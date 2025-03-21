@@ -1,8 +1,25 @@
-[gd_scene load_steps=3 format=3 uid="uid://cbpwvuj8kdyod"]
+[gd_scene load_steps=6 format=3 uid="uid://cbpwvuj8kdyod"]
 
 [ext_resource type="Script" uid="uid://t5tc36uuxhcf" path="res://Scripts/authentication.gd" id="1_6ea5n"]
+[ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://dyslexiafont/OpenDyslexic-Regular.otf" id="2_edc1m"]
+[ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://dyslexiafont/OpenDyslexic-Bold.otf" id="3_4bnr5"]
 
-[sub_resource type="SystemFont" id="SystemFont_5j2nl"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6yb2p"]
+bg_color = Color(0.929412, 0.937255, 0.968627, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_color = Color(0, 0, 0, 0.196078)
+shadow_size = 4
+shadow_offset = Vector2(2, 2)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_axc1p"]
+bg_color = Color(0.14902, 0.278431, 0.74902, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
 [node name="Authentication" type="Control"]
 layout_mode = 3
@@ -13,64 +30,241 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_6ea5n")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
-custom_minimum_size = Vector2(300, 0)
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.85098, 0.878431, 0.933333, 1)
+
+[node name="MainContainer" type="PanelContainer" parent="."]
+custom_minimum_size = Vector2(450, 0)
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = -20.0
-offset_right = 20.0
-offset_bottom = 20.0
+offset_left = -225.0
+offset_top = -300.0
+offset_right = 225.0
+offset_bottom = 300.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 20
+theme_override_styles/panel = SubResource("StyleBoxFlat_6yb2p")
 
-[node name="Title" type="Label" parent="VBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MainContainer"]
 layout_mode = 2
-theme_override_fonts/font = SubResource("SystemFont_5j2nl")
-theme_override_font_sizes/font_size = 30
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="Title" type="Label" parent="MainContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.14902, 0.278431, 0.74902, 1)
+theme_override_fonts/font = ExtResource("3_4bnr5")
+theme_override_font_sizes/font_size = 40
 text = "Lexia"
 horizontal_alignment = 1
 
-[node name="StateLabel" type="Label" parent="VBoxContainer"]
+[node name="StateLabel" type="Label" parent="MainContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_fonts/font = SubResource("SystemFont_5j2nl")
-theme_override_font_sizes/font_size = 15
-text = "Login your lexia account"
+theme_override_colors/font_color = Color(0.298039, 0.298039, 0.298039, 1)
+theme_override_fonts/font = ExtResource("2_edc1m")
+theme_override_font_sizes/font_size = 18
+text = "Welcome to Lexia - (Dyslexia Game)"
 horizontal_alignment = 1
 
-[node name="EmailLineEdit" type="LineEdit" parent="VBoxContainer"]
+[node name="HSeparator" type="HSeparator" parent="MainContainer/VBoxContainer"]
 layout_mode = 2
-placeholder_text = "Email"
 
-[node name="PasswordLineEdit" type="LineEdit" parent="VBoxContainer"]
+[node name="TabContainer" type="TabContainer" parent="MainContainer/VBoxContainer"]
 layout_mode = 2
-placeholder_text = "Password"
+theme_override_fonts/font = ExtResource("2_edc1m")
+theme_override_font_sizes/font_size = 18
+current_tab = 0
+
+[node name="Login" type="VBoxContainer" parent="MainContainer/VBoxContainer/TabContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+metadata/_tab_index = 0
+
+[node name="Spacer" type="Control" parent="MainContainer/VBoxContainer/TabContainer/Login"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="EmailLabel" type="Label" parent="MainContainer/VBoxContainer/TabContainer/Login"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_edc1m")
+theme_override_font_sizes/font_size = 16
+text = "Email"
+
+[node name="EmailLineEdit" type="LineEdit" parent="MainContainer/VBoxContainer/TabContainer/Login"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_edc1m")
+theme_override_font_sizes/font_size = 16
+placeholder_text = "Enter your email"
+clear_button_enabled = true
+
+[node name="PasswordLabel" type="Label" parent="MainContainer/VBoxContainer/TabContainer/Login"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_edc1m")
+theme_override_font_sizes/font_size = 16
+text = "Password"
+
+[node name="PasswordLineEdit" type="LineEdit" parent="MainContainer/VBoxContainer/TabContainer/Login"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_edc1m")
+theme_override_font_sizes/font_size = 16
+placeholder_text = "Enter your password"
+clear_button_enabled = true
 secret = true
 
-[node name="LoginButton" type="Button" parent="VBoxContainer"]
+[node name="ForgotPasswordButton" type="LinkButton" parent="MainContainer/VBoxContainer/TabContainer/Login"]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.14902, 0.278431, 0.74902, 1)
+theme_override_fonts/font = ExtResource("2_edc1m")
+theme_override_font_sizes/font_size = 14
+text = "Forgot your password?"
+underline = 1
+
+[node name="LoginButton" type="Button" parent="MainContainer/VBoxContainer/TabContainer/Login"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_4bnr5")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxFlat_axc1p")
 text = "Sign In"
 
-[node name="SignupButton" type="Button" parent="VBoxContainer"]
+[node name="OrLabel" type="Label" parent="MainContainer/VBoxContainer/TabContainer/Login"]
 layout_mode = 2
-text = "Register"
-
-[node name="Title2" type="Label" parent="VBoxContainer"]
-layout_mode = 2
-theme_override_fonts/font = SubResource("SystemFont_5j2nl")
-theme_override_font_sizes/font_size = 30
+theme_override_fonts/font = ExtResource("2_edc1m")
+theme_override_font_sizes/font_size = 16
 text = "Or"
 horizontal_alignment = 1
 
-[node name="SignInGoogleButton" type="Button" parent="VBoxContainer"]
+[node name="SignInGoogleButton" type="Button" parent="MainContainer/VBoxContainer/TabContainer/Login"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("2_edc1m")
+theme_override_font_sizes/font_size = 16
 text = "Sign In with Google"
 
-[connection signal="pressed" from="VBoxContainer/LoginButton" to="." method="_on_login_button_pressed"]
-[connection signal="pressed" from="VBoxContainer/SignupButton" to="." method="_on_signup_button_pressed"]
-[connection signal="pressed" from="VBoxContainer/SignInGoogleButton" to="." method="_on_sign_in_google_button_pressed"]
+[node name="Register" type="VBoxContainer" parent="MainContainer/VBoxContainer/TabContainer"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 12
+metadata/_tab_index = 1
+
+[node name="Spacer" type="Control" parent="MainContainer/VBoxContainer/TabContainer/Register"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="UsernameLabel" type="Label" parent="MainContainer/VBoxContainer/TabContainer/Register"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_edc1m")
+theme_override_font_sizes/font_size = 16
+text = "Username"
+
+[node name="UsernameLineEdit" type="LineEdit" parent="MainContainer/VBoxContainer/TabContainer/Register"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_edc1m")
+theme_override_font_sizes/font_size = 16
+placeholder_text = "Choose a username"
+clear_button_enabled = true
+
+[node name="BirthDateLabel" type="Label" parent="MainContainer/VBoxContainer/TabContainer/Register"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_edc1m")
+theme_override_font_sizes/font_size = 16
+text = "Birth Date"
+
+[node name="BirthDateContainer" type="HBoxContainer" parent="MainContainer/VBoxContainer/TabContainer/Register"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="DayOptionButton" type="OptionButton" parent="MainContainer/VBoxContainer/TabContainer/Register/BirthDateContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("2_edc1m")
+theme_override_font_sizes/font_size = 16
+
+[node name="MonthOptionButton" type="OptionButton" parent="MainContainer/VBoxContainer/TabContainer/Register/BirthDateContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("2_edc1m")
+theme_override_font_sizes/font_size = 16
+
+[node name="YearOptionButton" type="OptionButton" parent="MainContainer/VBoxContainer/TabContainer/Register/BirthDateContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("2_edc1m")
+theme_override_font_sizes/font_size = 16
+
+[node name="EmailLabel" type="Label" parent="MainContainer/VBoxContainer/TabContainer/Register"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_edc1m")
+theme_override_font_sizes/font_size = 16
+text = "Email"
+
+[node name="RegEmailLineEdit" type="LineEdit" parent="MainContainer/VBoxContainer/TabContainer/Register"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_edc1m")
+theme_override_font_sizes/font_size = 16
+placeholder_text = "Enter your email"
+clear_button_enabled = true
+
+[node name="PasswordLabel" type="Label" parent="MainContainer/VBoxContainer/TabContainer/Register"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_edc1m")
+theme_override_font_sizes/font_size = 16
+text = "Password"
+
+[node name="RegPasswordLineEdit" type="LineEdit" parent="MainContainer/VBoxContainer/TabContainer/Register"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_edc1m")
+theme_override_font_sizes/font_size = 16
+placeholder_text = "Create a password"
+clear_button_enabled = true
+secret = true
+
+[node name="ConfirmPasswordLabel" type="Label" parent="MainContainer/VBoxContainer/TabContainer/Register"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_edc1m")
+theme_override_font_sizes/font_size = 16
+text = "Confirm Password"
+
+[node name="ConfirmPasswordLineEdit" type="LineEdit" parent="MainContainer/VBoxContainer/TabContainer/Register"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_edc1m")
+theme_override_font_sizes/font_size = 16
+placeholder_text = "Confirm your password"
+clear_button_enabled = true
+secret = true
+
+[node name="ErrorLabel" type="Label" parent="MainContainer/VBoxContainer/TabContainer/Register"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85098, 0.137255, 0.137255, 1)
+theme_override_fonts/font = ExtResource("2_edc1m")
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 1
+
+[node name="RegisterButton" type="Button" parent="MainContainer/VBoxContainer/TabContainer/Register"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_4bnr5")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxFlat_axc1p")
+text = "Create Account"
+
+[node name="VersionLabel" type="Label" parent="MainContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.462745, 0.462745, 0.462745, 1)
+theme_override_fonts/font = ExtResource("2_edc1m")
+theme_override_font_sizes/font_size = 12
+text = "Lexia v1.0"
+horizontal_alignment = 1
+
+[connection signal="tab_changed" from="MainContainer/VBoxContainer/TabContainer" to="." method="_on_tab_container_tab_changed"]
+[connection signal="pressed" from="MainContainer/VBoxContainer/TabContainer/Login/ForgotPasswordButton" to="." method="_on_forgot_password_button_pressed"]
+[connection signal="pressed" from="MainContainer/VBoxContainer/TabContainer/Login/LoginButton" to="." method="_on_login_button_pressed"]
+[connection signal="pressed" from="MainContainer/VBoxContainer/TabContainer/Login/SignInGoogleButton" to="." method="_on_sign_in_google_button_pressed"]
+[connection signal="pressed" from="MainContainer/VBoxContainer/TabContainer/Register/RegisterButton" to="." method="_on_register_button_pressed"]
