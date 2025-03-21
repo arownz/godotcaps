@@ -1,0 +1,40 @@
+[gd_scene load_steps=2 format=3 uid="uid://d36ytiqg31edd"]
+
+[ext_resource type="Script" uid="uid://datbxxer3mwvc" path="res://Scripts/mainmenu.gd" id="1_tt5f1"]
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_tt5f1")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -50.5
+offset_top = -27.5
+offset_right = 50.5
+offset_bottom = 27.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+
+[node name="Label" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "Main Menu"
+horizontal_alignment = 1
+
+[node name="LogoutButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Logout"
+
+[connection signal="pressed" from="VBoxContainer/LogoutButton" to="." method="_on_logout_button_pressed"]
