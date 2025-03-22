@@ -14,4 +14,6 @@ func _process(_delta):
 
 func _on_logout_button_pressed():
 	Firebase.Auth.logout()
+	# Add a short delay before changing scene
+	await get_tree().create_timer(0.2).timeout
 	get_tree().change_scene_to_file("res://Scenes/Authentication.tscn")

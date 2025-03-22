@@ -320,8 +320,29 @@ func on_login_succeeded(auth):
 			
 			collection.add(user_id, user_doc)
 		else:
-			# Existing user - just update the last login time
-			collection.update(user_id, {"last_login": current_time})
+			# Existing user - do a complete update
+			if result.doc_fields != null:
+				var current_data = result.doc_fields
+				current_data["last_login"] = current_time
+				# Complete document update instead of just updating one field
+				collection.add(user_id, current_data)
+			else:
+				# If we can't retrieve the fields, create new
+				var display_name = auth.get("displayname", "")
+				var email = auth.get("email", "")
+				
+				var user_doc = {
+					"username": display_name,
+					"email": email,
+					"birth_date": "",
+					"age": 0,
+					"profile_picture": "default",
+					"user_level": 1,
+					"created_at": current_time,
+					"last_login": current_time
+				}
+				
+				collection.add(user_id, user_doc)
 	
 	# Show success message and redirect to main menu
 	show_message("Login Successful! Redirecting...", true)

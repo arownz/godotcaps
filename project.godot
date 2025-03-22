@@ -11,14 +11,16 @@ config_version=5
 [application]
 
 config/name="projectlexia"
+config/description="dyslexia web 2d gamification"
+config/version="1.0"
 run/main_scene="uid://cbpwvuj8kdyod"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://gui/lexiagamelogo.png"
+x`run/main_scene="uid://cbpwvuj8kdyod"
 
 [autoload]
 
 Firebase="*res://addons/godot-firebase/firebase/firebase.tscn"
-"s[editor]version_control/autoload_on_startup"=true
 
 [display]
 
@@ -27,6 +29,10 @@ window/size/viewport_height=720
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 window/handheld/orientation=4
+
+[editor]
+
+version_control/autoload_on_startup=true
 
 [editor_plugins]
 
