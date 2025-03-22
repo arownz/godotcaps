@@ -42,7 +42,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.92549, 0.952941, 0.972549, 1)
+color = Color(0.817091, 0.981945, 0.97575, 1)
 
 [node name="BackgroundAccent" type="ColorRect" parent="."]
 layout_mode = 1
@@ -110,7 +110,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.301961, 0.329412, 0.380392, 1)
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 22
-text = "Gaming made accessible for everyone"
+text = "Gamified made accessible for dyslexia"
 horizontal_alignment = 1
 
 [node name="RightPanel" type="Control" parent="MarginContainer/ContentContainer"]

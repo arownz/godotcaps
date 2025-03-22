@@ -268,7 +268,62 @@ func on_login_succeeded(auth):
 	print("Login successful")
 	Firebase.Auth.save_auth(auth)
 	
-	# Show success message and redirect directly to main menu
+	# Check if we need to store/update user data in Firestore
+	var collection = Firebase.Firestore.collection("users")
+	var user_id = auth.localid
+	
+	var current_time = Time.get_datetime_string_from_system(false, true)
+	
+	# First check if this user already exists in the database
+	var task = collection.get(user_id)
+	if task == null:
+		# Handle task creation failure
+		print("Failed to create task for user check")
+		# Create a new user anyway
+		var display_name = auth.get("displayname", "")
+		var email = auth.get("email", "")
+		
+		# Create new user document with default values
+		var user_doc = {
+			"username": display_name,
+			"email": email,
+			"birth_date": "", # Empty for Google users
+			"age": 0, # Will be calculated if birth date is provided later
+			"profile_picture": "default", # Use default for all new users
+			"user_level": 1, # Default level for new users
+			"created_at": current_time,
+			"last_login": current_time
+		}
+		
+		# Save the user data
+		collection.add(user_id, user_doc)
+	else:
+		# Add proper error handling
+		var result = await task.task_finished
+		
+		if result == null or result.error:
+			print("Error handling Firestore task")
+			# Fallback - create a new user anyway
+			var display_name = auth.get("displayname", "")
+			var email = auth.get("email", "")
+			
+			var user_doc = {
+				"username": display_name,
+				"email": email,
+				"birth_date": "",
+				"age": 0,
+				"profile_picture": "default",
+				"user_level": 1,
+				"created_at": current_time,
+				"last_login": current_time
+			}
+			
+			collection.add(user_id, user_doc)
+		else:
+			# Existing user - just update the last login time
+			collection.update(user_id, {"last_login": current_time})
+	
+	# Show success message and redirect to main menu
 	show_message("Login Successful! Redirecting...", true)
 	
 	# Change scene after a short delay
@@ -280,28 +335,49 @@ func on_signup_succeeded(auth):
 	
 	# Get user data from registration form
 	var username = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/UsernameLineEdit.text
+	var email = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegEmailLineEdit.text
 	
 	# Get birthdate components
 	var day_option = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/BirthDateContainer/DayOptionButton
 	var month_option = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/BirthDateContainer/MonthOptionButton
 	var year_option = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/BirthDateContainer/YearOptionButton
-	
+
 	var birth_date = ""
+	var age = 0
 	if day_option.selected > -1 and month_option.selected > -1 and year_option.selected > -1:
-		birth_date = "%s-%s-%s" % [year_option.get_item_text(year_option.selected),
-								month_option.selected + 1,
-								day_option.get_item_text(day_option.selected)]
+		var year = int(year_option.get_item_text(year_option.selected))
+		var month = month_option.selected + 1
+		var day = int(day_option.get_item_text(day_option.selected))
+		
+		birth_date = "%04d-%02d-%02d" % [year, month, day]
+		
+		# Calculate age
+		var current_date = Time.get_date_dict_from_system()
+		age = current_date["year"] - year
+		if current_date["month"] < month or (current_date["month"] == month and current_date["day"] < day):
+			age -= 1
 	
-	# Store user data in Firestore using add instead of document().set()
-	var user_doc = {"username": username, "birth_date": birth_date, "created_at": Time.get_unix_time_from_system()}
+	var current_time = Time.get_datetime_string_from_system(false, true)
 	
-	# Save using add() method with the user ID as document ID
+	# Store user data in Firestore
+	var user_doc = {
+		"username": username,
+		"email": email,
+		"birth_date": birth_date,
+		"age": age,
+		"profile_picture": "default", # Default profile picture for everyone
+		"user_level": 1, # Default level for new users
+		"created_at": current_time,
+		"last_login": current_time
+	}
+	
+	# Save to Firestore
 	var collection = Firebase.Firestore.collection("users")
 	collection.add(auth.localid, user_doc)
 	
 	Firebase.Auth.save_auth(auth)
 	
-	# Show success message and redirect directly to main menu
+	# Show success message and redirect
 	show_message("Registration Successful! Redirecting...", true)
 	
 	# Change scene after a short delay
@@ -315,3 +391,11 @@ func on_login_failed(error_code, message):
 func on_signup_failed(error_code, message):
 	print("Signup failed: ", error_code, " - ", message)
 	show_message("Registration Failed: " + message, false)
+
+# Then in your profile loading code (when you implement it):
+func load_profile_image(image_identifier):
+	if image_identifier == "default":
+		return preload("res://gui/default.png")
+	else:
+		# Handle loading from Firebase Storage or web URLs if needed
+		pass
