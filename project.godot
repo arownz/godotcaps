@@ -13,12 +13,11 @@ config_version=5
 config/name="projectlexia"
 run/main_scene="uid://cbpwvuj8kdyod"
 config/features=PackedStringArray("4.4", "GL Compatibility")
-config/icon="res://icon.svg"
+config/icon="res://gui/lexiagamelogo.png"
 
 [autoload]
 
 Firebase="*res://addons/godot-firebase/firebase/firebase.tscn"
-NotificationManager="*res://OOP/notification_manager.gd"
 "s[editor]version_control/autoload_on_startup"=true
 
 [display]
