@@ -29,9 +29,9 @@ func _ready():
 		show_message("You are already logged in", true)
 		await get_tree().create_timer(0.5).timeout
 		get_tree().change_scene_to_file("res://Scenes/MainMenu.tscn")
-	elif OS.get_name() == "web":
+	elif OS.get_name() == "Web":
 		var provider = Firebase.Auth.get_GoogleProvider()
-		Firebase.Auth.set_redirect_uri("http://localhost:8060/")
+		Firebase.Auth.set_redirect_uri("http://localhost:5000/")
 		var token = Firebase.Auth.get_token_from_url(provider)
 		if token:
 			Firebase.Auth.login_with_oauth(token, provider)
@@ -222,13 +222,28 @@ func _on_sign_in_google_button_pressed():
 	
 	show_message("Redirecting to Google...")
 	
-	if OS.get_name() == "web":
-		# For web
-		Firebase.Auth.set_redirect_uri("http://localhost:8060/")
+	if OS.get_name() == "Web":
+		# For web builds - critical changes for web authentication
+		Firebase.Auth.set_redirect_uri(get_web_redirect_uri())
+		provider.params.client_id = "746497205021-j5102kn8f9cjeobvnr696ruuifclpokl.apps.googleusercontent.com"
+		# Set these parameters explicitly for web
+		provider.params.response_type = "token"  
+		provider.params.redirect_type = "redirect_uri"
 		Firebase.Auth.get_auth_with_redirect(provider)
 	else:
-		# For desktop
+		# For desktop build
 		Firebase.Auth.get_auth_localhost(provider, 8060)
+
+# Helper function to determine the correct redirect URI based on the current URL
+func get_web_redirect_uri():
+	if OS.get_name() == "Web":
+		# Try to detect actual URL in web builds using JavaScript
+		if JavaScriptBridge.eval("typeof window !== 'undefined'"):
+			var location = JavaScriptBridge.eval("window.location.origin + window.location.pathname")
+			return location
+	
+	# Fallback for local testing
+	return "http://localhost:5000/"
 
 # ===== Forgot Password Functions =====
 func _on_forgot_password_button_pressed():
@@ -420,3 +435,20 @@ func load_profile_image(image_identifier):
 	else:
 		# Handle loading from Firebase Storage or web URLs if needed
 		pass
+
+# Helper function to get auth headers for requests
+func _get_auth_headers():
+	var headers = []
+	if Firebase.Auth.auth != null and Firebase.Auth.auth.has("idtoken"):
+		headers.append("Authorization: Bearer " + Firebase.Auth.auth.idtoken)
+	return headers
+
+# Add this to your authentication.gd
+func is_web_platform():
+	return OS.get_name() == "Web"
+
+# Replace any file storage with web storage when in browser
+func save_web_data(key, data):
+	if is_web_platform():
+		var js_code = "sessionStorage.setItem('%s', '%s');" % [key, JSON.stringify(data)]
+		JavaScriptBridge.eval(js_code)
