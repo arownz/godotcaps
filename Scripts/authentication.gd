@@ -292,7 +292,7 @@ func on_login_succeeded(auth):
 	# First check if this user already exists in the database
 	var task = collection.get(user_id)
 	if task == null:
-		# Handle task creation failure
+		# Handle task creation failure	
 		print("Failed to create task for user check")
 		# Create a new user anyway
 		var display_name = auth.get("displayname", "")

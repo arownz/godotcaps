@@ -18,6 +18,10 @@ config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://gui/lexiagamelogo.png"
 x`run/main_scene="uid://cbpwvuj8kdyod"
 
+[audio]
+
+general/text_to_speech=true
+
 [autoload]
 
 Firebase="*res://addons/godot-firebase/firebase/firebase.tscn"
@@ -37,6 +41,10 @@ version_control/autoload_on_startup=true
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/godot-firebase/plugin.cfg")
+
+[input_devices]
+
+pointing/emulate_touch_from_mouse=true
 
 [rendering]
 
