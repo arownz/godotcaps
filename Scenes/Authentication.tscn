@@ -1,8 +1,8 @@
 [gd_scene load_steps=8 format=3 uid="uid://cbpwvuj8kdyod"]
 
 [ext_resource type="Script" uid="uid://t5tc36uuxhcf" path="res://Scripts/authentication.gd" id="1_6ea5n"]
-[ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://dyslexiafont/OpenDyslexic-Regular.otf" id="2_edc1m"]
-[ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://dyslexiafont/OpenDyslexic-Bold.otf" id="3_4bnr5"]
+[ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="2_edc1m"]
+[ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="3_4bnr5"]
 [ext_resource type="Texture2D" uid="uid://bf6ojtexn75fa" path="res://gui/lexiagamelogo.png" id="4_x7u1p"]
 [ext_resource type="Texture2D" uid="uid://decyo17hpkcp6" path="res://gui/googleicon.png" id="5_qlk3g"]
 
@@ -10,7 +10,6 @@
 bg_color = Color(0.956863, 0.960784, 0.980392, 1)
 corner_radius_top_left = 16
 corner_radius_top_right = 16
-corner_radius_bottom_right = 16
 corner_radius_bottom_left = 16
 shadow_color = Color(0, 0, 0, 0.196078)
 shadow_size = 8
@@ -34,6 +33,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_6ea5n")
+metadata/_edit_vertical_guides_ = [-348.0]
 
 [node name="Background" type="ColorRect" parent="."]
 layout_mode = 1
@@ -43,15 +43,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.817091, 0.981945, 0.97575, 1)
-
-[node name="BackgroundAccent" type="ColorRect" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0, 0.266667, 0.337255, 0.0392157)
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -125,10 +116,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -225.0
-offset_top = -320.0
-offset_right = 225.0
-offset_bottom = 320.0
+offset_left = -344.5
+offset_top = -374.0
+offset_right = 274.5
+offset_bottom = 374.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_6yb2p")

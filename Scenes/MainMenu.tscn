@@ -37,4 +37,9 @@ horizontal_alignment = 1
 layout_mode = 2
 text = "Logout"
 
+[node name="JourneyModeButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Start Journey Mode"
+
 [connection signal="pressed" from="VBoxContainer/LogoutButton" to="." method="_on_logout_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/JourneyModeButton" to="." method="_on_journey_mode_button_pressed"]

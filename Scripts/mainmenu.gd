@@ -17,3 +17,6 @@ func _on_logout_button_pressed():
 	# Add a short delay before changing scene
 	await get_tree().create_timer(0.2).timeout
 	get_tree().change_scene_to_file("res://Scenes/Authentication.tscn")
+
+func _on_journey_mode_button_pressed() -> void:
+	get_tree().change_scene_to_file("res://Scenes/BattleScene.tscn")

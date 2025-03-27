@@ -1,0 +1,112 @@
+[gd_scene load_steps=5 format=3 uid="uid://3mxcrytk1kud"]
+
+[ext_resource type="Script" uid="uid://dc6lqw6dmfe1y" path="res://Scripts/EndgameScreen.gd" id="1_mgr3d"]
+[ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="2_6d17n"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tng3h"]
+bg_color = Color(0.0980392, 0.0980392, 0.0980392, 0.835294)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_g7vb6"]
+bg_color = Color(0.945098, 0.945098, 0.945098, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.141176, 0.141176, 0.141176, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+shadow_color = Color(0, 0, 0, 0.313726)
+shadow_size = 8
+shadow_offset = Vector2(2, 2)
+
+[node name="EndgameScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_mgr3d")
+
+[node name="Background" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_tng3h")
+
+[node name="ResultPanel" type="Panel" parent="."]
+custom_minimum_size = Vector2(500, 350)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -250.0
+offset_top = -175.0
+offset_right = 250.0
+offset_bottom = 175.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_g7vb6")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ResultPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="ResultLabel" type="Label" parent="ResultPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.101961, 0.101961, 0.101961, 1)
+theme_override_fonts/font = ExtResource("2_6d17n")
+theme_override_font_sizes/font_size = 48
+text = "Victory!"
+horizontal_alignment = 1
+
+[node name="MessageLabel" type="Label" parent="ResultPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.101961, 0.101961, 0.101961, 1)
+theme_override_fonts/font = ExtResource("2_6d17n")
+theme_override_font_sizes/font_size = 24
+text = "You defeated the enemy!"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="HSeparator" type="HSeparator" parent="ResultPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="ButtonsContainer" type="HBoxContainer" parent="ResultPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 30
+alignment = 1
+
+[node name="RestartButton" type="Button" parent="ResultPanel/VBoxContainer/ButtonsContainer"]
+custom_minimum_size = Vector2(150, 60)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_6d17n")
+theme_override_font_sizes/font_size = 24
+text = "Restart"
+
+[node name="QuitButton" type="Button" parent="ResultPanel/VBoxContainer/ButtonsContainer"]
+custom_minimum_size = Vector2(150, 60)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_6d17n")
+theme_override_font_sizes/font_size = 24
+text = "Quit"
+
+[connection signal="pressed" from="ResultPanel/VBoxContainer/ButtonsContainer/RestartButton" to="." method="_on_restart_button_pressed"]
+[connection signal="pressed" from="ResultPanel/VBoxContainer/ButtonsContainer/QuitButton" to="." method="_on_quit_button_pressed"]
