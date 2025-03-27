@@ -22,8 +22,8 @@ func _ready():
 	_initialize_date_pickers()
 	
 	# Make layout responsive
-	get_tree().root.size_changed.connect(_adjust_layout_for_screen_size)
-	_adjust_layout_for_screen_size()
+	#get_tree().root.size_changed.connect(_adjust_layout_for_screen_size)
+	#_adjust_layout_for_screen_size()
 	
 	if Firebase.Auth.check_auth_file():
 		show_message("You are already logged in", true)

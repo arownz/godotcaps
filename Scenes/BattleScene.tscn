@@ -1,9 +1,9 @@
 [gd_scene load_steps=9 format=3 uid="uid://cfead7bcuslp4"]
 
-[ext_resource type="Texture2D" uid="uid://buvygmke8by44" path="res://Sprites/Player/example_fix_player.png" id="1"]
-[ext_resource type="Texture2D" uid="uid://jq3w8mrmq7b0" path="res://Sprites/Dungeon_1/Stage_1/slime/examplefix_slime.png" id="2"]
-[ext_resource type="Script" uid="uid://cnnycoui3l3ef" path="res://Scripts/battlescene.gd" id="3_vhj2j"]
+[ext_resource type="Texture2D" uid="uid://drdd3ybj0eete" path="res://Images/Sprites/player.png" id="2_hb1yk"]
+[ext_resource type="Script" path="res://Scripts/battlescene.gd" id="3_vhj2j"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="4_akpf4"]
+[ext_resource type="Texture2D" uid="uid://ckjp6thr2r8og" path="res://Images/Sprites/Slime.png" id="4_u810s"]
 [ext_resource type="PackedScene" uid="uid://buhhqw4k2b2ye" path="res://Scenes/StatsTester.tscn" id="5_pqv1n"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_e13ox"]
@@ -70,7 +70,7 @@ grow_vertical = 2
 [node name="Player" type="Sprite2D" parent="BattleContainer/PlayerContainer"]
 position = Vector2(3, -214)
 scale = Vector2(6, 6)
-texture = ExtResource("1")
+texture = ExtResource("2_hb1yk")
 
 [node name="PlayerName" type="Label" parent="BattleContainer/PlayerContainer"]
 layout_mode = 0
@@ -86,7 +86,6 @@ horizontal_alignment = 1
 
 [node name="PlayerHealth" type="ProgressBar" parent="BattleContainer/PlayerContainer"]
 custom_minimum_size = Vector2(200, 25)
-layout_mode = 0
 offset_left = -100.0
 offset_top = -100.0
 offset_right = 100.0
@@ -113,7 +112,9 @@ grow_vertical = 2
 [node name="Enemy" type="Sprite2D" parent="BattleContainer/EnemyContainer"]
 position = Vector2(6, -213)
 scale = Vector2(6, 6)
-texture = ExtResource("2")
+texture = ExtResource("4_u810s")
+hframes = 6
+vframes = 3
 
 [node name="EnemyName" type="Label" parent="BattleContainer/EnemyContainer"]
 layout_mode = 0
@@ -141,7 +142,6 @@ show_percentage = false
 
 [node name="EnemySkillMeter" type="ProgressBar" parent="BattleContainer/EnemyContainer"]
 custom_minimum_size = Vector2(200, 15)
-layout_mode = 0
 offset_left = -100.0
 offset_top = -70.0
 offset_right = 100.0
@@ -194,7 +194,7 @@ visible = false
 offset_left = 620.0
 offset_top = 405.0
 offset_right = 820.0
-offset_bottom = 455.0
+offset_bottom = 478.333
 theme_override_colors/font_color = Color(0.905882, 0.47451, 0, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 5
@@ -206,7 +206,7 @@ horizontal_alignment = 1
 [node name="StageInfoLabel" type="Label" parent="."]
 offset_left = 544.0
 offset_top = 52.0
-offset_right = 896.0
+offset_right = 958.0
 offset_bottom = 104.0
 theme_override_colors/font_color = Color(0.101961, 0.101961, 0.101961, 1)
 theme_override_fonts/font = ExtResource("4_akpf4")
@@ -224,7 +224,7 @@ offset_bottom = 600.0
 [node name="StatsToggleButton" type="Button" parent="."]
 offset_left = 49.0
 offset_top = 50.0
-offset_right = 295.0
+offset_right = 296.0
 offset_bottom = 90.0
 theme_override_fonts/font = ExtResource("4_akpf4")
 theme_override_font_sizes/font_size = 18

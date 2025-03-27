@@ -13,9 +13,10 @@ config_version=5
 config/name="projectlexia"
 config/description="dyslexia web 2d gamification"
 config/version="1.0"
-run/main_scene="uid://cfead7bcuslp4"
+run/main_scene="uid://cbpwvuj8kdyod"
 config/features=PackedStringArray("4.4", "GL Compatibility")
-config/icon="res://gui/lexiagamelogo.png"
+run/max_fps=60
+config/icon="res://Images/gui/lexiagamelogo.png"
 x`run/main_scene="uid://cbpwvuj8kdyod"
 
 [audio]
@@ -28,8 +29,10 @@ Firebase="*res://addons/godot-firebase/firebase/firebase.tscn"
 
 [display]
 
-window/size/viewport_width=1440
-window/size/viewport_height=810
+window/size/viewport_width=320
+window/size/viewport_height=180
+window/size/window_width_override=1440
+window/size/window_height_override=810
 window/subwindows/embed_subwindows=false
 window/stretch/mode="canvas_items"
 window/per_pixel_transparency/allowed=true
@@ -47,8 +50,17 @@ version_control/autoload_on_startup=true
 
 enabled=PackedStringArray("res://addons/godot-firebase/plugin.cfg")
 
+[gui]
+
+theme/custom_font="uid://l1q8mfvbxty3"
+theme/default_font_antialiasing=0
+theme/default_font_hinting=0
+theme/default_font_subpixel_positioning=0
+theme/default_font_multichannel_signed_distance_field=true
+
 [input_devices]
 
+pointing/emulate_touch_from_mouse=true
 pointing/emulate_mouse_from_touch=false
 "#Addthislineforcompletetouchsupport[rendering]renderer/rendering_method"="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
