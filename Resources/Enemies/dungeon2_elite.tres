@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="EnemyTypeResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Resources/enemy_type_resource.gd" id="1_rjmtd"]
+
+[resource]
+script = ExtResource("1_rjmtd")
+type_id = "elite"
+names = ["Cobra", "Viper", "Poisonous Snake"]
+health_multiplier = 2.2
+damage_multiplier = 1.7
+exp_reward = 35
+sprite_scale = Vector2(1.5, 1.5)

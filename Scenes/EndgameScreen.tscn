@@ -1,10 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://3mxcrytk1kud"]
+[gd_scene load_steps=4 format=3 uid="uid://3mxcrytk1kud"]
 
 [ext_resource type="Script" uid="uid://dc6lqw6dmfe1y" path="res://Scripts/EndgameScreen.gd" id="1_mgr3d"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="2_6d17n"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tng3h"]
-bg_color = Color(0.0980392, 0.0980392, 0.0980392, 0.835294)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_g7vb6"]
 bg_color = Color(0.945098, 0.945098, 0.945098, 1)
@@ -29,15 +26,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_mgr3d")
-
-[node name="Background" type="Panel" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_tng3h")
 
 [node name="ResultPanel" type="Panel" parent="."]
 custom_minimum_size = Vector2(500, 350)
@@ -89,6 +77,20 @@ autowrap_mode = 2
 [node name="HSeparator" type="HSeparator" parent="ResultPanel/VBoxContainer"]
 layout_mode = 2
 
+[node name="ButtonContainer" type="VBoxContainer" parent="ResultPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 15
+alignment = 1
+
+[node name="ContinueButton" type="Button" parent="ResultPanel/VBoxContainer/ButtonContainer"]
+custom_minimum_size = Vector2(200, 60)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.0431373, 0.45098, 0.0705882, 1)
+theme_override_fonts/font = ExtResource("2_6d17n")
+theme_override_font_sizes/font_size = 24
+text = "Continue"
+
 [node name="ButtonsContainer" type="HBoxContainer" parent="ResultPanel/VBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 30
@@ -108,5 +110,6 @@ theme_override_fonts/font = ExtResource("2_6d17n")
 theme_override_font_sizes/font_size = 24
 text = "Quit"
 
+[connection signal="pressed" from="ResultPanel/VBoxContainer/ButtonContainer/ContinueButton" to="." method="_on_continue_button_pressed"]
 [connection signal="pressed" from="ResultPanel/VBoxContainer/ButtonsContainer/RestartButton" to="." method="_on_restart_button_pressed"]
 [connection signal="pressed" from="ResultPanel/VBoxContainer/ButtonsContainer/QuitButton" to="." method="_on_quit_button_pressed"]

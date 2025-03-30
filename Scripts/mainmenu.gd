@@ -19,4 +19,6 @@ func _on_logout_button_pressed():
 	get_tree().change_scene_to_file("res://Scenes/Authentication.tscn")
 
 func _on_journey_mode_button_pressed() -> void:
+	# Use change_scene_to_file instead of manual instantiation
+	# This is more reliable and will properly initialize the scene
 	get_tree().change_scene_to_file("res://Scenes/BattleScene.tscn")

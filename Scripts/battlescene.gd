@@ -1,89 +1,223 @@
 extends Node2D
 
-var player_health = 100
-var enemy_health = 100
-var enemy_skill_meter = 0
-var battle_active = false
-var dungeon_num = 1
-var stage_num = 1
-var enemy_damage = 10
-var player_damage = 15
-var player_name = "Hero"
-var enemy_name = "Slime"
+# Preload all manager scripts to ensure they're defined before use
+const BattleManagerScript = preload("res://Scripts/Manager/battle_manager.gd")
+const EnemyManagerScript = preload("res://Scripts/Manager/enemy_manager.gd")
+const PlayerManagerScript = preload("res://Scripts/Manager/player_manager.gd")
+const LogManagerScript = preload("res://Scripts/Manager/battle_log_manager.gd")
+const UIManagerScript = preload("res://Scripts/Manager/ui_manager.gd")
+const ChallengeManagerScript = preload("res://Scripts/Manager/challenge_manager.gd")
+const DungeonManagerScript = preload("res://Scripts/Manager/dungeon_manager.gd")
 
-# New variables for automatic combat
+# Managers - references to specialized classes that handle different aspects of the game
+var battle_manager
+var enemy_manager
+var player_manager
+var log_manager
+var ui_manager
+var challenge_manager
+var dungeon_manager
+
+# Auto battle settings
 var auto_battle_timer = null
-var auto_battle_speed = 1.5  # Time between attacks in seconds
+var auto_battle_speed = 3.0  # SLOWER battle speed (increased from 1.5 to 3.0 seconds)
 
-# References to the scenes we'll instance
-var word_challenge_scene = null  # Will be loaded in _ready
-var endgame_screen_scene = null  # Will be loaded in _ready
-var current_word_challenge = null
+# Flags
+var battle_active = false
+var fresh_start = true
+
+# Settings handle to load configurables
+var settings
 
 func _ready():
-	# Load the scenes to avoid preload errors
-	word_challenge_scene = load("res://Scenes/WordChallengePanel.tscn")
-	endgame_screen_scene = load("res://Scenes/EndgameScreen.tscn")
+	# Initialize settings from GameSettings singleton if it exists
+	if Engine.has_singleton("GameSettings"):
+		settings = Engine.get_singleton("GameSettings")
+		auto_battle_speed = settings.default_battle_speed
+	
+	# Initialize managers
+	_initialize_managers()
+	
+	# Connect to signals
+	_connect_signals()
 	
 	# Initialize UI
-	$BattleContainer/PlayerContainer/PlayerName.text = player_name
-	$BattleContainer/EnemyContainer/EnemyName.text = enemy_name
+	ui_manager.initialize_ui()
 	
-	$BattleContainer/PlayerContainer/PlayerHealth.value = player_health
-	$BattleContainer/EnemyContainer/EnemyHealth.value = enemy_health
-	$BattleContainer/EnemyContainer/EnemySkillMeter.value = enemy_skill_meter
-	$StageInfoLabel.text = "Dungeon " + str(dungeon_num) + " - Stage " + str(stage_num)
-	
-	# Set max values for health bars
-	$BattleContainer/PlayerContainer/PlayerHealth.max_value = player_health
-	$BattleContainer/EnemyContainer/EnemyHealth.max_value = enemy_health
-	
-	# Make sure the enemy skill label is hidden initially
-	$BattleContainer/EnemyContainer/EnemySkillLabel.visible = false
-	
-	# Initialize battle state
-	battle_active = false
-	
-	# Reset positions
-	$BattleContainer/PlayerContainer/Player.position.y = -200
-	$BattleContainer/EnemyContainer/Enemy.position.y = -200
+	# Display introduction messages
+	if fresh_start:
+		log_manager.display_introduction_messages()
 	
 	# Create auto battle timer
-	auto_battle_timer = Timer.new()
-	auto_battle_timer.one_shot = true
-	auto_battle_timer.wait_time = auto_battle_speed
-	auto_battle_timer.connect("timeout", _auto_battle_turn)
-	add_child(auto_battle_timer)
+	_setup_auto_battle_timer()
 	
 	# Initialize stats from testing panel (if available)
 	if has_node("StatsTester"):
 		_update_stats_from_tester()
 	
-	# Initially hide the StatsTester panel
+	# Hide the StatsTester panel
 	$StatsTester.visible = false
+
+func _initialize_managers():
+	# Create all managers with reference to this scene
+	battle_manager = BattleManagerScript.new(self)
+	enemy_manager = EnemyManagerScript.new(self)
+	player_manager = PlayerManagerScript.new(self)
+	log_manager = LogManagerScript.new(self)
+	ui_manager = UIManagerScript.new(self)
+	challenge_manager = ChallengeManagerScript.new(self)
+	dungeon_manager = DungeonManagerScript.new(self)
+	
+	# Add managers as children
+	add_child(battle_manager)
+	add_child(enemy_manager)
+	add_child(player_manager)
+	add_child(log_manager)
+	add_child(ui_manager)
+	add_child(challenge_manager)
+	add_child(dungeon_manager)
+	
+	# Set up the enemy based on current stage and dungeon
+	enemy_manager.setup_enemy()
+	
+	# Let the dungeon manager initialize
+	dungeon_manager.initialize()
+
+func _connect_signals():
+	# Connect UI elements - add checks to prevent duplicate connections
+	var engage_button = $MainContainer/RightContainer/MarginContainer/VBoxContainer/ButtonContainer/EngageButton
+	if !engage_button.is_connected("pressed", _on_engage_button_pressed):
+		engage_button.pressed.connect(_on_engage_button_pressed)
+	
+	var stats_toggle_button = $MainContainer/BattleAreaContainer/StatsToggleButton
+	if !stats_toggle_button.is_connected("pressed", _on_stats_toggle_button_pressed):
+		stats_toggle_button.pressed.connect(_on_stats_toggle_button_pressed)
+	
+	# Connect scroll container to detect user scrolling
+	var scroll_container = $MainContainer/RightContainer/MarginContainer/VBoxContainer/BattleLogContainer/ScrollContainer
+	var scroll_bar = scroll_container.get_v_scroll_bar()
+	if !scroll_bar.is_connected("value_changed", log_manager._on_scroll_value_changed):
+		scroll_bar.value_changed.connect(log_manager._on_scroll_value_changed)
+	
+	# Connect manager signals
+	_connect_manager_signals()
+
+func _connect_manager_signals():
+	# BattleManager signals
+	battle_manager.player_attack_performed.connect(_on_player_attack_performed)
+	battle_manager.enemy_attack_performed.connect(_on_enemy_attack_performed)
+	battle_manager.victory_achieved.connect(_on_victory_achieved)
+	battle_manager.enemy_skill_triggered.connect(_on_enemy_skill_triggered)
+	battle_manager.challenge_started.connect(_on_challenge_started)
+	
+	# EnemyManager signals
+	enemy_manager.enemy_health_changed.connect(_on_enemy_health_changed)
+	enemy_manager.enemy_defeated.connect(_on_enemy_defeated)
+	enemy_manager.enemy_skill_meter_changed.connect(_on_enemy_skill_meter_changed)
+	enemy_manager.enemy_set_up.connect(_on_enemy_set_up)
+	
+	# PlayerManager signals
+	player_manager.player_health_changed.connect(_on_player_health_changed)
+	player_manager.player_defeated.connect(_on_player_defeated)
+	player_manager.player_experience_changed.connect(_on_player_experience_changed)
+	player_manager.player_level_up.connect(_on_player_level_up)
+	
+	# DungeonManager signals
+	dungeon_manager.stage_advanced.connect(_on_stage_advanced)
+	dungeon_manager.dungeon_advanced.connect(_on_dungeon_advanced)
+
+# Signal callbacks
+func _on_player_attack_performed(damage):
+	enemy_manager.take_damage(damage)
+
+func _on_enemy_attack_performed(damage):
+	player_manager.take_damage(damage)
+	enemy_manager.increase_skill_meter(25)
+
+func _on_enemy_health_changed(_current_health, _max_health):
+	ui_manager.update_enemy_health()
+
+func _on_player_health_changed(_current_health, _max_health):
+	ui_manager.update_player_health()
+
+func _on_enemy_defeated(_exp_reward):
+	battle_active = false
+	battle_manager.handle_victory()
+
+func _on_victory_achieved(exp_reward):
+	battle_active = false
+	log_manager.add_message("[color=#4CAF50]Victory! You defeated the enemy and gained " + str(exp_reward) + " experience.[/color]")
+
+func _on_player_defeated():
+	battle_active = false
+	battle_manager.show_endgame_screen("Defeat")
+
+func _on_player_experience_changed(_current_exp, _max_exp):
+	ui_manager.update_player_exp()
+
+func _on_player_level_up(new_level):
+	log_manager.add_message("[color=#4CAF50]Congratulations! You reached level " + str(new_level) + "![/color]")
+
+func _on_enemy_skill_meter_changed(_value):
+	ui_manager.update_enemy_skill_meter()
+
+func _on_enemy_skill_triggered():
+	# Remove references to challenge buttons container
+	# Nothing to do here now as we don't need to show buttons
+	pass
+
+func _on_challenge_started(challenge_type):
+	# Handle challenge start
+	challenge_manager.challenge_type = challenge_type
+
+func _on_stage_advanced(_dungeon_num, _stage_num):
+	ui_manager.update_stage_info()
+
+func _on_dungeon_advanced(dungeon_num):
+	ui_manager.update_background(dungeon_num)
+	log_manager.add_message("[color=#4CAF50]You've entered a new dungeon! Prepare for stronger enemies.[/color]")
+
+func _on_enemy_set_up(_enemy_name, _enemy_type):
+	ui_manager.initialize_enemy_ui()
+
+func _setup_auto_battle_timer():
+	auto_battle_timer = Timer.new()
+	auto_battle_timer.one_shot = true
+	auto_battle_timer.wait_time = auto_battle_speed
+	auto_battle_timer.timeout.connect(_auto_battle_turn)
+	add_child(auto_battle_timer)
 
 func _on_engage_button_pressed():
 	if battle_active:
 		return
 		
 	battle_active = true
-	$BattleControls/EngageButton.disabled = true
+	
+	# Get the engage button and make it transparent/disabled looking
+	var engage_button = $MainContainer/RightContainer/MarginContainer/VBoxContainer/ButtonContainer/EngageButton
+	engage_button.disabled = true
+	engage_button.modulate = Color(1, 1, 1, 0.5) # 50% transparency
+	
+	# Also update the label
+	var engage_label = engage_button.get_node("EngageLabel")
+	if engage_label:
+		engage_label.modulate = Color(1, 1, 1, 0.5)
+	
+	# Add battle log message
+	log_manager.add_message("Battle started! You engage the " + enemy_manager.enemy_name + ".")
 	
 	# Show FIGHT! label with animation
-	$FightLabel.visible = true
-	$FightLabel.scale = Vector2(1.0, 1.0)
-	var tween = create_tween()
-	tween.tween_property($FightLabel, "scale", Vector2(1.5, 1.5), 0.3)
-	tween.tween_property($FightLabel, "scale", Vector2(1.0, 1.0), 0.2)
-	tween.tween_interval(0.5)
-	tween.tween_property($FightLabel, "modulate", Color(1, 1, 1, 0), 0.5)
-	tween.tween_callback(_start_auto_battle)
+	ui_manager.show_fight_animation(_start_auto_battle)
 
 func _start_auto_battle():
-	$FightLabel.visible = false
-	$FightLabel.modulate = Color(1, 1, 1, 1)
+	$MainContainer/BattleAreaContainer/FightLabel.visible = false
+	$MainContainer/BattleAreaContainer/FightLabel.modulate = Color(1, 1, 1, 1)
 	
-	# Start the automatic battle sequence
+	# Add battle log message
+	log_manager.add_message("The turn-based battle begins!")
+	
+	# Start the automatic battle sequence after a short delay
+	await get_tree().create_timer(0.2).timeout
 	_auto_battle_turn()
 
 func _auto_battle_turn():
@@ -91,183 +225,74 @@ func _auto_battle_turn():
 		return
 		
 	# Player attacks first
-	_player_attack()
+	battle_manager.player_attack()
 	
 	# Check if enemy is defeated
-	if enemy_health <= 0:
+	if enemy_manager.enemy_health <= 0:
 		battle_active = false
-		_show_endgame_screen("Victory")
+		battle_manager.handle_victory()
 		return
 	
 	# After a small delay, enemy attacks
 	await get_tree().create_timer(0.8).timeout
-	_enemy_attack()
+	battle_manager.enemy_attack()
 	
 	# Check if player is defeated
-	if player_health <= 0:
+	if player_manager.player_health <= 0:
 		battle_active = false
-		_show_endgame_screen("Defeat")
+		battle_manager.show_endgame_screen("Defeat")
 		return
 		
 	# Check if enemy skill is ready
-	if enemy_skill_meter >= 100:
+	if enemy_manager.enemy_skill_meter >= 100:
 		await get_tree().create_timer(0.3).timeout
-		_trigger_enemy_skill()
+		battle_manager.trigger_enemy_skill()
 		return
 	
 	# Continue battle after delay
 	auto_battle_timer.start()
 
-func _player_attack():
-	var player_attack_tween = create_tween()
-	
-	# Move player toward enemy
-	player_attack_tween.tween_property($BattleContainer/PlayerContainer/Player, "position", 
-		Vector2(300, -200), 0.3) # Move right
-	player_attack_tween.tween_property($BattleContainer/PlayerContainer/Player, "position", 
-		Vector2(0, -200), 0.2)    # Return to original position
-	
-	await player_attack_tween.finished
-	
-	enemy_health -= player_damage
-	enemy_health = max(0, enemy_health)  # Ensure it doesn't go below 0
-	$BattleContainer/EnemyContainer/EnemyHealth.value = enemy_health
-
-func _enemy_attack():
-	var enemy_attack_tween = create_tween()
-	
-	# Move enemy toward player
-	enemy_attack_tween.tween_property($BattleContainer/EnemyContainer/Enemy, "position", 
-		Vector2(-300, -200), 0.3) # Move left
-	enemy_attack_tween.tween_property($BattleContainer/EnemyContainer/Enemy, "position", 
-		Vector2(0, -200), 0.2)    # Return to original position
-	
-	await enemy_attack_tween.finished
-	
-	player_health -= enemy_damage
-	player_health = max(0, player_health)  # Ensure it doesn't go below 0
-	$BattleContainer/PlayerContainer/PlayerHealth.value = player_health
-	
-	# Increase enemy skill meter
-	enemy_skill_meter += 25
-	$BattleContainer/EnemyContainer/EnemySkillMeter.value = enemy_skill_meter
-
-func _trigger_enemy_skill():
-	# Show the enemy skill label when skill is triggered
-	$BattleContainer/EnemyContainer/EnemySkillLabel.visible = true
-	
-	# Pause gameplay and show random word panel
-	if word_challenge_scene:
-		current_word_challenge = word_challenge_scene.instantiate()
-		add_child(current_word_challenge)
-		
-		# Center the challenge panel on screen
-		current_word_challenge.connect("ready", func(): 
-			var panel = current_word_challenge.get_node("ChallengePanel")
-			panel.position = Vector2(
-				(get_viewport_rect().size.x - panel.size.x) / 2,
-				(get_viewport_rect().size.y - panel.size.y) / 2
-			)
-		)
-		
-		current_word_challenge.connect("challenge_completed", _on_word_challenge_completed)
-		current_word_challenge.connect("challenge_failed", _on_word_challenge_failed)
-	else:
-		# Fallback if scene couldn't be loaded
-		print("ERROR: Could not load WordChallengePanel.tscn")
-		# Skip the skill challenge
-		_on_word_challenge_failed()
-
-func _on_word_challenge_completed(bonus_damage):
-	# Player successfully countered the enemy skill
-	enemy_health -= bonus_damage
-	enemy_health = max(0, enemy_health)
-	$BattleContainer/EnemyContainer/EnemyHealth.value = enemy_health
-	
-	# Reset enemy skill meter
-	enemy_skill_meter = 0
-	$BattleContainer/EnemyContainer/EnemySkillMeter.value = enemy_skill_meter
-	
-	# Hide the enemy skill label
-	$BattleContainer/EnemyContainer/EnemySkillLabel.visible = false
-	
-	# Check if enemy is defeated after counterattack
-	if enemy_health <= 0:
-		battle_active = false
-		_show_endgame_screen("Victory")
-		return
-	
-	# Continue battle
-	auto_battle_timer.start()
-
-func _on_word_challenge_failed():
-	# Player failed to counter - enemy deals full skill damage
-	player_health -= enemy_damage * 2
-	player_health = max(0, player_health)
-	$BattleContainer/PlayerContainer/PlayerHealth.value = player_health
-	
-	# Reset enemy skill meter
-	enemy_skill_meter = 0
-	$BattleContainer/EnemyContainer/EnemySkillMeter.value = enemy_skill_meter
-	
-	# Hide the enemy skill label
-	$BattleContainer/EnemyContainer/EnemySkillLabel.visible = false
-	
-	# Check if player is defeated
-	if player_health <= 0:
-		battle_active = false
-		_show_endgame_screen("Defeat")
-		return
-	
-	# Continue battle
-	auto_battle_timer.start()
-
-func _show_endgame_screen(result):
-	if endgame_screen_scene:
-		var endgame_screen = endgame_screen_scene.instantiate()
-		add_child(endgame_screen)
-		endgame_screen.set_result(result)
-		endgame_screen.connect("restart_battle", _on_restart_battle)
-		endgame_screen.connect("quit_to_menu", _on_quit_to_menu)
-	else:
-		print("ERROR: Could not load EndgameScreen.tscn")
-		# Fallback - return to menu
-		get_tree().change_scene_to_file("res://Scenes/MainMenu.tscn")
-
-func _on_restart_battle():
-	# Reload the battle scene
-	get_tree().reload_current_scene()
-
-func _on_quit_to_menu():
-	# Return to main menu
-	get_tree().change_scene_to_file("res://Scenes/MainMenu.tscn")
-
-# Update stats from the testing panel
 func _update_stats_from_tester():
 	var tester = $StatsTester
 	
-	# Update enemy stats
-	enemy_health = tester.get_enemy_health()
-	enemy_damage = tester.get_enemy_damage()
+	# Update using the managers
+	enemy_manager.update_from_tester(tester)
+	player_manager.update_from_tester(tester)
 	
-	# Update player stats
-	player_health = tester.get_player_health()
-	player_damage = tester.get_player_damage()
-	
-	# Update UI
-	$BattleContainer/PlayerContainer/PlayerHealth.max_value = player_health
-	$BattleContainer/PlayerContainer/PlayerHealth.value = player_health
-	$BattleContainer/EnemyContainer/EnemyHealth.max_value = enemy_health
-	$BattleContainer/EnemyContainer/EnemyHealth.value = enemy_health
-	
-	# Update skill label visibility if the function exists
-	if tester.has_method("get_show_skill_label"):
-		$BattleContainer/EnemyContainer/EnemySkillLabel.visible = tester.get_show_skill_label()
+	# Update battle speed
+	auto_battle_speed = tester.get_battle_speed()
+	auto_battle_timer.wait_time = auto_battle_speed
 
-# Called when stats are changed in the testing panel
 func _on_stats_updated():
 	_update_stats_from_tester()
 
-# New function to toggle the StatsTester panel visibility
 func _on_stats_toggle_button_pressed():
 	$StatsTester.visible = !$StatsTester.visible
+
+func _on_word_challenge_completed(_bonus_damage):
+	# Show engage button again with normal appearance
+	var engage_button = $MainContainer/RightContainer/MarginContainer/VBoxContainer/ButtonContainer/EngageButton
+	engage_button.visible = true
+	engage_button.disabled = false
+	engage_button.modulate = Color(1, 1, 1, 1) # 100% opacity
+	
+	# Also update the label
+	var engage_label = engage_button.get_node("EngageLabel")
+	if engage_label:
+		engage_label.modulate = Color(1, 1, 1, 1)
+
+func _on_word_challenge_failed():
+	# Show engage button again with normal appearance
+	var engage_button = $MainContainer/RightContainer/MarginContainer/VBoxContainer/ButtonContainer/EngageButton
+	engage_button.visible = true
+	engage_button.disabled = false
+	engage_button.modulate = Color(1, 1, 1, 1) # 100% opacity
+	
+	# Also update the label
+	var engage_label = engage_button.get_node("EngageLabel")
+	if engage_label:
+		engage_label.modulate = Color(1, 1, 1, 1)
+
+# Used from inspector to change player skin
+func change_player_appearance(skin_name: String) -> bool:
+	return player_manager.change_player_skin(skin_name)

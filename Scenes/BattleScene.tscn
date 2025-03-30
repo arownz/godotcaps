@@ -1,13 +1,17 @@
-[gd_scene load_steps=9 format=3 uid="uid://cfead7bcuslp4"]
+[gd_scene load_steps=16 format=3 uid="uid://cfead7bcuslp4"]
 
-[ext_resource type="Texture2D" uid="uid://buvygmke8by44" path="res://Sprites/Player/example_fix_player.png" id="1"]
 [ext_resource type="Texture2D" uid="uid://jq3w8mrmq7b0" path="res://Sprites/Dungeon_1/Stage_1/slime/examplefix_slime.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://dljqigmy8f7k6" path="res://Sprites/Player/player.png" id="2_hb1yk"]
 [ext_resource type="Script" uid="uid://cnnycoui3l3ef" path="res://Scripts/battlescene.gd" id="3_vhj2j"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="4_akpf4"]
 [ext_resource type="PackedScene" uid="uid://buhhqw4k2b2ye" path="res://Scenes/StatsTester.tscn" id="5_pqv1n"]
+[ext_resource type="Texture2D" uid="uid://bj14mm05c4i87" path="res://gui/ui_4.png" id="6_r8yha"]
+[ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="8_2tp6q"]
+[ext_resource type="Texture2D" uid="uid://b1xek3qm04qa2" path="res://gui/uncolored_button.png" id="8_4lnub"]
+[ext_resource type="Texture2D" uid="uid://d1kxcxch535m0" path="res://gui/Backgrounds/Dungeon1_background.png" id="11_x73uj"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_e13ox"]
-bg_color = Color(0.901961, 0.203922, 0.203922, 1)
+bg_color = Color(0.901961, 0.368627, 0.294118, 1)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
@@ -30,8 +34,44 @@ corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_skill_fill"]
+bg_color = Color(0.823529, 0.490196, 0.172549, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.141176, 0.141176, 0.141176, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_stats_toggle"]
 bg_color = Color(0.321569, 0.431373, 0.784314, 0.803922)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.141176, 0.141176, 0.141176, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_exp_bg"]
+bg_color = Color(0.901961, 0.368627, 0.294118, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.141176, 0.141176, 0.141176, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_exp_fill"]
+bg_color = Color(0.941176, 0.611765, 0.176471, 1)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
@@ -45,134 +85,213 @@ corner_radius_bottom_left = 8
 [node name="BattleScene" type="Node2D"]
 script = ExtResource("3_vhj2j")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="TextureRect" parent="."]
 offset_right = 1440.0
 offset_bottom = 810.0
-color = Color(0.870588, 0.870588, 0.870588, 1)
+texture = ExtResource("11_x73uj")
+expand_mode = 1
 
-[node name="BattleContainer" type="Control" parent="."]
-layout_mode = 3
-anchors_preset = 0
+[node name="MainContainer" type="HBoxContainer" parent="."]
 offset_right = 1440.0
 offset_bottom = 810.0
 
-[node name="PlayerContainer" type="Control" parent="BattleContainer"]
+[node name="BattleAreaContainer" type="Control" parent="MainContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.6
+
+[node name="BattleContainer" type="Control" parent="MainContainer/BattleAreaContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PlayerContainer" type="Control" parent="MainContainer/BattleAreaContainer/BattleContainer"]
 layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
-offset_left = 300.0
-offset_top = 255.0
-offset_right = 300.0
-offset_bottom = 255.0
+offset_left = 313.0
+offset_top = 261.0
+offset_right = 313.0
+offset_bottom = 261.0
 grow_vertical = 2
 
-[node name="Player" type="Sprite2D" parent="BattleContainer/PlayerContainer"]
-position = Vector2(3, -214)
-scale = Vector2(6, 6)
-texture = ExtResource("1")
+[node name="Player" type="Sprite2D" parent="MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer"]
+position = Vector2(-47, -193)
+scale = Vector2(4.57468, 4.51523)
+texture = ExtResource("2_hb1yk")
 
-[node name="PlayerName" type="Label" parent="BattleContainer/PlayerContainer"]
+[node name="PlayerName" type="Label" parent="MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer"]
 layout_mode = 0
-offset_left = -89.0
-offset_top = -386.0
-offset_right = 111.0
-offset_bottom = -331.0
-theme_override_colors/font_color = Color(0, 0.266667, 0.337255, 1)
+offset_left = -158.0
+offset_top = -73.0
+offset_right = 42.0
+offset_bottom = -18.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
 theme_override_fonts/font = ExtResource("4_akpf4")
-theme_override_font_sizes/font_size = 30
-text = "Player"
+theme_override_font_sizes/font_size = 18
+text = "Player Name"
 horizontal_alignment = 1
 
-[node name="PlayerHealth" type="ProgressBar" parent="BattleContainer/PlayerContainer"]
-custom_minimum_size = Vector2(200, 25)
+[node name="PlayerHealthBar" type="ProgressBar" parent="MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer"]
+custom_minimum_size = Vector2(180, 15)
 layout_mode = 0
-offset_left = -100.0
+offset_left = -150.0
 offset_top = -100.0
-offset_right = 100.0
-offset_bottom = -75.0
+offset_right = 30.0
+offset_bottom = -76.0
 theme_override_styles/background = SubResource("StyleBoxFlat_e13ox")
 theme_override_styles/fill = SubResource("StyleBoxFlat_s2q4u")
 value = 100.0
+fill_mode = 1
 show_percentage = false
 
-[node name="EnemyContainer" type="Control" parent="BattleContainer"]
+[node name="HealthLabel" type="Label" parent="MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer/PlayerHealthBar"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 2
+theme_override_fonts/font = ExtResource("4_akpf4")
+theme_override_font_sizes/font_size = 12
+text = "100/100"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="EnemyContainer" type="Control" parent="MainContainer/BattleAreaContainer/BattleContainer"]
 layout_mode = 1
 anchors_preset = 6
 anchor_left = 1.0
 anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
-offset_left = -300.0
-offset_top = 255.0
-offset_right = -300.0
-offset_bottom = 255.0
+offset_left = -293.0
+offset_top = 270.0
+offset_right = -293.0
+offset_bottom = 270.0
 grow_horizontal = 0
 grow_vertical = 2
 
-[node name="Enemy" type="Sprite2D" parent="BattleContainer/EnemyContainer"]
-position = Vector2(6, -213)
-scale = Vector2(6, 6)
+[node name="Enemy" type="Sprite2D" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer"]
+position = Vector2(56, -204)
+scale = Vector2(4.32031, 4.61719)
 texture = ExtResource("2")
 
-[node name="EnemyName" type="Label" parent="BattleContainer/EnemyContainer"]
+[node name="EnemyName" type="Label" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer"]
 layout_mode = 0
-offset_left = -92.0
-offset_top = -312.0
-offset_right = 108.0
-offset_bottom = -257.0
-theme_override_colors/font_color = Color(0.454902, 0, 0.0392157, 1)
+offset_left = -46.0
+offset_top = -54.0
+offset_right = 154.0
+offset_bottom = 1.0
+theme_override_colors/font_color = Color(1, 0.29, 0.29, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
 theme_override_fonts/font = ExtResource("4_akpf4")
-theme_override_font_sizes/font_size = 30
+theme_override_font_sizes/font_size = 18
 text = "Slime"
 horizontal_alignment = 1
 
-[node name="EnemyHealth" type="ProgressBar" parent="BattleContainer/EnemyContainer"]
-custom_minimum_size = Vector2(200, 25)
+[node name="EnemyHealthBar" type="ProgressBar" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer"]
+custom_minimum_size = Vector2(180, 15)
 layout_mode = 0
-offset_left = -100.0
-offset_top = -100.0
-offset_right = 100.0
-offset_bottom = -75.0
+offset_left = -38.0
+offset_top = -109.0
+offset_right = 142.0
+offset_bottom = -85.0
 theme_override_styles/background = SubResource("StyleBoxFlat_e13ox")
 theme_override_styles/fill = SubResource("StyleBoxFlat_s2q4u")
 value = 100.0
+fill_mode = 1
 show_percentage = false
 
-[node name="EnemySkillMeter" type="ProgressBar" parent="BattleContainer/EnemyContainer"]
-custom_minimum_size = Vector2(200, 15)
+[node name="HealthLabel" type="Label" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer/EnemyHealthBar"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 2
+theme_override_fonts/font = ExtResource("4_akpf4")
+theme_override_font_sizes/font_size = 12
+text = "100/100"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="EnemySkillBar" type="ProgressBar" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer"]
+custom_minimum_size = Vector2(180, 10)
 layout_mode = 0
-offset_left = -100.0
-offset_top = -70.0
-offset_right = 100.0
+offset_left = -37.0
+offset_top = -80.0
+offset_right = 143.0
 offset_bottom = -55.0
 theme_override_styles/background = SubResource("StyleBoxFlat_e13ox")
-theme_override_styles/fill = SubResource("StyleBoxFlat_s2q4u")
+theme_override_styles/fill = SubResource("StyleBoxFlat_skill_fill")
+fill_mode = 1
 show_percentage = false
 
-[node name="EnemySkillLabel" type="Label" parent="BattleContainer/EnemyContainer"]
+[node name="SkillLabel" type="Label" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer/EnemySkillBar"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 2
+theme_override_fonts/font = ExtResource("4_akpf4")
+theme_override_font_sizes/font_size = 8
+text = "Skill"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="EnemySkillLabel" type="Label" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer"]
 visible = false
 layout_mode = 0
-offset_left = -100.0
+offset_left = -37.0
 offset_top = -55.0
-offset_right = 100.0
+offset_right = 143.0
 offset_bottom = -29.0
-theme_override_colors/font_color = Color(0.454902, 0, 0.0392157, 1)
+theme_override_colors/font_color = Color(0.952941, 0.215686, 0.188235, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
 theme_override_fonts/font = ExtResource("4_akpf4")
 theme_override_font_sizes/font_size = 16
 text = "Uses Special Skill!"
 horizontal_alignment = 1
 
-[node name="BattleControls" type="Control" parent="."]
-layout_mode = 3
-anchors_preset = 0
-offset_left = 720.0
-offset_top = 650.0
-offset_right = 720.0
-offset_bottom = 650.0
-
-[node name="EngageButton" type="Button" parent="BattleControls"]
-custom_minimum_size = Vector2(200, 50)
+[node name="FightLabel" type="Label" parent="MainContainer/BattleAreaContainer"]
+visible = false
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -185,16 +304,6 @@ offset_right = 100.0
 offset_bottom = 25.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_fonts/font = ExtResource("4_akpf4")
-theme_override_font_sizes/font_size = 24
-text = "Engage"
-
-[node name="FightLabel" type="Label" parent="."]
-visible = false
-offset_left = 620.0
-offset_top = 405.0
-offset_right = 820.0
-offset_bottom = 455.0
 theme_override_colors/font_color = Color(0.905882, 0.47451, 0, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 5
@@ -203,16 +312,260 @@ theme_override_font_sizes/font_size = 40
 text = "FIGHT!"
 horizontal_alignment = 1
 
-[node name="StageInfoLabel" type="Label" parent="."]
-offset_left = 544.0
-offset_top = 52.0
-offset_right = 896.0
-offset_bottom = 104.0
-theme_override_colors/font_color = Color(0.101961, 0.101961, 0.101961, 1)
+[node name="StageInfoLabel" type="Label" parent="MainContainer/BattleAreaContainer"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -70.5
+offset_top = 66.0
+offset_right = 343.5
+offset_bottom = 118.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
 theme_override_fonts/font = ExtResource("4_akpf4")
 theme_override_font_sizes/font_size = 28
 text = "Dungeon 1 - Stage 1"
 horizontal_alignment = 1
+
+[node name="StatsToggleButton" type="Button" parent="MainContainer/BattleAreaContainer"]
+layout_mode = 0
+offset_left = 40.0
+offset_top = 45.0
+offset_right = 286.0
+offset_bottom = 85.0
+theme_override_fonts/font = ExtResource("4_akpf4")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxFlat_stats_toggle")
+text = "Toggle Stats Panel"
+
+[node name="RightContainer" type="Control" parent="MainContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BackgroundTexture" type="TextureRect" parent="MainContainer/RightContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("6_r8yha")
+expand_mode = 3
+stretch_mode = 6
+
+[node name="MarginContainer" type="MarginContainer" parent="MainContainer/RightContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainContainer/RightContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="StatsContainer" type="HBoxContainer" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="HPContainer" type="VBoxContainer" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HPLabel" type="Label" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/HPContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("4_akpf4")
+theme_override_font_sizes/font_size = 16
+text = "HP"
+horizontal_alignment = 1
+
+[node name="PlayerHealth" type="ProgressBar" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/HPContainer"]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_e13ox")
+theme_override_styles/fill = SubResource("StyleBoxFlat_s2q4u")
+value = 100.0
+show_percentage = false
+
+[node name="HPValue" type="Label" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/HPContainer/PlayerHealth"]
+layout_mode = 2
+offset_left = 2.0
+offset_top = -2.0
+offset_right = 122.0
+offset_bottom = 25.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("4_akpf4")
+theme_override_font_sizes/font_size = 14
+text = "100/100"
+horizontal_alignment = 1
+
+[node name="EXPContainer" type="VBoxContainer" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="EXPLabel" type="Label" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/EXPContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("4_akpf4")
+theme_override_font_sizes/font_size = 16
+text = "EXP"
+horizontal_alignment = 1
+
+[node name="PlayerEXP" type="ProgressBar" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/EXPContainer"]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_exp_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_exp_fill")
+show_percentage = false
+
+[node name="EXPValue" type="Label" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/EXPContainer/PlayerEXP"]
+layout_mode = 2
+offset_left = 1.0
+offset_top = -1.0
+offset_right = 122.0
+offset_bottom = 26.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("4_akpf4")
+theme_override_font_sizes/font_size = 14
+text = "0/100"
+horizontal_alignment = 1
+
+[node name="PowerContainer" type="VBoxContainer" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PowerLabel" type="Label" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/PowerContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("4_akpf4")
+theme_override_font_sizes/font_size = 16
+text = "Power"
+horizontal_alignment = 1
+
+[node name="PowerBar" type="ProgressBar" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/PowerContainer"]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_e13ox")
+theme_override_styles/fill = SubResource("StyleBoxFlat_skill_fill")
+value = 5.0
+show_percentage = false
+
+[node name="PowerValue" type="Label" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/PowerContainer/PowerBar"]
+layout_mode = 2
+offset_left = 1.0
+offset_top = -1.0
+offset_right = 122.0
+offset_bottom = 26.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("4_akpf4")
+theme_override_font_sizes/font_size = 14
+text = "5/100"
+horizontal_alignment = 1
+
+[node name="DurabilityContainer" type="VBoxContainer" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="DurabilityLabel" type="Label" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/DurabilityContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("4_akpf4")
+theme_override_font_sizes/font_size = 16
+text = "Durability"
+horizontal_alignment = 1
+
+[node name="DurabilityBar" type="ProgressBar" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/DurabilityContainer"]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_e13ox")
+theme_override_styles/fill = SubResource("StyleBoxFlat_stats_toggle")
+value = 5.0
+show_percentage = false
+
+[node name="DurabilityValue" type="Label" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/DurabilityContainer/DurabilityBar"]
+layout_mode = 2
+offset_left = 1.0
+offset_top = -2.0
+offset_right = 122.0
+offset_bottom = 25.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("4_akpf4")
+theme_override_font_sizes/font_size = 14
+text = "5/100"
+horizontal_alignment = 1
+
+[node name="BattleLogContainer" type="VBoxContainer" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.5
+
+[node name="BattleLogLabel" type="Label" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/BattleLogContainer"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("4_akpf4")
+theme_override_font_sizes/font_size = 25
+text = "Battle Log"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/BattleLogContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+follow_focus = true
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 2
+
+[node name="LogsContainer" type="VBoxContainer" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/BattleLogContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.0
+theme_override_constants/separation = 10
+
+[node name="ButtonContainer" type="VBoxContainer" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.0
+alignment = 1
+
+[node name="EngageButton" type="TextureButton" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/ButtonContainer"]
+custom_minimum_size = Vector2(350, 80)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+texture_normal = ExtResource("8_4lnub")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="EngageLabel" type="Label" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/ButtonContainer/EngageButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 3.0
+offset_top = -4.0
+offset_right = 3.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.101961, 0.101961, 0.101961, 1)
+theme_override_fonts/font = ExtResource("8_2tp6q")
+theme_override_font_sizes/font_size = 28
+text = "Engage Battle"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="StatsTester" parent="." instance=ExtResource("5_pqv1n")]
 visible = false
@@ -221,16 +574,6 @@ offset_top = 120.0
 offset_right = 400.0
 offset_bottom = 600.0
 
-[node name="StatsToggleButton" type="Button" parent="."]
-offset_left = 49.0
-offset_top = 50.0
-offset_right = 295.0
-offset_bottom = 90.0
-theme_override_fonts/font = ExtResource("4_akpf4")
-theme_override_font_sizes/font_size = 18
-theme_override_styles/normal = SubResource("StyleBoxFlat_stats_toggle")
-text = "Toggle Stats Panel"
-
-[connection signal="pressed" from="BattleControls/EngageButton" to="." method="_on_engage_button_pressed"]
+[connection signal="pressed" from="MainContainer/BattleAreaContainer/StatsToggleButton" to="." method="_on_stats_toggle_button_pressed"]
+[connection signal="pressed" from="MainContainer/RightContainer/MarginContainer/VBoxContainer/ButtonContainer/EngageButton" to="." method="_on_engage_button_pressed"]
 [connection signal="stats_updated" from="StatsTester" to="." method="_on_stats_updated"]
-[connection signal="pressed" from="StatsToggleButton" to="." method="_on_stats_toggle_button_pressed"]

@@ -1,0 +1,259 @@
+[gd_scene load_steps=7 format=3 uid="uid://c2yw4dvkfybh8"]
+
+[ext_resource type="Script" uid="uid://brg3pmp2qoagy" path="res://Scripts/WordChallengePanel_Whiteboard.gd" id="1_k1qm8"]
+[ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="2_j54t7"]
+[ext_resource type="PackedScene" uid="uid://cvv1bpkfdvqjw" path="res://Scenes/WhiteboardInterface.tscn" id="3_86dfl"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lj5j4"]
+bg_color = Color(0.945098, 0.945098, 0.945098, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.141176, 0.141176, 0.141176, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+shadow_color = Color(0, 0, 0, 0.313726)
+shadow_size = 8
+shadow_offset = Vector2(2, 2)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tts_panel"]
+bg_color = Color(0.862745, 0.901961, 0.929412, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.054902, 0.27451, 0.47451, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_whiteboard_panel"]
+bg_color = Color(0.101961, 0.462745, 0.784314, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.054902, 0.27451, 0.47451, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[node name="WordChallengePanel_Whiteboard" type="Control"]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -300.0
+offset_right = 400.0
+offset_bottom = 300.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_k1qm8")
+
+[node name="ChallengePanel" type="Panel" parent="."]
+custom_minimum_size = Vector2(800, 600)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -300.0
+offset_right = 400.0
+offset_bottom = 300.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_lj5j4")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ChallengePanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 15
+
+[node name="TitleLabel" type="Label" parent="ChallengePanel/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.905882, 0.47451, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 2
+theme_override_fonts/font = ExtResource("2_j54t7")
+theme_override_font_sizes/font_size = 36
+text = "Enemy Skill Activated!"
+horizontal_alignment = 1
+
+[node name="InstructionLabel" type="Label" parent="ChallengePanel/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.101961, 0.101961, 0.101961, 1)
+theme_override_fonts/font = ExtResource("2_j54t7")
+theme_override_font_sizes/font_size = 24
+text = "Write the word to counter the attack!"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="ChallengePanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="WordContainer" type="HBoxContainer" parent="ChallengePanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="RandomWordLabel" type="Label" parent="ChallengePanel/VBoxContainer/WordContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.101961, 0.101961, 0.101961, 1)
+theme_override_fonts/font = ExtResource("2_j54t7")
+theme_override_font_sizes/font_size = 48
+text = "Loading..."
+horizontal_alignment = 1
+
+[node name="TTSButtonContainer" type="VBoxContainer" parent="ChallengePanel/VBoxContainer/WordContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="TTSButton" type="Button" parent="ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer"]
+custom_minimum_size = Vector2(80, 50)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_j54t7")
+theme_override_font_sizes/font_size = 16
+text = "🔊 Read"
+
+[node name="TTSSettingsButton" type="Button" parent="ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_j54t7")
+theme_override_font_sizes/font_size = 14
+text = "TTS Settings"
+
+[node name="TTSSettingsPanel" type="Panel" parent="ChallengePanel/VBoxContainer"]
+visible = false
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_tts_panel")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ChallengePanel/VBoxContainer/TTSSettingsPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+
+[node name="TitleLabel" type="Label" parent="ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.2, 0.2, 1)
+theme_override_fonts/font = ExtResource("2_j54t7")
+theme_override_font_sizes/font_size = 18
+text = "Text-to-Speech Settings"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="VoiceContainer" type="HBoxContainer" parent="ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer/VoiceContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.2, 0.2, 0.2, 1)
+theme_override_fonts/font = ExtResource("2_j54t7")
+theme_override_font_sizes/font_size = 16
+text = "Voice:"
+
+[node name="VoiceOptionButton" type="OptionButton" parent="ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer/VoiceContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+theme_override_fonts/font = ExtResource("2_j54t7")
+theme_override_font_sizes/font_size = 16
+
+[node name="RateContainer" type="VBoxContainer" parent="ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer/RateContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.2, 0.2, 1)
+theme_override_fonts/font = ExtResource("2_j54t7")
+theme_override_font_sizes/font_size = 16
+text = "Speech Rate:"
+
+[node name="RateSlider" type="HSlider" parent="ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer/RateContainer"]
+layout_mode = 2
+min_value = 0.1
+max_value = 2.0
+step = 0.1
+value = 0.8
+tick_count = 10
+ticks_on_borders = true
+
+[node name="RateValueLabel" type="Label" parent="ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer/RateContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.2, 0.2, 1)
+theme_override_fonts/font = ExtResource("2_j54t7")
+theme_override_font_sizes/font_size = 14
+text = "Rate: 0.8 (Slower)"
+horizontal_alignment = 1
+
+[node name="ButtonsContainer" type="HBoxContainer" parent="ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="TestButton" type="Button" parent="ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer/ButtonsContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_j54t7")
+theme_override_font_sizes/font_size = 16
+text = "Test Voice"
+
+[node name="CloseButton" type="Button" parent="ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer/ButtonsContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_j54t7")
+theme_override_font_sizes/font_size = 16
+text = "Close"
+
+[node name="WhiteboardContainer" type="Panel" parent="ChallengePanel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_whiteboard_panel")
+
+[node name="WhiteboardInterface" parent="ChallengePanel/VBoxContainer/WhiteboardContainer" instance=ExtResource("3_86dfl")]
+layout_mode = 1
+anchors_preset = 15
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+
+[node name="APIStatusLabel" type="Label" parent="ChallengePanel/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.498039, 0.498039, 0.498039, 1)
+theme_override_fonts/font = ExtResource("2_j54t7")
+theme_override_font_sizes/font_size = 16
+text = "Connecting to random word API..."
+
+[connection signal="pressed" from="ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer/TTSButton" to="." method="_on_tts_button_pressed"]
+[connection signal="pressed" from="ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer/TTSSettingsButton" to="." method="_on_tts_settings_button_pressed"]
+[connection signal="item_selected" from="ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer/VoiceContainer/VoiceOptionButton" to="." method="_on_voice_option_button_item_selected"]
+[connection signal="value_changed" from="ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer/RateContainer/RateSlider" to="." method="_on_rate_slider_value_changed"]
+[connection signal="pressed" from="ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer/ButtonsContainer/TestButton" to="." method="_on_test_button_pressed"]
+[connection signal="pressed" from="ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer/ButtonsContainer/CloseButton" to="." method="_on_close_button_pressed"]

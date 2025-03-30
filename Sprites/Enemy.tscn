@@ -1,62 +1,11 @@
-[gd_scene load_steps=9 format=3 uid="uid://bd5jnv8xpnsag"]
+[gd_scene load_steps=3 format=3 uid="uid://bd5jnv8xpnsag"]
 
-[ext_resource type="Texture2D" uid="uid://ckjp6thr2r8og" path="res://Sprites/Dungeon_1/Stage_1/slime/Slime.png" id="1_kyiu6"]
+[ext_resource type="Texture2D" uid="uid://ckjp6thr2r8og" path="res://Sprites/Dungeon_1/Stage_1/slime/Slime.png" id="1_cptlc"]
+[ext_resource type="Script" uid="uid://dpufif2akuw3w" path="res://Scripts/enemy_sprite_controller.gd" id="2_a5y0d"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_4fb0k"]
-atlas = ExtResource("1_kyiu6")
-region = Rect2(0, 0, 64, 64)
+[node name="Enemy" type="AnimatedSprite2D"]
+animation = &""
+script = ExtResource("2_a5y0d")
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_0n3ge"]
-atlas = ExtResource("1_kyiu6")
-region = Rect2(64, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_uo6e0"]
-atlas = ExtResource("1_kyiu6")
-region = Rect2(128, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_tdt2h"]
-atlas = ExtResource("1_kyiu6")
-region = Rect2(192, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_6iw7b"]
-atlas = ExtResource("1_kyiu6")
-region = Rect2(256, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_u2c7x"]
-atlas = ExtResource("1_kyiu6")
-region = Rect2(320, 0, 64, 64)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_mi6b8"]
-animations = [{
-"frames": [],
-"loop": true,
-"name": &"attack",
-"speed": 12.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_4fb0k")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_0n3ge")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_uo6e0")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_tdt2h")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_6iw7b")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_u2c7x")
-}],
-"loop": true,
-"name": &"idle",
-"speed": 12.0
-}]
-
-[node name="AnimatedSprite2D" type="AnimatedSprite2D"]
-sprite_frames = SubResource("SpriteFrames_mi6b8")
-animation = &"attack"
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_cptlc")
