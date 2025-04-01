@@ -148,7 +148,6 @@ offset_bottom = -76.0
 theme_override_styles/background = SubResource("StyleBoxFlat_e13ox")
 theme_override_styles/fill = SubResource("StyleBoxFlat_s2q4u")
 value = 100.0
-fill_mode = 1
 show_percentage = false
 
 [node name="HealthLabel" type="Label" parent="MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer/PlayerHealthBar"]
@@ -425,6 +424,7 @@ custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 theme_override_styles/background = SubResource("StyleBoxFlat_exp_bg")
 theme_override_styles/fill = SubResource("StyleBoxFlat_exp_fill")
+value = 5.0
 show_percentage = false
 
 [node name="EXPValue" type="Label" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/EXPContainer/PlayerEXP"]
@@ -456,7 +456,7 @@ custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 theme_override_styles/background = SubResource("StyleBoxFlat_e13ox")
 theme_override_styles/fill = SubResource("StyleBoxFlat_skill_fill")
-value = 5.0
+max_value = 0.0
 show_percentage = false
 
 [node name="PowerValue" type="Label" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/PowerContainer/PowerBar"]
@@ -468,7 +468,7 @@ offset_bottom = 26.0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("4_akpf4")
 theme_override_font_sizes/font_size = 14
-text = "5/100"
+text = "10"
 horizontal_alignment = 1
 
 [node name="DurabilityContainer" type="VBoxContainer" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer"]
@@ -488,7 +488,7 @@ custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 theme_override_styles/background = SubResource("StyleBoxFlat_e13ox")
 theme_override_styles/fill = SubResource("StyleBoxFlat_stats_toggle")
-value = 5.0
+max_value = 0.0
 show_percentage = false
 
 [node name="DurabilityValue" type="Label" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/DurabilityContainer/DurabilityBar"]
@@ -500,7 +500,7 @@ offset_bottom = 25.0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("4_akpf4")
 theme_override_font_sizes/font_size = 14
-text = "5/100"
+text = "5"
 horizontal_alignment = 1
 
 [node name="BattleLogContainer" type="VBoxContainer" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer"]

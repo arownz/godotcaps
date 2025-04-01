@@ -318,3 +318,20 @@ func _on_quit_to_menu():
 	
 	# Return to main menu
 	battle_scene.get_tree().change_scene_to_file("res://Scenes/MainMenu.tscn")
+
+# Add a debug method to test health updates
+func debug_damage_test():
+	# Deal a small amount of damage to both entities to test health bars
+	print("DEBUG: Testing damage with small damage...")
+	
+	# Emit signals for player and enemy taking small damage
+	emit_signal("player_attack_performed", 15)  # Player deals 15 damage
+	emit_signal("enemy_attack_performed", 10)  # Enemy deals 10 damage
+	
+	# Wait a moment and then check health values
+	await battle_scene.get_tree().create_timer(0.5).timeout
+	
+	print("Player health: ", battle_scene.player_manager.player_health, "/", 
+		  battle_scene.player_manager.player_max_health)
+	print("Enemy health: ", battle_scene.enemy_manager.enemy_health, "/", 
+		  battle_scene.enemy_manager.enemy_max_health)

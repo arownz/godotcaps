@@ -132,8 +132,9 @@ func setup_enemy():
 		enemy_name = names[randi() % names.size()]
 		
 		# Calculate enemy stats based on dungeon, stage, and type
-		var base_health = 80 + (dungeon_manager.dungeon_num * 20) + (dungeon_manager.stage_num * 5)
-		var base_damage = 8 + (dungeon_manager.dungeon_num * 2) + (dungeon_manager.stage_num)
+		# Fix here as well to only add stage bonus from stage 2 onwards
+		var base_health = 80 + (dungeon_manager.dungeon_num * 20) + ((dungeon_manager.stage_num - 1) * 5)
+		var base_damage = 8 + (dungeon_manager.dungeon_num * 2) + ((dungeon_manager.stage_num - 1) * 1)
 		
 		# Apply multiplier from resource
 		enemy_max_health = base_health * current_enemy_resource.health_multiplier
@@ -185,8 +186,10 @@ func _setup_enemy_fallback():
 	
 	# Calculate enemy stats based on dungeon, stage, and type
 	var dungeon_manager = battle_scene.dungeon_manager
-	var base_health = 80 + (dungeon_manager.dungeon_num * 20) + (dungeon_manager.stage_num * 5)
-	var base_damage = 8 + (dungeon_manager.dungeon_num * 2) + (dungeon_manager.stage_num)
+	
+	# Fix the calculation to only add stage bonus from stage 2 onwards
+	var base_health = 80 + (dungeon_manager.dungeon_num * 20) + ((dungeon_manager.stage_num - 1) * 5)
+	var base_damage = 8 + (dungeon_manager.dungeon_num * 2) + ((dungeon_manager.stage_num - 1) * 1)
 	
 	# Apply multiplier based on enemy type
 	enemy_max_health = base_health * current_dungeon[enemy_type]["health_multiplier"]
@@ -229,9 +232,9 @@ func update_from_tester(tester):
 		battle_scene.get_node("MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer/EnemySkillLabel").visible = tester.get_show_skill_label()
 
 # This method will be called when player attacks
-func take_damage(damage_amount):
-	enemy_health -= damage_amount
-	enemy_health = max(0, enemy_health)  # Ensure it doesn't go below 0
+func take_damage(damage: int):
+	enemy_health -= damage
+	enemy_health = max(enemy_health, 0)  # Ensure health doesn't go below 0
 	
 	# Emit signal for health change
 	emit_signal("enemy_health_changed", enemy_health, enemy_max_health)

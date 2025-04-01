@@ -11,13 +11,17 @@ func initialize_ui():
 	initialize_player_ui()
 	initialize_enemy_ui()
 	update_stage_info()
+	
+	# Initialize PLAYER power and durability bars with default values
+	update_power_bar(10)
+	update_durability_bar(5)
 
 func initialize_player_ui():
 	# Set player name
 	var player_name_label = battle_scene.get_node("MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer/PlayerName")
 	player_name_label.text = battle_scene.player_manager.player_name
 	
-	# Update player health bar
+	# Update player health bars
 	update_player_health()
 	
 	# Set initial player exp
@@ -30,34 +34,50 @@ func initialize_enemy_ui():
 	
 	# Update enemy health bar
 	update_enemy_health()
-	
-	# Set initial enemy skill meter
 	update_enemy_skill_meter()
 
 func update_player_health():
-	# Update player health bar dynamically
-	var health_bar = battle_scene.get_node("MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer/PlayerHealthBar")
+	# Get current health values
 	var player_health = battle_scene.player_manager.player_health
 	var player_max_health = battle_scene.player_manager.player_max_health
+	var percentage = (float(player_health) / float(player_max_health)) * 100.0
+	var health_text = str(int(player_health)) + "/" + str(int(player_max_health))
 	
-	# Update progress bar value
-	health_bar.value = (player_health / player_max_health) * 100 if player_max_health > 0 else 0
+	# Update battle area health bar
+	var battle_health_bar = battle_scene.get_node("MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer/PlayerHealthBar")
+	battle_health_bar.value = percentage
+	var battle_health_label = battle_health_bar.get_node("HealthLabel")
+	battle_health_label.text = health_text
+	
+	# Update stats panel health bar
+	var stats_health_bar = battle_scene.get_node("MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/HPContainer/PlayerHealth")
+	stats_health_bar.value = percentage
+	var stats_health_label = stats_health_bar.get_node("HPValue")
+	stats_health_label.text = health_text
+	
+	# Debug output
+	print("Player Health Update: ", health_text, " (", int(percentage), "%)")
 
 func update_enemy_health():
-	# Update enemy health bar dynamically
-	var health_bar = battle_scene.get_node("MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer/EnemyHealthBar")
+	# Get current health values
 	var enemy_health = battle_scene.enemy_manager.enemy_health
 	var enemy_max_health = battle_scene.enemy_manager.enemy_max_health
+	var percentage = (float(enemy_health) / float(enemy_max_health)) * 100.0
+	var health_text = str(int(enemy_health)) + "/" + str(int(enemy_max_health))
 	
-	# Update progress bar value
-	health_bar.value = (enemy_health / enemy_max_health) * 100 if enemy_max_health > 0 else 0
+	# Update enemy health bar
+	var health_bar = battle_scene.get_node("MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer/EnemyHealthBar")
+	health_bar.value = percentage
+	var health_label = health_bar.get_node("HealthLabel")
+	health_label.text = health_text
+	
+	# Debug output
+	print("Enemy Health Update: ", health_text, " (", int(percentage), "%)")
 
 func update_enemy_skill_meter():
 	var skill_bar = battle_scene.get_node("MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer/EnemySkillBar")
 	var enemy_skill_meter = battle_scene.enemy_manager.enemy_skill_meter
-	
-	# Update skill bar value directly
-	skill_bar.value = enemy_skill_meter
+	skill_bar.value = int(enemy_skill_meter)
 
 func update_player_exp():
 	var exp_bar = battle_scene.get_node("MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/EXPContainer/PlayerEXP")
@@ -67,10 +87,33 @@ func update_player_exp():
 	var player_max_exp = battle_scene.player_manager.player_max_exp
 	
 	# Update exp bar value
-	exp_bar.value = (player_exp / player_max_exp) * 100
+	var percentage = (float(player_exp) / float(player_max_exp)) * 100.0
+	exp_bar.value = percentage
 	
 	# Update exp label
-	exp_label.text = str(player_exp) + "/" + str(player_max_exp)
+	exp_label.text = str(int(player_exp)) + "/" + str(int(player_max_exp))
+
+func update_power_bar(power_value, max_power=100):
+	var power_bar = battle_scene.get_node("MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/PowerContainer/PowerBar")
+	var power_label = power_bar.get_node("PowerValue")
+	
+	# Update power bar value (ensure it's between 0-100)
+	var percentage = (float(power_value) / float(max_power)) * 100.0
+	power_bar.value = percentage
+	
+	# Update power label without max value - only show current power
+	power_label.text = str(int(power_value))
+
+func update_durability_bar(durability_value, max_durability=100):
+	var durability_bar = battle_scene.get_node("MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/DurabilityContainer/DurabilityBar")
+	var durability_label = durability_bar.get_node("DurabilityValue")
+	
+	# Update durability bar value (ensure it's between 0-100)
+	var percentage = (float(durability_value) / float(max_durability)) * 100.0
+	durability_bar.value = percentage
+	
+	# Update durability label without max value - only show current durability
+	durability_label.text = str(int(durability_value))
 
 func update_stage_info():
 	var stage_info_label = battle_scene.get_node("MainContainer/BattleAreaContainer/StageInfoLabel")

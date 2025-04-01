@@ -27,9 +27,9 @@ func _init(scene):
 	battle_scene = scene
 
 # This method will be called when enemy attacks
-func take_damage(damage_amount):
-	player_health -= damage_amount
-	player_health = max(0, player_health)  # Ensure it doesn't go below 0
+func take_damage(damage: int):
+	player_health -= damage
+	player_health = max(player_health, 0)  # Ensure health doesn't go below 0
 	
 	# Emit signal for health change
 	emit_signal("player_health_changed", player_health, player_max_health)
@@ -39,6 +39,14 @@ func take_damage(damage_amount):
 		emit_signal("player_defeated")
 		return true
 	return false
+
+# Add a heal method if needed
+func heal(heal_amount):
+	player_health += heal_amount
+	player_health = min(player_health, player_max_health)  # Ensure it doesn't go above max
+	
+	# Emit signal for health change
+	emit_signal("player_health_changed", player_health, player_max_health)
 
 func add_experience(exp_amount):
 	# Add experience points
