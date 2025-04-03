@@ -318,12 +318,17 @@ func login_with_oauth(_token: String, provider: AuthProvider) -> void:
 			token = auth.accesstoken
 		
 		if is_successful and _is_ready():
-			print("DEBUG: Proceeding with Firebase login")
+			print("DEBUG: Proceeding with Firebase login with token")
 			is_busy = true
 			_oauth_login_request_body.postBody = "access_token="+token+"&providerId="+provider.provider_id
 			_oauth_login_request_body.requestUri = _local_uri
 			requesting = Requests.LOGIN_WITH_OAUTH
 			auth_request_type = Auth_Type.LOGIN_OAUTH
+			
+			# Log the request details for debugging
+			print("DEBUG: OAuth request URL: " + _base_url + _signin_with_oauth_request_url)
+			print("DEBUG: OAuth request body: " + JSON.stringify(_oauth_login_request_body))
+			
 			var err = request(_base_url + _signin_with_oauth_request_url, _headers, HTTPClient.METHOD_POST, JSON.stringify(_oauth_login_request_body))
 			_oauth_login_request_body.postBody = ""
 			_oauth_login_request_body.requestUri = ""
@@ -493,12 +498,23 @@ func _on_FirebaseAuth_request_completed(result : int, response_code : int, heade
 # Note this uses web storage in HTML5
 func save_auth(auth : Dictionary) -> bool:
 	if OS.has_feature('web'):
-		# Web version - use localStorage
+		# Web version - use localStorage with error handling
+		print("DEBUG: Saving auth data to web storage")
 		var auth_json = JSON.stringify(auth)
-		JavaScriptBridge.eval("localStorage.setItem('firebase_auth', '" + auth_json + "')")
-		return true
+		var result = JavaScriptBridge.eval("""
+			(function() {
+				try {
+					localStorage.setItem('firebase_auth', '""" + auth_json + """');
+					console.log('Auth data saved to localStorage');
+					return true;
+				} catch(e) {
+					console.error('Failed to save auth data: ' + e.message);
+					return false;
+				}
+			})();
+		""")
+		return result
 	else:
-		# Desktop/mobile version - use encrypted file
 		var encrypted_file = FileAccess.open_encrypted_with_pass("user://user.auth", FileAccess.WRITE, _config.apiKey)
 		var err = encrypted_file == null
 		if err:
@@ -716,42 +732,68 @@ func get_token_from_url(provider: AuthProvider):
 		var debug_url = JavaScriptBridge.eval("window.location.href")
 		print("DEBUG: Current URL: " + str(debug_url))
 		
-		# Try multiple methods to get the token as Google returns tokens in different ways
+		 # Fix the JavaScript code to avoid using 'return' statements within eval
 		var token = JavaScriptBridge.eval("""
-			// First try: Check hash fragment directly (most reliable method)
-			var url_string = window.location.href;
-			var token = null;
-			
-			if (url_string.indexOf('#access_token=') !== -1) {
-				token = url_string.split('#access_token=')[1].split('&')[0];
-				console.log('Token found directly in hash: ' + token);
+			(function() {
+				// First try: Check hash fragment directly (most reliable method)
+				var url_string = window.location.href;
+				var token = null;
+				
+				// For Google OAuth response format
+				if (url_string.indexOf('#state=google_auth') !== -1 && url_string.indexOf('access_token=') !== -1) {
+					console.log('Google OAuth format detected');
+					var parts = url_string.split('access_token=');
+					if (parts.length > 1) {
+						token = parts[1].split('&')[0];
+						console.log('Token found in Google format: ' + token.substring(0, 10) + '...');
+					}
+				}
+				
+				// Standard OAuth2 implicit flow format
+				else if (url_string.indexOf('#access_token=') !== -1) {
+					var parts = url_string.split('#access_token=');
+					if (parts.length > 1) {
+						token = parts[1].split('&')[0];
+						console.log('Token found in standard format: ' + token.substring(0, 10) + '...');
+					}
+				}
+				
+				// Try parsing as URL parameters in the hash
+				else if (url_string.indexOf('#') !== -1) {
+					try {
+						var hash = url_string.split('#')[1];
+						var params = new URLSearchParams(hash);
+						token = params.get('access_token');
+						console.log('Token from hash params: ' + (token ? token.substring(0, 10) + '...' : 'null'));
+					} catch(e) {
+						console.error('Error parsing hash: ' + e.message);
+					}
+				}
+				
+				// Try query parameters (some flows use this)
+				if (!token) {
+					try {
+						var params = new URLSearchParams(window.location.search);
+						token = params.get('access_token');
+						console.log('Token from query: ' + (token ? token.substring(0, 10) + '...' : 'null'));
+					} catch(e) {
+						console.error('Error parsing query: ' + e.message);
+					}
+				}
+				
 				return token;
-			}
-			
-			// Second try: Check hash as parameters
-			if (url_string.indexOf('#') !== -1) {
-				var hash = url_string.split('#')[1];
-				var params = new URLSearchParams(hash);
-				token = params.get('access_token');
-				console.log('Token from hash params: ' + token);
-				if (token) return token;
-			}
-			
-			// Try query parameters
-			var params = new URLSearchParams(window.location.search);
-			token = params.get('access_token');
-			console.log('Token from query: ' + token);
-			
-			return token;
+			})();
 		""")
 		
 		if token and token != "null" and token.length() > 10:
 			print("DEBUG: Token found: " + str(token).substr(0, 10) + "...")
 			# Clean up URL without losing the page context
 			JavaScriptBridge.eval("""
-				if (window.history && window.history.replaceState) {
-					window.history.replaceState({}, document.title, window.location.pathname);
-				}
+				(function() {
+					if (window.history && window.history.replaceState) {
+						window.history.replaceState({}, document.title, window.location.pathname);
+					}
+				})();
 			""")
 			return token
 		else:

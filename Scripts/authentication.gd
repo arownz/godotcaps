@@ -38,7 +38,10 @@ func check_existing_auth():
 		 # Check for OAuth tokens in URL
 		print("DEBUG: Web platform detected, checking for auth token")
 		var provider = Firebase.Auth.get_GoogleProvider()
-		Firebase.Auth.set_redirect_uri(get_web_redirect_uri())
+		var redirect_uri = get_web_redirect_uri()
+		print("DEBUG: Setting redirect URI: " + redirect_uri)
+		Firebase.Auth.set_redirect_uri(redirect_uri)
+		
 		var token = Firebase.Auth.get_token_from_url(provider)
 		if token:
 			print("DEBUG: Token found on page load: " + str(token).substr(0, 10) + "...")
@@ -47,7 +50,19 @@ func check_existing_auth():
 			await get_tree().process_frame
 			# Store a flag to indicate we're processing a sign-in
 			save_web_data("processing_signin", "true")
+			save_web_data("google_auth_in_progress", "true")
 			Firebase.Auth.login_with_oauth(token, provider)
+		else:
+			# Check if we were in the middle of a Google auth that might have failed
+			if JavaScriptBridge.eval("window.location.href.indexOf('#state=google_auth') !== -1"):
+				print("DEBUG: Google auth state found but no token - possible auth error")
+				show_message("Google Sign-In failed. Please try again.", false)
+				# Clean up URL
+				JavaScriptBridge.eval("""
+					if (window.history && window.history.replaceState) {
+						window.history.replaceState({}, document.title, window.location.pathname);
+					}
+				""")
 
 # Function to hide the ForgotPassword tab in the TabContainer
 func _hide_forgot_password_tab():
@@ -241,15 +256,18 @@ func _on_sign_in_google_button_pressed():
 		print("DEBUG: Using redirect URI: " + redirect_uri)
 		Firebase.Auth.set_redirect_uri(redirect_uri)
 		
+		 # Save flag that we're starting Google auth
+		save_web_data("google_auth_started", "true")
+		
 		# Set client ID from .env config
 		provider.params.client_id = "746497205021-j5102kn8f9cjeobvnr696ruuifclpokl.apps.googleusercontent.com"
 		
 		# Set explicit parameters for Google auth
 		provider.params.response_type = "token"
 		provider.params.redirect_type = "redirect_uri"
-		provider.params.prompt = "select_account"  # Force account selection
+		provider.params.prompt = "select_account" # Force account selection
 		provider.params.scope = "email profile openid"
-		provider.params.state = "google_auth"  # For verifying the response
+		provider.params.state = "google_auth" # For verifying the response
 		
 		# Include login_hint if we have an email from a previous login attempt
 		var email_field = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/EmailLineEdit
@@ -313,14 +331,23 @@ func _on_reset_password_button_pressed():
 # ===== Firebase Authentication Callbacks =====
 func on_login_succeeded(auth):
 	print("DEBUG: Login successful with auth data: " + str(auth.keys()))
-	Firebase.Auth.save_auth(auth)
+	
+	# Make sure we save the auth data properly
+	var save_result = Firebase.Auth.save_auth(auth)
+	print("DEBUG: Auth save result: " + str(save_result))
 	
 	# Check if this is a returning web user from Google auth
 	var is_returning_from_google = false
-	if OS.has_feature('web') and JavaScriptBridge.eval("sessionStorage.getItem('processing_signin') === 'true'"):
-		is_returning_from_google = true
-		JavaScriptBridge.eval("sessionStorage.removeItem('processing_signin')")
-		print("DEBUG: User returning from Google auth")
+	if OS.has_feature('web'):
+		if JavaScriptBridge.eval("sessionStorage.getItem('processing_signin') === 'true' || sessionStorage.getItem('google_auth_in_progress') === 'true'"):
+			is_returning_from_google = true
+			JavaScriptBridge.eval("sessionStorage.removeItem('processing_signin'); sessionStorage.removeItem('google_auth_in_progress');")
+			print("DEBUG: User returning from Google auth")
+		
+		# Also check URL for Google auth state
+		if JavaScriptBridge.eval("window.location.href.indexOf('#state=google_auth') !== -1"):
+			is_returning_from_google = true
+			print("DEBUG: Google auth state found in URL")
 	
 	# Check if we need to store/update user data in Firestore
 	var collection = Firebase.Firestore.collection("users")
@@ -415,6 +442,14 @@ func navigate_to_main_menu(is_google_auth := false):
 	# For Google auth that just completed, go immediately to avoid delays
 	if is_google_auth:
 		print("DEBUG: Immediately navigating to main menu after Google auth")
+		# Make sure the URL is clean
+		if OS.has_feature('web'):
+			JavaScriptBridge.eval("""
+				if (window.history && window.history.replaceState) {
+					window.history.replaceState({}, document.title, window.location.pathname);
+				}
+			""")
+		# Force scene change regardless of other operations
 		get_tree().change_scene_to_file("res://Scenes/MainMenu.tscn")
 	else:
 		# For regular login, add a slight delay for UX
@@ -509,5 +544,17 @@ func is_web_platform():
 # Replace any file storage with web storage when in browser
 func save_web_data(key, data):
 	if is_web_platform():
-		var js_code = "sessionStorage.setItem('%s', '%s');" % [key, JSON.stringify(data)]
-		JavaScriptBridge.eval(js_code)
+		var js_code = """
+		(function() {
+			try {
+				sessionStorage.setItem('""" + key + """', '""" + str(data) + """');
+				console.log('Saved data for key: """ + key + """');
+				return true;
+			} catch(e) {
+				console.error('Error saving sessionStorage data: ' + e.message);
+				return false;
+			}
+		})();
+		"""
+		return JavaScriptBridge.eval(js_code)
+	return false

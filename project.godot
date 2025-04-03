@@ -30,7 +30,7 @@ GameSettings="*res://Scripts/export_variables.gd"
 
 [display]
 
-window/size/viewport_width=1440
+window/size/viewport_width=1460
 window/size/viewport_height=810
 window/subwindows/embed_subwindows=false
 window/stretch/mode="canvas_items"
