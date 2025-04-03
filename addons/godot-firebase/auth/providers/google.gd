@@ -16,6 +16,7 @@ func _init(client_id: String, client_secret: String):
 		# Add these parameters for web compatibility
 		self.params.include_granted_scopes = "true"
 		self.params.prompt = "select_account"
+		self.params.display = "page"  # Force same-tab display
 	else:
 		self.should_exchange = true
 		self.redirect_uri = "https://accounts.google.com/o/oauth2/v2/auth?"

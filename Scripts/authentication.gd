@@ -256,7 +256,7 @@ func _on_sign_in_google_button_pressed():
 		print("DEBUG: Using redirect URI: " + redirect_uri)
 		Firebase.Auth.set_redirect_uri(redirect_uri)
 		
-		 # Save flag that we're starting Google auth
+		# Save flag that we're starting Google auth
 		save_web_data("google_auth_started", "true")
 		
 		# Set client ID from .env config
@@ -265,9 +265,10 @@ func _on_sign_in_google_button_pressed():
 		# Set explicit parameters for Google auth
 		provider.params.response_type = "token"
 		provider.params.redirect_type = "redirect_uri"
-		provider.params.prompt = "select_account" # Force account selection
+		provider.params.prompt = "select_account"  # Force account selection
 		provider.params.scope = "email profile openid"
-		provider.params.state = "google_auth" # For verifying the response
+		provider.params.state = "google_auth"  # For verifying the response
+		provider.params.display = "page"  # Force display in the same page/tab
 		
 		# Include login_hint if we have an email from a previous login attempt
 		var email_field = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/EmailLineEdit

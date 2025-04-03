@@ -286,13 +286,20 @@ func get_auth_localhost(provider: AuthProvider = get_GoogleProvider(), port : in
 func get_auth_with_redirect(provider: AuthProvider) -> void:
 	var url_endpoint: String = provider.redirect_uri
 	for key in provider.params.keys():
-		url_endpoint+=key+"="+provider.params[key]+"&"
-	url_endpoint += provider.params.redirect_type+"="+_local_uri
+		url_endpoint += key + "=" + provider.params[key] + "&"
+	url_endpoint += provider.params.redirect_type + "=" + _local_uri
 	url_endpoint = _clean_url(url_endpoint)
+	
 	if Utilities.is_web() and OS.has_feature("JavaScript"):
-		JavaScriptBridge.eval('window.location.replace("' + url_endpoint + '")')
+		# Use window.location.href to redirect in the same tab
+		JavaScriptBridge.eval("""
+			(function() {
+				console.log("Redirecting to: """ + url_endpoint + """");
+				window.location.href = '""" + url_endpoint + """';
+			})();
+		""")
 	elif Engine.has_singleton(_INAPP_PLUGIN) and OS.get_name() == "iOS":
-		#in app for ios if the iOS plugin exists
+		# In-app for iOS if the iOS plugin exists
 		set_local_provider(provider)
 		Engine.get_singleton(_INAPP_PLUGIN).popup(url_endpoint)
 	else:
