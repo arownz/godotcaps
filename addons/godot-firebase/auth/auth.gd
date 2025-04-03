@@ -305,14 +305,20 @@ func get_auth_with_redirect(provider: AuthProvider) -> void:
 # @provider_id and @request_uri can be changed
 func login_with_oauth(_token: String, provider: AuthProvider) -> void:
 	if _token:
+		print("DEBUG: Starting OAuth login with token: " + str(_token).substr(0, 10) + "...")
 		is_oauth_login = true
 		var token : String = _token.uri_decode()
 		var is_successful: bool = true
-		if provider.should_exchange:
+		
+		# For web builds with Google auth, skip token exchange
+		if provider.should_exchange and not (OS.has_feature('web') and provider.provider_id == "google.com"):
+			print("DEBUG: Exchanging token")
 			exchange_token(token, _local_uri, provider.access_token_uri, provider.get_client_id(), provider.get_client_secret())
 			is_successful = await self.token_exchanged
 			token = auth.accesstoken
+		
 		if is_successful and _is_ready():
+			print("DEBUG: Proceeding with Firebase login")
 			is_busy = true
 			_oauth_login_request_body.postBody = "access_token="+token+"&providerId="+provider.provider_id
 			_oauth_login_request_body.requestUri = _local_uri
@@ -324,6 +330,10 @@ func login_with_oauth(_token: String, provider: AuthProvider) -> void:
 			if err != OK:
 				is_busy = false
 				Firebase._printerr("Error logging in with oauth: %s" % err)
+		else:
+			print("DEBUG: Token exchange failed or auth is busy")
+	else:
+		print("DEBUG: No token provided for OAuth login")
 
 # Exchange the authorization oAuth2 code obtained from browser with a proper access id_token
 func exchange_token(code : String, redirect_uri : String, request_url: String, _client_id: String, _client_secret: String) -> void:
@@ -392,9 +402,12 @@ func logout() -> void:
 
 # Checks to see if we need a hard login
 func needs_login() -> bool:
-	var encrypted_file = FileAccess.open_encrypted_with_pass("user://user.auth", FileAccess.READ, _config.apiKey)
-	var err = encrypted_file == null
-	return err
+	if OS.has_feature('web'):
+		return not JavaScriptBridge.eval("typeof localStorage !== 'undefined' && localStorage.getItem('firebase_auth') !== null")
+	else:
+		var encrypted_file = FileAccess.open_encrypted_with_pass("user://user.auth", FileAccess.READ, _config.apiKey)
+		var err = encrypted_file == null
+		return err
 
 # Function is called when requesting a manual token refresh
 func manual_token_refresh(auth_data):
@@ -477,51 +490,99 @@ func _on_FirebaseAuth_request_completed(result : int, response_code : int, heade
 
 
 # Function used to save the auth data provided by Firebase into an encrypted file
-# Note this does not work in HTML5 or UWP
+# Note this uses web storage in HTML5
 func save_auth(auth : Dictionary) -> bool:
-	var encrypted_file = FileAccess.open_encrypted_with_pass("user://user.auth", FileAccess.WRITE, _config.apiKey)
-	var err = encrypted_file == null
-	if err:
-		Firebase._printerr("Error Opening File. Error Code: " + str(FileAccess.get_open_error()))
+	if OS.has_feature('web'):
+		# Web version - use localStorage
+		var auth_json = JSON.stringify(auth)
+		JavaScriptBridge.eval("localStorage.setItem('firebase_auth', '" + auth_json + "')")
+		return true
 	else:
-		encrypted_file.store_line(JSON.stringify(auth))
-	return not err
+		# Desktop/mobile version - use encrypted file
+		var encrypted_file = FileAccess.open_encrypted_with_pass("user://user.auth", FileAccess.WRITE, _config.apiKey)
+		var err = encrypted_file == null
+		if err:
+			Firebase._printerr("Error Opening File. Error Code: " + str(FileAccess.get_open_error()))
+		else:
+			encrypted_file.store_line(JSON.stringify(auth))
+		return not err
 
 
 # Function used to load the auth data file that has been stored locally
-# Note this does not work in HTML5 or UWP
+# Note this uses web storage in HTML5
 func load_auth() -> bool:
-	var encrypted_file = FileAccess.open_encrypted_with_pass("user://user.auth", FileAccess.READ, _config.apiKey)
-	var err = encrypted_file == null
-	if err:
-		Firebase._printerr("Error Opening Firebase Auth File. Error Code: " + str(FileAccess.get_open_error()))
-		auth_request.emit(err, "Error Opening Firebase Auth File.")
+	if OS.has_feature('web'):
+		# Web version - use localStorage
+		if JavaScriptBridge.eval("typeof localStorage !== 'undefined' && localStorage.getItem('firebase_auth') !== null"):
+			var auth_data_str = JavaScriptBridge.eval("localStorage.getItem('firebase_auth')")
+			var json = JSON.new()
+			var json_parse_result = json.parse(auth_data_str)
+			if json_parse_result == OK:
+				var auth_data = json.data
+				manual_token_refresh(auth_data)
+				return true
+			else:
+				Firebase._printerr("Error parsing auth data from web storage")
+				auth_request.emit(ERR_PARSE_ERROR, "Error parsing auth data from web storage")
+				return false
+		else:
+			Firebase._printerr("No saved auth data found in web storage")
+			auth_request.emit(ERR_DOES_NOT_EXIST, "No saved auth data found in web storage")
+			return false
 	else:
-		var json = JSON.new()
-		var json_parse_result = json.parse(encrypted_file.get_line())
-		if json_parse_result == OK:
-			var encrypted_file_data = json.data
-			manual_token_refresh(encrypted_file_data)
-	return not err
+		# Desktop/mobile version - use file system
+		var encrypted_file = FileAccess.open_encrypted_with_pass("user://user.auth", FileAccess.READ, _config.apiKey)
+		var err = encrypted_file == null
+		if err:
+			Firebase._printerr("Error Opening Firebase Auth File. Error Code: " + str(FileAccess.get_open_error()))
+			auth_request.emit(err, "Error Opening Firebase Auth File.")
+		else:
+			var json = JSON.new()
+			var json_parse_result = json.parse(encrypted_file.get_line())
+			if json_parse_result == OK:
+				var encrypted_file_data = json.data
+				manual_token_refresh(encrypted_file_data)
+		return not err
 
-# Function used to remove_at the local encrypted auth file
+# Function used to remove the local encrypted auth file
 func remove_auth() -> void:
-	if (FileAccess.file_exists("user://user.auth")):
-		DirAccess.remove_absolute("user://user.auth")
+	if OS.has_feature('web'):
+		# Web version - clear localStorage item
+		JavaScriptBridge.eval("localStorage.removeItem('firebase_auth')")
 	else:
-		Firebase._printerr("No encrypted auth file exists")
+		# Desktop/mobile version - delete file
+		if (FileAccess.file_exists("user://user.auth")):
+			DirAccess.remove_absolute("user://user.auth")
+		else:
+			Firebase._printerr("No encrypted auth file exists")
 
 
 # Function to check if there is an encrypted auth data file
 # If there is, the game will load it and refresh the token
 func check_auth_file() -> bool:
-	if (FileAccess.file_exists("user://user.auth")):
-		# Will ensure "auth_request" emitted
-		return load_auth()
-	else:
-		Firebase._printerr("Encrypted Firebase Auth file does not exist")
-		auth_request.emit(ERR_DOES_NOT_EXIST, "Encrypted Firebase Auth file does not exist")
+	if OS.has_feature('web'):
+		# Web version - use localStorage instead of file system
+		if JavaScriptBridge.eval("typeof localStorage !== 'undefined' && localStorage.getItem('firebase_auth') !== null"):
+			var auth_data_str = JavaScriptBridge.eval("localStorage.getItem('firebase_auth')")
+			var json = JSON.new()
+			var json_parse_result = json.parse(auth_data_str)
+			if json_parse_result == OK:
+				var auth_data = json.data
+				manual_token_refresh(auth_data)
+				return true
+		# If no auth data in localStorage
+		Firebase._printerr("No saved auth data found in web storage")
+		auth_request.emit(ERR_DOES_NOT_EXIST, "No saved auth data found in web storage")
 		return false
+	else:
+		# Desktop/mobile version - use file system
+		if (FileAccess.file_exists("user://user.auth")):
+			# Will ensure "auth_request" emitted
+			return load_auth()
+		else:
+			Firebase._printerr("Encrypted Firebase Auth file does not exist")
+			auth_request.emit(ERR_DOES_NOT_EXIST, "Encrypted Firebase Auth file does not exist")
+			return false
 
 
 # Function used to change the email account for the currently logged in user
@@ -651,13 +712,50 @@ func begin_refresh_countdown() -> void:
 func get_token_from_url(provider: AuthProvider):
 	var token_type: String = provider.params.response_type if provider.params.response_type == "code" else "access_token"
 	if OS.has_feature('web'):
+		# More robust token extraction with debug output
+		var debug_url = JavaScriptBridge.eval("window.location.href")
+		print("DEBUG: Current URL: " + str(debug_url))
+		
+		# Try multiple methods to get the token as Google returns tokens in different ways
 		var token = JavaScriptBridge.eval("""
-			var url_string = window.location.href.replaceAll('?#', '?');
-			var url = new URL(url_string);
-			url.searchParams.get('"""+token_type+"""');
+			// First try: Check hash fragment directly (most reliable method)
+			var url_string = window.location.href;
+			var token = null;
+			
+			if (url_string.indexOf('#access_token=') !== -1) {
+				token = url_string.split('#access_token=')[1].split('&')[0];
+				console.log('Token found directly in hash: ' + token);
+				return token;
+			}
+			
+			// Second try: Check hash as parameters
+			if (url_string.indexOf('#') !== -1) {
+				var hash = url_string.split('#')[1];
+				var params = new URLSearchParams(hash);
+				token = params.get('access_token');
+				console.log('Token from hash params: ' + token);
+				if (token) return token;
+			}
+			
+			// Try query parameters
+			var params = new URLSearchParams(window.location.search);
+			token = params.get('access_token');
+			console.log('Token from query: ' + token);
+			
+			return token;
 		""")
-		JavaScriptBridge.eval("""window.history.pushState({}, null, location.href.split('?')[0]);""")
-		return token
+		
+		if token and token != "null" and token.length() > 10:
+			print("DEBUG: Token found: " + str(token).substr(0, 10) + "...")
+			# Clean up URL without losing the page context
+			JavaScriptBridge.eval("""
+				if (window.history && window.history.replaceState) {
+					window.history.replaceState({}, document.title, window.location.pathname);
+				}
+			""")
+			return token
+		else:
+			print("DEBUG: No valid token found in URL: " + str(token))
 	return null
 
 

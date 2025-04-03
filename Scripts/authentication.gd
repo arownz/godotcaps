@@ -25,15 +25,28 @@ func _ready():
 	get_tree().root.size_changed.connect(_adjust_layout_for_screen_size)
 	_adjust_layout_for_screen_size()
 	
+	# Handle authentication check on startup
+	check_existing_auth()
+
+# Consolidate auth checking to avoid duplicate code
+func check_existing_auth():
 	if Firebase.Auth.check_auth_file():
 		show_message("You are already logged in", true)
 		await get_tree().create_timer(0.5).timeout
 		get_tree().change_scene_to_file("res://Scenes/MainMenu.tscn")
-	elif OS.get_name() == "Web":
+	elif OS.has_feature('web'):
+		 # Check for OAuth tokens in URL
+		print("DEBUG: Web platform detected, checking for auth token")
 		var provider = Firebase.Auth.get_GoogleProvider()
-		Firebase.Auth.set_redirect_uri("http://localhost:5000/")
+		Firebase.Auth.set_redirect_uri(get_web_redirect_uri())
 		var token = Firebase.Auth.get_token_from_url(provider)
 		if token:
+			print("DEBUG: Token found on page load: " + str(token).substr(0, 10) + "...")
+			show_message("Completing Google Sign-In...", true)
+			# Use a deferred call to ensure the GUI is ready
+			await get_tree().process_frame
+			# Store a flag to indicate we're processing a sign-in
+			save_web_data("processing_signin", "true")
 			Firebase.Auth.login_with_oauth(token, provider)
 
 # Function to hide the ForgotPassword tab in the TabContainer
@@ -220,27 +233,46 @@ func _on_register_button_pressed():
 func _on_sign_in_google_button_pressed():
 	var provider = Firebase.Auth.get_GoogleProvider()
 	
-	show_message("Redirecting to Google...")
+	show_message("Redirecting to Google...", true)
 	
-	if OS.get_name() == "Web":
-		# For web builds - critical changes for web authentication
-		Firebase.Auth.set_redirect_uri(get_web_redirect_uri())
+	if OS.has_feature('web'):
+		# For web builds - enhanced web auth
+		var redirect_uri = get_web_redirect_uri()
+		print("DEBUG: Using redirect URI: " + redirect_uri)
+		Firebase.Auth.set_redirect_uri(redirect_uri)
+		
+		# Set client ID from .env config
 		provider.params.client_id = "746497205021-j5102kn8f9cjeobvnr696ruuifclpokl.apps.googleusercontent.com"
-		# Set these parameters explicitly for web
-		provider.params.response_type = "token"  
+		
+		# Set explicit parameters for Google auth
+		provider.params.response_type = "token"
 		provider.params.redirect_type = "redirect_uri"
+		provider.params.prompt = "select_account"  # Force account selection
+		provider.params.scope = "email profile openid"
+		provider.params.state = "google_auth"  # For verifying the response
+		
+		# Include login_hint if we have an email from a previous login attempt
+		var email_field = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/EmailLineEdit
+		if !email_field.text.strip_edges().is_empty():
+			provider.params.login_hint = email_field.text
+		
+		print("DEBUG: Redirecting to Google OAuth")
 		Firebase.Auth.get_auth_with_redirect(provider)
 	else:
 		# For desktop build
 		Firebase.Auth.get_auth_localhost(provider, 8060)
 
-# Helper function to determine the correct redirect URI based on the current URL
+# Enhanced redirect URI detection for web
 func get_web_redirect_uri():
-	if OS.get_name() == "Web":
+	if OS.has_feature('web'):
 		# Try to detect actual URL in web builds using JavaScript
 		if JavaScriptBridge.eval("typeof window !== 'undefined'"):
-			var location = JavaScriptBridge.eval("window.location.origin + window.location.pathname")
-			return location
+			var current_url = JavaScriptBridge.eval("""
+				// Get the base URL without any query parameters or hash
+				window.location.origin + window.location.pathname
+			""")
+			print("DEBUG: Detected web URL: " + str(current_url))
+			return current_url
 	
 	# Fallback for local testing
 	return "http://localhost:5000/"
@@ -280,8 +312,15 @@ func _on_reset_password_button_pressed():
 
 # ===== Firebase Authentication Callbacks =====
 func on_login_succeeded(auth):
-	print("Login successful")
+	print("DEBUG: Login successful with auth data: " + str(auth.keys()))
 	Firebase.Auth.save_auth(auth)
+	
+	# Check if this is a returning web user from Google auth
+	var is_returning_from_google = false
+	if OS.has_feature('web') and JavaScriptBridge.eval("sessionStorage.getItem('processing_signin') === 'true'"):
+		is_returning_from_google = true
+		JavaScriptBridge.eval("sessionStorage.removeItem('processing_signin')")
+		print("DEBUG: User returning from Google auth")
 	
 	# Check if we need to store/update user data in Firestore
 	var collection = Firebase.Firestore.collection("users")
@@ -292,7 +331,7 @@ func on_login_succeeded(auth):
 	# First check if this user already exists in the database
 	var task = collection.get(user_id)
 	if task == null:
-		# Handle task creation failure	
+		# Handle task creation failure
 		print("Failed to create task for user check")
 		# Create a new user anyway
 		var display_name = auth.get("displayname", "")
@@ -312,6 +351,9 @@ func on_login_succeeded(auth):
 		
 		# Save the user data
 		collection.add(user_id, user_doc)
+		
+		# Navigate to main menu
+		navigate_to_main_menu(is_returning_from_google)
 	else:
 		# Add proper error handling
 		var result = await task.task_finished
@@ -334,6 +376,9 @@ func on_login_succeeded(auth):
 			}
 			
 			collection.add(user_id, user_doc)
+			
+			# Navigate to main menu
+			navigate_to_main_menu(is_returning_from_google)
 		else:
 			# Existing user - do a complete update
 			if result.doc_fields != null:
@@ -358,14 +403,24 @@ func on_login_succeeded(auth):
 				}
 				
 				collection.add(user_id, user_doc)
-	
+			
+			# Navigate to main menu
+			navigate_to_main_menu(is_returning_from_google)
+
+# Helper function to navigate to main menu
+func navigate_to_main_menu(is_google_auth := false):
 	# Show success message and redirect to main menu
 	show_message("Login Successful! Redirecting...", true)
 	
-	# Change scene after a short delay
-	await get_tree().create_timer(0.5).timeout
-	get_tree().change_scene_to_file("res://Scenes/MainMenu.tscn")
-	
+	# For Google auth that just completed, go immediately to avoid delays
+	if is_google_auth:
+		print("DEBUG: Immediately navigating to main menu after Google auth")
+		get_tree().change_scene_to_file("res://Scenes/MainMenu.tscn")
+	else:
+		# For regular login, add a slight delay for UX
+		await get_tree().create_timer(0.5).timeout
+		get_tree().change_scene_to_file("res://Scenes/MainMenu.tscn")
+
 func on_signup_succeeded(auth):
 	print("Signup successful")
 	
@@ -421,8 +476,12 @@ func on_signup_succeeded(auth):
 	get_tree().change_scene_to_file("res://Scenes/MainMenu.tscn")
 	
 func on_login_failed(error_code, message):
-	print("Login failed: ", error_code, " - ", message)
+	print("DEBUG: Login failed: ", error_code, " - ", message)
 	show_message("Login Failed: " + message, false)
+	
+	# If this was a Google auth failure, show more helpful message
+	if message.contains("TOKEN_EXPIRED") or message.contains("INVALID_IDP_RESPONSE"):
+		show_message("Google login failed. Please try again or use email login.", false)
 	
 func on_signup_failed(error_code, message):
 	print("Signup failed: ", error_code, " - ", message)
@@ -445,7 +504,7 @@ func _get_auth_headers():
 
 # Add this to your authentication.gd
 func is_web_platform():
-	return OS.get_name() == "Web"
+	return OS.has_feature('web')
 
 # Replace any file storage with web storage when in browser
 func save_web_data(key, data):
