@@ -84,13 +84,22 @@ func _on_word_fetched():
 	# Log the word for debugging
 	print("Challenge word: ", challenge_word)
 
+# Function to get the current challenge word - used by WhiteboardInterface
+func get_challenge_word():
+	return challenge_word
+
 func _on_drawing_submitted(text_result):
+	print("Recognized text: ", text_result)
+	print("Challenge word: ", challenge_word)
+	
 	# Compare the recognized text with the challenge word
 	if text_result.to_lower().strip_edges() == challenge_word.to_lower().strip_edges():
 		# Success - bonus damage!
+		print("Handwriting recognition successful!")
 		emit_signal("challenge_completed", bonus_damage)
 	else:
 		# Failure
+		print("Handwriting recognition failed!")
 		emit_signal("challenge_failed")
 	
 	# Remove the challenge panel

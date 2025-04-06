@@ -95,6 +95,99 @@ body {
 <link rel="manifest" href="index.manifest.json">
 <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
 <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp">
+<!-- Update Tesseract.js to v5 -->
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
+<!-- Add OCR initialization script -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initialize OCR functionality
+    window.ocrInitialized = false;
+    window.ocrWorker = null;
+    
+    // Initialize Tesseract.js with v5 API
+    window.initializeOCR = function() {
+      if (window.ocrInitialized) return Promise.resolve();
+      
+      // Handle the case where Tesseract fails to load
+      if (typeof Tesseract === 'undefined') {
+        console.error("Tesseract not loaded. Falling back to empty recognition.");
+        window.ocrInitialized = true; // Mark as initialized to prevent further attempts
+        return Promise.resolve();
+      }
+      
+      // Use v5 API - createWorker now returns a Promise with the worker
+      return Tesseract.createWorker('eng')
+        .then(worker => {
+          window.ocrWorker = worker;
+          window.ocrInitialized = true;
+          console.log("OCR engine initialized successfully");
+          return worker;
+        })
+        .catch(err => {
+          console.error("Failed to initialize OCR:", err);
+          window.ocrInitialized = true; // Mark as initialized to prevent further attempts
+          return null;
+        });
+    };
+    
+    // Function to recognize handwriting from image
+    window.recognizeHandwritingFromImage = function(imageData, callback) {
+      console.log("Starting handwriting recognition...");
+      
+      // If Tesseract isn't loaded, return empty string
+      if (typeof Tesseract === 'undefined') {
+        console.error("Tesseract not loaded. Cannot perform recognition.");
+        setTimeout(() => callback(""), 500);
+        return;
+      }
+      
+      if (!window.ocrInitialized) {
+        window.initializeOCR().then(processImage).catch(err => {
+          console.error("OCR initialization failed:", err);
+          callback("");
+        });
+      } else {
+        processImage();
+      }
+      
+      function processImage() {
+        // If we don't have a worker, return empty string
+        if (!window.ocrWorker) {
+          console.error("OCR worker not available");
+          callback("");
+          return;
+        }
+        
+        // Process the image using Tesseract - v5 API
+        window.ocrWorker.recognize(imageData, {}, {
+          tessedit_char_whitelist: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+        }).then(result => {
+          console.log("OCR Result:", result);
+          let recognizedText = result.data.text || "";
+          // Clean up the text
+          recognizedText = recognizedText.replace(/\s+/g, "").toLowerCase();
+          console.log("Recognized text after cleanup:", recognizedText);
+          callback(recognizedText);
+        }).catch(err => {
+          console.error("OCR processing error:", err);
+          callback("");
+        });
+      }
+    };
+    
+    // Start initializing OCR in the background
+    window.initializeOCR().catch(console.error);
+    
+    // Add utility function to safely handle image data processing errors
+    window.handleImageProcessingError = function(error, callback) {
+      console.error("Image processing error:", error);
+      if (typeof callback === 'function') {
+        callback("");
+      }
+    };
+  });
+</script>
 	</head>
 	<body>
 		<canvas id="canvas">
@@ -113,7 +206,7 @@ body {
 
 		<script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":2505072,"index.wasm":52126319},"focusCanvas":true,"gdextensionLibs":[],"serviceWorker":"index.service.worker.js"};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":3533152,"index.wasm":52126319},"focusCanvas":true,"gdextensionLibs":[],"serviceWorker":"index.service.worker.js"};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 

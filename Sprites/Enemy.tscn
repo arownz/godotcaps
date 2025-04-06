@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://dpufif2akuw3w" path="res://Scripts/enemy_sprite_controller.gd" id="2_a5y0d"]
 
 [node name="Enemy" type="AnimatedSprite2D"]
-animation = &""
+animation = &"idle"
 script = ExtResource("2_a5y0d")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
