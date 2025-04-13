@@ -23,6 +23,16 @@ func start_speech_challenge():
 	# Set the challenge type
 	challenge_type = "stt"
 
+func handle_challenge_cancelled():
+	# Log the cancellation message
+	battle_scene.log_manager.add_cancellation_message()
+	
+	# Reset challenge state
+	challenge_type = "none"
+	
+	# Resume auto battle
+	battle_scene._resume_auto_battle()
+
 func end_challenge():
 	# Reset challenge type
 	challenge_type = "none"

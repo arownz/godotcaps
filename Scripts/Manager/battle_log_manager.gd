@@ -75,6 +75,10 @@ func add_message(text):
 	if !user_scrolled:
 		_scroll_to_bottom()
 
+func add_cancellation_message():
+	# Add a specific message for challenge cancellation
+	add_message("[color=#FFA500]You chose to cancel countering the enemy skill.[/color]")
+
 func _scroll_to_bottom():
 	# Wait for the next frame to ensure UI has updated
 	await battle_scene.get_tree().process_frame

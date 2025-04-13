@@ -2,6 +2,7 @@ extends Control
 
 signal challenge_completed(bonus_damage)
 signal challenge_failed
+signal challenge_cancelled
 
 # References to child nodes
 var random_word_label
@@ -41,12 +42,13 @@ func _ready():
 	tts_settings_panel = $ChallengePanel/VBoxContainer/TTSSettingsPanel
 	api_status_label = $ChallengePanel/VBoxContainer/APIStatusLabel
 	
-	# Create TTS instance (same as whiteboard panel)
+	# Create TTS instance using our simplified TextToSpeech class
 	tts = TextToSpeech.new()
 	add_child(tts)
+	print("Created TextToSpeech instance")
 	
-	# Initialize TTS settings
-	_initialize_tts_settings()
+	# Hide the built-in TTS panel (will use popup instead)
+	tts_settings_panel.visible = false
 	
 	# Create and initialize the random word API
 	random_word_api = RandomWordAPI.new()
@@ -58,28 +60,6 @@ func _ready():
 	
 	# Check if speech recognition is available
 	_check_speech_recognition_availability()
-
-func _initialize_tts_settings():
-	# Get all available voices
-	var voice_select = $ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer/VoiceContainer/VoiceOptionButton
-	voice_select.clear()
-	
-	# Use the correct function to get available voices
-	voice_options = []
-	var voice_dict = tts.get_voice_list()
-	for voice_id in voice_dict:
-		voice_options.append({
-			"id": voice_id,
-			"name": voice_dict[voice_id]
-		})
-	
-	for voice in voice_options:
-		voice_select.add_item(voice.name)
-	
-	# Set default voice
-	if voice_options.size() > 0:
-		voice_select.select(0)
-		tts.set_voice(voice_options[0].id)
 
 func _check_speech_recognition_availability():
 	# Check for Web platform where SpeechRecognition is available
@@ -111,6 +91,17 @@ func _on_word_fetched():
 		api_status_label.text = ""
 	else:
 		api_status_label.text = "API Error: " + random_word_api.last_error
+		
+		# If API fails, use a fallback word
+		if challenge_word.is_empty():
+			var fallback_words = ["cat", "dog", "tree", "book", "pen", "car", "sun", "moon", "fish", "house"]
+			challenge_word = fallback_words[randi() % fallback_words.size()]
+			random_word_label.text = challenge_word
+			api_status_label.text = "Using fallback word"
+	
+	# Store the challenge word in JavaScript for debugging
+	if OS.has_feature("JavaScript"):
+		JavaScriptBridge.eval("window.setChallengeWord('%s');" % challenge_word)
 	
 	# Log the word for debugging
 	print("Challenge word: ", challenge_word)
@@ -163,14 +154,34 @@ func _on_speak_button_pressed():
 				}
 			"""
 			
+			# Setup Godot callbacks
+			JavaScriptBridge.eval("""
+				if (typeof window.godot === 'undefined') {
+					window.godot = {};
+				}
+				window.godot.speechResult = function(text) {
+					const engine = window.godot.getEngine ? window.godot.getEngine() : null;
+					if (engine) {
+						engine.sendMessage('%s', 'speech_result_callback', text);
+					}
+				};
+				window.godot.speechError = function(error) {
+					const engine = window.godot.getEngine ? window.godot.getEngine() : null;
+					if (engine) {
+						engine.sendMessage('%s', 'speech_error_callback', error);
+					}
+				};
+				window.godot.speechEnd = function() {
+					const engine = window.godot.getEngine ? window.godot.getEngine() : null;
+					if (engine) {
+						engine.sendMessage('%s', 'speech_end_callback', '');
+					}
+				};
+			""" % [get_path(), get_path(), get_path()])
+			
 			# Execute JavaScript and check result
 			var success = JavaScriptBridge.eval(js_code)
 			if success:
-				# Register Godot callbacks for JavaScript to call
-				JavaScriptBridge.create_callback(Callable(self, "speech_result_callback"))
-				JavaScriptBridge.create_callback(Callable(self, "speech_error_callback"))
-				JavaScriptBridge.create_callback(Callable(self, "speech_end_callback"))
-				
 				recognition_active = true
 				status_label.text = "Listening..."
 			else:
@@ -180,12 +191,10 @@ func _on_speak_button_pressed():
 		_simulate_speech_recognition()
 
 # JavaScript callback functions
-func speech_result_callback(args):
-	var text = args[0]
+func speech_result_callback(text):
 	_on_speech_recognized(text)
 
-func speech_error_callback(args):
-	var error = args[0]
+func speech_error_callback(error):
 	status_label.text = "Error: " + error
 	recognition_active = false
 	speak_button.text = "🎤 Start Speaking"
@@ -217,18 +226,6 @@ func _simulate_speech_recognition():
 	)
 	timer.start()
 
-func _start_speech_recognition():
-	# Placeholder - would start actual speech recognition
-	recognition_active = true
-	speak_button.text = "Stop Listening"
-	status_label.text = "Listening..."
-
-func _stop_speech_recognition():
-	# Placeholder - would stop actual speech recognition
-	recognition_active = false
-	speak_button.text = "🎤 Start Speaking"
-	status_label.text = "Not listening"
-
 func _on_speech_recognized(text):
 	# Update recognized text label
 	recognized_text_label.text = text
@@ -253,41 +250,79 @@ func _on_speech_recognized(text):
 			emit_signal("challenge_failed")
 			queue_free()
 
-# TTS-related functions (same as whiteboard panel)
 func _on_tts_button_pressed():
-	# Speak the challenge word
-	tts.speak(challenge_word)
+	# Speak the challenge word with improved feedback
+	api_status_label.text = "Reading word..."
+	
+	print("TTS button pressed, trying to speak: ", challenge_word)
+	
+	var result = tts.speak(challenge_word)
+	
+	if !result:
+		api_status_label.text = "Failed to read word"
+		print("TTS speak returned false")
+		return
+	
+	# Connect to signals for this specific request if not already connected
+	if !tts.is_connected("speech_ended", Callable(self, "_on_tts_speech_ended")):
+		tts.connect("speech_ended", Callable(self, "_on_tts_speech_ended"))
+	
+	if !tts.is_connected("speech_error", Callable(self, "_on_tts_speech_error")):
+		tts.connect("speech_error", Callable(self, "_on_tts_speech_error"))
+
+# Handle TTS feedback
+func _on_tts_speech_ended():
+	api_status_label.text = ""
+	
+	# Disconnect the temporary signals
+	if tts.is_connected("speech_ended", Callable(self, "_on_tts_speech_ended")):
+		tts.disconnect("speech_ended", Callable(self, "_on_tts_speech_ended"))
+	
+	if tts.is_connected("speech_error", Callable(self, "_on_tts_speech_error")):
+		tts.disconnect("speech_error", Callable(self, "_on_tts_speech_error"))
+
+func _on_tts_speech_error(error_msg):
+	api_status_label.text = "TTS Error: " + error_msg
+	
+	# Disconnect the temporary signals
+	if tts.is_connected("speech_ended", Callable(self, "_on_tts_speech_ended")):
+		tts.disconnect("speech_ended", Callable(self, "_on_tts_speech_ended"))
+	
+	if tts.is_connected("speech_error", Callable(self, "_on_tts_speech_error")):
+		tts.disconnect("speech_error", Callable(self, "_on_tts_speech_error"))
 
 func _on_tts_settings_button_pressed():
-	# Toggle the TTS settings panel
-	tts_settings_panel.visible = !tts_settings_panel.visible
+	# Load and show the TTS settings popup
+	var tts_popup = load("res://Scenes/TTSSettingsPopup.tscn").instantiate()
+	add_child(tts_popup)
+	
+	# Set up the popup with current settings
+	tts_popup.setup(tts, tts.current_voice, tts.speech_rate, challenge_word)
+	
+	# Connect signals
+	tts_popup.settings_saved.connect(_on_tts_settings_saved)
+	tts_popup.settings_closed.connect(_on_tts_settings_closed)
 
-func _on_voice_option_button_item_selected(index):
-	# Set the selected voice
-	if index >= 0 and index < voice_options.size():
-		tts.set_voice(voice_options[index].id)
+func _on_tts_settings_saved(voice_id, rate):
+	# Apply the new settings
+	tts.set_voice(voice_id)
+	tts.set_rate(rate)
 
-func _on_rate_slider_value_changed(value):
-	# Update rate label text
-	var rate_label = $ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer/RateContainer/RateValueLabel
-	var rate_text = "Rate: " + str(value)
+func _on_tts_settings_closed():
+	# Do any cleanup needed when the popup is closed
+	pass
+
+func _on_cancel_button_pressed():
+	# Emit signal to indicate challenge was cancelled without affecting battle state
+	emit_signal("challenge_cancelled")
 	
-	if value < 0.8:
-		rate_text += " (Slower)"
-	elif value > 1.2:
-		rate_text += " (Faster)"
-	else:
-		rate_text += " (Normal)"
-	
-	rate_label.text = rate_text
-	
-	# Set speech rate
-	tts.set_rate(value)
+	# Remove the challenge panel without affecting engagement
+	queue_free()
 
 func _on_test_button_pressed():
-	# Test the current TTS settings with the challenge word
-	tts.speak(challenge_word)
+	# This is handled by the popup now
+	pass
 
 func _on_close_button_pressed():
-	# Close the TTS settings panel
+	# This is handled by the popup now
 	tts_settings_panel.visible = false

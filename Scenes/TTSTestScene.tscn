@@ -1,0 +1,402 @@
+[gd_scene load_steps=3 format=3 uid="uid://davhhtdjq0ycr"]
+
+[ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="2_46mfp"]
+
+[sub_resource type="GDScript" id="GDScript_m57gp"]
+script/source = "extends Control
+
+# TTS instance
+var tts = null
+var voice_options = []
+var voice_initialization_attempts = 0
+var max_init_attempts = 3
+
+func _ready():
+	# Initialize TTS
+	tts = TextToSpeech.new()
+	add_child(tts)
+	
+	# Connect to TTS signals
+	tts.tts_initialized.connect(_on_tts_initialized)
+	tts.voices_loaded.connect(_on_voices_loaded)
+	tts.speech_started.connect(_on_speech_started)
+	tts.speech_ended.connect(_on_speech_ended)
+	tts.speech_error.connect(_on_speech_error)
+	
+	# Set default UI values
+	$Panel/VBoxContainer/StatusLabel.text = \"Initializing TTS...\"
+	log_message(\"TTS test scene initialized\")
+	
+	# Delayed initialization check - sometimes voices aren't loaded immediately
+	await get_tree().create_timer(2.0).timeout
+	_check_voices_loaded()
+
+func _check_voices_loaded():
+	# Check if we have any voices loaded
+	if tts.get_voice_list().size() <= 1 and voice_initialization_attempts < max_init_attempts:
+		voice_initialization_attempts += 1
+		log_message(\"No voices loaded yet. Attempt \" + str(voice_initialization_attempts) + \"/\" + str(max_init_attempts))
+		
+		# Try to reinitialize
+		if tts.is_web_platform:
+			log_message(\"Attempting to initialize Web TTS voices...\")
+			JavaScriptBridge.eval(\"\"\"
+				// Try to force voice loading
+				if (typeof window.speechSynthesis !== 'undefined') {
+					// Voice loading trick for Chrome
+					window.speechSynthesis.cancel();
+					
+					// Get current voices
+					let currentVoices = window.speechSynthesis.getVoices();
+					console.log(\"Current voices:\", currentVoices.length);
+					
+					// If no voices, try to force load them
+					if (currentVoices.length === 0) {
+						console.log(\"Forcing voice loading...\");
+						let utterance = new SpeechSynthesisUtterance('.');
+						utterance.volume = 0;
+						window.speechSynthesis.speak(utterance);
+						
+						// Chrome needs onvoiceschanged
+						if (typeof window.speechSynthesis.onvoiceschanged !== 'undefined') {
+							window.speechSynthesis.onvoiceschanged = function() {
+								console.log(\"Voices changed!\");
+								
+								// Update our voice list
+								if (typeof window.godotTTSHelper !== 'undefined') {
+									let voices = window.godotTTSHelper.getVoices();
+									const engine = window.godot.getEngine ? window.godot.getEngine() : null;
+									if (engine) {
+										engine.sendMessage('TextToSpeech', '_on_voices_loaded', voices);
+									}
+								}
+							};
+						}
+					}
+				}
+			\"\"\")
+		else:
+			log_message(\"Attempting to initialize native TTS voices...\")
+			var native_voices = DisplayServer.tts_get_voices()
+			log_message(\"Found \" + str(native_voices.size()) + \" native voices\")
+			
+			# Try to show information about the TTS system
+			log_message(\"TTS feature available: \" + str(DisplayServer.has_feature(DisplayServer.FEATURE_TEXT_TO_SPEECH)))
+			
+			# Try a direct speak test
+			if native_voices.size() > 0:
+				var voice_id = native_voices[0][\"id\"]
+				log_message(\"Testing direct TTS with voice: \" + voice_id)
+				DisplayServer.tts_speak(\"Testing speech\", voice_id)
+				log_message(\"Direct TTS call executed\")
+		
+		# Wait and check again
+		await get_tree().create_timer(2.0).timeout
+		_check_voices_loaded()
+	elif voice_initialization_attempts >= max_init_attempts:
+		log_message(\"Failed to load voices after \" + str(max_init_attempts) + \" attempts.\")
+		$Panel/VBoxContainer/StatusLabel.text = \"No TTS voices available. See logs for details.\"
+
+func _on_tts_initialized():
+	log_message(\"TTS initialized\")
+	$Panel/VBoxContainer/StatusLabel.text = \"TTS initialized, loading voices...\"
+
+func _on_voices_loaded():
+	log_message(\"Voices loaded\")
+	
+	# Update the voice option button
+	_update_voice_list()
+	
+	$Panel/VBoxContainer/StatusLabel.text = \"Ready\"
+
+func _update_voice_list():
+	# Get available voices
+	var voice_select = $Panel/VBoxContainer/VoiceContainer/VoiceOptionButton
+	voice_select.clear()
+	
+	# Reset voice options
+	voice_options = []
+	var voice_dict = tts.get_voice_list()
+	
+	log_message(\"Updating voice list with \" + str(voice_dict.size()) + \" voices\")
+	
+	# Convert to option array
+	for voice_id in voice_dict:
+		voice_options.append({
+			\"id\": voice_id,
+			\"name\": voice_dict[voice_id]
+		})
+	
+	# Add to dropdown
+	for voice in voice_options:
+		voice_select.add_item(voice.name)
+	
+	# Find and select the current voice
+	if voice_options.size() > 0:
+		for i in range(voice_options.size()):
+			if voice_options[i].id == tts.current_voice:
+				voice_select.select(i)
+				break
+				
+		# If no match was found, select the first one
+		if voice_select.selected < 0:
+			voice_select.select(0)
+			tts.set_voice(voice_options[0].id)
+
+func _on_speech_started():
+	log_message(\"Speech started\")
+	$Panel/VBoxContainer/StatusLabel.text = \"Speaking...\"
+
+func _on_speech_ended():
+	log_message(\"Speech ended\")
+	$Panel/VBoxContainer/StatusLabel.text = \"Ready\"
+
+func _on_speech_error(error_msg):
+	log_message(\"Speech error: \" + error_msg, true)
+	$Panel/VBoxContainer/StatusLabel.text = \"Error: \" + error_msg
+
+func _on_voice_option_button_item_selected(index):
+	if index >= 0 and index < voice_options.size():
+		var voice_id = voice_options[index].id
+		log_message(\"Selected voice: \" + voice_options[index].name + \" (ID: \" + voice_id + \")\")
+		tts.set_voice(voice_id)
+
+func _on_rate_slider_value_changed(value):
+	$Panel/VBoxContainer/RateContainer/RateValueLabel.text = str(value)
+	tts.set_rate(value)
+
+func _on_speak_button_pressed():
+	var text = $Panel/VBoxContainer/TextInputContainer/TextInput.text
+	if text.strip_edges() == \"\":
+		text = \"Please enter some text to speak.\"
+		$Panel/VBoxContainer/TextInputContainer/TextInput.text = text
+	
+	log_message(\"Speaking text: \" + text)
+	var result = tts.speak(text)
+	
+	if !result:
+		$Panel/VBoxContainer/StatusLabel.text = \"Failed to speak\"
+		log_message(\"Failed to speak text\", true)
+
+func _on_stop_button_pressed():
+	log_message(\"Stopping speech\")
+	tts.stop()
+
+func _on_test_voices_button_pressed():
+	# Test each voice with a simple phrase
+	log_message(\"Testing all voices...\")
+	
+	for i in range(voice_options.size()):
+		var voice = voice_options[i]
+		log_message(\"Testing voice: \" + voice.name)
+		
+		# Select the voice
+		tts.set_voice(voice.id)
+		
+		# Speak a test phrase
+		var success = tts.speak(\"This is a test of voice \" + str(i+1))
+		
+		if success:
+			log_message(\"Voice test started for \" + voice.name)
+		else:
+			log_message(\"Failed to test voice: \" + voice.name, true)
+		
+		# Wait for speech to complete
+		await tts.speech_ended
+		await get_tree().create_timer(0.5).timeout
+
+	log_message(\"Voice testing complete\")
+	$Panel/VBoxContainer/StatusLabel.text = \"Voice testing complete\"
+
+func _on_small_hello_button_pressed():
+	log_message(\"Speaking 'Hello'\")
+	tts.speak(\"Hello\")
+
+func log_message(message, is_error = false):
+	var timestamp = Time.get_time_string_from_system()
+	var log_text = $Panel/VBoxContainer/LogsContainer/LogsScroll/LogText
+	
+	var color = \"#AAFFAA\"
+	if is_error:
+		color = \"#FFAAAA\"
+		print(\"TTS ERROR: \" + message)
+	else:
+		print(\"TTS: \" + message)
+		
+	log_text.text += \"\\n[color=\" + color + \"][\" + timestamp + \"] \" + message + \"[/color]\"
+	
+	# Ensure we scroll to the bottom
+	await get_tree().process_frame
+	var scrollbar = $Panel/VBoxContainer/LogsContainer/LogsScroll.get_v_scroll_bar()
+	if scrollbar:
+		scrollbar.value = scrollbar.max_value
+"
+
+[node name="TTSTestScene" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = SubResource("GDScript_m57gp")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 50.0
+offset_top = 50.0
+offset_right = -50.0
+offset_bottom = -50.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+
+[node name="TitleLabel" type="Label" parent="Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_46mfp")
+theme_override_font_sizes/font_size = 32
+text = "Text-to-Speech Test"
+horizontal_alignment = 1
+
+[node name="StatusLabel" type="Label" parent="Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_46mfp")
+theme_override_font_sizes/font_size = 18
+text = "Initializing TTS..."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="HSeparator" type="HSeparator" parent="Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="VoiceContainer" type="HBoxContainer" parent="Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/VBoxContainer/VoiceContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("2_46mfp")
+theme_override_font_sizes/font_size = 18
+text = "Voice:"
+
+[node name="VoiceOptionButton" type="OptionButton" parent="Panel/VBoxContainer/VoiceContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+theme_override_fonts/font = ExtResource("2_46mfp")
+theme_override_font_sizes/font_size = 16
+
+[node name="RateContainer" type="HBoxContainer" parent="Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/VBoxContainer/RateContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("2_46mfp")
+theme_override_font_sizes/font_size = 18
+text = "Speech Rate:"
+
+[node name="RateSlider" type="HSlider" parent="Panel/VBoxContainer/RateContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+min_value = 0.1
+max_value = 2.0
+step = 0.1
+value = 0.8
+
+[node name="RateValueLabel" type="Label" parent="Panel/VBoxContainer/RateContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_46mfp")
+theme_override_font_sizes/font_size = 16
+text = "0.8"
+horizontal_alignment = 1
+
+[node name="TextInputContainer" type="VBoxContainer" parent="Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/VBoxContainer/TextInputContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_46mfp")
+theme_override_font_sizes/font_size = 18
+text = "Text to Speak:"
+
+[node name="TextInput" type="TextEdit" parent="Panel/VBoxContainer/TextInputContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_46mfp")
+theme_override_font_sizes/font_size = 16
+placeholder_text = "Type or paste text here..."
+wrap_mode = 1
+
+[node name="ButtonsContainer" type="HBoxContainer" parent="Panel/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="TestVoicesButton" type="Button" parent="Panel/VBoxContainer/ButtonsContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_46mfp")
+theme_override_font_sizes/font_size = 16
+text = "Test All Voices"
+
+[node name="SpeakButton" type="Button" parent="Panel/VBoxContainer/ButtonsContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_46mfp")
+theme_override_font_sizes/font_size = 16
+text = "🔊 Speak Text"
+
+[node name="StopButton" type="Button" parent="Panel/VBoxContainer/ButtonsContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_46mfp")
+theme_override_font_sizes/font_size = 16
+text = "⏹️ Stop"
+
+[node name="SmallHelloButton" type="Button" parent="Panel/VBoxContainer/ButtonsContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_46mfp")
+theme_override_font_sizes/font_size = 16
+text = "Say \"Hello\""
+
+[node name="LogsContainer" type="VBoxContainer" parent="Panel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Panel/VBoxContainer/LogsContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_46mfp")
+theme_override_font_sizes/font_size = 16
+text = "Debug Logs:"
+
+[node name="LogsScroll" type="ScrollContainer" parent="Panel/VBoxContainer/LogsContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="LogText" type="RichTextLabel" parent="Panel/VBoxContainer/LogsContainer/LogsScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_fonts/normal_font = ExtResource("2_46mfp")
+theme_override_font_sizes/normal_font_size = 14
+bbcode_enabled = true
+text = "[color=#AAFFAA]TTS Test initialized[/color]"
+fit_content = true
+scroll_following = true
+
+[connection signal="item_selected" from="Panel/VBoxContainer/VoiceContainer/VoiceOptionButton" to="." method="_on_voice_option_button_item_selected"]
+[connection signal="value_changed" from="Panel/VBoxContainer/RateContainer/RateSlider" to="." method="_on_rate_slider_value_changed"]
+[connection signal="pressed" from="Panel/VBoxContainer/ButtonsContainer/TestVoicesButton" to="." method="_on_test_voices_button_pressed"]
+[connection signal="pressed" from="Panel/VBoxContainer/ButtonsContainer/SpeakButton" to="." method="_on_speak_button_pressed"]
+[connection signal="pressed" from="Panel/VBoxContainer/ButtonsContainer/StopButton" to="." method="_on_stop_button_pressed"]
+[connection signal="pressed" from="Panel/VBoxContainer/ButtonsContainer/SmallHelloButton" to="." method="_on_small_hello_button_pressed"]

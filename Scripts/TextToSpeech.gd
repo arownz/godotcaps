@@ -4,6 +4,11 @@ class_name TextToSpeech
 signal voices_loaded
 signal speech_started
 signal speech_finished
+# Add these compatibility signals
+signal speech_ended 
+
+# Add this compatibility property
+var current_voice = ""
 
 var tts_available = false
 var voices = []
@@ -30,6 +35,7 @@ func _initialize_tts():
 	if voices.size() > 0:
 		# Select the first voice by default
 		selected_voice_id = voices[0]["id"]
+		current_voice = selected_voice_id  # Set compatibility property
 		print("TTS initialized with voice: ", voices[0]["name"])
 		
 		# Print all available voices for debugging
@@ -43,6 +49,7 @@ func _initialize_tts():
 	var english_voices = DisplayServer.tts_get_voices_for_language("en")
 	if english_voices.size() > 0:
 		selected_voice_id = english_voices[0]
+		current_voice = selected_voice_id  # Set compatibility property
 		print("Using English voice: ", selected_voice_id)
 	
 	# Signal that voices are loaded and ready
@@ -51,22 +58,36 @@ func _initialize_tts():
 func speak(text):
 	if !tts_available:
 		print("TTS not available")
-		return
+		return false
 		
 	if selected_voice_id == "":
 		print("No TTS voice selected")
-		return
+		return false
 		
 	if text.strip_edges() == "":
 		print("Cannot speak empty text")
-		return
+		return false
 	
-	# Fixed: Pass the required voice_id parameter - Godot requires at least these two parameters
+	# IMPORTANT: Call with only the required parameters that were working
 	print("Speaking text: ", text, " with voice: ", selected_voice_id)
 	DisplayServer.tts_speak(text, selected_voice_id)
 	
 	print("Speaking text with rate ", speech_rate, ": ", text)
 	speech_started.emit()
+	
+	# Create a simple timer to emit speech_ended after estimated duration
+	var timer = Timer.new()
+	add_child(timer)
+	timer.wait_time = 0.5 + (text.length() * 0.1)  # Simple estimate based on text length
+	timer.one_shot = true
+	timer.timeout.connect(func():
+		speech_finished.emit()
+		speech_ended.emit()  # Also emit the compatibility signal
+		timer.queue_free()
+	)
+	timer.start()
+	
+	return true
 
 func stop_speaking():
 	if !tts_available:
@@ -75,6 +96,11 @@ func stop_speaking():
 	# Stop all speech
 	DisplayServer.tts_stop()
 	speech_finished.emit()
+	speech_ended.emit()  # Also emit compatibility signal
+
+# Add stop method for compatibility
+func stop():
+	stop_speaking()
 
 # Get the list of available voices as a Dictionary for UI display
 func get_voice_list():
@@ -87,6 +113,7 @@ func get_voice_list():
 func set_voice(voice_id):
 	if voice_id in get_voice_list():
 		selected_voice_id = voice_id
+		current_voice = voice_id  # Set compatibility property
 		return true
 	return false
 
@@ -95,6 +122,7 @@ func set_voice_by_name(voice_name):
 	for voice in voices:
 		if voice["name"].to_lower().contains(voice_name.to_lower()):
 			selected_voice_id = voice["id"]
+			current_voice = selected_voice_id  # Set compatibility property
 			return true
 	return false
 

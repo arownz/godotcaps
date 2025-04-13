@@ -70,6 +70,13 @@ theme_override_fonts/font = ExtResource("2_ckebf")
 theme_override_font_sizes/font_size = 20
 text = "Clear"
 
+[node name="CancelButton" type="Button" parent="VBoxContainer/ButtonsContainer"]
+custom_minimum_size = Vector2(100, 50)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_ckebf")
+theme_override_font_sizes/font_size = 20
+text = "Cancel"
+
 [node name="DoneButton" type="Button" parent="VBoxContainer/ButtonsContainer"]
 custom_minimum_size = Vector2(120, 50)
 layout_mode = 2
@@ -82,4 +89,5 @@ text = "Done"
 [connection signal="pressed" from="VBoxContainer/ButtonsContainer/UndoButton" to="." method="_on_undo_button_pressed"]
 [connection signal="pressed" from="VBoxContainer/ButtonsContainer/RedoButton" to="." method="_on_redo_button_pressed"]
 [connection signal="pressed" from="VBoxContainer/ButtonsContainer/ClearButton" to="." method="_on_clear_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/ButtonsContainer/CancelButton" to="." method="_on_cancel_button_pressed"]
 [connection signal="pressed" from="VBoxContainer/ButtonsContainer/DoneButton" to="." method="_on_done_button_pressed"]

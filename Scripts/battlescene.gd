@@ -296,3 +296,20 @@ func _on_word_challenge_failed():
 # Used from inspector to change player skin
 func change_player_appearance(skin_name: String) -> bool:
 	return player_manager.change_player_skin(skin_name)
+
+func _resume_auto_battle():
+	# Re-enable the engage button
+	var engage_button = $MainContainer/RightContainer/MarginContainer/VBoxContainer/ButtonContainer/EngageButton
+	engage_button.visible = true
+	engage_button.disabled = false
+	engage_button.modulate = Color(1, 1, 1, 1) # 100% opacity
+	
+	# Also update the label
+	var engage_label = engage_button.get_node("EngageLabel")
+	if engage_label:
+		engage_label.modulate = Color(1, 1, 1, 1)
+	
+	# Resume auto battle after a small delay
+	await get_tree().create_timer(0.5).timeout
+	battle_active = true
+	_auto_battle_turn()

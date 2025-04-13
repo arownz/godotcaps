@@ -36,6 +36,7 @@ func _ready():
 	current_word = local_word_list[randi() % local_word_list.size()]
 	print("Initialized with fallback word: ", current_word)
 
+
 func fetch_random_word():
 	# Reset values
 	last_error = ""
@@ -58,7 +59,7 @@ func fetch_random_word():
 func _try_api_request():
 	# Different API endpoints to try
 	var apis = [
-		"https://api.datamuse.com/words?sp=?????&max=26"  # Try this API first (faster)
+		"https://api.datamuse.com/words?sp=?????&max=250"  # Try this API first (faster)
 	]
 	
 	# Choose an API endpoint - use the first one initially (datamuse)

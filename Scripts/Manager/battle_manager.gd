@@ -94,6 +94,7 @@ func _show_whiteboard_challenge():
 		# Connect signals
 		current_word_challenge.connect("challenge_completed", _on_word_challenge_completed)
 		current_word_challenge.connect("challenge_failed", _on_word_challenge_failed)
+		current_word_challenge.connect("challenge_cancelled", _on_challenge_cancelled)
 	else:
 		# Fallback if scene couldn't be loaded
 		print("ERROR: Could not load WordChallengePanel_Whiteboard.tscn")
@@ -121,6 +122,7 @@ func _show_speech_to_text_challenge():
 		# Connect signals
 		current_word_challenge.connect("challenge_completed", _on_word_challenge_completed)
 		current_word_challenge.connect("challenge_failed", _on_word_challenge_failed)
+		current_word_challenge.connect("challenge_cancelled", _on_challenge_cancelled)
 	else:
 		# Fallback if scene couldn't be loaded
 		print("ERROR: Could not load WordChallengePanel_STT.tscn")
@@ -226,6 +228,30 @@ func _on_word_challenge_failed():
 	
 	# Continue battle
 	battle_scene.auto_battle_timer.start()
+
+func _on_challenge_cancelled():
+	# Log the cancellation to the battle log
+	battle_scene.log_manager.add_cancellation_message()
+	
+	# Reset enemy skill meter to 50% since the challenge was cancelled
+	battle_scene.enemy_manager.enemy_skill_meter = 50
+	battle_scene.ui_manager.update_enemy_skill_meter()
+	
+	# Hide the enemy skill label
+	battle_scene.get_node("MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer/EnemySkillLabel").visible = false
+	
+	# Remove the challenge overlay
+	var overlay = battle_scene.get_node_or_null("ChallengeOverlay")
+	if overlay:
+		overlay.queue_free()
+	
+	# Clean up the challenge panel
+	if current_word_challenge:
+		current_word_challenge.queue_free()
+		current_word_challenge = null
+		
+	# Notify the challenge manager to handle cancellation
+	battle_scene.challenge_manager.handle_challenge_cancelled()
 
 func handle_victory():
 	# Award experience points based on enemy type
