@@ -104,9 +104,9 @@ func _on_drawing_submitted(text_result):
 		return
 	
 	if recognized_text == "recognition_error" or recognized_text == "recognition_fallback":
-		# Try again
-		api_status_label.text = "Recognition error, please try again"
-		await get_tree().create_timer(1.5).timeout
+		# Try again with better prompt
+		api_status_label.text = "Recognition error. Please write '" + target_word + "' more clearly"
+		await get_tree().create_timer(2.0).timeout
 		api_status_label.text = ""
 		return
 	
@@ -122,8 +122,8 @@ func _on_drawing_submitted(text_result):
 	# Calculate similarity for non-exact matches
 	var similarity = calculate_word_similarity(recognized_text, target_word)
 	
-	# Make the threshold more strict - require at least 85% similarity
-	if similarity >= 0.85:
+	# Make the threshold more lenient for dyslexia support - requiring 70% similarity
+	if similarity >= 0.7:
 		# Close enough match for dyslexia support
 		api_status_label.text = "Good enough! (Similarity: " + str(int(similarity * 100)) + "%)"
 		emit_signal("challenge_completed", bonus_damage)
@@ -153,7 +153,7 @@ func _on_drawing_submitted(text_result):
 func calculate_word_similarity(word1, word2):
 	# For completely different length words, reduce similarity
 	var length_diff = abs(word1.length() - word2.length())
-	if length_diff > 2:
+	if length_diff > 3:
 		return 0.0
 		
 	# Convert to arrays for easier manipulation
@@ -169,6 +169,15 @@ func calculate_word_similarity(word1, word2):
 		"b": "d", "d": "b",  # b-d confusion
 		"p": "q", "q": "p",  # p-q confusion
 		"m": "w", "w": "m",  # m-w confusion
+		"n": "u", "u": "n",  # n-u confusion
+	}
+	
+	# Add phonetic similarity - letters that sound similar
+	var phonetic_similar = {
+		"f": "v", "v": "f",
+		"s": "z", "z": "s",
+		"g": "j", "j": "g",
+		"c": "k", "k": "c",
 	}
 	
 	# Compare characters allowing for common dyslexic swaps and transpositions
@@ -181,13 +190,16 @@ func calculate_word_similarity(word1, word2):
 			var ch1_char = char(ch1)
 			var ch2_char = char(ch2)
 			if common_swaps.has(ch1_char) and common_swaps[ch1_char] == ch2_char:
-				# Count dyslexic swaps as 0.5 distance instead of 1
+				# Count dyslexic swaps as 0.25 distance instead of 1
+				distance += 0.25
+			elif phonetic_similar.has(ch1_char) and phonetic_similar[ch1_char] == ch2_char:
+				# Count phonetic similarities as 0.5 distance
 				distance += 0.5
 			else:
 				distance += 1.0
 	
-	# Add penalty for length difference
-	distance += length_diff
+	# Add smaller penalty for length difference
+	distance += (length_diff * 0.5)
 	
 	# Calculate similarity (0 to 1)
 	var similarity = 1.0 - (distance / max_length) if max_length > 0 else 0.0

@@ -6,6 +6,7 @@ signal speech_started
 signal speech_finished
 # Add these compatibility signals
 signal speech_ended 
+signal speech_error  # Missing signal that needs to be added
 
 # Add this compatibility property
 var current_voice = ""
@@ -58,18 +59,23 @@ func _initialize_tts():
 func speak(text):
 	if !tts_available:
 		print("TTS not available")
+		speech_error.emit("TTS not available on this platform")
 		return false
 		
 	if selected_voice_id == "":
 		print("No TTS voice selected")
+		speech_error.emit("No voice selected")
 		return false
 		
 	if text.strip_edges() == "":
 		print("Cannot speak empty text")
+		speech_error.emit("Cannot speak empty text")
 		return false
 	
 	# IMPORTANT: Call with only the required parameters that were working
 	print("Speaking text: ", text, " with voice: ", selected_voice_id)
+	
+	# Try to speak - but don't try to capture return value since it's void
 	DisplayServer.tts_speak(text, selected_voice_id)
 	
 	print("Speaking text with rate ", speech_rate, ": ", text)
@@ -91,10 +97,12 @@ func speak(text):
 
 func stop_speaking():
 	if !tts_available:
+		speech_error.emit("TTS not available")
 		return
 		
-	# Stop all speech
+	# Stop all speech - but don't try to capture return value
 	DisplayServer.tts_stop()
+	
 	speech_finished.emit()
 	speech_ended.emit()  # Also emit compatibility signal
 
@@ -115,6 +123,8 @@ func set_voice(voice_id):
 		selected_voice_id = voice_id
 		current_voice = voice_id  # Set compatibility property
 		return true
+	
+	speech_error.emit("Invalid voice ID: " + voice_id)
 	return false
 
 # Set the voice by name or partial name match

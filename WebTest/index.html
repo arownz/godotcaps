@@ -306,6 +306,186 @@ body {
 			}
 		});
 	</script>
+	<!-- Add this inside the existing script tag after the recognizeHandwriting function -->
+<script>
+	// Initialize Tesseract.js properly with a serializable logger
+	document.addEventListener('DOMContentLoaded', function () {
+		// Verify Tesseract is loaded
+		if (typeof Tesseract !== 'undefined') {
+			console.log("Tesseract.js loaded successfully!");
+
+			// Pre-load the English language model with fixed serializable logger
+			Tesseract.createWorker({
+				// Use a simpler logger that can be serialized
+				logger: function(m) { 
+					if (m.status === 'recognizing text') {
+						console.log('OCR progress:', Math.round(m.progress * 100) + '%');
+					} else {
+						console.log('OCR:', m.status);
+					}
+				}
+			}).then(worker => {
+				window.tesseractWorker = worker;
+				console.log("Tesseract worker created");
+				worker.load().then(() => {
+					worker.loadLanguage('eng').then(() => {
+						worker.initialize('eng').then(() => {
+							console.log("Tesseract initialized and ready for handwriting recognition");
+						});
+					});
+				});
+			});
+
+			// Initialize handwriting recognition functionality
+			window.recognizeHandwriting = function (imageData, canvasWidth, canvasHeight) {
+				return new Promise((resolve, reject) => {
+					// Create a canvas to process the image
+					const canvas = document.createElement('canvas');
+					canvas.width = canvasWidth;
+					canvas.height = canvasHeight;
+					const ctx = canvas.getContext('2d');
+
+					const img = new Image();
+					img.onload = function () {
+						// Draw image on white background
+						ctx.fillStyle = 'white';
+						ctx.fillRect(0, 0, canvas.width, canvas.height);
+						ctx.drawImage(img, 0, 0);
+
+						// Process image for better recognition
+						const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+						const data = imageData.data;
+
+						// Apply stronger thresholding and contrast enhancement
+						for (let i = 0; i < data.length; i += 4) {
+							const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+							// More aggressive thresholding
+							const val = avg < 200 ? 0 : 255; // Increased threshold to make even faint lines black
+							data[i] = data[i + 1] = data[i + 2] = val;
+						}
+						ctx.putImageData(imageData, 0, 0);
+
+						// Display debug image if testing
+						// Uncomment for debugging:
+						/*
+						const debugImg = document.createElement('img');
+						debugImg.src = canvas.toDataURL('image/png');
+						debugImg.style.position = 'fixed';
+						debugImg.style.bottom = '10px';
+						debugImg.style.right = '10px';
+						debugImg.style.width = '200px';
+						debugImg.style.border = '2px solid red';
+						debugImg.style.zIndex = '1000';
+						document.body.appendChild(debugImg);
+						*/
+
+						// Recognize text with Tesseract
+						if (window.tesseractWorker) {
+							// Set Tesseract options to optimize for handwriting
+							const tesseractOptions = {
+								lang: 'eng',
+								tessedit_char_whitelist: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
+								// Improved handwriting recognition settings
+								preserve_interword_spaces: '1',
+								tessedit_pageseg_mode: '8', // Treat as a single word
+								tessjs_create_hocr: '0',
+								tessjs_create_tsv: '0',
+								tessjs_create_box: '0',
+								tessedit_do_invert: '0',
+								tessedit_char_blacklist: '|=_-+<>[]{}',
+							};
+
+							console.log("Starting OCR recognition...");
+							console.log("Challenge word:", window.currentChallengeWord);
+
+							window.tesseractWorker.recognize(canvas.toDataURL('image/png'), tesseractOptions).then(result => {
+								console.log("OCR Result:", result);
+
+								// Check if the confidence is too low
+								if (result.data.confidence < 20) {
+									console.warn("Low confidence OCR result:", result.data.confidence);
+									resolve("recognition_error");
+									return;
+								}
+
+								// Extract the text from the OCR result
+								let text = result.data.text.trim();
+
+								// Enhanced post-processing
+								// Remove line breaks, special characters, and extra spaces
+								text = text.replace(/[\r\n]+/g, ' ');
+								text = text.replace(/[^a-zA-Z0-9 ]/g, '');
+								text = text.replace(/\s+/g, ' ').trim();
+
+								// If result is multiple words, take the first word
+								const words = text.split(/\s+/);
+								if (words.length > 0 && words[0].length > 0) {
+									text = words[0].toLowerCase(); // Convert to lowercase for consistent matching
+									console.log("Final recognized text:", text);
+								} else {
+									text = "recognition_error";
+								}
+
+								// Log the original challenge word and the recognized word for debugging
+								console.log("Challenge word (expected):", window.currentChallengeWord || "unknown");
+								console.log("OCR recognized word:", text);
+
+								resolve(text);
+							}).catch(err => {
+								console.error("OCR error:", err);
+								resolve("recognition_error");
+							});
+						} else {
+							console.warn("Tesseract worker not initialized, using fallback");
+							resolve("recognition_fallback");
+						}
+					};
+
+					img.onerror = function (err) {
+						console.error("Failed to load image for recognition:", err);
+						reject(err);
+					};
+
+					img.src = 'data:image/png;base64,' + imageData;
+				});
+			};
+		} else {
+			console.warn("Tesseract.js not loaded - handwriting recognition will use fallback method");
+		}
+	});
+
+	// Add this debugging function to test Tesseract directly
+	window.testTesseract = function(testWord) {
+		console.log("Testing Tesseract.js with word:", testWord || "test");
+		
+		// Log Tesseract status
+		console.log("Tesseract available:", typeof Tesseract !== 'undefined');
+		console.log("tesseractWorker available:", typeof window.tesseractWorker !== 'undefined');
+		
+		// Log current challenge word
+		console.log("Current challenge word:", window.currentChallengeWord || "not set");
+		
+		// Try to initialize worker if needed
+		if (typeof Tesseract !== 'undefined' && typeof window.tesseractWorker === 'undefined') {
+			console.log("Initializing Tesseract worker...");
+			// Use a serializable logger
+			Tesseract.createWorker({
+				logger: function(m) { console.log('OCR:', m.status); }
+			}).then(worker => {
+				window.tesseractWorker = worker;
+				worker.load().then(() => {
+					worker.loadLanguage('eng').then(() => {
+						worker.initialize('eng').then(() => {
+							console.log("Tesseract worker initialized on demand");
+						});
+					});
+				});
+			});
+		}
+		
+		return "Tesseract test initiated - check console for results";
+	};
+</script>
 	</head>
 	<body>
 		<canvas id="canvas">

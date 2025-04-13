@@ -1,6 +1,18 @@
-[gd_scene load_steps=2 format=3 uid="uid://d36ytiqg31edd"]
+[gd_scene load_steps=14 format=3 uid="uid://d36ytiqg31edd"]
 
 [ext_resource type="Script" uid="uid://datbxxer3mwvc" path="res://Scripts/mainmenu.gd" id="1_tt5f1"]
+[ext_resource type="Texture2D" uid="uid://ckkds573c15wj" path="res://gui/Backgrounds/Main_menu_Background.png" id="2_kpa4r"]
+[ext_resource type="Texture2D" uid="uid://dljqigmy8f7k6" path="res://Sprites/Player/player.png" id="3_4k22p"]
+[ext_resource type="Texture2D" uid="uid://b8wrg4f34l05q" path="res://gui/MainMenu/small button.png" id="4_pv8c5"]
+[ext_resource type="Texture2D" uid="uid://d1ojbvrecs4o1" path="res://gui/MainMenu/long button.png" id="5_enwt5"]
+[ext_resource type="Texture2D" uid="uid://cn716b8kx5vgr" path="res://gui/energy.png" id="6_7q2f4"]
+[ext_resource type="Texture2D" uid="uid://dxy5okvgwlv6o" path="res://gui/learning modules.png" id="7_3ylv5"]
+[ext_resource type="Texture2D" uid="uid://dmghej0q84au7" path="res://gui/MainMenu/Change Character.png" id="8_q05ub"]
+[ext_resource type="Texture2D" uid="uid://cgs6saoh3771b" path="res://gui/journey mode.png" id="9_ndgqr"]
+[ext_resource type="Texture2D" uid="uid://0pd5aetjcpr6" path="res://gui/leaderboards.png" id="10_vgdm8"]
+[ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="11_qm2o7"]
+[ext_resource type="Texture2D" uid="uid://m6ls0r18o3xg" path="res://gui/settings.png" id="12_q0r2p"]
+[ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="13_uaqt0"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -11,35 +23,394 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_tt5f1")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
-custom_minimum_size = Vector2(300, 0)
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_kpa4r")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="TitleContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 13.0
+offset_top = 78.0
+offset_right = 13.0
+offset_bottom = 290.0
+grow_horizontal = 2
+theme_override_constants/margin_top = 30
+
+[node name="TitleLabel" type="Label" parent="TitleContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 8
+theme_override_fonts/font = ExtResource("13_uaqt0")
+theme_override_font_sizes/font_size = 110
+text = "LEXIA"
+horizontal_alignment = 1
+
+[node name="CharacterArea" type="Control" parent="."]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -50.5
-offset_top = -27.5
-offset_right = 50.5
-offset_bottom = 27.5
+offset_left = -150.0
+offset_top = -200.0
+offset_right = 150.0
+offset_bottom = 100.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 20
 
-[node name="Label" type="Label" parent="VBoxContainer"]
+[node name="PlayerCharacter" type="TextureRect" parent="CharacterArea"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -244.0
+offset_top = -53.0
+offset_right = -6.0
+offset_bottom = 230.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_4k22p")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ProfileButton" type="TextureButton" parent="."]
+layout_mode = 0
+offset_left = -19.0
+offset_top = 39.0
+offset_right = 218.0
+offset_bottom = 119.0
+texture_normal = ExtResource("4_pv8c5")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ProfileButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 5.0
+offset_right = -10.0
+offset_bottom = -5.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="AvatarBackground" type="ColorRect" parent="ProfileButton/HBoxContainer"]
+custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
-theme_override_font_sizes/font_size = 40
-text = "Main Menu"
+size_flags_vertical = 4
+color = Color(0.054902, 0.27451, 0.47451, 0.501961)
+metadata/_edit_use_anchors_ = true
+
+[node name="AvatarLabel" type="Label" parent="ProfileButton/HBoxContainer/AvatarBackground"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("13_uaqt0")
+theme_override_font_sizes/font_size = 24
+text = "P"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ProfileButton"]
+layout_mode = 2
+offset_left = 167.0
+offset_top = 8.0
+offset_right = 327.0
+offset_bottom = 78.0
+size_flags_horizontal = 3
+theme_override_constants/separation = 5
+alignment = 1
+
+[node name="NameLabel" type="Label" parent="ProfileButton/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("11_qm2o7")
+theme_override_font_sizes/font_size = 18
+text = "Loading..."
+vertical_alignment = 1
+clip_text = true
+
+[node name="LevelLabel" type="Label" parent="ProfileButton/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("11_qm2o7")
+theme_override_font_sizes/font_size = 16
+text = "LVL: 1"
+vertical_alignment = 1
+
+[node name="EnergyDisplay" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -198.0
+offset_top = 44.0
+offset_right = -42.0
+offset_bottom = 103.0
+grow_horizontal = 0
+alignment = 1
+
+[node name="EnergyIcon" type="TextureRect" parent="EnergyDisplay"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+size_flags_vertical = 4
+texture = ExtResource("6_7q2f4")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="EnergyLabel" type="Label" parent="EnergyDisplay"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.933333, 0.788235, 0.0352941, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("13_uaqt0")
+theme_override_font_sizes/font_size = 32
+text = "99/99"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BottomButtonsContainer" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -150.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="ModulesButton" type="TextureButton" parent="BottomButtonsContainer"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -120.0
+offset_right = 150.0
+offset_bottom = -20.0
+grow_vertical = 0
+texture_normal = ExtResource("4_pv8c5")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="IconContainer" type="CenterContainer" parent="BottomButtonsContainer/ModulesButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ModulesIcon" type="TextureRect" parent="BottomButtonsContainer/ModulesButton/IconContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+texture = ExtResource("7_3ylv5")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ModulesLabel" type="Label" parent="BottomButtonsContainer/ModulesButton"]
+visible = false
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -57.5
+offset_top = -30.0
+offset_right = 57.5
+offset_bottom = -3.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.054902, 0.27451, 0.47451, 1)
+theme_override_colors/font_shadow_color = Color(1, 1, 1, 1)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_fonts/font = ExtResource("11_qm2o7")
+theme_override_font_sizes/font_size = 18
+text = "Learning Modules"
 horizontal_alignment = 1
 
-[node name="LogoutButton" type="Button" parent="VBoxContainer"]
-layout_mode = 2
-text = "Logout"
+[node name="CharacterButton" type="TextureButton" parent="BottomButtonsContainer"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 444.0
+offset_top = -121.0
+offset_right = 574.0
+offset_bottom = -21.0
+grow_vertical = 0
+texture_normal = ExtResource("4_pv8c5")
+ignore_texture_size = true
+stretch_mode = 5
 
-[node name="JourneyModeButton" type="Button" parent="VBoxContainer"]
-layout_mode = 2
-text = "Start Journey Mode"
+[node name="IconContainer" type="CenterContainer" parent="BottomButtonsContainer/CharacterButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
-[connection signal="pressed" from="VBoxContainer/LogoutButton" to="." method="_on_logout_button_pressed"]
-[connection signal="pressed" from="VBoxContainer/JourneyModeButton" to="." method="_on_journey_mode_button_pressed"]
+[node name="CharacterIcon" type="TextureRect" parent="BottomButtonsContainer/CharacterButton/IconContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+texture = ExtResource("8_q05ub")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="CharacterLabel" type="Label" parent="BottomButtonsContainer/CharacterButton"]
+visible = false
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -57.5
+offset_top = -30.0
+offset_right = 57.5
+offset_bottom = -3.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.054902, 0.27451, 0.47451, 1)
+theme_override_colors/font_shadow_color = Color(1, 1, 1, 1)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_fonts/font = ExtResource("11_qm2o7")
+theme_override_font_sizes/font_size = 18
+text = "Change Character"
+horizontal_alignment = 1
+
+[node name="JourneyButton" type="TextureButton" parent="BottomButtonsContainer"]
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -130.0
+offset_top = -120.0
+offset_right = 130.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 0
+texture_normal = ExtResource("5_enwt5")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="HBoxContainer" type="HBoxContainer" parent="BottomButtonsContainer/JourneyButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="JourneyIcon" type="TextureRect" parent="BottomButtonsContainer/JourneyButton/HBoxContainer"]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+size_flags_vertical = 4
+texture = ExtResource("9_ndgqr")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="LeaderboardButton" type="TextureButton" parent="BottomButtonsContainer"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -580.0
+offset_top = -121.0
+offset_right = -450.0
+offset_bottom = -21.0
+grow_horizontal = 0
+grow_vertical = 0
+texture_normal = ExtResource("4_pv8c5")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="IconContainer" type="CenterContainer" parent="BottomButtonsContainer/LeaderboardButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LeaderboardIcon" type="TextureRect" parent="BottomButtonsContainer/LeaderboardButton/IconContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+texture = ExtResource("10_vgdm8")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="LeaderboardLabel" type="Label" parent="BottomButtonsContainer/LeaderboardButton"]
+visible = false
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -57.5
+offset_top = -30.0
+offset_right = 57.5
+offset_bottom = -3.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.054902, 0.27451, 0.47451, 1)
+theme_override_colors/font_shadow_color = Color(1, 1, 1, 1)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_fonts/font = ExtResource("11_qm2o7")
+theme_override_font_sizes/font_size = 18
+text = "Leaderboard"
+horizontal_alignment = 1
+
+[node name="SettingsButton" type="TextureButton" parent="BottomButtonsContainer"]
+layout_mode = 0
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -150.0
+offset_top = -120.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 0
+grow_vertical = 0
+texture_normal = ExtResource("4_pv8c5")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="IconContainer" type="CenterContainer" parent="BottomButtonsContainer/SettingsButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SettingsIcon" type="TextureRect" parent="BottomButtonsContainer/SettingsButton/IconContainer"]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+texture = ExtResource("12_q0r2p")
+expand_mode = 1
+stretch_mode = 5

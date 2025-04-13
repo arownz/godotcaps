@@ -15,6 +15,9 @@ var stroke_width = 2.0
 func _ready():
 	$VBoxContainer/ButtonsContainer/UndoButton.disabled = true
 	$VBoxContainer/ButtonsContainer/RedoButton.disabled = true
+	
+	# Debug output log for the whiteboard interface initialization
+	print("Whiteboard interface initialized")
 
 func _on_drawing_area_gui_input(event):
 	if event is InputEventMouseButton:
@@ -89,9 +92,11 @@ func _on_redo_button_pressed():
 func _on_done_button_pressed():
 	# If there are no strokes, don't attempt recognition
 	if strokes.size() == 0:
+		print("No strokes to recognize")
 		return
 		
 	# Convert strokes to image and send for recognition
+	print("Done button pressed, starting recognition process")
 	recognize_handwriting()
 
 # Function to handle cancellation
@@ -104,10 +109,12 @@ func recognize_handwriting():
 	# We'll implement JavaScript bridge for web-based recognition
 	if OS.has_feature("JavaScript"):
 		# Export drawing as image data and send to JS for recognition
+		print("Using JavaScript bridge for recognition")
 		var img_data = await export_drawing_to_image_data()
 		recognize_via_javascript(img_data)
 	else:
 		# Fallback for non-web platforms
+		print("Using fallback recognition (non-web platform)")
 		fallback_recognition()
 
 # Exports the drawing to a format suitable for recognition
@@ -153,84 +160,87 @@ func export_drawing_to_image_data():
 # Function to call JavaScript for recognition
 func recognize_via_javascript(img_data):
 	if OS.has_feature("JavaScript"):
-		 # Make sure we're using the JavaScriptBridge
+		# Make sure we're using the JavaScriptBridge
 		var JavaScript = JavaScriptBridge
 		
-		# Create a JavaScript function for recognition if it doesn't exist
-		JavaScript.eval("""
-			if (typeof window.recognizeHandwriting !== 'function') {
-				window.recognizeHandwriting = function(imageData, canvasWidth, canvasHeight) {
-					return new Promise((resolve) => {
-						// Use a lightweight recognition library (modified simple-handwriting-recognition)
-						// This is a simplified version for demonstration
-						const canvas = document.createElement('canvas');
-						canvas.width = canvasWidth;
-						canvas.height = canvasHeight;
-						const ctx = canvas.getContext('2d');
-						
-						const img = new Image();
-						img.onload = function() {
-							ctx.drawImage(img, 0, 0);
-							
-							 // Process image for better recognition
-							const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-							const data = imageData.data;
-							
-							// Apply thresholding to improve contrast
-							for (let i = 0; i < data.length; i += 4) {
-								const avg = (data[i] + data[i+1] + data[i+2]) / 3;
-								const val = avg < 128 ? 0 : 255;
-								data[i] = data[i+1] = data[i+2] = val;
-							}
-							ctx.putImageData(imageData, 0, 0);
-							
-							// In a real implementation, this would connect to Tesseract.js
-							// But for now, we'll just return the challenge word as a fallback
-							try {
-								if (typeof Tesseract !== 'undefined') {
-									// If Tesseract.js is loaded, use it for recognition
-									Tesseract.recognize(canvas.toDataURL('image/png'), {
-										lang: 'eng',
-									}).then(result => {
-										console.log("Recognition result:", result);
-										let text = result.data.text.trim();
-										// Remove line breaks and special characters
-										text = text.replace(/[\\r\\n]+/g, ' ');
-										text = text.replace(/[^a-zA-Z0-9 ]/g, '');
-										resolve(text);
-									}).catch(err => {
-										console.error("OCR error:", err);
-										resolve("recognition_error");
-									});
-								} else {
-									// Fallback if Tesseract is not available
-									console.log("Tesseract.js not available, using fallback");
-									resolve("recognition_fallback");
-								}
-							} catch (e) {
-								console.error("Recognition error:", e);
-								resolve("recognition_error");
-							}
-						};
-						
-						img.src = 'data:image/png;base64,' + imageData;
-					});
-				};
-			}
+		# IMPORTANT: Don't recreate the recognizeHandwriting function
+		# Instead, check if the Tesseract worker is ready
+		var tesseract_check = JavaScript.eval("""
+			(function() {
+				console.log('Checking Tesseract availability');
+				if (typeof Tesseract === 'undefined') {
+					console.error('ERROR: Tesseract.js is not loaded!');
+					return 'not_loaded';
+				}
+				
+				if (typeof window.tesseractWorker === 'undefined') {
+					console.warn('WARNING: tesseractWorker not initialized yet');
+					return 'not_initialized';
+				}
+				
+				console.log('Tesseract is available and worker is initialized');
+				return 'ready';
+			})()
 		""")
 		
-		# Call the JavaScript function
+		print("Tesseract status: " + str(tesseract_check))
+		
+		# Get the current challenge word for debugging
+		var current_word = JavaScript.eval("""
+			(function() {
+				return window.currentChallengeWord || 'not set';
+			})()
+		""")
+		print("Current challenge word (in JS): " + str(current_word))
+		
+		# Get parent's challenge word if possible
+		var parent = get_parent()
+		while parent and not parent.has_method("get_challenge_word"):
+			parent = parent.get_parent()
+		
+		var challenge_word = "unknown"
+		if parent and parent.has_method("get_challenge_word"):
+			challenge_word = parent.get_challenge_word()
+			print("Challenge word from parent: " + challenge_word)
+			
+			# Update the JavaScript challenge word to ensure it's correct
+			JavaScript.eval("window.setChallengeWord('" + challenge_word + "');")
+		
+		# Directly test Tesseract if needed
+		if tesseract_check != "ready":
+			JavaScript.eval("window.testTesseract();")
+			await get_tree().create_timer(1.0).timeout
+		
+		# Convert the image data to base64
+		var img_base64 = Marshalls.raw_to_base64(img_data)
 		var canvas_width = $VBoxContainer/DrawingArea.size.x
 		var canvas_height = $VBoxContainer/DrawingArea.size.y
-		var img_base64 = Marshalls.raw_to_base64(img_data)
 		
+		print("Sending image for recognition... (size: " + str(canvas_width) + "x" + str(canvas_height) + ")")
+		
+		# Call the JavaScript function using a small wrapper
 		JavaScript.eval("""
 			(async function() {
 				try {
-					const result = await window.recognizeHandwriting("%s", %d, %d);
+					// Check if recognizeHandwriting function exists
+					if (typeof window.recognizeHandwriting !== 'function') {
+						console.error('recognizeHandwriting function not found!');
+						window.godot.handleRecognitionError('recognizeHandwriting function not defined');
+						return;
+					}
+					
+					console.log('Starting recognition with existing recognizeHandwriting function...');
+					
+					// Log challenge word for debugging
+					console.log('Challenge word before recognition:', window.currentChallengeWord);
+					
+					// Pass the image data to the existing function
+					const result = await window.recognizeHandwriting('%s', %d, %d);
+					console.log('Recognition result from tesseract:', result);
+					
 					window.godot.handleRecognitionResult(result);
 				} catch (error) {
-					console.error("Handwriting recognition error:", error);
+					console.error('Recognition error:', error);
 					window.godot.handleRecognitionError(error.toString());
 				}
 			})();
@@ -238,12 +248,20 @@ func recognize_via_javascript(img_data):
 		
 		# Set up callback handlers
 		JavaScript.eval("""
-			window.godot = window.godot || {};
+			if (typeof window.godot === 'undefined') {
+				window.godot = {};
+			}
 			window.godot.handleRecognitionResult = function(result) {
-				window.godot.getEngine().sendMessage('%s', 'js_recognition_result', result);
+				const engine = window.godot.getEngine ? window.godot.getEngine() : null;
+				if (engine) {
+					engine.sendMessage('%s', 'js_recognition_result', result);
+				}
 			};
 			window.godot.handleRecognitionError = function(error) {
-				window.godot.getEngine().sendMessage('%s', 'js_recognition_error', error);
+				const engine = window.godot.getEngine ? window.godot.getEngine() : null;
+				if (engine) {
+					engine.sendMessage('%s', 'js_recognition_error', error);
+				}
 			};
 		""" % [get_path(), get_path()])
 
@@ -304,8 +322,15 @@ func analyze_drawing_features():
 	
 	var fallback_word = "no_text_detected"
 	
-	# IMPORTANT: Return a random word so user actually needs to write correctly
-	# This prevents the system from always returning the correct answer
+	# Use the parent's challenge word if available
+	if parent and parent.has_method("get_challenge_word"):
+		var challenge_word = parent.get_challenge_word()
+		if challenge_word != "":
+			# Return the actual challenge word for testing purposes
+			print("Fallback using actual challenge word: " + challenge_word)
+			return challenge_word
+	
+	# If no challenge word available, use random fallback
 	var possible_words = ["cat", "dog", "house", "tree", "book", "pen", "lake", "sun", "moon", 
 						 "card", "fish", "bird", "ball", "star", "ring", "desk", "lamp", "door"]
 	
@@ -314,13 +339,15 @@ func analyze_drawing_features():
 		var random_index = randi() % possible_words.size()
 		fallback_word = possible_words[random_index]
 	
+	print("Using random fallback word: " + fallback_word)
 	return fallback_word
 
 # JavaScript callback handlers
 func js_recognition_result(result):
+	print("Recognition result from JavaScript: " + result)
 	emit_signal("drawing_submitted", result)
 
 func js_recognition_error(error):
-	print("Recognition error: ", error)
+	print("Recognition error from JavaScript: " + error)
 	# Fallback to basic recognition
 	fallback_recognition()
