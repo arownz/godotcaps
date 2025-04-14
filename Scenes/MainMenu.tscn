@@ -88,9 +88,9 @@ stretch_mode = 5
 
 [node name="ProfileButton" type="TextureButton" parent="."]
 layout_mode = 0
-offset_left = -19.0
+offset_left = 20.0
 offset_top = 39.0
-offset_right = 218.0
+offset_right = 260.0
 offset_bottom = 119.0
 texture_normal = ExtResource("4_pv8c5")
 ignore_texture_size = true
@@ -101,17 +101,17 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 10.0
-offset_top = 5.0
-offset_right = -10.0
-offset_bottom = -5.0
+offset_left = 88.0
+offset_top = 3.0
+offset_right = 73.0
+offset_bottom = -3.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 10
 alignment = 1
 
 [node name="AvatarBackground" type="ColorRect" parent="ProfileButton/HBoxContainer"]
-custom_minimum_size = Vector2(50, 50)
+custom_minimum_size = Vector2(65, 60)
 layout_mode = 2
 size_flags_vertical = 4
 color = Color(0.054902, 0.27451, 0.47451, 0.501961)
@@ -131,17 +131,13 @@ text = "P"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="VBoxContainer" type="VBoxContainer" parent="ProfileButton"]
+[node name="VBoxContainer" type="VBoxContainer" parent="ProfileButton/HBoxContainer"]
 layout_mode = 2
-offset_left = 167.0
-offset_top = 8.0
-offset_right = 327.0
-offset_bottom = 78.0
-size_flags_horizontal = 3
-theme_override_constants/separation = 5
+size_flags_horizontal = 2
+theme_override_constants/separation = 10
 alignment = 1
 
-[node name="NameLabel" type="Label" parent="ProfileButton/VBoxContainer"]
+[node name="NameLabel" type="Label" parent="ProfileButton/HBoxContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -151,13 +147,26 @@ text = "Loading..."
 vertical_alignment = 1
 clip_text = true
 
-[node name="LevelLabel" type="Label" parent="ProfileButton/VBoxContainer"]
+[node name="LevelContainer" type="HBoxContainer" parent="ProfileButton/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="LevelPrefixLabel" type="Label" parent="ProfileButton/HBoxContainer/VBoxContainer/LevelContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("11_qm2o7")
 theme_override_font_sizes/font_size = 16
-text = "LVL: 1"
+text = "LVL:"
+vertical_alignment = 1
+
+[node name="LevelLabel" type="Label" parent="ProfileButton/HBoxContainer/VBoxContainer/LevelContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("11_qm2o7")
+theme_override_font_sizes/font_size = 16
+text = "1"
 vertical_alignment = 1
 
 [node name="EnergyDisplay" type="HBoxContainer" parent="."]
@@ -197,6 +206,7 @@ anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 117.0
 offset_top = -150.0
 grow_horizontal = 2
 grow_vertical = 0
@@ -255,9 +265,9 @@ layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_left = 444.0
+offset_left = 376.0
 offset_top = -121.0
-offset_right = 574.0
+offset_right = 506.0
 offset_bottom = -21.0
 grow_vertical = 0
 texture_normal = ExtResource("4_pv8c5")
@@ -339,9 +349,9 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -580.0
+offset_left = -505.0
 offset_top = -121.0
-offset_right = -450.0
+offset_right = -375.0
 offset_bottom = -21.0
 grow_horizontal = 0
 grow_vertical = 0
@@ -385,14 +395,15 @@ text = "Leaderboard"
 horizontal_alignment = 1
 
 [node name="SettingsButton" type="TextureButton" parent="BottomButtonsContainer"]
-layout_mode = 0
+layout_mode = 1
+anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -150.0
+offset_left = -230.0
 offset_top = -120.0
-offset_right = -20.0
+offset_right = -100.0
 offset_bottom = -20.0
 grow_horizontal = 0
 grow_vertical = 0

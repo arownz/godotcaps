@@ -1,0 +1,32 @@
+[gd_scene load_steps=3 format=3 uid="uid://bysyq46j6ycis"]
+
+[ext_resource type="Texture2D" uid="uid://ccdwoylh104gc" path="res://gui/ProfileScene/ui 8.png" id="1_mn5kv"]
+[ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="2_73kok"]
+
+[node name="ProfilePopUp" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="Transparent_ColorRect" type="ColorRect" parent="."]
+layout_mode = 0
+offset_right = 1459.0
+offset_bottom = 812.0
+color = Color(1, 1, 1, 0.176471)
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 341.0
+offset_top = 61.0
+offset_right = 1118.0
+offset_bottom = 766.0
+texture = ExtResource("1_mn5kv")
+
+[node name="Label" type="Label" parent="TextureRect"]
+layout_mode = 0
+offset_left = 232.0
+offset_top = 43.0
+offset_right = 559.0
+offset_bottom = 134.0
+theme_override_fonts/font = ExtResource("2_73kok")
+theme_override_font_sizes/font_size = 50
+text = "PROFILE"

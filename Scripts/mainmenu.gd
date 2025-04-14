@@ -12,8 +12,8 @@ var user_data = {
 
 # UI References
 @onready var name_label = $ProfileButton/HBoxContainer/VBoxContainer/NameLabel
-@onready var level_label = $ProfileButton/HBoxContainer/VBoxContainer/LevelLabel
-@onready var energy_label = $EnergyDisplay/HBoxContainer/EnergyLabel
+@onready var level_label = $ProfileButton/HBoxContainer/VBoxContainer/LevelContainer/LevelLabel
+@onready var energy_label = $EnergyDisplay/EnergyLabel
 @onready var avatar_label = $ProfileButton/HBoxContainer/AvatarBackground/AvatarLabel
 
 # Buttons with hover labels
@@ -25,6 +25,7 @@ func _ready():
 	debug_label.name = "DebugLabel"
 	debug_label.position = Vector2(10, 10)
 	debug_label.size = Vector2(500, 100)
+	debug_label.text = "Main Menu loaded successfully"
 	add_child(debug_label)
 	debug_label.text = "Main Menu loaded successfully"
 

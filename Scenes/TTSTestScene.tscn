@@ -270,6 +270,7 @@ text = "Text-to-Speech Test"
 horizontal_alignment = 1
 
 [node name="StatusLabel" type="Label" parent="Panel/VBoxContainer"]
+custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_46mfp")
 theme_override_font_sizes/font_size = 18
