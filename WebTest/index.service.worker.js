@@ -20,6 +20,26 @@ const CACHED_FILES = ["index.html","index.js","index.offline.html","index.icon.p
 const CACHEABLE_FILES = ["index.wasm","index.pck"];
 const FULL_CACHE = CACHED_FILES.concat(CACHEABLE_FILES);
 
+// List of Firebase domains that should bypass the cache
+const FIREBASE_DOMAINS = [
+    'firestore.googleapis.com',
+    'www.googleapis.com',
+    'identitytoolkit.googleapis.com',
+    'securetoken.googleapis.com',
+    'firebaseinstallations.googleapis.com',
+    'firebaseremoteconfig.googleapis.com',
+    'firebasestorage.googleapis.com',
+    'fcmregistrations.googleapis.com',
+    'teamlexia-46228.firebaseapp.com',
+    'teamlexia-46228-default-rtdb.asia-southeast1.firebasedatabase.app'
+];
+
+// Function to check if a URL is a Firebase API URL
+function isFirebaseRequest(url) {
+    const urlObj = new URL(url);
+    return FIREBASE_DOMAINS.some(domain => urlObj.hostname.includes(domain));
+}
+
 self.addEventListener('install', (event) => {
 	event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(CACHED_FILES)));
 });
@@ -96,6 +116,14 @@ self.addEventListener(
 	(event) => {
 		const isNavigate = event.request.mode === 'navigate';
 		const url = event.request.url || '';
+		
+		// Skip cache for Firebase API requests
+		if (isFirebaseRequest(url)) {
+			console.log('[ServiceWorker] Bypassing cache for Firebase request:', url);
+			event.respondWith(fetch(event.request));
+			return;
+		}
+		
 		const referrer = event.request.referrer || '';
 		const base = referrer.slice(0, referrer.lastIndexOf('/') + 1);
 		const local = url.startsWith(base) ? url.replace(base, '') : '';

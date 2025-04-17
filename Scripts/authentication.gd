@@ -179,6 +179,10 @@ func clear_all_error_labels():
 
 # ===== Login Functions =====
 func _on_login_button_pressed():
+	# If we're on web, try clearing storage first to ensure fresh state
+	if is_web_platform():
+		clear_web_storage()
+		
 	var email = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/EmailLineEdit.text
 	var password = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/PasswordContainer/PasswordLineEdit.text
 	var has_error = false
@@ -375,7 +379,8 @@ func on_login_succeeded(auth):
 			"user_level": 1, # Default level for new users
 			"created_at": current_time,
 			"last_login": current_time,
-			"energy": 20, # Initial energy value
+			"energy": 20, # Initial base energy value
+			"max_energy": 20, # Starting energy capacity (changed from 99)
 			"coin": 100, # Initial coin value
 			"power_scale": 120, # Initial power scale
 			"rank": "bronze", # Initial rank
@@ -413,6 +418,7 @@ func on_login_succeeded(auth):
 				"created_at": current_time,
 				"last_login": current_time,
 				"energy": 20, # Initial energy value
+				"max_energy": 20, # Starting energy capacity (changed from 99)
 				"coin": 100, # Initial coin value
 				"power_scale": 120, # Initial power scale
 				"rank": "bronze", # Initial rank
@@ -466,6 +472,7 @@ func on_login_succeeded(auth):
 					"created_at": current_time,
 					"last_login": current_time,
 					"energy": 20, # Initial energy value
+					"max_energy": 20, # Starting energy capacity (changed from 99)
 					"coin": 100, # Initial coin value
 					"power_scale": 120, # Initial power scale
 					"rank": "bronze", # Initial rank
@@ -545,6 +552,7 @@ func on_signup_succeeded(auth):
 		"created_at": current_time,
 		"last_login": current_time,
 		"energy": 20, # Initial energy value
+		"max_energy": 20, # Starting energy capacity (changed from 99)
 		"coin": 100, # Initial coin value
 		"power_scale": 120, # Initial power scale
 		"rank": "bronze", # Initial rank
@@ -620,7 +628,7 @@ func save_web_data(key, data):
 	return false
 
 # Add function to update dungeon progress
-func update_dungeon_progress(dungeon_id, stage_id, completed=false):
+func update_dungeon_progress(dungeon_id, stage_id, _completed=false):
 	if !Firebase.Auth.auth:
 		print("No authenticated user to update dungeon progress")
 		return
@@ -688,3 +696,24 @@ func update_dungeon_progress(dungeon_id, stage_id, completed=false):
 			# Also update the game settings for local reference
 			GameSettings.current_dungeon = current_dungeon
 			GameSettings.current_stage = current_stage
+
+# Add this function to clear web storage if issues are detected
+func clear_web_storage():
+	if is_web_platform():
+		var js_code = """
+		(function() {
+			try {
+				// Clear session storage
+				sessionStorage.clear();
+				// Clear local storage
+				localStorage.clear();
+				console.log('Web storage cleared');
+				return true;
+			} catch(e) {
+				console.error('Error clearing web storage: ' + e.message);
+				return false;
+			}
+		})();
+		"""
+		return JavaScriptBridge.eval(js_code)
+	return false

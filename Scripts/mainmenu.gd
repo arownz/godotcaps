@@ -9,17 +9,18 @@ var user_data = {
 	"character": "default",
 	"coin": 100,
 	"power_scale": 120,
-	"rank": "bronze"
 }
 
 # UI References
 @onready var name_label = $InfoContainer/NameLabel
 @onready var level_label = $InfoContainer/LevelContainer/LevelLabel
 @onready var energy_label = $EnergyDisplay/EnergyLabel
-@onready var avatar_label = $ProfileButton/AvatarBackground/AvatarLabel
 
 # Buttons with hover labels
 var hover_buttons = []
+
+# Add reference to our debug helper
+var firebase_debug = preload("res://Scripts/firebase_debug.gd").new()
 
 func _ready():
 	# Add a debug label to show messages
@@ -31,6 +32,9 @@ func _ready():
 	add_child(debug_label)
 	debug_label.text = "Main Menu loaded successfully"
 
+	# Add debug helper
+	add_child(firebase_debug)
+	
 	# Set up hover buttons
 	hover_buttons = [
 		{
@@ -104,68 +108,189 @@ func load_user_data():
 		get_tree().change_scene_to_file("res://Scenes/Authentication.tscn")
 		return
 	
+	# Log full auth object with our helper
+	firebase_debug.debug_log("Loading user data with auth:", firebase_debug.LOG_LEVEL_INFO)
+	firebase_debug.log_auth(Firebase.Auth.auth)
+	
 	var user_id = Firebase.Auth.auth.localid
-	print("Loading user data for ID: ", user_id)
+	firebase_debug.debug_log("Loading user data for ID: " + user_id, firebase_debug.LOG_LEVEL_INFO)
 	
 	# Set loading state UI
 	name_label.text = "Loading..."
-	avatar_label.text = "..."
 	
-	# Fetch user data from Firestore - explicitly use dyslexia_users collection
+	# Check if Firestore is ready
+	if Firebase.Firestore == null:
+		firebase_debug.debug_log("Firebase Firestore is null, attempting to initialize", firebase_debug.LOG_LEVEL_ERROR)
+		# Try to reinitialize Firebase
+		_initialize_firebase()
+		await get_tree().create_timer(1.0).timeout
+		
+		# If still null after waiting, use fallback
+		if Firebase.Firestore == null:
+			firebase_debug.debug_log("Firebase Firestore still null after initialization attempt", firebase_debug.LOG_LEVEL_ERROR)
+			update_user_interface()
+			return
+	
+	# FIXED: Don't test connection first - this causes parallel HTTP requests
+	# Just directly fetch the user document
+	firebase_debug.debug_log("Attempting to fetch from collection: dyslexia_users", firebase_debug.LOG_LEVEL_INFO)
+	
+	# First, explicitly verify the token is still valid
+	if OS.has_feature('web'):
+		firebase_debug.debug_log("Web platform detected, ensuring token is fresh", firebase_debug.LOG_LEVEL_INFO)
+		# Check token expiration and refresh if needed
+		var tokenCheck = await Firebase.Auth.check_token_expiry()
+		firebase_debug.debug_log("Token check result: " + str(tokenCheck), firebase_debug.LOG_LEVEL_INFO)
+	
+	# Fetch user data from Firestore
 	var collection = Firebase.Firestore.collection("dyslexia_users")
-	print("Attempting to fetch from collection: dyslexia_users")
-	
 	var task = collection.get(user_id)
 	
 	if task:
-		print("Fetch task created successfully")
+		firebase_debug.debug_log("Fetch task created successfully", firebase_debug.LOG_LEVEL_DEBUG)
 		var document = await task.task_finished
 		
-		if document and !document.error:
-			print("User data loaded successfully")
-			print("Document fields: ", document.doc_fields)
-			
-			# Update user data
-			user_data.username = document.doc_fields.get("username", "Player")
-			user_data.level = document.doc_fields.get("user_level", 1)
-			user_data.energy = document.doc_fields.get("energy", 20)
-			user_data.max_energy = 99  # Hard-coded max value
-			user_data.role = document.doc_fields.get("user_type", "dyslexia")
-			user_data.character = document.doc_fields.get("profile_picture", "default")
-			user_data.coin = document.doc_fields.get("coin", 100)
-			user_data.power_scale = document.doc_fields.get("power_scale", 120)
-			user_data.rank = document.doc_fields.get("rank", "bronze")
-			
-			 # Add dungeon and stage data
-			user_data.current_dungeon = document.doc_fields.get("current_dungeon", 1)
-			user_data.current_stage = document.doc_fields.get("current_stage", 1)
-			user_data.dungeons_completed = document.doc_fields.get("dungeons_completed", {
-				"1": {"completed": false, "stages_completed": 0},
-				"2": {"completed": false, "stages_completed": 0},
-				"3": {"completed": false, "stages_completed": 0}
-			})
-			user_data.dungeon_names = document.doc_fields.get("dungeon_names", {
-				"1": "The Plains",
-				"2": "The Mountain", 
-				"3": "The Demon"
-			})
-			
-			# Also update GameSettings for global access
-			GameSettings.current_dungeon = user_data.current_dungeon
-			GameSettings.current_stage = user_data.current_stage
-			
-			# Update UI
-			update_user_interface()
-			
-			# Log last login
-			update_last_login()
+		if document:
+			firebase_debug.debug_log("Document received: " + str(document.keys() if document is Dictionary else "Not a dictionary"), firebase_debug.LOG_LEVEL_DEBUG)
+			if !document.error:
+				firebase_debug.debug_log("User data loaded successfully", firebase_debug.LOG_LEVEL_INFO)
+				firebase_debug.debug_log("Document fields: " + str(document.doc_fields.keys() if document.doc_fields is Dictionary else "No doc_fields"), firebase_debug.LOG_LEVEL_DEBUG)
+				
+				# Update user data
+				user_data.username = document.doc_fields.get("username", "Player")
+				user_data.level = document.doc_fields.get("user_level", 1)
+				user_data.energy = document.doc_fields.get("energy", 20)
+				user_data.max_energy = document.doc_fields.get("max_energy", 20)
+				user_data.role = document.doc_fields.get("user_type", "dyslexia")
+				user_data.character = document.doc_fields.get("profile_picture", "default")
+				user_data.coin = document.doc_fields.get("coin", 100)
+				user_data.power_scale = document.doc_fields.get("power_scale", 120)
+				user_data.rank = document.doc_fields.get("rank", "bronze")
+				
+				# Add dungeon and stage data
+				user_data.current_dungeon = document.doc_fields.get("current_dungeon", 1)
+				user_data.current_stage = document.doc_fields.get("current_stage", 1)
+				user_data.dungeons_completed = document.doc_fields.get("dungeons_completed", {
+					"1": {"completed": false, "stages_completed": 0},
+					"2": {"completed": false, "stages_completed": 0},
+					"3": {"completed": false, "stages_completed": 0}
+				})
+				user_data.dungeon_names = document.doc_fields.get("dungeon_names", {
+					"1": "The Plains",
+					"2": "The Mountain", 
+					"3": "The Demon"
+				})
+				
+				# Also update GameSettings for global access
+				GameSettings.current_dungeon = user_data.current_dungeon
+				GameSettings.current_stage = user_data.current_stage
+				
+				# Update UI
+				update_user_interface()
+				
+				# Log last login
+				update_last_login()
+			else:
+				firebase_debug.debug_log("Document has error", firebase_debug.LOG_LEVEL_ERROR)
+				firebase_debug.log_firestore_error(document.error)
+				
+				# More detailed error logging
+				if typeof(document.error) == TYPE_DICTIONARY:
+					for key in document.error:
+						firebase_debug.debug_log("Error detail - " + key + ": " + str(document.error[key]), firebase_debug.LOG_LEVEL_ERROR)
+				
+				# Handle specific errors
+				if document.error is Dictionary and document.error.has("status"):
+					match document.error.status:
+						"PERMISSION_DENIED":
+							firebase_debug.debug_log("Permission denied. Checking Firestore rules.", firebase_debug.LOG_LEVEL_ERROR)
+							# Run rules test to check permissions
+							await firebase_debug.test_firebase_rules()
+							
+						"NOT_FOUND":
+							firebase_debug.debug_log("Document not found. Creating a new one.", firebase_debug.LOG_LEVEL_WARNING)
+							await _create_default_user_document(user_id)
+							return
+				
+				# Fall back to default values
+				update_user_interface()
 		else:
-			print("Error loading user data:", document.error if document else "No document")
-			# Fall back to default values if document can't be loaded
+			firebase_debug.debug_log("Document is null", firebase_debug.LOG_LEVEL_ERROR)
 			update_user_interface()
 	else:
-		print("Failed to create Firestore task")
-		# Fall back to default values if task creation fails
+		firebase_debug.debug_log("Failed to create Firestore task", firebase_debug.LOG_LEVEL_ERROR)
+		
+		# Try reinitializing Firebase and retry once
+		_initialize_firebase()
+		await get_tree().create_timer(1.0).timeout
+		
+		firebase_debug.debug_log("Retrying after Firebase reinitialization", firebase_debug.LOG_LEVEL_INFO)
+		var retry_collection = Firebase.Firestore.collection("dyslexia_users")
+		var retry_task = retry_collection.get(user_id)
+		
+		if retry_task:
+			firebase_debug.debug_log("Retry task created successfully", firebase_debug.LOG_LEVEL_INFO)
+			var retry_doc = await retry_task.task_finished
+			
+			if retry_doc and !retry_doc.error and retry_doc.doc_fields:
+				firebase_debug.debug_log("Retry succeeded!", firebase_debug.LOG_LEVEL_INFO)
+				
+				# Update user data
+				user_data.username = retry_doc.doc_fields.get("username", "Player")
+				user_data.level = retry_doc.doc_fields.get("user_level", 1)
+				user_data.energy = retry_doc.doc_fields.get("energy", 20)
+				user_data.max_energy = retry_doc.doc_fields.get("max_energy", 20)
+				
+				update_user_interface()
+				return
+		
+		# If we get here, the retry failed too
+		firebase_debug.debug_log("Retry failed too, using default values", firebase_debug.LOG_LEVEL_ERROR)
+		update_user_interface()
+
+# Helper to reinitialize Firebase when needed
+func _initialize_firebase():
+	firebase_debug.debug_log("Reinitializing Firebase", firebase_debug.LOG_LEVEL_INFO)
+	
+	# Force a token refresh to ensure we have a valid token
+	if Firebase.Auth and Firebase.Auth.auth:
+		var refresh_result = await Firebase.Auth.refresh_auth()
+		firebase_debug.debug_log("Auth token refresh result: " + str(refresh_result), firebase_debug.LOG_LEVEL_INFO)
+
+# Helper function to create a default user document
+func _create_default_user_document(user_id):
+	var collection = Firebase.Firestore.collection("dyslexia_users")
+	var current_time = Time.get_datetime_string_from_system(false, true)
+	
+	var display_name = Firebase.Auth.auth.get("displayname", "Player")
+	var email = Firebase.Auth.auth.get("email", "")
+	
+	var user_doc = {
+		"username": display_name if display_name else "Player",
+		"email": email,
+		"birth_date": "",
+		"age": 0,
+		"profile_picture": "default",
+		"user_level": 1,
+		"created_at": current_time,
+		"last_login": current_time,
+		"energy": 20,
+	}
+	
+	print("Creating default user document for ID: ", user_id)
+	var task = collection.add(user_id, user_doc)
+	
+	if task:
+		var result = await task.task_finished
+		if result and !result.error:
+			print("Default user document created successfully")
+			# Now try to fetch the newly created document
+			load_user_data()
+		else:
+			print("Error creating default user document: ", result.error if result else "Unknown error")
+			update_user_interface()
+	else:
+		print("Failed to create task for default user document")
 		update_user_interface()
 
 func update_user_interface():
@@ -173,12 +298,6 @@ func update_user_interface():
 	name_label.text = user_data.username
 	level_label.text = str(user_data.level)
 	energy_label.text = str(user_data.energy) + "/" + str(user_data.max_energy)
-	
-	# Set avatar label with first letter of username
-	if user_data.username.length() > 0:
-		avatar_label.text = user_data.username.substr(0, 1).to_upper()
-	else:
-		avatar_label.text = "U"
 
 func update_last_login():
 	# Update last login time in Firestore

@@ -184,7 +184,7 @@ offset_right = 280.0
 offset_bottom = 161.0
 theme_override_fonts/font = ExtResource("2_73kok")
 theme_override_font_sizes/font_size = 20
-text = "Bronze"
+text = "Rank"
 
 [node name="Separator" type="ColorRect" parent="ProfileContainer"]
 layout_mode = 0
@@ -233,7 +233,7 @@ offset_bottom = 115.0
 theme_override_colors/font_color = Color(0.99, 0.99, 0, 1)
 theme_override_fonts/font = ExtResource("2_73kok")
 theme_override_font_sizes/font_size = 20
-text = "20/20"
+text = "20/100"
 
 [node name="CoinsLabel" type="Label" parent="ProfileContainer/StatsArea"]
 layout_mode = 0
@@ -254,7 +254,7 @@ offset_bottom = 155.0
 theme_override_colors/font_color = Color(0.99, 0.99, 0, 1)
 theme_override_fonts/font = ExtResource("2_73kok")
 theme_override_font_sizes/font_size = 20
-text = "100"
+text = "99999"
 
 [node name="PowerLabel" type="Label" parent="ProfileContainer/StatsArea"]
 layout_mode = 0
@@ -275,7 +275,7 @@ offset_bottom = 195.0
 theme_override_colors/font_color = Color(0.99, 0.99, 0, 1)
 theme_override_fonts/font = ExtResource("2_73kok")
 theme_override_font_sizes/font_size = 20
-text = "120"
+text = "10000"
 
 [node name="DungeonValue" type="Label" parent="ProfileContainer/StatsArea"]
 layout_mode = 0

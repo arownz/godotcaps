@@ -6,7 +6,7 @@ signal user_data_updated
 var username = "Player"
 var level = 1
 var energy = 20
-var max_energy = 99
+var max_energy = 20  # Changed from 99 to 20
 var character = "default"
 var coin = 100
 var power_scale = 120
@@ -47,6 +47,7 @@ func load_from_firestore():
 			username = document.doc_fields.get("username", "Player")
 			level = document.doc_fields.get("user_level", 1)
 			energy = document.doc_fields.get("energy", 20)
+			max_energy = document.doc_fields.get("max_energy", 20)  # Changed from 99 to 20
 			character = document.doc_fields.get("profile_picture", "default")
 			coin = document.doc_fields.get("coin", 100)
 			power_scale = document.doc_fields.get("power_scale", 120)
@@ -85,6 +86,7 @@ func save_to_firestore():
 		"username": username,
 		"user_level": level,
 		"energy": energy,
+		"max_energy": max_energy,  # Changed from 99 to 20
 		"profile_picture": character,
 		"coin": coin,
 		"power_scale": power_scale,
@@ -108,7 +110,8 @@ func save_to_firestore():
 		return false
 
 # Update dungeon progress
-func update_dungeon_progress(dungeon_id, stage_id, completed=false):
+func update_dungeon_progress(dungeon_id, stage_id, _completed=false):
+	# Changed 'completed' to '_completed' to indicate it's intentionally unused
 	# Convert dungeon_id to string for dictionary key
 	var dungeon_key = str(dungeon_id)
 	

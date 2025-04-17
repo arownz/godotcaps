@@ -10,7 +10,7 @@ extends Node
 # Player stats
 @export_category("Player Stats")
 @export var player_base_health: int = 100
-@export var player_base_damage: int = 15
+@export var player_base_damage: int = 10
 @export var player_level_up_health_bonus: int = 20
 @export var player_level_up_damage_bonus: int = 5
 
