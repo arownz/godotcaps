@@ -1,0 +1,216 @@
+[gd_scene load_steps=16 format=3 uid="uid://b16uc2y8w57k1"]
+
+[ext_resource type="Script" uid="uid://dysw762c4jib3" path="res://Scripts/ProfilePicturesPopup.gd" id="1_popup_script"]
+[ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="2_popup_font"]
+[ext_resource type="Texture2D" uid="uid://dkccpks7klx5p" path="res://gui/ProfileScene/Profile/portrait 14.png" id="3_portrait14"]
+[ext_resource type="Texture2D" uid="uid://dr3do7cagamyh" path="res://gui/ProfileScene/Profile/portrait 15.png" id="4_portrait15"]
+[ext_resource type="Texture2D" uid="uid://cjvdyfgftwdhb" path="res://gui/ProfileScene/close icon.png" id="5_close_icon"]
+[ext_resource type="Texture2D" uid="uid://bvjr3trvmqhfh" path="res://gui/ProfileScene/Profile/portrait 13.png" id="6_mg4gf"]
+[ext_resource type="Texture2D" uid="uid://byl5kwwejfev1" path="res://gui/ProfileScene/Profile/portrait 16.png" id="7_kxfne"]
+[ext_resource type="Texture2D" uid="uid://cxe7eswe4tydw" path="res://gui/ProfileScene/Profile/portrait 17.png" id="8_yxql3"]
+[ext_resource type="Texture2D" uid="uid://ce61ch2pmlaaa" path="res://gui/ProfileScene/Profile/portrait 18.png" id="9_h1a42"]
+[ext_resource type="Texture2D" uid="uid://b4fu51nwjti0g" path="res://gui/ProfileScene/Profile/portrait 19.png" id="10_v70ae"]
+[ext_resource type="Texture2D" uid="uid://da4ei78q8uwfn" path="res://gui/ProfileScene/Profile/portrait 20.png" id="11_00j4d"]
+[ext_resource type="Texture2D" uid="uid://bjf64am65ot8s" path="res://gui/ProfileScene/Profile/portrait 21.png" id="12_5fqu5"]
+[ext_resource type="Texture2D" uid="uid://bqn15k8rwnsxf" path="res://gui/ProfileScene/Profile/portrait 22.png" id="13_pwh4d"]
+[ext_resource type="Texture2D" uid="uid://5o1l1bijp3ey" path="res://gui/ProfileScene/Profile/portrait 23.png" id="14_almhk"]
+[ext_resource type="Texture2D" uid="uid://dyj20er5r25q" path="res://gui/ProfileScene/Profile/portrait 24.png" id="15_u6s02"]
+
+[node name="ProfilePicturesPopup" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_popup_script")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.5)
+
+[node name="Panel" type="Panel" parent="."]
+custom_minimum_size = Vector2(500, 400)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -250.0
+offset_top = -200.0
+offset_right = 250.0
+offset_bottom = 200.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CloseButton" type="TextureButton" parent="Panel"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -40.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = 40.0
+grow_horizontal = 0
+texture_normal = ExtResource("5_close_icon")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="TitleLabel" type="Label" parent="Panel"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -150.0
+offset_top = 20.0
+offset_right = 150.0
+offset_bottom = 60.0
+grow_horizontal = 2
+theme_override_fonts/font = ExtResource("2_popup_font")
+theme_override_font_sizes/font_size = 24
+text = "Choose Profile Picture"
+horizontal_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 70.0
+offset_right = -20.0
+offset_bottom = -60.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GridContainer" type="GridContainer" parent="Panel/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/h_separation = 20
+theme_override_constants/v_separation = 20
+columns = 3
+
+[node name="Portrait14" type="TextureButton" parent="Panel/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+texture_normal = ExtResource("3_portrait14")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Portrait15" type="TextureButton" parent="Panel/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+texture_normal = ExtResource("4_portrait15")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Portrait16" type="TextureButton" parent="Panel/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+texture_normal = ExtResource("6_mg4gf")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Portrait17" type="TextureButton" parent="Panel/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+texture_normal = ExtResource("7_kxfne")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Portrait18" type="TextureButton" parent="Panel/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+texture_normal = ExtResource("8_yxql3")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Portrait19" type="TextureButton" parent="Panel/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+texture_normal = ExtResource("9_h1a42")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Portrait20" type="TextureButton" parent="Panel/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+texture_normal = ExtResource("10_v70ae")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Portrait21" type="TextureButton" parent="Panel/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+texture_normal = ExtResource("11_00j4d")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Portrait22" type="TextureButton" parent="Panel/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+texture_normal = ExtResource("12_5fqu5")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Portrait23" type="TextureButton" parent="Panel/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+texture_normal = ExtResource("13_pwh4d")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Portrait24" type="TextureButton" parent="Panel/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+texture_normal = ExtResource("14_almhk")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Portrait25" type="TextureButton" parent="Panel/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+texture_normal = ExtResource("15_u6s02")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="ConfirmButton" type="Button" parent="Panel"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -100.0
+offset_top = -50.0
+offset_right = 100.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_fonts/font = ExtResource("2_popup_font")
+theme_override_font_sizes/font_size = 18
+disabled = true
+text = "Confirm Selection"
+
+[connection signal="pressed" from="Panel/CloseButton" to="." method="_on_close_button_pressed"]
+[connection signal="pressed" from="Panel/ScrollContainer/GridContainer/Portrait14" to="." method="_on_portrait_button_pressed" binds= ["14"]]
+[connection signal="pressed" from="Panel/ScrollContainer/GridContainer/Portrait15" to="." method="_on_portrait_button_pressed" binds= ["15"]]
+[connection signal="pressed" from="Panel/ScrollContainer/GridContainer/Portrait16" to="." method="_on_portrait_button_pressed" binds= ["16"]]
+[connection signal="pressed" from="Panel/ScrollContainer/GridContainer/Portrait17" to="." method="_on_portrait_button_pressed" binds= ["17"]]
+[connection signal="pressed" from="Panel/ScrollContainer/GridContainer/Portrait18" to="." method="_on_portrait_button_pressed" binds= ["18"]]
+[connection signal="pressed" from="Panel/ScrollContainer/GridContainer/Portrait19" to="." method="_on_portrait_button_pressed" binds= ["19"]]
+[connection signal="pressed" from="Panel/ScrollContainer/GridContainer/Portrait20" to="." method="_on_portrait_button_pressed" binds= ["20"]]
+[connection signal="pressed" from="Panel/ScrollContainer/GridContainer/Portrait21" to="." method="_on_portrait_button_pressed" binds= ["21"]]
+[connection signal="pressed" from="Panel/ScrollContainer/GridContainer/Portrait22" to="." method="_on_portrait_button_pressed" binds= ["22"]]
+[connection signal="pressed" from="Panel/ScrollContainer/GridContainer/Portrait23" to="." method="_on_portrait_button_pressed" binds= ["23"]]
+[connection signal="pressed" from="Panel/ScrollContainer/GridContainer/Portrait24" to="." method="_on_portrait_button_pressed" binds= ["24"]]
+[connection signal="pressed" from="Panel/ScrollContainer/GridContainer/Portrait25" to="." method="_on_portrait_button_pressed" binds= ["25"]]
+[connection signal="pressed" from="Panel/ConfirmButton" to="." method="_on_confirm_button_pressed"]

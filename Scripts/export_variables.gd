@@ -32,6 +32,24 @@ extends Node
 @export var stage_health_increase: int = 5
 @export var stage_damage_increase: int = 1
 
+# Add dungeon and stage variables
+var current_dungeon = 1
+var current_stage = 1
+
+# Add dungeon completion tracking
+var dungeons_completed = {
+	"1": {"completed": false, "stages_completed": 0},
+	"2": {"completed": false, "stages_completed": 0},
+	"3": {"completed": false, "stages_completed": 0}
+}
+
+# Dungeon names
+var dungeon_names = {
+	"1": "The Plains",
+	"2": "The Mountain", 
+	"3": "The Demon"
+}
+
 # Apply these settings
 func _ready():
 	# This must be called from the game initialization

@@ -351,7 +351,7 @@ func on_login_succeeded(auth):
 			print("DEBUG: Google auth state found in URL")
 	
 	# Check if we need to store/update user data in Firestore
-	var collection = Firebase.Firestore.collection("users")
+	var collection = Firebase.Firestore.collection("dyslexia_users")
 	var user_id = auth.localid
 	
 	var current_time = Time.get_datetime_string_from_system(false, true)
@@ -374,7 +374,18 @@ func on_login_succeeded(auth):
 			"profile_picture": "default", # Use default for all new users
 			"user_level": 1, # Default level for new users
 			"created_at": current_time,
-			"last_login": current_time
+			"last_login": current_time,
+			"energy": 20, # Initial energy value
+			"coin": 100, # Initial coin value
+			"power_scale": 120, # Initial power scale
+			"rank": "bronze", # Initial rank
+			"current_dungeon": 1, # Starting dungeon
+			"current_stage": 1, # Starting stage
+			"dungeons_completed": {
+				"1": {"completed": false, "stages_completed": 0},
+				"2": {"completed": false, "stages_completed": 0},
+				"3": {"completed": false, "stages_completed": 0}
+			}
 		}
 		
 		# Save the user data
@@ -400,7 +411,18 @@ func on_login_succeeded(auth):
 				"profile_picture": "default",
 				"user_level": 1,
 				"created_at": current_time,
-				"last_login": current_time
+				"last_login": current_time,
+				"energy": 20, # Initial energy value
+				"coin": 100, # Initial coin value
+				"power_scale": 120, # Initial power scale
+				"rank": "bronze", # Initial rank
+				"current_dungeon": 1, # Starting dungeon
+				"current_stage": 1, # Starting stage
+				"dungeons_completed": {
+					"1": {"completed": false, "stages_completed": 0},
+					"2": {"completed": false, "stages_completed": 0},
+					"3": {"completed": false, "stages_completed": 0}
+				}
 			}
 			
 			collection.add(user_id, user_doc)
@@ -412,6 +434,21 @@ func on_login_succeeded(auth):
 			if result.doc_fields != null:
 				var current_data = result.doc_fields
 				current_data["last_login"] = current_time
+				
+				# Make sure dungeons_completed exists
+				if not current_data.has("dungeons_completed"):
+					current_data["dungeons_completed"] = {
+						"1": {"completed": false, "stages_completed": 0},
+						"2": {"completed": false, "stages_completed": 0},
+						"3": {"completed": false, "stages_completed": 0}
+					}
+				
+				# Make sure dungeon progress exists
+				if not current_data.has("current_dungeon"):
+					current_data["current_dungeon"] = 1
+				if not current_data.has("current_stage"):
+					current_data["current_stage"] = 1
+				
 				# Complete document update instead of just updating one field
 				collection.add(user_id, current_data)
 			else:
@@ -427,7 +464,18 @@ func on_login_succeeded(auth):
 					"profile_picture": "default",
 					"user_level": 1,
 					"created_at": current_time,
-					"last_login": current_time
+					"last_login": current_time,
+					"energy": 20, # Initial energy value
+					"coin": 100, # Initial coin value
+					"power_scale": 120, # Initial power scale
+					"rank": "bronze", # Initial rank
+					"current_dungeon": 1, # Starting dungeon
+					"current_stage": 1, # Starting stage
+					"dungeons_completed": {
+						"1": {"completed": false, "stages_completed": 0},
+						"2": {"completed": false, "stages_completed": 0},
+						"3": {"completed": false, "stages_completed": 0}
+					}
 				}
 				
 				collection.add(user_id, user_doc)
@@ -495,11 +543,22 @@ func on_signup_succeeded(auth):
 		"profile_picture": "default", # Default profile picture for everyone
 		"user_level": 1, # Default level for new users
 		"created_at": current_time,
-		"last_login": current_time
+		"last_login": current_time,
+		"energy": 20, # Initial energy value
+		"coin": 100, # Initial coin value
+		"power_scale": 120, # Initial power scale
+		"rank": "bronze", # Initial rank
+		"current_dungeon": 1, # Starting dungeon
+		"current_stage": 1, # Starting stage
+		"dungeons_completed": {
+			"1": {"completed": false, "stages_completed": 0},
+			"2": {"completed": false, "stages_completed": 0},
+			"3": {"completed": false, "stages_completed": 0}
+		}
 	}
 	
 	# Save to Firestore
-	var collection = Firebase.Firestore.collection("users")
+	var collection = Firebase.Firestore.collection("dyslexia_users")
 	collection.add(auth.localid, user_doc)
 	
 	Firebase.Auth.save_auth(auth)
@@ -526,7 +585,7 @@ func on_signup_failed(error_code, message):
 # Then in your profile loading code (when you implement it):
 func load_profile_image(image_identifier):
 	if image_identifier == "default":
-		return preload("res://gui/default.png")
+		return preload("res://gui/ProfileScene/Profile/portrait 14.png")
 	else:
 		# Handle loading from Firebase Storage or web URLs if needed
 		pass
@@ -559,3 +618,73 @@ func save_web_data(key, data):
 		"""
 		return JavaScriptBridge.eval(js_code)
 	return false
+
+# Add function to update dungeon progress
+func update_dungeon_progress(dungeon_id, stage_id, completed=false):
+	if !Firebase.Auth.auth:
+		print("No authenticated user to update dungeon progress")
+		return
+		
+	var user_id = Firebase.Auth.auth.localid
+	var collection = Firebase.Firestore.collection("dyslexia_users")
+	
+	# First fetch the current user data
+	var task = collection.get(user_id)
+	if task:
+		var document = await task.task_finished
+		if document.error:
+			print("Error retrieving user data for dungeon update: ", document.error)
+			return
+			
+		var dungeons_completed = document.doc_fields.get("dungeons_completed", {})
+		var current_dungeon = int(document.doc_fields.get("current_dungeon", 1))
+		var current_stage = int(document.doc_fields.get("current_stage", 1))
+		
+		# Ensure the dungeons_completed structure exists
+		if dungeons_completed.is_empty():
+			dungeons_completed = {
+				"1": {"completed": false, "stages_completed": 0},
+				"2": {"completed": false, "stages_completed": 0},
+				"3": {"completed": false, "stages_completed": 0}
+			}
+		
+		# Convert dungeon_id to string for dictionary key
+		var dungeon_key = str(dungeon_id)
+		
+		# Update the stages completed for this dungeon
+		if dungeons_completed.has(dungeon_key):
+			var dungeon_data = dungeons_completed[dungeon_key]
+			dungeon_data["stages_completed"] = max(dungeon_data["stages_completed"], stage_id)
+			
+			# Check if all stages of this dungeon are completed
+			if stage_id >= 5:  # Assuming 5 stages per dungeon
+				dungeon_data["completed"] = true
+				
+				# Advance to next dungeon if current one is completed
+				if dungeon_id == current_dungeon:
+					current_dungeon = min(current_dungeon + 1, 3)
+					current_stage = 1
+			elif dungeon_id == current_dungeon:
+				# Just advance to next stage in current dungeon
+				current_stage = min(stage_id + 1, 5)
+				
+			dungeons_completed[dungeon_key] = dungeon_data
+		
+		# Update Firestore
+		var update_data = {
+			"dungeons_completed": dungeons_completed,
+			"current_dungeon": current_dungeon,
+			"current_stage": current_stage
+		}
+		
+		var update_task = collection.update(user_id, update_data)
+		var update_result = await update_task.task_finished
+		
+		if update_result.error:
+			print("Error updating dungeon progress: ", update_result.error)
+		else:
+			print("Dungeon progress updated successfully")
+			
+			# Also update the game settings for local reference
+			GameSettings.current_dungeon = current_dungeon
+			GameSettings.current_stage = current_stage
