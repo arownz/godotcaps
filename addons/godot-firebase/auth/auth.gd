@@ -422,7 +422,24 @@ func needs_login() -> bool:
 		return err
 
 # Function is called when requesting a manual token refresh
-func manual_token_refresh(auth_data):
+func manual_token_refresh(auth_data, delay_time: float = 0.0):
+	# First check if the auth module is busy with another request
+	if is_busy:
+		Firebase._printerr("Auth module is busy, cannot refresh token right now")
+		
+		# If a delay was provided, wait and try again
+		if delay_time > 0.0:
+			Firebase._printerr("Waiting for " + str(delay_time) + " seconds before retrying")
+			await get_tree().create_timer(delay_time).timeout
+			if is_busy:
+				Firebase._printerr("Auth module is still busy after waiting, aborting token refresh")
+				return ERR_BUSY
+			else:
+				# If no longer busy after waiting, proceed with the request
+				return await manual_token_refresh(auth_data, 0.0)  # No delay on retry
+		else:
+			return ERR_BUSY
+	is_busy = true
 	auth = auth_data
 	var refresh_token = null
 	auth = get_clean_keys(auth)
@@ -430,13 +447,20 @@ func manual_token_refresh(auth_data):
 		refresh_token = auth.refreshtoken
 	elif auth.has("refresh_token"):
 		refresh_token = auth.refresh_token
+	
+	if refresh_token == null or refresh_token == "":
+		Firebase._printerr("No refresh token available, cannot refresh authentication")
+		is_busy = false
+		return ERR_INVALID_PARAMETER
+	
 	_needs_refresh = true
 	_refresh_request_body.refresh_token = refresh_token
 	var err = request(_refresh_request_base_url + _refresh_request_url, _headers, HTTPClient.METHOD_POST, JSON.stringify(_refresh_request_body))
 	if err != OK:
 		is_busy = false
 		Firebase._printerr("Error manually refreshing token: %s" % err)
-
+	
+	return err
 
 # This function is called whenever there is an authentication request to Firebase
 # On an error, this function with emit the signal 'login_failed' and print the error to the console
@@ -542,7 +566,8 @@ func load_auth() -> bool:
 			var json_parse_result = json.parse(auth_data_str)
 			if json_parse_result == OK:
 				var auth_data = json.data
-				manual_token_refresh(auth_data)
+				# Fix: Add await here
+				await manual_token_refresh(auth_data)
 				return true
 			else:
 				Firebase._printerr("Error parsing auth data from web storage")
@@ -564,7 +589,8 @@ func load_auth() -> bool:
 			var json_parse_result = json.parse(encrypted_file.get_line())
 			if json_parse_result == OK:
 				var encrypted_file_data = json.data
-				manual_token_refresh(encrypted_file_data)
+				# Fix: Add await here
+				await manual_token_refresh(encrypted_file_data)
 		return not err
 
 # Function used to remove the local encrypted auth file
@@ -591,7 +617,8 @@ func check_auth_file() -> bool:
 			var json_parse_result = json.parse(auth_data_str)
 			if json_parse_result == OK:
 				var auth_data = json.data
-				manual_token_refresh(auth_data)
+				# Fix: Add await here
+				await manual_token_refresh(auth_data)
 				return true
 		# If no auth data in localStorage
 		Firebase._printerr("No saved auth data found in web storage")
@@ -601,7 +628,7 @@ func check_auth_file() -> bool:
 		# Desktop/mobile version - use file system
 		if (FileAccess.file_exists("user://user.auth")):
 			# Will ensure "auth_request" emitted
-			return load_auth()
+			return await load_auth() # Fix: Add await here
 		else:
 			Firebase._printerr("Encrypted Firebase Auth file does not exist")
 			auth_request.emit(ERR_DOES_NOT_EXIST, "Encrypted Firebase Auth file does not exist")

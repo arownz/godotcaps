@@ -66,6 +66,35 @@ func log_firestore_error(error):
 	else:
 		debug_log("Firestore error (raw): " + str(error), LOG_LEVEL_ERROR)
 
+# Debug a Firestore document in detail
+func debug_firestore_document(doc, doc_name="Document"):
+	if doc == null:
+		debug_log(doc_name + " is NULL", LOG_LEVEL_ERROR)
+		return
+	
+	debug_log(doc_name + " keys: " + str(doc.keys()), LOG_LEVEL_DEBUG)
+	
+	if doc.has("error") and doc.error:
+		debug_log(doc_name + " has error:", LOG_LEVEL_ERROR)
+		log_firestore_error(doc.error)
+	
+	if doc.has("doc_name"):
+		debug_log(doc_name + " name: " + str(doc.doc_name), LOG_LEVEL_DEBUG)
+	
+	if doc.has("doc_fields"):
+		if doc.doc_fields == null:
+			debug_log(doc_name + ".doc_fields is NULL", LOG_LEVEL_ERROR)
+		elif typeof(doc.doc_fields) == TYPE_DICTIONARY:
+			debug_log(doc_name + ".doc_fields keys: " + str(doc.doc_fields.keys()), LOG_LEVEL_DEBUG)
+			for key in doc.doc_fields.keys():
+				var value = doc.doc_fields[key]
+				if typeof(value) == TYPE_DICTIONARY:
+					debug_log(doc_name + "." + key + " (dict): " + str(value), LOG_LEVEL_DEBUG)
+				else:
+					debug_log(doc_name + "." + key + ": " + str(value), LOG_LEVEL_DEBUG)
+		else:
+			debug_log(doc_name + ".doc_fields is not a dictionary: " + str(typeof(doc.doc_fields)), LOG_LEVEL_ERROR)
+
 # Test Firebase rules and report results
 func test_firebase_rules():
 	debug_log("Testing Firebase rules...", LOG_LEVEL_INFO)
@@ -81,11 +110,23 @@ func test_firebase_rules():
 		debug_log("User not authenticated", LOG_LEVEL_ERROR)
 		return
 	
+	# Log complete auth object for debugging
+	if Firebase.Auth && Firebase.Auth.auth:
+		debug_log("Auth object: " + str(Firebase.Auth.auth.keys()), LOG_LEVEL_DEBUG)
+		if Firebase.Auth.auth.has("idtoken"):
+			debug_log("ID token exists (length: " + str(Firebase.Auth.auth.idtoken.length()) + ")", LOG_LEVEL_DEBUG)
+	
+	# If token might be expired, check and refresh it
+	if Firebase.Auth && Firebase.Auth.auth:
+		debug_log("Refreshing token before testing rules", LOG_LEVEL_INFO)
+		var token_refresh = await Firebase.Auth.manual_token_refresh(Firebase.Auth.auth)
+		debug_log("Token refresh result: " + str(token_refresh), LOG_LEVEL_INFO)
+	
 	# FIXED: Make sure we don't try to execute multiple Firestore operations in parallel
 	# Wait between requests to avoid HTTPRequest conflicts
 	
 	# Test read operation
-	debug_log("Testing read operation...", LOG_LEVEL_INFO)
+	debug_log("Testing read operation for user ID: " + user_id, LOG_LEVEL_INFO)
 	var read_task = Firebase.Firestore.collection("dyslexia_users").get(user_id)
 	if read_task:
 		var read_result = await read_task.task_finished

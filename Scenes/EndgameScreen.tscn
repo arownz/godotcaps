@@ -2,21 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dc6lqw6dmfe1y" path="res://Scripts/EndgameScreen.gd" id="1_mgr3d"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="2_6d17n"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_g7vb6"]
-bg_color = Color(0.945098, 0.945098, 0.945098, 1)
-border_width_left = 4
-border_width_top = 4
-border_width_right = 4
-border_width_bottom = 4
-border_color = Color(0.141176, 0.141176, 0.141176, 1)
-corner_radius_top_left = 15
-corner_radius_top_right = 15
-corner_radius_bottom_right = 15
-corner_radius_bottom_left = 15
-shadow_color = Color(0, 0, 0, 0.313726)
-shadow_size = 8
-shadow_offset = Vector2(2, 2)
+[ext_resource type="Texture2D" uid="uid://bc0tebgiiloa6" path="res://gui/ui_2.png" id="2_frm3f"]
 
 [node name="EndgameScreen" type="Control"]
 layout_mode = 3
@@ -27,7 +13,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_mgr3d")
 
-[node name="ResultPanel" type="Panel" parent="."]
+[node name="ResultPanel" type="TextureRect" parent="."]
 custom_minimum_size = Vector2(500, 350)
 layout_mode = 1
 anchors_preset = 8
@@ -41,7 +27,7 @@ offset_right = 344.0
 offset_bottom = 268.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_g7vb6")
+texture = ExtResource("2_frm3f")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="ResultPanel"]
 layout_mode = 1

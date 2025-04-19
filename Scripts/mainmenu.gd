@@ -1,20 +1,19 @@
 extends Control
 
-# User data variables
+# User data variables - simplified to only essential fields
 var user_data = {
 	"username": "Player",
 	"level": 1,
 	"energy": 20,
 	"max_energy": 20,
-	"character": "default",
-	"coin": 100,
-	"power_scale": 120,
+	"profile_picture": "default" # Added profile_picture field
 }
 
 # UI References
 @onready var name_label = $InfoContainer/NameLabel
 @onready var level_label = $InfoContainer/LevelContainer/LevelLabel
 @onready var energy_label = $EnergyDisplay/EnergyLabel
+@onready var avatar_background = $ProfileButton/AvatarBackground # Reference to avatar background
 
 # Buttons with hover labels
 var hover_buttons = []
@@ -30,7 +29,6 @@ func _ready():
 	debug_label.size = Vector2(500, 100)
 	debug_label.text = "Main Menu loaded successfully"
 	add_child(debug_label)
-	debug_label.text = "Main Menu loaded successfully"
 
 	# Add debug helper
 	add_child(firebase_debug)
@@ -86,10 +84,7 @@ func _ready():
 			button_data.button.mouse_exited.connect(func(): _on_button_mouse_exited(button_data.label))
 	
 	# Load user data
-	load_user_data()
-
-func _process(_delta):
-	pass
+	await load_user_data()
 
 func _on_button_mouse_entered(label):
 	# Show label when hovering
@@ -101,6 +96,7 @@ func _on_button_mouse_exited(label):
 	if label:
 		label.visible = false
 
+# Simplified load_user_data function that only fetches essential fields
 func load_user_data():
 	# Check if user is authenticated
 	if !Firebase.Auth.auth:
@@ -108,12 +104,11 @@ func load_user_data():
 		get_tree().change_scene_to_file("res://Scenes/Authentication.tscn")
 		return
 	
-	# Log full auth object with our helper
-	firebase_debug.debug_log("Loading user data with auth:", firebase_debug.LOG_LEVEL_INFO)
-	firebase_debug.log_auth(Firebase.Auth.auth)
+	# Log auth status
+	firebase_debug.debug_log("Loading user data", firebase_debug.LOG_LEVEL_INFO)
 	
 	var user_id = Firebase.Auth.auth.localid
-	firebase_debug.debug_log("Loading user data for ID: " + user_id, firebase_debug.LOG_LEVEL_INFO)
+	firebase_debug.debug_log("User ID: " + user_id, firebase_debug.LOG_LEVEL_INFO)
 	
 	# Set loading state UI
 	name_label.text = "Loading..."
@@ -131,122 +126,103 @@ func load_user_data():
 			update_user_interface()
 			return
 	
-	# FIXED: Don't test connection first - this causes parallel HTTP requests
-	# Just directly fetch the user document
-	firebase_debug.debug_log("Attempting to fetch from collection: dyslexia_users", firebase_debug.LOG_LEVEL_INFO)
-	
-	# First, explicitly verify the token is still valid
-	if OS.has_feature('web'):
-		firebase_debug.debug_log("Web platform detected, ensuring token is fresh", firebase_debug.LOG_LEVEL_INFO)
-		# Check token expiration and refresh if needed
-		var tokenCheck = await Firebase.Auth.check_token_expiry()
-		firebase_debug.debug_log("Token check result: " + str(tokenCheck), firebase_debug.LOG_LEVEL_INFO)
-	
-	# Fetch user data from Firestore
+	# First, explicitly verify the token is still valid with better error handling
+	var _token_valid = await _ensure_valid_token()
+	# If the function returns false, it already logs the error
+
+	# Fetch user data from Firestore - using similar pattern as ProfilePopUp.gd
 	var collection = Firebase.Firestore.collection("dyslexia_users")
-	var task = collection.get(user_id)
+	
+	# Use the proper way to handle Firestore tasks
+	var task = await collection.get_doc(user_id)
 	
 	if task:
 		firebase_debug.debug_log("Fetch task created successfully", firebase_debug.LOG_LEVEL_DEBUG)
-		var document = await task.task_finished
 		
-		if document:
-			firebase_debug.debug_log("Document received: " + str(document.keys() if document is Dictionary else "Not a dictionary"), firebase_debug.LOG_LEVEL_DEBUG)
-			if !document.error:
-				firebase_debug.debug_log("User data loaded successfully", firebase_debug.LOG_LEVEL_INFO)
-				firebase_debug.debug_log("Document fields: " + str(document.doc_fields.keys() if document.doc_fields is Dictionary else "No doc_fields"), firebase_debug.LOG_LEVEL_DEBUG)
-				
-				# Update user data
-				user_data.username = document.doc_fields.get("username", "Player")
-				user_data.level = document.doc_fields.get("user_level", 1)
-				user_data.energy = document.doc_fields.get("energy", 20)
-				user_data.max_energy = document.doc_fields.get("max_energy", 20)
-				user_data.role = document.doc_fields.get("user_type", "dyslexia")
-				user_data.character = document.doc_fields.get("profile_picture", "default")
-				user_data.coin = document.doc_fields.get("coin", 100)
-				user_data.power_scale = document.doc_fields.get("power_scale", 120)
-				user_data.rank = document.doc_fields.get("rank", "bronze")
-				
-				# Add dungeon and stage data
-				user_data.current_dungeon = document.doc_fields.get("current_dungeon", 1)
-				user_data.current_stage = document.doc_fields.get("current_stage", 1)
-				user_data.dungeons_completed = document.doc_fields.get("dungeons_completed", {
-					"1": {"completed": false, "stages_completed": 0},
-					"2": {"completed": false, "stages_completed": 0},
-					"3": {"completed": false, "stages_completed": 0}
-				})
-				user_data.dungeon_names = document.doc_fields.get("dungeon_names", {
-					"1": "The Plains",
-					"2": "The Mountain", 
-					"3": "The Demon"
-				})
-				
-				# Also update GameSettings for global access
-				GameSettings.current_dungeon = user_data.current_dungeon
-				GameSettings.current_stage = user_data.current_stage
-				
-				# Update UI
-				update_user_interface()
-				
-				# Log last login
-				update_last_login()
-			else:
-				firebase_debug.debug_log("Document has error", firebase_debug.LOG_LEVEL_ERROR)
-				firebase_debug.log_firestore_error(document.error)
-				
-				# More detailed error logging
-				if typeof(document.error) == TYPE_DICTIONARY:
-					for key in document.error:
-						firebase_debug.debug_log("Error detail - " + key + ": " + str(document.error[key]), firebase_debug.LOG_LEVEL_ERROR)
-				
-				# Handle specific errors
-				if document.error is Dictionary and document.error.has("status"):
-					match document.error.status:
-						"PERMISSION_DENIED":
-							firebase_debug.debug_log("Permission denied. Checking Firestore rules.", firebase_debug.LOG_LEVEL_ERROR)
-							# Run rules test to check permissions
-							await firebase_debug.test_firebase_rules()
-							
-						"NOT_FOUND":
-							firebase_debug.debug_log("Document not found. Creating a new one.", firebase_debug.LOG_LEVEL_WARNING)
-							await _create_default_user_document(user_id)
-							return
-				
-				# Fall back to default values
-				update_user_interface()
-		else:
-			firebase_debug.debug_log("Document is null", firebase_debug.LOG_LEVEL_ERROR)
-			update_user_interface()
+		# Connect to the task_finished signal and wait for it
+		task.task_finished.connect(func(doc_snapshot): 
+			_process_user_data(doc_snapshot, user_id)
+			)
 	else:
 		firebase_debug.debug_log("Failed to create Firestore task", firebase_debug.LOG_LEVEL_ERROR)
-		
-		# Try reinitializing Firebase and retry once
-		_initialize_firebase()
-		await get_tree().create_timer(1.0).timeout
-		
-		firebase_debug.debug_log("Retrying after Firebase reinitialization", firebase_debug.LOG_LEVEL_INFO)
-		var retry_collection = Firebase.Firestore.collection("dyslexia_users")
-		var retry_task = retry_collection.get(user_id)
-		
-		if retry_task:
-			firebase_debug.debug_log("Retry task created successfully", firebase_debug.LOG_LEVEL_INFO)
-			var retry_doc = await retry_task.task_finished
-			
-			if retry_doc and !retry_doc.error and retry_doc.doc_fields:
-				firebase_debug.debug_log("Retry succeeded!", firebase_debug.LOG_LEVEL_INFO)
-				
-				# Update user data
-				user_data.username = retry_doc.doc_fields.get("username", "Player")
-				user_data.level = retry_doc.doc_fields.get("user_level", 1)
-				user_data.energy = retry_doc.doc_fields.get("energy", 20)
-				user_data.max_energy = retry_doc.doc_fields.get("max_energy", 20)
-				
-				update_user_interface()
-				return
-		
-		# If we get here, the retry failed too
-		firebase_debug.debug_log("Retry failed too, using default values", firebase_debug.LOG_LEVEL_ERROR)
 		update_user_interface()
+
+# New function to process user data after task completion
+func _process_user_data(user_doc, user_id):
+	if user_doc:
+		# Check for errors using proper error detection
+		var has_error = false
+		var error_data = null
+		
+		# According to the docs, we need to check keys() for fields
+		var doc_keys = user_doc.keys()
+		
+		# Check if there is an error in the document
+		if "error" in doc_keys:
+			# Get error value using get_value instead of direct property access
+			error_data = user_doc.get_value("error")
+			if error_data:
+				has_error = true
+		
+		if has_error:
+			firebase_debug.debug_log("Error in document: " + str(error_data), firebase_debug.LOG_LEVEL_ERROR)
+			
+			# Handle document not found error
+			if typeof(error_data) == TYPE_DICTIONARY and error_data.has("status") and error_data.status == "NOT_FOUND":
+				firebase_debug.debug_log("Document not found. Creating a new one.", firebase_debug.LOG_LEVEL_WARNING)
+				_create_default_user_document(user_id)
+			
+			# Fall back to default values
+			update_user_interface()
+		else:
+			# Success path - document found with no errors
+			# Extract only the fields we need using the proper API
+			user_data.username = user_doc.get_value("username") if "username" in doc_keys else "Player"
+			user_data.level = user_doc.get_value("user_level") if "user_level" in doc_keys else 1
+			user_data.energy = user_doc.get_value("energy") if "energy" in doc_keys else 20
+			user_data.max_energy = user_doc.get_value("max_energy") if "max_energy" in doc_keys else 20
+			user_data.profile_picture = user_doc.get_value("profile_picture") if "profile_picture" in doc_keys else "default"
+			
+			firebase_debug.debug_log("User data loaded: " + str(user_data), firebase_debug.LOG_LEVEL_INFO)
+			update_user_interface()
+			
+			# Log last login as a background task
+			update_last_login()
+	else:
+		firebase_debug.debug_log("Document is null", firebase_debug.LOG_LEVEL_ERROR)
+		update_user_interface()
+
+# Ensure we have a valid token before making Firestore requests
+func _ensure_valid_token() -> bool:
+	if Firebase.Auth and Firebase.Auth.auth:
+		# Check if token exists or is about to expire
+		if not Firebase.Auth.auth.has("idtoken"):
+			firebase_debug.debug_log("No token found, attempting refresh", firebase_debug.LOG_LEVEL_INFO)
+			
+			# Additional safety check to avoid errors if auth is busy
+			if Firebase.Auth.is_busy:
+				firebase_debug.debug_log("Auth is busy, waiting before refresh attempt", firebase_debug.LOG_LEVEL_WARNING)
+				await get_tree().create_timer(1.0).timeout
+				
+				if Firebase.Auth.is_busy:
+					firebase_debug.debug_log("Auth still busy, skipping refresh", firebase_debug.LOG_LEVEL_WARNING)
+					return false
+			
+			# Safe to refresh now - remove try/except and use simple error handling
+			firebase_debug.debug_log("Attempting token refresh", firebase_debug.LOG_LEVEL_INFO)
+			# Prefix with underscore since it's unused
+			var _refresh_result = await Firebase.Auth.manual_token_refresh(Firebase.Auth.auth)
+			
+			# Check if we have a token after refresh
+			if Firebase.Auth.auth.has("idtoken"):
+				firebase_debug.debug_log("Token refresh completed successfully", firebase_debug.LOG_LEVEL_INFO)
+				return true
+			else:
+				firebase_debug.debug_log("Token refresh failed - no token available", firebase_debug.LOG_LEVEL_ERROR)
+				return false
+		else:
+			return true
+	return false
 
 # Helper to reinitialize Firebase when needed
 func _initialize_firebase():
@@ -254,11 +230,33 @@ func _initialize_firebase():
 	
 	# Force a token refresh to ensure we have a valid token
 	if Firebase.Auth and Firebase.Auth.auth:
-		var refresh_result = await Firebase.Auth.refresh_auth()
-		firebase_debug.debug_log("Auth token refresh result: " + str(refresh_result), firebase_debug.LOG_LEVEL_INFO)
+		# Log auth object for debugging
+		firebase_debug.debug_log("Auth object before refresh: " + str(Firebase.Auth.auth.keys()), firebase_debug.LOG_LEVEL_DEBUG)
+		
+		# Check if auth is busy before refreshing token
+		if not Firebase.Auth.is_busy:
+			firebase_debug.debug_log("Attempting token refresh", firebase_debug.LOG_LEVEL_INFO)
+			var refresh_result = await Firebase.Auth.manual_token_refresh(Firebase.Auth.auth, 1.0) # Added delay retry
+			firebase_debug.debug_log("Token refresh result: " + str(refresh_result), firebase_debug.LOG_LEVEL_INFO)
+		else:
+			firebase_debug.debug_log("Auth is busy, skipping refresh", firebase_debug.LOG_LEVEL_WARNING)
+			# Wait a moment for possible auth operations to complete
+			await get_tree().create_timer(1.0).timeout
+		
+		# Final check to see if we have a valid token
+		if Firebase.Auth.auth.has("idtoken"):
+			firebase_debug.debug_log("Token exists after refresh attempt", firebase_debug.LOG_LEVEL_INFO)
+			return true
+		else:
+			firebase_debug.debug_log("No token after refresh attempts", firebase_debug.LOG_LEVEL_ERROR)
+			return false
+	else:
+		firebase_debug.debug_log("Auth is null, cannot refresh", firebase_debug.LOG_LEVEL_ERROR)
+		return false
 
 # Helper function to create a default user document
 func _create_default_user_document(user_id):
+	# Simplified to just create essential fields
 	var collection = Firebase.Firestore.collection("dyslexia_users")
 	var current_time = Time.get_datetime_string_from_system(false, true)
 	
@@ -268,39 +266,78 @@ func _create_default_user_document(user_id):
 	var user_doc = {
 		"username": display_name if display_name else "Player",
 		"email": email,
-		"birth_date": "",
-		"age": 0,
-		"profile_picture": "default",
 		"user_level": 1,
-		"created_at": current_time,
-		"last_login": current_time,
 		"energy": 20,
+		"max_energy": 20,
+		"created_at": current_time,
+		"last_login": current_time
 	}
 	
 	print("Creating default user document for ID: ", user_id)
 	var task = collection.add(user_id, user_doc)
 	
 	if task:
-		var result = await task.task_finished
-		if result and !result.error:
-			print("Default user document created successfully")
-			# Now try to fetch the newly created document
-			load_user_data()
-		else:
-			print("Error creating default user document: ", result.error if result else "Unknown error")
-			update_user_interface()
+		# Connect to the signal
+		task.task_finished.connect(func(result):
+			if result and !result.error:
+				print("Default user document created successfully")
+				# Use the data we just created
+				user_data.username = display_name if display_name else "Player"
+				user_data.level = 1
+				user_data.energy = 20
+				user_data.max_energy = 20
+				update_user_interface()
+			else:
+				print("Error creating default user document")
+				update_user_interface()
+			)
 	else:
 		print("Failed to create task for default user document")
 		update_user_interface()
 
+# Update both UI and user's avatar
 func update_user_interface():
-	# Update UI elements with user data
 	name_label.text = user_data.username
 	level_label.text = str(user_data.level)
 	energy_label.text = str(user_data.energy) + "/" + str(user_data.max_energy)
+	
+	# Update avatar
+	update_profile_avatar(user_data.profile_picture)
+
+# Function to update the avatar in the profile button
+func update_profile_avatar(profile_id):
+	if has_node("ProfileButton/AvatarBackground"):
+		var avatar_rect = $ProfileButton/AvatarBackground
+		var texture_path
+		
+		if profile_id == "default" or profile_id == "":
+			texture_path = "res://gui/ProfileScene/Profile/portrait 14.png"
+		else:
+			texture_path = "res://gui/ProfileScene/Profile/portrait " + profile_id + ".png"
+		
+		var texture = load(texture_path)
+		if texture:
+			# Create TextureRect if one doesn't exist
+			var avatar_image
+			if avatar_rect.get_child_count() == 0:
+				avatar_image = TextureRect.new()
+				avatar_image.name = "AvatarImage"
+				avatar_image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+				avatar_image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+				avatar_image.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+				avatar_image.size_flags_vertical = Control.SIZE_EXPAND_FILL
+				# Fix: Use the correct layout mode constant
+				avatar_image.layout_mode = 1 # Use 1 instead of non-existent LAYOUT_MODE_ANCHORS_AND_OFFSETS
+				avatar_image.set_anchors_preset(Control.PRESET_FULL_RECT)
+				avatar_rect.add_child(avatar_image)
+			else:
+				avatar_image = avatar_rect.get_node("AvatarImage")
+				
+			avatar_image.texture = texture
+			firebase_debug.debug_log("Profile avatar updated to: " + str(profile_id), firebase_debug.LOG_LEVEL_INFO)
 
 func update_last_login():
-	# Update last login time in Firestore
+	# Update last login time in Firestore (background task)
 	if Firebase.Auth.auth:
 		var user_id = Firebase.Auth.auth.localid
 		var collection = Firebase.Firestore.collection("dyslexia_users")
@@ -308,15 +345,13 @@ func update_last_login():
 		var current_time = Time.get_datetime_string_from_system(false, true)
 		var update_data = {"last_login": current_time}
 		
-		print("Updating last login for user: ", user_id)
 		var update_task = collection.update(user_id, update_data)
-		
 		if update_task:
-			var result = await update_task.task_finished
-			if result and result.error:
-				print("Error updating last login:", result.error)
-		else:
-			print("Failed to create update task")
+			# Connect to the signal but don't await it
+			update_task.task_finished.connect(func(_result): 
+				# Optionally handle result
+				pass
+			)
 
 # Button handlers
 func _on_journey_mode_button_pressed():
@@ -345,6 +380,13 @@ func _on_settings_button_pressed():
 
 func _on_profile_button_pressed():
 	print("Profile button pressed - attempting to show profile popup")
+	
+	# Ensure Firebase is properly initialized BEFORE showing profile
+	if Firebase.Firestore == null or Firebase.Auth == null:
+		firebase_debug.debug_log("Firebase needs initialization before showing profile", firebase_debug.LOG_LEVEL_WARNING)
+		var init_result = await _initialize_firebase()
+		firebase_debug.debug_log("Firebase initialization result: " + str(init_result), firebase_debug.LOG_LEVEL_INFO)
+		await get_tree().create_timer(0.5).timeout
 	
 	# Create and show the profile popup
 	var profile_popup_scene = load("res://Scenes/ProfilePopUp.tscn")
@@ -385,10 +427,8 @@ func _on_profile_button_pressed():
 		print("WARNING: ProfilePopUp does not have 'closed' signal")
 
 func _on_profile_popup_closed():
-	# Optional function to handle any cleanup after popup closes
+	# Refresh player info when profile popup closes as it might have changed
 	print("Profile popup closed")
-	
-	# You might want to refresh player info here if it changed in the profile
 	load_user_data()
 
 func _on_logout_button_pressed():

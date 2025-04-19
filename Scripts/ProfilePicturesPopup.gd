@@ -35,6 +35,26 @@ func _ready():
     
     # Show checkmark for currently equipped profile
     update_checkmarks()
+    
+    # Try to get current profile ID from Firestore when opening
+    load_current_profile()
+
+func load_current_profile():
+    # Get current user ID
+    if Firebase.Auth.auth and Firebase.Auth.auth.has("localid"):
+        var user_id = Firebase.Auth.auth.localid
+        var collection = Firebase.Firestore.collection("dyslexia_users")
+        var task = collection.get_doc(user_id)
+        
+        if task:
+            var doc = await task.task_finished
+            if doc and !("error" in doc.keys() and doc.get_value("error")):
+                var doc_keys = doc.keys()
+                if "profile_picture" in doc_keys:
+                    var profile_id = doc.get_value("profile_picture")
+                    print("Current profile picture is: ", profile_id)
+                    current_equipped_id = profile_id
+                    update_checkmarks()
 
 func set_current_profile(profile_id):
     current_equipped_id = profile_id
@@ -73,7 +93,19 @@ func _on_portrait_button_pressed(picture_id):
 func _on_confirm_button_pressed():
     # Emit signal with selected picture
     emit_signal("picture_selected", selected_picture_id)
+    update_firestore_profile(selected_picture_id)
     queue_free()
+
+func update_firestore_profile(picture_id):
+    # Get current user ID
+    if Firebase.Auth.auth and Firebase.Auth.auth.has("localid"):
+        var user_id = Firebase.Auth.auth.localid
+        var collection = Firebase.Firestore.collection("dyslexia_users")
+        # Prefix with underscore since it's unused
+        var _update_task = collection.update(user_id, {"profile_picture": picture_id})
+        
+        # We could await this, but it's not necessary since we're closing the popup
+        print("Updating profile picture in Firestore to: ", picture_id)
 
 func _on_close_button_pressed():
     # Emit cancelled signal

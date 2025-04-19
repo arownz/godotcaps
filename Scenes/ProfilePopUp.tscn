@@ -3,9 +3,9 @@
 [ext_resource type="Texture2D" uid="uid://ccdwoylh104gc" path="res://gui/ProfileScene/ui 8.png" id="1_mn5kv"]
 [ext_resource type="Script" uid="uid://caa84ntbsorb8" path="res://Scripts/ProfilePopUp.gd" id="1_script"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="2_73kok"]
-[ext_resource type="Texture2D" uid="uid://dkccpks7klx5p" path="res://gui/ProfileScene/Profile/portrait 14.png" id="3_portrait"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="3_uyv5l"]
 [ext_resource type="Texture2D" uid="uid://dljqigmy8f7k6" path="res://Sprites/Player/player.png" id="4_player"]
+[ext_resource type="Texture2D" uid="uid://dry2umw3ejgro" path="res://gui/profile.png" id="5_6yy5g"]
 [ext_resource type="Texture2D" uid="uid://cjvdyfgftwdhb" path="res://gui/ProfileScene/close icon.png" id="6_close"]
 [ext_resource type="Texture2D" uid="uid://upv1mak0rswy" path="res://gui/ProfileScene/bronze medal.png" id="7_medal"]
 [ext_resource type="Texture2D" uid="uid://d025ghojxo8wn" path="res://gui/ProfileScene/highest level 1.png" id="8_d7ibu"]
@@ -89,7 +89,7 @@ offset_left = 57.0
 offset_top = 153.0
 offset_right = 177.0
 offset_bottom = 273.0
-texture_normal = ExtResource("3_portrait")
+texture_normal = ExtResource("5_6yy5g")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -233,7 +233,7 @@ offset_bottom = 115.0
 theme_override_colors/font_color = Color(0.99, 0.99, 0, 1)
 theme_override_fonts/font = ExtResource("2_73kok")
 theme_override_font_sizes/font_size = 20
-text = "20/100"
+text = "100/100"
 
 [node name="CoinsLabel" type="Label" parent="ProfileContainer/StatsArea"]
 layout_mode = 0
@@ -264,7 +264,7 @@ offset_right = 159.0
 offset_bottom = 195.0
 theme_override_fonts/font = ExtResource("2_73kok")
 theme_override_font_sizes/font_size = 20
-text = "Power:"
+text = "Scale:"
 
 [node name="PowerValue" type="Label" parent="ProfileContainer/StatsArea"]
 layout_mode = 0
@@ -286,7 +286,7 @@ offset_bottom = 63.0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("3_uyv5l")
 theme_override_font_sizes/font_size = 18
-text = "1: The Plains"
+text = "3: The Demon"
 
 [node name="StageLabel" type="Label" parent="ProfileContainer/StatsArea"]
 layout_mode = 0
@@ -308,7 +308,7 @@ offset_bottom = 269.0
 theme_override_colors/font_color = Color(0.988235, 0.988235, 0, 1)
 theme_override_fonts/font = ExtResource("3_uyv5l")
 theme_override_font_sizes/font_size = 18
-text = "1/5"
+text = "5/5"
 
 [node name="CharacterArea" type="Control" parent="ProfileContainer"]
 layout_mode = 1
