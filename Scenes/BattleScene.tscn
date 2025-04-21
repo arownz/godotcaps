@@ -187,8 +187,8 @@ grow_horizontal = 0
 grow_vertical = 2
 
 [node name="Enemy" type="Sprite2D" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer"]
-position = Vector2(56, -204)
-scale = Vector2(4.32031, 4.61719)
+position = Vector2(56, -187)
+scale = Vector2(3.52051, 3.76243)
 texture = ExtResource("2")
 
 [node name="EnemyName" type="Label" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer"]

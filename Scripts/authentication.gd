@@ -593,7 +593,7 @@ func on_signup_failed(error_code, message):
 # Then in your profile loading code (when you implement it):
 func load_profile_image(image_identifier):
 	if image_identifier == "default":
-		return preload("res://gui/ProfileScene/Profile/portrait 14.png")
+		return preload("res://gui/ProfileScene/Profile/portrait13.png")
 	else:
 		# Handle loading from Firebase Storage or web URLs if needed
 		pass

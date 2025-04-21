@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://bysyq46j6ycis"]
+[gd_scene load_steps=12 format=3 uid="uid://bysyq46j6ycis"]
 
 [ext_resource type="Texture2D" uid="uid://ccdwoylh104gc" path="res://gui/ProfileScene/ui 8.png" id="1_mn5kv"]
 [ext_resource type="Script" uid="uid://caa84ntbsorb8" path="res://Scripts/ProfilePopUp.gd" id="1_script"]
@@ -7,6 +7,8 @@
 [ext_resource type="Texture2D" uid="uid://dljqigmy8f7k6" path="res://Sprites/Player/player.png" id="4_player"]
 [ext_resource type="Texture2D" uid="uid://dry2umw3ejgro" path="res://gui/profile.png" id="5_6yy5g"]
 [ext_resource type="Texture2D" uid="uid://cjvdyfgftwdhb" path="res://gui/ProfileScene/close icon.png" id="6_close"]
+[ext_resource type="Texture2D" uid="uid://yernxap6enqq" path="res://gui/ProfileScene/edit 1.png" id="6_rwnca"]
+[ext_resource type="Texture2D" uid="uid://dwgcjv1wpp0hw" path="res://gui/ProfileScene/copy UID.png" id="7_ampbo"]
 [ext_resource type="Texture2D" uid="uid://upv1mak0rswy" path="res://gui/ProfileScene/bronze medal.png" id="7_medal"]
 [ext_resource type="Texture2D" uid="uid://d025ghojxo8wn" path="res://gui/ProfileScene/highest level 1.png" id="8_d7ibu"]
 
@@ -85,10 +87,10 @@ horizontal_alignment = 1
 
 [node name="ProfilePictureButton" type="TextureButton" parent="ProfileContainer"]
 layout_mode = 0
-offset_left = 57.0
-offset_top = 153.0
-offset_right = 177.0
-offset_bottom = 273.0
+offset_left = 21.0
+offset_top = 156.0
+offset_right = 181.0
+offset_bottom = 316.0
 texture_normal = ExtResource("5_6yy5g")
 ignore_texture_size = true
 stretch_mode = 5
@@ -114,15 +116,26 @@ layout_mode = 0
 offset_left = 186.0
 offset_right = 469.0
 offset_bottom = 45.0
-theme_override_fonts/font = ExtResource("2_73kok")
+theme_override_colors/font_color = Color(0.988235, 0.988235, 0, 1)
+theme_override_fonts/font = ExtResource("3_uyv5l")
 theme_override_font_sizes/font_size = 24
 text = "Loading..."
 
+[node name="EditNameButton" type="TextureButton" parent="ProfileContainer/UserInfoArea"]
+layout_mode = 0
+offset_left = 537.0
+offset_top = -1.0
+offset_right = 586.0
+offset_bottom = 48.0
+scale = Vector2(0.586272, 0.755157)
+tooltip_text = "Edit Username"
+texture_normal = ExtResource("6_rwnca")
+
 [node name="EmailLabel" type="Label" parent="ProfileContainer/UserInfoArea"]
 layout_mode = 0
-offset_top = 42.0
+offset_top = 89.0
 offset_right = 181.0
-offset_bottom = 75.0
+offset_bottom = 126.0
 theme_override_fonts/font = ExtResource("2_73kok")
 theme_override_font_sizes/font_size = 20
 text = "Email:"
@@ -130,31 +143,44 @@ text = "Email:"
 [node name="EmailValue" type="Label" parent="ProfileContainer/UserInfoArea"]
 layout_mode = 0
 offset_left = 101.0
-offset_top = 42.0
-offset_right = 356.0
-offset_bottom = 79.0
-theme_override_fonts/font = ExtResource("2_73kok")
+offset_top = 89.0
+offset_right = 473.0
+offset_bottom = 126.0
+theme_override_colors/font_color = Color(0.988235, 0.988235, 0, 1)
+theme_override_fonts/font = ExtResource("3_uyv5l")
 theme_override_font_sizes/font_size = 20
 text = "Loading..."
 
 [node name="UIDLabel" type="Label" parent="ProfileContainer/UserInfoArea"]
 layout_mode = 0
-offset_top = 84.0
-offset_right = 181.0
-offset_bottom = 117.0
+offset_left = 4.0
+offset_top = 48.0
+offset_right = 185.0
+offset_bottom = 82.0
 theme_override_fonts/font = ExtResource("2_73kok")
 theme_override_font_sizes/font_size = 18
 text = "UID:"
 
 [node name="UIDValue" type="Label" parent="ProfileContainer/UserInfoArea"]
 layout_mode = 0
-offset_left = 70.0
-offset_top = 84.0
-offset_right = 411.0
-offset_bottom = 118.0
-theme_override_fonts/font = ExtResource("2_73kok")
-theme_override_font_sizes/font_size = 18
+offset_left = 72.0
+offset_top = 52.0
+offset_right = 486.0
+offset_bottom = 86.0
+theme_override_colors/font_color = Color(0.988235, 0.988235, 0, 1)
+theme_override_fonts/font = ExtResource("3_uyv5l")
+theme_override_font_sizes/font_size = 16
 text = "Loading..."
+
+[node name="CopyUIDButton" type="TextureButton" parent="ProfileContainer/UserInfoArea"]
+layout_mode = 0
+offset_left = 538.0
+offset_top = 48.0
+offset_right = 587.0
+offset_bottom = 97.0
+scale = Vector2(0.590817, 0.67551)
+tooltip_text = "Copy UID to Clipboard"
+texture_normal = ExtResource("7_ampbo")
 
 [node name="RankLabel" type="Label" parent="ProfileContainer/UserInfoArea"]
 layout_mode = 0
@@ -182,7 +208,8 @@ offset_left = 120.0
 offset_top = 124.0
 offset_right = 280.0
 offset_bottom = 161.0
-theme_override_fonts/font = ExtResource("2_73kok")
+theme_override_colors/font_color = Color(0.988235, 0.988235, 0, 1)
+theme_override_fonts/font = ExtResource("3_uyv5l")
 theme_override_font_sizes/font_size = 20
 text = "Rank"
 
@@ -204,12 +231,12 @@ offset_bottom = 598.0
 
 [node name="StatsTitle" type="Label" parent="ProfileContainer/StatsArea"]
 layout_mode = 0
-offset_left = 42.0
-offset_top = 39.0
-offset_right = 244.0
-offset_bottom = 76.0
+offset_left = 39.0
+offset_top = 25.0
+offset_right = 265.0
+offset_bottom = 70.0
 theme_override_fonts/font = ExtResource("2_73kok")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 24
 text = "Player Stats"
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -226,12 +253,12 @@ text = "Energy:"
 
 [node name="EnergyValue" type="Label" parent="ProfileContainer/StatsArea"]
 layout_mode = 0
-offset_left = 179.0
+offset_left = 160.0
 offset_top = 78.0
-offset_right = 299.0
+offset_right = 280.0
 offset_bottom = 115.0
 theme_override_colors/font_color = Color(0.99, 0.99, 0, 1)
-theme_override_fonts/font = ExtResource("2_73kok")
+theme_override_fonts/font = ExtResource("3_uyv5l")
 theme_override_font_sizes/font_size = 20
 text = "100/100"
 
@@ -247,12 +274,12 @@ text = "Coins:"
 
 [node name="CoinsValue" type="Label" parent="ProfileContainer/StatsArea"]
 layout_mode = 0
-offset_left = 179.0
+offset_left = 160.0
 offset_top = 118.0
-offset_right = 299.0
+offset_right = 280.0
 offset_bottom = 155.0
 theme_override_colors/font_color = Color(0.99, 0.99, 0, 1)
-theme_override_fonts/font = ExtResource("2_73kok")
+theme_override_fonts/font = ExtResource("3_uyv5l")
 theme_override_font_sizes/font_size = 20
 text = "99999"
 
@@ -268,12 +295,12 @@ text = "Scale:"
 
 [node name="PowerValue" type="Label" parent="ProfileContainer/StatsArea"]
 layout_mode = 0
-offset_left = 179.0
+offset_left = 160.0
 offset_top = 158.0
-offset_right = 299.0
+offset_right = 280.0
 offset_bottom = 195.0
 theme_override_colors/font_color = Color(0.99, 0.99, 0, 1)
-theme_override_fonts/font = ExtResource("2_73kok")
+theme_override_fonts/font = ExtResource("3_uyv5l")
 theme_override_font_sizes/font_size = 20
 text = "10000"
 
@@ -283,7 +310,7 @@ offset_left = 304.0
 offset_top = 27.0
 offset_right = 468.0
 offset_bottom = 63.0
-theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(0.988235, 0.988235, 0, 1)
 theme_override_fonts/font = ExtResource("3_uyv5l")
 theme_override_font_sizes/font_size = 18
 text = "3: The Demon"
@@ -336,7 +363,7 @@ offset_top = 218.0
 offset_right = 156.0
 offset_bottom = 295.0
 theme_override_colors/font_color = Color(0.99, 0.99, 0, 1)
-theme_override_fonts/font = ExtResource("2_73kok")
+theme_override_fonts/font = ExtResource("3_uyv5l")
 theme_override_font_sizes/font_size = 20
 text = "99
 "

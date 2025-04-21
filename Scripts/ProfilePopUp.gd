@@ -2,11 +2,9 @@ extends Control
 
 signal closed
 
-# Simplify to just the essential data we need to track
+# Only keep essential data tracking
 var user_data = {}
 var current_profile_picture = "default"
-var fetch_retry_count = 0
-var max_retries = 3
 
 func _ready():
 	# Check signal connections
@@ -16,8 +14,12 @@ func _ready():
 	if !$ProfileContainer/LogoutButton.is_connected("pressed", Callable(self, "_on_logout_button_pressed")):
 		$ProfileContainer/LogoutButton.connect("pressed", Callable(self, "_on_logout_button_pressed"))
 	
+	# Connect edit and copy UID buttons
+	$ProfileContainer/UserInfoArea/EditNameButton.pressed.connect(_on_edit_name_button_pressed)
+	$ProfileContainer/UserInfoArea/CopyUIDButton.pressed.connect(_on_copy_uid_button_pressed)
+	
 	# Load user data from Firestore
-	load_user_data()
+	await load_user_data()
 
 func load_user_data():
 	print("ProfilePopUp: Loading user data")
@@ -30,228 +32,57 @@ func load_user_data():
 	var user_id = Firebase.Auth.auth.localid
 	print("ProfilePopUp: Loading data for user ID: ", user_id)
 	
-	# Check if Firestore is initialized
+	# Simple Firestore check
 	if Firebase.Firestore == null:
 		print("ProfilePopUp: ERROR - Firestore is null")
-		await _init_firebase()
-		
-		# If still null, use fallback
-		if Firebase.Firestore == null:
-			print("ProfilePopUp: Firestore still null after init")
-			return
+		return
 	
-	# CRITICAL FIX: Check if Auth is busy before proceeding
-	if is_auth_busy():
-		print("ProfilePopUp: Firebase Auth is busy, waiting before proceeding...")
-		# Wait for Firebase Auth to be available
-		await get_tree().create_timer(2.0).timeout
+	# SIMPLIFIED: Create collection reference and fetch document directly
+	var collection = Firebase.Firestore.collection("dyslexia_users")
+	print("ProfilePopUp: Attempting to fetch document with ID: ", user_id)
+	
+	# Using the direct await approach that works correctly
+	var document_result = await collection.get_doc(user_id)
+	
+	if document_result != null:
+		print("ProfilePopUp: Document received")
 		
-		if is_auth_busy():
-			print("ProfilePopUp: Firebase Auth still busy, skipping token refresh")
-		else:
-			# Only refresh if not busy
-			print("ProfilePopUp: Refreshing auth token to ensure validity")
-			# Use a timer to allow any pending HTTP requests to complete
-			await get_tree().create_timer(0.5).timeout
-			# Pass a delay parameter for auto-retry if still busy
-			var refresh_result = await Firebase.Auth.manual_token_refresh(Firebase.Auth.auth, 1.0)
-			print("ProfilePopUp: Token refresh result: ", refresh_result)
+		# Check for errors in the document
+		var has_error = false
+		var error_data = null
+		var doc_keys = document_result.keys()
+		
+		if "error" in doc_keys:
+			error_data = document_result.get_value("error")
+			if error_data:
+				has_error = true
+				print("ProfilePopUp: Error in document: ", error_data)
+				
+				if typeof(error_data) == TYPE_DICTIONARY and error_data.has("status"):
+					if error_data.status == "NOT_FOUND":
+						# Create a new user document if it doesn't exist
+						var create_success = await _create_user_document(user_id)
+						if create_success:
+							await load_user_data() # Try loading again after creation
+							return
+		
+		if !has_error:
+			# Process the document data
+			user_data = {}
+			for field in doc_keys:
+				if field != "error":
+					user_data[field] = document_result.get_value(field)
+			
+			print("ProfilePopUp: Successfully loaded user data with keys: ", user_data.keys())
+			update_ui()
 	else:
-		# Not busy, can refresh safely
-		print("ProfilePopUp: Refreshing auth token to ensure validity")
-		var refresh_result = await Firebase.Auth.manual_token_refresh(Firebase.Auth.auth)
-		print("ProfilePopUp: Token refresh result: ", refresh_result)
-	
-	# Wait a moment to ensure all initialization is complete
-	await get_tree().create_timer(1.0).timeout
-	
-	# Try fetching from Firestore with retry logic
-	await _fetch_user_document(user_id)
+		print("ProfilePopUp: Failed to fetch document")
 
-# Helper function to check if Auth is busy (to avoid direct property access if not available)
-func is_auth_busy():
-	# Method 1: Try has_method first (this is valid)
-	if Firebase.Auth.has_method("is_busy"):
-		return Firebase.Auth.is_busy
-	
-	# Method 2: Try direct property access using get() with a default
-	# This handles the case without using has_property() which doesn't exist
-	var busy_status = false
-	
-	# Using a simple check - if the property exists, this will work
-	# If it doesn't, it will just return our default value (false)
-	if "is_busy" in Firebase.Auth:
-		busy_status = Firebase.Auth.is_busy
-	
-	return busy_status
-
-# New function to handle fetching with retries
-func _fetch_user_document(user_id):
-	fetch_retry_count = 0
-	var fetched = false
-	
-	while !fetched and fetch_retry_count < max_retries:
-		# Enhanced Firestore fetch with retry
-		print("ProfilePopUp: Creating Firestore collection reference (attempt %d)" % (fetch_retry_count + 1))
-		
-		if Firebase.Firestore == null:
-			print("ProfilePopUp: Firestore is null on attempt %d" % (fetch_retry_count + 1))
-			await _init_firebase()
-			await get_tree().create_timer(1.0).timeout
-			fetch_retry_count += 1
-			continue
-		
-		var collection = null
-		if Firebase.Firestore:
-			collection = Firebase.Firestore.collection("dyslexia_users")
-			if not collection:
-				print("ProfilePopUp: Failed to create collection reference")
-				await get_tree().create_timer(1.0).timeout
-				fetch_retry_count += 1
-				continue
-		else:
-			print("ProfilePopUp: Firestore is null, cannot create collection reference")
-			await get_tree().create_timer(1.0).timeout
-			fetch_retry_count += 1
-			continue
-		
-		# Use the correct method: get_doc instead of get
-		print("ProfilePopUp: Attempting to fetch document with ID: ", user_id)
-		
-		# Get the document
-		var task = collection.get_doc(user_id)
-		
-		if task:
-			print("ProfilePopUp: Task created, waiting for result")
-			
-			# Use a custom signal to communicate back from the lambda
-			var temp_signal = Signal()
-			var document_result = null
-			
-			# Connect to the task_finished signal
-			task.task_finished.connect(func(doc_snapshot): 
-				document_result = doc_snapshot
-				# Signal that we have received the result
-				temp_signal.emit()
-			)
-			
-			# Wait for a reasonable time for the task to complete
-			var timeout = 0
-			var result_received = false
-			
-			while !result_received and timeout < 30:  # 3 second timeout
-				# Try to receive the signal
-				if temp_signal.connect(func(): result_received = true):
-					break
-				await get_tree().create_timer(0.1).timeout
-				timeout += 1
-			
-			# If we have a result, process it
-			if document_result != null:
-				var user_doc = document_result
-				print("ProfilePopUp: Document received")
-				
-				# Print full raw document for debugging
-				print("ProfilePopUp: DOCUMENT RECEIVED:")
-				_print_document_structure(user_doc)
-				
-				# Check for errors using proper error detection
-				var has_error = false
-				var error_data = null
-				
-				# According to the docs, we need to check keys() for fields
-				var doc_keys = user_doc.keys()
-				
-				# Check if there is an error in the document
-				if "error" in doc_keys:
-					error_data = user_doc.get_value("error")
-					if error_data:
-						has_error = true
-				
-				if has_error:
-					print("ProfilePopUp: Error in document: ", error_data)
-					# Handle specific errors - check if error_data is a dictionary
-					if typeof(error_data) == TYPE_DICTIONARY and error_data.has("status"):
-						print("ProfilePopUp: Error status: ", error_data.status)
-						
-						if error_data.status == "NOT_FOUND":
-							print("ProfilePopUp: Document not found - will try to create it")
-							# Try to create the user document
-							var create_success = await _create_user_document(user_id)
-							if create_success:
-								# Try fetching again
-								continue
-						elif error_data.status == "PERMISSION_DENIED":
-							print("ProfilePopUp: Permission denied. Check that document ID matches user UID exactly")
-							# This is likely due to Firestore rules - the document ID must match user ID
-							print("ProfilePopUp: User ID: ", user_id)
-							print("ProfilePopUp: Auth UID: ", Firebase.Auth.auth.localid if Firebase.Auth.auth else "None")
-					
-					fetch_retry_count += 1
-					await get_tree().create_timer(1.0).timeout
-				else:
-					# Success path - document found with no errors
-					user_data = {}
-					
-					# Use the correct field access pattern
-					for field in doc_keys:
-						if field != "error": # Skip the error field if it exists
-							user_data[field] = user_doc.get_value(field)
-					
-					print("ProfilePopUp: Successfully loaded user data with keys: ", user_data.keys())
-					update_ui()
-					fetched = true
-					break
-			else:
-				print("ProfilePopUp: Task timed out")
-				fetch_retry_count += 1
-				await get_tree().create_timer(1.0).timeout
-		else:
-			print("ProfilePopUp: Failed to create task")
-			fetch_retry_count += 1
-			await get_tree().create_timer(1.0).timeout
-	
-	# If we couldn't fetch after all retries, use default values
-	if !fetched:
-		print("ProfilePopUp: Could not fetch data after %d attempts, using defaults" % max_retries)
-		# Create default document with minimal information
-		user_data = {
-			"username": "User " + user_id.substr(0, 5),
-			"user_level": 1,
-			"energy": 20,
-			"max_energy": 20,
-			"coin": 100,
-			"power_scale": 115,
-			"rank": "Bronze",
-			"current_dungeon": 1,
-			"current_stage": 1,
-			"profile_picture": "default",
-			"email": Firebase.Auth.auth.email if Firebase.Auth.auth and Firebase.Auth.auth.has("email") else "no-email@example.com"
-		}
-		update_ui()
-		
-		# Try to create the document since it might not exist
-		_create_user_document(user_id)
-
-# Function to create a user document if it doesn't exist
+# Simplified user document creation function
 func _create_user_document(user_id):
-	print("ProfilePopUp: Attempting to create user document with ID: ", user_id)
-	
-	if Firebase.Firestore == null:
-		print("ProfilePopUp: Firestore is null, cannot create document")
-		return false
-	
-	# Make sure we're using the correct user ID that matches Firebase Auth
-	if user_id != Firebase.Auth.auth.localid:
-		print("ProfilePopUp: Warning - user_id mismatch with auth.localid")
-		user_id = Firebase.Auth.auth.localid
+	print("ProfilePopUp: Creating user document")
 	
 	var collection = Firebase.Firestore.collection("dyslexia_users")
-	if collection == null:
-		print("ProfilePopUp: Cannot get collection reference")
-		return false
-	
-	# Create basic user document with fields matching the expected structure
 	var user_doc = {
 		"username": Firebase.Auth.auth.get("displayname", "User"),
 		"email": Firebase.Auth.auth.get("email", ""),
@@ -271,98 +102,15 @@ func _create_user_document(user_id):
 		}
 	}
 	
-	# Use the correct method to add a document
-	var task = collection.add(user_id, user_doc)
-	
+	# Add document and await result
+	var task = await collection.add(user_id, user_doc)
 	if task:
-		var success = false
-		var create_result = null
-		
-		# Connect to the signal
-		task.task_finished.connect(func(result):
-			create_result = result
-		)
-		
-		# Wait for the result
-		var timeout = 0
-		while create_result == null and timeout < 30:  # 3 second timeout
-			await get_tree().create_timer(0.1).timeout
-			timeout += 1
-		
-		if create_result != null and !create_result.error:
-			print("ProfilePopUp: Successfully created user document")
-			return true
-		else:
-			print("ProfilePopUp: Error creating document: ", create_result.error if create_result else "Unknown error")
-			return false
-	else:
-		print("ProfilePopUp: Failed to create task")
-		return false
-
-# Helper function to print the document structure for debugging
-func _print_document_structure(doc):
-	if doc == null:
-		print("  Document is null")
-		return
-		
-	print("  Document keys: ", doc.keys())
+		var create_result = await task.task_finished
+		return create_result != null and !create_result.error
 	
-	# Use the correct way to access document fields - using get_value()
-	for key in doc.keys():
-		var value = doc.get_value(key)
-		if typeof(value) == TYPE_DICTIONARY:
-			print("    ", key, " (dict): ", value)
-		else:
-			print("    ", key, ": ", value)
+	return false
 
-# Initialize Firebase (useful when retrying connections)
-func _init_firebase():
-	print("ProfilePopUp: Reinitializing Firebase connection")
-	
-	# Check if Firebase is properly initialized
-	if Firebase.Auth == null:
-		print("ProfilePopUp: CRITICAL ERROR - Firebase.Auth is null, plugin might be incorrectly initialized")
-		return false
-		
-	if Firebase.Firestore == null:
-		print("ProfilePopUp: CRITICAL ERROR - Firebase.Firestore is null, plugin might be incorrectly initialized")
-		return false
-	
-	# Debug the auth object
-	if Firebase.Auth.auth:
-		print("ProfilePopUp: Auth keys available: ", Firebase.Auth.auth.keys())
-		
-		# Ensure we have a valid token
-		if Firebase.Auth.auth.has("idtoken"):
-			print("ProfilePopUp: Token exists")
-			return true
-			
-		# Only if we don't have a token, try to refresh auth
-		print("ProfilePopUp: No token found, attempting to refresh")
-		
-		# Make sure auth isn't busy before refreshing
-		if is_auth_busy():
-			print("ProfilePopUp: Auth is busy, waiting...")
-			await get_tree().create_timer(1.0).timeout
-			
-			if is_auth_busy():
-				print("ProfilePopUp: Auth still busy, cannot refresh token")
-				return false
-				
-		var token_result = await Firebase.Auth.manual_token_refresh(Firebase.Auth.auth)
-		print("ProfilePopUp: Token refresh result: ", token_result)
-		
-		# Check if we now have a token
-		if Firebase.Auth.auth.has("idtoken"):
-			print("ProfilePopUp: Token obtained after refresh")
-			return true
-		else:
-			print("ProfilePopUp: Failed to obtain token after refresh")
-			return false
-	else:
-		print("ProfilePopUp: Auth is null or missing")
-		return false
-
+# UI updating functions - keep as they were before
 func update_ui():
 	print("ProfilePopUp: Updating UI with user data")
 	
@@ -433,59 +181,192 @@ func update_ui():
 	
 	print("ProfilePopUp: UI update complete")
 
-# Update profile picture function
 func update_profile_picture():
 	# Get reference to the profile picture texture rect
 	if has_node("ProfileContainer/ProfilePictureButton"):
 		var profile_button = $ProfileContainer/ProfilePictureButton
 		# Try to load the profile picture
-		var texture_path = "res://gui/ProfileScene/Profile/portrait 14.png" + current_profile_picture + ".png"
-		# Default fallback
+		var texture_path
+		
+		# Set texture path based on profile ID
 		if current_profile_picture == "default":
-			texture_path = "res://gui/ProfileScene/Profile/portrait 14.png"
+			current_profile_picture = "13"  # Map default to portrait 13
+		
+		texture_path = "res://gui/ProfileScene/Profile/portrait" + current_profile_picture + ".png"
 			
 		var texture = load(texture_path)
 		if texture:
 			profile_button.texture_normal = texture
 			print("ProfilePopUp: Profile picture updated successfully")
+		else:
+			print("ProfilePopUp: Failed to load texture from path: " + texture_path)
 
+# Button handlers
 func _on_close_button_pressed():
-	# Emit closed signal
 	emit_signal("closed")
 	queue_free()
 
+# Remove async keyword - Godot doesn't support this syntax
 func _on_profile_picture_button_pressed():
 	print("ProfilePopUp: Profile picture button pressed")
 	var profile_pics_popup = load("res://Scenes/ProfilePicturesPopup.tscn").instantiate()
 	add_child(profile_pics_popup)
+	
+	# Connect signal before _ready finishes to ensure we don't miss events
 	profile_pics_popup.connect("picture_selected", Callable(self, "_on_profile_picture_selected"))
+	
+	# We can still use await inside a regular function
+	await get_tree().process_frame
 
 func _on_profile_picture_selected(picture_id):
 	print("ProfilePopUp: Picture selected: ", picture_id)
 	current_profile_picture = picture_id
 	update_profile_picture()
 	
-	# Update in Firestore
+	# Update in Firestore - using proper await pattern
 	if Firebase.Auth.auth:
 		var user_id = Firebase.Auth.auth.localid
 		var collection = Firebase.Firestore.collection("dyslexia_users")
-		var task = collection.update(user_id, {"profile_picture": picture_id})
 		
-		if task:
-			# Connect to the signal
-			task.task_finished.connect(func(result):
-				if result.error:
-					print("Error updating profile picture: ", result.error)
-				else:
-					print("Profile picture updated successfully")
-			)
+		print("DEBUG: Updating Firestore document for user: " + user_id)
+		print("DEBUG: Setting profile_picture to: " + picture_id)
+		
+		# FIXED: Get the document first, then update fields, then submit the update
+		var document_task = await collection.get_doc(user_id)
+		
+		if document_task and not ("error" in document_task.keys() and document_task.get_value("error")):
+			# Add/update the profile_picture field
+			document_task.add_or_update_field("profile_picture", picture_id)
+			
+			# Update the document in Firestore - FIXED to handle both return types
+			print("DEBUG: Calling update on document")
+			var updated_doc = await collection.update(document_task)
+			
+			print("DEBUG: Update returned: ", updated_doc)
+			
+			if updated_doc:
+				print("Profile picture updated successfully in Firestore")
+				# Update local user_data to maintain consistency
+				if user_data.has("profile_picture"):
+					user_data["profile_picture"] = picture_id
+					
+				# Add explicit debug to verify document after update
+				debug_firestore_document()
+			else:
+				print("Failed to update profile picture - no document returned")
 		else:
-			print("Failed to create task for updating profile picture")
+			print("Failed to get document for updating")
+
+# Add debug function to check Firestore document
+func debug_firestore_document():
+	if Firebase.Auth.auth:
+		var user_id = Firebase.Auth.auth.localid
+		var collection = Firebase.Firestore.collection("dyslexia_users")
+		
+		print("Verifying document update for user: " + user_id)
+		var document = await collection.get_doc(user_id)
+		
+		if document:
+			# Updated to correctly check document fields
+			if document.has_method("keys") and "profile_picture" in document.keys():
+				print("Current profile_picture value: " + str(document.get_value("profile_picture")))
+			else:
+				print("Document doesn't have profile_picture field or wrong format")
+		else:
+			print("Failed to fetch document for verification")
 
 func _on_logout_button_pressed():
-	# Logout from Firebase
 	Firebase.Auth.logout()
-	
-	# Close profile and navigate to the login scene
 	var scene = load("res://Scenes/Authentication.tscn")
 	get_tree().change_scene_to_packed(scene)
+
+# Handle edit name button press
+func _on_edit_name_button_pressed():
+	# Create a simple dialog for name editing
+	var dialog = AcceptDialog.new()
+	dialog.title = "Edit Username"
+	
+	# Add a LineEdit for the name input
+	var vbox = VBoxContainer.new()
+	vbox.set_anchors_preset(Control.PRESET_FULL_RECT)
+	vbox.add_theme_constant_override("separation", 10)
+	
+	var label = Label.new()
+	label.text = "Enter new username:"
+	vbox.add_child(label)
+	
+	var line_edit = LineEdit.new()
+	line_edit.text = user_data.get("username", "")
+	line_edit.placeholder_text = "Enter username"
+	# Set up the line edit with appropriate size and styling
+	line_edit.custom_minimum_size.y = 40
+	vbox.add_child(line_edit)
+	
+	dialog.add_child(vbox)
+	
+	# Add confirm button
+	dialog.add_button("Cancel", false, "cancel")
+	
+	# Connect dialog signals
+	dialog.confirmed.connect(func(): _update_username(line_edit.text))
+	
+	# Add dialog to scene and show it
+	add_child(dialog)
+	dialog.popup_centered(Vector2(400, 150))
+
+# Update username in Firestore
+func _update_username(new_username):
+	if new_username.strip_edges().is_empty():
+		print("Username cannot be empty")
+		return
+		
+	if Firebase.Auth.auth:
+		var user_id = Firebase.Auth.auth.localid
+		var collection = Firebase.Firestore.collection("dyslexia_users")
+		
+		print("Updating username for user: " + user_id)
+		
+		# Get the document first
+		var document_task = await collection.get_doc(user_id)
+		
+		if document_task and not ("error" in document_task.keys() and document_task.get_value("error")):
+			# Update the username field
+			document_task.add_or_update_field("username", new_username)
+			
+			# Update the document in Firestore
+			var updated_doc = await collection.update(document_task)
+			
+			if updated_doc:
+				print("Username updated successfully")
+				# Update local user_data
+				user_data["username"] = new_username
+				# Update UI
+				$ProfileContainer/UserInfoArea/NameValue.text = new_username
+			else:
+				print("Failed to update username - no document returned")
+		else:
+			print("Failed to get document for updating username")
+
+# Handle copy UID button press
+func _on_copy_uid_button_pressed():
+	if Firebase.Auth.auth and Firebase.Auth.auth.has("localid"):
+		var uid = Firebase.Auth.auth.localid
+		
+		# Copy to clipboard
+		DisplayServer.clipboard_set(uid)
+		
+		# Show feedback
+		var popup = Label.new()
+		popup.text = "UID Copied!"
+		popup.add_theme_font_override("font", load("res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf"))
+		popup.add_theme_font_size_override("font_size", 16)
+		popup.add_theme_color_override("font_color", Color(0, 0.8, 0.2)) # Green color
+		popup.position = $ProfileContainer/UserInfoArea/CopyUIDButton.position + Vector2(0, 30)
+		popup.z_index = 100
+		
+		$ProfileContainer/UserInfoArea.add_child(popup)
+		
+		# Remove popup after a short delay
+		var tween = create_tween()
+		tween.tween_property(popup, "modulate", Color(1, 1, 1, 0), 1.0)
+		tween.tween_callback(popup.queue_free)
