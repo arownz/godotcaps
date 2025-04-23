@@ -59,7 +59,8 @@ func fetch_random_word():
 func _try_api_request():
 	# Different API endpoints to try
 	var apis = [
-		"https://api.datamuse.com/words?sp=?????&max=250"  # Try this API first (faster)
+		"https://api.datamuse.com/words?sp=?????&max=250",  # Try this API first (faster)
+		"https://random-word-api.herokuapp.com/word?number=1" # Try this API second (slower)
 	]
 	
 	# Choose an API endpoint - use the first one initially (datamuse)

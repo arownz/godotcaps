@@ -123,11 +123,11 @@ text = "Loading..."
 
 [node name="EditNameButton" type="TextureButton" parent="ProfileContainer/UserInfoArea"]
 layout_mode = 0
-offset_left = 537.0
-offset_top = -1.0
-offset_right = 586.0
-offset_bottom = 48.0
-scale = Vector2(0.586272, 0.755157)
+offset_left = 494.0
+offset_top = -3.0
+offset_right = 543.0
+offset_bottom = 46.0
+scale = Vector2(0.529192, 0.72086)
 tooltip_text = "Edit Username"
 texture_normal = ExtResource("6_rwnca")
 
@@ -174,11 +174,11 @@ text = "Loading..."
 
 [node name="CopyUIDButton" type="TextureButton" parent="ProfileContainer/UserInfoArea"]
 layout_mode = 0
-offset_left = 538.0
-offset_top = 48.0
-offset_right = 587.0
-offset_bottom = 97.0
-scale = Vector2(0.590817, 0.67551)
+offset_left = 495.0
+offset_top = 46.0
+offset_right = 544.0
+offset_bottom = 95.0
+scale = Vector2(0.533295, 0.64483)
 tooltip_text = "Copy UID to Clipboard"
 texture_normal = ExtResource("7_ampbo")
 
