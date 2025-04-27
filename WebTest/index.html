@@ -336,67 +336,6 @@ body {
             return 'recognition_error';
         }
     };
-
-    // Test function to verify API works - FIXED VERSION
-    window.testVisionAPI = async function () {
-        try {
-            console.log('Testing Vision API access...');
-
-            // Load the test image file
-            const response = await fetch("HelloWorld.png");
-            const blob = await response.blob();
-            
-            // Convert to base64
-            const reader = new FileReader();
-            const base64Promise = new Promise(resolve => {
-                reader.onloadend = () => resolve(reader.result.split(',')[1]);
-                reader.readAsDataURL(blob);
-            });
-            const base64Image = await base64Promise;
-            
-            console.log('Test image loaded, size:', Math.round(base64Image.length / 1024), 'KB');
-            
-            // Now call the Vision API with the base64 data
-            const result = await window.callGoogleVisionApi(base64Image);
-            console.log('Test result:', result);
-            return 'API test completed with result: ' + result;
-        } catch (e) {
-            console.error('API test failed:', e);
-            return 'API test failed: ' + e.message;
-        }
-    };
-
-    // Run API test on page load to verify connectivity
-    document.addEventListener('DOMContentLoaded', function () {
-        // Create debug output div
-        var debugOutput = document.createElement('div');
-        debugOutput.id = 'debug-output';
-        debugOutput.style.display = 'none';
-        debugOutput.style.position = 'fixed';
-        debugOutput.style.bottom = '10px';
-        debugOutput.style.right = '10px';
-        debugOutput.style.width = '300px';
-        debugOutput.style.height = '200px';
-        debugOutput.style.backgroundColor = 'rgba(0,0,0,0.7)';
-        debugOutput.style.color = 'white';
-        debugOutput.style.padding = '10px';
-        debugOutput.style.fontFamily = 'monospace';
-        debugOutput.style.fontSize = '12px';
-        debugOutput.style.overflow = 'auto';
-        debugOutput.style.zIndex = '9999';
-        document.body.appendChild(debugOutput);
-        
-        setTimeout(async function () {
-            try {
-                window.debugLog("Testing Vision API...");
-                const testResult = await window.testVisionAPI();
-                window.debugLog('API test result: ' + testResult);
-            } catch (error) {
-                console.error('API test error:', error);
-                window.debugLog('API test error: ' + error.message);
-            }
-        }, 2000);
-    });
 </script>
 
 <script>
@@ -455,7 +394,7 @@ body {
 
 		<script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":55630400,"index.wasm":52126319},"focusCanvas":true,"gdextensionLibs":[],"serviceWorker":"index.service.worker.js"};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":55628032,"index.wasm":52126319},"focusCanvas":true,"gdextensionLibs":[],"serviceWorker":"index.service.worker.js"};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
