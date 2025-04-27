@@ -88,51 +88,80 @@ func _on_drawing_submitted(text_result):
 	# Update status
 	api_status_label.text = "Processing recognition result..."
 	
-	# Compare the recognized text with the challenge word - add null safety and better text normalization
+	# Normalize and compare the recognized text with the challenge word
 	var recognized_text = ""
 	var target_word = ""
 	
 	if text_result != null and typeof(text_result) == TYPE_STRING:
 		# Enhanced text normalization:
-		# - Convert to lowercase
-		# - Remove spaces
-		# - Remove special characters
 		recognized_text = text_result.to_lower().strip_edges()
-		recognized_text = recognized_text.replace(" ", "")
 		
-		# Remove special characters using regex
-		var regex = RegEx.new()
-		regex.compile("[^a-z0-9]")
-		recognized_text = regex.sub(recognized_text, "", true)
+		# Check for special error messages to handle them separately
+		if recognized_text == "no_text_detected" or recognized_text == "recognition_error":
+			print("Special error case detected: " + recognized_text)
+		else:
+			# More sophisticated normalization for normal text results
+			recognized_text = recognized_text.replace(" ", "")
+			recognized_text = recognized_text.replace("\n", "")
+			recognized_text = recognized_text.replace(".", "")
+			recognized_text = recognized_text.replace(",", "")
+			
+			# Filter special characters that might interfere with comparison
+			var regex = RegEx.new()
+			regex.compile("[^a-z0-9]")
+			recognized_text = regex.sub(recognized_text, "", true)
 	else:
 		recognized_text = "no_text_detected"
 		
 	if challenge_word != null and typeof(challenge_word) == TYPE_STRING:
-		# Apply the same normalization to target word
 		target_word = challenge_word.to_lower().strip_edges()
-		target_word = target_word.replace(" ", "")
-		
-		var regex = RegEx.new()
-		regex.compile("[^a-z0-9]")
-		target_word = regex.sub(target_word, "", true)
 	
-	print("Recognized text (normalized): ", recognized_text)
-	print("Target word (normalized): ", target_word)
+	print("Recognized text (normalized): " + recognized_text)
+	print("Target word (normalized): " + target_word)
 	
-	# Use fuzzy matching for more forgiving comparison
-	if recognized_text == target_word or target_word.begins_with(recognized_text) or recognized_text.begins_with(target_word):
+	# Check for special error cases first
+	if recognized_text == "no_text_detected" or recognized_text == "recognition_error":
+		if recognized_text == "no_text_detected":
+			api_status_label.text = "Please write more clearly"
+		else:
+			api_status_label.text = "Error recognizing text - please try again"
+		await get_tree().create_timer(1.5).timeout
+		emit_signal("challenge_failed")
+		queue_free()
+		return
+
+	# Exact match check
+	if recognized_text == target_word:
 		api_status_label.text = "Challenge completed successfully!"
 		await get_tree().create_timer(1.0).timeout
 		emit_signal("challenge_completed", bonus_damage)
 		queue_free()
-	# More forgiving recognition - allow partial matches
-	elif target_word.length() > 3 and recognized_text.length() > 2:
-		# Check if at least 70% of the characters match
+		return
+	
+	# Partial match checks for better UX
+	if target_word.begins_with(recognized_text) and recognized_text.length() >= target_word.length() / 2:
+		api_status_label.text = "Close enough! Challenge completed!"
+		await get_tree().create_timer(1.0).timeout
+		emit_signal("challenge_completed", bonus_damage)
+		queue_free()
+		return
+	
+	if recognized_text.begins_with(target_word) and target_word.length() >= 2:
+		api_status_label.text = "Close enough! Challenge completed!"
+		await get_tree().create_timer(1.0).timeout
+		emit_signal("challenge_completed", bonus_damage)
+		queue_free()
+		return
+	
+	# Fuzzy matching for longer words (more than 3 characters)
+	if target_word.length() > 3 and recognized_text.length() > 2:
+		# Count matching characters
 		var match_count = 0
-		for c in recognized_text:
-			if target_word.find(c) >= 0:
+		for c in target_word:
+			if recognized_text.find(c) >= 0:
 				match_count += 1
-		
+				
+		# If 70% or more characters match, accept it
 		var match_ratio = float(match_count) / target_word.length()
 		if match_ratio > 0.7:
 			api_status_label.text = "Close enough! Challenge completed!"
@@ -140,24 +169,12 @@ func _on_drawing_submitted(text_result):
 			emit_signal("challenge_completed", bonus_damage)
 			queue_free()
 			return
-			
-		# Special error messages to be more specific about what went wrong
-		api_status_label.text = "That doesn't look like '" + challenge_word + "'. Try again!"
-		await get_tree().create_timer(1.5).timeout
-		emit_signal("challenge_failed")
-		queue_free()
-	else:
-		# Special error handling for common issues
-		if recognized_text == "no_text_detected" or recognized_text == "drawing_too_small":
-			api_status_label.text = "Please write more clearly"
-		elif recognized_text == "recognition_error":
-			api_status_label.text = "Recognition error - please try again"
-		else:
-			api_status_label.text = "Incorrect! The word was '" + challenge_word + "'"
-			
-		await get_tree().create_timer(1.5).timeout
-		emit_signal("challenge_failed")
-		queue_free()
+	
+	# If we got here, it's a failure
+	api_status_label.text = "Incorrect! The word was '" + challenge_word + "'"
+	await get_tree().create_timer(1.5).timeout
+	emit_signal("challenge_failed")
+	queue_free()
 
 # Simple failure handling function
 func _fail_challenge():

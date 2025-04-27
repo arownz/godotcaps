@@ -261,40 +261,96 @@ func process_image_with_javascript(base64_img, width, height):
 	if JavaScriptBridge.has_method("eval"):
 		debug_log("Starting OCR process with JavaScript")
 		
-		# Create a simple and clean JavaScript call
-		var js_code = """
+		# Create a completely different approach using polling for Promise resolution
+		# This avoids the issue with direct Promise returns that aren't properly handled
+		var unique_callback_id = str(randi())
+		
+		# Step 1: Create a global variable to store the result
+		var setup_js = """
 			(function() {
-				try {
-					if (typeof window.godotProcessImageVision !== 'function') {
-						console.error('godotProcessImageVision function not found');
-						return 'error:function_not_found';
+				window.godot_ocr_results = window.godot_ocr_results || {};
+				window.godot_ocr_results['%s'] = { status: 'pending', result: null };
+				
+				// Create function to process the image and store result
+				window.processImageAndStore = async function(id, base64data, imgWidth, imgHeight) {
+					try {
+						console.log('Processing image with ID: ' + id);
+						const result = await window.godotProcessImageVision(base64data, imgWidth, imgHeight);
+						window.godot_ocr_results[id] = { status: 'completed', result: result };
+						console.log('Processing complete for ID: ' + id + ' with result: ' + result);
+					} catch(e) {
+						console.error('Error in image processing:', e);
+						window.godot_ocr_results[id] = { status: 'error', result: 'error:' + e.message };
 					}
-					
-					console.log('Starting godotProcessImageVision call');
-					return window.godotProcessImageVision('%s', %d, %d);
-				} catch(e) {
-					console.error('OCR error:', e);
-					return 'error:' + e.message;
-				}
+				};
+				
+				// Start processing
+				window.processImageAndStore('%s', '%s', %d, %d);
+				return true;
 			})();
-		"""
+		""" % [unique_callback_id, unique_callback_id, base64_img, width, height]
 		
-		# Format the JavaScript code with proper parameters
-		js_code = js_code % [base64_img, width, height]
+		# Execute setup and start processing
+		JavaScriptBridge.eval(setup_js)
 		
-		# Execute the JavaScript
-		var result = JavaScriptBridge.eval(js_code)
+		# Start polling for results
+		print("Starting polling for OCR results with ID: " + unique_callback_id)
 		
-		print("JavaScript returned: " + str(result))
-		debug_log("JavaScript returned: " + str(result))
+		# Set up max retries and delay between checks
+		var max_retries = 30  # 30 x 200ms = 6 seconds max wait time
+		var retry_count = 0
 		
-		if result == null or result.is_empty():
-			print("Recognition error: No response from Vision API")
-			_on_recognition_error("No response from Vision API")
-		elif result is String and result.begins_with("error:"):
-			_on_recognition_error("JavaScript error: " + result.substr(6))
-		else:
-			_on_recognition_completed(result)
+		while retry_count < max_retries:
+			# Wait a bit before checking
+			await get_tree().create_timer(0.2).timeout
+			retry_count += 1
+			
+			# Check result status
+			var check_js = """
+				(function() {
+					if (window.godot_ocr_results && window.godot_ocr_results['%s']) {
+						return JSON.stringify(window.godot_ocr_results['%s']);
+					} else {
+						return JSON.stringify({status: 'missing'});
+					}
+				})();
+			""" % [unique_callback_id, unique_callback_id]
+			
+			var result_json = JavaScriptBridge.eval(check_js)
+			var json = JSON.new()
+			var error = json.parse(result_json)
+			
+			if error == OK:
+				var result_data = json.data
+				
+				if result_data.status == "completed":
+					print("OCR processing completed with result: " + str(result_data.result))
+					
+					# Clean up the result entry
+					JavaScriptBridge.eval("""
+						(function() { 
+							delete window.godot_ocr_results['%s']; 
+						})();
+					""" % unique_callback_id)
+					
+					if result_data.result:
+						_on_recognition_completed(result_data.result)
+						return
+					else:
+						_on_recognition_error("Empty result received")
+						return
+				
+				elif result_data.status == "error":
+					print("OCR processing error: " + str(result_data.result))
+					_on_recognition_error(str(result_data.result))
+					return
+					
+				# Otherwise continue polling
+				print("Still waiting for OCR result (attempt " + str(retry_count) + ")")
+			
+		# If we got here, we timed out
+		print("Timed out waiting for OCR result")
+		_on_recognition_error("Request timed out")
 	else:
 		print("JavaScriptBridge not available")
 		_on_recognition_error("JavaScript bridge unavailable")

@@ -93,6 +93,7 @@ body {
 		<link id="-gd-engine-icon" rel="icon" type="image/png" href="index.icon.png" />
 <link rel="apple-touch-icon" href="index.apple-touch-icon.png"/>
 <link rel="manifest" href="index.manifest.json">
+<!-- Custom Head Include with Cross-Origin Policies -->
 <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
 <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp">
 
@@ -131,19 +132,47 @@ body {
             try {
                 console.log("godotProcessImageVision called with image: " + width + "x" + height);
                 
-                // First preprocess the image
-                window.preprocessHandwritingImage(base64Image, width, height)
+                // First preprocess the image with timeout handling
+                const preprocessPromise = new Promise((resolvePreprocess, rejectPreprocess) => {
+                    // Set a timeout for preprocessing
+                    const timeoutId = setTimeout(() => {
+                        rejectPreprocess(new Error('Preprocessing timed out'));
+                    }, 5000);
+                    
+                    window.preprocessHandwritingImage(base64Image, width, height)
+                        .then(function(processedImage) {
+                            clearTimeout(timeoutId);
+                            resolvePreprocess(processedImage);
+                        })
+                        .catch(function(error) {
+                            clearTimeout(timeoutId);
+                            rejectPreprocess(error);
+                        });
+                });
+                
+                preprocessPromise
                     .then(function(processedImage) {
-                        // Then call the Cloud Vision API
-                        window.callGoogleVisionApi(processedImage)
-                            .then(function(result) {
-                                console.log('Vision API result:', result);
-                                resolve(result);
-                            })
-                            .catch(function(error) {
-                                console.error('Error in Vision API call:', error);
-                                resolve('recognition_error: ' + error.message);
-                            });
+                        // Then call the Cloud Vision API with timeout handling
+                        const apiPromise = new Promise((resolveApi, rejectApi) => {
+                            // Set a timeout for API call
+                            const timeoutId = setTimeout(() => {
+                                rejectApi(new Error('API call timed out'));
+                            }, 10000);
+                            
+                            window.callGoogleVisionApi(processedImage)
+                                .then(function(result) {
+                                    clearTimeout(timeoutId);
+                                    console.log('Vision API result:', result);
+                                    resolve(result);
+                                })
+                                .catch(function(error) {
+                                    clearTimeout(timeoutId);
+                                    console.error('Error in Vision API call:', error);
+                                    resolve('recognition_error: ' + error.message);
+                                });
+                        });
+                        
+                        return apiPromise;
                     })
                     .catch(function(error) {
                         console.error('Error preprocessing image:', error);
@@ -185,30 +214,34 @@ body {
                 canvas.width = width;
                 canvas.height = height;
 
+                // Add error handling to image loading
                 img.onload = function () {
                     // Draw image on white background
                     ctx.fillStyle = 'white';
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    
+                    // Draw with higher contrast
+                    ctx.globalAlpha = 1.0; // Full opacity for better contrast
                     ctx.drawImage(img, 0, 0, width, height);
 
-                    // Process the image to enhance recognition
+                    // Process the image to enhance recognition - improved algorithm
                     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
                     const data = imageData.data;
 
-                    // Apply thresholding with better contrast
+                    // Enhanced thresholding for handwriting
                     for (let i = 0; i < data.length; i += 4) {
                         const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
-                        // Use an improved threshold for handwriting - smaller threshold for better contrast
-                        const value = avg < 160 ? 0 : 255;  // Changed from 180 to 160
+                        // Lower threshold for better detection of light strokes
+                        const value = avg < 140 ? 0 : 255;  // Changed from 160 to 140
                         data[i] = data[i + 1] = data[i + 2] = value;
                     }
 
                     ctx.putImageData(imageData, 0, 0);
 
-                    // Use PNG format instead of JPEG for better quality
+                    // Use PNG format which is better for text
                     try {
-                        const pngData = canvas.toDataURL('image/png', 0.9).split(',')[1];
-                        console.log('Using PNG format for image');
+                        const pngData = canvas.toDataURL('image/png', 1.0).split(',')[1];
+                        console.log('Using PNG format for image with maximum quality');
                         resolve(pngData);
                     } catch (e) {
                         console.error('Error converting image:', e);
@@ -221,6 +254,8 @@ body {
                     resolve(imageBase64); // Fallback to original image
                 };
 
+                // Set crossOrigin to anonymous
+                img.crossOrigin = 'Anonymous';
                 img.src = 'data:image/png;base64,' + imageBase64;
             } catch(e) {
                 console.error('Preprocessing error:', e);
@@ -336,6 +371,19 @@ body {
         // Create debug output div
         var debugOutput = document.createElement('div');
         debugOutput.id = 'debug-output';
+        debugOutput.style.display = 'none';
+        debugOutput.style.position = 'fixed';
+        debugOutput.style.bottom = '10px';
+        debugOutput.style.right = '10px';
+        debugOutput.style.width = '300px';
+        debugOutput.style.height = '200px';
+        debugOutput.style.backgroundColor = 'rgba(0,0,0,0.7)';
+        debugOutput.style.color = 'white';
+        debugOutput.style.padding = '10px';
+        debugOutput.style.fontFamily = 'monospace';
+        debugOutput.style.fontSize = '12px';
+        debugOutput.style.overflow = 'auto';
+        debugOutput.style.zIndex = '9999';
         document.body.appendChild(debugOutput);
         
         setTimeout(async function () {
@@ -407,7 +455,7 @@ body {
 
 		<script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":55628752,"index.wasm":52126319},"focusCanvas":true,"gdextensionLibs":[],"serviceWorker":"index.service.worker.js"};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":55630400,"index.wasm":52126319},"focusCanvas":true,"gdextensionLibs":[],"serviceWorker":"index.service.worker.js"};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
