@@ -28,6 +28,11 @@ Firebase="*res://addons/godot-firebase/firebase/firebase.tscn"
 GameTypes="*res://Scripts/game_types.gd"
 GameSettings="*res://Scripts/export_variables.gd"
 
+[config]
+
+features/web/optimize_for_web=true
+features/vulkan/disable=true
+
 [display]
 
 window/size/viewport_width=1460

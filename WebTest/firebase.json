@@ -16,15 +16,11 @@
           },
           {
             "key": "Access-Control-Allow-Methods",
-            "value": "GET, POST, OPTIONS"
+            "value": "GET, POST, OPTIONS, PUT, DELETE"
           },
           {
             "key": "Access-Control-Allow-Headers",
             "value": "Content-Type, Authorization, X-Requested-With, Accept"
-          },
-          {
-            "key": "Access-Control-Allow-Credentials",
-            "value": "true"
           },
           {
             "key": "Cross-Origin-Opener-Policy",
@@ -73,6 +69,10 @@
           {
             "key": "Content-Type",
             "value": "application/wasm"
+          },
+          {
+            "key": "Cross-Origin-Embedder-Policy",
+            "value": "require-corp"
           }
         ]
       },

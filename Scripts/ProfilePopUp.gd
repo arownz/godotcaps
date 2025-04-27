@@ -304,9 +304,6 @@ func _on_edit_name_button_pressed():
 	
 	dialog.add_child(vbox)
 	
-	# Add confirm button
-	dialog.add_button("Cancel", false, "cancel")
-	
 	# Connect dialog signals
 	dialog.confirmed.connect(func(): _update_username(line_edit.text))
 	

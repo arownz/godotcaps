@@ -15,8 +15,12 @@ var max_dungeons = 3
 var max_stages_per_dungeon = 5
 var previous_dungeon = 1  # Used to track dungeon transitions
 
+# Testing mode flag - set to true during development to disable Firebase operations
+var testing_mode = true
+
 func _init(scene):
 	battle_scene = scene
+	load_progress()
 
 func initialize():
 	# Get values from GameSettings if available
@@ -85,6 +89,11 @@ func reset():
 
 # Save progress to Firebase
 func save_progress_to_firebase():
+	# Skip Firebase operations in testing mode
+	if testing_mode:
+		print("Dungeon Manager: Skipping Firebase save in testing mode")
+		return
+	
 	# If Authentication script is available, use its method
 	if "update_dungeon_progress" in get_node("/root/Authentication"):
 		get_node("/root/Authentication").update_dungeon_progress(dungeon_num, stage_num)
@@ -111,3 +120,26 @@ func save_progress_to_firebase():
 			GameSettings.current_dungeon = dungeon_num
 		if "current_stage" in GameSettings:
 			GameSettings.current_stage = stage_num
+
+func load_progress():
+	# During development, use default values
+	if testing_mode:
+		print("Dungeon Manager: Using default progress values for testing")
+		dungeon_num = 1
+		stage_num = 1
+		return
+		
+	# In production, load from Firestore if available
+	if Firebase != null and Firebase.Auth != null and Firebase.Auth.auth != null:
+		var user_id = Firebase.Auth.auth.localid
+		var collection = Firebase.Firestore.collection("dyslexia_users")
+		
+		var task = collection.get(user_id)
+		if task:
+			var result = await task.task_finished
+			
+			if result and result.doc_fields:
+				dungeon_num = result.doc_fields.get("current_dungeon", 1)
+				stage_num = result.doc_fields.get("current_stage", 1)
+				
+				print("Loaded dungeon progress: Dungeon ", dungeon_num, " Stage ", stage_num)

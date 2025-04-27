@@ -34,7 +34,7 @@ func _ready():
 	add_child(overlay)
 	move_child(overlay, 0) # Move to bottom
 	
-	# Get node references
+	# Get node references - FIXED PATHS
 	random_word_label = $ChallengePanel/VBoxContainer/WordContainer/RandomWordLabel
 	recognized_text_label = $ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer/RecognizedText
 	speak_button = $ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer/SpeakButton
@@ -42,24 +42,41 @@ func _ready():
 	tts_settings_panel = $ChallengePanel/VBoxContainer/TTSSettingsPanel
 	api_status_label = $ChallengePanel/VBoxContainer/APIStatusLabel
 	
-	# Create TTS instance using our simplified TextToSpeech class
+	# Create TTS instance and initialize
 	tts = TextToSpeech.new()
 	add_child(tts)
-	print("Created TextToSpeech instance")
+	tts.speech_ended.connect(_on_tts_speech_ended)
+	tts.speech_error.connect(_on_tts_speech_error)
 	
-	# Hide the built-in TTS panel (will use popup instead)
-	tts_settings_panel.visible = false
+	# Hide TTS settings panel initially
+	if tts_settings_panel:
+		tts_settings_panel.visible = false
 	
-	# Create and initialize the random word API
+	# Setup speech recognition
+	_check_speech_recognition_availability()
+	
+	# Get a random word for the challenge
 	random_word_api = RandomWordAPI.new()
 	add_child(random_word_api)
 	random_word_api.word_fetched.connect(_on_word_fetched)
-	
-	# Fetch a random word
 	random_word_api.fetch_random_word()
 	
-	# Check if speech recognition is available
-	_check_speech_recognition_availability()
+	# FIX: Connect buttons signals only if they exist and if not already connected
+	var cancel_button = $ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer/CancelButton
+	if cancel_button and !cancel_button.is_connected("pressed", Callable(self, "_on_cancel_button_pressed")):
+		cancel_button.pressed.connect(_on_cancel_button_pressed)
+		
+	var tts_button = $ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer/TTSButton
+	if tts_button and !tts_button.is_connected("pressed", Callable(self, "_on_tts_button_pressed")):
+		tts_button.pressed.connect(_on_tts_button_pressed)
+	
+	if speak_button and !speak_button.is_connected("pressed", Callable(self, "_on_speak_button_pressed")):
+		speak_button.pressed.connect(_on_speak_button_pressed)
+	
+	# Connect TTS settings button
+	var tts_settings_button = $ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer/TTSSettingsButton
+	if tts_settings_button and !tts_settings_button.is_connected("pressed", Callable(self, "_on_tts_settings_button_pressed")):
+		tts_settings_button.pressed.connect(_on_tts_settings_button_pressed)
 
 func _check_speech_recognition_availability():
 	# Check for Web platform where SpeechRecognition is available
@@ -70,16 +87,22 @@ func _check_speech_recognition_availability():
 			(window.SpeechRecognition || window.webkitSpeechRecognition)
 		"""):
 			speech_recognition_available = true
-			status_label.text = "Ready for speech input"
-			speak_button.disabled = false
+			if status_label:  # FIX: Add null check
+				status_label.text = "Ready for speech input"
+			if speak_button:  # FIX: Add null check
+				speak_button.disabled = false
 		else:
-			status_label.text = "Speech recognition not available in this browser"
-			speak_button.disabled = true
+			if status_label:  # FIX: Add null check
+				status_label.text = "Speech recognition not available in this browser"
+			if speak_button:  # FIX: Add null check
+				speak_button.disabled = true
 	else:
 		# Desktop platforms - use simulation for testing
 		speech_recognition_available = true
-		status_label.text = "Using simulated speech recognition for testing"
-		speak_button.disabled = false
+		if status_label:  # FIX: Add null check
+			status_label.text = "Using simulated speech recognition for testing"
+		if speak_button:  # FIX: Add null check
+			speak_button.disabled = false
 
 func _on_word_fetched():
 	# Update the random word label
@@ -313,10 +336,10 @@ func _on_tts_settings_closed():
 	pass
 
 func _on_cancel_button_pressed():
-	# Emit signal to indicate challenge was cancelled without affecting battle state
-	emit_signal("challenge_cancelled")
-	
-	# Remove the challenge panel without affecting engagement
+	print("STT challenge cancelled, player will take damage")
+	status_label.text = "Challenge cancelled!"
+	await get_tree().create_timer(0.5).timeout
+	emit_signal("challenge_cancelled")  # This will notify battle_manager to apply damage 
 	queue_free()
 
 func _on_test_button_pressed():

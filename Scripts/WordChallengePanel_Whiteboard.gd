@@ -42,7 +42,10 @@ func _ready():
 	
 	# Connect whiteboard signals
 	whiteboard_interface.drawing_submitted.connect(_on_drawing_submitted)
-	whiteboard_interface.drawing_cancelled.connect(_on_drawing_cancelled)
+	whiteboard_interface.connect("drawing_cancelled", Callable(self, "_on_drawing_cancelled"))
+	
+	# Update status to show we're using Google Cloud Vision
+	api_status_label.text = "Using Google Cloud Vision for recognition"
 
 # Function to provide the challenge word to the WhiteboardInterface
 func get_challenge_word():
@@ -50,10 +53,10 @@ func get_challenge_word():
 
 # Function to handle cancellation from whiteboard
 func _on_drawing_cancelled():
-	# Emit signal to indicate challenge was cancelled without affecting engagement
-	emit_signal("challenge_cancelled")
-	
-	# Remove the challenge panel without affecting engagement
+	print("Drawing cancelled, player will take damage")
+	api_status_label.text = "Challenge cancelled!"
+	await get_tree().create_timer(0.5).timeout
+	emit_signal("challenge_cancelled")  # This will notify battle_manager to apply damage
 	queue_free()
 
 func _on_word_fetched():
@@ -82,72 +85,87 @@ func _on_word_fetched():
 	print("Challenge word: ", challenge_word)
 
 func _on_drawing_submitted(text_result):
-	# Compare the recognized text with the challenge word
-	var recognized_text = text_result.to_lower().strip_edges()
-	var target_word = challenge_word.to_lower().strip_edges()
-	print("Recognized text: ", recognized_text)
-	print("Target word: ", target_word)
+	# Update status
+	api_status_label.text = "Processing recognition result..."
 	
-	# Check for special error messages from our handwriting recognition
-	if recognized_text == "no_text_detected" or recognized_text == "drawing_too_small":
-		# Tell the user they need to write something
-		api_status_label.text = "Please write more clearly"
-		await get_tree().create_timer(1.5).timeout
-		api_status_label.text = ""
-		return
+	# Compare the recognized text with the challenge word - add null safety and better text normalization
+	var recognized_text = ""
+	var target_word = ""
 	
-	if recognized_text == "looks_like_scribble":
-		# Tell the user they need to write properly
-		api_status_label.text = "Please don't scribble"
-		await get_tree().create_timer(1.5).timeout
-		api_status_label.text = ""
-		return
+	if text_result != null and typeof(text_result) == TYPE_STRING:
+		# Enhanced text normalization:
+		# - Convert to lowercase
+		# - Remove spaces
+		# - Remove special characters
+		recognized_text = text_result.to_lower().strip_edges()
+		recognized_text = recognized_text.replace(" ", "")
+		
+		# Remove special characters using regex
+		var regex = RegEx.new()
+		regex.compile("[^a-z0-9]")
+		recognized_text = regex.sub(recognized_text, "", true)
+	else:
+		recognized_text = "no_text_detected"
+		
+	if challenge_word != null and typeof(challenge_word) == TYPE_STRING:
+		# Apply the same normalization to target word
+		target_word = challenge_word.to_lower().strip_edges()
+		target_word = target_word.replace(" ", "")
+		
+		var regex = RegEx.new()
+		regex.compile("[^a-z0-9]")
+		target_word = regex.sub(target_word, "", true)
 	
-	if recognized_text == "recognition_error" or recognized_text == "recognition_fallback":
-		# Try again with better prompt
-		api_status_label.text = "Recognition error. Please write '" + target_word + "' more clearly"
-		await get_tree().create_timer(2.0).timeout
-		api_status_label.text = ""
-		return
+	print("Recognized text (normalized): ", recognized_text)
+	print("Target word (normalized): ", target_word)
 	
-	# Check for exact match
-	if recognized_text == target_word:
-		# Success - bonus damage!
-		api_status_label.text = "Perfect match!"
+	# Use fuzzy matching for more forgiving comparison
+	if recognized_text == target_word or target_word.begins_with(recognized_text) or recognized_text.begins_with(target_word):
+		api_status_label.text = "Challenge completed successfully!"
+		await get_tree().create_timer(1.0).timeout
 		emit_signal("challenge_completed", bonus_damage)
-		await get_tree().create_timer(0.5).timeout
 		queue_free()
-		return
-	
-	# Calculate similarity for non-exact matches
-	var similarity = calculate_word_similarity(recognized_text, target_word)
-	
-	# Make the threshold more lenient for dyslexia support - requiring 70% similarity
-	if similarity >= 0.7:
-		# Close enough match for dyslexia support
-		api_status_label.text = "Good enough! (Similarity: " + str(int(similarity * 100)) + "%)"
-		emit_signal("challenge_completed", bonus_damage)
-		await get_tree().create_timer(0.5).timeout
+	# More forgiving recognition - allow partial matches
+	elif target_word.length() > 3 and recognized_text.length() > 2:
+		# Check if at least 70% of the characters match
+		var match_count = 0
+		for c in recognized_text:
+			if target_word.find(c) >= 0:
+				match_count += 1
+		
+		var match_ratio = float(match_count) / target_word.length()
+		if match_ratio > 0.7:
+			api_status_label.text = "Close enough! Challenge completed!"
+			await get_tree().create_timer(1.0).timeout
+			emit_signal("challenge_completed", bonus_damage)
+			queue_free()
+			return
+			
+		# Special error messages to be more specific about what went wrong
+		api_status_label.text = "That doesn't look like '" + challenge_word + "'. Try again!"
+		await get_tree().create_timer(1.5).timeout
+		emit_signal("challenge_failed")
 		queue_free()
 	else:
-		# Show what was recognized vs what was expected
-		api_status_label.text = "Incorrect. You wrote '" + recognized_text + "'"
-		await get_tree().create_timer(2.0).timeout
-		api_status_label.text = ""
-		
-		# Check if this was very far off
-		if similarity < 0.3:
-			api_status_label.text = "Try writing '" + target_word + "' more clearly"
-			await get_tree().create_timer(1.5).timeout
-			api_status_label.text = ""
+		# Special error handling for common issues
+		if recognized_text == "no_text_detected" or recognized_text == "drawing_too_small":
+			api_status_label.text = "Please write more clearly"
+		elif recognized_text == "recognition_error":
+			api_status_label.text = "Recognition error - please try again"
 		else:
-			# Let the player try again without penalty if they were close
-			return
-		
-		# If they were very far off, count as a failure
+			api_status_label.text = "Incorrect! The word was '" + challenge_word + "'"
+			
+		await get_tree().create_timer(1.5).timeout
 		emit_signal("challenge_failed")
-		await get_tree().create_timer(0.5).timeout
 		queue_free()
+
+# Simple failure handling function
+func _fail_challenge():
+	api_status_label.text = "You failed to counter the skill"
+	await get_tree().create_timer(1.0).timeout
+	emit_signal("challenge_failed")
+	await get_tree().create_timer(0.5).timeout
+	queue_free()
 
 # Calculate similarity between two words to help with dyslexia recognition
 func calculate_word_similarity(word1, word2):
@@ -207,6 +225,7 @@ func calculate_word_similarity(word1, word2):
 	print("Word similarity: ", similarity)
 	return similarity
 
+# Handle TTS button press
 func _on_tts_button_pressed():
 	# Speak the challenge word with improved feedback
 	api_status_label.text = "Reading word..."

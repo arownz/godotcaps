@@ -231,16 +231,29 @@ func _on_word_challenge_failed():
 
 func _on_challenge_cancelled():
 	# Log the cancellation to the battle log
-	battle_scene.log_manager.add_cancellation_message()
+	battle_scene.log_manager.add_message("[color=#EB5E4B]You cancelled your counter! The " + 
+		battle_scene.enemy_manager.enemy_name + " takes advantage of your hesitation![/color]")
 	
-	# Reset enemy skill meter to 50% since the challenge was cancelled
-	battle_scene.enemy_manager.enemy_skill_meter = 50
-	battle_scene.ui_manager.update_enemy_skill_meter()
+	# Player takes damage - apply a reduced skill damage (1.5x instead of 2x for failure)
+	var cancellation_damage = battle_scene.enemy_manager.enemy_damage * 1.5
+	cancellation_damage = int(cancellation_damage) # Ensure it's an integer
+	battle_scene.player_manager.player_health -= cancellation_damage
+	battle_scene.player_manager.player_health = max(0, battle_scene.player_manager.player_health)
+	
+	# Update UI
+	battle_scene.ui_manager.update_player_health()
+	
+	# Add message about taking damage
+	battle_scene.log_manager.add_message("The " + battle_scene.enemy_manager.enemy_name + 
+		" dealt " + str(cancellation_damage) + " damage as you failed to counter!")
+	
+	# Reset enemy skill meter COMPLETELY (not to 50%)
+	battle_scene.enemy_manager.reset_skill_meter()
 	
 	# Hide the enemy skill label
 	battle_scene.get_node("MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer/EnemySkillLabel").visible = false
 	
-	# Remove the challenge overlay
+	# Remove the overlay
 	var overlay = battle_scene.get_node_or_null("ChallengeOverlay")
 	if overlay:
 		overlay.queue_free()
@@ -250,6 +263,14 @@ func _on_challenge_cancelled():
 		current_word_challenge.queue_free()
 		current_word_challenge = null
 		
+	# Check if player is defeated by the cancellation damage
+	if battle_scene.player_manager.player_health <= 0:
+		battle_scene.battle_active = false
+		battle_scene.log_manager.add_message("[color=#EB5E4B]You have been defeated by the " + 
+			battle_scene.enemy_manager.enemy_name + "![/color]")
+		show_endgame_screen("Defeat")
+		return
+	
 	# Notify the challenge manager to handle cancellation
 	battle_scene.challenge_manager.handle_challenge_cancelled()
 

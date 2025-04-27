@@ -3,202 +3,200 @@ class_name RandomWordAPI
 
 signal word_fetched
 
-var current_word = ""
-var last_error = ""
-var http_request = null
-var request_timeout = 10.0  # Increased timeout for slower connections
-var timeout_timer = null
-var retry_count = 0
-var max_retries = 2
-
-# A local fallback word list in case the API is not available
-var local_word_list = [
-	"dyslexia","apple", "banana", "cat", "dog", "elephant", 
-	"fish", "giraffe", "house", "igloo", "jacket", 
-	"kite", "lion", "monkey", "nest", "orange",
-	"piano", "queen", "robot", "sun", "tree",
-	"umbrella", "violin", "window", "xylophone", "yellow", "zebra"
+# API URLs to try in order of preference
+var API_URLS = [
+		"https://api.datamuse.com/words?sp=???&max=1",
+	"https://random-word-api.herokuapp.com/word"
 ]
 
-func _ready():
+# State variables
+var http_request = null
+var random_word = ""
+var current_api_index = 0
+var current_retry = 0
+var last_error = ""
+
+# Constants
+const MAX_RETRIES = 3
+const RETRY_DELAY = 1.0
+
+func _init():
+	# Create HTTP request node
 	http_request = HTTPRequest.new()
-	add_child(http_request)
 	http_request.request_completed.connect(_on_request_completed)
-	
-	# Add a timeout timer
-	timeout_timer = Timer.new()
-	timeout_timer.one_shot = true
-	add_child(timeout_timer)
-	timeout_timer.timeout.connect(_on_request_timeout)
-	
-	# Initialize with a random word from our local list
-	randomize()
-	current_word = local_word_list[randi() % local_word_list.size()]
-	print("Initialized with fallback word: ", current_word)
 
-
+# Public function to fetch a random word
 func fetch_random_word():
-	# Reset values
+	# Reset word
+	random_word = ""
+	
+	# Reset error
 	last_error = ""
-	retry_count = 0
 	
-	# Try the API request (but keep current_word as backup)
-	var backup_word = current_word
-	current_word = ""
-	
-	# Try the API request
-	_try_api_request()
-	
-	# If we don't get a new word in 2 seconds, use the backup
-	# This is now handled by the timeout in WordChallengePanel.gd
-	
-	# Return the backup word as a fallback
-	if current_word == "":
-		current_word = backup_word
+	# Try primary API first
+	current_api_index = 0
+	current_retry = 0
+	_make_request()
 
-func _try_api_request():
-	# Different API endpoints to try
-	var apis = [
-		"https://api.datamuse.com/words?sp=?????&max=250",  # Try this API first (faster)
-		"https://random-word-api.herokuapp.com/word?number=1" # Try this API second (slower)
-	]
+# Make an HTTP request to the current API endpoint
+func _make_request():
+	var error = http_request.request(API_URLS[current_api_index])
 	
-	# Choose an API endpoint - use the first one initially (datamuse)
-	var url = apis[0]
-	if retry_count > 0:
-		# Try the other API on retry
-		url = apis[1]
-	
-	print("Attempting to fetch word from API: ", url)
-	
-	# Set timeout (reduced from 10s to 3s)
-	timeout_timer.start(3.0)
-	
-	# Add custom headers to help with CORS issues
-	var headers = [
-		"User-Agent: GodotEngine/4.0",
-		"Accept: application/json"
-	]
-	
-	# Send the request
-	var error = http_request.request(url, headers)
 	if error != OK:
-		print("HTTP Request failed with error: ", error)
-		last_error = "HTTP Request Error: " + str(error)
-		timeout_timer.stop()
-		_use_fallback_word()
-		word_fetched.emit()
+		print("RandomWordAPI: Error making request: " + str(error))
+		last_error = "Request error: " + str(error)
+		_try_fallback()
+		return
 
-func _on_request_timeout():
-	print("Request timed out")
-	# Handle timeout case
-	http_request.cancel_request()
-	last_error = "Request timed out. Check your internet connection."
-	
-	if retry_count < max_retries:
-		retry_count += 1
-		print("Retrying... Attempt #", retry_count)
-		_try_api_request()
-	else:
-		# Use a fallback word after max retries
-		_use_fallback_word()
-		word_fetched.emit()
-
+# Handle HTTP response
 func _on_request_completed(result, response_code, _headers, body):
-	# Stop the timeout timer
-	timeout_timer.stop()
-	
-	print("API response received. Result: ", result, " Response code: ", response_code)
-	
 	if result != HTTPRequest.RESULT_SUCCESS:
-		last_error = "Request failed with error code: " + str(result)
-		if retry_count < max_retries:
-			retry_count += 1
-			print("Retrying... Attempt #", retry_count)
-			_try_api_request()
-		else:
-			_use_fallback_word()
-			word_fetched.emit()
+		print("RandomWordAPI: Request failed: " + str(result))
+		last_error = "Request failed: " + str(result)
+		_try_fallback()
 		return
-		
+	
 	if response_code != 200:
-		last_error = "API returned error code: " + str(response_code)
-		if retry_count < max_retries:
-			retry_count += 1
-			print("Retrying... Attempt #", retry_count)
-			_try_api_request()
-		else:
-			_use_fallback_word()
-			word_fetched.emit()
+		print("RandomWordAPI: Invalid response code: " + str(response_code))
+		last_error = "HTTP error: " + str(response_code)
+		_try_fallback()
 		return
 	
-	# Try to parse the JSON response
+	# Process response based on API format
+	if current_api_index == 0:
+		_process_primary_api_response(body)
+	else:
+		_process_secondary_api_response(body)
+
+func _process_primary_api_response(body):
+	# Parse JSON response
 	var json = JSON.new()
-	var parse_error = json.parse(body.get_string_from_utf8())
+	var error = json.parse(body.get_string_from_utf8())
 	
-	if parse_error != OK:
-		last_error = "JSON parse error: " + json.get_error_message()
-		_use_fallback_word()
-		word_fetched.emit()
+	if error != OK:
+		print("RandomWordAPI: JSON parse error: " + str(error))
+		last_error = "JSON parse error"
+		_try_fallback()
+		return
+	
+	var data = json.get_data()
+	
+	# FIX: Enhanced type checking and response handling
+	if typeof(data) == TYPE_ARRAY and data.size() > 0:
+		var first_item = data[0]
+		
+		# Handle different possible response formats
+		match typeof(first_item):
+			TYPE_STRING:
+				# Simple string format
+				random_word = first_item
+				
+			TYPE_DICTIONARY:
+				# If it's a dictionary, try to find a word field
+				if first_item.has("word"):
+					random_word = str(first_item.word)
+				elif first_item.has("name"):
+					random_word = str(first_item.name)
+				elif first_item.has("value"):
+					random_word = str(first_item.value)
+				else:
+					# Just use the first key as fallback
+					for key in first_item:
+						if typeof(first_item[key]) == TYPE_STRING:
+							random_word = str(first_item[key])
+							break
+			
+			_:
+				# For any other type, convert to string
+				random_word = str(first_item)
+	
+	if random_word.is_empty():
+		print("RandomWordAPI: Could not extract word from response")
+		print("RandomWordAPI: Response data: ", data)
+		last_error = "Invalid response format"
+		_try_fallback()
 		return
 		
-	var response = json.get_data()
-	print("API response data: ", response)
+	print("RandomWordAPI: Word fetched: " + str(random_word))
+	emit_signal("word_fetched")
+
+# Process response from secondary API
+func _process_secondary_api_response(body):
+	# Parse JSON response
+	var json = JSON.new()
+	var error = json.parse(body.get_string_from_utf8())
 	
-	# Handle different API response formats
-	if response is Array and response.size() > 0:
-		if retry_count == 0:
-			# For datamuse format
-			if response[0] is Dictionary and response[0].has("word"):
-				# First API (datamuse) returns an array of objects with "word" property
-				randomize()
-				var random_index = randi() % response.size()
-				current_word = response[random_index]["word"]
-			else:
-				# Second API format (random-word-api)
-				current_word = response[0]
+	if error != OK:
+		print("RandomWordAPI: JSON parse error: " + str(error))
+		last_error = "JSON parse error"
+		_try_fallback()
+		return
+	
+	var data = json.get_data()
+	
+	if typeof(data) == TYPE_ARRAY and data.size() > 0:
+		if typeof(data[0]) == TYPE_DICTIONARY and data[0].has("word"):
+			random_word = data[0].word
+			print("RandomWordAPI: Word fetched: " + str(random_word))
+			emit_signal("word_fetched")
 		else:
-			# Format for random-word-api
-			current_word = response[0]
-			
-		print("Word fetched from API: ", current_word)
-	elif response is Array and response.size() == 0:
-		last_error = "API returned empty response"
-		_use_fallback_word()
-	elif response is Dictionary and response.has("word"):
-		# Format for some other APIs
-		current_word = response.word
+			print("RandomWordAPI: Invalid response format from secondary API")
+			last_error = "Invalid secondary API format"
+			_try_fallback()
 	else:
-		last_error = "Unexpected API response format"
-		_use_fallback_word()
-		
-	# Make sure the word is of reasonable length for the challenge
-	if current_word.length() > 10:
-		current_word = current_word.substr(0, 10)
-		
-	# Make sure the word doesn't have weird characters
-	var simplified_word = ""
-	for ch in current_word:
-		if (ch >= 'a' and ch <= 'z') or (ch >= 'A' and ch <= 'Z'):
-			simplified_word += ch
+		print("RandomWordAPI: Invalid response format from secondary API")
+		last_error = "Invalid secondary API format"
+		_try_fallback()
+
+# Try fallback API or retry current one
+func _try_fallback():
+	current_retry += 1
 	
-	if simplified_word.length() > 0:
-		current_word = simplified_word
+	if current_retry <= MAX_RETRIES:
+		# Retry current API
+		print("RandomWordAPI: Retrying API attempt " + str(current_retry) + " of " + str(MAX_RETRIES))
+		await get_tree().create_timer(RETRY_DELAY).timeout
+		_make_request()
+	elif current_api_index < API_URLS.size() - 1:
+		# Try next API
+		current_api_index += 1
+		current_retry = 0
+		print("RandomWordAPI: Trying fallback API: " + API_URLS[current_api_index])
+		_make_request()
 	else:
-		_use_fallback_word()
+		# All APIs failed, use fallback word
+		print("RandomWordAPI: All APIs failed, using fallback word")
+		random_word = _get_fallback_word()
+		emit_signal("word_fetched")
+
+# Improve fallback word selection with categories
+func _get_fallback_word() -> String:
+	# Add more word categories for better variety
+	var word_categories = {
+		"animals": ["cat", "dog", "bird", "fish", "wolf", "bear", "lion", "tiger"],
+		"objects": ["book", "pen", "car", "ball", "chair", "table", "phone"],
+		"nature": ["tree", "sun", "moon", "star", "cloud", "rain", "wind"],
+		"food": ["apple", "bread", "cake", "milk", "egg", "rice", "meat"]
+	}
 	
-	word_fetched.emit()
+	# Select a random category
+	var categories = word_categories.keys()
+	var category = categories[randi() % categories.size()]
+	
+	# Select a random word from that category
+	var words = word_categories[category]
+	return words[randi() % words.size()]
 
-func _use_fallback_word():
-	# Choose a random word from our local fallback list
-	randomize()
-	var random_index = randi() % local_word_list.size()
-	current_word = local_word_list[random_index]
-	print("Using fallback word: ", current_word)
+# Public function to get the fetched word - enhance for better error handling
+func get_random_word() -> String:
+	# Make sure we have a word - if not, provide a fallback
+	if random_word.is_empty():
+		print("WARNING: Random word is empty, using fallback")
+		return _get_fallback_word()
+	return random_word
 
-func get_random_word():
-	# A convenience method that immediately returns a word
-	# If we don't have one set yet, get a fallback word
-	if current_word.strip_edges() == "":
-		_use_fallback_word()
-	return current_word
+# Add child node override
+func _notification(what):
+	if what == NOTIFICATION_PARENTED:
+		if get_parent() and not http_request.is_inside_tree():
+			get_parent().add_child(http_request)

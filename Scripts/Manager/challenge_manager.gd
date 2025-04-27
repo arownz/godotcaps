@@ -24,9 +24,6 @@ func start_speech_challenge():
 	challenge_type = "stt"
 
 func handle_challenge_cancelled():
-	# Log the cancellation message
-	battle_scene.log_manager.add_cancellation_message()
-	
 	# Reset challenge state
 	challenge_type = "none"
 	

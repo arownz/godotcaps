@@ -253,6 +253,7 @@ func increase_skill_meter(amount):
 	
 	return enemy_skill_meter >= 100  # Return true if skill is ready
 
+# Reset skill meter to zero
 func reset_skill_meter():
 	enemy_skill_meter = 0
 	emit_signal("enemy_skill_meter_changed", enemy_skill_meter)
