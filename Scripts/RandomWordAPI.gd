@@ -5,7 +5,7 @@ signal word_fetched
 
 # API URLs to try in order of preference
 var API_URLS = [
-		"https://api.datamuse.com/words?sp=???&max=1",
+		"https://api.datamuse.com/words?sp=???&max=250",
 	"https://random-word-api.herokuapp.com/word"
 ]
 
