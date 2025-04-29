@@ -29,18 +29,52 @@ var debug_mode = true
 # Reference to viewport for image export
 var export_viewport = null
 
+# Reference to debug label
+var debug_label: Label = null
+
 func _ready():
 	$VBoxContainer/ButtonsContainer/UndoButton.disabled = true
 	$VBoxContainer/ButtonsContainer/RedoButton.disabled = true
 	
-	# Create status label for feedback
-	status_label = Label.new()
-	status_label.name = "StatusLabel"
-	status_label.text = ""
-	status_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	status_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	status_label.modulate = Color(1, 1, 1, 0)
-	$VBoxContainer.add_child(status_label)
+	# Add status label if it doesn't exist
+	if not has_node("StatusLabel"):
+		var label = Label.new()
+		label.name = "StatusLabel"
+		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		label.add_theme_font_override("font", preload("res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf"))
+		label.add_theme_font_size_override("font_size", 24)
+		label.add_theme_color_override("font_color", Color(1, 1, 1))
+		label.anchors_preset = Control.PRESET_CENTER
+		label.size = Vector2(600, 80)
+		label.position = Vector2(-300, 250)
+		label.visible = false
+		add_child(label)
+		status_label = label
+	else:
+		status_label = $StatusLabel
+
+	# Add debug label for development
+	if OS.is_debug_build() and not has_node("DebugLabel"):
+		var debug = Label.new()
+		debug.name = "DebugLabel"
+		debug.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+		debug.vertical_alignment = VERTICAL_ALIGNMENT_TOP
+		debug.add_theme_font_override("font", preload("res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf"))
+		debug.add_theme_font_size_override("font_size", 16)
+		debug.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8, 0.8))
+		debug.anchors_preset = Control.PRESET_TOP_LEFT
+		debug.position = Vector2(10, 10)
+		debug.visible = true
+		debug.text = "Debug mode"
+		add_child(debug)
+		debug_label = debug
+	elif has_node("DebugLabel"):
+		debug_label = $DebugLabel
+	
+	# Initialize drawing system
+	setup_drawing()
+	debug_log("WhiteboardInterface ready")
 	
 	# Create the Google Cloud Vision instance
 	google_cloud_vision = GoogleCloudVision.new()
@@ -297,7 +331,7 @@ func process_image_with_javascript(base64_img, width, height):
 		print("Starting polling for OCR results with ID: " + unique_callback_id)
 		
 		# Set up max retries and delay between checks
-		var max_retries = 30  # 30 x 200ms = 6 seconds max wait time
+		var max_retries = 30 # 30 x 200ms = 6 seconds max wait time
 		var retry_count = 0
 		
 		while retry_count < max_retries:
@@ -368,45 +402,41 @@ func process_image_with_native_api(base64_img):
 		print("GoogleCloudVision class not available")
 		_on_recognition_error("Vision API not available")
 
-# Handlers for recognition results
-func _on_recognition_completed(text_result):
+# Function to handle successful text recognition
+func _on_recognition_completed(text_result: String):
+	# Display the recognition result
 	print("Recognition completed: ", text_result)
-	recognition_in_progress = false
+	debug_log("Recognition result: " + text_result)
 	
-	# Re-enable buttons
-	$VBoxContainer/ButtonsContainer/DoneButton.disabled = false
-	$VBoxContainer/ButtonsContainer/CancelButton.disabled = false
-	$VBoxContainer/ButtonsContainer/ClearButton.disabled = false
-	$VBoxContainer/ButtonsContainer/UndoButton.disabled = strokes.size() == 0
-	$VBoxContainer/ButtonsContainer/RedoButton.disabled = undo_history.size() == 0
+	# Emit signal with recognized text
+	emit_signal("drawing_submitted", text_result)
 	
-	# Hide status message
-	_hide_status_message()
-	
-	# Send recognition result - add empty fallback to avoid null errors
-	var result_text = text_result if text_result != null and typeof(text_result) == TYPE_STRING else "no_text_detected"
-	emit_signal("drawing_submitted", result_text)
+	# Update status display
+	if status_label:
+		status_label.visible = true
+		status_label.text = "Processing result..."
 
-func _on_recognition_error(error_message):
-	print("Recognition error: ", error_message)
-	recognition_in_progress = false
+# Function to handle recognition errors
+func _on_recognition_error(error_msg: String):
+	print("Recognition error: " + error_msg)
+	debug_log("Recognition error: " + error_msg)
 	
-	# Re-enable buttons
-	$VBoxContainer/ButtonsContainer/DoneButton.disabled = false
-	$VBoxContainer/ButtonsContainer/CancelButton.disabled = false
-	$VBoxContainer/ButtonsContainer/ClearButton.disabled = false
-	$VBoxContainer/ButtonsContainer/UndoButton.disabled = strokes.size() == 0
-	$VBoxContainer/ButtonsContainer/RedoButton.disabled = undo_history.size() == 0
-	
-	# Show error message
-	_show_status_message("Recognition failed!", Color(1, 0.3, 0.3, 1))
-	
-	# Wait a bit then hide
-	await get_tree().create_timer(2.0).timeout
-	_hide_status_message()
-	
-	# Send error result
 	emit_signal("drawing_submitted", "recognition_error")
+	
+	# Update status display
+	if status_label:
+		status_label.visible = true
+		status_label.text = "Processing result..."
+
+# Helper function to hide UI elements
+func hide_ui_elements():
+	for child in get_children():
+		if child is VBoxContainer:
+			child.visible = false
+	
+	# Keep status label visible
+	if status_label:
+		status_label.visible = true
 
 # Test JavaScript bridge functions
 func test_javascript_bridge():
@@ -435,6 +465,25 @@ func debug_log(message):
 				}
 			})();
 		""")
+
+# Setup drawing system
+func setup_drawing():
+	# Connect drawing area signals
+	if $VBoxContainer/DrawingArea:
+		$VBoxContainer/DrawingArea.draw.connect(_on_drawing_area_draw)
+	
+	# Initialize drawing variables
+	drawing = false
+	points = []
+	strokes = []
+	undo_history = []
+	
+	# Set default drawing parameters
+	stroke_color = Color(0, 0, 0)
+	stroke_width = 2.0
+	current_stroke = null
+	
+	debug_log("Drawing system initialized")
 
 # UI status messages
 func _show_status_message(text, color = Color(1, 1, 1, 1)):

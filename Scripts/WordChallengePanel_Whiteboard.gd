@@ -119,42 +119,22 @@ func _on_drawing_submitted(text_result):
 	print("Recognized text (normalized): " + recognized_text)
 	print("Target word (normalized): " + target_word)
 	
-	# Check for special error cases first
-	if recognized_text == "no_text_detected" or recognized_text == "recognition_error":
-		if recognized_text == "no_text_detected":
-			api_status_label.text = "Please write more clearly"
-		else:
-			api_status_label.text = "Error recognizing text - please try again"
-		await get_tree().create_timer(1.5).timeout
-		emit_signal("challenge_failed")
-		queue_free()
-		return
-
+	# Check for success conditions
+	var is_success = false
+	
 	# Exact match check
 	if recognized_text == target_word:
-		api_status_label.text = "Challenge completed successfully!"
-		await get_tree().create_timer(1.0).timeout
-		emit_signal("challenge_completed", bonus_damage)
-		queue_free()
-		return
+		is_success = true
 	
 	# Partial match checks for better UX
-	if target_word.begins_with(recognized_text) and recognized_text.length() >= target_word.length() / 2:
-		api_status_label.text = "Close enough! Challenge completed!"
-		await get_tree().create_timer(1.0).timeout
-		emit_signal("challenge_completed", bonus_damage)
-		queue_free()
-		return
+	elif target_word.begins_with(recognized_text) and recognized_text.length() >= target_word.length() / 2:
+		is_success = true
 	
-	if recognized_text.begins_with(target_word) and target_word.length() >= 2:
-		api_status_label.text = "Close enough! Challenge completed!"
-		await get_tree().create_timer(1.0).timeout
-		emit_signal("challenge_completed", bonus_damage)
-		queue_free()
-		return
+	elif recognized_text.begins_with(target_word) and target_word.length() >= 2:
+		is_success = true
 	
-	# Fuzzy matching for longer words (more than 3 characters)
-	if target_word.length() > 3 and recognized_text.length() > 2:
+	# Fuzzy matching for longer words
+	elif target_word.length() > 3 and recognized_text.length() > 2:
 		# Count matching characters
 		var match_count = 0
 		for c in target_word:
@@ -164,16 +144,42 @@ func _on_drawing_submitted(text_result):
 		# If 70% or more characters match, accept it
 		var match_ratio = float(match_count) / target_word.length()
 		if match_ratio > 0.7:
-			api_status_label.text = "Close enough! Challenge completed!"
-			await get_tree().create_timer(1.0).timeout
-			emit_signal("challenge_completed", bonus_damage)
-			queue_free()
-			return
+			is_success = true
 	
-	# If we got here, it's a failure
-	api_status_label.text = "Incorrect! The word was '" + challenge_word + "'"
-	await get_tree().create_timer(1.5).timeout
-	emit_signal("challenge_failed")
+	# Create and show the result panel
+	var result_panel = load("res://Scenes/ChallengeResultPanels.tscn").instantiate()
+
+	# Add directly to the scene root to ensure it appears on top of everything
+	get_tree().root.add_child(result_panel)
+
+	# Set as top-level to avoid parent layout issues
+	result_panel.set_as_top_level(true)
+
+	# FIXED: Use the proper approach for setting full screen size
+	# First set the position
+	result_panel.position = Vector2.ZERO
+
+	# FIXED: Set anchors first, then defer the size setting to avoid warnings
+	result_panel.set_anchors_preset(Control.PRESET_FULL_RECT)
+	result_panel.call_deferred("set_size", get_viewport_rect().size)
+
+	# Set the result data
+	result_panel.set_result(text_result, challenge_word, is_success, bonus_damage, "wrote")
+
+	# Connect the continue signal
+	result_panel.continue_pressed.connect(_on_result_panel_continue_pressed.bind(is_success))
+
+	# Hide the current panel but don't free it yet
+	self.visible = false
+
+# Handle the continue signal from result panel
+func _on_result_panel_continue_pressed(was_successful: bool):
+	if was_successful:
+		emit_signal("challenge_completed", bonus_damage)
+	else:
+		emit_signal("challenge_failed")
+	
+	# Now we can free the challenge panel
 	queue_free()
 
 # Simple failure handling function

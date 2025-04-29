@@ -259,19 +259,42 @@ func _on_speech_recognized(text):
 	status_label.text = "Processing result..."
 	
 	# Check if the recognized text matches the challenge word
-	if text.to_lower().strip_edges() == challenge_word.to_lower().strip_edges():
-		status_label.text = "Correct! Counter successful"
-		await get_tree().create_timer(0.5).timeout
+	var is_success = text.to_lower().strip_edges() == challenge_word.to_lower().strip_edges()
+	var text_result = "Correct! Counter successful" if is_success else "Incorrect"
+	status_label.text = text_result
+	
+	# Create and show the result panel
+	var result_panel = load("res://Scenes/ChallengeResultPanels.tscn").instantiate()
+
+	# Add directly to the scene root to ensure it appears on top of everything
+	get_tree().root.add_child(result_panel)
+
+	# Set as top-level to avoid parent layout issues
+	result_panel.set_as_top_level(true)
+
+	# FIXED: Use the proper approach for setting full screen size
+	# First set the position
+	result_panel.position = Vector2.ZERO
+
+	# FIXED: Set anchors first, then defer the size setting to avoid warnings
+	result_panel.set_anchors_preset(Control.PRESET_FULL_RECT)
+	result_panel.call_deferred("set_size", get_viewport_rect().size)
+
+	# Add the result data
+	result_panel.set_result(text, challenge_word, is_success, bonus_damage, "said")
+
+	# Connect the continue signal
+	result_panel.continue_pressed.connect(_on_result_panel_continue_pressed.bind(is_success))
+
+	# Hide the current panel but don't free it yet
+	self.visible = false
+
+func _on_result_panel_continue_pressed(is_success):
+	if is_success:
 		emit_signal("challenge_completed", bonus_damage)
-		queue_free()
 	else:
-		status_label.text = "Incorrect. You failed to counter the skill"
-		
-		# For testing, add auto-failure after a few seconds
-		await get_tree().create_timer(3.0).timeout
-		if is_inside_tree(): # Check if node still exists
-			emit_signal("challenge_failed")
-			queue_free()
+		emit_signal("challenge_failed")
+	queue_free()
 
 func _on_tts_button_pressed():
 	# Speak the challenge word with improved feedback

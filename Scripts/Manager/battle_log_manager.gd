@@ -21,12 +21,38 @@ var introduction_messages = {
 	]
 }
 
+# Log entry properties
+var max_entries: int = 10
+var entries: Array = []
+var entry_colors = {
+	"default": Color(1.0, 1.0, 1.0),     # White for standard messages
+	"player": Color(0.4, 0.9, 0.4),      # Green for player actions
+	"enemy": Color(0.9, 0.4, 0.4),       # Red for enemy actions
+	"damage": Color(0.9, 0.6, 0.2),      # Orange for damage
+	"heal": Color(0.2, 0.7, 0.9),        # Blue for healing
+	"challenge": Color(0.9, 0.9, 0.2),   # Yellow for challenges
+	"system": Color(0.7, 0.7, 0.7)       # Gray for system messages
+}
+
+# Reference to the log UI elements
+@onready var battle_log: Control = null 
+@onready var log_entries_container: VBoxContainer = null
+
 func _init(scene):
 	battle_scene = scene
 
 func _ready():
 	# Get reference to the battle log container
 	battle_log_container = battle_scene.get_node("MainContainer/RightContainer/MarginContainer/VBoxContainer/BattleLogContainer/ScrollContainer/LogsContainer")
+	
+	# Find battle log UI
+	battle_log = get_node_or_null("../BattleUI/BattleLog")
+	
+	if battle_log:
+		log_entries_container = battle_log.get_node_or_null("VBoxContainer/LogEntries")
+	
+	# Adding a test entry
+	add_log_entry("Battle started", "system")
 
 func display_introduction_messages():
 	# Get the current dungeon number
@@ -79,6 +105,20 @@ func add_cancellation_message():
 	# Add a specific message for challenge cancellation
 	add_message("[color=#FFA500]You chose to cancel countering the enemy skill.[/color]")
 
+# Add a function to handle challenge result logs specifically
+func add_challenge_result_log(recognized_text: String, target_word: String, success: bool, bonus_damage: int = 0):
+	var log_message = ""
+	
+	if success:
+		log_message = "Challenge successful! You wrote: \"" + recognized_text + "\""
+		if bonus_damage > 0:
+			log_message += " (Bonus damage: +" + str(bonus_damage) + ")"
+	else:
+		log_message = "Challenge failed. You wrote: \"" + recognized_text + "\". The word was: \"" + target_word + "\""
+	
+	# Use the existing add_log_entry function with a challenge type
+	add_log_entry(log_message, "challenge")
+
 func _scroll_to_bottom():
 	# Wait for the next frame to ensure UI has updated
 	await battle_scene.get_tree().process_frame
@@ -99,3 +139,59 @@ func _on_scroll_value_changed(value):
 		user_scrolled = false
 	else:
 		user_scrolled = true
+
+# Function to add a new log entry with optional type for color coding
+func add_log_entry(text: String, type: String = "default") -> void:
+	# Add timestamp
+	var current_time = Time.get_time_dict_from_system()
+	var timestamp = "%02d:%02d" % [current_time.hour, current_time.minute]
+	var formatted_text = "[%s] %s" % [timestamp, text]
+	
+	# Add to entries array
+	entries.push_back({"text": formatted_text, "type": type})
+	
+	# Keep only the last max_entries
+	while entries.size() > max_entries:
+		entries.pop_front()
+	
+	# Update UI if available
+	update_ui()
+	
+	# Also print to console for debugging
+	print("Battle Log: " + formatted_text)
+
+# Update the UI with current entries
+func update_ui() -> void:
+	if not log_entries_container:
+		return
+	
+	# Clear existing entries
+	for child in log_entries_container.get_children():
+		child.queue_free()
+	
+	# Add entries from newest to oldest
+	for entry in entries:
+		var label = Label.new()
+		label.text = entry.text
+		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		label.add_theme_font_override("font", preload("res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf"))
+		label.add_theme_font_size_override("font_size", 16)
+		
+		# Set color based on entry type
+		var color = entry_colors.get(entry.type, entry_colors.default)
+		label.add_theme_color_override("font_color", color)
+		
+		# Add to container
+		log_entries_container.add_child(label)
+	
+	# Make sure the newest entry is visible
+	if log_entries_container.get_child_count() > 0:
+		var scroll = log_entries_container.get_parent()
+		if scroll is ScrollContainer:
+			await get_tree().process_frame
+			scroll.scroll_vertical = scroll.get_v_scroll_bar().max_value
+
+# Clear all log entries
+func clear_log() -> void:
+	entries.clear()
+	update_ui()

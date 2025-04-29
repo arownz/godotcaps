@@ -124,20 +124,6 @@ position = Vector2(-47, -193)
 scale = Vector2(4.57468, 4.51523)
 texture = ExtResource("2_hb1yk")
 
-[node name="PlayerName" type="Label" parent="MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer"]
-layout_mode = 0
-offset_left = -158.0
-offset_top = -73.0
-offset_right = 42.0
-offset_bottom = -18.0
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 3
-theme_override_fonts/font = ExtResource("4_akpf4")
-theme_override_font_sizes/font_size = 18
-text = "Player Name"
-horizontal_alignment = 1
-
 [node name="PlayerHealthBar" type="ProgressBar" parent="MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer"]
 custom_minimum_size = Vector2(180, 15)
 layout_mode = 0
@@ -172,6 +158,20 @@ text = "100/100"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="PlayerName" type="Label" parent="MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer"]
+layout_mode = 0
+offset_left = -158.0
+offset_top = -73.0
+offset_right = 42.0
+offset_bottom = -18.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("4_akpf4")
+theme_override_font_sizes/font_size = 18
+text = "Player Name"
+horizontal_alignment = 1
+
 [node name="EnemyContainer" type="Control" parent="MainContainer/BattleAreaContainer/BattleContainer"]
 layout_mode = 1
 anchors_preset = 6
@@ -190,20 +190,6 @@ grow_vertical = 2
 position = Vector2(56, -187)
 scale = Vector2(3.52051, 3.76243)
 texture = ExtResource("2")
-
-[node name="EnemyName" type="Label" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer"]
-layout_mode = 0
-offset_left = -46.0
-offset_top = -54.0
-offset_right = 154.0
-offset_bottom = 1.0
-theme_override_colors/font_color = Color(1, 0.29, 0.29, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 3
-theme_override_fonts/font = ExtResource("4_akpf4")
-theme_override_font_sizes/font_size = 18
-text = "Slime"
-horizontal_alignment = 1
 
 [node name="EnemyHealthBar" type="ProgressBar" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer"]
 custom_minimum_size = Vector2(180, 15)
@@ -274,20 +260,32 @@ text = "Skill"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="EnemyName" type="Label" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer"]
+layout_mode = 0
+offset_left = -48.0
+offset_top = -51.0
+offset_right = 152.0
+offset_bottom = -17.0
+theme_override_colors/font_color = Color(1, 0.29, 0.29, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("4_akpf4")
+theme_override_font_sizes/font_size = 18
+text = "Slime"
+horizontal_alignment = 1
+
 [node name="EnemySkillLabel" type="Label" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer"]
 visible = false
 layout_mode = 0
-offset_left = -37.0
-offset_top = -55.0
-offset_right = 143.0
-offset_bottom = -29.0
+offset_right = 218.0
+offset_bottom = 30.0
 theme_override_colors/font_color = Color(0.952941, 0.215686, 0.188235, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 3
 theme_override_fonts/font = ExtResource("4_akpf4")
 theme_override_font_sizes/font_size = 16
 text = "Uses Special Skill!"
-horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="FightLabel" type="Label" parent="MainContainer/BattleAreaContainer"]
 visible = false
