@@ -5,7 +5,7 @@ signal word_fetched
 
 # API URLs to try in order of preference
 var API_URLS = [
-		"https://api.datamuse.com/words?sp=???&max=250",
+	"https://api.datamuse.com/words?sp=???&max=250", # Changed from max=1 to max=250
 	"https://random-word-api.herokuapp.com/word"
 ]
 
@@ -81,34 +81,35 @@ func _process_primary_api_response(body):
 	
 	var data = json.get_data()
 	
-	# FIX: Enhanced type checking and response handling
+	# FIX: Select a random word from the array instead of always taking the first one
 	if typeof(data) == TYPE_ARRAY and data.size() > 0:
-		var first_item = data[0]
+		# Choose a random index from the response array
+		var random_index = randi() % data.size()
+		var selected_item = data[random_index]
 		
-		# Handle different possible response formats
-		match typeof(first_item):
+		match typeof(selected_item):
 			TYPE_STRING:
 				# Simple string format
-				random_word = first_item
+				random_word = selected_item
 				
 			TYPE_DICTIONARY:
 				# If it's a dictionary, try to find a word field
-				if first_item.has("word"):
-					random_word = str(first_item.word)
-				elif first_item.has("name"):
-					random_word = str(first_item.name)
-				elif first_item.has("value"):
-					random_word = str(first_item.value)
+				if selected_item.has("word"):
+					random_word = str(selected_item.word)
+				elif selected_item.has("name"):
+					random_word = str(selected_item.name)
+				elif selected_item.has("value"):
+					random_word = str(selected_item.value)
 				else:
 					# Just use the first key as fallback
-					for key in first_item:
-						if typeof(first_item[key]) == TYPE_STRING:
-							random_word = str(first_item[key])
+					for key in selected_item:
+						if typeof(selected_item[key]) == TYPE_STRING:
+							random_word = str(selected_item[key])
 							break
 			
 			_:
 				# For any other type, convert to string
-				random_word = str(first_item)
+				random_word = str(selected_item)
 	
 	if random_word.is_empty():
 		print("RandomWordAPI: Could not extract word from response")
