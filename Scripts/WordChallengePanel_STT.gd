@@ -516,9 +516,6 @@ func speech_error_callback(error):
 func _on_speech_recognized(text):
 	print("Processing recognized text: ", text)
 	
-	# Debug for troubleshooting
-	print("DEBUG: Starting _on_speech_recognized with text: " + text)
-	
 	# Prevent duplicate processing
 	if result_being_processed:
 		print("Result already being processed, ignoring duplicate recognition")
@@ -536,70 +533,44 @@ func _on_speech_recognized(text):
 	print("Word comparison result - Success: " + str(is_success))
 	
 	# Create the result panel
-	print("DEBUG: Creating result panel")
 	var result_panel = load("res://Scenes/ChallengeResultPanels.tscn").instantiate()
 	
-	# CRITICAL FIX: Ensure we're using the main viewport's root
-	var viewport_root = get_tree().root
-	print("DEBUG: Viewport root: ", viewport_root)
+	# Add directly to the scene root to ensure it appears on top of everything
+	get_tree().root.add_child(result_panel)
 	
-	# Clean up any existing result panels
-	for child in viewport_root.get_children():
-		if child.get_script() and child.get_script().resource_path == "res://Scripts/ChallengeResultPanel.gd":
-			print("DEBUG: Found existing result panel, removing")
-			child.queue_free()
-	
-	# Add to the scene tree at the right level
-	viewport_root.add_child(result_panel)
-	
-	# Ensure proper display by setting as top level
+	# Set as top-level to avoid parent layout issues
 	result_panel.set_as_top_level(true)
 	
-	# Force proper positioning at (0,0)
-	result_panel.global_position = Vector2.ZERO
+	# Set the position to cover the full screen
+	result_panel.position = Vector2.ZERO
 	
 	# Set anchors to fill the screen
 	result_panel.set_anchors_preset(Control.PRESET_FULL_RECT)
 	result_panel.call_deferred("set_size", get_viewport_rect().size)
 	
-	# Force visibility
-	result_panel.modulate = Color(1, 1, 1, 1)
+	# Make sure the panel is visible
 	result_panel.visible = true
+	result_panel.modulate = Color(1, 1, 1, 1) # Full opacity
 	
-	# Configure the result panel with our results
-	print("DEBUG: Setting result panel data")
+	print("Challenge result panel created: " + str(result_panel) + " visible: " + str(result_panel.visible))
+	
+	# Set the result data - "said" for the STT
 	result_panel.set_result(text, challenge_word, is_success, bonus_damage, "said")
 	
-	# Force the animation to play
-	print("DEBUG: Playing animation")
-	var animation_player = result_panel.get_node("AnimationPlayer")
-	if animation_player and animation_player.has_animation("appear"):
-		animation_player.stop()
-		animation_player.play("appear")
-	
-	# Connect to signals 
-	print("DEBUG: Connecting signal")
+	# Connect the continue signal
 	result_panel.continue_pressed.connect(_on_result_panel_continue_pressed.bind(is_success))
 	
-	# Hide the STT panel to prevent UI conflicts - CRITICAL FIX
-	visible = false
-	
-	# Force immediate processing update
-	await get_tree().process_frame
-	
-	print("DEBUG: Result panel created and displayed. Waiting for timer...")
+	# Hide the current panel but don't free it yet
+	self.visible = false
 
+# Handle the continue signal from result panel
 func _on_result_panel_continue_pressed(was_successful: bool):
-	print("DEBUG: Result panel continue pressed, was successful: " + str(was_successful))
-	
-	# Important: First emit signal before freeing
 	if was_successful:
 		emit_signal("challenge_completed", bonus_damage)
 	else:
 		emit_signal("challenge_failed")
 	
-	# Then queue_free after a small delay to ensure signal processing
-	await get_tree().create_timer(0.1).timeout
+	# Now we can free the challenge panel
 	queue_free()
 
 # Improved word comparison function to be more forgiving with dyslexic errors
