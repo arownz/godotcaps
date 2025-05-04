@@ -14,14 +14,26 @@ var api_status_label
 
 # Word challenge properties
 var challenge_word = ""
-var bonus_damage = 20
+var bonus_damage = 5
 var random_word_api = null
 var tts = null
 var voice_options = []
 var recognition_active = false
 
-# Placeholder for speech recognition functionality
-var speech_recognition_available = false
+# Google Cloud Speech API variables
+var max_recording_time = 10.0 # Maximum recording time in seconds
+var unique_callback_id = ""
+var recognition_in_progress = false
+
+# Constants for API
+const SPEECH_API_ENDPOINT = "https://speech.googleapis.com/v1/speech:recognize"
+const DEFAULT_API_KEY = "AIzaSyCz9BNjDlDYDvioKMwzR2_f8D1vHseQtZ0" # Default key if none provided
+
+# Flag to track if result panel is already showing
+var result_panel_active = false
+
+# Flag to track if result is being processed
+var result_being_processed = false
 
 func _ready():
 	# Add overlay to ensure it covers the whole screen
@@ -52,8 +64,11 @@ func _ready():
 	if tts_settings_panel:
 		tts_settings_panel.visible = false
 	
-	# Setup speech recognition
-	_check_speech_recognition_availability()
+	# Setup speech recognition capabilities
+	_setup_speech_recognition()
+	
+	# Check existing permissions status WITHOUT requesting them
+	_check_existing_permissions()
 	
 	# Get a random word for the challenge
 	random_word_api = RandomWordAPI.new()
@@ -61,284 +76,605 @@ func _ready():
 	random_word_api.word_fetched.connect(_on_word_fetched)
 	random_word_api.fetch_random_word()
 	
-	# FIX: Connect buttons signals only if they exist and if not already connected
-	var cancel_button = $ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer/CancelButton
-	if cancel_button and !cancel_button.is_connected("pressed", Callable(self, "_on_cancel_button_pressed")):
-		cancel_button.pressed.connect(_on_cancel_button_pressed)
-		
-	var tts_button = $ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer/TTSButton
-	if tts_button and !tts_button.is_connected("pressed", Callable(self, "_on_tts_button_pressed")):
-		tts_button.pressed.connect(_on_tts_button_pressed)
-	
-	if speak_button and !speak_button.is_connected("pressed", Callable(self, "_on_speak_button_pressed")):
-		speak_button.pressed.connect(_on_speak_button_pressed)
-	
-	# Connect TTS settings button
+	# Connect TTS settings button signal
 	var tts_settings_button = $ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer/TTSSettingsButton
 	if tts_settings_button and !tts_settings_button.is_connected("pressed", Callable(self, "_on_tts_settings_button_pressed")):
 		tts_settings_button.pressed.connect(_on_tts_settings_button_pressed)
 
-func _check_speech_recognition_availability():
-	# Check for Web platform where SpeechRecognition is available
-	if OS.get_name() == "Web":
-		# Use JavaScript to check if SpeechRecognition API is available
-		if JavaScriptBridge.eval("""
-			typeof window !== 'undefined' && 
-			(window.SpeechRecognition || window.webkitSpeechRecognition)
-		"""):
-			speech_recognition_available = true
-			if status_label:  # FIX: Add null check
-				status_label.text = "Ready for speech input"
-			if speak_button:  # FIX: Add null check
-				speak_button.disabled = false
-		else:
-			if status_label:  # FIX: Add null check
-				status_label.text = "Speech recognition not available in this browser"
-			if speak_button:  # FIX: Add null check
-				speak_button.disabled = true
+func _setup_speech_recognition():
+	print("Setting up web speech recognition...")
+	_initialize_web_audio_environment()
+	_setup_web_audio_callbacks()
+
+# Function to check if the browser already has microphone permissions
+# Modified to only check, not request permissions
+func _check_existing_permissions():
+	if JavaScriptBridge.has_method("eval"):
+		var js_code = """
+			(function() {
+				// Check if permissions API is available
+				if (navigator.permissions && navigator.permissions.query) {
+					navigator.permissions.query({ name: 'microphone' })
+					.then(function(permissionStatus) {
+						// Update UI based on current permission state
+						if (window.godot_speech) {
+							window.godot_speech.permissionState = permissionStatus.state;
+						}
+						console.log('Microphone permission state:', permissionStatus.state);
+						
+						// Set up permission change listener
+						permissionStatus.onchange = function() {
+							if (window.godot_speech) {
+								window.godot_speech.permissionState = this.state;
+							}
+							console.log('Microphone permission state changed to:', this.state);
+							
+							// Use engine.call instead of sendToGodot
+							var engine = null;
+							if (window.godot && typeof window.godot.getEngine === 'function') {
+								engine = window.godot.getEngine();
+							} else if (window.engine) {
+								engine = window.engine;
+							} else if (window.Module && window.Module.engine) {
+								engine = window.Module.engine;
+							}
+							
+							if (engine && typeof engine.call === 'function') {
+								engine.call('""" + str(get_path()) + """', 'update_mic_permission_state', this.state);
+							}
+						};
+						
+						// Initial update to Godot using available engine
+						var engine = null;
+						if (window.godot && typeof window.godot.getEngine === 'function') {
+							engine = window.godot.getEngine();
+						} else if (window.engine) {
+							engine = window.engine;
+						} else if (window.Module && window.Module.engine) {
+							engine = window.Module.engine;
+						}
+						
+						if (engine && typeof engine.call === 'function') {
+							engine.call('""" + str(get_path()) + """', 'update_mic_permission_state', permissionStatus.state);
+						}
+						
+						return permissionStatus.state;
+					})
+					.catch(function(error) {
+						console.error('Error checking microphone permission:', error);
+						return 'unknown';
+					});
+				} else {
+					console.log('Permissions API not supported');
+					return 'unknown';
+				}
+				return 'checking';
+			})();
+		"""
+		JavaScriptBridge.eval(js_code)
+
+# Callback function for permission state updates from JavaScript
+func update_mic_permission_state(state):
+	print("Microphone permission state updated: " + state)
+	
+	if state == "granted":
+		# Permission already granted, update UI to show this
+		status_label.text = "Click mic button to start"
+		speak_button.disabled = false
+	elif state == "denied":
+		# Permission denied, update UI to show this
+		status_label.text = "Microphone access denied. Check browser settings."
+		speak_button.disabled = false # Still allow clicking to trigger permission prompt
 	else:
-		# Desktop platforms - use simulation for testing
-		speech_recognition_available = true
-		if status_label:  # FIX: Add null check
-			status_label.text = "Using simulated speech recognition for testing"
-		if speak_button:  # FIX: Add null check
-			speak_button.disabled = false
+		# Permission not determined yet, will be requested when button is clicked
+		status_label.text = "Click mic button to start"
+		speak_button.disabled = false
+
+# Initialize JavaScript environment for web audio - FIXED ENGINE DETECTION
+func _initialize_web_audio_environment():
+	if JavaScriptBridge.has_method("eval"):
+		var js_code = """
+			(function() {
+				// Reset godot_speech object if it exists to avoid conflicts
+				if (window.godot_speech) {
+					console.log("Resetting godot_speech object");
+					delete window.godot_speech;
+				}
+				
+				// Create fresh godot_speech object
+				window.godot_speech = {
+					mediaRecorder: null,
+					audioChunks: [],
+					audioStream: null,
+					recording: false,
+					permissionState: 'prompt',
+					engineReady: false,
+					
+					// Debug logging function
+					debugLog: function(message) {
+						console.log("Speech Debug:", message);
+					},
+					
+					// Fixed result handler - IMPORTANT: Define as function expression
+					onResult: function(text) {
+						this.debugLog("Recognition result: " + text);
+						if (text) {
+							var engine = this.getEngine();
+							if (engine) {
+								engine.call('""" + str(get_path()) + """', 'speech_result_callback', text);
+							}
+						} else {
+							this.onError("Empty result from speech recognition");
+						}
+					},
+					
+					// Fixed error handler - IMPORTANT: Define as function expression
+					onError: function(error) {
+						this.debugLog("Speech recognition error: " + error);
+						var engine = this.getEngine();
+						if (engine) {
+							engine.call('""" + str(get_path()) + """', 'speech_error_callback', error.toString());
+						}
+					},
+					
+					// Helper to get engine through various methods
+					getEngine: function() {
+						if (window.godot && typeof window.godot.getEngine === 'function') {
+							return window.godot.getEngine();
+						} else if (window.engine) {
+							return window.engine;
+						} else if (window.Module && window.Module.engine) {
+							return window.Module.engine;
+						}
+						return null;
+					}
+				};
+				return window.godot_speech != null;
+			})();
+		"""
+		
+		# Execute the JavaScript
+		var result = JavaScriptBridge.eval(js_code)
+		print("Web audio environment initialized: ", result)
+
+# Set up JavaScript callbacks for web platform
+func _setup_web_audio_callbacks():
+	if JavaScriptBridge.has_method("eval"):
+		var js_code = """
+			(function() {
+				// Make sure we have our speech object
+				if (!window.godot_speech) return false;
+				
+				// Store the godot object path for sending messages back
+				window.godot_speech._godotObjectPath = '""" + str(get_path()) + """';
+				
+				// Process audio data after recording
+				window.godot_speech.processAudio = function(audioBlob) {
+					this.debugLog("Processing recorded audio");
+					
+					// Convert audio blob to base64
+					var reader = new FileReader();
+					reader.readAsDataURL(audioBlob); 
+					reader.onloadend = () => {
+						try {
+							var base64data = reader.result.split(',')[1];
+							this.debugLog("Audio converted to base64");
+							
+							// Send the audio data to the Google Speech API
+							this.debugLog("Sending request to Google Speech API");
+							
+							// Request parameters
+							var request = {
+								config: {
+									encoding: "WEBM_OPUS",
+									sampleRateHertz: 48000,
+									languageCode: "en-US",
+									model: "command_and_search",
+									speechContexts: [{
+										phrases: ["spelling", "letters", "dictation"]
+									}]
+								},
+								audio: {
+									content: base64data
+								}
+							};
+							
+							fetch('https://speech.googleapis.com/v1/speech:recognize?key=' + window.GOOGLE_CLOUD_API_KEY, {
+								method: 'POST',
+								headers: {
+									'Content-Type': 'application/json'
+								},
+								body: JSON.stringify(request)
+							})
+							.then(response => response.json())
+							.then(data => {
+								this.debugLog("Speech API response received");
+								console.log("Speech API response:", data);
+								
+								if (data.results && data.results.length > 0 && 
+									data.results[0].alternatives && 
+									data.results[0].alternatives.length > 0) {
+									var text = data.results[0].alternatives[0].transcript;
+									// Make sure to use function properly
+									this.onResult(text);
+								} else {
+									// Make sure to use function properly
+									this.onError("No recognition result");
+								}
+							})
+							.catch(error => {
+								console.error("Error with Speech API:", error);
+								// Make sure to use function properly
+								this.onError(error);
+							});
+						} catch (e) {
+							// Make sure to use function properly
+							this.onError("Audio processing error: " + e.message);
+						}
+					};
+				};
+				
+				return true;
+			})();
+		"""
+		
+		var result = JavaScriptBridge.eval(js_code)
+		print("Web audio callbacks set up: ", result)
+
+# Process function - removed since we don't need desktop functionality
 
 func _on_word_fetched():
-	# Update the random word label
+	# Get word from the API - FIX: Use the proper method to get the word
 	challenge_word = random_word_api.get_random_word()
-	random_word_label.text = challenge_word
 	
-	# Clear API status if successful, or show error
-	if random_word_api.last_error == "":
-		api_status_label.text = ""
-	else:
-		api_status_label.text = "API Error: " + random_word_api.last_error
+	# Update UI
+	if random_word_label:
+		random_word_label.text = challenge_word
 		
-		# If API fails, use a fallback word
-		if challenge_word.is_empty():
-			var fallback_words = ["cat", "dog", "tree", "book", "pen", "car", "sun", "moon", "fish", "house"]
-			challenge_word = fallback_words[randi() % fallback_words.size()]
-			random_word_label.text = challenge_word
-			api_status_label.text = "Using fallback word"
+	# Send word to JavaScript for debug - FIX: Properly escape the string
+	if JavaScriptBridge.has_method("eval"):
+		var escaped_word = challenge_word.replace("'", "\\'").replace("\n", "\\n").replace("\r", "\\r")
+		var js_code = "window.setChallengeWord(\"" + escaped_word + "\");"
+		JavaScriptBridge.eval(js_code)
 	
-	# Store the challenge word in JavaScript for debugging
-	if OS.has_feature("JavaScript"):
-		JavaScriptBridge.eval("window.setChallengeWord('%s');" % challenge_word)
-	
-	# Log the word for debugging
-	print("Challenge word: ", challenge_word)
-
+# Handle button press to start/stop speech recognition
 func _on_speak_button_pressed():
-	if OS.get_name() == "Web" && speech_recognition_available:
-		if recognition_active:
-			# Stop recognition
-			JavaScriptBridge.eval("""
-				if (window.recognition) {
-					window.recognition.stop();
-					delete window.recognition;
-				}
-			""")
-			recognition_active = false
-			speak_button.text = "🎤 Start Speaking"
-			status_label.text = "Stopped listening"
-		else:
-			# Start Web Speech API recognition
-			status_label.text = "Starting recognition..."
-			speak_button.text = "Stop Listening"
-			
-			# Setup SpeechRecognition in JavaScript
-			var js_code = """
-				const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+	if recognition_active:
+		# Stop recording
+		recognition_active = false
+		speak_button.text = "Speak"
+		status_label.text = "Processing speech..."
+		
+		_stop_web_recording()
+	else:
+		# Update UI first
+		status_label.text = "Starting microphone..."
+		
+		# Start recording - this will request permission if needed
+		recognition_active = true
+		speak_button.text = "Stop"
+		recognized_text_label.text = ""
+		
+		_start_web_recording()
+
+# Web platform recording functions using Google Cloud Speech-to-Text API
+func _start_web_recording():
+	if JavaScriptBridge.has_method("eval"):
+		var js_code = """
+			(function() {
+				window.godot_speech.debugLog('Starting web recording');
 				
-				if (SpeechRecognition) {
-					window.recognition = new SpeechRecognition();
-					window.recognition.lang = 'en-US';
-					window.recognition.interimResults = false;
-					window.recognition.maxAlternatives = 1;
+				// Clean up any existing MediaRecorder
+				if (window.godot_speech.mediaRecorder && window.godot_speech.mediaRecorder.state !== 'inactive') {
+					window.godot_speech.mediaRecorder.stop();
+				}
+				
+				if (window.godot_speech.audioStream) {
+					window.godot_speech.audioStream.getTracks().forEach(track => track.stop());
+					window.godot_speech.audioStream = null;
+				}
+				
+				window.godot_speech.audioChunks = [];
+				window.godot_speech.recording = true;
+				
+				// Request microphone permission now (or use existing permission)
+				navigator.mediaDevices.getUserMedia({ 
+					audio: { 
+						echoCancellation: true,
+						noiseSuppression: true,
+						autoGainControl: true
+					}, 
+					video: false 
+				})
+				.then(function(stream) {
+					// Update our tracked permission state
+					window.godot_speech.permissionState = 'granted';
 					
-					window.recognition.onresult = function(event) {
-						const transcript = event.results[0][0].transcript;
-						window.godot.speechResult(transcript);
-					};
+					window.godot_speech.audioStream = stream;
+					window.godot_speech.audioChunks = [];
 					
-					window.recognition.onerror = function(event) {
-						window.godot.speechError(event.error);
-					};
+					try {
+						// Create MediaRecorder with optimal settings for speech
+						window.godot_speech.mediaRecorder = new MediaRecorder(stream, {
+							mimeType: 'audio/webm;codecs=opus',
+							audioBitsPerSecond: 24000
+						});
+						
+						// Listen for data available event
+						window.godot_speech.mediaRecorder.ondataavailable = function(e) {
+							if (e.data.size > 0) {
+								window.godot_speech.audioChunks.push(e.data);
+							}
+						};
+						
+						// Setup completion handler
+						window.godot_speech.mediaRecorder.onstop = function() {
+							window.godot_speech.debugLog('MediaRecorder stopped');
+							window.godot_speech.recording = false;
+							
+							// Process the audio chunks
+							if (window.godot_speech.audioChunks.length > 0) {
+								var audioBlob = new Blob(window.godot_speech.audioChunks, { type: 'audio/webm;codecs=opus' });
+								window.godot_speech.debugLog('Audio recorded: ' + (audioBlob.size / 1024).toFixed(2) + ' KB');
+								
+								// Process the audio
+								window.godot_speech.processAudio(audioBlob);
+							} else {
+								// Use with proper function call
+								if (typeof window.godot_speech.onError === 'function') {
+									window.godot_speech.onError('No audio data recorded');
+								}
+							}
+						};
+						
+						// Setup error handler
+						window.godot_speech.mediaRecorder.onerror = function(event) {
+							// Use with proper function call
+							if (typeof window.godot_speech.onError === 'function') {
+								window.godot_speech.onError('MediaRecorder error: ' + event.name);
+							}
+						};
+						
+						// Start recording
+						window.godot_speech.mediaRecorder.start();
+						window.godot_speech.debugLog('MediaRecorder started');
+						
+						return true;
+					} catch (err) {
+						// Use with proper function call
+						if (typeof window.godot_speech.onError === 'function') {
+							window.godot_speech.onError('Error initializing MediaRecorder: ' + err.message);
+						}
+						return false;
+					}
+				})
+				.catch(function(err) {
+					console.error('Error accessing media devices:', err);
 					
-					window.recognition.onend = function() {
-						window.godot.speechEnd();
-					};
+					// Update our tracked permission state if denied
+					if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+						window.godot_speech.permissionState = 'denied';
+					}
 					
-					window.recognition.start();
+					// Use with proper function call
+					if (typeof window.godot_speech.onError === 'function') {
+						window.godot_speech.onError('Microphone access error: ' + err.message);
+					}
+					return false;
+				});
+				
+				return true;
+			})();
+		"""
+		
+		var result = JavaScriptBridge.eval(js_code)
+		print("Starting web recording: ", result)
+
+func _stop_web_recording():
+	if JavaScriptBridge.has_method("eval"):
+		var js_code = """
+			(function() {
+				window.godot_speech.debugLog('MediaRecorder stopped by user');
+				
+				if (window.godot_speech.mediaRecorder && window.godot_speech.mediaRecorder.state !== 'inactive') {
+					window.godot_speech.mediaRecorder.stop();
 					return true;
 				} else {
+					if (typeof window.godot_speech.onError === 'function') {
+						window.godot_speech.onError('No active recording to stop');
+					}
 					return false;
 				}
-			"""
-			
-			# Setup Godot callbacks
-			JavaScriptBridge.eval("""
-				if (typeof window.godot === 'undefined') {
-					window.godot = {};
-				}
-				window.godot.speechResult = function(text) {
-					const engine = window.godot.getEngine ? window.godot.getEngine() : null;
-					if (engine) {
-						engine.sendMessage('%s', 'speech_result_callback', text);
-					}
-				};
-				window.godot.speechError = function(error) {
-					const engine = window.godot.getEngine ? window.godot.getEngine() : null;
-					if (engine) {
-						engine.sendMessage('%s', 'speech_error_callback', error);
-					}
-				};
-				window.godot.speechEnd = function() {
-					const engine = window.godot.getEngine ? window.godot.getEngine() : null;
-					if (engine) {
-						engine.sendMessage('%s', 'speech_end_callback', '');
-					}
-				};
-			""" % [get_path(), get_path(), get_path()])
-			
-			# Execute JavaScript and check result
-			var success = JavaScriptBridge.eval(js_code)
-			if success:
-				recognition_active = true
-				status_label.text = "Listening..."
-			else:
-				status_label.text = "Failed to start speech recognition"
-	else:
-		# For testing on desktop
-		_simulate_speech_recognition()
+			})();
+		"""
+		
+		var result = JavaScriptBridge.eval(js_code)
+		print("Stopping web recording: ", result)
 
-# JavaScript callback functions
+# Callback function for speech recognition result from JavaScript
 func speech_result_callback(text):
-	_on_speech_recognized(text)
+	print("Speech recognition result: ", text)
+	if text and text.length() > 0:
+		# Explicitly call _on_speech_recognized directly instead of deferring
+		_on_speech_recognized(text)
+	else:
+		status_label.text = "Could not understand speech"
+		# Reset the UI for another attempt
+		speak_button.text = "Speak"
+		speak_button.disabled = false
+		recognition_active = false
 
+# Callback function for speech recognition error from JavaScript
 func speech_error_callback(error):
+	print("Speech recognition error: ", error)
 	status_label.text = "Error: " + error
 	recognition_active = false
-	speak_button.text = "🎤 Start Speaking"
+	speak_button.text = "Speak"
+	speak_button.disabled = false
 
-func speech_end_callback(_args):
-	if recognition_active:
-		status_label.text = "Recognition finished"
-		recognition_active = false
-		speak_button.text = "🎤 Start Speaking"
-
-func _simulate_speech_recognition():
-	# For testing purposes only - simulate speech recognition
-	status_label.text = "Listening..."
-	speak_button.text = "Stop Listening"
-	recognition_active = true
-	
-	# Create timer to simulate processing
-	var timer = Timer.new()
-	add_child(timer)
-	timer.wait_time = 2.0
-	timer.one_shot = true
-	timer.timeout.connect(func():
-		# 50% chance of success for testing
-		if randf() > 0.5:
-			_on_speech_recognized(challenge_word)
-		else:
-			_on_speech_recognized("incorrect word")
-		timer.queue_free()
-	)
-	timer.start()
-
+# Function to process recognized speech
 func _on_speech_recognized(text):
-	# Update recognized text label
-	recognized_text_label.text = text
-	speak_button.text = "🎤 Start Speaking"
-	recognition_active = false
+	print("Processing recognized text: ", text)
 	
-	# Change status label
+	# Debug for troubleshooting
+	print("DEBUG: Starting _on_speech_recognized with text: " + text)
+	
+	# Prevent duplicate processing
+	if result_being_processed:
+		print("Result already being processed, ignoring duplicate recognition")
+		return
+		
+	result_being_processed = true
+	
+	# Update UI
+	recognized_text_label.text = text
+	speak_button.disabled = true
 	status_label.text = "Processing result..."
 	
-	# Check if the recognized text matches the challenge word
-	var is_success = text.to_lower().strip_edges() == challenge_word.to_lower().strip_edges()
-	var text_result = "Correct! Counter successful" if is_success else "Incorrect"
-	status_label.text = text_result
+	# Compare with challenge word
+	var is_success = _compare_words(text.to_lower().strip_edges(), challenge_word.to_lower())
+	print("Word comparison result - Success: " + str(is_success))
 	
-	# Create and show the result panel
+	# Create the result panel
+	print("DEBUG: Creating result panel")
 	var result_panel = load("res://Scenes/ChallengeResultPanels.tscn").instantiate()
-
-	# Add directly to the scene root to ensure it appears on top of everything
-	get_tree().root.add_child(result_panel)
-
-	# Set as top-level to avoid parent layout issues
+	
+	# CRITICAL FIX: Ensure we're using the main viewport's root
+	var viewport_root = get_tree().root
+	print("DEBUG: Viewport root: ", viewport_root)
+	
+	# Clean up any existing result panels
+	for child in viewport_root.get_children():
+		if child.get_script() and child.get_script().resource_path == "res://Scripts/ChallengeResultPanel.gd":
+			print("DEBUG: Found existing result panel, removing")
+			child.queue_free()
+	
+	# Add to the scene tree at the right level
+	viewport_root.add_child(result_panel)
+	
+	# Ensure proper display by setting as top level
 	result_panel.set_as_top_level(true)
-
-	# FIXED: Use the proper approach for setting full screen size
-	# First set the position
-	result_panel.position = Vector2.ZERO
-
-	# FIXED: Set anchors first, then defer the size setting to avoid warnings
+	
+	# Force proper positioning at (0,0)
+	result_panel.global_position = Vector2.ZERO
+	
+	# Set anchors to fill the screen
 	result_panel.set_anchors_preset(Control.PRESET_FULL_RECT)
 	result_panel.call_deferred("set_size", get_viewport_rect().size)
-
-	# Add the result data
+	
+	# Force visibility
+	result_panel.modulate = Color(1, 1, 1, 1)
+	result_panel.visible = true
+	
+	# Configure the result panel with our results
+	print("DEBUG: Setting result panel data")
 	result_panel.set_result(text, challenge_word, is_success, bonus_damage, "said")
-
-	# Connect the continue signal
+	
+	# Force the animation to play
+	print("DEBUG: Playing animation")
+	var animation_player = result_panel.get_node("AnimationPlayer")
+	if animation_player and animation_player.has_animation("appear"):
+		animation_player.stop()
+		animation_player.play("appear")
+	
+	# Connect to signals 
+	print("DEBUG: Connecting signal")
 	result_panel.continue_pressed.connect(_on_result_panel_continue_pressed.bind(is_success))
+	
+	# Hide the STT panel to prevent UI conflicts - CRITICAL FIX
+	visible = false
+	
+	# Force immediate processing update
+	await get_tree().process_frame
+	
+	print("DEBUG: Result panel created and displayed. Waiting for timer...")
 
-	# Hide the current panel but don't free it yet
-	self.visible = false
-
-func _on_result_panel_continue_pressed(is_success):
-	if is_success:
+func _on_result_panel_continue_pressed(was_successful: bool):
+	print("DEBUG: Result panel continue pressed, was successful: " + str(was_successful))
+	
+	# Important: First emit signal before freeing
+	if was_successful:
 		emit_signal("challenge_completed", bonus_damage)
 	else:
 		emit_signal("challenge_failed")
+	
+	# Then queue_free after a small delay to ensure signal processing
+	await get_tree().create_timer(0.1).timeout
 	queue_free()
 
+# Improved word comparison function to be more forgiving with dyslexic errors
+func _compare_words(spoken_word, target_word):
+	# Direct match
+	if spoken_word == target_word:
+		return true
+	
+	# Check if any words in the phrase match the target
+	var words = spoken_word.split(" ")
+	for word in words:
+		if word == target_word:
+			return true
+		
+		# Check for common speech recognition errors with short words
+		if target_word.length() <= 4:
+			# For short words like "bus", check for homophones or near-matches
+			var distance = levenshtein_distance(word, target_word)
+			if distance <= 1: # Allow 1 character difference for short words
+				return true
+	
+	# Calculate Levenshtein distance for words that are similar lengths
+	if abs(spoken_word.length() - target_word.length()) <= 2:
+		var distance = levenshtein_distance(spoken_word, target_word)
+		# Allow for more errors in longer words
+		var max_distance = max(1, target_word.length() / 3)
+		if distance <= max_distance:
+			return true
+	
+	return false
+
+# Calculate Levenshtein distance between two strings
+func levenshtein_distance(s1, s2):
+	var m = s1.length()
+	var n = s2.length()
+	
+	# Create a matrix of size (m+1) x (n+1)
+	var d = []
+	for i in range(m + 1):
+		d.append([])
+		for j in range(n + 1):
+			d[i].append(0)
+	
+	# Initialize the first row and column
+	for i in range(m + 1):
+		d[i][0] = i
+	for j in range(n + 1):
+		d[0][j] = j
+	
+	# Fill the matrix
+	for j in range(1, n + 1):
+		for i in range(1, m + 1):
+			var substitutionCost = 0 if s1[i - 1] == s2[j - 1] else 1
+			d[i][j] = min(min(d[i - 1][j] + 1, # Deletion
+							  d[i][j - 1] + 1), # Insertion
+							  d[i - 1][j - 1] + substitutionCost) # Substitution
+	
+	return d[m][n]
+
 func _on_tts_button_pressed():
-	# Speak the challenge word with improved feedback
-	api_status_label.text = "Reading word..."
-	
-	print("TTS button pressed, trying to speak: ", challenge_word)
-	
-	var result = tts.speak(challenge_word)
-	
-	if !result:
-		api_status_label.text = "Failed to read word"
-		print("TTS speak returned false")
-		return
-	
-	# Connect to signals for this specific request if not already connected
-	if !tts.is_connected("speech_ended", Callable(self, "_on_tts_speech_ended")):
-		tts.connect("speech_ended", Callable(self, "_on_tts_speech_ended"))
-	
-	if !tts.is_connected("speech_error", Callable(self, "_on_tts_speech_error")):
-		tts.connect("speech_error", Callable(self, "_on_tts_speech_error"))
+	# Text-to-speech for the challenge word
+	if challenge_word:
+		print("TTS button pressed, trying to speak: " + challenge_word)
+		
+		# Use the native TTS class instead of JavaScript bridge
+		api_status_label.text = "Reading word..."
+		var result = tts.speak(challenge_word)
+		
+		if !result:
+			api_status_label.text = "Failed to read word"
+			print("TTS speak returned false")
 
-# Handle TTS feedback
-func _on_tts_speech_ended():
-	api_status_label.text = ""
-	
-	# Disconnect the temporary signals
-	if tts.is_connected("speech_ended", Callable(self, "_on_tts_speech_ended")):
-		tts.disconnect("speech_ended", Callable(self, "_on_tts_speech_ended"))
-	
-	if tts.is_connected("speech_error", Callable(self, "_on_tts_speech_error")):
-		tts.disconnect("speech_error", Callable(self, "_on_tts_speech_error"))
-
-func _on_tts_speech_error(error_msg):
-	api_status_label.text = "TTS Error: " + error_msg
-	
-	# Disconnect the temporary signals
-	if tts.is_connected("speech_ended", Callable(self, "_on_tts_speech_ended")):
-		tts.disconnect("speech_ended", Callable(self, "_on_tts_speech_ended"))
-	
-	if tts.is_connected("speech_error", Callable(self, "_on_tts_speech_error")):
-		tts.disconnect("speech_error", Callable(self, "_on_tts_speech_error"))
-
+# Fix the TTS settings button functionality to match whiteboard version
 func _on_tts_settings_button_pressed():
-	# Load and show the TTS settings popup
+	# Load and show the TTS settings popup instead of using the built-in panel
 	var tts_popup = load("res://Scenes/TTSSettingsPopup.tscn").instantiate()
 	add_child(tts_popup)
 	
@@ -350,7 +686,7 @@ func _on_tts_settings_button_pressed():
 	tts_popup.settings_closed.connect(_on_tts_settings_closed)
 
 func _on_tts_settings_saved(voice_id, rate):
-	# Apply the new settings
+	# Apply the new settings directly to the TTS instance
 	tts.set_voice(voice_id)
 	tts.set_rate(rate)
 
@@ -359,16 +695,47 @@ func _on_tts_settings_closed():
 	pass
 
 func _on_cancel_button_pressed():
-	print("STT challenge cancelled, player will take damage")
-	status_label.text = "Challenge cancelled!"
-	await get_tree().create_timer(0.5).timeout
-	emit_signal("challenge_cancelled")  # This will notify battle_manager to apply damage 
+	# Emit signal to cancel the challenge
+	emit_signal("challenge_cancelled")
 	queue_free()
 
-func _on_test_button_pressed():
-	# This is handled by the popup now
-	pass
+# Make sure to clean up resources when this node is about to be removed
+func _exit_tree():
+	_cleanup_web_audio()
 
-func _on_close_button_pressed():
-	# This is handled by the popup now
-	tts_settings_panel.visible = false
+# Clean up any web audio resources when no longer needed
+func _cleanup_web_audio():
+	if JavaScriptBridge.has_method("eval"):
+		var js_code = """
+			(function() {
+				if (window.godot_speech && window.godot_speech.audioStream) {
+					window.godot_speech.audioStream.getTracks().forEach(track => track.stop());
+					window.godot_speech.audioStream = null;
+				}
+				
+				if (window.godot_speech && window.godot_speech.mediaRecorder) {
+					if (window.godot_speech.mediaRecorder.state !== 'inactive') {
+						window.godot_speech.mediaRecorder.stop();
+					}
+					window.godot_speech.mediaRecorder = null;
+				}
+				
+				if (window.godot_speech) {
+					window.godot_speech.audioChunks = [];
+					window.godot_speech.recording = false;
+					window.godot_speech.engineReady = false;
+				}
+				
+				return true;
+			})();
+		"""
+		
+		JavaScriptBridge.eval(js_code)
+		print("Web audio resources cleaned up")
+
+# Handle TTS feedback
+func _on_tts_speech_ended():
+	print("TTS speech ended")
+
+func _on_tts_speech_error(error_msg):
+	print("TTS speech error: ", error_msg)

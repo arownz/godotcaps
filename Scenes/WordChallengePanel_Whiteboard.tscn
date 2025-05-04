@@ -129,7 +129,7 @@ custom_minimum_size = Vector2(80, 50)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_j54t7")
 theme_override_font_sizes/font_size = 16
-text = "🔊 Read"
+text = "Read"
 
 [node name="TTSSettingsButton" type="Button" parent="ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer"]
 layout_mode = 2
@@ -247,6 +247,7 @@ offset_bottom = 0.0
 [node name="APIStatusLabel" type="Label" parent="ChallengePanel/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.498039, 0.498039, 0.498039, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_j54t7")
 theme_override_font_sizes/font_size = 16
 text = "Connecting to random word API..."

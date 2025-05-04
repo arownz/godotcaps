@@ -25,7 +25,7 @@ var introduction_messages = {
 var max_entries: int = 10
 var entries: Array = []
 var entry_colors = {
-	"default": Color(1.0, 1.0, 1.0),     # White for standard messages
+	"default": Color(5.1, 5.1, 5.1),     # White for standard messages
 	"player": Color(0.4, 0.9, 0.4),      # Green for player actions
 	"enemy": Color(0.9, 0.4, 0.4),       # Red for enemy actions
 	"damage": Color(0.9, 0.6, 0.2),      # Orange for damage

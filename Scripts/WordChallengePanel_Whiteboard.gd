@@ -12,7 +12,7 @@ var api_status_label
 
 # Word challenge properties
 var challenge_word = ""
-var bonus_damage = 20
+var bonus_damage = 5
 var random_word_api = null
 var tts = null
 var voice_options = []
@@ -163,7 +163,7 @@ func _on_drawing_submitted(text_result):
 	result_panel.set_anchors_preset(Control.PRESET_FULL_RECT)
 	result_panel.call_deferred("set_size", get_viewport_rect().size)
 
-	# Set the result data
+	# Set the result data - "wrote" for the whiteboard
 	result_panel.set_result(text_result, challenge_word, is_success, bonus_damage, "wrote")
 
 	# Connect the continue signal

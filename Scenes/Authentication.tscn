@@ -1,7 +1,8 @@
-[gd_scene load_steps=8 format=3 uid="uid://cbpwvuj8kdyod"]
+[gd_scene load_steps=9 format=3 uid="uid://cbpwvuj8kdyod"]
 
 [ext_resource type="Script" uid="uid://t5tc36uuxhcf" path="res://Scripts/authentication.gd" id="1_6ea5n"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="2_edc1m"]
+[ext_resource type="Texture2D" uid="uid://d1kxcxch535m0" path="res://gui/Backgrounds/Dungeon1_background.png" id="2_wtcou"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="3_4bnr5"]
 [ext_resource type="Texture2D" uid="uid://bf6ojtexn75fa" path="res://gui/lexiagamelogo.png" id="4_x7u1p"]
 [ext_resource type="Texture2D" uid="uid://decyo17hpkcp6" path="res://gui/googleicon.png" id="5_qlk3g"]
@@ -35,14 +36,14 @@ grow_vertical = 2
 script = ExtResource("1_6ea5n")
 metadata/_edit_vertical_guides_ = [-348.0]
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="TextureRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.9, 0.9, 0.9, 1)
+texture = ExtResource("2_wtcou")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -90,7 +91,8 @@ stretch_mode = 5
 
 [node name="Title" type="Label" parent="MarginContainer/ContentContainer/LeftPanel/BrandContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.266667, 0.337255, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_4bnr5")
 theme_override_font_sizes/font_size = 48
 text = "Lexia"
@@ -98,7 +100,8 @@ horizontal_alignment = 1
 
 [node name="Subtitle" type="Label" parent="MarginContainer/ContentContainer/LeftPanel/BrandContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.301961, 0.329412, 0.380392, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 22
 text = "Gamified made accessible for dyslexia"
@@ -169,7 +172,8 @@ layout_mode = 2
 
 [node name="EmailLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.301961, 0.329412, 0.380392, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 18
 text = "Email"
@@ -189,7 +193,8 @@ text = "Please enter a valid email"
 
 [node name="PasswordLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.301961, 0.329412, 0.380392, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 18
 text = "Password"
@@ -219,8 +224,8 @@ text = "Please enter your password"
 
 [node name="ForgotPasswordButton" type="LinkButton" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.266667, 0.337255, 1)
-theme_override_fonts/font = ExtResource("2_edc1m")
+theme_override_colors/font_color = Color(0, 0.360333, 0.46, 1)
+theme_override_fonts/font = ExtResource("3_4bnr5")
 theme_override_font_sizes/font_size = 16
 text = "Forgot your password?"
 underline = 1
@@ -247,7 +252,8 @@ size_flags_horizontal = 3
 
 [node name="OrLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/OrContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.301961, 0.329412, 0.380392, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 16
 text = "  Or  "
@@ -510,7 +516,8 @@ text = "Reset Password"
 
 [node name="VersionLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.462745, 0.462745, 0.462745, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 14
 text = "Lexia v1.0"

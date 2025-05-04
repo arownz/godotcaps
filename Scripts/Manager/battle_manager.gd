@@ -11,7 +11,7 @@ signal battle_continued
 signal battle_restarted
 signal battle_quit
 
-var battle_scene  # Reference to the main battle scene
+var battle_scene # Reference to the main battle scene
 
 # External resources
 var word_challenge_whiteboard_scene = preload("res://Scenes/WordChallengePanel_Whiteboard.tscn")
@@ -33,8 +33,8 @@ func player_attack():
 	var original_position = player_sprite.position
 	
 	var player_attack_tween = create_tween()
-	player_attack_tween.tween_property(player_sprite, "position", original_position + Vector2(50, 0), 0.3)  # Move right
-	player_attack_tween.tween_property(player_sprite, "position", original_position, 0.2)  # Return to original position
+	player_attack_tween.tween_property(player_sprite, "position", original_position + Vector2(50, 0), 0.3) # Move right
+	player_attack_tween.tween_property(player_sprite, "position", original_position, 0.2) # Return to original position
 	
 	await player_attack_tween.finished
 	emit_signal("player_attack_performed", battle_scene.player_manager.player_damage)
@@ -44,8 +44,8 @@ func enemy_attack():
 	var original_position = enemy_sprite.position
 	
 	var enemy_attack_tween = create_tween()
-	enemy_attack_tween.tween_property(enemy_sprite, "position", original_position - Vector2(50, 0), 0.3)  # Move left
-	enemy_attack_tween.tween_property(enemy_sprite, "position", original_position, 0.2)  # Return to original position
+	enemy_attack_tween.tween_property(enemy_sprite, "position", original_position - Vector2(50, 0), 0.3) # Move left
+	enemy_attack_tween.tween_property(enemy_sprite, "position", original_position, 0.2) # Return to original position
 	
 	await enemy_attack_tween.finished
 	emit_signal("enemy_attack_performed", battle_scene.enemy_manager.enemy_damage)
@@ -119,10 +119,18 @@ func _show_speech_to_text_challenge():
 		# Center the panel immediately
 		_center_popup(current_word_challenge)
 		
-		# Connect signals
-		current_word_challenge.connect("challenge_completed", _on_word_challenge_completed)
-		current_word_challenge.connect("challenge_failed", _on_word_challenge_failed)
-		current_word_challenge.connect("challenge_cancelled", _on_challenge_cancelled)
+		# Connect signals with proper error checking
+		if !current_word_challenge.is_connected("challenge_completed", Callable(self, "_on_word_challenge_completed")):
+			current_word_challenge.connect("challenge_completed", Callable(self, "_on_word_challenge_completed"))
+			print("Connected challenge_completed signal")
+		
+		if !current_word_challenge.is_connected("challenge_failed", Callable(self, "_on_word_challenge_failed")):
+			current_word_challenge.connect("challenge_failed", Callable(self, "_on_word_challenge_failed"))
+			print("Connected challenge_failed signal")
+		
+		if !current_word_challenge.is_connected("challenge_cancelled", Callable(self, "_on_challenge_cancelled")):
+			current_word_challenge.connect("challenge_cancelled", Callable(self, "_on_challenge_cancelled"))
+			print("Connected challenge_cancelled signal")
 	else:
 		# Fallback if scene couldn't be loaded
 		print("ERROR: Could not load WordChallengePanel_STT.tscn")
@@ -149,6 +157,8 @@ func _center_popup_deferred(popup: Control):
 	popup.position = center_position
 
 func _on_word_challenge_completed(bonus_damage):
+	print("Word challenge completed with bonus damage: " + str(bonus_damage))
+	
 	# Player successfully countered the enemy skill
 	battle_scene.enemy_manager.enemy_health -= bonus_damage
 	battle_scene.enemy_manager.enemy_health = max(0, battle_scene.enemy_manager.enemy_health)
@@ -171,6 +181,11 @@ func _on_word_challenge_completed(bonus_damage):
 	var overlay = battle_scene.get_node_or_null("ChallengeOverlay")
 	if overlay:
 		overlay.queue_free()
+	
+	# Clean up the challenge panel if it still exists
+	if current_word_challenge and is_instance_valid(current_word_challenge):
+		current_word_challenge.queue_free()
+		current_word_challenge = null
 	
 	# Show engage button again
 	var engage_button = battle_scene.get_node("MainContainer/RightContainer/MarginContainer/VBoxContainer/ButtonContainer/EngageButton")
@@ -231,7 +246,7 @@ func _on_word_challenge_failed():
 
 func _on_challenge_cancelled():
 	# Log the cancellation to the battle log
-	battle_scene.log_manager.add_message("[color=#EB5E4B]You cancelled your counter! The " + 
+	battle_scene.log_manager.add_message("[color=#EB5E4B]You cancelled your counter! The " +
 		battle_scene.enemy_manager.enemy_name + " takes advantage of your hesitation![/color]")
 	
 	# Player takes damage - apply a reduced skill damage (1.5x instead of 2x for failure)
@@ -244,7 +259,7 @@ func _on_challenge_cancelled():
 	battle_scene.ui_manager.update_player_health()
 	
 	# Add message about taking damage
-	battle_scene.log_manager.add_message("The " + battle_scene.enemy_manager.enemy_name + 
+	battle_scene.log_manager.add_message("The " + battle_scene.enemy_manager.enemy_name +
 		" dealt " + str(cancellation_damage) + " damage as you failed to counter!")
 	
 	# Reset enemy skill meter COMPLETELY (not to 50%)
@@ -266,7 +281,7 @@ func _on_challenge_cancelled():
 	# Check if player is defeated by the cancellation damage
 	if battle_scene.player_manager.player_health <= 0:
 		battle_scene.battle_active = false
-		battle_scene.log_manager.add_message("[color=#EB5E4B]You have been defeated by the " + 
+		battle_scene.log_manager.add_message("[color=#EB5E4B]You have been defeated by the " +
 			battle_scene.enemy_manager.enemy_name + "![/color]")
 		show_endgame_screen("Defeat")
 		return
@@ -372,13 +387,13 @@ func debug_damage_test():
 	print("DEBUG: Testing damage with small damage...")
 	
 	# Emit signals for player and enemy taking small damage
-	emit_signal("player_attack_performed", 15)  # Player deals 15 damage
-	emit_signal("enemy_attack_performed", 10)  # Enemy deals 10 damage
+	emit_signal("player_attack_performed", 15) # Player deals 15 damage
+	emit_signal("enemy_attack_performed", 10) # Enemy deals 10 damage
 	
 	# Wait a moment and then check health values
 	await battle_scene.get_tree().create_timer(0.5).timeout
 	
-	print("Player health: ", battle_scene.player_manager.player_health, "/", 
+	print("Player health: ", battle_scene.player_manager.player_health, "/",
 		  battle_scene.player_manager.player_max_health)
-	print("Enemy health: ", battle_scene.enemy_manager.enemy_health, "/", 
+	print("Enemy health: ", battle_scene.enemy_manager.enemy_health, "/",
 		  battle_scene.enemy_manager.enemy_max_health)

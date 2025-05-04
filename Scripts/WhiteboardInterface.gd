@@ -66,7 +66,7 @@ func _ready():
 		debug.anchors_preset = Control.PRESET_TOP_LEFT
 		debug.position = Vector2(10, 10)
 		debug.visible = true
-		debug.text = "Debug mode"
+		debug.text = "Write the random word in this whiteboard!"
 		add_child(debug)
 		debug_label = debug
 	elif has_node("DebugLabel"):

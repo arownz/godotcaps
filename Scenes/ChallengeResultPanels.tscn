@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3 uid="uid://2fpacds3hu8n"]
 
 [ext_resource type="Script" uid="uid://c8ypkl4nixsox" path="res://Scripts/ChallengeResultPanel.gd" id="1_8sm0m"]
-[ext_resource type="Texture2D" uid="uid://bc0tebgiiloa6" path="res://gui/ui_2.png" id="2_sol4t"]
+[ext_resource type="Texture2D" uid="uid://bj14mm05c4i87" path="res://gui/ui_4.png" id="2_uofyk"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="3_idjw4"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="4_kf8r5"]
 
@@ -62,13 +62,13 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -562.0
-offset_top = -349.0
-offset_right = 567.0
-offset_bottom = 356.0
+offset_left = -338.0
+offset_top = -353.0
+offset_right = 262.0
+offset_bottom = 351.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_sol4t")
+texture = ExtResource("2_uofyk")
 expand_mode = 1
 stretch_mode = 5
 
@@ -80,7 +80,7 @@ anchor_bottom = 1.0
 offset_left = 19.0
 offset_top = 135.0
 offset_right = -21.0
-offset_bottom = -140.0
+offset_bottom = -142.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 20
@@ -88,7 +88,7 @@ alignment = 1
 
 [node name="TitleLabel" type="Label" parent="ResultPanel/ContentContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.866667, 0.627451, 0.0196078, 1)
+theme_override_colors/font_color = Color(0, 0.81197, 0.296865, 1)
 theme_override_colors/font_shadow_color = Color(0.32549, 0.14902, 0.0196078, 1)
 theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
@@ -157,13 +157,13 @@ theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.501961)
 theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
 theme_override_fonts/font = ExtResource("3_idjw4")
-theme_override_font_sizes/font_size = 25
+theme_override_font_sizes/font_size = 22
 text = "CHALLENGE SUCCESSFUL!"
 horizontal_alignment = 1
 
 [node name="BonusDamageLabel" type="Label" parent="ResultPanel/ContentContainer/StatusContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.866667, 0.482353, 0.0196078, 1)
+theme_override_colors/font_color = Color(0, 0.762171, 0.822802, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.501961)
 theme_override_constants/shadow_offset_x = 1
 theme_override_constants/shadow_offset_y = 1

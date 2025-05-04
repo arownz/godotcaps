@@ -381,7 +381,6 @@ func on_login_succeeded(auth):
 			"last_login": current_time,
 			"energy": 20, # Initial base energy value
 			"max_energy": 20, # Starting energy capacity
-			"coin": 100, # Initial coin value
 			"power_scale": 115, # Initial power scale
 			"rank": "bronze", # Initial rank
 			"current_dungeon": 1, # Starting dungeon
@@ -419,7 +418,6 @@ func on_login_succeeded(auth):
 				"last_login": current_time,
 				"energy": 20, # Initial energy value
 				"max_energy": 20, # Starting energy capacity (changed from 99)
-				"coin": 100, # Initial coin value
 				"power_scale": 115, # Initial power scale
 				"rank": "bronze", # Initial rank
 				"current_dungeon": 1, # Starting dungeon
@@ -473,12 +471,11 @@ func on_login_succeeded(auth):
 					"last_login": current_time,
 					"energy": 20, # Initial energy value
 					"max_energy": 20, # Starting energy capacity (changed from 99)
-					"coin": 100, # Initial coin value
 					"power_scale": 115, # Initial power scale
 					"rank": "bronze", # Initial rank
 					"current_dungeon": 1, # Starting dungeon
 					"current_stage": 1, # Starting stage
-					"dungeons_completed": {
+					"dungeons_completed": { 
 						"1": {"completed": false, "stages_completed": 0},
 						"2": {"completed": false, "stages_completed": 0},
 						"3": {"completed": false, "stages_completed": 0}
@@ -553,7 +550,6 @@ func on_signup_succeeded(auth):
 		"last_login": current_time,
 		"energy": 20, # Initial energy value
 		"max_energy": 20, # Starting energy capacity
-		"coin": 100, # Initial coin value
 		"power_scale": 115, # Initial power scale
 		"rank": "bronze", # Initial rank
 		"current_dungeon": 1, # Starting dungeon

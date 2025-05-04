@@ -277,14 +277,16 @@ horizontal_alignment = 1
 [node name="EnemySkillLabel" type="Label" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer"]
 visible = false
 layout_mode = 0
-offset_right = 218.0
-offset_bottom = 30.0
+offset_left = -306.0
+offset_top = 20.0
+offset_right = -3.0
+offset_bottom = 50.0
 theme_override_colors/font_color = Color(0.952941, 0.215686, 0.188235, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 3
 theme_override_fonts/font = ExtResource("4_akpf4")
 theme_override_font_sizes/font_size = 16
-text = "Uses Special Skill!"
+text = "Enemy Uses Special Skill!"
 vertical_alignment = 1
 
 [node name="FightLabel" type="Label" parent="MainContainer/BattleAreaContainer"]
@@ -314,17 +316,18 @@ layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -70.5
-offset_top = 66.0
-offset_right = 343.5
-offset_bottom = 118.0
+offset_left = -115.5
+offset_top = 70.0
+offset_right = 313.5
+offset_bottom = 122.0
 grow_horizontal = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(1, 0.836, 0.18, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 3
 theme_override_fonts/font = ExtResource("4_akpf4")
-theme_override_font_sizes/font_size = 28
-text = "Dungeon 1 - Stage 1"
+theme_override_font_sizes/font_size = 25
+text = "D1: The Plain - Stage 1"
 horizontal_alignment = 1
 
 [node name="StatsToggleButton" type="Button" parent="MainContainer/BattleAreaContainer"]

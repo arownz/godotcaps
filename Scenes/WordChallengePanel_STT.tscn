@@ -128,7 +128,7 @@ custom_minimum_size = Vector2(80, 50)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_8hfec")
 theme_override_font_sizes/font_size = 16
-text = "🔊 Read"
+text = "Read"
 
 [node name="TTSSettingsButton" type="Button" parent="ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer"]
 layout_mode = 2
@@ -258,7 +258,7 @@ layout_mode = 2
 size_flags_horizontal = 4
 theme_override_fonts/font = ExtResource("2_8hfec")
 theme_override_font_sizes/font_size = 20
-text = "🎤 Start Speaking"
+text = "Start Speaking"
 
 [node name="CancelButton" type="Button" parent="ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer"]
 custom_minimum_size = Vector2(150, 50)
@@ -282,7 +282,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 0.701961)
 theme_override_fonts/font = ExtResource("2_8hfec")
 theme_override_font_sizes/font_size = 15
-text = "Speech recognition is not yet implemented"
+text = "Speak the random word to counter!"
 horizontal_alignment = 1
 
 [node name="APIStatusLabel" type="Label" parent="ChallengePanel/VBoxContainer"]

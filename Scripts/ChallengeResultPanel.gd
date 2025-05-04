@@ -7,12 +7,12 @@ var recognized_text: String = ""
 var challenge_word: String = ""
 var is_successful: bool = false
 var bonus_damage: int = 0
-var input_type: String = "wrote"  # "wrote" or "said" based on input method
-var display_time: float = 6.0     # Increased display time for dyslexia users
+var input_type: String = "" # "wrote" or "said" based on input method
+var display_time: float = 3.5 # Increased display time for dyslexia users
 
 # Colors
-var success_color = Color("1ddd62")  # Green
-var failure_color = Color("dd1d1d")  # Red
+var success_color = Color("1ddd62") # Green
+var failure_color = Color("dd1d1d") # Red
 
 # References to UI elements
 @onready var title_label = $ResultPanel/ContentContainer/TitleLabel
@@ -52,7 +52,7 @@ func _ready():
 	print("ChallengeResultPanel initialized with display time: " + str(display_time) + " seconds")
 
 # Set the challenge result data and update UI
-func set_result(recognized: String, target: String, success: bool, damage: int = 0, type: String = "wrote", custom_display_time: float = 0.0):
+func set_result(recognized: String, target: String, success: bool, damage: int = 0, type: String = "", custom_display_time: float = 0.0):
 	recognized_text = recognized
 	challenge_word = target
 	is_successful = success
