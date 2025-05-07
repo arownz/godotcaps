@@ -15,7 +15,6 @@ var challenge_word = ""
 var bonus_damage = 5
 var random_word_api = null
 var tts = null
-var voice_options = []
 
 func _ready():
 	# Get node references

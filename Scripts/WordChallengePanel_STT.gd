@@ -36,17 +36,7 @@ var result_panel_active = false
 var result_being_processed = false
 
 func _ready():
-	# Add overlay to ensure it covers the whole screen
-	var overlay = ColorRect.new()
-	overlay.name = "Overlay"
-	overlay.color = Color(0, 0, 0, 0.6) # Semi-transparent black
-	overlay.anchor_right = 1.0
-	overlay.anchor_bottom = 1.0
-	overlay.mouse_filter = Control.MOUSE_FILTER_STOP
-	add_child(overlay)
-	move_child(overlay, 0) # Move to bottom
-	
-	# Get node references - FIXED PATHS
+	# Get node references
 	random_word_label = $ChallengePanel/VBoxContainer/WordContainer/RandomWordLabel
 	recognized_text_label = $ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer/RecognizedText
 	speak_button = $ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer/SpeakButton
@@ -74,12 +64,8 @@ func _ready():
 	random_word_api = RandomWordAPI.new()
 	add_child(random_word_api)
 	random_word_api.word_fetched.connect(_on_word_fetched)
+
 	random_word_api.fetch_random_word()
-	
-	# Connect TTS settings button signal
-	var tts_settings_button = $ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer/TTSSettingsButton
-	if tts_settings_button and !tts_settings_button.is_connected("pressed", Callable(self, "_on_tts_settings_button_pressed")):
-		tts_settings_button.pressed.connect(_on_tts_settings_button_pressed)
 
 func _setup_speech_recognition():
 	print("Setting up web speech recognition...")
@@ -493,13 +479,15 @@ func _stop_web_recording():
 
 # Callback function for speech recognition result from JavaScript
 func speech_result_callback(text):
-	print("Speech recognition result: ", text)
+	print("SPEECH RECOGNITION CALLBACK: Received text from JavaScript: " + text)
+	
 	if text and text.length() > 0:
-		# Explicitly call _on_speech_recognized directly instead of deferring
+		# Call our rewritten function with the recognized text
+		print("CALLING RECOGNITION HANDLER with text: " + text)
 		_on_speech_recognized(text)
 	else:
+		print("EMPTY RECOGNITION RESULT")
 		status_label.text = "Could not understand speech"
-		# Reset the UI for another attempt
 		speak_button.text = "Speak"
 		speak_button.disabled = false
 		recognition_active = false
@@ -512,65 +500,86 @@ func speech_error_callback(error):
 	speak_button.text = "Speak"
 	speak_button.disabled = false
 
-# Function to process recognized speech
+# Function to process recognized speech - COMPLETELY REWRITTEN FOR RELIABILITY
 func _on_speech_recognized(text):
-	print("Processing recognized text: ", text)
+	print("PROCESSING RECOGNITION: Recognized text = '" + text + "', challenge word = '" + challenge_word + "'")
 	
-	# Prevent duplicate processing
+	# Prevent duplicate processing with more verbose logging
 	if result_being_processed:
-		print("Result already being processed, ignoring duplicate recognition")
+		print("DUPLICATE RECOGNITION: Already processing a result, ignoring this one")
 		return
 		
+	# Mark that we're processing to prevent duplicates
 	result_being_processed = true
 	
-	# Update UI
+	# Update UI elements
 	recognized_text_label.text = text
 	speak_button.disabled = true
 	status_label.text = "Processing result..."
 	
-	# Compare with challenge word
+	# Compare the spoken word with the challenge word
 	var is_success = _compare_words(text.to_lower().strip_edges(), challenge_word.to_lower())
-	print("Word comparison result - Success: " + str(is_success))
+	print("WORD COMPARISON: Success = " + str(is_success))
 	
-	# Create the result panel
-	var result_panel = load("res://Scenes/ChallengeResultPanels.tscn").instantiate()
+	# We'll disable all UI elements to prevent interaction while showing results
+	$ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer/SpeakButton.disabled = true
 	
-	# Add directly to the scene root to ensure it appears on top of everything
-	get_tree().root.add_child(result_panel)
+	# Instantiate the result panel
+	print("CREATING RESULT PANEL")
+	var result_panel = preload("res://Scenes/ChallengeResultPanels.tscn").instantiate()
 	
-	# Set as top-level to avoid parent layout issues
-	result_panel.set_as_top_level(true)
+	# Get the viewport (screen) size
+	var viewport_rect = get_viewport_rect()
 	
-	# Set the position to cover the full screen
-	result_panel.position = Vector2.ZERO
-	
-	# Set anchors to fill the screen
-	result_panel.set_anchors_preset(Control.PRESET_FULL_RECT)
-	result_panel.call_deferred("set_size", get_viewport_rect().size)
-	
-	# Make sure the panel is visible
-	result_panel.visible = true
-	result_panel.modulate = Color(1, 1, 1, 1) # Full opacity
-	
-	print("Challenge result panel created: " + str(result_panel) + " visible: " + str(result_panel.visible))
-	
-	# Set the result data - "said" for the STT
+	# Configure the panel BEFORE adding it to the scene
 	result_panel.set_result(text, challenge_word, is_success, bonus_damage, "said")
 	
-	# Connect the continue signal
-	result_panel.continue_pressed.connect(_on_result_panel_continue_pressed.bind(is_success))
+	# Immediately position and size the panel
+	result_panel.position = Vector2.ZERO
 	
-	# Hide the current panel but don't free it yet
-	self.visible = false
+	# Ensure the panel has the highest z-index possible
+	result_panel.z_index = 1000
+	
+	# Add to the root but don't hide our panel yet
+	print("ADDING PANEL TO ROOT")
+	get_tree().root.add_child(result_panel)
+	
+	# Mark as top level to ensure it stays above everything
+	result_panel.set_as_top_level(true)
+	
+	# Set to full viewport size after adding to scene
+	result_panel.set_anchors_preset(Control.PRESET_FULL_RECT)
+	result_panel.size = viewport_rect.size
+	
+	# Use deferred call to ensure panel is ready
+	print("CONFIGURING PANEL SIGNALS")
+	result_panel.call_deferred("update_ui")
+	
+	# Connect the continue signal with an anonymous function to avoid signal connection issues
+	result_panel.continue_pressed.connect(
+		func():
+			print("RESULT PANEL CONTINUE SIGNAL RECEIVED")
+			if is_success:
+				emit_signal("challenge_completed", bonus_damage)
+			else:
+				emit_signal("challenge_failed")
+			queue_free()  # Free our panel
+	)
+	
+	# Print confirmation that we've completed setup
+	print("RESULT PANEL SETUP COMPLETE - panel should now be visible")
+	
+	# Only hide our UI AFTER ensuring the result panel is fully set up
+	$ChallengePanel/VBoxContainer.visible = false
+	
+	# We'll leave result_being_processed as true since we won't reuse this panel
 
-# Handle the continue signal from result panel
-func _on_result_panel_continue_pressed(was_successful: bool):
-	if was_successful:
-		emit_signal("challenge_completed", bonus_damage)
-	else:
-		emit_signal("challenge_failed")
-	
-	# Now we can free the challenge panel
+# Simple failure handling function
+func _fail_challenge():
+	api_status_label.text = "You failed to counter the skill"
+	await get_tree().create_timer(1.0).timeout
+	emit_signal("challenge_failed")
+	await get_tree().create_timer(0.5).timeout
 	queue_free()
 
 # Improved word comparison function to be more forgiving with dyslexic errors
@@ -631,21 +640,48 @@ func levenshtein_distance(s1, s2):
 	return d[m][n]
 
 func _on_tts_button_pressed():
-	# Text-to-speech for the challenge word
-	if challenge_word:
-		print("TTS button pressed, trying to speak: " + challenge_word)
-		
-		# Use the native TTS class instead of JavaScript bridge
-		api_status_label.text = "Reading word..."
-		var result = tts.speak(challenge_word)
-		
-		if !result:
-			api_status_label.text = "Failed to read word"
-			print("TTS speak returned false")
+	# Speak the challenge word with improved feedback
+	api_status_label.text = "Reading word..."
+	
+	print("TTS button pressed, trying to speak: ", challenge_word)
+	
+	var result = tts.speak(challenge_word)
+	
+	if !result:
+		api_status_label.text = "Failed to read word"
+		print("TTS speak returned false")
+		return
 
-# Fix the TTS settings button functionality to match whiteboard version
+	# Connect to signals for this specific request if not already connected
+	if !tts.is_connected("speech_ended", Callable(self, "_on_tts_speech_ended")):
+		tts.connect("speech_ended", Callable(self, "_on_tts_speech_ended"))
+	
+	if !tts.is_connected("speech_error", Callable(self, "_on_tts_speech_error")):
+		tts.connect("speech_error", Callable(self, "_on_tts_speech_error"))
+
+# Handle TTS feedback
+func _on_tts_speech_ended():
+	api_status_label.text = ""
+	
+	# Disconnect the temporary signals
+	if tts.is_connected("speech_ended", Callable(self, "_on_tts_speech_ended")):
+		tts.disconnect("speech_ended", Callable(self, "_on_tts_speech_ended"))
+	
+	if tts.is_connected("speech_error", Callable(self, "_on_tts_speech_error")):
+		tts.disconnect("speech_error", Callable(self, "_on_tts_speech_error"))
+
+func _on_tts_speech_error(error_msg):
+	api_status_label.text = "TTS Error: " + error_msg
+	
+	# Disconnect the temporary signals
+	if tts.is_connected("speech_ended", Callable(self, "_on_tts_speech_ended")):
+		tts.disconnect("speech_ended", Callable(self, "_on_tts_speech_ended"))
+	
+	if tts.is_connected("speech_error", Callable(self, "_on_tts_speech_error")):
+		tts.disconnect("speech_error", Callable(self, "_on_tts_speech_error"))
+
 func _on_tts_settings_button_pressed():
-	# Load and show the TTS settings popup instead of using the built-in panel
+	# Load and show the TTS settings popup
 	var tts_popup = load("res://Scenes/TTSSettingsPopup.tscn").instantiate()
 	add_child(tts_popup)
 	
@@ -657,7 +693,7 @@ func _on_tts_settings_button_pressed():
 	tts_popup.settings_closed.connect(_on_tts_settings_closed)
 
 func _on_tts_settings_saved(voice_id, rate):
-	# Apply the new settings directly to the TTS instance
+	# Apply the new settings
 	tts.set_voice(voice_id)
 	tts.set_rate(rate)
 
@@ -665,10 +701,15 @@ func _on_tts_settings_closed():
 	# Do any cleanup needed when the popup is closed
 	pass
 
+func _on_test_button_pressed():
+	pass
+
+func _on_close_button_pressed():
+	pass
+
 func _on_cancel_button_pressed():
-	# Emit signal to cancel the challenge
+	print("Cancel button pressed - cancelling speak challenge")
 	emit_signal("challenge_cancelled")
-	queue_free()
 
 # Make sure to clean up resources when this node is about to be removed
 func _exit_tree():
@@ -696,17 +737,10 @@ func _cleanup_web_audio():
 					window.godot_speech.recording = false;
 					window.godot_speech.engineReady = false;
 				}
-				
+
 				return true;
 			})();
 		"""
 		
 		JavaScriptBridge.eval(js_code)
 		print("Web audio resources cleaned up")
-
-# Handle TTS feedback
-func _on_tts_speech_ended():
-	print("TTS speech ended")
-
-func _on_tts_speech_error(error_msg):
-	print("TTS speech error: ", error_msg)

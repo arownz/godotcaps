@@ -121,9 +121,9 @@ func update_stage_info():
 	var stage_num = battle_scene.dungeon_manager.stage_num
 	
 	var dungeon_names = {
-		1: "The Plains",
+		1: "The Plain",
 		2: "The Forest",
-		3: "The Mountain"
+		3: "The Demon"
 	}
 	
 	var dungeon_name = dungeon_names.get(dungeon_num, "Dungeon " + str(dungeon_num))

@@ -5,5 +5,5 @@ extends Resource
 @export var challenge_name: String = "Whiteboard Challenge"
 @export var challenge_description: String = "Write the word to counter the enemy skill!"
 @export var scene_path: String = "res://Scenes/WordChallengePanel_Whiteboard.tscn"
-@export var success_bonus_damage: int = 20
+@export var success_bonus_damage: int = 5
 @export var failure_damage_multiplier: float = 2.0

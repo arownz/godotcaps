@@ -44,7 +44,6 @@ _data = {
 }
 
 [node name="ChallengeResultPanels" type="Control"]
-modulate = Color(1, 1, 1, 0)
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -110,7 +109,7 @@ theme_override_constants/shadow_offset_x = 1
 theme_override_constants/shadow_offset_y = 1
 theme_override_fonts/font = ExtResource("4_kf8r5")
 theme_override_font_sizes/font_size = 22
-text = "You wrote:"
+text = "You stated:"
 horizontal_alignment = 1
 
 [node name="WordLabel" type="Label" parent="ResultPanel/ContentContainer/ResultContainer"]
