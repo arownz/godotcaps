@@ -66,6 +66,9 @@ func _ready():
 	random_word_api.word_fetched.connect(_on_word_fetched)
 
 	random_word_api.fetch_random_word()
+	
+	# Reset result processing flag at start
+	result_being_processed = false
 
 func _setup_speech_recognition():
 	print("Setting up web speech recognition...")
@@ -181,13 +184,34 @@ func _initialize_web_audio_environment():
 						console.log("Speech Debug:", message);
 					},
 					
-					// Fixed result handler - IMPORTANT: Define as function expression
+					// Fixed result handler with more robust engine detection
 					onResult: function(text) {
 						this.debugLog("Recognition result: " + text);
 						if (text) {
-							var engine = this.getEngine();
-							if (engine) {
-								engine.call('""" + str(get_path()) + """', 'speech_result_callback', text);
+							try {
+								var engine = this.getEngine();
+								if (engine) {
+									this.debugLog("Calling Godot with recognition result");
+									engine.call('""" + str(get_path()) + """', 'speech_result_callback', text);
+									this.debugLog("Call to Godot completed");
+								} else {
+									this.debugLog("ERROR: Could not find Godot engine");
+									// Fallback approach using a global function
+									if (typeof window.godotSpeechResultCallback === 'function') {
+										this.debugLog("Using fallback global callback");
+										window.godotSpeechResultCallback(text);
+									}
+								}
+							} catch (e) {
+								console.error("Error calling Godot:", e);
+								// Try alternate method with setTimeout
+								setTimeout(() => {
+									var engine = this.getEngine();
+									if (engine) {
+										this.debugLog("Retrying Godot call after delay");
+										engine.call('""" + str(get_path()) + """', 'speech_result_callback', text);
+									}
+								}, 100);
 							}
 						} else {
 							this.onError("Empty result from speech recognition");
@@ -203,7 +227,7 @@ func _initialize_web_audio_environment():
 						}
 					},
 					
-					// Helper to get engine through various methods
+					 // Enhanced engine detection
 					getEngine: function() {
 						if (window.godot && typeof window.godot.getEngine === 'function') {
 							return window.godot.getEngine();
@@ -211,10 +235,30 @@ func _initialize_web_audio_environment():
 							return window.engine;
 						} else if (window.Module && window.Module.engine) {
 							return window.Module.engine;
+						} else if (typeof _engine !== 'undefined') {
+							return _engine;
 						}
 						return null;
 					}
 				};
+				
+				// Define a global callback function that Godot can call to check if results are ready
+				window.godotSpeechResultCallback = function(text) {
+					console.log("Global speech result callback with:", text);
+					// We'll poll for this value from Godot
+					window.latestSpeechResult = text;
+				};
+				
+				// Define a function to check if we have a result
+				window.getSpeechResult = function() {
+					if (window.latestSpeechResult) {
+						var result = window.latestSpeechResult;
+						window.latestSpeechResult = null; // Clear after reading
+						return result;
+					}
+					return null;
+				};
+				
 				return window.godot_speech != null;
 			})();
 		"""
@@ -481,10 +525,13 @@ func _stop_web_recording():
 func speech_result_callback(text):
 	print("SPEECH RECOGNITION CALLBACK: Received text from JavaScript: " + text)
 	
+	# Reset the flag for safety
+	result_being_processed = false
+	
 	if text and text.length() > 0:
 		# Call our rewritten function with the recognized text
 		print("CALLING RECOGNITION HANDLER with text: " + text)
-		_on_speech_recognized(text)
+		call_deferred("_on_speech_recognized", text)
 	else:
 		print("EMPTY RECOGNITION RESULT")
 		status_label.text = "Could not understand speech"
@@ -517,45 +564,74 @@ func _on_speech_recognized(text):
 	speak_button.disabled = true
 	status_label.text = "Processing result..."
 	
-	# Compare the spoken word with the challenge word
-	var is_success = _compare_words(text.to_lower().strip_edges(), challenge_word.to_lower())
+	# Normalize texts for comparison
+	var recognized_normalized = text.to_lower().strip_edges()
+	var target_normalized = challenge_word.to_lower().strip_edges()
+	
+	# Apply more text normalization
+	recognized_normalized = recognized_normalized.replace(" ", "")
+	recognized_normalized = recognized_normalized.replace("\n", "")
+	recognized_normalized = recognized_normalized.replace(".", "")
+	recognized_normalized = recognized_normalized.replace(",", "")
+	
+	# Filter special characters
+	var regex = RegEx.new()
+	regex.compile("[^a-z0-9]")
+	recognized_normalized = regex.sub(recognized_normalized, "", true)
+	
+	print("Normalized recognized text: " + recognized_normalized)
+	print("Normalized target word: " + target_normalized)
+	
+	# Check for success conditions
+	var is_success = false
+	
+	# Exact match check
+	if recognized_normalized == target_normalized:
+		is_success = true
+	
+	# Partial match checks for better UX
+	elif target_normalized.begins_with(recognized_normalized) and recognized_normalized.length() >= target_normalized.length() / 2:
+		is_success = true
+	
+	elif recognized_normalized.begins_with(target_normalized) and target_normalized.length() >= 2:
+		is_success = true
+	
+	# Fuzzy matching for longer words
+	elif target_normalized.length() > 3 and recognized_normalized.length() > 2:
+		# Count matching characters
+		var match_count = 0
+		for c in target_normalized:
+			if recognized_normalized.find(c) >= 0:
+				match_count += 1
+				
+		# If 70% or more characters match, accept it
+		var match_ratio = float(match_count) / target_normalized.length()
+		if match_ratio > 0.7:
+			is_success = true
+	
 	print("WORD COMPARISON: Success = " + str(is_success))
 	
-	# We'll disable all UI elements to prevent interaction while showing results
-	$ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer/SpeakButton.disabled = true
-	
-	# Instantiate the result panel
+	# Create and show the result panel
 	print("CREATING RESULT PANEL")
-	var result_panel = preload("res://Scenes/ChallengeResultPanels.tscn").instantiate()
+	var result_panel = load("res://Scenes/ChallengeResultPanels.tscn").instantiate()
 	
-	# Get the viewport (screen) size
-	var viewport_rect = get_viewport_rect()
-	
-	# Configure the panel BEFORE adding it to the scene
-	result_panel.set_result(text, challenge_word, is_success, bonus_damage, "said")
-	
-	# Immediately position and size the panel
-	result_panel.position = Vector2.ZERO
-	
-	# Ensure the panel has the highest z-index possible
-	result_panel.z_index = 1000
-	
-	# Add to the root but don't hide our panel yet
-	print("ADDING PANEL TO ROOT")
+	# Add directly to the scene root to ensure it appears on top of everything
 	get_tree().root.add_child(result_panel)
 	
-	# Mark as top level to ensure it stays above everything
+	# Set as top-level to avoid parent layout issues
 	result_panel.set_as_top_level(true)
 	
-	# Set to full viewport size after adding to scene
+	# Set position first
+	result_panel.position = Vector2.ZERO
+	
+	# Set anchors and defer size setting
 	result_panel.set_anchors_preset(Control.PRESET_FULL_RECT)
-	result_panel.size = viewport_rect.size
+	result_panel.call_deferred("set_size", get_viewport_rect().size)
 	
-	# Use deferred call to ensure panel is ready
-	print("CONFIGURING PANEL SIGNALS")
-	result_panel.call_deferred("update_ui")
+	# Set the result data - use "said" for the STT
+	result_panel.set_result(text, challenge_word, is_success, bonus_damage, "said")
 	
-	# Connect the continue signal with an anonymous function to avoid signal connection issues
+	# Connect the continue signal with an anonymous function
 	result_panel.continue_pressed.connect(
 		func():
 			print("RESULT PANEL CONTINUE SIGNAL RECEIVED")
@@ -566,13 +642,11 @@ func _on_speech_recognized(text):
 			queue_free()  # Free our panel
 	)
 	
-	# Print confirmation that we've completed setup
-	print("RESULT PANEL SETUP COMPLETE - panel should now be visible")
-	
-	# Only hide our UI AFTER ensuring the result panel is fully set up
+	# Hide our panel but don't free it yet
 	$ChallengePanel/VBoxContainer.visible = false
 	
-	# We'll leave result_being_processed as true since we won't reuse this panel
+	# Print confirmation message
+	print("RESULT PANEL SETUP COMPLETE - panel should now be visible")
 
 # Simple failure handling function
 func _fail_challenge():
@@ -744,3 +818,12 @@ func _cleanup_web_audio():
 		
 		JavaScriptBridge.eval(js_code)
 		print("Web audio resources cleaned up")
+
+# Add a polling mechanism to check for results
+func _process(delta):
+	# Only check for results if we're in active recognition mode
+	if recognition_active or (not result_being_processed and JavaScriptBridge.has_method("eval")):
+		var result = JavaScriptBridge.eval("window.getSpeechResult ? window.getSpeechResult() : null;")
+		if result and typeof(result) == TYPE_STRING:
+			print("Found result from polling: " + result)
+			speech_result_callback(result)
