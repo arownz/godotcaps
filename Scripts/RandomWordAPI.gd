@@ -5,8 +5,8 @@ signal word_fetched
 
 # API URLs to try in order of preference
 var API_URLS = [
-	"https://api.datamuse.com/words?sp=????&max=300",
-	"https://random-word-api.herokuapp.com/word"
+    "https://api.datamuse.com/words?sp=????&max=300", # 4-letter words specifically
+    "https://random-word-api.herokuapp.com/word"
 ]
 
 # State variables
@@ -81,7 +81,7 @@ func _process_primary_api_response(body):
 	
 	var data = json.get_data()
 	
-	# FIX: Select a random word from the array instead of always taking the first one
+	# Select a random word from the array instead of always taking the first one
 	if typeof(data) == TYPE_ARRAY and data.size() > 0:
 		# Choose a random index from the response array
 		var random_index = randi() % data.size()
@@ -117,7 +117,24 @@ func _process_primary_api_response(body):
 		last_error = "Invalid response format"
 		_try_fallback()
 		return
+	
+	# For 4-letter words from the API, ensure it's actually a clean 4-letter word
+	# This helps eliminate potential junk or longer strings that might come through
+	if API_URLS[current_api_index].contains("sp=????"):
+		# Ensure it's actually close to 4 letters (allowing for minor variations)
+		if random_word.length() < 3 or random_word.length() > 6:
+			print("RandomWordAPI: Word length not in range 3-6: " + random_word)
+			_try_fallback()
+			return
 		
+		# Check if it has any special characters we don't want
+		var regex = RegEx.new()
+		regex.compile("[^a-zA-Z0-9]")
+		if regex.search(random_word):
+			print("RandomWordAPI: Word contains special characters: " + random_word)
+			_try_fallback()
+			return
+	
 	print("RandomWordAPI: Word fetched: " + str(random_word))
 	emit_signal("word_fetched")
 
@@ -170,14 +187,16 @@ func _try_fallback():
 		random_word = _get_fallback_word()
 		emit_signal("word_fetched")
 
-# Improve fallback word selection with categories
+# Improve fallback word selection with categories and ensure we have 4-letter words
 func _get_fallback_word() -> String:
-	# Add more word categories for better variety
+	# Add more word categories for better variety - ensure we have enough 4-letter words
 	var word_categories = {
-		"animals": ["cat", "dog", "bird", "fish", "wolf", "bear", "lion", "tiger"],
-		"objects": ["book", "pen", "car", "ball", "chair", "table", "phone"],
-		"nature": ["tree", "sun", "moon", "star", "cloud", "rain", "wind"],
-		"food": ["apple", "bread", "cake", "milk", "egg", "rice", "meat"]
+		"animals": ["wolf", "frog", "bear", "lion", "duck", "bird", "fish", "deer", "goat", "seal"],
+		"objects": ["book", "lamp", "desk", "fork", "door", "bowl", "mug", "ring", "coat", "pipe"],
+		"nature": ["tree", "rock", "fire", "lake", "hill", "moon", "star", "rain", "snow", "leaf"],
+		"food": ["cake", "fish", "meat", "rice", "soup", "pear", "plum", "milk", "corn", "beef"],
+		"colors": ["blue", "pink", "teal", "grey", "gold", "ruby", "mint", "aqua", "lime", "navy"],
+		"verbs": ["walk", "talk", "make", "read", "swim", "sing", "play", "ride", "push", "pull"]
 	}
 	
 	# Select a random category

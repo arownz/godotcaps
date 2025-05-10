@@ -642,8 +642,8 @@ func _on_speech_recognized(text):
 			queue_free()  # Free our panel
 	)
 	
-	# Hide our panel but don't free it yet
-	$ChallengePanel/VBoxContainer.visible = false
+	# Hide our entire panel, not just the VBoxContainer
+	visible = false
 	
 	# Print confirmation message
 	print("RESULT PANEL SETUP COMPLETE - panel should now be visible")
@@ -669,17 +669,17 @@ func _compare_words(spoken_word, target_word):
 			return true
 		
 		# Check for common speech recognition errors with short words
-		if target_word.length() <= 4:
-			# For short words like "bus", check for homophones or near-matches
+		if target_word.length() <= 4:  # Updated to handle 4-letter words better
+			# For short words like "gate" or "blue", check for near-matches
 			var distance = levenshtein_distance(word, target_word)
-			if distance <= 1: # Allow 1 character difference for short words
+			if distance <= 1:  # Allow 1 character difference for short words
 				return true
 	
 	# Calculate Levenshtein distance for words that are similar lengths
 	if abs(spoken_word.length() - target_word.length()) <= 2:
 		var distance = levenshtein_distance(spoken_word, target_word)
-		# Allow for more errors in longer words
-		var max_distance = max(1, target_word.length() / 3)
+		# Allow for more errors in longer words, but be more strict with 4-letter words
+		var max_distance = 1 if target_word.length() <= 4 else max(1, target_word.length() / 3)
 		if distance <= max_distance:
 			return true
 	

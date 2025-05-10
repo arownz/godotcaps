@@ -53,8 +53,17 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_8sm0m")
 
+[node name="BackgroundOverlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.6)
+
 [node name="ResultPanel" type="TextureRect" parent="."]
-custom_minimum_size = Vector2(600, 400)
+custom_minimum_size = Vector2(600, 500)
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -67,6 +76,7 @@ offset_right = 262.0
 offset_bottom = 351.0
 grow_horizontal = 2
 grow_vertical = 2
+scale = Vector2(0.997167, 1.00342)
 texture = ExtResource("2_uofyk")
 expand_mode = 1
 stretch_mode = 5
