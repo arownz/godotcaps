@@ -1,18 +1,25 @@
-[gd_scene load_steps=14 format=3 uid="uid://d36ytiqg31edd"]
+[gd_scene load_steps=16 format=3 uid="uid://d36ytiqg31edd"]
 
 [ext_resource type="Script" uid="uid://datbxxer3mwvc" path="res://Scripts/mainmenu.gd" id="1_tt5f1"]
 [ext_resource type="Texture2D" uid="uid://ckkds573c15wj" path="res://gui/Backgrounds/Main_menu_Background.png" id="2_kpa4r"]
 [ext_resource type="Texture2D" uid="uid://dljqigmy8f7k6" path="res://Sprites/Player/player.png" id="3_4k22p"]
-[ext_resource type="Texture2D" uid="uid://b8wrg4f34l05q" path="res://gui/MainMenu/small button.png" id="4_pv8c5"]
-[ext_resource type="Texture2D" uid="uid://d1ojbvrecs4o1" path="res://gui/MainMenu/long button.png" id="5_enwt5"]
+[ext_resource type="Texture2D" uid="uid://bctgpjuu2tes7" path="res://gui/profile pic with border.png" id="5_8e205"]
 [ext_resource type="Texture2D" uid="uid://cn716b8kx5vgr" path="res://gui/energy.png" id="6_7q2f4"]
 [ext_resource type="Texture2D" uid="uid://dxy5okvgwlv6o" path="res://gui/learning modules.png" id="7_3ylv5"]
-[ext_resource type="Texture2D" uid="uid://dtc3wy3w5us7i" path="res://gui/newicon/upscalemedia-transformed.png" id="9_fh7cp"]
+[ext_resource type="Texture2D" uid="uid://ddv767r634oaw" path="res://gui/Update/UI/hover short button.png" id="8_7467j"]
 [ext_resource type="Texture2D" uid="uid://cgs6saoh3771b" path="res://gui/journey mode.png" id="9_ndgqr"]
+[ext_resource type="Texture2D" uid="uid://buoabv72l54hn" path="res://gui/character customization.png" id="10_2x1g0"]
 [ext_resource type="Texture2D" uid="uid://0pd5aetjcpr6" path="res://gui/leaderboards.png" id="10_vgdm8"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="11_qm2o7"]
+[ext_resource type="Texture2D" uid="uid://ckytnr3x3xgkv" path="res://gui/Update/UI/long button.png" id="11_riqfo"]
 [ext_resource type="Texture2D" uid="uid://m6ls0r18o3xg" path="res://gui/settings.png" id="12_q0r2p"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="13_uaqt0"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_8e205"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -106,23 +113,26 @@ offset_top = 20.0
 offset_right = -514.0
 offset_bottom = 163.0
 grow_horizontal = 2
-texture_normal = ExtResource("4_pv8c5")
+texture_normal = ExtResource("5_8e205")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="AvatarBackground" type="ColorRect" parent="ProfileButton"]
+[node name="AvatarBackground" type="Panel" parent="ProfileButton"]
 layout_mode = 1
-anchors_preset = 4
+anchors_preset = 8
+anchor_left = 0.5
 anchor_top = 0.5
+anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = 13.0
+offset_left = -44.5
 offset_top = -44.5
-offset_right = 110.0
-offset_bottom = 49.5
+offset_right = 51.5
+offset_bottom = 50.5
+grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(0.923117, 0.93701)
 mouse_filter = 2
-color = Color(0.054902, 0.27451, 0.47451, 0.501961)
+theme_override_styles/panel = SubResource("StyleBoxEmpty_8e205")
 
 [node name="ProfileLabel" type="Label" parent="ProfileButton"]
 visible = false
@@ -154,16 +164,16 @@ anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -228.0
 offset_top = 45.0
-offset_right = -68.0
+offset_right = -32.0
 offset_bottom = 104.0
 grow_horizontal = 0
 
 [node name="EnergyIcon" type="TextureRect" parent="EnergyDisplay"]
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 0
-offset_left = -35.0
+offset_left = -18.0
 offset_top = 10.0
-offset_right = 15.0
+offset_right = 32.0
 offset_bottom = 60.0
 texture = ExtResource("6_7q2f4")
 expand_mode = 1
@@ -171,10 +181,10 @@ stretch_mode = 5
 
 [node name="EnergyLabel" type="Label" parent="EnergyDisplay"]
 layout_mode = 0
-offset_left = 25.0
-offset_top = 10.0
-offset_right = 146.0
-offset_bottom = 69.0
+offset_left = 27.0
+offset_top = 7.0
+offset_right = 187.0
+offset_bottom = 66.0
 theme_override_colors/font_color = Color(0.933333, 0.788235, 0.0352941, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("13_uaqt0")
@@ -219,7 +229,7 @@ offset_top = -132.0
 offset_right = 160.0
 offset_bottom = -32.0
 grow_vertical = 0
-texture_normal = ExtResource("4_pv8c5")
+texture_normal = ExtResource("8_7467j")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -264,7 +274,7 @@ offset_top = -123.0
 offset_right = 545.0
 offset_bottom = -23.0
 grow_vertical = 0
-texture_normal = ExtResource("4_pv8c5")
+texture_normal = ExtResource("8_7467j")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -295,7 +305,7 @@ offset_left = 25.0
 offset_top = 10.0
 offset_right = 105.0
 offset_bottom = 90.0
-texture = ExtResource("9_fh7cp")
+texture = ExtResource("10_2x1g0")
 expand_mode = 1
 stretch_mode = 5
 
@@ -306,13 +316,13 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -130.0
-offset_top = -120.0
-offset_right = 130.0
-offset_bottom = -20.0
+offset_left = -97.0
+offset_top = -121.0
+offset_right = 106.0
+offset_bottom = -21.0
 grow_horizontal = 2
 grow_vertical = 0
-texture_normal = ExtResource("5_enwt5")
+texture_normal = ExtResource("11_riqfo")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -367,7 +377,7 @@ offset_right = -420.0
 offset_bottom = -18.0
 grow_horizontal = 0
 grow_vertical = 0
-texture_normal = ExtResource("4_pv8c5")
+texture_normal = ExtResource("8_7467j")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -416,7 +426,7 @@ offset_right = -16.0
 offset_bottom = -26.0
 grow_horizontal = 0
 grow_vertical = 0
-texture_normal = ExtResource("4_pv8c5")
+texture_normal = ExtResource("8_7467j")
 ignore_texture_size = true
 stretch_mode = 5
 

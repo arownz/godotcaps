@@ -94,6 +94,7 @@ theme_override_font_sizes/font_size = 18
 text = "Speech Rate:"
 
 [node name="RateSlider" type="HSlider" parent="Panel/VBoxContainer/RateContainer"]
+visible = false
 layout_mode = 2
 min_value = 0.5
 max_value = 2.0

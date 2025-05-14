@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3 uid="uid://2fpacds3hu8n"]
 
 [ext_resource type="Script" uid="uid://c8ypkl4nixsox" path="res://Scripts/ChallengeResultPanel.gd" id="1_8sm0m"]
-[ext_resource type="Texture2D" uid="uid://bj14mm05c4i87" path="res://gui/ui_4.png" id="2_uofyk"]
+[ext_resource type="Texture2D" uid="uid://cct70l6wbh13s" path="res://gui/Update/UI/ui 9.png" id="2_uofyk"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="3_idjw4"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="4_kf8r5"]
 
@@ -70,10 +70,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -338.0
-offset_top = -353.0
-offset_right = 262.0
-offset_bottom = 351.0
+offset_left = -322.0
+offset_top = -236.0
+offset_right = 278.0
+offset_bottom = 264.0
 grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(0.997167, 1.00342)

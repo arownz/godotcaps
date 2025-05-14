@@ -1,13 +1,13 @@
 [gd_scene load_steps=16 format=3 uid="uid://cfead7bcuslp4"]
 
-[ext_resource type="Texture2D" uid="uid://jq3w8mrmq7b0" path="res://Sprites/Dungeon_1/Stage_1/slime/examplefix_slime.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://jq3w8mrmq7b0" path="res://Scripts/Dungeon_1/Stage_1/slime/examplefix_slime.png" id="2"]
 [ext_resource type="Texture2D" uid="uid://dljqigmy8f7k6" path="res://Sprites/Player/player.png" id="2_hb1yk"]
 [ext_resource type="Script" uid="uid://cnnycoui3l3ef" path="res://Scripts/battlescene.gd" id="3_vhj2j"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="4_akpf4"]
 [ext_resource type="PackedScene" uid="uid://buhhqw4k2b2ye" path="res://Scenes/StatsTester.tscn" id="5_pqv1n"]
 [ext_resource type="Texture2D" uid="uid://bj14mm05c4i87" path="res://gui/ui_4.png" id="6_r8yha"]
+[ext_resource type="Texture2D" uid="uid://bmjd8nkagj08e" path="res://gui/Update/UI/long uncolored button.png" id="7_2tp6q"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="8_2tp6q"]
-[ext_resource type="Texture2D" uid="uid://b1xek3qm04qa2" path="res://gui/uncolored_button.png" id="8_4lnub"]
 [ext_resource type="Texture2D" uid="uid://d1kxcxch535m0" path="res://gui/Backgrounds/Dungeon1_background.png" id="11_x73uj"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_e13ox"]
@@ -166,7 +166,7 @@ offset_right = 42.0
 offset_bottom = -18.0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 3
+theme_override_constants/outline_size = 5
 theme_override_fonts/font = ExtResource("4_akpf4")
 theme_override_font_sizes/font_size = 18
 text = "Player Name"
@@ -268,7 +268,7 @@ offset_right = 152.0
 offset_bottom = -17.0
 theme_override_colors/font_color = Color(1, 0.29, 0.29, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 3
+theme_override_constants/outline_size = 5
 theme_override_fonts/font = ExtResource("4_akpf4")
 theme_override_font_sizes/font_size = 18
 text = "Slime"
@@ -323,8 +323,7 @@ offset_bottom = 122.0
 grow_horizontal = 2
 theme_override_colors/font_color = Color(1, 0.836, 0.18, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 3
+theme_override_constants/outline_size = 5
 theme_override_fonts/font = ExtResource("4_akpf4")
 theme_override_font_sizes/font_size = 25
 text = "D1: The Plain - Stage 1"
@@ -507,17 +506,16 @@ text = "5"
 horizontal_alignment = 1
 
 [node name="BattleLogContainer" type="VBoxContainer" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.5
 
 [node name="BattleLogLabel" type="Label" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/BattleLogContainer"]
-custom_minimum_size = Vector2(0, 40)
+custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 10
 theme_override_fonts/font = ExtResource("4_akpf4")
-theme_override_font_sizes/font_size = 25
+theme_override_font_sizes/font_size = 35
 text = "Battle Log"
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -530,6 +528,7 @@ horizontal_scroll_mode = 0
 vertical_scroll_mode = 2
 
 [node name="LogsContainer" type="VBoxContainer" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/BattleLogContainer/ScrollContainer"]
+custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -544,11 +543,11 @@ size_flags_stretch_ratio = 0.0
 alignment = 1
 
 [node name="EngageButton" type="TextureButton" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/ButtonContainer"]
-custom_minimum_size = Vector2(350, 80)
+custom_minimum_size = Vector2(500, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 3
-texture_normal = ExtResource("8_4lnub")
+texture_normal = ExtResource("7_2tp6q")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -557,12 +556,13 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 3.0
-offset_top = -4.0
-offset_right = 3.0
-offset_bottom = -4.0
+offset_left = 31.0
+offset_top = 34.0
+offset_right = -28.0
+offset_bottom = -34.0
 grow_horizontal = 2
 grow_vertical = 2
+scale = Vector2(0.975855, 0.932577)
 theme_override_colors/font_color = Color(0.101961, 0.101961, 0.101961, 1)
 theme_override_fonts/font = ExtResource("8_2tp6q")
 theme_override_font_sizes/font_size = 28

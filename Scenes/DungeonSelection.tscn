@@ -1,0 +1,403 @@
+[gd_scene load_steps=13 format=3 uid="uid://sdyk7ldijega"]
+
+[ext_resource type="Script" uid="uid://t3y57n5oleps" path="res://Scripts/DungeonSelectionManager.gd" id="1_bfmdj"]
+[ext_resource type="Texture2D" uid="uid://chfkysvsxt4eg" path="res://gui/Update/Backgrounds/Plains_Level.png" id="2_bu21u"]
+[ext_resource type="Texture2D" uid="uid://bx1y3wrexv02d" path="res://gui/dungeonselection/next.png" id="2_pu3ti"]
+[ext_resource type="Texture2D" uid="uid://dds117r721ew8" path="res://gui/dungeonselection/previous.png" id="3_e1jkr"]
+[ext_resource type="Texture2D" uid="uid://t7tphlgw3pme" path="res://gui/dungeonselection/dungeon1.png" id="4_tv7ar"]
+[ext_resource type="Texture2D" uid="uid://boyms7my8lwmc" path="res://gui/dungeonselection/dungeon2_lock.png" id="5_efoci"]
+[ext_resource type="Texture2D" uid="uid://dlmfvdh6uvgep" path="res://gui/dungeonselection/dungeon3_lock.png" id="6_j6mrw"]
+[ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="7_vkjng"]
+[ext_resource type="Texture2D" uid="uid://da6rdtvo1nlwj" path="res://gui/Update/icons/return.png" id="8_r0sib"]
+[ext_resource type="Texture2D" uid="uid://n08ji1i2co16" path="res://gui/Update/UI/small button.png" id="8_xb6di"]
+[ext_resource type="Texture2D" uid="uid://ckytnr3x3xgkv" path="res://gui/Update/UI/long button.png" id="9_xb6di"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_popup"]
+bg_color = Color(0.113725, 0.329412, 0.458824, 0.9)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0, 0, 0, 0.392157)
+shadow_size = 10
+
+[node name="DungeonSelection" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_bfmdj")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_bu21u")
+
+[node name="TitleContainer" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 100.0
+grow_horizontal = 2
+
+[node name="TitleLabel" type="Label" parent="TitleContainer"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -28.5
+offset_right = 300.0
+offset_bottom = 28.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 8
+theme_override_fonts/font = ExtResource("7_vkjng")
+theme_override_font_sizes/font_size = 48
+text = "Select a Dungeon"
+horizontal_alignment = 1
+
+[node name="DungeonContainer" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 100.0
+offset_bottom = -100.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="DungeonCarousel" type="HBoxContainer" parent="DungeonContainer"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -997.0
+offset_top = -271.0
+offset_right = 1003.0
+offset_bottom = 229.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 100
+alignment = 1
+
+[node name="Dungeon1" type="Control" parent="DungeonContainer/DungeonCarousel"]
+custom_minimum_size = Vector2(600, 500)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="TextureButton" type="TextureButton" parent="DungeonContainer/DungeonCarousel/Dungeon1"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("4_tv7ar")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="NameLabel" type="Label" parent="DungeonContainer/DungeonCarousel/Dungeon1"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -60.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_fonts/font = ExtResource("7_vkjng")
+theme_override_font_sizes/font_size = 36
+text = "Dungeon 1: The Plain"
+horizontal_alignment = 1
+
+[node name="StatusLabel" type="Label" parent="DungeonContainer/DungeonCarousel/Dungeon1"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = -61.0
+offset_top = -54.0
+offset_right = -61.0
+offset_bottom = 9.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.501961, 0.988235, 0.501961, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_fonts/font = ExtResource("7_vkjng")
+theme_override_font_sizes/font_size = 24
+text = "Unlocked"
+horizontal_alignment = 1
+
+[node name="Dungeon2" type="Control" parent="DungeonContainer/DungeonCarousel"]
+custom_minimum_size = Vector2(600, 500)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="TextureButton" type="TextureButton" parent="DungeonContainer/DungeonCarousel/Dungeon2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("5_efoci")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="NameLabel" type="Label" parent="DungeonContainer/DungeonCarousel/Dungeon2"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -60.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_fonts/font = ExtResource("7_vkjng")
+theme_override_font_sizes/font_size = 36
+text = "Dungeon 2: The Forest"
+horizontal_alignment = 1
+
+[node name="StatusLabel" type="Label" parent="DungeonContainer/DungeonCarousel/Dungeon2"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = -40.0
+offset_bottom = 23.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(1, 0.4, 0.4, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_fonts/font = ExtResource("7_vkjng")
+theme_override_font_sizes/font_size = 24
+text = "Locked"
+horizontal_alignment = 1
+
+[node name="Dungeon3" type="Control" parent="DungeonContainer/DungeonCarousel"]
+custom_minimum_size = Vector2(600, 500)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="TextureButton" type="TextureButton" parent="DungeonContainer/DungeonCarousel/Dungeon3"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("6_j6mrw")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="NameLabel" type="Label" parent="DungeonContainer/DungeonCarousel/Dungeon3"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -60.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_fonts/font = ExtResource("7_vkjng")
+theme_override_font_sizes/font_size = 36
+text = "Dungeon 3: The Demon"
+horizontal_alignment = 1
+
+[node name="StatusLabel" type="Label" parent="DungeonContainer/DungeonCarousel/Dungeon3"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = -40.0
+offset_bottom = 23.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(1, 0.4, 0.4, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_fonts/font = ExtResource("7_vkjng")
+theme_override_font_sizes/font_size = 24
+text = "Locked"
+horizontal_alignment = 1
+
+[node name="NextButton" type="TextureButton" parent="."]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -327.0
+offset_top = -75.0
+offset_right = -227.0
+offset_bottom = 56.0
+grow_horizontal = 0
+grow_vertical = 2
+texture_normal = ExtResource("2_pu3ti")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="PreviousButton" type="TextureButton" parent="."]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 220.0
+offset_top = -75.0
+offset_right = 320.0
+offset_bottom = 56.0
+grow_vertical = 2
+texture_normal = ExtResource("3_e1jkr")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="BackButton" type="TextureButton" parent="."]
+custom_minimum_size = Vector2(1, 1)
+layout_mode = 2
+offset_left = 135.0
+offset_top = 678.0
+offset_right = 162.0
+offset_bottom = 705.0
+scale = Vector2(3.76293, 3.83557)
+texture_normal = ExtResource("8_xb6di")
+
+[node name="TextureRect" type="TextureRect" parent="BackButton"]
+layout_mode = 0
+offset_left = 4.73197
+offset_top = 7.02944
+offset_right = 33.732
+offset_bottom = 31.0294
+scale = Vector2(0.612926, 0.537912)
+texture = ExtResource("8_r0sib")
+
+[node name="PlayButton" type="TextureButton" parent="."]
+layout_mode = 0
+offset_left = 634.0
+offset_top = 678.0
+offset_right = 834.0
+offset_bottom = 779.0
+texture_normal = ExtResource("9_xb6di")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="NameLabel" type="Label" parent="PlayButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 56.0
+offset_top = 12.0
+offset_right = -55.0
+offset_bottom = -12.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.125684, 0.064225, 0.0212433, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_fonts/font = ExtResource("7_vkjng")
+theme_override_font_sizes/font_size = 20
+text = "ENTER
+DUNGEON"
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="LockPopup" type="Panel" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -250.0
+offset_top = -100.0
+offset_right = 250.0
+offset_bottom = 100.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_popup")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="LockPopup"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="LockPopup/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 2
+theme_override_fonts/font = ExtResource("7_vkjng")
+theme_override_font_sizes/font_size = 28
+text = "Dungeon Locked!"
+horizontal_alignment = 1
+
+[node name="MessageLabel" type="Label" parent="LockPopup/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.92549, 0.756863, 1)
+theme_override_fonts/font = ExtResource("7_vkjng")
+theme_override_font_sizes/font_size = 15
+text = "Please complete the previous dungeon first to unlock this dungeon."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="CloseButton" type="Button" parent="LockPopup/VBoxContainer"]
+custom_minimum_size = Vector2(120, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 8
+theme_override_fonts/font = ExtResource("7_vkjng")
+theme_override_font_sizes/font_size = 18
+text = "OK"
+
+[connection signal="pressed" from="DungeonContainer/DungeonCarousel/Dungeon1/TextureButton" to="." method="_on_dungeon1_pressed"]
+[connection signal="pressed" from="DungeonContainer/DungeonCarousel/Dungeon2/TextureButton" to="." method="_on_dungeon2_pressed"]
+[connection signal="pressed" from="DungeonContainer/DungeonCarousel/Dungeon3/TextureButton" to="." method="_on_dungeon3_pressed"]
+[connection signal="pressed" from="NextButton" to="." method="_on_next_button_pressed"]
+[connection signal="pressed" from="PreviousButton" to="." method="_on_previous_button_pressed"]
+[connection signal="pressed" from="BackButton" to="." method="_on_back_button_pressed"]
+[connection signal="pressed" from="PlayButton" to="." method="_on_play_button_pressed"]
+[connection signal="pressed" from="LockPopup/VBoxContainer/CloseButton" to="." method="_on_popup_close_button_pressed"]

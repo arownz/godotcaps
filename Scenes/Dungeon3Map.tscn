@@ -1,0 +1,606 @@
+[gd_scene load_steps=52 format=3 uid="uid://0unsb1sjvcje"]
+
+[ext_resource type="Texture2D" uid="uid://chfkysvsxt4eg" path="res://gui/Update/Backgrounds/Plains_Level.png" id="1_qydu8"]
+[ext_resource type="Texture2D" uid="uid://n08ji1i2co16" path="res://gui/Update/UI/small button.png" id="2_oabpg"]
+[ext_resource type="Texture2D" uid="uid://da6rdtvo1nlwj" path="res://gui/Update/icons/return.png" id="3_0cogd"]
+[ext_resource type="Texture2D" uid="uid://dfy42u6wycc3x" path="res://gui/Update/icons/next level select.png" id="4_07erb"]
+[ext_resource type="Texture2D" uid="uid://bmnybgl8oe1l" path="res://gui/Update/icons/unlocked level.png" id="5_62ino"]
+[ext_resource type="Texture2D" uid="uid://bghwdafec1fjd" path="res://gui/Update/UI/Select Level title bg.png" id="6_xeiu1"]
+[ext_resource type="Texture2D" uid="uid://cp7k7g2my8pgp" path="res://gui/Update/UI/level details.png" id="7_16krn"]
+[ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="8_1icim"]
+[ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="9_3555f"]
+[ext_resource type="Texture2D" uid="uid://by0xvtv0v0usp" path="res://Sprites/Frame Sprites/Treant.png" id="10_mqaq1"]
+[ext_resource type="Texture2D" uid="uid://cmgrkntjwnvvr" path="res://Sprites/Frame Sprites/Slime.png" id="11_a70df"]
+[ext_resource type="Texture2D" uid="uid://ckfq2sv5fswsg" path="res://Sprites/Frame Sprites/Snake.png" id="12_o425e"]
+[ext_resource type="Texture2D" uid="uid://dr71hrxs7djx0" path="res://Sprites/Frame Sprites/Boar.png" id="13_s8gg8"]
+[ext_resource type="Texture2D" uid="uid://dlusv4b6bm07h" path="res://gui/Update/UI/ui 10.png" id="14_8ojmt"]
+[ext_resource type="Texture2D" uid="uid://caaebspp4lxk4" path="res://gui/Update/icons/slaym enemeh.png" id="15_ot0ms"]
+[ext_resource type="Texture2D" uid="uid://ct2kkb4phx2kr" path="res://gui/Update/icons/treant.png" id="16_oabpg"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vdeks"]
+atlas = ExtResource("10_mqaq1")
+region = Rect2(0, 0, 112, 112)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qbrrc"]
+atlas = ExtResource("10_mqaq1")
+region = Rect2(112, 0, 112, 112)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vcxhp"]
+atlas = ExtResource("10_mqaq1")
+region = Rect2(224, 0, 112, 112)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pm2va"]
+atlas = ExtResource("10_mqaq1")
+region = Rect2(336, 0, 112, 112)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lrk43"]
+atlas = ExtResource("10_mqaq1")
+region = Rect2(448, 0, 112, 112)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bsryn"]
+atlas = ExtResource("10_mqaq1")
+region = Rect2(560, 0, 112, 112)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_84pmk"]
+atlas = ExtResource("10_mqaq1")
+region = Rect2(672, 0, 112, 112)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kyech"]
+atlas = ExtResource("10_mqaq1")
+region = Rect2(784, 0, 112, 112)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o52iv"]
+atlas = ExtResource("11_a70df")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1g3o1"]
+atlas = ExtResource("11_a70df")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lhl6u"]
+atlas = ExtResource("11_a70df")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lqaqn"]
+atlas = ExtResource("11_a70df")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_26xo2"]
+atlas = ExtResource("11_a70df")
+region = Rect2(256, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0ho0y"]
+atlas = ExtResource("11_a70df")
+region = Rect2(320, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xrlqr"]
+atlas = ExtResource("12_o425e")
+region = Rect2(0, 0, 63, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t6djc"]
+atlas = ExtResource("12_o425e")
+region = Rect2(63, 0, 63, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ocdpx"]
+atlas = ExtResource("12_o425e")
+region = Rect2(126, 0, 63, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sq72c"]
+atlas = ExtResource("12_o425e")
+region = Rect2(189, 0, 63, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nxxex"]
+atlas = ExtResource("12_o425e")
+region = Rect2(252, 0, 63, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3yyql"]
+atlas = ExtResource("12_o425e")
+region = Rect2(315, 0, 63, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1j53d"]
+atlas = ExtResource("12_o425e")
+region = Rect2(0, 64, 63, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fkgs2"]
+atlas = ExtResource("12_o425e")
+region = Rect2(63, 64, 63, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0v8yh"]
+atlas = ExtResource("12_o425e")
+region = Rect2(126, 64, 63, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tpob7"]
+atlas = ExtResource("12_o425e")
+region = Rect2(189, 64, 63, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_br8kr"]
+atlas = ExtResource("12_o425e")
+region = Rect2(252, 64, 63, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dlnh5"]
+atlas = ExtResource("12_o425e")
+region = Rect2(0, 128, 63, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o6mw7"]
+atlas = ExtResource("12_o425e")
+region = Rect2(63, 128, 63, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ndd0i"]
+atlas = ExtResource("12_o425e")
+region = Rect2(126, 128, 63, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_oqxtc"]
+atlas = ExtResource("13_s8gg8")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eeeep"]
+atlas = ExtResource("13_s8gg8")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kga4m"]
+atlas = ExtResource("13_s8gg8")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vyhae"]
+atlas = ExtResource("13_s8gg8")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7ja67"]
+atlas = ExtResource("13_s8gg8")
+region = Rect2(256, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u6wvt"]
+atlas = ExtResource("13_s8gg8")
+region = Rect2(320, 0, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_0cogd"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vdeks")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qbrrc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vcxhp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pm2va")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lrk43")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bsryn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_84pmk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kyech")
+}],
+"loop": true,
+"name": &"BossIdle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o52iv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1g3o1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lhl6u")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lqaqn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_26xo2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0ho0y")
+}],
+"loop": true,
+"name": &"Mob1Idle",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xrlqr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t6djc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ocdpx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sq72c")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nxxex")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3yyql")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1j53d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fkgs2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0v8yh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tpob7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_br8kr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dlnh5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o6mw7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ndd0i")
+}],
+"loop": true,
+"name": &"Mob2Idle",
+"speed": 15.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_oqxtc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eeeep")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kga4m")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vyhae")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7ja67")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u6wvt")
+}],
+"loop": true,
+"name": &"Mob3Idle",
+"speed": 12.0
+}]
+
+[node name="Dungeon3Map" type="Node2D"]
+
+[node name="TextureRect" type="TextureRect" parent="."]
+offset_right = 1463.0
+offset_bottom = 810.0
+texture = ExtResource("1_qydu8")
+
+[node name="BackButton" type="TextureButton" parent="TextureRect"]
+custom_minimum_size = Vector2(1, 1)
+layout_mode = 0
+offset_left = 92.0
+offset_top = 663.0
+offset_right = 119.0
+offset_bottom = 690.0
+scale = Vector2(3.76293, 3.83557)
+texture_normal = ExtResource("2_oabpg")
+
+[node name="TextureRect" type="TextureRect" parent="TextureRect/BackButton"]
+layout_mode = 0
+offset_left = 4.73197
+offset_top = 7.02944
+offset_right = 33.732
+offset_bottom = 31.0294
+scale = Vector2(0.612926, 0.537912)
+texture = ExtResource("3_0cogd")
+
+[node name="Stage1" type="TextureButton" parent="."]
+offset_left = 224.0
+offset_top = 311.0
+offset_right = 239.0
+offset_bottom = 320.0
+scale = Vector2(6.5654, 6.5654)
+texture_normal = ExtResource("4_07erb")
+
+[node name="Stage2" type="TextureButton" parent="."]
+offset_left = 416.0
+offset_top = 583.0
+offset_right = 431.0
+offset_bottom = 592.0
+scale = Vector2(6.5654, 6.5654)
+texture_normal = ExtResource("5_62ino")
+
+[node name="Stage3" type="TextureButton" parent="."]
+offset_left = 733.0
+offset_top = 364.0
+offset_right = 748.0
+offset_bottom = 373.0
+scale = Vector2(6.5654, 6.5654)
+texture_normal = ExtResource("5_62ino")
+
+[node name="Stage4" type="TextureButton" parent="."]
+offset_left = 1001.0
+offset_top = 586.0
+offset_right = 1016.0
+offset_bottom = 595.0
+scale = Vector2(6.5654, 6.5654)
+texture_normal = ExtResource("5_62ino")
+
+[node name="Stage5" type="TextureButton" parent="."]
+offset_left = 1218.0
+offset_top = 309.0
+offset_right = 1233.0
+offset_bottom = 318.0
+scale = Vector2(6.5654, 6.5654)
+texture_normal = ExtResource("5_62ino")
+
+[node name="TextureRect2" type="TextureRect" parent="."]
+offset_left = 461.0
+offset_top = 77.0
+offset_right = 940.0
+offset_bottom = 168.0
+texture = ExtResource("6_xeiu1")
+
+[node name="Label" type="Label" parent="TextureRect2"]
+layout_mode = 0
+offset_left = 84.0
+offset_top = 11.0
+offset_right = 426.0
+offset_bottom = 80.0
+theme_override_font_sizes/font_size = 50
+text = "Select Level"
+uppercase = true
+
+[node name="StageDetails" type="TextureRect" parent="."]
+visible = false
+offset_left = 803.0
+offset_top = 7.0
+offset_right = 1452.0
+offset_bottom = 803.0
+texture = ExtResource("7_16krn")
+
+[node name="RightContainer" type="Control" parent="StageDetails"]
+anchors_preset = 0
+offset_left = 295.0
+offset_top = 262.0
+offset_right = 610.0
+offset_bottom = 641.0
+
+[node name="Detail" type="Label" parent="StageDetails/RightContainer"]
+layout_mode = 2
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 91.0
+offset_top = -366.0
+offset_right = -94.0
+offset_bottom = -329.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 0.866658, 0.380537, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_fonts/font = ExtResource("8_1icim")
+theme_override_font_sizes/font_size = 20
+text = "DETAILS"
+horizontal_alignment = 1
+
+[node name="Info" type="Label" parent="StageDetails/RightContainer"]
+layout_mode = 2
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = -321.0
+offset_right = -11.0
+offset_bottom = -61.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.937255, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_fonts/font = ExtResource("8_1icim")
+theme_override_font_sizes/font_size = 20
+text = "Big, venomous sluthering snake that is possessed by dark magic."
+autowrap_mode = 3
+
+[node name="Health" type="Label" parent="StageDetails/RightContainer"]
+layout_mode = 0
+offset_left = 41.0
+offset_top = 342.0
+offset_right = 102.0
+offset_bottom = 379.0
+theme_override_fonts/font = ExtResource("9_3555f")
+theme_override_font_sizes/font_size = 20
+text = "100"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Attack" type="Label" parent="StageDetails/RightContainer"]
+layout_mode = 0
+offset_left = 147.0
+offset_top = 342.0
+offset_right = 209.0
+offset_bottom = 379.0
+theme_override_fonts/font = ExtResource("9_3555f")
+theme_override_font_sizes/font_size = 20
+text = "100"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Durability" type="Label" parent="StageDetails/RightContainer"]
+layout_mode = 0
+offset_left = 256.0
+offset_top = 342.0
+offset_right = 312.0
+offset_bottom = 379.0
+theme_override_fonts/font = ExtResource("9_3555f")
+theme_override_font_sizes/font_size = 20
+text = "100"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="LeftContainer" type="Control" parent="StageDetails"]
+anchors_preset = 0
+offset_left = 39.0
+offset_top = 256.0
+offset_right = 289.0
+offset_bottom = 645.0
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="StageDetails/LeftContainer"]
+position = Vector2(120, 233)
+scale = Vector2(2.79408, 2.76731)
+sprite_frames = SubResource("SpriteFrames_0cogd")
+animation = &"Mob1Idle"
+
+[node name="LVLabel" type="Label" parent="StageDetails/LeftContainer"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 80.0
+offset_top = -340.0
+offset_right = -113.0
+offset_bottom = -303.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_fonts/font = ExtResource("8_1icim")
+theme_override_font_sizes/font_size = 20
+text = "LvL."
+horizontal_alignment = 1
+
+[node name="LVLabel2" type="Label" parent="StageDetails/LeftContainer"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 143.0
+offset_top = -341.0
+offset_right = -68.0
+offset_bottom = -304.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.964706, 1, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_fonts/font = ExtResource("8_1icim")
+theme_override_font_sizes/font_size = 20
+text = "100"
+
+[node name="MonsterName" type="Label" parent="StageDetails/LeftContainer"]
+layout_mode = 2
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 31.0
+offset_top = -374.0
+offset_right = -26.0
+offset_bottom = -337.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.964706, 0, 0.47451, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_fonts/font = ExtResource("8_1icim")
+theme_override_font_sizes/font_size = 20
+text = "EVIL MOB"
+horizontal_alignment = 1
+
+[node name="Label" type="Label" parent="StageDetails"]
+layout_mode = 0
+offset_left = 207.0
+offset_top = 20.0
+offset_right = 374.0
+offset_bottom = 81.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("9_3555f")
+theme_override_font_sizes/font_size = 33
+text = "STAGE"
+
+[node name="Label2" type="Label" parent="StageDetails"]
+layout_mode = 0
+offset_left = 389.0
+offset_top = 19.0
+offset_right = 486.0
+offset_bottom = 80.0
+theme_override_fonts/font = ExtResource("9_3555f")
+theme_override_font_sizes/font_size = 33
+text = "5"
+autowrap_mode = 3
+
+[node name="MonsterContainer" type="HBoxContainer" parent="StageDetails"]
+layout_mode = 0
+offset_left = 93.0
+offset_top = 123.0
+offset_right = 217.0
+offset_bottom = 151.0
+scale = Vector2(3.83947, 3.51072)
+alignment = 1
+
+[node name="TextureButton" type="TextureButton" parent="StageDetails/MonsterContainer"]
+layout_mode = 2
+texture_normal = ExtResource("14_8ojmt")
+
+[node name="TextureRect" type="TextureRect" parent="StageDetails/MonsterContainer/TextureButton"]
+layout_mode = 0
+offset_left = 6.31601
+offset_top = 7.59498
+offset_right = 21.316
+offset_bottom = 21.595
+texture = ExtResource("15_ot0ms")
+
+[node name="TextureButton2" type="TextureButton" parent="StageDetails/MonsterContainer"]
+layout_mode = 2
+texture_normal = ExtResource("14_8ojmt")
+
+[node name="TextureRect" type="TextureRect" parent="StageDetails/MonsterContainer/TextureButton2"]
+layout_mode = 0
+offset_left = 6.31601
+offset_top = 7.59498
+offset_right = 21.316
+offset_bottom = 21.595
+texture = ExtResource("15_ot0ms")
+
+[node name="TextureButton3" type="TextureButton" parent="StageDetails/MonsterContainer"]
+layout_mode = 2
+texture_normal = ExtResource("14_8ojmt")
+
+[node name="TextureRect" type="TextureRect" parent="StageDetails/MonsterContainer/TextureButton3"]
+layout_mode = 0
+offset_left = 6.31601
+offset_top = 7.59498
+offset_right = 21.316
+offset_bottom = 21.595
+texture = ExtResource("15_ot0ms")
+
+[node name="TextureButton4" type="TextureButton" parent="StageDetails/MonsterContainer"]
+layout_mode = 2
+texture_normal = ExtResource("14_8ojmt")
+
+[node name="TextureRect" type="TextureRect" parent="StageDetails/MonsterContainer/TextureButton4"]
+layout_mode = 0
+offset_left = 5.5764
+offset_top = 5.412
+offset_right = 20.5764
+offset_bottom = 22.412
+texture = ExtResource("16_oabpg")

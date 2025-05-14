@@ -232,7 +232,7 @@ func update_profile_picture(profile_id):
 
 # Button handlers
 func _on_journey_mode_button_pressed():
-    get_tree().change_scene_to_file("res://Scenes/BattleScene.tscn")
+    get_tree().change_scene_to_file("res://Scenes/DungeonSelection.tscn")
 
 func _on_modules_button_pressed():
     # Placeholder for modules screen
