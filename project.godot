@@ -13,10 +13,11 @@ config_version=5
 config/name="Lexia"
 config/description="dyslexia web 2d gamification"
 config/version="1.0"
-run/main_scene="uid://d1cb4djmat1dj"
+run/main_scene="uid://cbpwvuj8kdyod"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="uid://dkkb8nek5d6fs"
 x`run/main_scene="uid://cbpwvuj8kdyod"
+run/icon="res://gui/lexiagamelogo.png"
 
 [audio]
 

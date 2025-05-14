@@ -1,6 +1,6 @@
 [gd_scene load_steps=13 format=3 uid="uid://sdyk7ldijega"]
 
-[ext_resource type="Script" uid="uid://t3y57n5oleps" path="res://Scripts/DungeonSelectionManager.gd" id="1_bfmdj"]
+[ext_resource type="Script" uid="uid://t3y57n5oleps" path="res://Scripts/Manager/DungeonSelectionManager.gd" id="1_bfmdj"]
 [ext_resource type="Texture2D" uid="uid://chfkysvsxt4eg" path="res://gui/Update/Backgrounds/Plains_Level.png" id="2_bu21u"]
 [ext_resource type="Texture2D" uid="uid://bx1y3wrexv02d" path="res://gui/dungeonselection/next.png" id="2_pu3ti"]
 [ext_resource type="Texture2D" uid="uid://dds117r721ew8" path="res://gui/dungeonselection/previous.png" id="3_e1jkr"]

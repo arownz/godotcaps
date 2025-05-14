@@ -128,21 +128,6 @@ func update_stage_info():
 	
 	var dungeon_name = dungeon_names.get(dungeon_num, "Dungeon " + str(dungeon_num))
 	stage_info_label.text = dungeon_name + " - Stage " + str(stage_num)
-	
-	# Update background based on dungeon
-	update_background(dungeon_num)
-
-func update_background(dungeon_num: int):
-	# Get the background texture node
-	var background = battle_scene.get_node("Background")
-	
-	# Try to load the appropriate background texture
-	var background_path = "res://gui/Backgrounds/Dungeon" + str(dungeon_num) + "_background.png"
-	if ResourceLoader.exists(background_path):
-		background.texture = load(background_path)
-	else:
-		# Fallback to default background
-		background.texture = load("res://gui/Backgrounds/Dungeon1_background.png")
 
 func show_fight_animation(callback = null):
 	var fight_label = battle_scene.get_node("MainContainer/BattleAreaContainer/FightLabel")

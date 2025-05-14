@@ -28,27 +28,33 @@ var enemy_resources = {}
 var enemy_types = {
 	"dungeon1": {
 		"normal": {
-			"names": ["Slime"],
+			"names": ["Evil Slime"],
 			"health_multiplier": 1.0,
 			"damage_multiplier": 1.0,
 			"exp_reward": 10
 		},
 		"elite": {
-			"names": ["Giant Slime"],
+			"names": ["Poison Slime"],
 			"health_multiplier": 2.0,
 			"damage_multiplier": 1.5,
 			"exp_reward": 25
 		},
-		"boss": {
-			"names": ["King Slime"],
+		"epic": {
+			"names": ["Rimuru Slime"],
 			"health_multiplier": 3.0,
 			"damage_multiplier": 2.0,
 			"exp_reward": 50
+		},
+		"boss": {
+			"names": ["Evil Treant"],
+			"health_multiplier": 3.0,
+			"damage_multiplier": 2.5,
+			"exp_reward": 75
 		}
 	},
 	"dungeon2": {
 		"normal": {
-			"names": ["Snake"],
+			"names": ["Evil Snake"],
 			"health_multiplier": 1.2,
 			"damage_multiplier": 1.2,
 			"exp_reward": 15
@@ -59,30 +65,42 @@ var enemy_types = {
 			"damage_multiplier": 1.7,
 			"exp_reward": 35
 		},
-		"boss": {
-			"names": ["Basilisk"],
+		"epic": {
+			"names": ["Mamba"],
 			"health_multiplier": 3.2,
 			"damage_multiplier": 2.2,
+			"exp_reward": 35
+		},
+		"boss": {
+			"names": ["Evil Treant"],
+			"health_multiplier": 3.2,
+			"damage_multiplier": 2.7,
 			"exp_reward": 75
 		}
 	},
 	"dungeon3": {
 		"normal": {
-			"names": ["Goblin"],
+			"names": ["Evil Boar"],
 			"health_multiplier": 1.5,
 			"damage_multiplier": 1.5,
 			"exp_reward": 20
 		},
 		"elite": {
-			"names": ["Goblin Warrior"],
+			"names": ["Wilder Boar"],
 			"health_multiplier": 2.5,
 			"damage_multiplier": 2.0,
 			"exp_reward": 45
 		},
-		"boss": {
-			"names": ["Goblin King"],
+		"epic": {
+			"names": ["Cobra"],
 			"health_multiplier": 3.5,
 			"damage_multiplier": 2.5,
+			"exp_reward": 35
+		},
+		"boss": {
+			"names": ["Evil Treant"],
+			"health_multiplier": 4.5,
+			"damage_multiplier": 3.0,
 			"exp_reward": 100
 		}
 	}
@@ -156,25 +174,31 @@ func _setup_enemy_fallback():
 	
 	# Simplified enemy types for testing
 	enemy_types = {
-		"dungeon1": {
-			"normal": {
-				"names": ["Slime"],
-				"health_multiplier": 1.0,
-				"damage_multiplier": 1.0,
-				"exp_reward": 10
-			},
-			"elite": {
-				"names": ["Giant Slime"],
-				"health_multiplier": 2.0,
-				"damage_multiplier": 1.5,
-				"exp_reward": 25
-			},
-			"boss": {
-				"names": ["King Slime"],
-				"health_multiplier": 3.0,
-				"damage_multiplier": 2.0,
-				"exp_reward": 50
-			}
+			"dungeon1": {
+		"normal": {
+			"names": ["Evil Slime"],
+			"health_multiplier": 1.0,
+			"damage_multiplier": 1.0,
+			"exp_reward": 10
+		},
+		"elite": {
+			"names": ["Poison Slime"],
+			"health_multiplier": 2.0,
+			"damage_multiplier": 1.5,
+			"exp_reward": 25
+		},
+		"epic": {
+			"names": ["Rimuru Slime"],
+			"health_multiplier": 3.0,
+			"damage_multiplier": 2.0,
+			"exp_reward": 50
+		},
+		"boss": {
+			"names": ["Evil Treant"],
+			"health_multiplier": 3.0,
+			"damage_multiplier": 2.5,
+			"exp_reward": 75
+		}
 		}
 	}
 	

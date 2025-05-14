@@ -73,7 +73,7 @@ func add_message(text):
 	
 	# Add custom style for the background
 	var style = StyleBoxTexture.new()
-	style.texture = load("res://gui/ui_2.png")
+	style.texture = load("res://gui/Update/UI/ui_2.png")
 	# Fix: Use content_margin_* properties instead of margin_*
 	style.content_margin_left = 5
 	style.content_margin_right = 5

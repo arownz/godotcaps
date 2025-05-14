@@ -1,8 +1,8 @@
 [gd_scene load_steps=19 format=3 uid="uid://bysyq46j6ycis"]
 
-[ext_resource type="Texture2D" uid="uid://ccdwoylh104gc" path="res://gui/ProfileScene/ui 8.png" id="1_mn5kv"]
 [ext_resource type="Script" uid="uid://caa84ntbsorb8" path="res://Scripts/ProfilePopUp.gd" id="1_script"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="2_73kok"]
+[ext_resource type="Texture2D" uid="uid://0con8ixqofpr" path="res://gui/Update/UI/ui 8.png" id="2_rwnca"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="3_uyv5l"]
 [ext_resource type="Texture2D" uid="uid://dry2umw3ejgro" path="res://gui/profile.png" id="5_6yy5g"]
 [ext_resource type="Texture2D" uid="uid://cjvdyfgftwdhb" path="res://gui/ProfileScene/close icon.png" id="6_close"]
@@ -103,7 +103,7 @@ offset_right = 43.0
 offset_bottom = 43.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("1_mn5kv")
+texture = ExtResource("2_rwnca")
 expand_mode = 1
 stretch_mode = 6
 

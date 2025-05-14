@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://mtijiybm8oea"]
+
+[ext_resource type="Script" uid="uid://dpufif2akuw3w" path="res://Scripts/enemy_sprite_controller.gd" id="2_a5y0d"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_kyiu6"]
+load_path = "res://.godot/imported/Slime.png-352c727f6069a3c269fcf05ad0c399c6.ctex"
+
+[node name="Enemy" type="AnimatedSprite2D"]
+animation = &""
+script = ExtResource("2_a5y0d")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = SubResource("CompressedTexture2D_kyiu6")

@@ -1,6 +1,7 @@
-[gd_scene load_steps=57 format=3 uid="uid://d1cb4djmat1dj"]
+[gd_scene load_steps=58 format=3 uid="uid://d1cb4djmat1dj"]
 
 [ext_resource type="Texture2D" uid="uid://cmgrkntjwnvvr" path="res://Sprites/Frame Sprites/Slime.png" id="1_lv3fd"]
+[ext_resource type="Script" uid="uid://4gerx64y471n" path="res://Scripts/dungeon_1_map.gd" id="1_ocdpx"]
 [ext_resource type="Texture2D" uid="uid://chfkysvsxt4eg" path="res://gui/Update/Backgrounds/Plains_Level.png" id="1_shrlp"]
 [ext_resource type="Texture2D" uid="uid://n08ji1i2co16" path="res://gui/Update/UI/small button.png" id="3_st54u"]
 [ext_resource type="Texture2D" uid="uid://da6rdtvo1nlwj" path="res://gui/Update/icons/return.png" id="4_taxvn"]
@@ -284,6 +285,7 @@ animations = [{
 }]
 
 [node name="DungeonMap1" type="Node2D"]
+script = ExtResource("1_ocdpx")
 
 [node name="TextureRect" type="TextureRect" parent="."]
 offset_right = 1463.0
@@ -344,6 +346,7 @@ texture_normal = ExtResource("6_o4t43")
 
 [node name="MobIndicator" type="TextureRect" parent="Stage2"]
 visible = false
+layout_mode = 0
 offset_left = 0.609256
 offset_top = -16.2976
 offset_right = 21.6093
@@ -369,6 +372,7 @@ texture_normal = ExtResource("6_o4t43")
 
 [node name="MobIndicator" type="TextureRect" parent="Stage3"]
 visible = false
+layout_mode = 0
 offset_left = 0.609256
 offset_top = -16.2976
 offset_right = 21.6093
@@ -394,6 +398,7 @@ texture_normal = ExtResource("6_o4t43")
 
 [node name="MobIndicator" type="TextureRect" parent="Stage4"]
 visible = false
+layout_mode = 0
 offset_left = 0.609256
 offset_top = -16.2976
 offset_right = 21.6093
@@ -419,6 +424,7 @@ texture_normal = ExtResource("6_o4t43")
 
 [node name="BossIndicator" type="TextureRect" parent="Stage5"]
 visible = false
+layout_mode = 0
 offset_left = 0.609256
 offset_top = -16.2976
 offset_right = 21.6093
