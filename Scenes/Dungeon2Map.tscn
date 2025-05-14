@@ -344,6 +344,7 @@ texture_normal = ExtResource("5_8wno4")
 
 [node name="MobIndicator" type="TextureRect" parent="Stage2"]
 visible = false
+layout_mode = 0
 offset_left = 0.609256
 offset_top = -16.2976
 offset_right = 21.6093
@@ -369,6 +370,7 @@ texture_normal = ExtResource("5_8wno4")
 
 [node name="MobIndicator" type="TextureRect" parent="Stage3"]
 visible = false
+layout_mode = 0
 offset_left = 0.609256
 offset_top = -16.2976
 offset_right = 21.6093
@@ -394,6 +396,7 @@ texture_normal = ExtResource("5_8wno4")
 
 [node name="MobIndicator" type="TextureRect" parent="Stage4"]
 visible = false
+layout_mode = 0
 offset_left = 0.609256
 offset_top = -16.2976
 offset_right = 21.6093
@@ -419,6 +422,7 @@ texture_normal = ExtResource("5_8wno4")
 
 [node name="BossIndicator" type="TextureRect" parent="Stage5"]
 visible = false
+layout_mode = 0
 offset_left = 0.609256
 offset_top = -16.2976
 offset_right = 21.6093
