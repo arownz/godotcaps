@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dc6lqw6dmfe1y" path="res://Scripts/EndgameScreen.gd" id="1_mgr3d"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="2_6d17n"]
-[ext_resource type="Texture2D" uid="uid://bc0tebgiiloa6" path="res://gui/ui_2.png" id="2_frm3f"]
+[ext_resource type="Texture2D" uid="uid://rgl03eh75egv" path="res://gui/Update/UI/victory UI.png" id="2_frm3f"]
 
 [node name="EndgameScreen" type="Control"]
 layout_mode = 3
@@ -22,7 +22,7 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -283.0
-offset_top = -175.0
+offset_top = -355.0
 offset_right = 344.0
 offset_bottom = 268.0
 grow_horizontal = 2
@@ -34,10 +34,10 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 20.0
-offset_top = 20.0
-offset_right = -20.0
-offset_bottom = -20.0
+offset_left = 155.0
+offset_top = 47.0
+offset_right = -142.0
+offset_bottom = -11.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 20
@@ -47,7 +47,7 @@ alignment = 1
 layout_mode = 2
 theme_override_colors/font_color = Color(0.101961, 0.101961, 0.101961, 1)
 theme_override_fonts/font = ExtResource("2_6d17n")
-theme_override_font_sizes/font_size = 48
+theme_override_font_sizes/font_size = 30
 text = "Victory!"
 horizontal_alignment = 1
 
@@ -76,7 +76,7 @@ size_flags_horizontal = 4
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("2_6d17n")
 theme_override_font_sizes/font_size = 24
-text = "Continue"
+text = "Next"
 
 [node name="ButtonsContainer" type="HBoxContainer" parent="ResultPanel/VBoxContainer"]
 layout_mode = 2
@@ -88,14 +88,14 @@ custom_minimum_size = Vector2(150, 60)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_6d17n")
 theme_override_font_sizes/font_size = 24
-text = "Restart"
+text = "Retry"
 
 [node name="QuitButton" type="Button" parent="ResultPanel/VBoxContainer/ButtonsContainer"]
 custom_minimum_size = Vector2(150, 60)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_6d17n")
 theme_override_font_sizes/font_size = 24
-text = "Quit"
+text = "Return"
 
 [connection signal="pressed" from="ResultPanel/VBoxContainer/ButtonContainer/ContinueButton" to="." method="_on_continue_button_pressed"]
 [connection signal="pressed" from="ResultPanel/VBoxContainer/ButtonsContainer/RestartButton" to="." method="_on_restart_button_pressed"]
