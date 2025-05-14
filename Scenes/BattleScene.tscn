@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=3 uid="uid://cfead7bcuslp4"]
+[gd_scene load_steps=32 format=3 uid="uid://cfead7bcuslp4"]
 
 [ext_resource type="Texture2D" uid="uid://bs7axy8rkm4ei" path="res://Sprites/Frame Sprites/Lexia.png" id="3_kwfy1"]
 [ext_resource type="Script" uid="uid://cnnycoui3l3ef" path="res://Scripts/battlescene.gd" id="3_vhj2j"]
@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://clkh35ycdmutp" path="res://gui/Update/icons/player progress icon.png" id="6_kwfy1"]
 [ext_resource type="Texture2D" uid="uid://bj14mm05c4i87" path="res://gui/ui_4.png" id="6_r8yha"]
 [ext_resource type="Texture2D" uid="uid://bmjd8nkagj08e" path="res://gui/Update/UI/long uncolored button.png" id="7_2tp6q"]
+[ext_resource type="Texture2D" uid="uid://c8vnqmxwy0lsw" path="res://gui/Update/icons/small settings.png" id="7_ixjr5"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="8_2tp6q"]
 [ext_resource type="Texture2D" uid="uid://d1kxcxch535m0" path="res://gui/Backgrounds/Dungeon1_background.png" id="11_x73uj"]
 
@@ -442,12 +443,21 @@ theme_override_font_sizes/font_size = 25
 text = "D1: The Plain - Stage 1"
 horizontal_alignment = 1
 
+[node name="TextureButton" type="TextureButton" parent="MainContainer/BattleAreaContainer"]
+layout_mode = 0
+offset_left = 31.0
+offset_top = 40.0
+offset_right = 41.0
+offset_bottom = 50.0
+scale = Vector2(4.30176, 4.19075)
+texture_normal = ExtResource("7_ixjr5")
+
 [node name="StatsToggleButton" type="Button" parent="MainContainer/BattleAreaContainer"]
 layout_mode = 0
-offset_left = 40.0
-offset_top = 45.0
-offset_right = 286.0
-offset_bottom = 85.0
+offset_left = 88.0
+offset_top = 41.0
+offset_right = 334.0
+offset_bottom = 81.0
 theme_override_fonts/font = ExtResource("4_akpf4")
 theme_override_font_sizes/font_size = 18
 theme_override_styles/normal = SubResource("StyleBoxFlat_stats_toggle")

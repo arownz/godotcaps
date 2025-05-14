@@ -62,14 +62,11 @@ animations = [{
 }],
 "loop": true,
 "name": &"idle",
-"speed": 5.0
+"speed": 10.0
 }]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_8e205"]
-content_margin_left = 0.0
-content_margin_top = 0.0
-content_margin_right = 0.0
-content_margin_bottom = 0.0
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8e205"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -129,6 +126,7 @@ position = Vector2(586, 452)
 scale = Vector2(5.55488, 5.63407)
 sprite_frames = SubResource("SpriteFrames_m7n2d")
 animation = &"idle"
+autoplay = "idle"
 
 [node name="ProfileButton" type="TextureButton" parent="."]
 layout_mode = 1
@@ -151,15 +149,15 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -44.5
-offset_top = -44.5
-offset_right = 51.5
-offset_bottom = 50.5
+offset_left = -45.5
+offset_top = -45.5
+offset_right = 52.5
+offset_bottom = 51.5
 grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(0.923117, 0.93701)
 mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxEmpty_8e205")
+theme_override_styles/panel = SubResource("StyleBoxFlat_8e205")
 
 [node name="ProfileLabel" type="Label" parent="ProfileButton"]
 visible = false
@@ -251,10 +249,10 @@ layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_left = 30.0
-offset_top = -132.0
-offset_right = 160.0
-offset_bottom = -32.0
+offset_left = 107.0
+offset_top = -121.0
+offset_right = 237.0
+offset_bottom = -21.0
 grow_vertical = 0
 texture_normal = ExtResource("8_7467j")
 ignore_texture_size = true
@@ -447,10 +445,10 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -146.0
-offset_top = -126.0
-offset_right = -16.0
-offset_bottom = -26.0
+offset_left = -241.0
+offset_top = -119.0
+offset_right = -111.0
+offset_bottom = -19.0
 grow_horizontal = 0
 grow_vertical = 0
 texture_normal = ExtResource("8_7467j")

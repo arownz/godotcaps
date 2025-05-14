@@ -87,7 +87,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.101961, 0.101961, 0.101961, 1)
 theme_override_fonts/font = ExtResource("2_8hfec")
 theme_override_font_sizes/font_size = 24
-text = "Say the word to counter the attack!"
+text = "Speak the word to counter the attack!"
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="ChallengePanel/VBoxContainer"]
@@ -265,7 +265,10 @@ horizontal_alignment = 1
 
 [node name="StatusLabel" type="Label" parent="ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 0.701961)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 0
+theme_override_constants/shadow_outline_size = 0
 theme_override_fonts/font = ExtResource("2_8hfec")
 theme_override_font_sizes/font_size = 15
 text = "Speak the random word to counter!"
