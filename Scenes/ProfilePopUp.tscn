@@ -1,47 +1,94 @@
-[gd_scene load_steps=12 format=3 uid="uid://bysyq46j6ycis"]
+[gd_scene load_steps=19 format=3 uid="uid://bysyq46j6ycis"]
 
 [ext_resource type="Texture2D" uid="uid://ccdwoylh104gc" path="res://gui/ProfileScene/ui 8.png" id="1_mn5kv"]
 [ext_resource type="Script" uid="uid://caa84ntbsorb8" path="res://Scripts/ProfilePopUp.gd" id="1_script"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="2_73kok"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="3_uyv5l"]
-[ext_resource type="Texture2D" uid="uid://dljqigmy8f7k6" path="res://Sprites/Player/player.png" id="4_player"]
 [ext_resource type="Texture2D" uid="uid://dry2umw3ejgro" path="res://gui/profile.png" id="5_6yy5g"]
 [ext_resource type="Texture2D" uid="uid://cjvdyfgftwdhb" path="res://gui/ProfileScene/close icon.png" id="6_close"]
 [ext_resource type="Texture2D" uid="uid://yernxap6enqq" path="res://gui/ProfileScene/edit 1.png" id="6_rwnca"]
 [ext_resource type="Texture2D" uid="uid://dwgcjv1wpp0hw" path="res://gui/ProfileScene/copy UID.png" id="7_ampbo"]
 [ext_resource type="Texture2D" uid="uid://upv1mak0rswy" path="res://gui/ProfileScene/bronze medal.png" id="7_medal"]
 [ext_resource type="Texture2D" uid="uid://d025ghojxo8wn" path="res://gui/ProfileScene/highest level 1.png" id="8_d7ibu"]
+[ext_resource type="Texture2D" uid="uid://bs7axy8rkm4ei" path="res://Sprites/Frame Sprites/Lexia.png" id="10_rwnca"]
 
-[node name="ProfilePopUp" type="Control"]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[sub_resource type="AtlasTexture" id="AtlasTexture_ampbo"]
+atlas = ExtResource("10_rwnca")
+region = Rect2(0, 0, 82, 82)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r1smr"]
+atlas = ExtResource("10_rwnca")
+region = Rect2(82, 0, 82, 82)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vhpl5"]
+atlas = ExtResource("10_rwnca")
+region = Rect2(164, 0, 82, 82)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kmls2"]
+atlas = ExtResource("10_rwnca")
+region = Rect2(246, 0, 82, 82)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tilb2"]
+atlas = ExtResource("10_rwnca")
+region = Rect2(328, 0, 82, 82)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_82scp"]
+atlas = ExtResource("10_rwnca")
+region = Rect2(410, 0, 82, 82)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_ob8vh"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ampbo")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_r1smr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vhpl5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kmls2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tilb2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_82scp")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 10.0
+}]
+
+[node name="ProfilePopUp" type="Node2D"]
 script = ExtResource("1_script")
 
 [node name="Transparent_ColorRect" type="ColorRect" parent="."]
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 781.0
+offset_top = 415.0
+offset_right = 781.0
+offset_bottom = 415.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.5)
 
 [node name="ProfileContainer" type="Control" parent="."]
 custom_minimum_size = Vector2(750, 600)
-layout_mode = 1
+layout_mode = 3
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -374.0
-offset_top = -347.0
-offset_right = 376.0
-offset_bottom = 334.0
+offset_left = 407.0
+offset_top = 68.0
+offset_right = 1157.0
+offset_bottom = 749.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -348,15 +395,12 @@ text = "99
 "
 horizontal_alignment = 1
 
-[node name="CharacterImage" type="TextureRect" parent="ProfileContainer/CharacterArea"]
-layout_mode = 0
-offset_left = 18.0
-offset_top = 53.0
-offset_right = 185.0
-offset_bottom = 206.0
-texture = ExtResource("4_player")
-expand_mode = 1
-stretch_mode = 6
+[node name="CharacterImage" type="AnimatedSprite2D" parent="ProfileContainer/CharacterArea"]
+position = Vector2(100, 139)
+scale = Vector2(4.95427, 4.43598)
+sprite_frames = SubResource("SpriteFrames_ob8vh")
+animation = &"idle"
+autoplay = "idle"
 
 [node name="DungeonArea" type="Control" parent="ProfileContainer"]
 layout_mode = 1

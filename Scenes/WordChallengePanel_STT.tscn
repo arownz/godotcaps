@@ -2,21 +2,7 @@
 
 [ext_resource type="Script" uid="uid://5556075jac2c" path="res://Scripts/WordChallengePanel_STT.gd" id="1_4yifo"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="2_8hfec"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lj5j4"]
-bg_color = Color(0.945098, 0.945098, 0.945098, 1)
-border_width_left = 4
-border_width_top = 4
-border_width_right = 4
-border_width_bottom = 4
-border_color = Color(0.141176, 0.141176, 0.141176, 1)
-corner_radius_top_left = 15
-corner_radius_top_right = 15
-corner_radius_bottom_right = 15
-corner_radius_bottom_left = 15
-shadow_color = Color(0, 0, 0, 0.313726)
-shadow_size = 8
-shadow_offset = Vector2(2, 2)
+[ext_resource type="Texture2D" uid="uid://dlusv4b6bm07h" path="res://gui/Update/UI/ui 10.png" id="2_ys01y"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tts_panel"]
 bg_color = Color(0.862745, 0.901961, 0.929412, 1)
@@ -57,7 +43,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_4yifo")
 
-[node name="ChallengePanel" type="Panel" parent="."]
+[node name="ChallengePanel" type="TextureRect" parent="."]
 custom_minimum_size = Vector2(800, 600)
 layout_mode = 1
 anchors_preset = 8
@@ -71,7 +57,7 @@ offset_right = 400.0
 offset_bottom = 300.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_lj5j4")
+texture = ExtResource("2_ys01y")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="ChallengePanel"]
 layout_mode = 1
@@ -288,9 +274,11 @@ horizontal_alignment = 1
 [node name="APIStatusLabel" type="Label" parent="ChallengePanel/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.498039, 0.498039, 0.498039, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_8hfec")
 theme_override_font_sizes/font_size = 16
 text = "Connecting to random word API..."
+horizontal_alignment = 1
 
 [connection signal="pressed" from="ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer/TTSButton" to="." method="_on_tts_button_pressed"]
 [connection signal="pressed" from="ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer/TTSSettingsButton" to="." method="_on_tts_settings_button_pressed"]

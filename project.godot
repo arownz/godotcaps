@@ -15,7 +15,7 @@ config/description="dyslexia web 2d gamification"
 config/version="1.0"
 run/main_scene="uid://d1cb4djmat1dj"
 config/features=PackedStringArray("4.4", "GL Compatibility")
-config/icon="res://gui/lexiagamelogo.png"
+config/icon="uid://dkkb8nek5d6fs"
 x`run/main_scene="uid://cbpwvuj8kdyod"
 
 [audio]

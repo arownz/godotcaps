@@ -1,6 +1,7 @@
-[gd_scene load_steps=16 format=3 uid="uid://b16uc2y8w57k1"]
+[gd_scene load_steps=17 format=3 uid="uid://b16uc2y8w57k1"]
 
 [ext_resource type="Script" uid="uid://dysw762c4jib3" path="res://Scripts/ProfilePicturesPopup.gd" id="1_popup_script"]
+[ext_resource type="Texture2D" uid="uid://clo1votqbo4bs" path="res://gui/Update/UI/ui 13.png" id="2_kxfne"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="2_popup_font"]
 [ext_resource type="Texture2D" uid="uid://dkccpks7klx5p" path="res://gui/ProfileScene/Profile/portrait13.png" id="3_portrait14"]
 [ext_resource type="Texture2D" uid="uid://dr3do7cagamyh" path="res://gui/ProfileScene/Profile/portrait15.png" id="4_portrait15"]
@@ -34,7 +35,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.0941176)
 
-[node name="Panel" type="Panel" parent="."]
+[node name="Panel" type="TextureRect" parent="."]
 custom_minimum_size = Vector2(500, 400)
 layout_mode = 1
 anchors_preset = 8
@@ -48,6 +49,7 @@ offset_right = 250.0
 offset_bottom = 200.0
 grow_horizontal = 2
 grow_vertical = 2
+texture = ExtResource("2_kxfne")
 
 [node name="CloseButton" type="TextureButton" parent="Panel"]
 layout_mode = 1
