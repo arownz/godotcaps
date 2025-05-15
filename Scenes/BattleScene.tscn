@@ -450,6 +450,7 @@ offset_top = 40.0
 offset_right = 41.0
 offset_bottom = 50.0
 scale = Vector2(4.30176, 4.19075)
+mouse_default_cursor_shape = 2
 texture_normal = ExtResource("7_ixjr5")
 
 [node name="StatsToggleButton" type="Button" parent="MainContainer/BattleAreaContainer"]
@@ -670,6 +671,7 @@ custom_minimum_size = Vector2(500, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 3
+mouse_default_cursor_shape = 2
 texture_normal = ExtResource("7_2tp6q")
 ignore_texture_size = true
 stretch_mode = 5

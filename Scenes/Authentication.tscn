@@ -77,6 +77,7 @@ alignment = 1
 custom_minimum_size = Vector2(200, 180)
 layout_mode = 2
 size_flags_horizontal = 4
+size_flags_stretch_ratio = 0.0
 texture = ExtResource("3_ine05")
 expand_mode = 1
 stretch_mode = 5
@@ -145,6 +146,7 @@ theme_override_constants/separation = 4
 
 [node name="TabContainer" type="TabContainer" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer"]
 layout_mode = 2
+mouse_default_cursor_shape = 2
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 20
 current_tab = 0
@@ -228,6 +230,7 @@ layout_mode = 2
 [node name="LoginButton" type="Button" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login"]
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
+mouse_default_cursor_shape = 2
 theme_override_fonts/font = ExtResource("3_4bnr5")
 theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_axc1p")
@@ -257,6 +260,7 @@ size_flags_horizontal = 3
 [node name="SignInGoogleButton" type="Button" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login"]
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
+mouse_default_cursor_shape = 2
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 18
 

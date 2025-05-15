@@ -300,6 +300,7 @@ offset_top = 663.0
 offset_right = 119.0
 offset_bottom = 690.0
 scale = Vector2(3.76293, 3.83557)
+mouse_default_cursor_shape = 2
 texture_normal = ExtResource("2_feumf")
 
 [node name="TextureRect" type="TextureRect" parent="TextureRect/BackButton"]
@@ -317,6 +318,7 @@ offset_top = 311.0
 offset_right = 239.0
 offset_bottom = 320.0
 scale = Vector2(6.5654, 6.5654)
+mouse_default_cursor_shape = 2
 texture_normal = ExtResource("4_0olnv")
 
 [node name="MobIndicator" type="TextureRect" parent="Stage1"]
@@ -342,6 +344,7 @@ offset_top = 583.0
 offset_right = 431.0
 offset_bottom = 592.0
 scale = Vector2(6.5654, 6.5654)
+mouse_default_cursor_shape = 2
 texture_normal = ExtResource("5_8wno4")
 
 [node name="MobIndicator" type="TextureRect" parent="Stage2"]
@@ -368,6 +371,7 @@ offset_top = 364.0
 offset_right = 748.0
 offset_bottom = 373.0
 scale = Vector2(6.5654, 6.5654)
+mouse_default_cursor_shape = 2
 texture_normal = ExtResource("5_8wno4")
 
 [node name="MobIndicator" type="TextureRect" parent="Stage3"]
@@ -394,6 +398,7 @@ offset_top = 586.0
 offset_right = 1016.0
 offset_bottom = 595.0
 scale = Vector2(6.5654, 6.5654)
+mouse_default_cursor_shape = 2
 texture_normal = ExtResource("5_8wno4")
 
 [node name="MobIndicator" type="TextureRect" parent="Stage4"]
@@ -420,6 +425,7 @@ offset_top = 309.0
 offset_right = 1233.0
 offset_bottom = 318.0
 scale = Vector2(6.5654, 6.5654)
+mouse_default_cursor_shape = 2
 texture_normal = ExtResource("5_8wno4")
 
 [node name="BossIndicator" type="TextureRect" parent="Stage5"]
@@ -742,17 +748,18 @@ offset_right = 20.5764
 offset_bottom = 22.412
 texture = ExtResource("16_feumf")
 
-[node name="TextureButton" type="TextureButton" parent="StageDetails"]
+[node name="FightButton" type="TextureButton" parent="StageDetails"]
 layout_mode = 0
 offset_left = 202.0
 offset_top = 679.0
 offset_right = 305.0
 offset_bottom = 701.0
 scale = Vector2(2.88017, 3.15688)
+mouse_default_cursor_shape = 2
 texture_normal = ExtResource("20_2uab6")
 texture_hover = ExtResource("21_le7wy")
 
-[node name="Label" type="Label" parent="StageDetails/TextureButton"]
+[node name="Label" type="Label" parent="StageDetails/FightButton"]
 layout_mode = 0
 offset_left = 19.7905
 offset_top = -0.316793

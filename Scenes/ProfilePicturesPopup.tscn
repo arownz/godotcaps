@@ -3,9 +3,9 @@
 [ext_resource type="Script" uid="uid://dysw762c4jib3" path="res://Scripts/ProfilePicturesPopup.gd" id="1_popup_script"]
 [ext_resource type="Texture2D" uid="uid://clo1votqbo4bs" path="res://gui/Update/UI/ui 13.png" id="2_kxfne"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="2_popup_font"]
+[ext_resource type="Texture2D" uid="uid://cmvfv5h4u7j6e" path="res://gui/Update/icons/close icon.png" id="3_kxfne"]
 [ext_resource type="Texture2D" uid="uid://dkccpks7klx5p" path="res://gui/ProfileScene/Profile/portrait13.png" id="3_portrait14"]
 [ext_resource type="Texture2D" uid="uid://dr3do7cagamyh" path="res://gui/ProfileScene/Profile/portrait15.png" id="4_portrait15"]
-[ext_resource type="Texture2D" uid="uid://cjvdyfgftwdhb" path="res://gui/ProfileScene/close icon.png" id="5_close_icon"]
 [ext_resource type="Texture2D" uid="uid://bvjr3trvmqhfh" path="res://gui/ProfileScene/Profile/portrait14.png" id="6_mg4gf"]
 [ext_resource type="Texture2D" uid="uid://byl5kwwejfev1" path="res://gui/ProfileScene/Profile/portrait16.png" id="7_kxfne"]
 [ext_resource type="Texture2D" uid="uid://cxe7eswe4tydw" path="res://gui/ProfileScene/Profile/portrait17.png" id="8_yxql3"]
@@ -56,12 +56,13 @@ layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -40.0
-offset_top = 10.0
-offset_right = -10.0
-offset_bottom = 40.0
+offset_left = -22.0
+offset_top = -10.0
+offset_right = 8.0
+offset_bottom = 20.0
 grow_horizontal = 0
-texture_normal = ExtResource("5_close_icon")
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("3_kxfne")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -96,6 +97,7 @@ grow_vertical = 2
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+mouse_default_cursor_shape = 2
 theme_override_constants/h_separation = 20
 theme_override_constants/v_separation = 20
 columns = 3
@@ -197,6 +199,7 @@ offset_right = 100.0
 offset_bottom = -20.0
 grow_horizontal = 2
 grow_vertical = 0
+mouse_default_cursor_shape = 2
 theme_override_fonts/font = ExtResource("2_popup_font")
 theme_override_font_sizes/font_size = 18
 disabled = true

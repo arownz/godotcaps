@@ -73,6 +73,7 @@ alignment = 1
 custom_minimum_size = Vector2(200, 60)
 layout_mode = 2
 size_flags_horizontal = 4
+mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("2_6d17n")
 theme_override_font_sizes/font_size = 24
@@ -86,6 +87,7 @@ alignment = 1
 [node name="RestartButton" type="Button" parent="ResultPanel/VBoxContainer/ButtonsContainer"]
 custom_minimum_size = Vector2(150, 60)
 layout_mode = 2
+mouse_default_cursor_shape = 2
 theme_override_fonts/font = ExtResource("2_6d17n")
 theme_override_font_sizes/font_size = 24
 text = "Retry"
@@ -93,6 +95,7 @@ text = "Retry"
 [node name="QuitButton" type="Button" parent="ResultPanel/VBoxContainer/ButtonsContainer"]
 custom_minimum_size = Vector2(150, 60)
 layout_mode = 2
+mouse_default_cursor_shape = 2
 theme_override_fonts/font = ExtResource("2_6d17n")
 theme_override_font_sizes/font_size = 24
 text = "Return"
