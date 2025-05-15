@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cycrvl3m41twc"
-path="res://.godot/imported/Settings mockup.png-0eb63c1ffffc184db7f627e9459cb36a.ctex"
+uid="uid://iaainiqo3tm3"
+path="res://.godot/imported/icon.png-2e2a9297b68480b94307a24c0b6a521a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://gui/Update/mockups/Settings mockup.png"
-dest_files=["res://.godot/imported/Settings mockup.png-0eb63c1ffffc184db7f627e9459cb36a.ctex"]
+source_file="res://addons/gemini_godot/icon.png"
+dest_files=["res://.godot/imported/icon.png-2e2a9297b68480b94307a24c0b6a521a.ctex"]
 
 [params]
 

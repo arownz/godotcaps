@@ -3,12 +3,12 @@
 [ext_resource type="Script" uid="uid://caa84ntbsorb8" path="res://Scripts/ProfilePopUp.gd" id="1_script"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="2_73kok"]
 [ext_resource type="Texture2D" uid="uid://0con8ixqofpr" path="res://gui/Update/UI/ui 8.png" id="2_rwnca"]
+[ext_resource type="Texture2D" uid="uid://cmvfv5h4u7j6e" path="res://gui/Update/icons/close icon.png" id="3_rwnca"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="3_uyv5l"]
 [ext_resource type="Texture2D" uid="uid://dry2umw3ejgro" path="res://gui/profile.png" id="5_6yy5g"]
-[ext_resource type="Texture2D" uid="uid://cjvdyfgftwdhb" path="res://gui/ProfileScene/close icon.png" id="6_close"]
-[ext_resource type="Texture2D" uid="uid://yernxap6enqq" path="res://gui/ProfileScene/edit 1.png" id="6_rwnca"]
-[ext_resource type="Texture2D" uid="uid://dwgcjv1wpp0hw" path="res://gui/ProfileScene/copy UID.png" id="7_ampbo"]
 [ext_resource type="Texture2D" uid="uid://upv1mak0rswy" path="res://gui/ProfileScene/bronze medal.png" id="7_medal"]
+[ext_resource type="Texture2D" uid="uid://dpejfssp2t44k" path="res://gui/Update/icons/edit name.png" id="7_rwnca"]
+[ext_resource type="Texture2D" uid="uid://d1y2su33nhh8p" path="res://gui/Update/icons/copy UID.png" id="8_ampbo"]
 [ext_resource type="Texture2D" uid="uid://d025ghojxo8wn" path="res://gui/ProfileScene/highest level 1.png" id="8_d7ibu"]
 [ext_resource type="Texture2D" uid="uid://bs7axy8rkm4ei" path="res://Sprites/Frame Sprites/Lexia.png" id="10_rwnca"]
 
@@ -120,7 +120,7 @@ offset_top = -46.0
 offset_right = 52.0
 offset_bottom = 8.0
 grow_horizontal = 0
-texture_normal = ExtResource("6_close")
+texture_normal = ExtResource("3_rwnca")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -175,11 +175,11 @@ text = "Loading..."
 layout_mode = 0
 offset_left = 494.0
 offset_top = -3.0
-offset_right = 543.0
-offset_bottom = 46.0
-scale = Vector2(0.529192, 0.72086)
+offset_right = 502.0
+offset_bottom = 5.0
+scale = Vector2(4.06308, 4.64415)
 tooltip_text = "Edit Username"
-texture_normal = ExtResource("6_rwnca")
+texture_normal = ExtResource("7_rwnca")
 
 [node name="EmailLabel" type="Label" parent="ProfileContainer/UserInfoArea"]
 layout_mode = 0
@@ -226,11 +226,11 @@ text = "Loading..."
 layout_mode = 0
 offset_left = 495.0
 offset_top = 46.0
-offset_right = 544.0
-offset_bottom = 95.0
-scale = Vector2(0.533295, 0.64483)
+offset_right = 503.0
+offset_bottom = 54.0
+scale = Vector2(3.64979, 4.41312)
 tooltip_text = "Copy UID to Clipboard"
-texture_normal = ExtResource("7_ampbo")
+texture_normal = ExtResource("8_ampbo")
 
 [node name="RankLabel" type="Label" parent="ProfileContainer/UserInfoArea"]
 layout_mode = 0
