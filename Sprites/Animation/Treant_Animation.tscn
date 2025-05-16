@@ -243,4 +243,4 @@ scale = Vector2(3.0282, 3.24591)
 sprite_frames = SubResource("SpriteFrames_j63xv")
 animation = &"idle"
 autoplay = "idle"
-frame_progress = 0.488164
+frame_progress = 0.271845

@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://b16uc2y8w57k1"]
+[gd_scene load_steps=18 format=3 uid="uid://b16uc2y8w57k1"]
 
 [ext_resource type="Script" uid="uid://dysw762c4jib3" path="res://Scripts/ProfilePicturesPopup.gd" id="1_popup_script"]
 [ext_resource type="Texture2D" uid="uid://clo1votqbo4bs" path="res://gui/Update/UI/ui 13.png" id="2_kxfne"]
@@ -16,6 +16,7 @@
 [ext_resource type="Texture2D" uid="uid://bqn15k8rwnsxf" path="res://gui/ProfileScene/Profile/portrait22.png" id="13_pwh4d"]
 [ext_resource type="Texture2D" uid="uid://5o1l1bijp3ey" path="res://gui/ProfileScene/Profile/portrait23.png" id="14_almhk"]
 [ext_resource type="Texture2D" uid="uid://dyj20er5r25q" path="res://gui/ProfileScene/Profile/portrait24.png" id="15_u6s02"]
+[ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="17_yxql3"]
 
 [node name="ProfilePicturesPopup" type="Control"]
 layout_mode = 3
@@ -193,17 +194,22 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -100.0
-offset_top = -50.0
-offset_right = 100.0
-offset_bottom = -20.0
+offset_left = -121.0
+offset_top = -62.0
+offset_right = 122.0
+offset_bottom = -2.0
 grow_horizontal = 2
 grow_vertical = 0
 mouse_default_cursor_shape = 2
+theme_override_colors/icon_normal_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("2_popup_font")
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 12
 disabled = true
 text = "Confirm Selection"
+icon = ExtResource("17_yxql3")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [connection signal="pressed" from="Panel/CloseButton" to="." method="_on_close_button_pressed"]
 [connection signal="pressed" from="Panel/ScrollContainer/GridContainer/Portrait13" to="." method="_on_portrait_button_pressed" binds= ["13"]]

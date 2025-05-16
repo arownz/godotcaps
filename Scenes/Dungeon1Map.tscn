@@ -1,4 +1,4 @@
-[gd_scene load_steps=58 format=3 uid="uid://d1cb4djmat1dj"]
+[gd_scene load_steps=59 format=3 uid="uid://d1cb4djmat1dj"]
 
 [ext_resource type="Texture2D" uid="uid://cmgrkntjwnvvr" path="res://Sprites/Frame Sprites/Slime.png" id="1_lv3fd"]
 [ext_resource type="Script" uid="uid://4gerx64y471n" path="res://Scripts/dungeon_1_map.gd" id="1_ocdpx"]
@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://dfy42u6wycc3x" path="res://gui/Update/icons/next level select.png" id="5_oyrip"]
 [ext_resource type="Texture2D" uid="uid://dkhwbc22y8hv6" path="res://gui/Update/icons/level indicator.png" id="5_t6djc"]
 [ext_resource type="Texture2D" uid="uid://bmnybgl8oe1l" path="res://gui/Update/icons/unlocked level.png" id="6_o4t43"]
+[ext_resource type="Texture2D" uid="uid://b3rmvd1s8kk13" path="res://gui/Update/icons/hover next level select.png" id="6_sq72c"]
 [ext_resource type="Texture2D" uid="uid://bghwdafec1fjd" path="res://gui/Update/UI/Select Level title bg.png" id="7_y4tkd"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="8_oyrip"]
 [ext_resource type="Texture2D" uid="uid://cp7k7g2my8pgp" path="res://gui/Update/UI/level details.png" id="8_xrlqr"]
@@ -17,11 +18,11 @@
 [ext_resource type="Texture2D" uid="uid://dlusv4b6bm07h" path="res://gui/Update/UI/ui 10.png" id="12_y4tkd"]
 [ext_resource type="Texture2D" uid="uid://dr71hrxs7djx0" path="res://Sprites/Frame Sprites/Boar.png" id="13_1g3o1"]
 [ext_resource type="Texture2D" uid="uid://caaebspp4lxk4" path="res://gui/Update/icons/slaym enemeh.png" id="13_xrlqr"]
-[ext_resource type="Texture2D" uid="uid://j04ay015xgxc" path="res://gui/icons/enemy snake icon.png" id="16_26xo2"]
+[ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="14_r6ypt"]
 [ext_resource type="Texture2D" uid="uid://ct2kkb4phx2kr" path="res://gui/Update/icons/treant.png" id="16_lqaqn"]
-[ext_resource type="Texture2D" uid="uid://dtseuaxep3eve" path="res://gui/Update/icons/bourr enemeh.png" id="17_0ho0y"]
 [ext_resource type="Texture2D" uid="uid://clbfvil7saw1l" path="res://gui/Update/UI/Fight Button (Default).png" id="19_0ho0y"]
 [ext_resource type="Texture2D" uid="uid://8nmtl16kilha" path="res://gui/Update/UI/Fight Button (Hover).png" id="20_t6djc"]
+[ext_resource type="Texture2D" uid="uid://bedyjdu5rblv8" path="res://gui/Update/UI/ui (1).png" id="21_ocdpx"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_vdeks"]
 atlas = ExtResource("10_o52iv")
@@ -320,6 +321,7 @@ offset_bottom = 320.0
 scale = Vector2(6.5654, 6.5654)
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("5_oyrip")
+texture_hover = ExtResource("6_sq72c")
 
 [node name="MobIndicator" type="TextureRect" parent="Stage1"]
 layout_mode = 0
@@ -346,6 +348,7 @@ offset_bottom = 592.0
 scale = Vector2(6.5654, 6.5654)
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("6_o4t43")
+texture_hover = ExtResource("6_sq72c")
 
 [node name="MobIndicator" type="TextureRect" parent="Stage2"]
 visible = false
@@ -373,6 +376,7 @@ offset_bottom = 373.0
 scale = Vector2(6.5654, 6.5654)
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("6_o4t43")
+texture_hover = ExtResource("6_sq72c")
 
 [node name="MobIndicator" type="TextureRect" parent="Stage3"]
 visible = false
@@ -400,6 +404,7 @@ offset_bottom = 595.0
 scale = Vector2(6.5654, 6.5654)
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("6_o4t43")
+texture_hover = ExtResource("6_sq72c")
 
 [node name="MobIndicator" type="TextureRect" parent="Stage4"]
 visible = false
@@ -427,6 +432,7 @@ offset_bottom = 318.0
 scale = Vector2(6.5654, 6.5654)
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("6_o4t43")
+texture_hover = ExtResource("6_sq72c")
 
 [node name="BossIndicator" type="TextureRect" parent="Stage5"]
 visible = false
@@ -446,14 +452,14 @@ offset_right = 17.8346
 offset_bottom = 20.6497
 texture = ExtResource("16_lqaqn")
 
-[node name="TextureRect2" type="TextureRect" parent="."]
+[node name="SelectLevel" type="TextureRect" parent="."]
 offset_left = 461.0
 offset_top = 77.0
 offset_right = 940.0
 offset_bottom = 168.0
 texture = ExtResource("7_y4tkd")
 
-[node name="Label" type="Label" parent="TextureRect2"]
+[node name="Label" type="Label" parent="SelectLevel"]
 layout_mode = 0
 offset_left = 84.0
 offset_top = 11.0
@@ -506,7 +512,7 @@ anchor_bottom = 1.0
 offset_left = 10.0
 offset_top = -321.0
 offset_right = -11.0
-offset_bottom = -164.0
+offset_bottom = -100.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_colors/font_color = Color(0.937255, 1, 1, 1)
@@ -668,6 +674,7 @@ theme_override_fonts/font = ExtResource("8_oyrip")
 theme_override_font_sizes/font_size = 20
 text = "EVIL TREANT"
 horizontal_alignment = 1
+uppercase = true
 
 [node name="Label" type="Label" parent="StageDetails"]
 layout_mode = 0
@@ -724,7 +731,7 @@ offset_left = 6.31601
 offset_top = 7.59498
 offset_right = 21.316
 offset_bottom = 21.595
-texture = ExtResource("16_26xo2")
+texture = ExtResource("13_xrlqr")
 
 [node name="Mob3Button" type="TextureButton" parent="StageDetails/MonsterIconButtonContainer"]
 layout_mode = 2
@@ -737,7 +744,7 @@ offset_left = 6.31601
 offset_top = 7.59498
 offset_right = 21.316
 offset_bottom = 21.595
-texture = ExtResource("17_0ho0y")
+texture = ExtResource("13_xrlqr")
 
 [node name="Boss1Button" type="TextureButton" parent="StageDetails/MonsterIconButtonContainer"]
 layout_mode = 2
@@ -771,3 +778,69 @@ offset_bottom = 23.6832
 theme_override_fonts/font = ExtResource("9_o4t43")
 theme_override_font_sizes/font_size = 13
 text = "FIGHT"
+
+[node name="StageLockPopup" type="TextureRect" parent="."]
+visible = false
+offset_left = 470.0
+offset_top = 305.0
+offset_right = 970.0
+offset_bottom = 505.0
+texture = ExtResource("21_ocdpx")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="StageLockPopup"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="StageLockPopup/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 2
+theme_override_fonts/font = ExtResource("8_oyrip")
+theme_override_font_sizes/font_size = 28
+text = "Stage Locked!"
+horizontal_alignment = 1
+
+[node name="MessageLabel" type="Label" parent="StageLockPopup/VBoxContainer"]
+custom_minimum_size = Vector2(1, 1)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.92549, 0.756863, 1)
+theme_override_fonts/font = ExtResource("8_oyrip")
+theme_override_font_sizes/font_size = 15
+text = "Complete the previous stage first to unlock this stage."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="CloseButton" type="TextureButton" parent="StageLockPopup/VBoxContainer"]
+custom_minimum_size = Vector2(120, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 8
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("14_r6ypt")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="StageLockPopup/VBoxContainer/CloseButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("8_oyrip")
+theme_override_font_sizes/font_size = 18
+text = "OK"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="pressed" from="StageLockPopup/VBoxContainer/CloseButton" to="." method="_on_popup_close_button_pressed"]

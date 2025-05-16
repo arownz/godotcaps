@@ -9,8 +9,8 @@
 [ext_resource type="Texture2D" uid="uid://upv1mak0rswy" path="res://gui/ProfileScene/bronze medal.png" id="7_medal"]
 [ext_resource type="Texture2D" uid="uid://dpejfssp2t44k" path="res://gui/Update/icons/edit name.png" id="7_rwnca"]
 [ext_resource type="Texture2D" uid="uid://d1y2su33nhh8p" path="res://gui/Update/icons/copy UID.png" id="8_ampbo"]
-[ext_resource type="Texture2D" uid="uid://d025ghojxo8wn" path="res://gui/ProfileScene/highest level 1.png" id="8_d7ibu"]
 [ext_resource type="Texture2D" uid="uid://bs7axy8rkm4ei" path="res://Sprites/Frame Sprites/Lexia.png" id="10_rwnca"]
+[ext_resource type="Texture2D" uid="uid://dwhfu458shj55" path="res://gui/Update/icons/highest level.png" id="11_rwnca"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ampbo"]
 atlas = ExtResource("10_rwnca")
@@ -419,7 +419,7 @@ offset_left = 64.0
 offset_top = 54.0
 offset_right = 165.0
 offset_bottom = 199.0
-texture = ExtResource("8_d7ibu")
+texture = ExtResource("11_rwnca")
 expand_mode = 1
 stretch_mode = 6
 

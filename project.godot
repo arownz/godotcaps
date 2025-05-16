@@ -27,7 +27,7 @@ general/text_to_speech=true
 
 Firebase="*res://addons/godot-firebase/firebase/firebase.tscn"
 GameTypes="*res://Scripts/game_types.gd"
-GameSettings="*res://Scripts/export_variables.gd"
+GameSettings="*res://Scripts/GameSettings.gd"
 
 [config]
 

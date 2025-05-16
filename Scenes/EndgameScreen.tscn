@@ -1,8 +1,11 @@
-[gd_scene load_steps=4 format=3 uid="uid://3mxcrytk1kud"]
+[gd_scene load_steps=7 format=3 uid="uid://3mxcrytk1kud"]
 
 [ext_resource type="Script" uid="uid://dc6lqw6dmfe1y" path="res://Scripts/EndgameScreen.gd" id="1_mgr3d"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="2_6d17n"]
 [ext_resource type="Texture2D" uid="uid://rgl03eh75egv" path="res://gui/Update/UI/victory UI.png" id="2_frm3f"]
+[ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="4_hehfl"]
+[ext_resource type="Texture2D" uid="uid://bwchhxhbrsql8" path="res://gui/Update/UI/hover white button.png" id="5_3xqox"]
+[ext_resource type="Texture2D" uid="uid://cmn2nn1d0s4pi" path="res://gui/Update/UI/hover yellow button.png" id="6_gworm"]
 
 [node name="EndgameScreen" type="Control"]
 layout_mode = 3
@@ -22,9 +25,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -283.0
-offset_top = -355.0
-offset_right = 344.0
-offset_bottom = 268.0
+offset_top = -373.0
+offset_right = 524.0
+offset_bottom = 359.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_frm3f")
@@ -34,10 +37,10 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 155.0
-offset_top = 47.0
-offset_right = -142.0
-offset_bottom = -11.0
+offset_left = 161.0
+offset_top = 226.0
+offset_right = -136.0
+offset_bottom = -202.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 20
@@ -74,10 +77,14 @@ custom_minimum_size = Vector2(200, 60)
 layout_mode = 2
 size_flags_horizontal = 4
 mouse_default_cursor_shape = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_6d17n")
 theme_override_font_sizes/font_size = 24
 text = "Next"
+icon = ExtResource("4_hehfl")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [node name="ButtonsContainer" type="HBoxContainer" parent="ResultPanel/VBoxContainer"]
 layout_mode = 2
@@ -85,20 +92,30 @@ theme_override_constants/separation = 30
 alignment = 1
 
 [node name="RestartButton" type="Button" parent="ResultPanel/VBoxContainer/ButtonsContainer"]
-custom_minimum_size = Vector2(150, 60)
+custom_minimum_size = Vector2(200, 70)
 layout_mode = 2
 mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_6d17n")
 theme_override_font_sizes/font_size = 24
 text = "Retry"
+icon = ExtResource("5_3xqox")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [node name="QuitButton" type="Button" parent="ResultPanel/VBoxContainer/ButtonsContainer"]
-custom_minimum_size = Vector2(150, 60)
+custom_minimum_size = Vector2(200, 60)
 layout_mode = 2
 mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_6d17n")
 theme_override_font_sizes/font_size = 24
 text = "Return"
+icon = ExtResource("6_gworm")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [connection signal="pressed" from="ResultPanel/VBoxContainer/ButtonContainer/ContinueButton" to="." method="_on_continue_button_pressed"]
 [connection signal="pressed" from="ResultPanel/VBoxContainer/ButtonsContainer/RestartButton" to="." method="_on_restart_button_pressed"]

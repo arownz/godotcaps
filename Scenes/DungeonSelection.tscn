@@ -11,20 +11,7 @@
 [ext_resource type="Texture2D" uid="uid://da6rdtvo1nlwj" path="res://gui/Update/icons/return.png" id="8_r0sib"]
 [ext_resource type="Texture2D" uid="uid://n08ji1i2co16" path="res://gui/Update/UI/small button.png" id="8_xb6di"]
 [ext_resource type="Texture2D" uid="uid://ckytnr3x3xgkv" path="res://gui/Update/UI/long button.png" id="9_xb6di"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_popup"]
-bg_color = Color(0.113725, 0.329412, 0.458824, 0.9)
-border_width_left = 4
-border_width_top = 4
-border_width_right = 4
-border_width_bottom = 4
-border_color = Color(1, 1, 1, 1)
-corner_radius_top_left = 20
-corner_radius_top_right = 20
-corner_radius_bottom_right = 20
-corner_radius_bottom_left = 20
-shadow_color = Color(0, 0, 0, 0.392157)
-shadow_size = 10
+[ext_resource type="Texture2D" uid="uid://bedyjdu5rblv8" path="res://gui/Update/UI/ui (1).png" id="12_v81g5"]
 
 [node name="DungeonSelection" type="Control"]
 layout_mode = 3
@@ -58,10 +45,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -300.0
-offset_top = -28.5
+offset_left = -307.0
+offset_top = -17.0
 offset_right = 300.0
-offset_bottom = 28.5
+offset_bottom = 71.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -347,7 +334,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 uppercase = true
 
-[node name="LockPopup" type="Panel" parent="."]
+[node name="LockPopup" type="TextureRect" parent="."]
 visible = false
 layout_mode = 1
 anchors_preset = 8
@@ -361,7 +348,7 @@ offset_right = 250.0
 offset_bottom = 100.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_popup")
+texture = ExtResource("12_v81g5")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="LockPopup"]
 layout_mode = 1
@@ -387,6 +374,7 @@ text = "Dungeon Locked!"
 horizontal_alignment = 1
 
 [node name="MessageLabel" type="Label" parent="LockPopup/VBoxContainer"]
+custom_minimum_size = Vector2(1, 1)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.92549, 0.756863, 1)
 theme_override_fonts/font = ExtResource("7_vkjng")
@@ -400,6 +388,7 @@ custom_minimum_size = Vector2(120, 40)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 8
+mouse_default_cursor_shape = 2
 theme_override_fonts/font = ExtResource("7_vkjng")
 theme_override_font_sizes/font_size = 18
 text = "OK"

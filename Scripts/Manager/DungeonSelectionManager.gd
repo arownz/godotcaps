@@ -30,9 +30,9 @@ var selection_indicators = []
 func _ready():
     # Preload dungeon textures
     dungeon_textures.unlocked = [
-        preload("res://gui/dungeonselection/dungeon1.png"),
-        preload("res://gui/dungeonselection/dungeon1.png"), # You'll need to create this
-        preload("res://gui/dungeonselection/dungeon1.png")  # You'll need to create this
+        preload("res://gui/Update/icons/level selection.png"),
+        preload("res://gui/Update/icons/highest level.png"), # You'll need to create this
+        preload("res://gui/Update/icons/level selection.png")  # You'll need to create this
     ]
     dungeon_textures.locked = [
         null, # Dungeon 1 is always unlocked

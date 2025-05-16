@@ -10,7 +10,7 @@ var battle_scene  # Reference to the main battle scene
 
 # Dungeon and stage tracking
 var dungeon_num = 1
-var stage_num = 1
+var stage_num = 1	
 var max_dungeons = 3
 var max_stages_per_dungeon = 5
 var previous_dungeon = 1  # Used to track dungeon transitions

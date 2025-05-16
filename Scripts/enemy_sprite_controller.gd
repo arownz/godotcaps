@@ -45,6 +45,8 @@ func get_enemy_folder_name() -> String:
 	match enemy_type:
 		"elite":
 			return "elite_slime"
+		"epic":
+			return "epic_slime"
 		"boss":
 			return "boss_slime"
 		_:
