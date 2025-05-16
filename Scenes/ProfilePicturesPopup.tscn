@@ -34,7 +34,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0, 0, 0, 0.247059)
+color = Color(0, 0, 0, 0.6)
 
 [node name="Panel" type="TextureRect" parent="."]
 custom_minimum_size = Vector2(500, 400)
