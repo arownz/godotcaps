@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://bysyq46j6ycis"]
+[gd_scene load_steps=20 format=3 uid="uid://bysyq46j6ycis"]
 
 [ext_resource type="Script" uid="uid://caa84ntbsorb8" path="res://Scripts/ProfilePopUp.gd" id="1_script"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="2_73kok"]
@@ -11,6 +11,7 @@
 [ext_resource type="Texture2D" uid="uid://d1y2su33nhh8p" path="res://gui/Update/icons/copy UID.png" id="8_ampbo"]
 [ext_resource type="Texture2D" uid="uid://bs7axy8rkm4ei" path="res://Sprites/Frame Sprites/Lexia.png" id="10_rwnca"]
 [ext_resource type="Texture2D" uid="uid://dwhfu458shj55" path="res://gui/Update/icons/highest level.png" id="11_rwnca"]
+[ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="12_ampbo"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ampbo"]
 atlas = ExtResource("10_rwnca")
@@ -425,13 +426,20 @@ stretch_mode = 6
 
 [node name="LogoutButton" type="Button" parent="ProfileContainer"]
 layout_mode = 0
-offset_left = 252.0
-offset_top = 643.0
-offset_right = 470.0
-offset_bottom = 697.0
+offset_left = 237.0
+offset_top = 628.0
+offset_right = 448.0
+offset_bottom = 682.0
+scale = Vector2(1.14248, 1.12309)
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_73kok")
 text = "Logout
 "
+icon = ExtResource("12_ampbo")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [connection signal="pressed" from="ProfileContainer/CloseButton" to="." method="_on_close_button_pressed"]
 [connection signal="pressed" from="ProfileContainer/ProfilePictureButton" to="." method="_on_profile_picture_button_pressed"]

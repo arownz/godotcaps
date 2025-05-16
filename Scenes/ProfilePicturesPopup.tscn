@@ -208,6 +208,7 @@ disabled = true
 text = "Confirm Selection"
 icon = ExtResource("17_yxql3")
 flat = true
+autowrap_mode = 3
 icon_alignment = 1
 expand_icon = true
 
