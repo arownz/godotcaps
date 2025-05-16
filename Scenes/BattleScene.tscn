@@ -1,5 +1,6 @@
 [gd_scene load_steps=32 format=3 uid="uid://cfead7bcuslp4"]
 
+[ext_resource type="Texture2D" uid="uid://cxqd6wyqy8g22" path="res://gui/Update/Backgrounds/battlescene background.png" id="2_ixjr5"]
 [ext_resource type="Texture2D" uid="uid://bs7axy8rkm4ei" path="res://Sprites/Frame Sprites/Lexia.png" id="3_kwfy1"]
 [ext_resource type="Script" uid="uid://cnnycoui3l3ef" path="res://Scripts/battlescene.gd" id="3_vhj2j"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="4_akpf4"]
@@ -10,7 +11,6 @@
 [ext_resource type="Texture2D" uid="uid://bmjd8nkagj08e" path="res://gui/Update/UI/long uncolored button.png" id="7_2tp6q"]
 [ext_resource type="Texture2D" uid="uid://c8vnqmxwy0lsw" path="res://gui/Update/icons/small settings.png" id="7_ixjr5"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="8_2tp6q"]
-[ext_resource type="Texture2D" uid="uid://d1kxcxch535m0" path="res://gui/Backgrounds/Dungeon1_background.png" id="11_x73uj"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1yevk"]
 atlas = ExtResource("3_kwfy1")
@@ -187,11 +187,16 @@ corner_radius_bottom_left = 8
 [node name="BattleScene" type="Node2D"]
 script = ExtResource("3_vhj2j")
 
-[node name="Background" type="TextureRect" parent="."]
-offset_right = 1440.0
-offset_bottom = 810.0
-texture = ExtResource("11_x73uj")
-expand_mode = 1
+[node name="Background" type="ParallaxBackground" parent="."]
+
+[node name="ParallaxLayer" type="ParallaxLayer" parent="Background"]
+
+[node name="Sprite2D" type="Sprite2D" parent="Background/ParallaxLayer"]
+texture_filter = 1
+position = Vector2(-8.00001, -59)
+scale = Vector2(4.59375, 5.42778)
+texture = ExtResource("2_ixjr5")
+centered = false
 
 [node name="MainContainer" type="HBoxContainer" parent="."]
 offset_right = 1440.0
@@ -657,6 +662,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.0
+mouse_default_cursor_shape = 2
 theme_override_constants/separation = 10
 
 [node name="ButtonContainer" type="VBoxContainer" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer"]

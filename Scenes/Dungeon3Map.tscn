@@ -1,4 +1,4 @@
-[gd_scene load_steps=59 format=3 uid="uid://0unsb1sjvcje"]
+[gd_scene load_steps=57 format=3 uid="uid://0unsb1sjvcje"]
 
 [ext_resource type="Script" uid="uid://cx3vkj8apruat" path="res://Scripts/dungeon_3_map.gd" id="1_1icim"]
 [ext_resource type="Texture2D" uid="uid://chfkysvsxt4eg" path="res://gui/Update/Backgrounds/Plains_Level.png" id="1_qydu8"]
@@ -18,10 +18,8 @@
 [ext_resource type="Texture2D" uid="uid://ckfq2sv5fswsg" path="res://Sprites/Frame Sprites/Snake.png" id="12_o425e"]
 [ext_resource type="Texture2D" uid="uid://dr71hrxs7djx0" path="res://Sprites/Frame Sprites/Boar.png" id="13_s8gg8"]
 [ext_resource type="Texture2D" uid="uid://dlusv4b6bm07h" path="res://gui/Update/UI/ui 10.png" id="14_8ojmt"]
-[ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="15_mxk37"]
 [ext_resource type="Texture2D" uid="uid://ct2kkb4phx2kr" path="res://gui/Update/icons/treant.png" id="16_oabpg"]
 [ext_resource type="Texture2D" uid="uid://clbfvil7saw1l" path="res://gui/Update/UI/Fight Button (Default).png" id="20_mqaq1"]
-[ext_resource type="Texture2D" uid="uid://bedyjdu5rblv8" path="res://gui/Update/UI/ui (1).png" id="21_1icim"]
 [ext_resource type="Texture2D" uid="uid://8nmtl16kilha" path="res://gui/Update/UI/Fight Button (Hover).png" id="21_a70df"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_vdeks"]
@@ -780,69 +778,3 @@ offset_bottom = 23.6832
 theme_override_fonts/font = ExtResource("9_3555f")
 theme_override_font_sizes/font_size = 13
 text = "FIGHT"
-
-[node name="StageLockPopup" type="TextureRect" parent="."]
-visible = false
-offset_left = 470.0
-offset_top = 305.0
-offset_right = 970.0
-offset_bottom = 505.0
-texture = ExtResource("21_1icim")
-
-[node name="VBoxContainer" type="VBoxContainer" parent="StageLockPopup"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 20.0
-offset_top = 20.0
-offset_right = -20.0
-offset_bottom = -20.0
-grow_horizontal = 2
-grow_vertical = 2
-alignment = 1
-
-[node name="TitleLabel" type="Label" parent="StageLockPopup/VBoxContainer"]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 2
-theme_override_fonts/font = ExtResource("9_3555f")
-theme_override_font_sizes/font_size = 28
-text = "Stage Locked!"
-horizontal_alignment = 1
-
-[node name="MessageLabel" type="Label" parent="StageLockPopup/VBoxContainer"]
-custom_minimum_size = Vector2(1, 1)
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.92549, 0.756863, 1)
-theme_override_fonts/font = ExtResource("8_1icim")
-theme_override_font_sizes/font_size = 15
-text = "Complete the previous stage first to unlock this stage."
-horizontal_alignment = 1
-autowrap_mode = 2
-
-[node name="CloseButton" type="TextureButton" parent="StageLockPopup/VBoxContainer"]
-custom_minimum_size = Vector2(120, 40)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 8
-mouse_default_cursor_shape = 2
-texture_normal = ExtResource("15_mxk37")
-ignore_texture_size = true
-stretch_mode = 5
-
-[node name="Label" type="Label" parent="StageLockPopup/VBoxContainer/CloseButton"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_fonts/font = ExtResource("8_1icim")
-theme_override_font_sizes/font_size = 18
-text = "OK"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[connection signal="pressed" from="StageLockPopup/VBoxContainer/CloseButton" to="." method="_on_popup_close_button_pressed"]

@@ -17,10 +17,10 @@ var player_exp = 0
 var player_max_exp = 100
 var player_level = 1
 var player_damage = 15
-var player_name = "Player Name"
+var player_name = "Dyslexia User"
 
 # Available player skins
-var available_skins = ["default", "wizard", "knight", "ranger"] 
+var available_skins = ["default"] 
 var current_skin = "default"
 
 func _init(scene):

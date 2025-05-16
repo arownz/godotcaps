@@ -16,8 +16,6 @@ var dungeon_textures = {
 
 # References to UI elements
 @onready var dungeon_carousel = $DungeonContainer/DungeonCarousel
-@onready var lock_popup = $LockPopup
-@onready var popup_message = $LockPopup/VBoxContainer/MessageLabel
 @onready var next_button = $NextButton
 @onready var previous_button = $PreviousButton
 @onready var play_button = $PlayButton
@@ -26,6 +24,9 @@ var dungeon_textures = {
 var user_data = {}
 # Selection indicator reference
 var selection_indicators = []
+
+# Add notification popup reference
+var notification_popup: CanvasLayer
 
 func _ready():
     # Preload dungeon textures
@@ -61,8 +62,10 @@ func _ready():
         
         selection_indicators.append(selection_indicator)
     
-    # Make sure LockPopup is hidden initially
-    lock_popup.visible = false
+    # Create notification popup
+    notification_popup = load("res://Scenes/NotificationPopUp.tscn").instantiate()
+    add_child(notification_popup)
+    notification_popup.closed.connect(_on_notification_closed)
     
     # Load user data and update UI
     _load_user_data()
@@ -179,7 +182,8 @@ func _on_dungeon2_pressed():
             update_dungeon_display()
         # Removed direct play button call
     else:
-        _show_lock_popup("Please complete 'The Plain' first to unlock this dungeon.")
+        # Use the new notification system instead
+        notification_popup.show_notification("Dungeon Locked!", "Please complete 'The Plain' first to unlock this dungeon.", "OK")
 
 func _on_dungeon3_pressed():
     if unlocked_dungeons >= 3:
@@ -189,7 +193,8 @@ func _on_dungeon3_pressed():
             update_dungeon_display()
         # Removed direct play button call
     else:
-        _show_lock_popup("Please complete 'The Plain' and 'The Forest' first to unlock this dungeon.")
+        # Use the new notification system instead
+        notification_popup.show_notification("Dungeon Locked!", "Please complete 'The Plain' and 'The Forest' first to unlock this dungeon.", "OK")
 
 # Animation functions
 func _animate_carousel(direction):
@@ -212,29 +217,10 @@ func _animate_carousel_to_position(dungeon_index):
     
     tween.tween_property(dungeon_carousel, "position:x", target_x, ANIMATION_DURATION)
 
-# Show lock popup with custom message
-func _show_lock_popup(message):
-    popup_message.text = message
-    lock_popup.visible = true
-    
-    # Add a simple animation
-    lock_popup.modulate = Color(1, 1, 1, 0)
-    lock_popup.scale = Vector2(0.8, 0.8)
-    
-    var tween = create_tween()
-    tween.set_parallel(true)
-    tween.tween_property(lock_popup, "modulate", Color(1, 1, 1, 1), 0.3)
-    tween.tween_property(lock_popup, "scale", Vector2(1, 1), 0.3).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
-
-# Close lock popup
-func _on_popup_close_button_pressed():
-    var tween = create_tween()
-    tween.set_parallel(true)
-    tween.tween_property(lock_popup, "modulate", Color(1, 1, 1, 0), 0.2)
-    tween.tween_property(lock_popup, "scale", Vector2(0.8, 0.8), 0.2)
-    
-    await tween.finished
-    lock_popup.visible = false
+# Add handler for notification closed
+func _on_notification_closed():
+    # Handle notification close if needed
+    pass
 
 # Handle navigation and play buttons
 func _on_back_button_pressed():

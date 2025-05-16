@@ -33,18 +33,6 @@ var enemy_types = {
 			"damage_multiplier": 1.0,
 			"exp_reward": 10
 		},
-		"elite": {
-			"names": ["Elite Slime"],
-			"health_multiplier": 2.0,
-			"damage_multiplier": 1.5,
-			"exp_reward": 25
-		},
-		"epic": {
-			"names": ["Epic Slime"],
-			"health_multiplier": 3.0,
-			"damage_multiplier": 2.0,
-			"exp_reward": 50
-		},
 		"boss": {
 			"names": ["The Treant"],
 			"health_multiplier": 3.0,
@@ -59,18 +47,6 @@ var enemy_types = {
 			"damage_multiplier": 1.5,
 			"exp_reward": 20
 		},
-		"elite": {
-			"names": ["Elite Boar"],
-			"health_multiplier": 2.5,
-			"damage_multiplier": 2.0,
-			"exp_reward": 45
-		},
-		"epic": {
-			"names": ["Epic Boar"],
-			"health_multiplier": 3.5,
-			"damage_multiplier": 2.5,
-			"exp_reward": 35
-		},
 		"boss": {
 			"names": ["The Treant"],
 			"health_multiplier": 4.5,
@@ -84,18 +60,6 @@ var enemy_types = {
 			"health_multiplier": 1.2,
 			"damage_multiplier": 1.2,
 			"exp_reward": 15
-		},
-		"elite": {
-			"names": ["Elite Snake"],
-			"health_multiplier": 2.2,
-			"damage_multiplier": 1.7,
-			"exp_reward": 35
-		},
-		"epic": {
-			"names": ["Epic Snake"],
-			"health_multiplier": 3.2,
-			"damage_multiplier": 2.2,
-			"exp_reward": 35
 		},
 		"boss": {
 			"names": ["The Treant"],
@@ -130,9 +94,7 @@ func _preload_enemy_resources():
 func _type_to_id(type_str: String) -> int:
 	match type_str:
 		"normal": return 1
-		"elite": return 2
-		"epic": return 3
-		"boss": return 4
+		"boss": return 2
 		_: return 0
 
 func setup_enemy():
@@ -181,18 +143,6 @@ func _setup_enemy_fallback():
 			"health_multiplier": 1.0,
 			"damage_multiplier": 1.0,
 			"exp_reward": 10
-		},
-		"elite": {
-			"names": ["Elite Slime"],
-			"health_multiplier": 2.0,
-			"damage_multiplier": 1.5,
-			"exp_reward": 25
-		},
-		"epic": {
-			"names": ["Epic Slime"],
-			"health_multiplier": 3.0,
-			"damage_multiplier": 2.0,
-			"exp_reward": 50
 		},
 		"boss": {
 			"names": ["The Treant"],

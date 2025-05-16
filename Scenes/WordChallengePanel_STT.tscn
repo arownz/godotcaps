@@ -1,8 +1,14 @@
-[gd_scene load_steps=6 format=3 uid="uid://b23008asrbgm5"]
+[gd_scene load_steps=12 format=3 uid="uid://b23008asrbgm5"]
 
 [ext_resource type="Script" uid="uid://5556075jac2c" path="res://Scripts/WordChallengePanel_STT.gd" id="1_4yifo"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="2_8hfec"]
 [ext_resource type="Texture2D" uid="uid://dlusv4b6bm07h" path="res://gui/Update/UI/ui 10.png" id="2_ys01y"]
+[ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="4_0l2ru"]
+[ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="5_y2iqy"]
+[ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="6_y470y"]
+[ext_resource type="Texture2D" uid="uid://drwre8l5sq5ql" path="res://gui/Update/UI/hover long button.png" id="7_th1nk"]
+[ext_resource type="Texture2D" uid="uid://bmjd8nkagj08e" path="res://gui/Update/UI/long uncolored button.png" id="8_00oi0"]
+[ext_resource type="Texture2D" uid="uid://clbfvil7saw1l" path="res://gui/Update/UI/Fight Button (Default).png" id="9_fn3wg"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tts_panel"]
 bg_color = Color(0.862745, 0.901961, 0.929412, 1)
@@ -112,15 +118,26 @@ alignment = 1
 [node name="TTSButton" type="Button" parent="ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer"]
 custom_minimum_size = Vector2(80, 50)
 layout_mode = 2
-theme_override_fonts/font = ExtResource("2_8hfec")
-theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_0l2ru")
+theme_override_font_sizes/font_size = 15
 text = "Read"
+icon = ExtResource("5_y2iqy")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [node name="TTSSettingsButton" type="Button" parent="ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer"]
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
-theme_override_fonts/font = ExtResource("2_8hfec")
-theme_override_font_sizes/font_size = 14
-text = "TTS Settings"
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_0l2ru")
+theme_override_font_sizes/font_size = 15
+text = "TTS Setting"
+icon = ExtResource("6_y470y")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [node name="TTSSettingsPanel" type="Panel" parent="ChallengePanel/VBoxContainer"]
 visible = false
@@ -239,21 +256,31 @@ text = "Press the button and say the word"
 horizontal_alignment = 1
 
 [node name="SpeakButton" type="Button" parent="ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer"]
-custom_minimum_size = Vector2(200, 80)
+custom_minimum_size = Vector2(0, 55)
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_8hfec")
 theme_override_font_sizes/font_size = 20
+theme_override_icons/icon = ExtResource("7_th1nk")
 text = "Start Speaking"
+icon = ExtResource("8_00oi0")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [node name="CancelButton" type="Button" parent="ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer"]
 custom_minimum_size = Vector2(150, 50)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_colors/font_color = Color(0.8, 0.2, 0.2, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("2_8hfec")
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 15
 text = "Cancel Countering"
+icon = ExtResource("9_fn3wg")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [node name="RecognizedText" type="Label" parent="ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer"]
 layout_mode = 2

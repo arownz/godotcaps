@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://d36ytiqg31edd"]
+[gd_scene load_steps=22 format=3 uid="uid://d36ytiqg31edd"]
 
 [ext_resource type="Script" uid="uid://datbxxer3mwvc" path="res://Scripts/mainmenu.gd" id="1_tt5f1"]
 [ext_resource type="Texture2D" uid="uid://ckkds573c15wj" path="res://gui/Backgrounds/Main_menu_Background.png" id="2_kpa4r"]
@@ -64,12 +64,6 @@ animations = [{
 "name": &"idle",
 "speed": 10.0
 }]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8e205"]
-corner_radius_top_left = 16
-corner_radius_top_right = 16
-corner_radius_bottom_right = 16
-corner_radius_bottom_left = 16
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -146,22 +140,21 @@ texture_normal = ExtResource("5_8e205")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="AvatarBackground" type="Panel" parent="ProfileButton"]
+[node name="AvatarBackground" type="TextureRect" parent="ProfileButton"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -45.5
-offset_top = -45.5
-offset_right = 52.5
-offset_bottom = 51.5
+offset_left = -41.5
+offset_top = -40.5
+offset_right = 48.5
+offset_bottom = 46.5
 grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(0.923117, 0.93701)
 mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_8e205")
 
 [node name="ProfileLabel" type="Label" parent="ProfileButton"]
 visible = false

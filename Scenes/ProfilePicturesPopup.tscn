@@ -34,7 +34,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0, 0, 0, 0.0941176)
+color = Color(0, 0, 0, 0.247059)
 
 [node name="Panel" type="TextureRect" parent="."]
 custom_minimum_size = Vector2(500, 400)
@@ -44,23 +44,24 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -250.0
-offset_top = -200.0
-offset_right = 250.0
-offset_bottom = 200.0
+offset_left = -306.0
+offset_top = -266.0
+offset_right = 306.0
+offset_bottom = 266.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_kxfne")
 
 [node name="CloseButton" type="TextureButton" parent="Panel"]
 layout_mode = 1
-anchors_preset = 1
+anchors_preset = -1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -22.0
-offset_top = -10.0
-offset_right = 8.0
-offset_bottom = 20.0
+anchor_bottom = 0.015
+offset_left = -34.0
+offset_top = -8.0
+offset_right = 6.0
+offset_bottom = 24.02
 grow_horizontal = 0
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("3_kxfne")
@@ -72,13 +73,13 @@ layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -150.0
-offset_top = 20.0
-offset_right = 150.0
-offset_bottom = 60.0
+offset_left = -272.0
+offset_top = 32.0
+offset_right = 253.0
+offset_bottom = 78.0
 grow_horizontal = 2
 theme_override_fonts/font = ExtResource("2_popup_font")
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 25
 text = "Choose Profile Picture"
 horizontal_alignment = 1
 
@@ -88,11 +89,12 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 20.0
-offset_top = 70.0
+offset_top = 96.0
 offset_right = -20.0
-offset_bottom = -60.0
+offset_bottom = -74.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_default_cursor_shape = 2
 
 [node name="GridContainer" type="GridContainer" parent="Panel/ScrollContainer"]
 layout_mode = 2
@@ -101,11 +103,12 @@ size_flags_vertical = 3
 mouse_default_cursor_shape = 2
 theme_override_constants/h_separation = 20
 theme_override_constants/v_separation = 20
-columns = 3
+columns = 4
 
 [node name="Portrait13" type="TextureButton" parent="Panel/ScrollContainer/GridContainer"]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
+mouse_default_cursor_shape = 2
 texture_normal = ExtResource("3_portrait14")
 ignore_texture_size = true
 stretch_mode = 5
@@ -113,6 +116,7 @@ stretch_mode = 5
 [node name="Portrait14" type="TextureButton" parent="Panel/ScrollContainer/GridContainer"]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
+mouse_default_cursor_shape = 2
 texture_normal = ExtResource("6_mg4gf")
 ignore_texture_size = true
 stretch_mode = 5
@@ -120,6 +124,7 @@ stretch_mode = 5
 [node name="Portrait15" type="TextureButton" parent="Panel/ScrollContainer/GridContainer"]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
+mouse_default_cursor_shape = 2
 texture_normal = ExtResource("4_portrait15")
 ignore_texture_size = true
 stretch_mode = 5
@@ -127,6 +132,7 @@ stretch_mode = 5
 [node name="Portrait16" type="TextureButton" parent="Panel/ScrollContainer/GridContainer"]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
+mouse_default_cursor_shape = 2
 texture_normal = ExtResource("7_kxfne")
 ignore_texture_size = true
 stretch_mode = 5
@@ -134,6 +140,7 @@ stretch_mode = 5
 [node name="Portrait17" type="TextureButton" parent="Panel/ScrollContainer/GridContainer"]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
+mouse_default_cursor_shape = 2
 texture_normal = ExtResource("8_yxql3")
 ignore_texture_size = true
 stretch_mode = 5
@@ -141,6 +148,7 @@ stretch_mode = 5
 [node name="Portrait18" type="TextureButton" parent="Panel/ScrollContainer/GridContainer"]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
+mouse_default_cursor_shape = 2
 texture_normal = ExtResource("9_h1a42")
 ignore_texture_size = true
 stretch_mode = 5
@@ -148,6 +156,7 @@ stretch_mode = 5
 [node name="Portrait19" type="TextureButton" parent="Panel/ScrollContainer/GridContainer"]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
+mouse_default_cursor_shape = 2
 texture_normal = ExtResource("10_v70ae")
 ignore_texture_size = true
 stretch_mode = 5
@@ -155,6 +164,7 @@ stretch_mode = 5
 [node name="Portrait20" type="TextureButton" parent="Panel/ScrollContainer/GridContainer"]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
+mouse_default_cursor_shape = 2
 texture_normal = ExtResource("11_00j4d")
 ignore_texture_size = true
 stretch_mode = 5
@@ -162,6 +172,7 @@ stretch_mode = 5
 [node name="Portrait21" type="TextureButton" parent="Panel/ScrollContainer/GridContainer"]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
+mouse_default_cursor_shape = 2
 texture_normal = ExtResource("12_5fqu5")
 ignore_texture_size = true
 stretch_mode = 5
@@ -169,6 +180,7 @@ stretch_mode = 5
 [node name="Portrait22" type="TextureButton" parent="Panel/ScrollContainer/GridContainer"]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
+mouse_default_cursor_shape = 2
 texture_normal = ExtResource("13_pwh4d")
 ignore_texture_size = true
 stretch_mode = 5
@@ -176,6 +188,7 @@ stretch_mode = 5
 [node name="Portrait23" type="TextureButton" parent="Panel/ScrollContainer/GridContainer"]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
+mouse_default_cursor_shape = 2
 texture_normal = ExtResource("14_almhk")
 ignore_texture_size = true
 stretch_mode = 5
@@ -183,34 +196,41 @@ stretch_mode = 5
 [node name="Portrait24" type="TextureButton" parent="Panel/ScrollContainer/GridContainer"]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
+mouse_default_cursor_shape = 2
 texture_normal = ExtResource("15_u6s02")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="ConfirmButton" type="Button" parent="Panel"]
+[node name="ConfirmButton" type="TextureButton" parent="Panel"]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -121.0
-offset_top = -62.0
-offset_right = 122.0
-offset_bottom = -2.0
+offset_left = -100.0
+offset_top = -80.0
+offset_right = 100.0
 grow_horizontal = 2
 grow_vertical = 0
 mouse_default_cursor_shape = 2
-theme_override_colors/icon_normal_color = Color(1, 1, 1, 1)
+texture_normal = ExtResource("17_yxql3")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="Panel/ConfirmButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.101961, 0.101961, 0.101961, 1)
 theme_override_fonts/font = ExtResource("2_popup_font")
-theme_override_font_sizes/font_size = 12
-disabled = true
-text = "Confirm Selection"
-icon = ExtResource("17_yxql3")
-flat = true
-autowrap_mode = 3
-icon_alignment = 1
-expand_icon = true
+theme_override_font_sizes/font_size = 22
+text = "Confirm"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [connection signal="pressed" from="Panel/CloseButton" to="." method="_on_close_button_pressed"]
 [connection signal="pressed" from="Panel/ScrollContainer/GridContainer/Portrait13" to="." method="_on_portrait_button_pressed" binds= ["13"]]

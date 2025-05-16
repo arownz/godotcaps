@@ -1,0 +1,92 @@
+[gd_scene load_steps=6 format=3 uid="uid://blge5vt1gmc8o"]
+
+[ext_resource type="Texture2D" uid="uid://bedyjdu5rblv8" path="res://gui/Update/UI/ui (1).png" id="1_8cacn"]
+[ext_resource type="Script" uid="uid://bpilknkrukhr5" path="res://Scripts/notification_popup.gd" id="1_i02w3"]
+[ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="2_47wmi"]
+[ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="3_xijp0"]
+[ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="4_3mnnr"]
+
+[node name="NotificationPopUp" type="CanvasLayer"]
+layer = 10
+script = ExtResource("1_i02w3")
+
+[node name="PopupContainer" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="PopupContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PopupBackground" type="TextureRect" parent="PopupContainer/CenterContainer"]
+custom_minimum_size = Vector2(500, 200)
+layout_mode = 2
+texture = ExtResource("1_8cacn")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PopupContainer/CenterContainer/PopupBackground"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="PopupContainer/CenterContainer/PopupBackground/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 2
+theme_override_fonts/font = ExtResource("3_xijp0")
+theme_override_font_sizes/font_size = 28
+text = "Notification Title"
+horizontal_alignment = 1
+
+[node name="MessageLabel" type="Label" parent="PopupContainer/CenterContainer/PopupBackground/VBoxContainer"]
+custom_minimum_size = Vector2(1, 1)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(1, 0.92549, 0.756863, 1)
+theme_override_fonts/font = ExtResource("2_47wmi")
+theme_override_font_sizes/font_size = 15
+text = "This is the notification message that will be displayed to the user."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="CloseButton" type="TextureButton" parent="PopupContainer/CenterContainer/PopupBackground/VBoxContainer"]
+custom_minimum_size = Vector2(120, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 8
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("4_3mnnr")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="PopupContainer/CenterContainer/PopupBackground/VBoxContainer/CloseButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("2_47wmi")
+theme_override_font_sizes/font_size = 18
+text = "OK"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="pressed" from="PopupContainer/CenterContainer/PopupBackground/VBoxContainer/CloseButton" to="." method="_on_close_button_pressed"]

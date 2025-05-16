@@ -183,8 +183,8 @@ func update_ui():
 
 func update_profile_picture():
 	# Get reference to the profile picture texture rect
-	if has_node("ProfileContainer/ProfilePictureButton"):
-		var profile_button = $ProfileContainer/ProfilePictureButton
+	if has_node("ProfileContainer/PictureContainer/ProfilePictureButton"):
+		var profile_button = $ProfileContainer/PictureContainer/ProfilePictureButton
 		# Try to load the profile picture
 		var texture_path
 		
@@ -206,17 +206,28 @@ func _on_close_button_pressed():
 	emit_signal("closed")
 	queue_free()
 
-# Remove async keyword - Godot doesn't support this syntax
+
 func _on_profile_picture_button_pressed():
 	print("ProfilePopUp: Profile picture button pressed")
 	var profile_pics_popup = load("res://Scenes/ProfilePicturesPopup.tscn").instantiate()
-	add_child(profile_pics_popup)
+	
+	# Add as a child of the root viewport to ensure proper positioning
+	get_tree().root.add_child(profile_pics_popup)
+	
+	# Center the popup
+	profile_pics_popup.position = get_viewport_rect().size / 2 - profile_pics_popup.size / 2
 	
 	# Connect signal before _ready finishes to ensure we don't miss events
 	profile_pics_popup.connect("picture_selected", Callable(self, "_on_profile_picture_selected"))
+	profile_pics_popup.connect("popup_closed", Callable(self, "_on_profile_pics_popup_closed"))
 	
 	# We can still use await inside a regular function
 	await get_tree().process_frame
+
+# Add this function to handle popup closing
+func _on_profile_pics_popup_closed():
+	# This function will be called when the popup is closed
+	print("Profile pictures popup closed")
 
 func _on_profile_picture_selected(picture_id):
 	print("ProfilePopUp: Picture selected: ", picture_id)

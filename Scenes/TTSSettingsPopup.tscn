@@ -1,8 +1,11 @@
-[gd_scene load_steps=4 format=3 uid="uid://7wtij707stht"]
+[gd_scene load_steps=7 format=3 uid="uid://7wtij707stht"]
 
 [ext_resource type="Script" uid="uid://di3xy4fn8ivv" path="res://Scripts/TTSSettingsPopup.gd" id="1_y2dfs"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="2_m3f5r"]
 [ext_resource type="Texture2D" uid="uid://dlusv4b6bm07h" path="res://gui/Update/UI/ui 10.png" id="2_umhyu"]
+[ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="4_7wrw6"]
+[ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="5_jb0wy"]
+[ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="6_e2f2d"]
 
 [node name="TTSSettingsPopup" type="Control"]
 layout_mode = 3
@@ -37,7 +40,7 @@ anchor_bottom = 1.0
 offset_left = 15.0
 offset_top = 15.0
 offset_right = -15.0
-offset_bottom = -15.0
+offset_bottom = -101.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 10
@@ -66,6 +69,7 @@ horizontal_alignment = 1
 
 [node name="VoiceOptionButton" type="OptionButton" parent="Panel/VBoxContainer/VoiceContainer"]
 layout_mode = 2
+mouse_default_cursor_shape = 2
 theme_override_fonts/font = ExtResource("2_m3f5r")
 theme_override_font_sizes/font_size = 16
 
@@ -106,26 +110,49 @@ text = "Loading voices..."
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="HSeparator2" type="HSeparator" parent="Panel/VBoxContainer"]
+[node name="TestButton" type="TextureButton" parent="Panel"]
 layout_mode = 2
+offset_left = 180.0
+offset_top = 279.0
+offset_right = 234.0
+offset_bottom = 295.0
+scale = Vector2(2.08295, 2.10011)
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("4_7wrw6")
 
-[node name="ButtonsContainer" type="HBoxContainer" parent="Panel/VBoxContainer"]
-layout_mode = 2
-alignment = 1
-
-[node name="TestButton" type="Button" parent="Panel/VBoxContainer/ButtonsContainer"]
-layout_mode = 2
-theme_override_fonts/font = ExtResource("2_m3f5r")
-theme_override_font_sizes/font_size = 16
+[node name="Label" type="Label" parent="Panel/TestButton"]
+layout_mode = 0
+offset_left = 4.3208
+offset_top = 2.85699
+offset_right = 50.3208
+offset_bottom = 14.857
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("5_jb0wy")
+theme_override_font_sizes/font_size = 6
 text = "Test Voice"
 
-[node name="CloseButton" type="Button" parent="Panel/VBoxContainer/ButtonsContainer"]
+[node name="CloseButton" type="TextureButton" parent="Panel"]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("2_m3f5r")
-theme_override_font_sizes/font_size = 16
+offset_left = 300.0
+offset_top = 279.0
+offset_right = 354.0
+offset_bottom = 295.0
+scale = Vector2(2.25382, 2.0651)
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("6_e2f2d")
+
+[node name="Label" type="Label" parent="Panel/CloseButton"]
+layout_mode = 0
+offset_left = 2.21847
+offset_top = 2.90542
+offset_right = 52.2185
+offset_bottom = 12.9054
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("5_jb0wy")
+theme_override_font_sizes/font_size = 5
 text = "Save & Close"
 
 [connection signal="item_selected" from="Panel/VBoxContainer/VoiceContainer/VoiceOptionButton" to="." method="_on_voice_option_button_item_selected"]
 [connection signal="value_changed" from="Panel/VBoxContainer/RateContainer/RateSlider" to="." method="_on_rate_slider_value_changed"]
-[connection signal="pressed" from="Panel/VBoxContainer/ButtonsContainer/TestButton" to="." method="_on_test_button_pressed"]
-[connection signal="pressed" from="Panel/VBoxContainer/ButtonsContainer/CloseButton" to="." method="_on_close_button_pressed"]
+[connection signal="pressed" from="Panel/TestButton" to="." method="_on_test_button_pressed"]
+[connection signal="pressed" from="Panel/CloseButton" to="." method="_on_close_button_pressed"]

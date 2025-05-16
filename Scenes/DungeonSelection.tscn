@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://sdyk7ldijega"]
+[gd_scene load_steps=12 format=3 uid="uid://sdyk7ldijega"]
 
 [ext_resource type="Script" uid="uid://t3y57n5oleps" path="res://Scripts/Manager/DungeonSelectionManager.gd" id="1_bfmdj"]
 [ext_resource type="Texture2D" uid="uid://chfkysvsxt4eg" path="res://gui/Update/Backgrounds/Plains_Level.png" id="2_bu21u"]
@@ -11,7 +11,6 @@
 [ext_resource type="Texture2D" uid="uid://da6rdtvo1nlwj" path="res://gui/Update/icons/return.png" id="8_r0sib"]
 [ext_resource type="Texture2D" uid="uid://n08ji1i2co16" path="res://gui/Update/UI/small button.png" id="8_xb6di"]
 [ext_resource type="Texture2D" uid="uid://ckytnr3x3xgkv" path="res://gui/Update/UI/long button.png" id="9_xb6di"]
-[ext_resource type="Texture2D" uid="uid://bedyjdu5rblv8" path="res://gui/Update/UI/ui (1).png" id="12_v81g5"]
 
 [node name="DungeonSelection" type="Control"]
 layout_mode = 3
@@ -334,65 +333,6 @@ horizontal_alignment = 1
 vertical_alignment = 1
 uppercase = true
 
-[node name="LockPopup" type="TextureRect" parent="."]
-visible = false
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -250.0
-offset_top = -100.0
-offset_right = 250.0
-offset_bottom = 100.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("12_v81g5")
-
-[node name="VBoxContainer" type="VBoxContainer" parent="LockPopup"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 20.0
-offset_top = 20.0
-offset_right = -20.0
-offset_bottom = -20.0
-grow_horizontal = 2
-grow_vertical = 2
-alignment = 1
-
-[node name="TitleLabel" type="Label" parent="LockPopup/VBoxContainer"]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 2
-theme_override_fonts/font = ExtResource("7_vkjng")
-theme_override_font_sizes/font_size = 28
-text = "Dungeon Locked!"
-horizontal_alignment = 1
-
-[node name="MessageLabel" type="Label" parent="LockPopup/VBoxContainer"]
-custom_minimum_size = Vector2(1, 1)
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.92549, 0.756863, 1)
-theme_override_fonts/font = ExtResource("7_vkjng")
-theme_override_font_sizes/font_size = 15
-text = "Please complete the previous dungeon first to unlock this dungeon."
-horizontal_alignment = 1
-autowrap_mode = 2
-
-[node name="CloseButton" type="Button" parent="LockPopup/VBoxContainer"]
-custom_minimum_size = Vector2(120, 40)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 8
-mouse_default_cursor_shape = 2
-theme_override_fonts/font = ExtResource("7_vkjng")
-theme_override_font_sizes/font_size = 18
-text = "OK"
-
 [connection signal="pressed" from="DungeonContainer/DungeonCarousel/Dungeon1/TextureButton" to="." method="_on_dungeon1_pressed"]
 [connection signal="pressed" from="DungeonContainer/DungeonCarousel/Dungeon2/TextureButton" to="." method="_on_dungeon2_pressed"]
 [connection signal="pressed" from="DungeonContainer/DungeonCarousel/Dungeon3/TextureButton" to="." method="_on_dungeon3_pressed"]
@@ -400,4 +340,3 @@ text = "OK"
 [connection signal="pressed" from="PreviousButton" to="." method="_on_previous_button_pressed"]
 [connection signal="pressed" from="BackButton" to="." method="_on_back_button_pressed"]
 [connection signal="pressed" from="PlayButton" to="." method="_on_play_button_pressed"]
-[connection signal="pressed" from="LockPopup/VBoxContainer/CloseButton" to="." method="_on_popup_close_button_pressed"]

@@ -34,6 +34,8 @@ var completed_stages = []
 var current_selected_stage = 0
 var current_selected_enemy_type = "normal"
 
+var notification_popup: CanvasLayer
+
 func _ready():
 	# Initialize Firebase if available
 	_initialize_firebase()
@@ -50,8 +52,10 @@ func _ready():
 	# Hide stage details panel initially
 	$StageDetails.visible = false
 	
-	# Ensure the stage lock popup is hidden initially
-	$StageLockPopup.visible = false
+	# Create notification popup
+	notification_popup = load("res://Scenes/NotificationPopUp.tscn").instantiate()
+	add_child(notification_popup)
+	notification_popup.closed.connect(_on_notification_closed)
 
 # Add this new function to handle clicks outside StageDetails
 func _unhandled_input(event):
@@ -179,8 +183,7 @@ func _on_stage_button_pressed(stage_num):
 	# Check if stage is unlocked
 	if stage_num > 1 and not (completed_stages.has(stage_num - 1) or completed_stages.has(stage_num)):
 		# Stage is locked - show popup
-		$StageLockPopup/VBoxContainer/MessageLabel.text = "Complete Stage " + str(stage_num - 1) + " first to unlock this stage."
-		$StageLockPopup.visible = true
+		notification_popup.show_notification("Stage Locked!", "Complete Stage " + str(stage_num - 1) + " first to unlock this stage.", "OK")
 		return
 		
 	current_selected_stage = stage_num
@@ -335,6 +338,6 @@ func _save_current_dungeon_stage():
 				await task.task_finished
 				print("Saved dungeon progress to Firebase")
 
-func _on_popup_close_button_pressed():
-	# Simply hide the popup
-	$StageLockPopup.visible = false
+func _on_notification_closed():
+	# Handle popup close if needed
+	pass
