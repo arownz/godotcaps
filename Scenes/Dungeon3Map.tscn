@@ -1,4 +1,4 @@
-[gd_scene load_steps=58 format=3 uid="uid://0unsb1sjvcje"]
+[gd_scene load_steps=56 format=3 uid="uid://0unsb1sjvcje"]
 
 [ext_resource type="Script" uid="uid://cx3vkj8apruat" path="res://Scripts/dungeon_3_map.gd" id="1_1icim"]
 [ext_resource type="Texture2D" uid="uid://chfkysvsxt4eg" path="res://gui/Update/Backgrounds/Plains_Level.png" id="1_qydu8"]
@@ -9,6 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://bmnybgl8oe1l" path="res://gui/Update/icons/unlocked level.png" id="5_62ino"]
 [ext_resource type="Texture2D" uid="uid://bghwdafec1fjd" path="res://gui/Update/UI/Select Level title bg.png" id="6_xeiu1"]
 [ext_resource type="Texture2D" uid="uid://cp7k7g2my8pgp" path="res://gui/Update/UI/level details.png" id="7_16krn"]
+[ext_resource type="Texture2D" uid="uid://dldjycdlawmeh" path="res://gui/Update/icons/snek enemeh.png" id="7_xeiu1"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="8_1icim"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="9_3555f"]
 [ext_resource type="Texture2D" uid="uid://by0xvtv0v0usp" path="res://Sprites/Frame Sprites/Treant.png" id="10_mqaq1"]
@@ -16,10 +17,7 @@
 [ext_resource type="Texture2D" uid="uid://ckfq2sv5fswsg" path="res://Sprites/Frame Sprites/Snake.png" id="12_o425e"]
 [ext_resource type="Texture2D" uid="uid://dr71hrxs7djx0" path="res://Sprites/Frame Sprites/Boar.png" id="13_s8gg8"]
 [ext_resource type="Texture2D" uid="uid://dlusv4b6bm07h" path="res://gui/Update/UI/ui 10.png" id="14_8ojmt"]
-[ext_resource type="Texture2D" uid="uid://caaebspp4lxk4" path="res://gui/Update/icons/slaym enemeh.png" id="15_ot0ms"]
 [ext_resource type="Texture2D" uid="uid://ct2kkb4phx2kr" path="res://gui/Update/icons/treant.png" id="16_oabpg"]
-[ext_resource type="Texture2D" uid="uid://j04ay015xgxc" path="res://gui/icons/enemy snake icon.png" id="18_1icim"]
-[ext_resource type="Texture2D" uid="uid://dtseuaxep3eve" path="res://gui/Update/icons/bourr enemeh.png" id="19_3555f"]
 [ext_resource type="Texture2D" uid="uid://clbfvil7saw1l" path="res://gui/Update/UI/Fight Button (Default).png" id="20_mqaq1"]
 [ext_resource type="Texture2D" uid="uid://8nmtl16kilha" path="res://gui/Update/UI/Fight Button (Hover).png" id="21_a70df"]
 
@@ -336,7 +334,7 @@ offset_left = 2.83461
 offset_top = 3.64973
 offset_right = 17.8346
 offset_bottom = 20.6497
-texture = ExtResource("15_ot0ms")
+texture = ExtResource("7_xeiu1")
 
 [node name="Stage2" type="TextureButton" parent="."]
 offset_left = 416.0
@@ -363,7 +361,7 @@ offset_left = 2.83461
 offset_top = 3.64973
 offset_right = 17.8346
 offset_bottom = 20.6497
-texture = ExtResource("15_ot0ms")
+texture = ExtResource("7_xeiu1")
 
 [node name="Stage3" type="TextureButton" parent="."]
 offset_left = 733.0
@@ -390,7 +388,7 @@ offset_left = 2.83461
 offset_top = 3.64973
 offset_right = 17.8346
 offset_bottom = 20.6497
-texture = ExtResource("15_ot0ms")
+texture = ExtResource("7_xeiu1")
 
 [node name="Stage4" type="TextureButton" parent="."]
 offset_left = 1001.0
@@ -417,7 +415,7 @@ offset_left = 2.83461
 offset_top = 3.64973
 offset_right = 17.8346
 offset_bottom = 20.6497
-texture = ExtResource("15_ot0ms")
+texture = ExtResource("7_xeiu1")
 
 [node name="Stage5" type="TextureButton" parent="."]
 offset_left = 1218.0
@@ -711,7 +709,7 @@ offset_left = 6.31601
 offset_top = 7.59498
 offset_right = 21.316
 offset_bottom = 21.595
-texture = ExtResource("15_ot0ms")
+texture = ExtResource("7_xeiu1")
 
 [node name="Mob2Button" type="TextureButton" parent="StageDetails/MonsterIconButtonContainer"]
 layout_mode = 2
@@ -724,7 +722,7 @@ offset_left = 6.31601
 offset_top = 7.59498
 offset_right = 21.316
 offset_bottom = 21.595
-texture = ExtResource("18_1icim")
+texture = ExtResource("7_xeiu1")
 
 [node name="Mob3Button" type="TextureButton" parent="StageDetails/MonsterIconButtonContainer"]
 layout_mode = 2
@@ -737,7 +735,7 @@ offset_left = 6.31601
 offset_top = 7.59498
 offset_right = 21.316
 offset_bottom = 21.595
-texture = ExtResource("19_3555f")
+texture = ExtResource("7_xeiu1")
 
 [node name="Boss1Button" type="TextureButton" parent="StageDetails/MonsterIconButtonContainer"]
 layout_mode = 2

@@ -28,25 +28,25 @@ var enemy_resources = {}
 var enemy_types = {
 	"dungeon1": {
 		"normal": {
-			"names": ["Evil Slime"],
+			"names": ["Slime"],
 			"health_multiplier": 1.0,
 			"damage_multiplier": 1.0,
 			"exp_reward": 10
 		},
 		"elite": {
-			"names": ["Poison Slime"],
+			"names": ["Elite Slime"],
 			"health_multiplier": 2.0,
 			"damage_multiplier": 1.5,
 			"exp_reward": 25
 		},
 		"epic": {
-			"names": ["Rimuru Slime"],
+			"names": ["Epic Slime"],
 			"health_multiplier": 3.0,
 			"damage_multiplier": 2.0,
 			"exp_reward": 50
 		},
 		"boss": {
-			"names": ["Evil Treant"],
+			"names": ["The Treant"],
 			"health_multiplier": 3.0,
 			"damage_multiplier": 2.5,
 			"exp_reward": 75
@@ -54,25 +54,25 @@ var enemy_types = {
 	},
 	"dungeon2": {
 		"normal": {
-			"names": ["Evil Boar"],
+			"names": ["Boar"],
 			"health_multiplier": 1.5,
 			"damage_multiplier": 1.5,
 			"exp_reward": 20
 		},
 		"elite": {
-			"names": ["Wilder Boar"],
+			"names": ["Elite Boar"],
 			"health_multiplier": 2.5,
 			"damage_multiplier": 2.0,
 			"exp_reward": 45
 		},
 		"epic": {
-			"names": ["Cobra"],
+			"names": ["Epic Boar"],
 			"health_multiplier": 3.5,
 			"damage_multiplier": 2.5,
 			"exp_reward": 35
 		},
 		"boss": {
-			"names": ["Evil Treant"],
+			"names": ["The Treant"],
 			"health_multiplier": 4.5,
 			"damage_multiplier": 3.0,
 			"exp_reward": 100
@@ -80,25 +80,25 @@ var enemy_types = {
 	},
 	"dungeon3": {
 		"normal": {
-			"names": ["Evil Snake"],
+			"names": ["Snake"],
 			"health_multiplier": 1.2,
 			"damage_multiplier": 1.2,
 			"exp_reward": 15
 		},
 		"elite": {
-			"names": ["Cobra"],
+			"names": ["Elite Snake"],
 			"health_multiplier": 2.2,
 			"damage_multiplier": 1.7,
 			"exp_reward": 35
 		},
 		"epic": {
-			"names": ["Mamba"],
+			"names": ["Epic Snake"],
 			"health_multiplier": 3.2,
 			"damage_multiplier": 2.2,
 			"exp_reward": 35
 		},
 		"boss": {
-			"names": ["Evil Treant"],
+			"names": ["The Treant"],
 			"health_multiplier": 3.2,
 			"damage_multiplier": 2.7,
 			"exp_reward": 75
@@ -131,7 +131,8 @@ func _type_to_id(type_str: String) -> int:
 	match type_str:
 		"normal": return 1
 		"elite": return 2
-		"boss": return 3
+		"epic": return 3
+		"boss": return 4
 		_: return 0
 
 func setup_enemy():
@@ -176,25 +177,25 @@ func _setup_enemy_fallback():
 	enemy_types = {
 			"dungeon1": {
 		"normal": {
-			"names": ["Evil Slime"],
+			"names": ["Slime"],
 			"health_multiplier": 1.0,
 			"damage_multiplier": 1.0,
 			"exp_reward": 10
 		},
 		"elite": {
-			"names": ["Poison Slime"],
+			"names": ["Elite Slime"],
 			"health_multiplier": 2.0,
 			"damage_multiplier": 1.5,
 			"exp_reward": 25
 		},
 		"epic": {
-			"names": ["Rimuru Slime"],
+			"names": ["Epic Slime"],
 			"health_multiplier": 3.0,
 			"damage_multiplier": 2.0,
 			"exp_reward": 50
 		},
 		"boss": {
-			"names": ["Evil Treant"],
+			"names": ["The Treant"],
 			"health_multiplier": 3.0,
 			"damage_multiplier": 2.5,
 			"exp_reward": 75
