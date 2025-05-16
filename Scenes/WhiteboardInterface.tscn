@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://cvv1bpkfdvqjw"]
+[gd_scene load_steps=5 format=3 uid="uid://cvv1bpkfdvqjw"]
 
 [ext_resource type="Script" uid="uid://tupwtis13uye" path="res://Scripts/WhiteboardInterface.gd" id="1_e3gsa"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="2_ckebf"]
+[ext_resource type="Texture2D" uid="uid://b71mx2j075d48" path="res://gui/Update/UI/hover gray short button.png" id="3_vuw0y"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7wk35"]
 bg_color = Color(1, 1, 1, 1)
@@ -52,37 +53,62 @@ theme_override_constants/separation = 20
 [node name="UndoButton" type="Button" parent="VBoxContainer/ButtonsContainer"]
 custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_ckebf")
 theme_override_font_sizes/font_size = 20
 text = "Undo"
+icon = ExtResource("3_vuw0y")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [node name="RedoButton" type="Button" parent="VBoxContainer/ButtonsContainer"]
 custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_ckebf")
 theme_override_font_sizes/font_size = 20
 text = "Redo"
+icon = ExtResource("3_vuw0y")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [node name="ClearButton" type="Button" parent="VBoxContainer/ButtonsContainer"]
 custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_ckebf")
 theme_override_font_sizes/font_size = 20
 text = "Clear"
+icon = ExtResource("3_vuw0y")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [node name="CancelButton" type="Button" parent="VBoxContainer/ButtonsContainer"]
 custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_ckebf")
 theme_override_font_sizes/font_size = 20
 text = "Cancel"
+icon = ExtResource("3_vuw0y")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [node name="DoneButton" type="Button" parent="VBoxContainer/ButtonsContainer"]
 custom_minimum_size = Vector2(120, 50)
 layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_ckebf")
 theme_override_font_sizes/font_size = 20
 text = "Done"
+icon = ExtResource("3_vuw0y")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [connection signal="draw" from="VBoxContainer/DrawingArea" to="." method="_on_drawing_area_draw"]
 [connection signal="gui_input" from="VBoxContainer/DrawingArea" to="." method="_on_drawing_area_gui_input"]
