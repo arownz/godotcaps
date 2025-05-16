@@ -66,7 +66,10 @@ animations = [{
 }]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8e205"]
-bg_color = Color(0.6, 0.6, 0.6, 0)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -255,6 +258,7 @@ offset_top = -121.0
 offset_right = 237.0
 offset_bottom = -21.0
 grow_vertical = 0
+mouse_default_cursor_shape = 2
 texture_normal = ExtResource("8_7467j")
 ignore_texture_size = true
 stretch_mode = 5
@@ -300,6 +304,7 @@ offset_top = -123.0
 offset_right = 545.0
 offset_bottom = -23.0
 grow_vertical = 0
+mouse_default_cursor_shape = 2
 texture_normal = ExtResource("8_7467j")
 ignore_texture_size = true
 stretch_mode = 5
@@ -348,6 +353,7 @@ offset_right = 106.0
 offset_bottom = -21.0
 grow_horizontal = 2
 grow_vertical = 0
+mouse_default_cursor_shape = 2
 texture_normal = ExtResource("11_riqfo")
 ignore_texture_size = true
 stretch_mode = 5
@@ -403,6 +409,7 @@ offset_right = -420.0
 offset_bottom = -18.0
 grow_horizontal = 0
 grow_vertical = 0
+mouse_default_cursor_shape = 2
 texture_normal = ExtResource("8_7467j")
 ignore_texture_size = true
 stretch_mode = 5
@@ -452,6 +459,7 @@ offset_right = -111.0
 offset_bottom = -19.0
 grow_horizontal = 0
 grow_vertical = 0
+mouse_default_cursor_shape = 2
 texture_normal = ExtResource("8_7467j")
 ignore_texture_size = true
 stretch_mode = 5

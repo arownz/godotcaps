@@ -5,8 +5,9 @@
 [resource]
 script = ExtResource("1_yd3b5")
 type_id = "elite"
-names = Array[String](["Cobra", "Viper", "Poisonous Snake"])
+names = Array[String](["Epic Boar"])
 health_multiplier = 2.2
+defense_multiplier = 1.2
 damage_multiplier = 1.7
 exp_reward = 35
 sprite_scale = Vector2(1.5, 1.5)

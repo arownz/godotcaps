@@ -8,5 +8,6 @@ type_id = "normal"
 names = Array[String](["Slime"])
 health_multiplier = 1.0
 damage_multiplier = 1.0
+defense_multiplier = 1.2
 exp_reward = 10
 sprite_scale = Vector2(1, 1)

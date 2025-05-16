@@ -58,7 +58,7 @@ animations = [{
 "texture": SubResource("AtlasTexture_i7srl")
 }],
 "loop": true,
-"name": &"idle",
+"name": &"battle_idle",
 "speed": 10.0
 }]
 
@@ -225,8 +225,8 @@ grow_vertical = 2
 position = Vector2(-47, -193)
 scale = Vector2(4.57468, 4.51523)
 sprite_frames = SubResource("SpriteFrames_iin7j")
-animation = &"idle"
-autoplay = "idle"
+animation = &"battle_idle"
+autoplay = "battle_idle"
 
 [node name="PlayerHealthBar" type="ProgressBar" parent="MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer"]
 custom_minimum_size = Vector2(180, 15)

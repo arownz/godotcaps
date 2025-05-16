@@ -15,7 +15,7 @@ var enemy_max_health = 100
 var enemy_damage = 10
 var enemy_skill_meter = 0
 var enemy_name = "Slime"
-var enemy_type = "normal" # Can be "normal", "elite", or "boss"
+var enemy_type = "normal" # Can be "normal", "elite", "epic" or "boss"
 
 # Resource paths
 var enemy_resource_path = "res://Resources/Enemies/"
@@ -54,32 +54,6 @@ var enemy_types = {
 	},
 	"dungeon2": {
 		"normal": {
-			"names": ["Evil Snake"],
-			"health_multiplier": 1.2,
-			"damage_multiplier": 1.2,
-			"exp_reward": 15
-		},
-		"elite": {
-			"names": ["Cobra"],
-			"health_multiplier": 2.2,
-			"damage_multiplier": 1.7,
-			"exp_reward": 35
-		},
-		"epic": {
-			"names": ["Mamba"],
-			"health_multiplier": 3.2,
-			"damage_multiplier": 2.2,
-			"exp_reward": 35
-		},
-		"boss": {
-			"names": ["Evil Treant"],
-			"health_multiplier": 3.2,
-			"damage_multiplier": 2.7,
-			"exp_reward": 75
-		}
-	},
-	"dungeon3": {
-		"normal": {
 			"names": ["Evil Boar"],
 			"health_multiplier": 1.5,
 			"damage_multiplier": 1.5,
@@ -102,6 +76,32 @@ var enemy_types = {
 			"health_multiplier": 4.5,
 			"damage_multiplier": 3.0,
 			"exp_reward": 100
+		}
+	},
+	"dungeon3": {
+		"normal": {
+			"names": ["Evil Snake"],
+			"health_multiplier": 1.2,
+			"damage_multiplier": 1.2,
+			"exp_reward": 15
+		},
+		"elite": {
+			"names": ["Cobra"],
+			"health_multiplier": 2.2,
+			"damage_multiplier": 1.7,
+			"exp_reward": 35
+		},
+		"epic": {
+			"names": ["Mamba"],
+			"health_multiplier": 3.2,
+			"damage_multiplier": 2.2,
+			"exp_reward": 35
+		},
+		"boss": {
+			"names": ["Evil Treant"],
+			"health_multiplier": 3.2,
+			"damage_multiplier": 2.7,
+			"exp_reward": 75
 		}
 	}
 }

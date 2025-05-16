@@ -5,8 +5,9 @@
 [resource]
 script = ExtResource("1_rjmtd")
 type_id = "elite"
-names = ["Giant Slime", "Blue Slime", "Toxic Slime"]
+names = ["Elite Slime"]
 health_multiplier = 2.0
 damage_multiplier = 1.5
+defense_multiplier = 1.2
 exp_reward = 25
 sprite_scale = Vector2(1.5, 1.5)
