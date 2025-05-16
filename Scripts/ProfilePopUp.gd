@@ -219,7 +219,7 @@ func _on_profile_picture_button_pressed():
 	
 	# Connect signal before _ready finishes to ensure we don't miss events
 	profile_pics_popup.connect("picture_selected", Callable(self, "_on_profile_picture_selected"))
-	profile_pics_popup.connect("popup_closed", Callable(self, "_on_profile_pics_popup_closed"))
+	profile_pics_popup.connect("cancelled", Callable(self, "_on_profile_pics_popup_closed"))
 	
 	# We can still use await inside a regular function
 	await get_tree().process_frame
