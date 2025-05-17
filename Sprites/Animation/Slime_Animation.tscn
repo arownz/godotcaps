@@ -262,4 +262,4 @@ scale = Vector2(3.0282, 3.24591)
 sprite_frames = SubResource("SpriteFrames_ovbb4")
 animation = &"idle"
 autoplay = "idle"
-frame_progress = 0.975139
+frame_progress = 0.422004

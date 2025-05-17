@@ -259,6 +259,6 @@ animations = [{
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 scale = Vector2(3.0282, 3.24591)
 sprite_frames = SubResource("SpriteFrames_3qtp5")
-animation = &"idle"
+animation = &"skill"
 autoplay = "idle"
-frame_progress = 0.974395
+frame_progress = 0.765488
