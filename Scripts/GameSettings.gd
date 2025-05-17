@@ -47,7 +47,7 @@ var dungeons_completed = {
 var dungeon_names = {
 	"1": "The Plains",
 	"2": "The Forest", 
-	"3": "The Demon"
+	"3": "The Mountain"
 }
 
 # Accessibility settings

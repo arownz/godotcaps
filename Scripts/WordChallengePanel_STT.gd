@@ -612,7 +612,7 @@ func _on_speech_recognized(text):
 	print("WORD COMPARISON: Success = " + str(is_success))
 	
 	# Create and show the result panel
-	print("CREATING RESULT PANEL")
+	print("OPENING RESULT PANEL")
 	var result_panel = load("res://Scenes/ChallengeResultPanels.tscn").instantiate()
 	
 	# Add directly to the scene root to ensure it appears on top of everything

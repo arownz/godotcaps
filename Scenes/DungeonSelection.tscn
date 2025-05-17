@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://chfkysvsxt4eg" path="res://gui/Update/Backgrounds/Plains_Level.png" id="2_bu21u"]
 [ext_resource type="Texture2D" uid="uid://bx1y3wrexv02d" path="res://gui/dungeonselection/next.png" id="2_pu3ti"]
 [ext_resource type="Texture2D" uid="uid://dds117r721ew8" path="res://gui/dungeonselection/previous.png" id="3_e1jkr"]
-[ext_resource type="Texture2D" uid="uid://t7tphlgw3pme" path="res://gui/dungeonselection/dungeon1.png" id="4_tv7ar"]
+[ext_resource type="Texture2D" uid="uid://bt0tigh26flog" path="res://gui/Update/icons/level selection.png" id="4_bu21u"]
 [ext_resource type="Texture2D" uid="uid://boyms7my8lwmc" path="res://gui/dungeonselection/dungeon2_lock.png" id="5_efoci"]
 [ext_resource type="Texture2D" uid="uid://dlmfvdh6uvgep" path="res://gui/dungeonselection/dungeon3_lock.png" id="6_j6mrw"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="7_vkjng"]
@@ -98,7 +98,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_default_cursor_shape = 2
-texture_normal = ExtResource("4_tv7ar")
+texture_normal = ExtResource("4_bu21u")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -225,7 +225,7 @@ theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
 theme_override_fonts/font = ExtResource("7_vkjng")
 theme_override_font_sizes/font_size = 36
-text = "Dungeon 3: The Demon"
+text = "Dungeon 3: The Mountain"
 horizontal_alignment = 1
 
 [node name="StatusLabel" type="Label" parent="DungeonContainer/DungeonCarousel/Dungeon3"]

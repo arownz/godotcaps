@@ -123,7 +123,7 @@ func update_stage_info():
 	var dungeon_names = {
 		1: "The Plain",
 		2: "The Forest",
-		3: "The Demon"
+		3: "The Mountain"
 	}
 	
 	var dungeon_name = dungeon_names.get(dungeon_num, "Dungeon " + str(dungeon_num))

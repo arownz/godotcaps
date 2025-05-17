@@ -86,7 +86,7 @@ func _preload_enemy_resources():
 	# Comment out other enemy types until needed
 	# For each dungeon and enemy type, preload the resources
 	# for dungeon_num in range(1, 4):
-	#    for type in ["normal", "elite", "boss"]:
+	#    for type in ["normal", "boss"]:
 	#        var resource_path = enemy_resource_path + "dungeon" + str(dungeon_num) + "_" + type + ".tres"
 	#        if ResourceLoader.exists(resource_path):
 	#            enemy_resources[dungeon_num * 10 + _type_to_id(type)] = load(resource_path)

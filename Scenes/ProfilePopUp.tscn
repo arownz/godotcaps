@@ -356,7 +356,7 @@ offset_bottom = 63.0
 theme_override_colors/font_color = Color(0.988235, 0.988235, 0, 1)
 theme_override_fonts/font = ExtResource("3_uyv5l")
 theme_override_font_sizes/font_size = 18
-text = "3: The Demon"
+text = "3: The Mountain"
 
 [node name="StageLabel" type="Label" parent="ProfileContainer/StatsArea"]
 layout_mode = 0

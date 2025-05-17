@@ -8,7 +8,7 @@ const ANIMATION_EASE = Tween.EASE_OUT_IN
 # Dungeon Properties
 var current_dungeon = 0  # 0-based index (0 = Dungeon 1)
 var unlocked_dungeons = 1  # How many dungeons are unlocked (at least 1)
-var dungeon_names = ["The Plain", "The Forest", "The Demon"]
+var dungeon_names = ["The Plain", "The Forest", "The Mountain"]
 var dungeon_textures = {
     "unlocked": [],
     "locked": []
