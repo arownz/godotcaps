@@ -1,13 +1,12 @@
-[gd_resource type="Resource" script_class="EnemyTypeResource" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="EnemyTypeResource" load_steps=2 format=3 uid="uid://x3tjguoxsd4w"]
 
-[ext_resource type="Script" path="res://Scripts/Resources/enemy_type_resource.gd" id="1_rjmtd"]
+[ext_resource type="Script" uid="uid://d2ghh4os1rp2o" path="res://Scripts/Resources/enemy_type_resource.gd" id="1_rjmtd"]
 
 [resource]
 script = ExtResource("1_rjmtd")
 type_id = "boss"
-names = ["The Treant"]
+names = Array[String](["The Treant"])
 health_multiplier = 3.0
 damage_multiplier = 2.0
-defense_multiplier = 1.2
 exp_reward = 50
 sprite_scale = Vector2(2, 2)

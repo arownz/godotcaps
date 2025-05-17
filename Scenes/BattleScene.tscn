@@ -1,66 +1,16 @@
-[gd_scene load_steps=32 format=3 uid="uid://cfead7bcuslp4"]
+[gd_scene load_steps=18 format=3 uid="uid://cfead7bcuslp4"]
 
 [ext_resource type="Texture2D" uid="uid://cxqd6wyqy8g22" path="res://gui/Update/Backgrounds/battlescene background.png" id="2_ixjr5"]
-[ext_resource type="Texture2D" uid="uid://bs7axy8rkm4ei" path="res://Sprites/Frame Sprites/Lexia.png" id="3_kwfy1"]
+[ext_resource type="PackedScene" uid="uid://e6bec84rrthm" path="res://Sprites/Animation/DefaultPlayer_Animation.tscn" id="3_ixjr5"]
 [ext_resource type="Script" uid="uid://cnnycoui3l3ef" path="res://Scripts/battlescene.gd" id="3_vhj2j"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="4_akpf4"]
-[ext_resource type="Texture2D" uid="uid://cmgrkntjwnvvr" path="res://Sprites/Frame Sprites/Slime.png" id="5_ixjr5"]
+[ext_resource type="PackedScene" uid="uid://d1i117ieiarnh" path="res://Sprites/Animation/Slime_Animation.tscn" id="5_1yevk"]
 [ext_resource type="PackedScene" uid="uid://buhhqw4k2b2ye" path="res://Scenes/StatsTester.tscn" id="5_pqv1n"]
 [ext_resource type="Texture2D" uid="uid://clkh35ycdmutp" path="res://gui/Update/icons/player progress icon.png" id="6_kwfy1"]
 [ext_resource type="Texture2D" uid="uid://bj14mm05c4i87" path="res://gui/ui_4.png" id="6_r8yha"]
 [ext_resource type="Texture2D" uid="uid://bmjd8nkagj08e" path="res://gui/Update/UI/long uncolored button.png" id="7_2tp6q"]
 [ext_resource type="Texture2D" uid="uid://c8vnqmxwy0lsw" path="res://gui/Update/icons/small settings.png" id="7_ixjr5"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="8_2tp6q"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_1yevk"]
-atlas = ExtResource("3_kwfy1")
-region = Rect2(0, 82, 82, 82)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_0avxp"]
-atlas = ExtResource("3_kwfy1")
-region = Rect2(82, 82, 82, 82)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_x5p3t"]
-atlas = ExtResource("3_kwfy1")
-region = Rect2(164, 82, 82, 82)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_cja1x"]
-atlas = ExtResource("3_kwfy1")
-region = Rect2(246, 82, 82, 82)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_aip7a"]
-atlas = ExtResource("3_kwfy1")
-region = Rect2(328, 82, 82, 82)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_i7srl"]
-atlas = ExtResource("3_kwfy1")
-region = Rect2(410, 82, 82, 82)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_iin7j"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_1yevk")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_0avxp")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_x5p3t")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_cja1x")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_aip7a")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_i7srl")
-}],
-"loop": true,
-"name": &"battle_idle",
-"speed": 10.0
-}]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_e13ox"]
 bg_color = Color(0.901961, 0.368627, 0.294118, 1)
@@ -85,56 +35,6 @@ corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_43vwj"]
-atlas = ExtResource("5_ixjr5")
-region = Rect2(0, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ksqd2"]
-atlas = ExtResource("5_ixjr5")
-region = Rect2(64, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_hueq0"]
-atlas = ExtResource("5_ixjr5")
-region = Rect2(128, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_pwb48"]
-atlas = ExtResource("5_ixjr5")
-region = Rect2(192, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_fm0w4"]
-atlas = ExtResource("5_ixjr5")
-region = Rect2(256, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_71qfg"]
-atlas = ExtResource("5_ixjr5")
-region = Rect2(320, 0, 64, 64)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_os4x4"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_43vwj")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ksqd2")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_hueq0")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_pwb48")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_fm0w4")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_71qfg")
-}],
-"loop": true,
-"name": &"idle",
-"speed": 10.0
-}]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_skill_fill"]
 bg_color = Color(0.823529, 0.490196, 0.172549, 1)
@@ -193,8 +93,8 @@ script = ExtResource("3_vhj2j")
 
 [node name="Sprite2D" type="Sprite2D" parent="Background/ParallaxLayer"]
 texture_filter = 1
-position = Vector2(-117, -20)
-scale = Vector2(5.50313, 4.72778)
+position = Vector2(-42, -25)
+scale = Vector2(5.77813, 4.72778)
 texture = ExtResource("2_ixjr5")
 centered = false
 
@@ -226,12 +126,12 @@ offset_right = 313.0
 offset_bottom = 261.0
 grow_vertical = 2
 
-[node name="Player" type="AnimatedSprite2D" parent="MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer"]
+[node name="Player" type="Node2D" parent="MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer"]
 position = Vector2(-47, -193)
 scale = Vector2(4.57468, 4.51523)
-sprite_frames = SubResource("SpriteFrames_iin7j")
-animation = &"battle_idle"
-autoplay = "battle_idle"
+
+[node name="DefaultPlayerAnimation" parent="MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer/Player" instance=ExtResource("3_ixjr5")]
+scale = Vector2(0.225055, 0.225055)
 
 [node name="PlayerHealthBar" type="ProgressBar" parent="MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer"]
 custom_minimum_size = Vector2(180, 15)
@@ -295,12 +195,12 @@ offset_bottom = 270.0
 grow_horizontal = 0
 grow_vertical = 2
 
-[node name="Enemy" type="AnimatedSprite2D" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer"]
+[node name="Enemy" type="Node2D" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer"]
 position = Vector2(56, -187)
 scale = Vector2(3.52051, 3.76243)
-sprite_frames = SubResource("SpriteFrames_os4x4")
-animation = &"idle"
-autoplay = "idle"
+
+[node name="Slime" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer/Enemy" instance=ExtResource("5_1yevk")]
+scale = Vector2(0.33845, 0.33845)
 
 [node name="EnemyHealthBar" type="ProgressBar" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer"]
 custom_minimum_size = Vector2(180, 15)

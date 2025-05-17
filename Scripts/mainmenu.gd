@@ -12,13 +12,7 @@ var user_data = {}
 # Buttons with hover labels
 var hover_buttons = []
 
-# Add reference to our debug helper
-var firebase_debug = preload("res://Scripts/firebase_debug.gd").new()
-
 func _ready():
-
-    # Add debug helper
-    add_child(firebase_debug)
     
     # Setup hover buttons for UI interaction
     _setup_hover_buttons()
