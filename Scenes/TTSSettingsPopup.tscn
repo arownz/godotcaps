@@ -16,6 +16,15 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_y2dfs")
 
+[node name="TextureRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.6)
+
 [node name="Panel" type="TextureRect" parent="."]
 custom_minimum_size = Vector2(400, 350)
 layout_mode = 1
@@ -47,7 +56,7 @@ theme_override_constants/separation = 10
 
 [node name="TitleLabel" type="Label" parent="Panel/VBoxContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.2, 0.2, 0.2, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_m3f5r")
 theme_override_font_sizes/font_size = 20
 text = "Text-to-Speech Settings"
@@ -61,7 +70,7 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="Panel/VBoxContainer/VoiceContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.2, 0.2, 0.2, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_m3f5r")
 theme_override_font_sizes/font_size = 18
 text = "Voice:"
@@ -78,7 +87,7 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="Panel/VBoxContainer/RateContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.2, 0.2, 0.2, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_m3f5r")
 theme_override_font_sizes/font_size = 18
 text = "Speech Rate:"
@@ -95,7 +104,7 @@ ticks_on_borders = true
 
 [node name="RateValueLabel" type="Label" parent="Panel/VBoxContainer/RateContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.2, 0.2, 0.2, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_m3f5r")
 theme_override_font_sizes/font_size = 16
 text = "Rate: 1.0 (Normal)"
@@ -103,7 +112,7 @@ horizontal_alignment = 1
 
 [node name="StatusLabel" type="Label" parent="Panel/VBoxContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.2, 0.2, 0.2, 0.6)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_m3f5r")
 theme_override_font_sizes/font_size = 14
 text = "Loading voices..."

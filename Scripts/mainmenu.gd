@@ -16,13 +16,6 @@ var hover_buttons = []
 var firebase_debug = preload("res://Scripts/firebase_debug.gd").new()
 
 func _ready():
-    # Add a debug label to show messages
-    var debug_label = Label.new()
-    debug_label.name = "DebugLabel"
-    debug_label.position = Vector2(10, 10)
-    debug_label.size = Vector2(500, 100)
-    debug_label.text = "Main Menu loaded successfully"
-    add_child(debug_label)
 
     # Add debug helper
     add_child(firebase_debug)
