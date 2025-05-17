@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=3 uid="uid://detxp7ylydvcd"]
+[gd_scene load_steps=39 format=3 uid="uid://detxp7ylydvcd"]
 
 [ext_resource type="Texture2D" uid="uid://ckfq2sv5fswsg" path="res://Sprites/Frame Sprites/Snake.png" id="1_k055r"]
 
@@ -122,6 +122,30 @@ region = Rect2(192, 64, 64, 64)
 atlas = ExtResource("1_k055r")
 region = Rect2(256, 64, 64, 64)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_k055r"]
+atlas = ExtResource("1_k055r")
+region = Rect2(320, 192, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_06me7"]
+atlas = ExtResource("1_k055r")
+region = Rect2(256, 192, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_upo73"]
+atlas = ExtResource("1_k055r")
+region = Rect2(192, 192, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g2pyi"]
+atlas = ExtResource("1_k055r")
+region = Rect2(128, 192, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fyetg"]
+atlas = ExtResource("1_k055r")
+region = Rect2(64, 192, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w3jao"]
+atlas = ExtResource("1_k055r")
+region = Rect2(0, 256, 64, 64)
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_06me7"]
 animations = [{
 "frames": [{
@@ -233,6 +257,29 @@ animations = [{
 "loop": true,
 "name": &"idle",
 "speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_k055r")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_06me7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_upo73")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_g2pyi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fyetg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_w3jao")
+}],
+"loop": true,
+"name": &"skill",
+"speed": 10.0
 }]
 
 [node name="SnakeAnimation" type="Node2D"]
@@ -242,3 +289,4 @@ scale = Vector2(3.0282, 3.24591)
 sprite_frames = SubResource("SpriteFrames_06me7")
 animation = &"idle"
 autoplay = "idle"
+frame_progress = 0.868731

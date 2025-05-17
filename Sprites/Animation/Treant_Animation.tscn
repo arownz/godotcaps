@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=3 uid="uid://d4gnmb7y5laks"]
+[gd_scene load_steps=40 format=3 uid="uid://d4gnmb7y5laks"]
 
 [ext_resource type="Texture2D" uid="uid://by0xvtv0v0usp" path="res://Sprites/Frame Sprites/Treant.png" id="1_ekcs8"]
 
@@ -122,6 +122,34 @@ region = Rect2(672, 0, 112, 112)
 atlas = ExtResource("1_ekcs8")
 region = Rect2(784, 0, 112, 112)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_ekcs8"]
+atlas = ExtResource("1_ekcs8")
+region = Rect2(0, 112, 112, 112)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j63xv"]
+atlas = ExtResource("1_ekcs8")
+region = Rect2(112, 112, 112, 112)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vbmvk"]
+atlas = ExtResource("1_ekcs8")
+region = Rect2(224, 112, 112, 112)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_26axe"]
+atlas = ExtResource("1_ekcs8")
+region = Rect2(336, 112, 112, 112)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1ub8n"]
+atlas = ExtResource("1_ekcs8")
+region = Rect2(448, 112, 112, 112)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e2d4x"]
+atlas = ExtResource("1_ekcs8")
+region = Rect2(560, 112, 112, 112)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qhv2p"]
+atlas = ExtResource("1_ekcs8")
+region = Rect2(0, 224, 112, 112)
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_j63xv"]
 animations = [{
 "frames": [{
@@ -233,6 +261,32 @@ animations = [{
 "loop": true,
 "name": &"idle",
 "speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ekcs8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_j63xv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vbmvk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_26axe")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1ub8n")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_e2d4x")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qhv2p")
+}],
+"loop": true,
+"name": &"skill",
+"speed": 7.0
 }]
 
 [node name="TreantAnimation" type="Node2D"]
@@ -242,4 +296,4 @@ scale = Vector2(2.177, 2.334)
 sprite_frames = SubResource("SpriteFrames_j63xv")
 animation = &"idle"
 autoplay = "idle"
-frame_progress = 0.271845
+frame_progress = 0.26471

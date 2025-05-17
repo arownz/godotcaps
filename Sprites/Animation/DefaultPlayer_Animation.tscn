@@ -507,5 +507,5 @@ animations = [{
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 scale = Vector2(4.41759, 4.73519)
 sprite_frames = SubResource("SpriteFrames_fdt5l")
-animation = &"battle_idle"
-autoplay = "battle_idle"
+animation = &"idle"
+autoplay = "idle"
