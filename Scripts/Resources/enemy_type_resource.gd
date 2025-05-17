@@ -1,7 +1,7 @@
 class_name EnemyTypeResource
 extends Resource
 
-@export var type_id: String = "normal"  # normal, elite, epic, boss
+@export var type_id: String = "normal"
 @export var names: Array[String] = ["Enemy"]
 @export var health_multiplier: float = 1.0
 @export var damage_multiplier: float = 1.0

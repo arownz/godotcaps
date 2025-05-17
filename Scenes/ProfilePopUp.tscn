@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://bysyq46j6ycis"]
+[gd_scene load_steps=13 format=3 uid="uid://bysyq46j6ycis"]
 
 [ext_resource type="Script" uid="uid://caa84ntbsorb8" path="res://Scripts/ProfilePopUp.gd" id="1_script"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="2_73kok"]
@@ -9,67 +9,14 @@
 [ext_resource type="Texture2D" uid="uid://upv1mak0rswy" path="res://gui/ProfileScene/bronze medal.png" id="7_medal"]
 [ext_resource type="Texture2D" uid="uid://dpejfssp2t44k" path="res://gui/Update/icons/edit name.png" id="7_rwnca"]
 [ext_resource type="Texture2D" uid="uid://d1y2su33nhh8p" path="res://gui/Update/icons/copy UID.png" id="8_ampbo"]
-[ext_resource type="Texture2D" uid="uid://bs7axy8rkm4ei" path="res://Sprites/Frame Sprites/Lexia.png" id="10_rwnca"]
+[ext_resource type="PackedScene" uid="uid://e6bec84rrthm" path="res://Sprites/Animation/DefaultPlayer_Animation.tscn" id="10_ampbo"]
 [ext_resource type="Texture2D" uid="uid://dwhfu458shj55" path="res://gui/Update/icons/highest level.png" id="11_rwnca"]
 [ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="12_ampbo"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_ampbo"]
-atlas = ExtResource("10_rwnca")
-region = Rect2(0, 0, 82, 82)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_r1smr"]
-atlas = ExtResource("10_rwnca")
-region = Rect2(82, 0, 82, 82)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_vhpl5"]
-atlas = ExtResource("10_rwnca")
-region = Rect2(164, 0, 82, 82)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_kmls2"]
-atlas = ExtResource("10_rwnca")
-region = Rect2(246, 0, 82, 82)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_tilb2"]
-atlas = ExtResource("10_rwnca")
-region = Rect2(328, 0, 82, 82)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_82scp"]
-atlas = ExtResource("10_rwnca")
-region = Rect2(410, 0, 82, 82)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_ob8vh"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ampbo")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_r1smr")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_vhpl5")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_kmls2")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_tilb2")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_82scp")
-}],
-"loop": true,
-"name": &"idle",
-"speed": 10.0
-}]
-
-[node name="ProfilePopUp" type="Control"]
-layout_mode = 3
-anchors_preset = 0
+[node name="ProfilePopUp" type="Node2D"]
 script = ExtResource("1_script")
 
 [node name="Transparent_ColorRect" type="ColorRect" parent="."]
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -83,7 +30,7 @@ color = Color(0, 0, 0, 0.5)
 
 [node name="ProfileContainer" type="Control" parent="."]
 custom_minimum_size = Vector2(750, 600)
-layout_mode = 1
+layout_mode = 3
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -290,14 +237,14 @@ layout_mode = 1
 anchors_preset = 0
 offset_left = 218.0
 offset_top = 350.0
-offset_right = 506.0
-offset_bottom = 598.0
+offset_right = 488.0
+offset_bottom = 537.0
 
 [node name="StatsTitle" type="Label" parent="ProfileContainer/StatsArea"]
 layout_mode = 0
-offset_left = 39.0
+offset_left = -5.0
 offset_top = 25.0
-offset_right = 265.0
+offset_right = 221.0
 offset_bottom = 70.0
 theme_override_fonts/font = ExtResource("2_73kok")
 theme_override_font_sizes/font_size = 24
@@ -307,9 +254,9 @@ vertical_alignment = 1
 
 [node name="EnergyLabel" type="Label" parent="ProfileContainer/StatsArea"]
 layout_mode = 0
-offset_left = 39.0
+offset_left = -5.0
 offset_top = 78.0
-offset_right = 159.0
+offset_right = 115.0
 offset_bottom = 115.0
 theme_override_fonts/font = ExtResource("2_73kok")
 theme_override_font_sizes/font_size = 20
@@ -317,9 +264,9 @@ text = "Energy:"
 
 [node name="EnergyValue" type="Label" parent="ProfileContainer/StatsArea"]
 layout_mode = 0
-offset_left = 160.0
+offset_left = 116.0
 offset_top = 78.0
-offset_right = 280.0
+offset_right = 236.0
 offset_bottom = 115.0
 theme_override_colors/font_color = Color(0.99, 0.99, 0, 1)
 theme_override_fonts/font = ExtResource("3_uyv5l")
@@ -328,9 +275,9 @@ text = "100/100"
 
 [node name="PowerLabel" type="Label" parent="ProfileContainer/StatsArea"]
 layout_mode = 0
-offset_left = 38.0
+offset_left = -6.0
 offset_top = 125.0
-offset_right = 158.0
+offset_right = 179.0
 offset_bottom = 162.0
 theme_override_fonts/font = ExtResource("2_73kok")
 theme_override_font_sizes/font_size = 20
@@ -338,105 +285,95 @@ text = "Power Scale:"
 
 [node name="PowerValue" type="Label" parent="ProfileContainer/StatsArea"]
 layout_mode = 0
-offset_left = 92.0
-offset_top = 166.0
-offset_right = 212.0
-offset_bottom = 203.0
+offset_left = 189.0
+offset_top = 125.0
+offset_right = 271.0
+offset_bottom = 162.0
 theme_override_colors/font_color = Color(0.99, 0.99, 0, 1)
 theme_override_fonts/font = ExtResource("3_uyv5l")
 theme_override_font_sizes/font_size = 20
 text = "10000"
 
-[node name="DungeonValue" type="Label" parent="ProfileContainer/StatsArea"]
-layout_mode = 0
-offset_left = 304.0
-offset_top = 27.0
-offset_right = 468.0
-offset_bottom = 63.0
-theme_override_colors/font_color = Color(0.988235, 0.988235, 0, 1)
-theme_override_fonts/font = ExtResource("3_uyv5l")
-theme_override_font_sizes/font_size = 18
-text = "3: The Mountain"
+[node name="CharacterArea" type="Node2D" parent="ProfileContainer"]
+position = Vector2(105, 477)
 
-[node name="StageLabel" type="Label" parent="ProfileContainer/StatsArea"]
-layout_mode = 0
-offset_left = 277.0
-offset_top = 232.0
-offset_right = 460.0
-offset_bottom = 268.0
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = ExtResource("3_uyv5l")
-theme_override_font_sizes/font_size = 18
-text = "Current Stage:"
+[node name="DefaultPlayerAnimation" parent="ProfileContainer/CharacterArea" instance=ExtResource("10_ampbo")]
+position = Vector2(1, 0)
+scale = Vector2(0.834702, 0.834702)
 
-[node name="StageValue" type="Label" parent="ProfileContainer/StatsArea"]
+[node name="Level" type="Label" parent="ProfileContainer"]
 layout_mode = 0
-offset_left = 470.0
-offset_top = 233.0
-offset_right = 543.0
-offset_bottom = 269.0
-theme_override_colors/font_color = Color(0.988235, 0.988235, 0, 1)
-theme_override_fonts/font = ExtResource("3_uyv5l")
-theme_override_font_sizes/font_size = 18
-text = "5/5"
-
-[node name="CharacterArea" type="Control" parent="ProfileContainer"]
-layout_mode = 1
-anchors_preset = 0
-offset_left = 13.0
-offset_top = 319.0
-offset_right = 214.0
-offset_bottom = 599.0
-
-[node name="Level" type="Label" parent="ProfileContainer/CharacterArea"]
-layout_mode = 0
-offset_left = 27.0
-offset_top = 217.0
-offset_right = 122.0
-offset_bottom = 254.0
+offset_left = 38.0
+offset_top = 548.0
+offset_right = 133.0
+offset_bottom = 585.0
 theme_override_fonts/font = ExtResource("2_73kok")
 theme_override_font_sizes/font_size = 20
 text = "Level:"
 horizontal_alignment = 1
 
-[node name="Level2" type="Label" parent="ProfileContainer/CharacterArea"]
+[node name="Level2" type="Label" parent="ProfileContainer"]
 layout_mode = 0
-offset_left = 123.0
-offset_top = 218.0
-offset_right = 156.0
-offset_bottom = 295.0
+offset_left = 134.0
+offset_top = 549.0
+offset_right = 161.0
+offset_bottom = 586.0
 theme_override_colors/font_color = Color(0.99, 0.99, 0, 1)
 theme_override_fonts/font = ExtResource("3_uyv5l")
 theme_override_font_sizes/font_size = 20
-text = "99
-"
-horizontal_alignment = 1
-
-[node name="CharacterImage" type="AnimatedSprite2D" parent="ProfileContainer/CharacterArea"]
-position = Vector2(100, 139)
-scale = Vector2(4.95427, 4.43598)
-sprite_frames = SubResource("SpriteFrames_ob8vh")
-animation = &"idle"
-autoplay = "idle"
+text = "100"
 
 [node name="DungeonArea" type="Control" parent="ProfileContainer"]
 layout_mode = 1
 anchors_preset = 0
-offset_left = 484.0
-offset_top = 364.0
-offset_right = 660.0
-offset_bottom = 540.0
+offset_left = 498.0
+offset_top = 354.0
+offset_right = 742.0
+offset_bottom = 631.0
 
 [node name="DungeonImage" type="TextureRect" parent="ProfileContainer/DungeonArea"]
 layout_mode = 0
-offset_left = 64.0
-offset_top = 54.0
-offset_right = 165.0
-offset_bottom = 199.0
+offset_left = 65.0
+offset_top = 60.0
+offset_right = 166.0
+offset_bottom = 205.0
 mouse_default_cursor_shape = 2
 texture = ExtResource("11_rwnca")
 expand_mode = 1
 stretch_mode = 6
+
+[node name="DungeonValue" type="Label" parent="ProfileContainer/DungeonArea"]
+layout_mode = 0
+offset_left = 15.0
+offset_top = 14.0
+offset_right = 216.0
+offset_bottom = 50.0
+theme_override_colors/font_color = Color(0.988235, 0.988235, 0, 1)
+theme_override_fonts/font = ExtResource("3_uyv5l")
+theme_override_font_sizes/font_size = 18
+text = "3: The Mountain"
+
+[node name="StageLabel" type="Label" parent="ProfileContainer/DungeonArea"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 226.0
+offset_right = 193.0
+offset_bottom = 262.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("3_uyv5l")
+theme_override_font_sizes/font_size = 18
+text = "Current Stage:"
+
+[node name="StageValue" type="Label" parent="ProfileContainer/DungeonArea"]
+layout_mode = 0
+offset_left = 203.0
+offset_top = 227.0
+offset_right = 276.0
+offset_bottom = 263.0
+theme_override_colors/font_color = Color(0.988235, 0.988235, 0, 1)
+theme_override_fonts/font = ExtResource("3_uyv5l")
+theme_override_font_sizes/font_size = 18
+text = "5/5"
 
 [node name="LogoutButton" type="Button" parent="ProfileContainer"]
 layout_mode = 0

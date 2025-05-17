@@ -17,7 +17,7 @@ var introduction_messages = {
 	],
 	"dungeon3": [
 		"You've reached The Mountain, home to the most fearsome creatures.",
-		"A goblin jumps out from behind the rocks, ready to attack!"
+		"A Boar ram behind the rocks, ready to attack!"
 	]
 }
 

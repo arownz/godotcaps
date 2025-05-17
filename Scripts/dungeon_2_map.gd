@@ -10,14 +10,15 @@ var dungeon_num = 2
 # Enemy types for this dungeon
 var enemy_types = {
 	"normal": {
-		"name": "Boar",
-		"description": "A fierce wild boar with sharp tusks.",
+		"name": "Snake",
+		"description": "A venomous snake that moves swiftly and strikes with precision.",
 		"health": 110,
 		"attack": 15,
 		"durability": 35,
-		"skill": "Charging Attack",
-		"animation": "Mob3Idle"
+		"skill": "Venom Strike",
+		"animation": "Mob2Idle"
 	},
+
 	"boss": {
 		"name": "The Treant",
 		"description": "An ancient tree guardian with powerful nature magic.",

@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_rjmtd")
 type_id = "normal"
-names = ["Snake"]
+names = ["Boar"]
 health_multiplier = 1.2
 damage_multiplier = 1.2
 defense_multiplier = 1.2

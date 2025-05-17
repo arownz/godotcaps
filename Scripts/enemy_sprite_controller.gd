@@ -1,13 +1,13 @@
 extends AnimatedSprite2D
 
 # Properties exposed to the Inspector
-@export var enemy_type: String = "normal"  # normal, elite, boss
+@export var enemy_type: String = "normal"  # normal, boss
 @export var dungeon: int = 1
 @export var stage: int = 1
 
 # Scaling parameters that can be adjusted in the editor
 @export var base_scale: Vector2 = Vector2(1.0, 1.0)
-@export var elite_scale_multiplier: float = 1.5
+@export var normal_scale_multiplier: float = 1.5
 @export var boss_scale_multiplier: float = 2.0
 
 func _ready():
@@ -19,8 +19,8 @@ func _ready():
 
 func apply_enemy_type_scale():
 	match enemy_type:
-		"elite":
-			scale = base_scale * elite_scale_multiplier
+		"normal":
+			scale = base_scale * normal_scale_multiplier
 		"boss":
 			scale = base_scale * boss_scale_multiplier
 		_:  # normal or any other type
@@ -43,10 +43,8 @@ func get_enemy_folder_name() -> String:
 	# This should return the folder name for this enemy type
 	# Could be derived from the enemy_type or configured separately
 	match enemy_type:
-		"elite":
-			return "elite_slime"
-		"epic":
-			return "epic_slime"
+		"normal":
+			return "slime"
 		"boss":
 			return "boss_slime"
 		_:

@@ -1,4 +1,4 @@
-extends Control
+extends Node2D
 
 signal closed
 
@@ -133,9 +133,9 @@ func update_ui():
 		$ProfileContainer/UserInfoArea/UIDValue.text = uid
 	
 	# Update level
-	if has_node("ProfileContainer/CharacterArea/Level2"):
+	if has_node("ProfileContainer/Level2"):
 		var level = user_data.get("user_level", 1)
-		$ProfileContainer/CharacterArea/Level2.text = str(level)
+		$ProfileContainer/Level2.text = str(level)
 	
 	# Update player stats
 	if has_node("ProfileContainer/StatsArea/EnergyValue"):
@@ -165,14 +165,14 @@ func update_ui():
 	var dungeon_names = user_data.get("dungeon_names", {"1": "The Plains", "2": "The Forest", "3": "The Mountain"})
 	
 	# Display current dungeon and stage
-	if has_node("ProfileContainer/StatsArea/DungeonValue"):
+	if has_node("ProfileContainer/DungeonArea/DungeonValue"):
 		var dungeon_name = dungeon_names.get(str(current_dungeon), "Unknown")
 		var dungeon_text = str(current_dungeon) + ": " + dungeon_name
-		$ProfileContainer/StatsArea/DungeonValue.text = dungeon_text
+		$ProfileContainer/DungeonArea/DungeonValue.text = dungeon_text
 	
-	if has_node("ProfileContainer/StatsArea/StageValue"):
+	if has_node("ProfileContainer/DungeonArea/StageValue"):
 		var stage_text = str(current_stage) + "/5"
-		$ProfileContainer/StatsArea/StageValue.text = stage_text
+		$ProfileContainer/DungeonArea/StageValue.text = stage_text
 	
 	# Update profile picture
 	if user_data.has("profile_picture"):

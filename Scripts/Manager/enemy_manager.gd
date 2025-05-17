@@ -29,43 +29,43 @@ var enemy_types = {
 	"dungeon1": {
 		"normal": {
 			"names": ["Slime"],
-			"health_multiplier": 1.0,
-			"damage_multiplier": 1.0,
-			"exp_reward": 10
+			"health_multiplier": 1.1,
+			"damage_multiplier": 1.1,
+			"exp_reward": 40
 		},
 		"boss": {
 			"names": ["The Treant"],
-			"health_multiplier": 3.0,
-			"damage_multiplier": 2.5,
-			"exp_reward": 75
+			"health_multiplier": 2.0,
+			"damage_multiplier": 1.5,
+			"exp_reward": 100
 		}
 	},
 	"dungeon2": {
 		"normal": {
 			"names": ["Boar"],
-			"health_multiplier": 1.5,
-			"damage_multiplier": 1.5,
-			"exp_reward": 20
+			"health_multiplier": 1.3,
+			"damage_multiplier": 1.2,
+			"exp_reward": 50
 		},
 		"boss": {
 			"names": ["The Treant"],
-			"health_multiplier": 4.5,
-			"damage_multiplier": 3.0,
+			"health_multiplier": 2.3,
+			"damage_multiplier": 1.8,
 			"exp_reward": 100
 		}
 	},
 	"dungeon3": {
 		"normal": {
 			"names": ["Snake"],
-			"health_multiplier": 1.2,
-			"damage_multiplier": 1.2,
-			"exp_reward": 15
+			"health_multiplier": 1.5,
+			"damage_multiplier": 1.4,
+			"exp_reward": 80
 		},
 		"boss": {
 			"names": ["The Treant"],
 			"health_multiplier": 3.2,
 			"damage_multiplier": 2.7,
-			"exp_reward": 75
+			"exp_reward": 100
 		}
 	}
 }
@@ -140,15 +140,15 @@ func _setup_enemy_fallback():
 			"dungeon1": {
 		"normal": {
 			"names": ["Slime"],
-			"health_multiplier": 1.0,
-			"damage_multiplier": 1.0,
-			"exp_reward": 10
+			"health_multiplier": 1.1,
+			"damage_multiplier": 1.1,
+			"exp_reward": 40
 		},
 		"boss": {
 			"names": ["The Treant"],
-			"health_multiplier": 3.0,
-			"damage_multiplier": 2.5,
-			"exp_reward": 75
+			"health_multiplier": 2.0,
+			"damage_multiplier": 1.5,
+			"exp_reward": 100
 		}
 		}
 	}
