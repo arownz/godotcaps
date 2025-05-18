@@ -292,8 +292,8 @@ animations = [{
 [node name="TreantAnimation" type="Node2D"]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(50, -196)
 scale = Vector2(2.177, 2.334)
 sprite_frames = SubResource("SpriteFrames_j63xv")
-animation = &"idle"
+animation = &"skill"
 autoplay = "idle"
-frame_progress = 0.26471
