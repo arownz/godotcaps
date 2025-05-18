@@ -47,6 +47,19 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_k1qm8")
 
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -330.0
+offset_top = -105.0
+offset_right = 359.0
+offset_bottom = 154.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.6)
+
 [node name="ChallengePanel" type="TextureRect" parent="."]
 custom_minimum_size = Vector2(800, 600)
 layout_mode = 1

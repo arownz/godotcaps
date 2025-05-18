@@ -1,10 +1,8 @@
-[gd_scene load_steps=18 format=3 uid="uid://cfead7bcuslp4"]
+[gd_scene load_steps=16 format=3 uid="uid://cfead7bcuslp4"]
 
 [ext_resource type="Texture2D" uid="uid://cxqd6wyqy8g22" path="res://gui/Update/Backgrounds/battlescene background.png" id="2_ixjr5"]
-[ext_resource type="PackedScene" uid="uid://e6bec84rrthm" path="res://Sprites/Animation/DefaultPlayer_Animation.tscn" id="3_ixjr5"]
 [ext_resource type="Script" uid="uid://cnnycoui3l3ef" path="res://Scripts/battlescene.gd" id="3_vhj2j"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="4_akpf4"]
-[ext_resource type="PackedScene" uid="uid://d1i117ieiarnh" path="res://Sprites/Animation/Slime_Animation.tscn" id="5_1yevk"]
 [ext_resource type="PackedScene" uid="uid://buhhqw4k2b2ye" path="res://Scenes/StatsTester.tscn" id="5_pqv1n"]
 [ext_resource type="Texture2D" uid="uid://clkh35ycdmutp" path="res://gui/Update/icons/player progress icon.png" id="6_kwfy1"]
 [ext_resource type="Texture2D" uid="uid://bj14mm05c4i87" path="res://gui/ui_4.png" id="6_r8yha"]
@@ -48,18 +46,6 @@ corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_stats_toggle"]
-bg_color = Color(0.321569, 0.431373, 0.784314, 0.803922)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.141176, 0.141176, 0.141176, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
-
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_exp_bg"]
 bg_color = Color(0.901961, 0.368627, 0.294118, 1)
 border_width_left = 2
@@ -84,6 +70,18 @@ corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_stats_toggle"]
+bg_color = Color(0.321569, 0.431373, 0.784314, 0.803922)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.141176, 0.141176, 0.141176, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
 [node name="BattleScene" type="Node2D"]
 script = ExtResource("3_vhj2j")
 
@@ -93,8 +91,8 @@ script = ExtResource("3_vhj2j")
 
 [node name="Sprite2D" type="Sprite2D" parent="Background/ParallaxLayer"]
 texture_filter = 1
-position = Vector2(-42, -25)
-scale = Vector2(5.77813, 4.72778)
+position = Vector2(-71, -64)
+scale = Vector2(5.51875, 4.91667)
 texture = ExtResource("2_ixjr5")
 centered = false
 
@@ -121,17 +119,14 @@ anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
 offset_left = 313.0
-offset_top = 261.0
+offset_top = 264.0
 offset_right = 313.0
-offset_bottom = 261.0
+offset_bottom = 264.0
 grow_vertical = 2
 
-[node name="Player" type="Node2D" parent="MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer"]
-position = Vector2(-47, -193)
+[node name="PlayerPosition" type="Node2D" parent="MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer"]
+position = Vector2(-68, -161)
 scale = Vector2(4.57468, 4.51523)
-
-[node name="DefaultPlayerAnimation" parent="MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer/Player" instance=ExtResource("3_ixjr5")]
-scale = Vector2(0.225055, 0.225055)
 
 [node name="PlayerHealthBar" type="ProgressBar" parent="MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer"]
 custom_minimum_size = Vector2(180, 15)
@@ -189,18 +184,15 @@ anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
 offset_left = -293.0
-offset_top = 270.0
+offset_top = 273.0
 offset_right = -293.0
-offset_bottom = 270.0
+offset_bottom = 273.0
 grow_horizontal = 0
 grow_vertical = 2
 
-[node name="Enemy" type="Node2D" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer"]
-position = Vector2(56, -187)
+[node name="EnemyPosition" type="Node2D" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer"]
+position = Vector2(59, -164)
 scale = Vector2(3.52051, 3.76243)
-
-[node name="Slime" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer/Enemy" instance=ExtResource("5_1yevk")]
-scale = Vector2(0.33845, 0.33845)
 
 [node name="EnemyHealthBar" type="ProgressBar" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer"]
 custom_minimum_size = Vector2(180, 15)
@@ -307,6 +299,7 @@ offset_top = 93.0
 offset_right = 698.0
 offset_bottom = 109.0
 theme_override_icons/grabber = ExtResource("6_kwfy1")
+scrollable = false
 
 [node name="FightLabel" type="Label" parent="MainContainer/BattleAreaContainer"]
 visible = false
@@ -326,7 +319,7 @@ theme_override_colors/font_color = Color(0.905882, 0.47451, 0, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 5
 theme_override_fonts/font = ExtResource("4_akpf4")
-theme_override_font_sizes/font_size = 40
+theme_override_font_sizes/font_size = 60
 text = "FIGHT!"
 horizontal_alignment = 1
 
@@ -354,20 +347,9 @@ offset_left = 31.0
 offset_top = 40.0
 offset_right = 41.0
 offset_bottom = 50.0
-scale = Vector2(4.30176, 4.19075)
+scale = Vector2(6.38275, 6.15812)
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("7_ixjr5")
-
-[node name="StatsToggleButton" type="Button" parent="MainContainer/BattleAreaContainer"]
-layout_mode = 0
-offset_left = 88.0
-offset_top = 41.0
-offset_right = 334.0
-offset_bottom = 81.0
-theme_override_fonts/font = ExtResource("4_akpf4")
-theme_override_font_sizes/font_size = 18
-theme_override_styles/normal = SubResource("StyleBoxFlat_stats_toggle")
-text = "Toggle Stats Panel"
 
 [node name="RightContainer" type="Control" parent="MainContainer"]
 layout_mode = 2
@@ -562,7 +544,6 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.0
-mouse_default_cursor_shape = 2
 theme_override_constants/separation = 10
 
 [node name="ButtonContainer" type="VBoxContainer" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer"]
@@ -608,6 +589,5 @@ offset_top = 120.0
 offset_right = 400.0
 offset_bottom = 600.0
 
-[connection signal="pressed" from="MainContainer/BattleAreaContainer/StatsToggleButton" to="." method="_on_stats_toggle_button_pressed"]
 [connection signal="pressed" from="MainContainer/RightContainer/MarginContainer/VBoxContainer/ButtonContainer/EngageButton" to="." method="_on_engage_button_pressed"]
 [connection signal="stats_updated" from="StatsTester" to="." method="_on_stats_updated"]

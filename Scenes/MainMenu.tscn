@@ -1,8 +1,8 @@
-[gd_scene load_steps=22 format=3 uid="uid://d36ytiqg31edd"]
+[gd_scene load_steps=15 format=3 uid="uid://d36ytiqg31edd"]
 
 [ext_resource type="Script" uid="uid://datbxxer3mwvc" path="res://Scripts/mainmenu.gd" id="1_tt5f1"]
 [ext_resource type="Texture2D" uid="uid://ckkds573c15wj" path="res://gui/Backgrounds/Main_menu_Background.png" id="2_kpa4r"]
-[ext_resource type="Texture2D" uid="uid://bs7axy8rkm4ei" path="res://Sprites/Frame Sprites/Lexia.png" id="4_8e205"]
+[ext_resource type="PackedScene" uid="uid://e6bec84rrthm" path="res://Sprites/Animation/DefaultPlayer_Animation.tscn" id="4_8e205"]
 [ext_resource type="Texture2D" uid="uid://bctgpjuu2tes7" path="res://gui/profile pic with border.png" id="5_8e205"]
 [ext_resource type="Texture2D" uid="uid://cn716b8kx5vgr" path="res://gui/energy.png" id="6_7q2f4"]
 [ext_resource type="Texture2D" uid="uid://dxy5okvgwlv6o" path="res://gui/learning modules.png" id="7_3ylv5"]
@@ -14,56 +14,6 @@
 [ext_resource type="Texture2D" uid="uid://ckytnr3x3xgkv" path="res://gui/Update/UI/long button.png" id="11_riqfo"]
 [ext_resource type="Texture2D" uid="uid://m6ls0r18o3xg" path="res://gui/settings.png" id="12_q0r2p"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="13_uaqt0"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_7467j"]
-atlas = ExtResource("4_8e205")
-region = Rect2(0, 0, 82, 82)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_2x1g0"]
-atlas = ExtResource("4_8e205")
-region = Rect2(82, 0, 82, 82)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_riqfo"]
-atlas = ExtResource("4_8e205")
-region = Rect2(164, 0, 82, 82)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_yxkem"]
-atlas = ExtResource("4_8e205")
-region = Rect2(246, 0, 82, 82)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_7v4os"]
-atlas = ExtResource("4_8e205")
-region = Rect2(328, 0, 82, 82)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_pjscj"]
-atlas = ExtResource("4_8e205")
-region = Rect2(410, 0, 82, 82)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_m7n2d"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_7467j")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_2x1g0")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_riqfo")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_yxkem")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_7v4os")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_pjscj")
-}],
-"loop": true,
-"name": &"idle",
-"speed": 10.0
-}]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -118,12 +68,8 @@ horizontal_alignment = 1
 
 [node name="CharacterArea" type="Node2D" parent="."]
 
-[node name="PlayerCharacter" type="AnimatedSprite2D" parent="CharacterArea"]
-position = Vector2(586, 452)
-scale = Vector2(5.55488, 5.63407)
-sprite_frames = SubResource("SpriteFrames_m7n2d")
-animation = &"idle"
-autoplay = "idle"
+[node name="DefaultPlayerAnimation" parent="CharacterArea" instance=ExtResource("4_8e205")]
+position = Vector2(616, 651)
 
 [node name="ProfileButton" type="TextureButton" parent="."]
 layout_mode = 1
