@@ -1,91 +1,59 @@
-# Gemini Assistant - Godot Editor Plugin
+# **Godot Dyslexia Web Capstone Project**
 
-**Version:** 0.1 
-**Author:** Austin Peck
-**Godot Version:** 4.2+
-**License:** MIT
+*A web-based educational tool developed using Godot Engine, designed to support individuals with dyslexia.*
 
-## Description
+## **Project Overview**
 
-Integrates Google's Gemini AI models directly into the Godot editor interface. This plugin provides a dock panel allowing you to send prompts, attach context from your project (scripts, scene nodes, project files), and receive AI-generated responses, assisting with coding, debugging, content generation, and more.
+This capstone project aims to create an **interactive, accessible, and engaging** web application that assists individuals with dyslexia in improving their reading and comprehension skills. Built using the  **Godot Engine** , the project integrates various accessibility features tailored to dyslexic users.
 
-Disclaimer: Gemini 2.5 was heavily leveraged in the creation of this tool, AI generated code is present inside of the scripts.
+## **Current Development Status**
 
-## Features
+🚧 **Work In Progress** 🚧
 
-*   **Editor Dock:** Dedicated panel for interacting with the Gemini API.
-*   **Prompt Input:** Send text prompts directly to the selected Gemini model.
-*   **Context Attachments:**
-	*   **Manual:** Attach the currently selected text in the script editor.
-	*   **Manual:** Attach the entire content of the currently open script.
-	*   **Manual (Scene Tree):** Attach the structure or properties of selected nodes via the Scene Tree context menu.
-	*   **Automatic (Optional):** Automatically include the current scene tree structure.
-	*   **Automatic (Optional):** Automatically include the project file structure (use with caution - large context!).
-	*   **Automatic Details (Optional):** Include node properties within automatic tree context (increases context size).
-*   **Response Display:** View formatted AI responses, including basic Markdown (bold, italics, code blocks).
-*   **Configuration:** Set your API Key and choose the Gemini model via Editor Settings.
-*   **Convenience:** Copy responses, clear outputs/attachments.
+This project is actively being developed. Some features may be incomplete or subject to change.
 
-## Installation
+### **Planned Features**
 
-1.  **Asset Library:**
-	*   Open the Godot Editor.
-	*   Navigate to the `AssetLib` tab.
-	*   Search for "Gemini Assistant".
-	*   Click `Download`, then `Install`.
-	*   Enable the plugin in `Project -> Project Settings -> Plugins`.
-2.  **Manual:**
-	*   Download the plugin repository (e.g., from GitHub Releases).
-	*   Extract the downloaded archive.
-	*   Copy the `addons/gemini_godot` folder into your Godot project's `addons/` directory.
-	*   Enable the plugin in `Project -> Project Settings -> Plugins`.
+✔️ **Text Customization:** Adjustable fonts, colors, and spacing to improve readability.
 
-## Setup: API Key (Required!)
+✔️ **Speech-to-Text Support:** Allow users to convert written text into spoken words.
 
-1.  **Get a Gemini API Key:** You need an API key from Google AI Studio. Visit [https://aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey) (or Google Cloud Console for Vertex AI) to create one. Note that API usage may incur costs based on Google's pricing.
-2.  **Configure in Godot:**
-	*   Open your Godot project.
-	*   Go to `Editor -> Editor Settings`.
-	*   In the left panel, navigate to `Plugins -> Gemini Assistant`.
-	*   Paste your API key into the `Api Key` field. **The plugin will not work without a valid key.**
+✔️ **Interactive Exercises:** Gamified learning experiences to enhance comprehension.
 
-## Usage
+✔️ **User Progress Tracking:** Monitor improvements and suggest personalized learning paths.
 
-1.  **Open the Dock:** Once the plugin is enabled, the "Gemini Assistant" dock should appear (by default, often on the bottom left panel). If not visible, go to `Editor -> Editor Docks -> Gemini Assistant`.
-2.  **Enter Prompt:** Type your query or request into the "Prompt Input" text area.
-3.  **(Optional) Add Context:**
-	*   **Selection:** Select text in the Script Editor, then click "Attach Selection".
-	*   **Script:** Open a script, then click "Attach Script".
-	*   **Scene Node:** Right-click a node in the Scene Tree dock and choose "Gemini: Attach Node Structure" or "Gemini: Attach Node Properties".
-	*   **Automatic:** Configure automatic context inclusion in `Editor -> Editor Settings -> Plugins -> Gemini Assistant`. Enabled settings will show as non-removable attachments.
-4.  **Send:** Click the "Send" button.
-5.  **View Response:** The AI's response will appear in the "Response Output" area.
-6.  **Manage:**
-	*   Use "Copy Output" to copy the response text.
-	*   Use "Clear" to remove the response and all *manual* attachments.
-	*   Click the 'X' button on manual attachments to remove them individually.
-	*   Click the 'i' button (or delete icon acting as info) on automatic attachments for an explanation.
-	*   Use "Open Settings" to quickly jump to the plugin's configuration in Editor Settings.
+✔️ **Web-Based Deployment:** Accessible via browser with seamless performance.
 
-## Configuration Settings
+## **Installation & Usage**
 
-Found under `Editor -> Editor Settings -> Plugins -> Gemini Assistant`:
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-repo-name.git
+   cd your-repo-name
+   ```
+2. Open the project in **Godot Engine** (version  *x.x.x* ).
+3. Run the scene and test features.
+4. Follow additional setup steps (to be updated soon).
 
-*   **Api Key:** (Required) Your Google Gemini API Key.
-*   **Api Model:** Select the Gemini model to use (e.g., `gemini-1.5-flash-latest`). Different models have varying capabilities and costs. Note: Only models that supper text input and output have been tested. https://ai.google.dev/gemini-api/docs/models
-*   **Include Scene Tree On Select:** Automatically attach the current scene structure.
-*   **Include Project Tree On Select:** Automatically attach the project file structure (WARNING: Can be very large!).
-*   **Project Tree Max Depth:** Limits how deep the project tree scan goes.
-*   **Include Tree Node Details:** Include node properties in automatic scene/project context (increases size).
+## **Contributing**
 
-## Troubleshooting
+Contributions are welcome! If you'd like to help, please follow these steps:
 
-*   **Error: "API Key not configured..."**: Make sure you've added your Gemini API Key in Editor Settings (see Setup).
-*   **Error: Request Failed / Network Error**: Check your internet connection. Ensure your API key is valid and has the necessary permissions/billing enabled on the Google Cloud side. Check the Godot console (Output panel) for more detailed error messages from the `APIHandler`.
-*   **Context Menu Missing:** Ensure the plugin is enabled. Ensure you are right-clicking in the correct context (script editor code area, scene tree item).
-*   **Slow Response:** Large context attachments (especially automatic project tree) can significantly increase processing time and API costs.
+1. Fork the repository.
+2. Create a new branch (`feature-your-idea`).
+3. Submit a pull request with a detailed explanation.
+
+## **License**
+
+📜 This project is licensed under [MIT License](LICENSE).
+
+## **Contact & Updates**
+
+For questions, suggestions, or collaboration opportunities, please contact:
+
+📧 **pasionharold01@gmail.com**
 
 
-## License
+---
 
-This plugin is released under the MIT License. See the LICENSE file for details.
+Let me know if you'd like any refinements! You can customize this further as you progress. 🚀
