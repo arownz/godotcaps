@@ -4,8 +4,8 @@
 [ext_resource type="Script" uid="uid://cnnycoui3l3ef" path="res://Scripts/battlescene.gd" id="3_vhj2j"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="4_akpf4"]
 [ext_resource type="PackedScene" uid="uid://buhhqw4k2b2ye" path="res://Scenes/StatsTester.tscn" id="5_pqv1n"]
+[ext_resource type="Texture2D" uid="uid://c6clhmrkbmg0u" path="res://gui/UI/ui 4.png" id="6_2tp6q"]
 [ext_resource type="Texture2D" uid="uid://clkh35ycdmutp" path="res://gui/Update/icons/player progress icon.png" id="6_kwfy1"]
-[ext_resource type="Texture2D" uid="uid://bj14mm05c4i87" path="res://gui/ui_4.png" id="6_r8yha"]
 [ext_resource type="Texture2D" uid="uid://bmjd8nkagj08e" path="res://gui/Update/UI/long uncolored button.png" id="7_2tp6q"]
 [ext_resource type="Texture2D" uid="uid://c8vnqmxwy0lsw" path="res://gui/Update/icons/small settings.png" id="7_ixjr5"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="8_2tp6q"]
@@ -364,7 +364,7 @@ offset_left = -22.0
 offset_right = 21.25
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("6_r8yha")
+texture = ExtResource("6_2tp6q")
 expand_mode = 3
 stretch_mode = 6
 
