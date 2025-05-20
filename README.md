@@ -14,13 +14,13 @@ This project is actively being developed. Some features may be incomplete or sub
 
 ### **Planned Features**
 
-✔️ **Text Customization:** Adjustable fonts, colors, and spacing to improve readability.
+✔️ **Whiteboard:** Allow users to write random word fetch from api.
 
-✔️ **Speech-to-Text Support:** Allow users to convert written text into spoken words.
+✔️ **Speech-to-Text Support:** Allow users to record random word fetch from api.
 
-✔️ **Interactive Exercises:** Gamified learning experiences to enhance comprehension.
+✔️ **Interactive Modular:** Gamified learning experiences to enhance comprehension.
 
-✔️ **User Progress Tracking:** Monitor improvements and suggest personalized learning paths.
+✔️ **User Progress Tracking:** Monitor improvements and suggest personalized learning paths in our flutter parents/teacher app to monitor dyslexia.
 
 ✔️ **Web-Based Deployment:** Accessible via browser with seamless performance.
 
@@ -52,7 +52,6 @@ Contributions are welcome! If you'd like to help, please follow these steps:
 For questions, suggestions, or collaboration opportunities, please contact:
 
 📧 **pasionharold01@gmail.com**
-
 
 ---
 
