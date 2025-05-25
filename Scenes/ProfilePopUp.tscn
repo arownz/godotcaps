@@ -340,6 +340,7 @@ theme_override_font_sizes/font_size = 20
 text = "100"
 
 [node name="TextureRect" type="TextureRect" parent="ProfileContainer"]
+layout_mode = 0
 offset_left = -13.0
 offset_top = 339.0
 offset_right = 224.0

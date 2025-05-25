@@ -281,67 +281,11 @@ func _on_back_button_pressed():
 func _on_fight_button_pressed():
 	print("Starting battle in Dungeon 1, Stage " + str(current_selected_stage))
 	
-	# Check if player has enough energy
-	if Engine.has_singleton("Firebase"):
-		if !await _consume_battle_energy():
-			# Show not enough energy message
-			notification_popup.show_notification("Not Enough Energy", "You need 2 energy points to start this battle. Energy refills over time.", "OK")
-			return
-
 	# Save current stage and dungeon directly to Firebase
 	await _save_current_dungeon_stage()
 
 	# Load the battle scene
 	get_tree().change_scene_to_file("res://Scenes/BattleScene.tscn")
-
-func _consume_battle_energy():
-	# Only proceed if authenticated
-	if not Firebase.Auth.auth:
-		print("User not authenticated, cannot check energy")
-		return true
-		
-	var user_id = Firebase.Auth.auth.localid
-	var collection = Firebase.Firestore.collection("dyslexia_users")
-	
-	# Get current document to check energy
-	var task = collection.get(user_id)
-	var success = false
-	
-	if task:
-		var document = await task.task_finished
-		if document and not document.error:
-			# Check current energy level in the new structure
-			var stats = document.doc_fields.get("stats", {})
-			var player_stats = stats.get("player", {})
-			var current_energy = player_stats.get("energy", 0)
-			
-			print("Current energy: " + str(current_energy))
-			
-			if current_energy >= 2: # Require 2 energy points per battle
-				# Subtract energy and update
-				current_energy -= 2
-				
-				# Update Firebase with new energy value
-				var update_data = {
-					"stats": {
-						"player": {
-							"energy": current_energy
-						}
-					}
-				}
-				
-				var update_task = collection.update(user_id, update_data)
-				var update_result = await update_task.task_finished
-				
-				if update_result and not update_result.error:
-					print("Energy updated, new value: " + str(current_energy))
-					success = true
-				else:
-					print("Failed to update energy")
-			else:
-				print("Not enough energy to start battle")
-	
-	return success
 
 func _save_current_dungeon_stage():
 	# Only proceed if authenticated

@@ -1,10 +1,9 @@
-[gd_scene load_steps=15 format=3 uid="uid://cfead7bcuslp4"]
+[gd_scene load_steps=14 format=3 uid="uid://cfead7bcuslp4"]
 
 [ext_resource type="Texture2D" uid="uid://cxqd6wyqy8g22" path="res://gui/Update/Backgrounds/battlescene background.png" id="2_ixjr5"]
 [ext_resource type="Script" uid="uid://cnnycoui3l3ef" path="res://Scripts/battlescene.gd" id="3_vhj2j"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="4_akpf4"]
 [ext_resource type="Texture2D" uid="uid://c6clhmrkbmg0u" path="res://gui/UI/ui 4.png" id="6_2tp6q"]
-[ext_resource type="Texture2D" uid="uid://clkh35ycdmutp" path="res://gui/Update/icons/player progress icon.png" id="6_kwfy1"]
 [ext_resource type="Texture2D" uid="uid://bmjd8nkagj08e" path="res://gui/Update/UI/long uncolored button.png" id="7_2tp6q"]
 [ext_resource type="Texture2D" uid="uid://c8vnqmxwy0lsw" path="res://gui/Update/icons/small settings.png" id="7_ixjr5"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="8_2tp6q"]
@@ -319,15 +318,6 @@ theme_override_font_sizes/font_size = 16
 text = "Enemy Uses Special Skill!"
 vertical_alignment = 1
 
-[node name="ProgressHSlider" type="HSlider" parent="MainContainer/BattleAreaContainer/BattleContainer"]
-layout_mode = 0
-offset_left = 472.0
-offset_top = 93.0
-offset_right = 698.0
-offset_bottom = 109.0
-theme_override_icons/grabber = ExtResource("6_kwfy1")
-scrollable = false
-
 [node name="FightLabel" type="Label" parent="MainContainer/BattleAreaContainer"]
 visible = false
 layout_mode = 1
@@ -368,7 +358,7 @@ theme_override_font_sizes/font_size = 25
 text = "D1: The Plain - Stage 1"
 horizontal_alignment = 1
 
-[node name="TextureButton" type="TextureButton" parent="MainContainer/BattleAreaContainer"]
+[node name="SettingButton" type="TextureButton" parent="MainContainer/BattleAreaContainer"]
 layout_mode = 0
 offset_left = 31.0
 offset_top = 40.0

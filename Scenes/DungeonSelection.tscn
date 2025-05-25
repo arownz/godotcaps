@@ -1,15 +1,16 @@
-[gd_scene load_steps=11 format=3 uid="uid://sdyk7ldijega"]
+[gd_scene load_steps=12 format=3 uid="uid://sdyk7ldijega"]
 
 [ext_resource type="Script" uid="uid://t3y57n5oleps" path="res://Scripts/DungeonSelection.gd" id="1_bfmdj"]
 [ext_resource type="Texture2D" uid="uid://chfkysvsxt4eg" path="res://gui/Update/Backgrounds/Plains_Level.png" id="2_bu21u"]
 [ext_resource type="Texture2D" uid="uid://bt0tigh26flog" path="res://gui/Update/icons/level selection.png" id="4_bu21u"]
 [ext_resource type="Texture2D" uid="uid://boyms7my8lwmc" path="res://gui/dungeonselection/dungeon2_lock.png" id="5_efoci"]
 [ext_resource type="Texture2D" uid="uid://dlmfvdh6uvgep" path="res://gui/dungeonselection/dungeon3_lock.png" id="6_j6mrw"]
+[ext_resource type="Texture2D" uid="uid://qmmpx3uab5h7" path="res://gui/Update/UI/next button.png" id="7_bu21u"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="7_vkjng"]
-[ext_resource type="Texture2D" uid="uid://cshpe1372xwid" path="res://gui/Update/icons/previous.png" id="7_xb6di"]
 [ext_resource type="Texture2D" uid="uid://da6rdtvo1nlwj" path="res://gui/Update/icons/return.png" id="8_r0sib"]
 [ext_resource type="Texture2D" uid="uid://n08ji1i2co16" path="res://gui/Update/UI/small button.png" id="8_xb6di"]
-[ext_resource type="Texture2D" uid="uid://ckytnr3x3xgkv" path="res://gui/Update/UI/long button.png" id="9_xb6di"]
+[ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="10_bu21u"]
+[ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="11_v81g5"]
 
 [node name="DungeonSelection" type="Control"]
 layout_mode = 3
@@ -252,17 +253,17 @@ anchor_left = 1.0
 anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
-offset_left = -327.0
-offset_top = -75.0
-offset_right = -227.0
-offset_bottom = 56.0
+offset_left = -358.0
+offset_top = -66.0
+offset_right = -258.0
+offset_bottom = 65.0
 grow_horizontal = 0
 grow_vertical = 2
+scale = Vector2(1.5132, 1.5132)
 mouse_default_cursor_shape = 2
-texture_normal = ExtResource("7_xb6di")
+texture_normal = ExtResource("7_bu21u")
 ignore_texture_size = true
 stretch_mode = 5
-flip_h = true
 
 [node name="PreviousButton" type="TextureButton" parent="."]
 layout_mode = 1
@@ -274,10 +275,12 @@ offset_top = -75.0
 offset_right = 320.0
 offset_bottom = 56.0
 grow_vertical = 2
+scale = Vector2(1.47096, 1.47096)
 mouse_default_cursor_shape = 2
-texture_normal = ExtResource("7_xb6di")
+texture_normal = ExtResource("7_bu21u")
 ignore_texture_size = true
 stretch_mode = 5
+flip_h = true
 
 [node name="BackButton" type="TextureButton" parent="."]
 custom_minimum_size = Vector2(1, 1)
@@ -299,39 +302,22 @@ offset_bottom = 31.0294
 scale = Vector2(0.612926, 0.537912)
 texture = ExtResource("8_r0sib")
 
-[node name="PlayButton" type="TextureButton" parent="."]
+[node name="PlayButton" type="Button" parent="."]
+physics_interpolation_mode = 0
 layout_mode = 0
-offset_left = 634.0
-offset_top = 678.0
-offset_right = 834.0
-offset_bottom = 779.0
+offset_left = 617.0
+offset_top = 673.0
+offset_right = 817.0
+offset_bottom = 774.0
+scale = Vector2(1.24648, 1.24648)
 mouse_default_cursor_shape = 2
-texture_normal = ExtResource("9_xb6di")
-ignore_texture_size = true
-stretch_mode = 5
-
-[node name="NameLabel" type="Label" parent="PlayButton"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 56.0
-offset_top = 12.0
-offset_right = -55.0
-offset_bottom = -12.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_colors/font_color = Color(0.125684, 0.064225, 0.0212433, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_constants/shadow_offset_x = 2
-theme_override_constants/shadow_offset_y = 2
-theme_override_fonts/font = ExtResource("7_vkjng")
-theme_override_font_sizes/font_size = 20
-text = "ENTER
-DUNGEON"
-horizontal_alignment = 1
-vertical_alignment = 1
-uppercase = true
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("10_bu21u")
+text = "Enter Dungeon"
+icon = ExtResource("11_v81g5")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [connection signal="pressed" from="DungeonContainer/DungeonCarousel/Dungeon1/TextureButton" to="." method="_on_dungeon1_pressed"]
 [connection signal="pressed" from="DungeonContainer/DungeonCarousel/Dungeon2/TextureButton" to="." method="_on_dungeon2_pressed"]

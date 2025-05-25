@@ -14,7 +14,8 @@ var hover_buttons = []
 
 # Add energy recovery system variables
 var max_energy = 20
-var energy_recovery_rate = 300  # 5 minutes in seconds
+var energy_recovery_rate = 240  # 4 minutes in seconds
+var energy_recovery_amount = 4  # Amount of energy recovered per interval
 var last_energy_update_time = 0
 var energy_recovery_timer = null
 
@@ -267,11 +268,12 @@ func _process_energy_recovery():
         return
     
     var time_passed = current_time - last_update
-    var energy_to_recover = int(time_passed / energy_recovery_rate)
+    var recovery_intervals = int(time_passed / energy_recovery_rate)
     
-    if energy_to_recover > 0:
+    if recovery_intervals > 0:
+        var energy_to_recover = recovery_intervals * energy_recovery_amount
         var new_energy = min(current_energy + energy_to_recover, max_energy)
-        var new_last_update = last_update + (energy_to_recover * energy_recovery_rate)
+        var new_last_update = last_update + (recovery_intervals * energy_recovery_rate)
         
         if new_energy != current_energy:
             # Update energy in Firebase
@@ -330,7 +332,7 @@ func _update_energy_timestamp(timestamp: float):
         if current_data.has("stats") and current_data.stats.has("player"):
             current_data.stats.player.last_energy_update = timestamp
         
-        var _task = collection.add(user_id, current_data)
+        var _task = await collection.add(user_id, current_data)
 
 func _update_energy_recovery_display():
     var current_energy = user_data.get("energy", 20)

@@ -21,6 +21,10 @@ func initialize_player_ui():
 	var player_name_label = battle_scene.get_node("MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer/PlayerName")
 	player_name_label.text = battle_scene.player_manager.player_name
 	
+	# Set player level
+	var player_level_label = battle_scene.get_node("MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer/PlayerLevelValue")
+	player_level_label.text = str(battle_scene.player_manager.player_level)
+	
 	# Update player health bars
 	update_player_health()
 	
@@ -92,6 +96,17 @@ func update_player_exp():
 	
 	# Update exp label
 	exp_label.text = str(int(player_exp)) + "/" + str(int(player_max_exp))
+
+func update_player_info():
+	# Update player name in BattleScene UI
+	var player_name_label = battle_scene.get_node("MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer/PlayerName")
+	if player_name_label:
+		player_name_label.text = battle_scene.player_manager.player_name
+	
+	# Update player level in BattleScene UI
+	var player_level_label = battle_scene.get_node("MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer/PlayerLevelValue")
+	if player_level_label:
+		player_level_label.text = str(battle_scene.player_manager.player_level)
 
 func update_power_bar(power_value, max_power=100):
 	var power_bar = battle_scene.get_node("MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/PowerContainer/PowerBar")

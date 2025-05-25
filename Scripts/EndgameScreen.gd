@@ -5,11 +5,16 @@ signal quit_to_menu
 signal continue_battle
 
 func _ready():
-	# Center the panel
-	$ResultPanel.position = Vector2(
-		(get_viewport_rect().size.x - $ResultPanel.size.x) / 2,
-		(get_viewport_rect().size.y - $ResultPanel.size.y) / 2
-	)
+	# Ensure Background fills the entire screen
+	$Background.anchors_preset = Control.PRESET_FULL_RECT
+	$Background.offset_left = 0
+	$Background.offset_top = 0
+	$Background.offset_right = 0
+	$Background.offset_bottom = 0
+	
+	# Center the ResultPanel properly
+	$ResultPanel.anchors_preset = Control.PRESET_CENTER
+	$ResultPanel.position = Vector2.ZERO
 	
 	# Animate the panel appearing
 	$ResultPanel.scale = Vector2(0.5, 0.5)
@@ -19,15 +24,32 @@ func _ready():
 	# Hide continue button by default
 	$ResultPanel/VBoxContainer/ButtonContainer/ContinueButton.visible = false
 
-func set_result(result):
+func set_result(result, dungeon_num: int = 1, stage_num: int = 1, exp_reward: int = 0):
 	if result == "Victory":
 		$ResultPanel/VBoxContainer/ResultLabel.text = "Victory!"
-		$ResultPanel/VBoxContainer/MessageLabel.text = "You defeated the enemy!"
+		var message = "You defeated stage " + str(stage_num) + " of dungeon " + str(dungeon_num) + "!"
+		if exp_reward > 0:
+			message += " You gained " + str(exp_reward) + " EXP!"
+		$ResultPanel/VBoxContainer/MessageLabel.text = message
 		$ResultPanel/VBoxContainer/ResultLabel.add_theme_color_override("font_color", Color(0.2, 0.8, 0.2))
 	else:
 		$ResultPanel/VBoxContainer/ResultLabel.text = "Defeat"
 		$ResultPanel/VBoxContainer/MessageLabel.text = "You were defeated by the enemy..."
 		$ResultPanel/VBoxContainer/ResultLabel.add_theme_color_override("font_color", Color(0.8, 0.2, 0.2))
+
+# Missing function that was causing the crash - now implemented
+func setup_endgame(result_type: String, dungeon_num: int = 1, stage_num: int = 1, exp_reward: int = 0):
+	print("EndgameScreen: Setting up endgame with result: " + result_type)
+	set_result(result_type, dungeon_num, stage_num, exp_reward)
+	
+	# For victory, enable continue button if there are more stages
+	if result_type == "Victory":
+		# Check if this is the last stage (stage 5) or if there are more stages
+		# For now, always show continue button for victory - the battle manager can handle logic
+		set_continue_enabled(true)
+	else:
+		# For defeat, hide continue button
+		set_continue_enabled(false)
 
 # New function to enable/disable the continue button
 func set_continue_enabled(enabled):

@@ -66,6 +66,9 @@ func load_player_data_from_firebase():
     
     var document = await collection.get_doc(user_id)
     if document:
+        # Get username from root level
+        player_name = document.get_value("username") if document.get_value("username") else "Player"
+        
         # Extract player stats from Firebase document
         var stats_data = document.get_value("stats")
         if stats_data and stats_data.has("player"):
@@ -82,6 +85,7 @@ func load_player_data_from_firebase():
             player_animation_scene = player_data.get("skin", "res://Sprites/Animation/DefaultPlayer_Animation.tscn")
             
             print("Player data loaded successfully:")
+            print("- Username: ", player_name)
             print("- Level: ", player_level)
             print("- Health: ", player_health, "/", player_max_health)
             print("- Damage: ", player_damage)
@@ -252,11 +256,8 @@ func add_experience(exp_amount):
         # Update stats on level up
         player_max_health = get_max_health()
         player_health = player_max_health  # Fully heal on level up
-        player_damage += 5
-        
-        # Every 5 levels, increase durability
-        if player_level % 5 == 0:   
-            player_durability += 1
+        player_damage += 8
+        player_durability += 6
         
         # Recalculate max_exp for next level
         max_exp = get_max_exp()
@@ -297,7 +298,7 @@ func _update_firebase_stats(leveled_up = false):
         if leveled_up:
             print("LEVEL UP! New level: " + str(player_level))
 
-# Calculate max health based on level (100 + 20 per level)
+# Calculate max health based on level (100 + 10 per level)
 func get_max_health():
     return 100 + (player_level - 1) * 20
 

@@ -31,6 +31,7 @@ var challenge_active = false
 
 # References
 @onready var engage_button = $MainContainer/RightContainer/MarginContainer/VBoxContainer/ButtonContainer/EngageButton
+@onready var settings_button = $MainContainer/BattleAreaContainer/SettingButton
 @onready var fight_label = $MainContainer/BattleAreaContainer/FightLabel
 @onready var stage_info_label = $MainContainer/BattleAreaContainer/StageInfoLabel
 
@@ -95,6 +96,9 @@ func _setup_battle():
 	# Initialize UI with current managers
 	ui_manager.initialize_ui()
 	
+	# Update player info in UI (username and level)
+	ui_manager.update_player_info()
+	
 	# Display dungeon introduction messages
 	battle_log_manager.display_introduction_messages()
 	
@@ -107,6 +111,10 @@ func _connect_signals():
 	# Connect UI elements - add checks to prevent duplicate connections
 	if !engage_button.is_connected("pressed", _on_engage_button_pressed):
 		engage_button.pressed.connect(_on_engage_button_pressed)
+	
+	# Connect settings button
+	if !settings_button.is_connected("pressed", _on_settings_button_pressed):
+		settings_button.pressed.connect(_on_settings_button_pressed)
 	
 	# Connect scroll container to detect user scrolling
 	var scroll_container = $MainContainer/RightContainer/MarginContainer/VBoxContainer/BattleLogContainer/ScrollContainer
@@ -202,8 +210,67 @@ func _setup_auto_battle_timer():
 	auto_battle_timer.timeout.connect(_on_auto_battle_timer_timeout)
 	add_child(auto_battle_timer)
 
-# Engage button pressed
+# Engage button pressed - directly start auto battle and consume energy
 func _on_engage_button_pressed():
+	if battle_active:
+		return
+	
+	# Consume energy before starting battle
+	if !await _consume_battle_energy():
+		return  # Not enough energy, don't start battle
+	
+	# Start the actual battle
+	_start_battle()
+
+func _show_battle_settings_popup():
+	# Load the popup scene dynamically
+	var battle_settings_popup_scene = load("res://Scenes/BattleSettingsPopup.tscn")
+	if battle_settings_popup_scene == null:
+		print("Failed to load BattleSettingsPopup scene, starting battle directly")
+		await _consume_battle_energy()
+		_start_battle()
+		return
+		
+	var popup = battle_settings_popup_scene.instantiate()
+	
+	# Set energy cost (2 energy per battle)
+	popup.set_energy_cost(2)
+	
+	# Connect signals
+	popup.engage_confirmed.connect(_on_engage_confirmed)
+	popup.quit_requested.connect(_on_battle_quit_requested)
+	
+	# Add to scene tree
+	get_tree().current_scene.add_child(popup)
+
+func _on_engage_confirmed():
+	# Consume energy before starting battle
+	if !await _consume_battle_energy():
+		return  # Not enough energy, don't start battle
+	
+	# Start the actual battle
+	_start_battle()
+
+func _on_battle_quit_requested():
+	# Player chose not to engage, return to dungeon map
+	print("Player quit battle engagement, returning to dungeon")
+	
+	# Determine which dungeon to return to based on current dungeon_id
+	var dungeon_scene_path = ""
+	match dungeon_id:
+		1:
+			dungeon_scene_path = "res://Scenes/Dungeon1Map.tscn"
+		2:
+			dungeon_scene_path = "res://Scenes/Dungeon2Map.tscn"
+		3:
+			dungeon_scene_path = "res://Scenes/Dungeon3Map.tscn"
+		_:
+			# Default to dungeon selection if unknown
+			dungeon_scene_path = "res://Scenes/DungeonSelection.tscn"
+	
+	get_tree().change_scene_to_file(dungeon_scene_path)
+
+func _start_battle():
 	if battle_active:
 		return
 	
@@ -355,23 +422,26 @@ func _update_firebase_challenge_stats(challenge_type: String, success: bool):
 	var user_id = Firebase.Auth.auth.localid
 	var collection = Firebase.Firestore.collection("dyslexia_users")
 	
-	# Get current document to preserve other fields - renamed to avoid shadowing
-	var user_document = await collection.get_doc(user_id)
-	if user_document and !("error" in user_document.keys() and user_document.get_value("error")):
-		# Get all current document data
-		var current_data = {}
-		for key in user_document.keys():
-			if key != "error":
-				current_data[key] = user_document.get_value(key)
+	# Get current document to preserve other fields - using the same approach as ProfilePopUp.gd
+	var user_doc = await collection.get_doc(user_id)
+	if user_doc and !("error" in user_doc.keys() and user_doc.get_value("error")):
+		print("BattleScene: Document retrieved successfully for challenge stats update")
 		
-		# Update word challenge stats in the nested structure
-		if !current_data.has("word_challenges"):
-			current_data["word_challenges"] = {
+		# Get current word_challenges structure or create default
+		var word_challenges = user_doc.get_value("word_challenges")
+		if word_challenges == null or typeof(word_challenges) != TYPE_DICTIONARY:
+			word_challenges = {
 				"completed": {"stt": 0, "whiteboard": 0},
 				"failed": {"stt": 0, "whiteboard": 0}
 			}
 		
-		var word_challenges = current_data.word_challenges
+		# Ensure nested structure exists
+		if !word_challenges.has("completed"):
+			word_challenges["completed"] = {"stt": 0, "whiteboard": 0}
+		if !word_challenges.has("failed"):
+			word_challenges["failed"] = {"stt": 0, "whiteboard": 0}
+		
+		# Update the specific challenge type and success/failure count
 		if success:
 			if challenge_type == "stt":
 				word_challenges.completed.stt += 1
@@ -383,17 +453,65 @@ func _update_firebase_challenge_stats(challenge_type: String, success: bool):
 			elif challenge_type == "whiteboard":
 				word_challenges.failed.whiteboard += 1
 		
-		# Save back to Firebase using add method (replaces document)
-		var task = await collection.add(user_id, current_data)
-		if task:
-			var result = await task.task_finished
-			if result and !result.error:
-				print("Updated word challenge stats for " + challenge_type + " - success: " + str(success))
-			else:
-				print("Failed to update word challenge stats")
+		# Update the document field using the correct method (same as ProfilePopUp.gd)
+		user_doc.add_or_update_field("word_challenges", word_challenges)
+		
+		# Save back to Firebase using update method (NOT add)
+		var updated_document = await collection.update(user_doc)
+		if updated_document:
+			print("BattleScene: Successfully updated word challenge stats for " + challenge_type + " - success: " + str(success))
+		else:
+			print("BattleScene: Failed to update word challenge stats")
+	else:
+		print("BattleScene: Failed to get user document for challenge stats update")
 
 func get_current_dungeon() -> int:
 	return dungeon_id
 
 func get_current_stage() -> int:
 	return stage_id
+
+func _on_settings_button_pressed():
+	print("Settings button pressed - showing battle settings popup")
+	_show_battle_settings_popup()
+
+func _consume_battle_energy() -> bool:
+	# Check if player has enough energy (2 energy required)
+	if !Firebase.Auth.auth:
+		return true  # Allow battle if not authenticated
+		
+	var user_id = Firebase.Auth.auth.localid
+	var collection = Firebase.Firestore.collection("dyslexia_users")
+	
+	# Get current document
+	var user_doc = await collection.get_doc(user_id)
+	if user_doc and !("error" in user_doc.keys() and user_doc.get_value("error")):
+		var stats_data = user_doc.get_value("stats")
+		if stats_data != null and typeof(stats_data) == TYPE_DICTIONARY and stats_data.has("player"):
+			var player_data = stats_data["player"]
+			var current_energy = player_data.get("energy", 0)
+			
+			# Check if player has enough energy
+			if current_energy < 2:
+				print("Not enough energy: " + str(current_energy) + "/2 required")
+				return false
+			
+			# Consume 2 energy
+			player_data["energy"] = current_energy - 2
+			stats_data["player"] = player_data
+			user_doc.add_or_update_field("stats", stats_data)
+			
+			# Update document in Firebase
+			var updated_doc = await collection.update(user_doc)
+			if updated_doc:
+				print("Energy consumed: 2 energy. Remaining: " + str(current_energy - 2))
+				return true
+			else:
+				print("Failed to update energy in Firebase")
+				return false
+		else:
+			print("No player stats found in Firebase")
+			return false
+	else:
+		print("Failed to get user document")
+		return false

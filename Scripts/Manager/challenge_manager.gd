@@ -149,8 +149,18 @@ func _on_challenge_cancelled():
 func handle_challenge_completed(bonus_damage):
 	# Player successfully countered the enemy skill
 	var enemy_manager = battle_scene.enemy_manager
+	var player_manager = battle_scene.player_manager
 	var battle_log_manager = battle_scene.battle_log_manager
 	var ui_manager = battle_scene.ui_manager
+	
+	# Play counter animation for player
+	if player_manager.player_animation:
+		var player_sprite = player_manager.player_animation.get_node_or_null("AnimatedSprite2D")
+		if player_sprite:
+			player_sprite.play("counter")
+			# Wait for animation to finish, then return to idle
+			await player_sprite.animation_finished
+			player_sprite.play("battle_idle")
 	
 	# Deal bonus damage to enemy
 	enemy_manager.take_damage(bonus_damage)
@@ -172,7 +182,7 @@ func handle_challenge_completed(bonus_damage):
 	if enemy_manager.enemy_health <= 0:
 		battle_scene.battle_active = false
 		battle_log_manager.add_message("[color=#4CAF50]You defeated the " + enemy_manager.enemy_name + " with your counter-attack![/color]")
-		battle_scene.battle_manager.handle_victory()
+		# Don't call handle_victory here - let the normal enemy_defeated signal handle it
 		return
 	
 	# Resume battle
@@ -263,5 +273,8 @@ func _resume_battle():
 	# Show engage button again
 	print("ChallengeManager: Resuming battle")
 	
-	# Resume auto battle
+	# Resume auto battle - IMPORTANT: Set battle_active to true first!
+	battle_scene.battle_active = true
 	battle_scene.auto_battle_timer.start()
+	
+	print("ChallengeManager: Battle resumed - battle_active set to true and timer started")

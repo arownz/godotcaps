@@ -94,7 +94,7 @@ func save_progress_to_firebase():
 	var collection = Firebase.Firestore.collection("dyslexia_users")
 	
 	# Get current document first to preserve other fields
-	var task = collection.get_doc(user_id)
+	var task = await collection.get_doc(user_id)
 	if task:
 		var document = await task
 		if document and document.has_method("doc_fields"):

@@ -43,6 +43,11 @@ func player_attack():
 		sprite.play("auto_attack")
 	
 	await player_attack_tween.finished
+	
+	# Reset to idle animation after attack
+	if sprite:
+		sprite.play("battle_idle")
+		
 	emit_signal("player_attack_performed", battle_scene.player_manager.player_damage)
 
 func enemy_attack():
@@ -65,6 +70,11 @@ func enemy_attack():
 		sprite.play("auto_attack")
 	
 	await enemy_attack_tween.finished
+	
+	# Reset to idle animation after attack
+	if sprite:
+		sprite.play("idle")
+		
 	emit_signal("enemy_attack_performed", battle_scene.enemy_manager.enemy_damage)
 
 # Centralize all endgame handling here
@@ -97,7 +107,7 @@ func handle_victory():
 	await battle_scene.get_tree().create_timer(1.0).timeout
 	
 	# Show victory screen - only called once from here
-	show_endgame_screen("Victory")
+	show_endgame_screen("Victory", exp_reward)
 
 # Direct Firebase update after victory
 func _update_firebase_after_victory(exp_gained: int):
@@ -108,20 +118,24 @@ func _update_firebase_after_victory(exp_gained: int):
 	var collection = Firebase.Firestore.collection("dyslexia_users")
 	
 	# Get current user document to update it
-	var task = collection.get_doc(user_id)
-	if task:
-		var document = await task
-		if document:
-			var current_data = document.doc_fields if document.has_method("doc_fields") else {}
-			
-			# Update enemies defeated count
-			if current_data.has("dungeons") and current_data.dungeons.has("progress"):
-				current_data.dungeons.progress.enemies_defeated = current_data.dungeons.progress.get("enemies_defeated", 0) + 1
-			
-			# Update player stats (experience and level)
-			if current_data.has("stats") and current_data.stats.has("player"):
-				var current_exp = current_data.stats.player.get("exp", 0)
-				var current_level = current_data.stats.player.get("level", 1)
+	var document = await collection.get_doc(user_id)
+	if document and !("error" in document.keys() and document.get_value("error")):
+		# Update enemies defeated count
+		var dungeons = document.get_value("dungeons")
+		if dungeons != null and typeof(dungeons) == TYPE_DICTIONARY:
+			if dungeons.has("progress"):
+				var progress = dungeons.progress
+				progress.enemies_defeated = progress.get("enemies_defeated", 0) + 1
+				# Update the document field
+				document.add_or_update_field("dungeons", dungeons)
+		
+		# Update player stats (experience and level)
+		var stats = document.get_value("stats")
+		if stats != null and typeof(stats) == TYPE_DICTIONARY:
+			if stats.has("player"):
+				var player_stats = stats.player
+				var current_exp = player_stats.get("exp", 0)
+				var current_level = player_stats.get("level", 1)
 				var new_exp = current_exp + exp_gained
 				
 				# Handle level ups (100 exp per level)
@@ -131,16 +145,23 @@ func _update_firebase_after_victory(exp_gained: int):
 					current_level += 1
 					
 					# Increase stats on level up
-					current_data.stats.player.health = current_data.stats.player.get("health", 100) + 10
-					current_data.stats.player.damage = current_data.stats.player.get("damage", 10) + 2
-					current_data.stats.player.durability = current_data.stats.player.get("durability", 5) + 1
+					player_stats.health = player_stats.get("health", 100) + 15
+					player_stats.damage = player_stats.get("damage", 10) + 8
+					player_stats.durability = player_stats.get("durability", 5) + 5
 				
 				# Update experience and level
-				current_data.stats.player.exp = new_exp
-				current_data.stats.player.level = current_level
-			
-			# Save updated data back to Firebase
-			collection.add(user_id, current_data)
+				player_stats.exp = new_exp
+				player_stats.level = current_level
+				
+				# Update the document field
+				document.add_or_update_field("stats", stats)
+		
+		# Save updated document back to Firebase using correct update method
+		var updated_document = await collection.update(document)
+		if updated_document:
+			print("Firebase stats updated successfully")
+		else:
+			print("Failed to update Firebase stats")
 
 func handle_defeat():
 	print("BattleManager: Handling defeat")
@@ -154,10 +175,12 @@ func handle_defeat():
 	# Show defeat screen
 	show_endgame_screen("Defeat")
 
-func show_endgame_screen(result_type: String):
+func show_endgame_screen(result_type: String, exp_reward: int = 0):
 	var endgame_scene = load("res://Scenes/EndgameScreen.tscn").instantiate()
 	battle_scene.add_child(endgame_scene)
-	endgame_scene.setup_endgame(result_type)
+	var dungeon_num = battle_scene.dungeon_manager.dungeon_num
+	var stage_num = battle_scene.dungeon_manager.stage_num
+	endgame_scene.setup_endgame(result_type, dungeon_num, stage_num, exp_reward)
 
 func trigger_enemy_skill():
 	print("BattleManager: Enemy skill triggered!")
