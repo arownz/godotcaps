@@ -1,13 +1,12 @@
-[gd_scene load_steps=12 format=3 uid="uid://sdyk7ldijega"]
+[gd_scene load_steps=11 format=3 uid="uid://sdyk7ldijega"]
 
-[ext_resource type="Script" uid="uid://t3y57n5oleps" path="res://Scripts/Manager/DungeonSelectionManager.gd" id="1_bfmdj"]
+[ext_resource type="Script" uid="uid://t3y57n5oleps" path="res://Scripts/DungeonSelection.gd" id="1_bfmdj"]
 [ext_resource type="Texture2D" uid="uid://chfkysvsxt4eg" path="res://gui/Update/Backgrounds/Plains_Level.png" id="2_bu21u"]
-[ext_resource type="Texture2D" uid="uid://bx1y3wrexv02d" path="res://gui/dungeonselection/next.png" id="2_pu3ti"]
-[ext_resource type="Texture2D" uid="uid://dds117r721ew8" path="res://gui/dungeonselection/previous.png" id="3_e1jkr"]
 [ext_resource type="Texture2D" uid="uid://bt0tigh26flog" path="res://gui/Update/icons/level selection.png" id="4_bu21u"]
 [ext_resource type="Texture2D" uid="uid://boyms7my8lwmc" path="res://gui/dungeonselection/dungeon2_lock.png" id="5_efoci"]
 [ext_resource type="Texture2D" uid="uid://dlmfvdh6uvgep" path="res://gui/dungeonselection/dungeon3_lock.png" id="6_j6mrw"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="7_vkjng"]
+[ext_resource type="Texture2D" uid="uid://cshpe1372xwid" path="res://gui/Update/icons/previous.png" id="7_xb6di"]
 [ext_resource type="Texture2D" uid="uid://da6rdtvo1nlwj" path="res://gui/Update/icons/return.png" id="8_r0sib"]
 [ext_resource type="Texture2D" uid="uid://n08ji1i2co16" path="res://gui/Update/UI/small button.png" id="8_xb6di"]
 [ext_resource type="Texture2D" uid="uid://ckytnr3x3xgkv" path="res://gui/Update/UI/long button.png" id="9_xb6di"]
@@ -260,9 +259,10 @@ offset_bottom = 56.0
 grow_horizontal = 0
 grow_vertical = 2
 mouse_default_cursor_shape = 2
-texture_normal = ExtResource("2_pu3ti")
+texture_normal = ExtResource("7_xb6di")
 ignore_texture_size = true
 stretch_mode = 5
+flip_h = true
 
 [node name="PreviousButton" type="TextureButton" parent="."]
 layout_mode = 1
@@ -275,7 +275,7 @@ offset_right = 320.0
 offset_bottom = 56.0
 grow_vertical = 2
 mouse_default_cursor_shape = 2
-texture_normal = ExtResource("3_e1jkr")
+texture_normal = ExtResource("7_xb6di")
 ignore_texture_size = true
 stretch_mode = 5
 

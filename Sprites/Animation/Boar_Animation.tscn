@@ -151,7 +151,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_ljejr")
 }],
-"loop": true,
+"loop": false,
 "name": &"auto_attack",
 "speed": 10.0
 }, {
@@ -174,7 +174,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_vurh1")
 }],
-"loop": true,
+"loop": false,
 "name": &"dead",
 "speed": 10.0
 }, {
@@ -200,7 +200,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_lemno")
 }],
-"loop": true,
+"loop": false,
 "name": &"hurt",
 "speed": 10.0
 }, {
@@ -249,7 +249,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_25cy8")
 }],
-"loop": true,
+"loop": false,
 "name": &"skill",
 "speed": 10.0
 }]
@@ -257,8 +257,6 @@ animations = [{
 [node name="BoarAnimation" type="Node2D"]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-position = Vector2(50, -196)
-scale = Vector2(3.0282, 3.24591)
 sprite_frames = SubResource("SpriteFrames_3qtp5")
-animation = &"skill"
+animation = &"idle"
 autoplay = "idle"

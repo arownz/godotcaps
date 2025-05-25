@@ -287,7 +287,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_wtlso")
 }],
-"loop": true,
+"loop": false,
 "name": &"auto_attack",
 "speed": 10.0
 }, {
@@ -372,7 +372,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_63kd3")
 }],
-"loop": true,
+"loop": false,
 "name": &"counter",
 "speed": 10.0
 }, {
@@ -407,7 +407,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_msfw0")
 }],
-"loop": true,
+"loop": false,
 "name": &"dead",
 "speed": 10.0
 }, {
@@ -445,7 +445,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_bvcky")
 }],
-"loop": true,
+"loop": false,
 "name": &"hurt",
 "speed": 10.0
 }, {
@@ -497,7 +497,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_xi64v")
 }],
-"loop": true,
+"loop": false,
 "name": &"run",
 "speed": 10.0
 }]
@@ -505,8 +505,6 @@ animations = [{
 [node name="DefaultPlayerAnimation" type="Node2D"]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-position = Vector2(-47, -186)
-scale = Vector2(4.41759, 4.73519)
 sprite_frames = SubResource("SpriteFrames_fdt5l")
-animation = &"idle"
-autoplay = "idle"
+animation = &"battle_idle"
+autoplay = "battle_idle"

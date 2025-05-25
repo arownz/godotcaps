@@ -8,7 +8,6 @@ var selected_button = null
 var current_equipped_id = ""
 var checkmark_icons = {}
 
-# Remove async keyword - GDScript doesn't support this syntax
 func _ready():
 	# Initialize UI
 	$Panel/ConfirmButton.disabled = true
@@ -37,31 +36,42 @@ func _ready():
 	# Show checkmark for currently equipped profile
 	update_checkmarks()
 	
-	# We can still use await inside a regular function
+	# Load current profile from Firebase
 	await load_current_profile()
 
-# Remove async keyword - GDScript doesn't support this syntax
 func load_current_profile():
 	# Get current user ID
 	if Firebase.Auth.auth and Firebase.Auth.auth.has("localid"):
 		var user_id = Firebase.Auth.auth.localid
 		var collection = Firebase.Firestore.collection("dyslexia_users")
 		
-		# Use direct await method that is working in your other files
 		print("ProfilePicturesPopup: Fetching user document to get profile picture")
 		var document = await collection.get_doc(user_id)
 		
 		if document and !("error" in document.keys() and document.get_value("error")):
-			var doc_keys = document.keys()
-			if "profile_picture" in doc_keys:
-				var profile_id = document.get_value("profile_picture")
-				print("Current profile picture is: ", profile_id)
+			# Try to get profile data from new structure first
+			var profile = document.get_value("profile")
+			if profile != null and typeof(profile) == TYPE_DICTIONARY:
+				var profile_id = profile.get("profile_picture", "default")
+				print("ProfilePicturesPopup: Current profile picture is: ", profile_id)
 				# Handle "default" profile mapping to "13"
 				if profile_id == "default":
 					current_equipped_id = "13"
 				else:
 					current_equipped_id = profile_id
 				update_checkmarks()
+			else:
+				# Fallback to old flat structure
+				var doc_keys = document.keys()
+				if "profile_picture" in doc_keys:
+					var profile_id = document.get_value("profile_picture")
+					print("ProfilePicturesPopup: Current profile picture is: ", profile_id)
+					# Handle "default" profile mapping to "13"
+					if profile_id == "default":
+						current_equipped_id = "13"
+					else:
+						current_equipped_id = profile_id
+					update_checkmarks()
 
 func set_current_profile(profile_id):
 	current_equipped_id = profile_id
@@ -80,6 +90,8 @@ func update_checkmarks():
 			icon.visible = true
 
 func _on_portrait_button_pressed(picture_id):
+	print("ProfilePicturesPopup: Portrait " + picture_id + " selected")
+	
 	# Find the button that was pressed
 	selected_picture_id = picture_id
 	
@@ -88,21 +100,83 @@ func _on_portrait_button_pressed(picture_id):
 		if child is TextureButton:
 			child.modulate = Color(1, 1, 1, 1)
 	
-	# Highlight the selected button
-	var sender = get_viewport().gui_get_focus_owner()
-	if sender and sender is TextureButton:
-		sender.modulate = Color(0.5, 0.8, 1.0, 1.0)
-		selected_button = sender
+	# Highlight the selected button - find it by name
+	var button_name = "Portrait" + picture_id
+	var selected_portrait = $Panel/ScrollContainer/GridContainer.get_node_or_null(button_name)
+	if selected_portrait and selected_portrait is TextureButton:
+		selected_portrait.modulate = Color(0.5, 0.8, 1.0, 1.0)
+		selected_button = selected_portrait
 	
 	# Enable confirm button
 	$Panel/ConfirmButton.disabled = false
 
 func _on_confirm_button_pressed():
-	# Emit signal with selected picture
-	emit_signal("picture_selected", selected_picture_id)
+	print("ProfilePicturesPopup: Confirming selection " + selected_picture_id)
+	
+	# Update Firebase with the new profile picture - FIXED
+	var success = await _update_profile_picture_in_firebase(selected_picture_id)
+	
+	if success:
+		# Emit the selected portrait ID
+		emit_signal("picture_selected", selected_picture_id)
+	
+	# Self-destruct
 	queue_free()
 
+# FIXED: Update profile picture in Firebase using working method
+func _update_profile_picture_in_firebase(picture_id):
+	if !Firebase.Auth.auth:
+		print("ProfilePicturesPopup: No authenticated user")
+		return false
+		
+	var user_id = Firebase.Auth.auth.localid
+	var collection = Firebase.Firestore.collection("dyslexia_users")
+	
+	print("ProfilePicturesPopup: Updating profile picture to: " + picture_id)
+	
+	# Get current document
+	var document = await collection.get_doc(user_id)
+	if document and !("error" in document.keys() and document.get_value("error")):
+		print("ProfilePicturesPopup: Document retrieved successfully")
+		
+		# Check if we have nested profile structure
+		var profile = document.get_value("profile")
+		if profile != null and typeof(profile) == TYPE_DICTIONARY:
+			# Update the nested profile structure
+			profile.profile_picture = picture_id
+			
+			# Use document.add_or_update_field for nested update
+			document.add_or_update_field("profile", profile)
+			
+			# Update the document using the update method (not add)
+			var updated_document = await collection.update(document)
+			if updated_document:
+				print("ProfilePicturesPopup: Successfully updated profile picture to " + picture_id + " in Firebase (nested)")
+				return true
+			else:
+				print("ProfilePicturesPopup: Failed to update document with nested structure")
+				return false
+		else:
+			# Fallback to simple field update for old structure
+			document.add_or_update_field("profile_picture", picture_id)
+			
+			# Update the document using the update method
+			var updated_document = await collection.update(document)
+			if updated_document:
+				print("ProfilePicturesPopup: Successfully updated profile picture to " + picture_id + " in Firebase (flat)")
+				return true
+			else:
+				print("ProfilePicturesPopup: Failed to update document with flat structure")
+				return false
+	else:
+		print("ProfilePicturesPopup: Failed to get user document for update")
+		return false
+
 func _on_close_button_pressed():
+	print("ProfilePicturesPopup: Closing without selection")
+	
 	# Emit cancelled signal
 	emit_signal("cancelled")
+	
+	# Self-destruct
 	queue_free()

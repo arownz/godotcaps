@@ -1,12 +1,14 @@
-[gd_resource type="Resource" script_class="EnemyTypeResource" load_steps=2 format=3 uid="uid://x3tjguoxsd4w"]
+[gd_resource type="Resource" script_class="EnemyTypeResource" load_steps=3 format=3 uid="uid://2uq4jhyo2yql"]
 
-[ext_resource type="Script" uid="uid://d2ghh4os1rp2o" path="res://Scripts/Resources/enemy_type_resource.gd" id="1_rjmtd"]
+[ext_resource type="Script" uid="uid://d2ghh4os1rp2o" path="res://Scripts/Resources/enemy_type_resource.gd" id="1_1"]
+[ext_resource type="PackedScene" uid="uid://d4gnmb7y5laks" path="res://Sprites/Animation/Treant_Animation.tscn" id="2_1"]
 
 [resource]
-script = ExtResource("1_rjmtd")
-type_id = "boss"
-names = Array[String](["The Treant"])
-health_multiplier = 3.0
-damage_multiplier = 2.0
-exp_reward = 50
-sprite_scale = Vector2(2, 2)
+script = ExtResource("1_1")
+enemy_name = "Ancient Treant"
+health = 200
+damage = 25
+durability = 10
+skill_name = "Root Strike"
+description = "A massive ancient tree guardian with crushing strength"
+animation_scene = ExtResource("2_1")

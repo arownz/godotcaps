@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="PlayerStatsResource" load_steps=2 format=3 uid="uid://5y2jt4fqqbdn"]
+
+[ext_resource type="Script" uid="uid://buyhu5ggftcp0" path="res://Scripts/Resources/player_stats_resource.gd" id="1_1"]
+
+[resource]
+script = ExtResource("1_1")
+player_name = "Player"
+player_health = 100
+player_damage = 10
+player_durability = 5
+player_level = 1
+player_exp = 0
+player_max_exp = 100
+player_animation_path = "res://Sprites/Animation/DefaultPlayer_Animation.tscn"

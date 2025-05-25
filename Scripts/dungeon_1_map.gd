@@ -12,9 +12,9 @@ var enemy_types = {
 	"normal": {
 		"name": "Slime",
 		"description": "A gelatinous creature that bounces around.",
-		"health": 100,
-		"attack": 10,
-		"durability": 30,
+		"health": 80,
+		"attack": 5,
+		"durability": 5,
 		"skill": "Acid Splash",
 		"animation": "Mob1Idle"
 	},
@@ -23,7 +23,7 @@ var enemy_types = {
 		"description": "An ancient tree guardian with powerful nature magic.",
 		"health": 300,
 		"attack": 25,
-		"durability": 100,
+		"durability": 35,
 		"skill": "Root Entangle",
 		"animation": "BossIdle"
 	}
@@ -281,16 +281,67 @@ func _on_back_button_pressed():
 func _on_fight_button_pressed():
 	print("Starting battle in Dungeon 1, Stage " + str(current_selected_stage))
 	
-	# Save current stage and dungeon to GameSettings
-	GameSettings.current_dungeon = dungeon_num
-	GameSettings.current_stage = current_selected_stage
-	GameSettings.save_settings()
-	
-	# Save to Firebase if available
-	_save_current_dungeon_stage()
-	
+	# Check if player has enough energy
+	if Engine.has_singleton("Firebase"):
+		if !await _consume_battle_energy():
+			# Show not enough energy message
+			notification_popup.show_notification("Not Enough Energy", "You need 2 energy points to start this battle. Energy refills over time.", "OK")
+			return
+
+	# Save current stage and dungeon directly to Firebase
+	await _save_current_dungeon_stage()
+
 	# Load the battle scene
 	get_tree().change_scene_to_file("res://Scenes/BattleScene.tscn")
+
+func _consume_battle_energy():
+	# Only proceed if authenticated
+	if not Firebase.Auth.auth:
+		print("User not authenticated, cannot check energy")
+		return true
+		
+	var user_id = Firebase.Auth.auth.localid
+	var collection = Firebase.Firestore.collection("dyslexia_users")
+	
+	# Get current document to check energy
+	var task = collection.get(user_id)
+	var success = false
+	
+	if task:
+		var document = await task.task_finished
+		if document and not document.error:
+			# Check current energy level in the new structure
+			var stats = document.doc_fields.get("stats", {})
+			var player_stats = stats.get("player", {})
+			var current_energy = player_stats.get("energy", 0)
+			
+			print("Current energy: " + str(current_energy))
+			
+			if current_energy >= 2: # Require 2 energy points per battle
+				# Subtract energy and update
+				current_energy -= 2
+				
+				# Update Firebase with new energy value
+				var update_data = {
+					"stats": {
+						"player": {
+							"energy": current_energy
+						}
+					}
+				}
+				
+				var update_task = collection.update(user_id, update_data)
+				var update_result = await update_task.task_finished
+				
+				if update_result and not update_result.error:
+					print("Energy updated, new value: " + str(current_energy))
+					success = true
+				else:
+					print("Failed to update energy")
+			else:
+				print("Not enough energy to start battle")
+	
+	return success
 
 func _save_current_dungeon_stage():
 	# Only proceed if authenticated
@@ -302,41 +353,25 @@ func _save_current_dungeon_stage():
 	var collection = Firebase.Firestore.collection("dyslexia_users")
 	
 	# Get current document first to preserve other fields
-	var get_task = collection.get(user_id)
+	var get_task = await collection.get_doc(user_id)
 	if get_task:
-		var document = await get_task.task_finished
-		if document and not document.error:
-			var update_data = document.doc_fields if document.doc_fields else {}
+		var document = await get_task
+		if document and document.has_method("doc_fields"):
+			var update_data = document.doc_fields
 			
-			# Add dungeons_completed if it doesn't exist
-			if not update_data.has("dungeons_completed"):
-				update_data["dungeons_completed"] = {}
-				
-			# Add current dungeon if it doesn't exist
-			if not update_data["dungeons_completed"].has(str(dungeon_num)):
-				update_data["dungeons_completed"][str(dungeon_num)] = {}
+			# Update dungeons progress
+			if not update_data.has("dungeons"):
+				update_data["dungeons"] = {}
+			if not update_data.dungeons.has("progress"):
+				update_data.dungeons["progress"] = {}
 			
-			# Mark stage as completed in GameSettings
-			if not str(current_selected_stage) in GameSettings.dungeons_completed[str(dungeon_num)]["stages_completed"]:
-				GameSettings.dungeons_completed[str(dungeon_num)]["stages_completed"].append(current_selected_stage)
-			
-			# Update Firebase with completed stages
-			if not update_data["dungeons_completed"][str(dungeon_num)].has("stages_completed"):
-				update_data["dungeons_completed"][str(dungeon_num)]["stages_completed"] = []
-				
-			# Make sure we don't add duplicate completed stages
-			if not current_selected_stage in update_data["dungeons_completed"][str(dungeon_num)]["stages_completed"]:
-				update_data["dungeons_completed"][str(dungeon_num)]["stages_completed"].append(current_selected_stage)
-				
-			# Update current stage
-			update_data["current_dungeon"] = dungeon_num
-			update_data["current_stage"] = current_selected_stage
+			# Update current dungeon and stage
+			update_data.dungeons.progress.current_dungeon = dungeon_num
+			update_data.dungeons.progress.current_stage = current_selected_stage
 			
 			# Save back to Firestore
-			var task = collection.update(user_id, update_data)
-			if task:
-				await task.task_finished
-				print("Saved dungeon progress to Firebase")
+			collection.add(user_id, update_data)
+			print("Saved current dungeon/stage to Firebase")
 
 func _on_notification_closed():
 	# Handle popup close if needed

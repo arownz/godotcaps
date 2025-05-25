@@ -167,7 +167,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_5m26x")
 }],
-"loop": true,
+"loop": false,
 "name": &"auto_attack",
 "speed": 10.0
 }, {
@@ -190,7 +190,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_i5c58")
 }],
-"loop": true,
+"loop": false,
 "name": &"dead",
 "speed": 10.0
 }, {
@@ -216,7 +216,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_jsmaf")
 }],
-"loop": true,
+"loop": false,
 "name": &"hurt",
 "speed": 10.0
 }, {
@@ -277,7 +277,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_w3jao")
 }],
-"loop": true,
+"loop": false,
 "name": &"skill",
 "speed": 10.0
 }]
@@ -285,8 +285,7 @@ animations = [{
 [node name="SnakeAnimation" type="Node2D"]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-position = Vector2(50, -196)
-scale = Vector2(3.0282, 3.24591)
 sprite_frames = SubResource("SpriteFrames_06me7")
-animation = &"skill"
+animation = &"idle"
 autoplay = "idle"
+frame_progress = 0.349641

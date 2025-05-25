@@ -233,7 +233,7 @@ func _on_register_button_pressed():
 	
 	# Validate password
 	if password.strip_edges().is_empty() or password.length() < 6:
-		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegPasswordErrorLabel.visible = true
+		$MarginContainer/ContentContainer/RightPanel/MainContainer	/VBoxContainer/TabContainer/Register/RegPasswordErrorLabel.visible = true
 		has_error = true
 	
 	# Validate confirm password
@@ -269,10 +269,10 @@ func _on_sign_in_google_button_pressed():
 		# Set explicit parameters for Google auth
 		provider.params.response_type = "token"
 		provider.params.redirect_type = "redirect_uri"
-		provider.params.prompt = "select_account"  # Force account selection
+		provider.params.prompt = "select_account" # Force account selection
 		provider.params.scope = "email profile openid"
-		provider.params.state = "google_auth"  # For verifying the response
-		provider.params.display = "page"  # Force display in the same page/tab
+		provider.params.state = "google_auth" # For verifying the response
+		provider.params.display = "page" # Force display in the same page/tab
 		
 		# Include login_hint if we have an email from a previous login attempt
 		var email_field = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/EmailLineEdit
@@ -304,19 +304,19 @@ func get_web_redirect_uri():
 func _on_forgot_password_button_pressed():
 	# Switch to the forgot password tab
 	$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer.current_tab = 2
-	$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword/ResetEmailLineEdit.grab_focus()
+	$MarginContainer/ContentContainer/RightPanel/MainContainer/	VBoxContainer/TabContainer/ForgotPassword/ResetEmailLineEdit.grab_focus()
 	
 	# Copy email address from login tab if available
-	var login_email = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/EmailLineEdit.text
+	var login_email = $MarginContainer/ContentContainer/RightPanel/MainContainer/	VBoxContainer/TabContainer/Login/EmailLineEdit.text
 	if not login_email.strip_edges().is_empty():
-		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword/ResetEmailLineEdit.text = login_email
+		$MarginContainer/ContentContainer/RightPanel/MainContainer/	VBoxContainer/TabContainer/ForgotPassword/ResetEmailLineEdit.text = login_email
 
 func _on_back_to_login_button_pressed():
 	# Switch back to login tab
-	$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer.current_tab = 0
+	$MarginContainer/ContentContainer/RightPanel/MainContainer/	VBoxContainer/TabContainer.current_tab = 0
 
 func _on_reset_password_button_pressed():
-	var email = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword/ResetEmailLineEdit.text
+	var email = $MarginContainer/ContentContainer/RightPanel/MainContainer	/VBoxContainer/TabContainer/ForgotPassword/ResetEmailLineEdit.text
 	
 	# Validate email
 	if email.strip_edges().is_empty() or not "@" in email or not "." in email:
@@ -331,7 +331,7 @@ func _on_reset_password_button_pressed():
 	
 	# Switch back to login tab after a short delay
 	await get_tree().create_timer(1.0).timeout
-	$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer.current_tab = 0
+	$MarginContainer/ContentContainer/RightPanel/MainContainer	/VBoxContainer/TabContainer.current_tab = 0
 
 # ===== Firebase Authentication Callbacks =====
 func on_login_succeeded(auth):
@@ -371,27 +371,50 @@ func on_login_succeeded(auth):
 		
 		# Create new user document with default values
 		var user_doc = {
-			"username": display_name,
-			"email": email,
-			"birth_date": "", # Empty for Google users
-			"age": 0, # Will be calculated if birth date is provided later
-			"profile_picture": "default", # Use default for all new users
-			"user_level": 1, # Default level for new users
-			"created_at": current_time,
-			"last_login": current_time,
-			"energy": 20, # Initial base energy value
-			"max_energy": 20, # Starting energy capacity
-			"power_scale": 115, # Initial power scale
-			"rank": "bronze", # Initial rank
-			"current_dungeon": 1, # Starting dungeon
-			"current_stage": 1, # Starting stage
-			"dungeons_completed": {
-				"1": {"completed": false, "stages_completed": 0},
-				"2": {"completed": false, "stages_completed": 0},
-				"3": {"completed": false, "stages_completed": 0}
+			"profile": {
+				"username": display_name,
+				"email": email,
+				"birth_date": "",
+				"age": 0,
+				"profile_picture": "default",
+				"rank": "bronze",
+				"created_at": current_time,
+				"last_login": current_time
+			},
+			"stats": {
+				"player": {
+					"level": 1,
+					"exp": 0,
+					"health": 100,
+					"damage": 10,
+					"durability": 5,
+					"energy": 20,
+					"skin": "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
+				}
+			},
+			"word_challenges": {
+				"completed": {
+					"stt": 0,
+					"whiteboard": 0
+				},
+				"failed": {
+					"stt": 0,
+					"whiteboard": 0
+				}
+			},
+			"dungeons": {
+				"completed": {
+					"1": {"completed": false, "stages_completed": 0},
+					"2": {"completed": false, "stages_completed": 0},
+					"3": {"completed": false, "stages_completed": 0}
+				},
+				"progress": {
+					"enemies_defeated": 0,
+					"current_dungeon": 1,
+				}
 			}
 		}
-		
+
 		# Save the user data
 		collection.add(user_id, user_doc)
 		
@@ -407,25 +430,48 @@ func on_login_succeeded(auth):
 			var display_name = auth.get("displayname", "")
 			var email = auth.get("email", "")
 			
+			# Create new user document with default values
 			var user_doc = {
-				"username": display_name,
-				"email": email,
-				"birth_date": "",
-				"age": 0,
-				"profile_picture": "default",
-				"user_level": 1,
-				"created_at": current_time,
-				"last_login": current_time,
-				"energy": 20, # Initial energy value
-				"max_energy": 20, # Starting energy capacity (changed from 99)
-				"power_scale": 115, # Initial power scale
-				"rank": "bronze", # Initial rank
-				"current_dungeon": 1, # Starting dungeon
-				"current_stage": 1, # Starting stage
-				"dungeons_completed": {
-					"1": {"completed": false, "stages_completed": 0},
-					"2": {"completed": false, "stages_completed": 0},
-					"3": {"completed": false, "stages_completed": 0}
+				"profile": {
+					"username": display_name,
+					"email": email,
+					"birth_date": "",
+					"age": 0,
+					"profile_picture": "default",
+					"rank": "bronze",
+					"created_at": current_time,
+					"last_login": current_time
+				},
+				"stats": {
+					"player": {
+						"level": 1,
+						"exp": 0,
+						"health": 100,
+						"damage": 10,
+						"durability": 5,
+						"energy": 20,
+						"skin": "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
+					}
+				},
+				"word_challenges": {
+					"completed": {
+						"stt": 0,
+						"whiteboard": 0
+					},
+					"failed": {
+						"stt": 0,
+						"whiteboard": 0
+					}
+				},
+				"dungeons": {
+					"completed": {
+						"1": {"completed": false, "stages_completed": 0},
+						"2": {"completed": false, "stages_completed": 0},
+						"3": {"completed": false, "stages_completed": 0}
+					},
+					"progress": {
+						"enemies_defeated": 0,
+						"current_dungeon": 1, }
 				}
 			}
 			
@@ -438,10 +484,10 @@ func on_login_succeeded(auth):
 			if result.doc_fields != null:
 				var current_data = result.doc_fields
 				current_data["last_login"] = current_time
-				
-				# Make sure dungeons_completed exists
-				if not current_data.has("dungeons_completed"):
-					current_data["dungeons_completed"] = {
+
+				# Make sure dungeons exist
+				if not current_data.has("dungeons"):
+					current_data["dungeons"] = {
 						"1": {"completed": false, "stages_completed": 0},
 						"2": {"completed": false, "stages_completed": 0},
 						"3": {"completed": false, "stages_completed": 0}
@@ -450,42 +496,15 @@ func on_login_succeeded(auth):
 				# Make sure dungeon progress exists
 				if not current_data.has("current_dungeon"):
 					current_data["current_dungeon"] = 1
-				if not current_data.has("current_stage"):
-					current_data["current_stage"] = 1
 				
 				# Complete document update instead of just updating one field
 				collection.add(user_id, current_data)
-			else:
-				# If we can't retrieve the fields, create new
-				var display_name = auth.get("displayname", "")
-				var email = auth.get("email", "")
 				
-				var user_doc = {
-					"username": display_name,
-					"email": email,
-					"birth_date": "",
-					"age": 0,
-					"profile_picture": "default",
-					"user_level": 1,
-					"created_at": current_time,
-					"last_login": current_time,
-					"energy": 20, # Initial energy value
-					"max_energy": 20, # Starting energy capacity (changed from 99)
-					"power_scale": 115, # Initial power scale
-					"rank": "bronze", # Initial rank
-					"current_dungeon": 1, # Starting dungeon
-					"current_stage": 1, # Starting stage
-					"dungeons_completed": { 
-						"1": {"completed": false, "stages_completed": 0},
-						"2": {"completed": false, "stages_completed": 0},
-						"3": {"completed": false, "stages_completed": 0}
-					}
-				}
-				
-				collection.add(user_id, user_doc)
-			
-			# Navigate to main menu
-			navigate_to_main_menu(is_returning_from_google)
+				# Navigate to main menu
+				navigate_to_main_menu(is_returning_from_google)
+	
+	# Navigate to main menu
+	navigate_to_main_menu(is_returning_from_google)
 
 # Helper function to navigate to main menu
 func navigate_to_main_menu(is_google_auth := false):
@@ -502,12 +521,31 @@ func navigate_to_main_menu(is_google_auth := false):
 					window.history.replaceState({}, document.title, window.location.pathname);
 				}
 			""")
-		# Force scene change regardless of other operations
-		get_tree().change_scene_to_file("res://Scenes/MainMenu.tscn")
+		# Use a CallDeferred approach to avoid scene tree issues during transition
+		call_deferred("_safe_change_scene", "res://Scenes/MainMenu.tscn")
 	else:
 		# For regular login, add a slight delay for UX
 		await get_tree().create_timer(0.5).timeout
-		get_tree().change_scene_to_file("res://Scenes/MainMenu.tscn")
+		# Check if still in tree before changing scene
+		if is_inside_tree():
+			get_tree().change_scene_to_file("res://Scenes/MainMenu.tscn")
+		else:
+			call_deferred("_safe_change_scene", "res://Scenes/MainMenu.tscn")
+
+# Add a helper function to safely change scenes, even if node is being freed
+func _safe_change_scene(target_scene):
+	# Always run from a context with valid scene tree access
+	if Engine.get_main_loop():
+		print("DEBUG: Using safe scene change to: " + target_scene)
+		Engine.get_main_loop().call_deferred("change_scene_to_file", target_scene)
+	else:
+		print("ERROR: Could not access main loop for scene change")
+		# Last resort - try to get SceneTree through global scope
+		var tree = Engine.get_singleton("SceneTree")
+		if tree:
+			tree.change_scene_to_file(target_scene)
+		else:
+			printerr("CRITICAL: Cannot change scene - no access to SceneTree")
 
 func on_signup_succeeded(auth):
 	print("Signup successful")
@@ -515,12 +553,12 @@ func on_signup_succeeded(auth):
 	# Get user data from registration form
 	var username = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/UsernameLineEdit.text
 	var email = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegEmailLineEdit.text
-	
+
 	# Get birthdate components
 	var day_option = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/BirthDateContainer/DayOptionButton
 	var month_option = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/BirthDateContainer/MonthOptionButton
 	var year_option = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/BirthDateContainer/YearOptionButton
-
+	
 	var birth_date = ""
 	var age = 0
 	if day_option.selected > -1 and month_option.selected > -1 and year_option.selected > -1:
@@ -537,27 +575,50 @@ func on_signup_succeeded(auth):
 			age -= 1
 	
 	var current_time = Time.get_datetime_string_from_system(false, true)
-	
-	# Store user data in Firestore
+
+	# Store user data in Firestore with new structure
 	var user_doc = {
-		"username": username,
-		"email": email,
-		"birth_date": birth_date,
-		"age": age,
-		"profile_picture": "default", # Default profile picture for everyone
-		"user_level": 1, # Default level for new users
-		"created_at": current_time,
-		"last_login": current_time,
-		"energy": 20, # Initial energy value
-		"max_energy": 20, # Starting energy capacity
-		"power_scale": 115, # Initial power scale
-		"rank": "bronze", # Initial rank
-		"current_dungeon": 1, # Starting dungeon
-		"current_stage": 1, # Starting stage
-		"dungeons_completed": {
-			"1": {"completed": false, "stages_completed": 0},
-			"2": {"completed": false, "stages_completed": 0},
-			"3": {"completed": false, "stages_completed": 0}
+		"profile": {
+			"username": username,
+			"email": email,
+			"birth_date": birth_date,
+			"age": age,
+			"profile_picture": "default",
+			"rank": "bronze",
+			"created_at": current_time,
+			"last_login": current_time
+		},
+		"stats": {
+			"player": {
+				"level": 1,
+				"exp": 0,
+				"health": 100,
+				"damage": 10,
+				"durability": 5,
+				"energy": 20,
+				"skin": "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
+			}
+		},
+		"word_challenges": {
+			"completed": {
+				"stt": 0,
+				"whiteboard": 0
+			},
+			"failed": {
+				"stt": 0,
+				"whiteboard": 0
+			}
+		},
+		"dungeons": {
+			"completed": {
+				"1": {"completed": false, "stages_completed": 0},
+				"2": {"completed": false, "stages_completed": 0},
+				"3": {"completed": false, "stages_completed": 0}
+			},
+			"progress": {
+				"enemies_defeated": 0,
+				"current_dungeon": 1,
+			}
 		}
 	}
 	
@@ -573,33 +634,6 @@ func on_signup_succeeded(auth):
 	# Change scene after a short delay
 	await get_tree().create_timer(0.5).timeout
 	get_tree().change_scene_to_file("res://Scenes/MainMenu.tscn")
-	
-func on_login_failed(error_code, message):
-	print("DEBUG: Login failed: ", error_code, " - ", message)
-	show_message("Login Failed: " + message, false)
-	
-	# If this was a Google auth failure, show more helpful message
-	if message.contains("TOKEN_EXPIRED") or message.contains("INVALID_IDP_RESPONSE"):
-		show_message("Google login failed. Please try again or use email login.", false)
-	
-func on_signup_failed(error_code, message):
-	print("Signup failed: ", error_code, " - ", message)
-	show_message("Registration Failed: " + message, false)
-
-# Then in your profile loading code (when you implement it):
-func load_profile_image(image_identifier):
-	if image_identifier == "default":
-		return preload("res://gui/ProfileScene/Profile/portrait13.png")
-	else:
-		# Handle loading from Firebase Storage or web URLs if needed
-		pass
-
-# Helper function to get auth headers for requests
-func _get_auth_headers():
-	var headers = []
-	if Firebase.Auth.auth != null and Firebase.Auth.auth.has("idtoken"):
-		headers.append("Authorization: Bearer " + Firebase.Auth.auth.idtoken)
-	return headers
 
 # Add this to your authentication.gd
 func is_web_platform():
@@ -623,75 +657,47 @@ func save_web_data(key, data):
 		return JavaScriptBridge.eval(js_code)
 	return false
 
-# Add function to update dungeon progress
-func update_dungeon_progress(dungeon_id, stage_id, _completed=false):
-	if !Firebase.Auth.auth:
-		print("No authenticated user to update dungeon progress")
-		return
-		
-	var user_id = Firebase.Auth.auth.localid
-	var collection = Firebase.Firestore.collection("dyslexia_users")
+
+# Add these missing functions
+func on_login_failed(error_code, message):
+	print("DEBUG: Login failed: ", error_code, " - ", message)
 	
-	# First fetch the current user data
-	var task = collection.get(user_id)
-	if task:
-		var document = await task.task_finished
-		if document.error:
-			print("Error retrieving user data for dungeon update: ", document.error)
-			return
-			
-		var dungeons_completed = document.doc_fields.get("dungeons_completed", {})
-		var current_dungeon = int(document.doc_fields.get("current_dungeon", 1))
-		var current_stage = int(document.doc_fields.get("current_stage", 1))
-		
-		# Ensure the dungeons_completed structure exists
-		if dungeons_completed.is_empty():
-			dungeons_completed = {
-				"1": {"completed": false, "stages_completed": 0},
-				"2": {"completed": false, "stages_completed": 0},
-				"3": {"completed": false, "stages_completed": 0}
-			}
-		
-		# Convert dungeon_id to string for dictionary key
-		var dungeon_key = str(dungeon_id)
-		
-		# Update the stages completed for this dungeon
-		if dungeons_completed.has(dungeon_key):
-			var dungeon_data = dungeons_completed[dungeon_key]
-			dungeon_data["stages_completed"] = max(dungeon_data["stages_completed"], stage_id)
-			
-			# Check if all stages of this dungeon are completed
-			if stage_id >= 5:  # Assuming 5 stages per dungeon
-				dungeon_data["completed"] = true
-				
-				# Advance to next dungeon if current one is completed
-				if dungeon_id == current_dungeon:
-					current_dungeon = min(current_dungeon + 1, 3)
-					current_stage = 1
-			elif dungeon_id == current_dungeon:
-				# Just advance to next stage in current dungeon
-				current_stage = min(stage_id + 1, 5)
-				
-			dungeons_completed[dungeon_key] = dungeon_data
-		
-		# Update Firestore
-		var update_data = {
-			"dungeons_completed": dungeons_completed,
-			"current_dungeon": current_dungeon,
-			"current_stage": current_stage
-		}
-		
-		var update_task = collection.update(user_id, update_data)
-		var update_result = await update_task.task_finished
-		
-		if update_result.error:
-			print("Error updating dungeon progress: ", update_result.error)
-		else:
-			print("Dungeon progress updated successfully")
-			
-			# Also update the game settings for local reference
-			GameSettings.current_dungeon = current_dungeon
-			GameSettings.current_stage = current_stage
+	# Provide user-friendly error messages
+	var user_message = ""
+	
+	# Common Firebase error codes
+	match error_code:
+		"auth/user-not-found":
+			user_message = "Account does not exist. Please check your email or sign up."
+		"auth/wrong-password":
+			user_message = "Incorrect password. Please try again."
+		"auth/invalid-email":
+			user_message = "Invalid email format."
+		"auth/user-disabled":
+			user_message = "This account has been disabled."
+		"auth/too-many-requests":
+			user_message = "Too many failed login attempts. Please try again later."
+		_:
+			# Default error message
+			user_message = "Login failed: " + message
+	
+	# Show the error message
+	show_message(user_message, false)
+	
+	# If this was a Google auth failure, show more helpful message
+	if message.contains("TOKEN_EXPIRED") or message.contains("INVALID_IDP_RESPONSE"):
+		show_message("Google login failed. Please try again or use email login.", false)
+	
+func on_signup_failed(error_code, message):
+	print("Signup failed: ", error_code, " - ", message)
+	show_message("Registration Failed: " + message, false)
+
+# Helper function to get auth headers for requests
+func _get_auth_headers():
+	var headers = []
+	if Firebase.Auth.auth != null and Firebase.Auth.auth.has("idtoken"):
+		headers.append("Authorization: Bearer " + Firebase.Auth.auth.idtoken)
+	return headers
 
 # Add this function to clear web storage if issues are detected
 func clear_web_storage():

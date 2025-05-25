@@ -8,16 +8,16 @@ var user_scrolled = false  # Track if user has manually scrolled
 # Introduction messages for different dungeons
 var introduction_messages = {
 	"dungeon1": [
-		"You have arrived at The Plains. This is the start of your adventure.",
-		"While traveling, you encounter a slime blocking your path."
+		"[color=#000000]You have arrived at The Plains. This is the start of your adventure.[/color]",
+		"[color=#000000]While traveling, you encounter an enemy blocking your path.[/color]"
 	],
 	"dungeon2": [
-		"You enter The Forest, a more dangerous area with tougher enemies.",
-		"The trees rustle as a snake appears before you."
+		"[color=#000000]You enter The Forest, a more dangerous area with tougher enemies.[/color]",
+		"[color=#000000]The trees rustle as an enemy appears before you.[/color]"
 	],
 	"dungeon3": [
-		"You've reached The Mountain, home to the most fearsome creatures.",
-		"A Boar ram behind the rocks, ready to attack!"
+		"[color=#000000]You've reached The Mountain, home to the most fearsome creatures.[/color]",
+		"[color=#000000]An enemy rams behind the rocks, ready to attack![/color]"
 	]
 }
 
@@ -52,7 +52,7 @@ func _ready():
 		log_entries_container = battle_log.get_node_or_null("VBoxContainer/LogEntries")
 	
 	# Adding a test entry
-	add_log_entry("Battle started", "system")
+	add_log_entry("[color=#EB5E4B]Battle started[/color]", "system")
 
 func display_introduction_messages():
 	# Get the current dungeon number
@@ -65,7 +65,7 @@ func display_introduction_messages():
 			add_message(message)
 	
 	# Add enemy introduction message
-	add_message("You encounter a " + battle_scene.enemy_manager.enemy_name + "!")
+	add_message("[color=#000000]You encounter a " + battle_scene.enemy_manager.enemy_name + "![/color]")
 
 func add_message(text):
 	# Create a panel for the background

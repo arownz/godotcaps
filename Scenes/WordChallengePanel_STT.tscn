@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://b23008asrbgm5"]
+[gd_scene load_steps=11 format=3 uid="uid://dhb04kp6rp2xh"]
 
 [ext_resource type="Script" uid="uid://5556075jac2c" path="res://Scripts/WordChallengePanel_STT.gd" id="1_4yifo"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="2_8hfec"]
@@ -48,15 +48,15 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_4yifo")
 
-[node name="ColorRect" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -330.0
-offset_top = -105.0
-offset_right = 359.0
-offset_bottom = 154.0
+offset_left = -362.0
+offset_top = -142.0
+offset_right = 377.0
+offset_bottom = 148.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.6)

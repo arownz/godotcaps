@@ -15,131 +15,119 @@ var max_dungeons = 3
 var max_stages_per_dungeon = 5
 var previous_dungeon = 1  # Used to track dungeon transitions
 
-# Testing mode flag - set to true during development to disable Firebase operations
-var testing_mode = true
+# Testing mode flag - set to false in production to enable Firebase operations
+var testing_mode = false
 
 func _init(scene):
 	battle_scene = scene
-	load_progress()
 
 func initialize():
-	# Get values from GameSettings if available
-	if GameSettings.has_method("get_current_dungeon") and GameSettings.has_method("get_current_stage"):
-		dungeon_num = GameSettings.get_current_dungeon()
-		stage_num = GameSettings.get_current_stage()
-	else:
-		# Directly access properties if they exist
-		if "current_dungeon" in GameSettings:
-			dungeon_num = GameSettings.current_dungeon
-		if "current_stage" in GameSettings: 
-			stage_num = GameSettings.current_stage
-	
-	# Ensure valid values
-	dungeon_num = clamp(dungeon_num, 1, max_dungeons)
-	stage_num = clamp(stage_num, 1, max_stages_per_dungeon)
-	previous_dungeon = dungeon_num
-	
-	print("DungeonManager initialized with dungeon: %d, stage: %d" % [dungeon_num, stage_num])
+	# Load current progress from Firebase directly
+	await load_progress_from_firebase()
 
-func advance_stage():
-	# Store previous values to check for transitions
-	var old_dungeon = dungeon_num
+func load_progress_from_firebase():
+	if testing_mode or !Firebase.Auth.auth:
+		print("DungeonManager: Using default progression (testing mode or not authenticated)")
+		return
+		
+	var user_id = Firebase.Auth.auth.localid
+	var collection = Firebase.Firestore.collection("dyslexia_users")
 	
-	# Increment stage
+	var task = await collection.get_doc(user_id)
+	if task:
+		var document = await task
+		if document and document.has_method("doc_fields"):
+			var user_data = document.doc_fields
+			
+			# Extract dungeon progress
+			if user_data.has("dungeons") and user_data.dungeons.has("progress"):
+				var progress = user_data.dungeons.progress
+				dungeon_num = progress.get("current_dungeon", 1)
+				stage_num = progress.get("current_stage", 1)
+				print("DungeonManager: Loaded progress - Dungeon: ", dungeon_num, ", Stage: ", stage_num)
+
+# Advance to the next stage or dungeon
+func advance_stage():
 	stage_num += 1
 	
-	# Check if we need to advance to the next dungeon
+	# Check if we completed all stages in current dungeon
 	if stage_num > max_stages_per_dungeon:
 		stage_num = 1
 		dungeon_num += 1
+		previous_dungeon = dungeon_num - 1
 		
-		# Check if we've completed all dungeons
+		# Check if we completed all dungeons
 		if dungeon_num > max_dungeons:
-			# For now, loop back to dungeon 1
-			dungeon_num = 1
-	
-	# Emit signals
-	emit_signal("stage_advanced", dungeon_num, stage_num)
-	
-	# If dungeon changed, emit dungeon advanced signal
-	if old_dungeon != dungeon_num:
+			dungeon_num = 1  # Reset to first dungeon after completing all
+		
+		# Emit signal for dungeon advancement
 		emit_signal("dungeon_advanced", dungeon_num)
+	
+	# Emit signal for stage advancement
+	emit_signal("stage_advanced", dungeon_num, stage_num)
 	
 	# Save progress to Firebase
 	save_progress_to_firebase()
-
-func is_new_dungeon():
-	# Check if we've just transitioned to a new dungeon
-	if previous_dungeon != dungeon_num:
-		previous_dungeon = dungeon_num
-		return true
-	return false
+	
+	return true
 
 func reset():
-	# Reset to first dungeon, first stage
-	dungeon_num = 1
+	# Reset to first stage and dungeon
 	stage_num = 1
+	dungeon_num = 1
 	previous_dungeon = 1
 	
-	# Save the reset to Firebase
+	# Emit reset signal
+	emit_signal("dungeon_reset")
+	
+	# Save progress to Firebase (resetting progress)
 	save_progress_to_firebase()
 	
-	# Emit signal
-	emit_signal("dungeon_reset")
+	return true
 
-# Save progress to Firebase
 func save_progress_to_firebase():
-	# Skip Firebase operations in testing mode
-	if testing_mode:
-		print("Dungeon Manager: Skipping Firebase save in testing mode")
+	if testing_mode or !Firebase.Auth.auth:
+		print("DungeonManager: Progress not saved (testing mode or not authenticated)")
 		return
+		
+	var user_id = Firebase.Auth.auth.localid
+	var collection = Firebase.Firestore.collection("dyslexia_users")
 	
-	# If Authentication script is available, use its method
-	if "update_dungeon_progress" in get_node("/root/Authentication"):
-		get_node("/root/Authentication").update_dungeon_progress(dungeon_num, stage_num)
-	elif Firebase and Firebase.Auth.auth:
-		# Update progress directly
-		var user_id = Firebase.Auth.auth.localid
-		var collection = Firebase.Firestore.collection("dyslexia_users")
-		
-		var update_data = {
-			"current_dungeon": dungeon_num,
-			"current_stage": stage_num
-		}
-		
-		var update_task = collection.update(user_id, update_data)
-		if update_task:
-			var result = await update_task.task_finished
-			if result.error:
-				print("Error updating dungeon progress: ", result.error)
-			else:
-				print("Dungeon progress updated successfully")
-		
-		# Also update GameSettings
-		if "current_dungeon" in GameSettings:
-			GameSettings.current_dungeon = dungeon_num
-		if "current_stage" in GameSettings:
-			GameSettings.current_stage = stage_num
-
-func load_progress():
-	# During development, use default values
-	if testing_mode:
-		print("Dungeon Manager: Using default progress values for testing")
-		dungeon_num = 1
-		stage_num = 1
-		return
-		
-	# In production, load from Firestore if available
-	if Firebase != null and Firebase.Auth != null and Firebase.Auth.auth != null:
-		var user_id = Firebase.Auth.auth.localid
-		var collection = Firebase.Firestore.collection("dyslexia_users")
-		
-		var task = collection.get(user_id)
-		if task:
-			var result = await task.task_finished
+	# Get current document first to preserve other fields
+	var task = collection.get_doc(user_id)
+	if task:
+		var document = await task
+		if document and document.has_method("doc_fields"):
+			var current_data = document.doc_fields
 			
-			if result and result.doc_fields:
-				dungeon_num = result.doc_fields.get("current_dungeon", 1)
-				stage_num = result.doc_fields.get("current_stage", 1)
+			# Ensure nested structure exists
+			if !current_data.has("dungeons"):
+				current_data["dungeons"] = {}
+			if !current_data.dungeons.has("progress"):
+				current_data.dungeons["progress"] = {}
 				
-				print("Loaded dungeon progress: Dungeon ", dungeon_num, " Stage ", stage_num)
+			# Update progress
+			current_data.dungeons.progress.current_dungeon = dungeon_num
+			current_data.dungeons.progress.current_stage = stage_num
+			
+			# Track stage completion
+			if !current_data.dungeons.has("completed"):
+				current_data.dungeons["completed"] = {}
+			
+			var dungeon_key = str(previous_dungeon)
+			if !current_data.dungeons.completed.has(dungeon_key):
+				current_data.dungeons.completed[dungeon_key] = {"completed": false, "stages_completed": []}
+			
+			# Add completed stage to array if not already there
+			var previous_stage = stage_num - 1
+			if previous_stage > 0:  # Only track completed stages
+				if !current_data.dungeons.completed[dungeon_key].stages_completed.has(previous_stage):
+					current_data.dungeons.completed[dungeon_key].stages_completed.append(previous_stage)
+			
+			# Save back to Firestore
+			collection.add(user_id, current_data)
+			print("DungeonManager: Saved progress - Dungeon: ", dungeon_num, ", Stage: ", stage_num)
+
+# Check if we just advanced to a new dungeon
+func is_new_dungeon():
+	return previous_dungeon != dungeon_num

@@ -1,13 +1,14 @@
-[gd_resource type="Resource" script_class="EnemyTypeResource" load_steps=2 format=3 uid="uid://g6aq2uw6wyrf"]
+[gd_resource type="Resource" script_class="EnemyTypeResource" load_steps=3 format=3 uid="uid://2uq4jhvlyyql"]
 
-[ext_resource type="Script" uid="uid://dsdd5w3jh6phu" path="res://Scripts/Resources/enemy_type_resource.gd" id="1_rjmtd"]
+[ext_resource type="Script" uid="uid://d2ghh4os1rp2o" path="res://Scripts/Resources/enemy_type_resource.gd" id="1_1"]
+[ext_resource type="PackedScene" uid="uid://d1i117ieiarnh" path="res://Sprites/Animation/Slime_Animation.tscn" id="2_1"]
 
 [resource]
-script = ExtResource("1_rjmtd")
-type_id = "normal"
-names = Array[String](["Slime"])
-health_multiplier = 1.0
-damage_multiplier = 1.0
-defense_multiplier = 1.2
-exp_reward = 10
-sprite_scale = Vector2(1, 1)
+script = ExtResource("1_1")
+enemy_name = "Slime"
+health = 80
+damage = 5
+durability = 5
+skill_name = "Slime Bounce"
+description = "A gelatinous creature from the forest depths"
+animation_scene = ExtResource("2_1")

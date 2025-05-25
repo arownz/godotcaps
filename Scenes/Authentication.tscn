@@ -147,14 +147,12 @@ theme_override_constants/separation = 4
 
 [node name="TabContainer" type="TabContainer" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer"]
 layout_mode = 2
-mouse_default_cursor_shape = 2
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 20
 current_tab = 0
 
 [node name="Login" type="VBoxContainer" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer"]
 layout_mode = 2
-mouse_default_cursor_shape = 2
 theme_override_constants/separation = 12
 metadata/_tab_index = 0
 
@@ -204,6 +202,7 @@ secret = true
 
 [node name="ShowPasswordButton" type="Button" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/PasswordContainer"]
 layout_mode = 2
+mouse_default_cursor_shape = 2
 theme_override_fonts/font = ExtResource("3_4bnr5")
 text = "Show"
 
@@ -216,9 +215,8 @@ text = "Please enter your password"
 
 [node name="ForgotPasswordButton" type="LinkButton" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(0, 0.342275, 0.342276, 1)
 theme_override_constants/outline_size = 3
 theme_override_fonts/font = ExtResource("3_4bnr5")
 theme_override_font_sizes/font_size = 16
@@ -300,7 +298,6 @@ text = "Sign In with Google"
 [node name="Register" type="VBoxContainer" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer"]
 visible = false
 layout_mode = 2
-mouse_default_cursor_shape = 2
 theme_override_constants/separation = 8
 metadata/_tab_index = 1
 
@@ -310,7 +307,8 @@ layout_mode = 2
 
 [node name="UsernameLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.301961, 0.329412, 0.380392, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 18
 text = "Username"
@@ -330,7 +328,8 @@ text = "Please enter a username"
 
 [node name="BirthDateLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.301961, 0.329412, 0.380392, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 18
 text = "Birth Date"
@@ -342,18 +341,21 @@ theme_override_constants/separation = 12
 [node name="DayOptionButton" type="OptionButton" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/BirthDateContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+mouse_default_cursor_shape = 2
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 16
 
 [node name="MonthOptionButton" type="OptionButton" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/BirthDateContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+mouse_default_cursor_shape = 2
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 16
 
 [node name="YearOptionButton" type="OptionButton" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/BirthDateContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+mouse_default_cursor_shape = 2
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 16
 
@@ -366,7 +368,8 @@ text = "Please select your birth date"
 
 [node name="EmailLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.301961, 0.329412, 0.380392, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 18
 text = "Email"
@@ -386,7 +389,8 @@ text = "Please enter a valid email address"
 
 [node name="PasswordLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.301961, 0.329412, 0.380392, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 18
 text = "Password"
@@ -404,6 +408,7 @@ secret = true
 
 [node name="ShowRegPasswordButton" type="Button" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegPasswordContainer"]
 layout_mode = 2
+mouse_default_cursor_shape = 2
 text = "Show"
 
 [node name="RegPasswordErrorLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
@@ -415,7 +420,8 @@ text = "Password must be at least 6 characters"
 
 [node name="ConfirmPasswordLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.301961, 0.329412, 0.380392, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 18
 text = "Confirm Password"
@@ -433,6 +439,7 @@ secret = true
 
 [node name="ShowConfirmPasswordButton" type="Button" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/ConfirmPasswordContainer"]
 layout_mode = 2
+mouse_default_cursor_shape = 2
 text = "Show"
 
 [node name="ConfirmPasswordErrorLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
@@ -445,6 +452,7 @@ text = "Passwords do not match"
 [node name="RegisterButton" type="Button" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
+mouse_default_cursor_shape = 2
 theme_override_fonts/font = ExtResource("3_4bnr5")
 theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_axc1p")
@@ -463,7 +471,10 @@ layout_mode = 2
 
 [node name="BackToLoginButton" type="LinkButton" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.266667, 0.337255, 1)
+theme_override_colors/font_color = Color(0, 1, 1, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0, 0.263969, 0.263969, 1)
+theme_override_constants/outline_size = 3
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 16
 text = "← Back to Login"
@@ -472,7 +483,8 @@ underline = 1
 [node name="InfoLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword"]
 custom_minimum_size = Vector2(400, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.301961, 0.329412, 0.380392, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 16
 text = "Enter your email address and we will send you instructions to reset your password."
@@ -485,7 +497,8 @@ layout_mode = 2
 
 [node name="EmailLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.301961, 0.329412, 0.380392, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 18
 text = "Email"
@@ -510,6 +523,7 @@ layout_mode = 2
 [node name="ResetButton" type="Button" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword"]
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
+mouse_default_cursor_shape = 2
 theme_override_fonts/font = ExtResource("3_4bnr5")
 theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_axc1p")
@@ -526,10 +540,6 @@ theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 14
 text = "Lexia v1.0"
 horizontal_alignment = 1
-
-[node name="Spacer2" type="Control" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 10)
-layout_mode = 2
 
 [connection signal="text_changed" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/EmailLineEdit" to="." method="_on_login_email_text_changed"]
 [connection signal="text_changed" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/PasswordContainer/PasswordLineEdit" to="." method="_on_login_password_text_changed"]

@@ -16,11 +16,15 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_y2dfs")
 
-[node name="TextureRect" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = -362.0
+offset_top = -142.0
+offset_right = 377.0
+offset_bottom = 148.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.6)
@@ -119,47 +123,38 @@ text = "Loading voices..."
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="TestButton" type="TextureButton" parent="Panel"]
+[node name="TestButton" type="Button" parent="Panel"]
 layout_mode = 2
 offset_left = 180.0
 offset_top = 279.0
-offset_right = 234.0
-offset_bottom = 295.0
+offset_right = 242.0
+offset_bottom = 303.0
 scale = Vector2(2.08295, 2.10011)
 mouse_default_cursor_shape = 2
-texture_normal = ExtResource("4_7wrw6")
-
-[node name="Label" type="Label" parent="Panel/TestButton"]
-layout_mode = 0
-offset_left = 4.3208
-offset_top = 2.85699
-offset_right = 50.3208
-offset_bottom = 14.857
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("5_jb0wy")
-theme_override_font_sizes/font_size = 6
-text = "Test Voice"
+theme_override_font_sizes/font_size = 5
+text = "Test Button"
+icon = ExtResource("4_7wrw6")
+flat = true
+icon_alignment = 1
 
-[node name="CloseButton" type="TextureButton" parent="Panel"]
+[node name="CloseButton" type="Button" parent="Panel"]
 layout_mode = 2
 offset_left = 300.0
-offset_top = 279.0
-offset_right = 354.0
-offset_bottom = 295.0
+offset_top = 275.0
+offset_right = 362.0
+offset_bottom = 304.0
 scale = Vector2(2.25382, 2.0651)
 mouse_default_cursor_shape = 2
-texture_normal = ExtResource("6_e2f2d")
-
-[node name="Label" type="Label" parent="Panel/CloseButton"]
-layout_mode = 0
-offset_left = 2.21847
-offset_top = 2.90542
-offset_right = 52.2185
-offset_bottom = 12.9054
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("5_jb0wy")
 theme_override_font_sizes/font_size = 5
 text = "Save & Close"
+icon = ExtResource("6_e2f2d")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [connection signal="item_selected" from="Panel/VBoxContainer/VoiceContainer/VoiceOptionButton" to="." method="_on_voice_option_button_item_selected"]
 [connection signal="value_changed" from="Panel/VBoxContainer/RateContainer/RateSlider" to="." method="_on_rate_slider_value_changed"]

@@ -12,6 +12,12 @@ var user_data = {}
 # Buttons with hover labels
 var hover_buttons = []
 
+# Add energy recovery system variables
+var max_energy = 20
+var energy_recovery_rate = 300  # 5 minutes in seconds
+var last_energy_update_time = 0
+var energy_recovery_timer = null
+
 func _ready():
     
     # Setup hover buttons for UI interaction
@@ -19,6 +25,13 @@ func _ready():
     
     # Connect button signals
     _connect_button_signals()
+    
+    # Setup energy recovery timer
+    energy_recovery_timer = Timer.new()
+    energy_recovery_timer.wait_time = 1.0  # Update every second
+    energy_recovery_timer.timeout.connect(_update_energy_recovery_display)
+    energy_recovery_timer.autostart = true
+    add_child(energy_recovery_timer)
     
     # Load user data - with await
     await load_user_data()
@@ -109,7 +122,7 @@ func load_user_data():
         print("Failed to fetch document")
         update_user_interface()
 
-# Process the Firestore document data
+# Process the Firestore document data - UPDATED for energy recovery
 func _process_document(document):
     if document == null:
         print("Document is null")
@@ -136,13 +149,38 @@ func _process_document(document):
                     return
         
         if !has_error:
-            # Extract essential fields using get_value
+            # Extract fields from new nested structure into our flat user_data dictionary
+            user_data = {}  # Reset user_data to avoid mixing old and new data
+            
             if document.has_method("get_value"):
-                user_data.username = document.get_value("username") if "username" in doc_keys else "Player"
-                user_data.level = document.get_value("user_level") if "user_level" in doc_keys else 1
-                user_data.energy = document.get_value("energy") if "energy" in doc_keys else 20
-                user_data.max_energy = document.get_value("max_energy") if "max_energy" in doc_keys else 20
-                user_data.profile_picture = document.get_value("profile_picture") if "profile_picture" in doc_keys else "default"
+                # Get profile data
+                var profile = document.get_value("profile")
+                if profile != null and typeof(profile) == TYPE_DICTIONARY:
+                    # Extract the profile data we need into our user_data dictionary
+                    user_data["username"] = profile.get("username", "Player")
+                    user_data["profile_picture"] = profile.get("profile_picture", "default")
+                    user_data["last_login"] = profile.get("last_login", "")
+                else:
+                    user_data["username"] = "Player"
+                    user_data["profile_picture"] = "default"
+                    user_data["last_login"] = ""
+                
+                # Get stats data
+                var stats = document.get_value("stats")
+                if stats != null and typeof(stats) == TYPE_DICTIONARY:
+                    var player_stats = stats.get("player", {})
+                    user_data["level"] = player_stats.get("level", 1)
+                    user_data["energy"] = player_stats.get("energy", 20)
+                    user_data["last_energy_update"] = player_stats.get("last_energy_update", 0)
+                else:
+                    user_data["level"] = 1
+                    user_data["energy"] = 20
+                    user_data["last_energy_update"] = 0
+                
+                # Process energy recovery based on time passed
+                _process_energy_recovery()
+                
+                print("Loaded user data from new structure: ", user_data)
     
     update_user_interface()
 
@@ -152,9 +190,54 @@ func _create_default_user_document(user_id):
     
     # Get user info from Auth if available
     var display_name = Firebase.Auth.auth.get("displayname", "Player")
+    var email = Firebase.Auth.auth.get("email", "")
+    var current_time = Time.get_datetime_string_from_system(false, true)
     
-    # Create minimal document with essential fields
-    var user_doc = {}
+    # Create document with the new structure
+    var user_doc = {
+        "profile": {
+            "username": display_name,
+            "email": email,
+            "birth_date": "",
+            "age": 0,
+            "profile_picture": "default",
+            "rank": "bronze",
+            "created_at": current_time,
+            "last_login": current_time
+        },
+        "stats": {
+            "player": {
+                "level": 1,
+                "exp": 0,
+                "health": 100,
+                "damage": 10,
+                "durability": 5,
+                "energy": 20,
+                "skin": "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
+            }
+        },
+        "word_challenges": {
+            "completed": {
+                "stt": 0,
+                "whiteboard": 0
+            },
+            "failed": {
+                "stt": 0,
+                "whiteboard": 0
+            }
+        },  
+        "dungeons": {
+            "completed": {
+                "1": {"completed": false, "stages_completed": 0},
+                "2": {"completed": false, "stages_completed": 0},
+                "3": {"completed": false, "stages_completed": 0}
+            },
+            "progress": {
+                "enemies_defeated": 0,
+                "current_dungeon": 1,
+            }
+        }
+    }
     
     # Add document to Firestore
     var task = collection.add(user_id, user_doc)
@@ -164,18 +247,124 @@ func _create_default_user_document(user_id):
             user_data.username = display_name if display_name else "Player"
             user_data.level = 1
             user_data.energy = 20
-            user_data.max_energy = 20
+            user_data.profile_picture = "default"
             update_user_interface()
         )
 
-# Update UI with user data
+# Add energy recovery processing
+func _process_energy_recovery():
+    var current_energy = user_data.get("energy", 20)
+    if current_energy >= max_energy:
+        return  # Already at max energy
+    
+    var current_time = Time.get_unix_time_from_system()
+    var last_update = user_data.get("last_energy_update", current_time)
+    
+    # If last_energy_update is 0 or invalid, set it to current time
+    if last_update == 0:
+        last_update = current_time
+        _update_energy_timestamp(current_time)
+        return
+    
+    var time_passed = current_time - last_update
+    var energy_to_recover = int(time_passed / energy_recovery_rate)
+    
+    if energy_to_recover > 0:
+        var new_energy = min(current_energy + energy_to_recover, max_energy)
+        var new_last_update = last_update + (energy_to_recover * energy_recovery_rate)
+        
+        if new_energy != current_energy:
+            # Update energy in Firebase
+            _update_energy_in_firebase(new_energy, new_last_update)
+            user_data["energy"] = new_energy
+            user_data["last_energy_update"] = new_last_update
+
+func _update_energy_in_firebase(new_energy: int, new_timestamp: float):
+    if !Firebase.Auth.auth:
+        return
+        
+    var user_id = Firebase.Auth.auth.localid
+    var collection = Firebase.Firestore.collection("dyslexia_users")
+    
+    # Get current document to preserve other fields
+    var document = await collection.get_doc(user_id)
+    if document and !("error" in document.keys() and document.get_value("error")):
+        # Get all current document data
+        var current_data = {}
+        for key in document.keys():
+            if key != "error":
+                current_data[key] = document.get_value(key)
+        
+        # Update energy in the nested structure
+        if current_data.has("stats") and typeof(current_data.stats) == TYPE_DICTIONARY:
+            if current_data.stats.has("player"):
+                current_data.stats.player.energy = new_energy
+                current_data.stats.player.last_energy_update = new_timestamp
+            else:
+                current_data.stats["player"] = {"energy": new_energy, "last_energy_update": new_timestamp}
+        else:
+            current_data["stats"] = {"player": {"energy": new_energy, "last_energy_update": new_timestamp}}
+        
+        # Save back to Firebase
+        var task = collection.add(user_id, current_data)
+        if task:
+            var result = await task.task_finished
+            if result and !result.error:
+                print("Energy updated to: " + str(new_energy))
+
+func _update_energy_timestamp(timestamp: float):
+    if !Firebase.Auth.auth:
+        return
+        
+    var user_id = Firebase.Auth.auth.localid
+    var collection = Firebase.Firestore.collection("dyslexia_users")
+    
+    # Update just the timestamp
+    var document = await collection.get_doc(user_id)
+    if document and !("error" in document.keys() and document.get_value("error")):
+        var current_data = {}
+        for key in document.keys():
+            if key != "error":
+                current_data[key] = document.get_value(key)
+        
+        if current_data.has("stats") and current_data.stats.has("player"):
+            current_data.stats.player.last_energy_update = timestamp
+        
+        var _task = collection.add(user_id, current_data)
+
+func _update_energy_recovery_display():
+    var current_energy = user_data.get("energy", 20)
+    var energy_timer_label = $EnergyDisplay/EnergyRecoveryTimer
+    
+    if current_energy >= max_energy:
+        energy_timer_label.visible = false
+        return
+    
+    var current_time = Time.get_unix_time_from_system()
+    var last_update = user_data.get("last_energy_update", current_time)
+    var time_since_last_recovery = current_time - last_update
+    var time_until_next_energy = energy_recovery_rate - fmod(time_since_last_recovery, energy_recovery_rate)
+    
+    var minutes = int(time_until_next_energy / 60)
+    var seconds = int(time_until_next_energy) % 60
+    
+    energy_timer_label.text = "Next energy in: %d:%02d" % [minutes, seconds]
+    energy_timer_label.visible = true
+
+# Update UI with user data - UPDATED for energy recovery
 func update_user_interface():
-    name_label.text = user_data.username
-    level_label.text = str(user_data.level)
-    energy_label.text = str(user_data.energy) + "/" + str(user_data.max_energy)
+    # Access data using dictionary syntax since we're storing it that way
+    name_label.text = user_data.get("username", "Player")
+    level_label.text = str(user_data.get("level", 1))
+    
+    var current_energy = user_data.get("energy", 0)
+    energy_label.text = str(current_energy) + "/" + str(max_energy)
+    
+    # Update energy recovery display
+    _update_energy_recovery_display()
     
     # Update profile avatar
-    update_profile_picture(user_data.profile_picture)
+    update_profile_picture(user_data.get("profile_picture", "default"))
 
 # Update profile avatar with the given image ID
 func update_profile_picture(profile_id):
@@ -258,10 +447,10 @@ func _on_profile_popup_closed():
     await load_user_data()
     
     # Additional debug to verify the update
-    if user_data.has("profile_picture"):
-        print("MainMenu: After popup closed - profile picture is now: " + user_data.profile_picture)
+    if "profile_picture" in user_data:
+        print("MainMenu: After popup closed - profile picture is now: " + user_data.get("profile_picture", "default"))
         # Force explicit refresh of the profile picture
-        update_profile_picture(user_data.profile_picture)
+        update_profile_picture(user_data.get("profile_picture", "default"))
 
 func _on_logout_button_pressed():
     print("Logging out")

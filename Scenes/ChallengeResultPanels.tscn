@@ -53,7 +53,7 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_8sm0m")
 
-[node name="BackgroundOverlay" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

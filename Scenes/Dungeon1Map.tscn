@@ -468,7 +468,6 @@ text = "Select Level"
 uppercase = true
 
 [node name="StageDetails" type="TextureRect" parent="."]
-visible = false
 offset_left = 803.0
 offset_top = 7.0
 offset_right = 1452.0
@@ -519,7 +518,7 @@ theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
 theme_override_fonts/font = ExtResource("8_oyrip")
 theme_override_font_sizes/font_size = 20
-text = "Big, venomous sluthering snake that is possessed by dark magic."
+text = "Detail"
 autowrap_mode = 3
 
 [node name="SkillLabel" type="Label" parent="StageDetails/RightContainer"]
@@ -609,7 +608,7 @@ offset_bottom = 645.0
 position = Vector2(120, 233)
 scale = Vector2(2.79408, 2.76731)
 sprite_frames = SubResource("SpriteFrames_t6djc")
-animation = &"BossIdle"
+animation = &"Mob1Idle"
 autoplay = "Mob1Idle"
 
 [node name="LVLabel" type="Label" parent="StageDetails/LeftContainer"]
@@ -670,7 +669,7 @@ theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
 theme_override_fonts/font = ExtResource("8_oyrip")
 theme_override_font_sizes/font_size = 20
-text = "EVIL TREANT"
+text = "name"
 horizontal_alignment = 1
 uppercase = true
 

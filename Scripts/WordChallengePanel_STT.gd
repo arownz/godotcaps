@@ -752,7 +752,7 @@ func _on_tts_speech_error(error_msg):
 		tts.disconnect("speech_ended", Callable(self, "_on_tts_speech_ended"))
 	
 	if tts.is_connected("speech_error", Callable(self, "_on_tts_speech_error")):
-		tts.disconnect("speech_error", Callable(self, "_on_tts_speech_error"))
+		tts.disconnect("speech_error", Callable(self, "_on_tts_speech_ended"))
 
 func _on_tts_settings_button_pressed():
 	# Load and show the TTS settings popup
@@ -820,7 +820,7 @@ func _cleanup_web_audio():
 		print("Web audio resources cleaned up")
 
 # Add a polling mechanism to check for results
-func _process(delta):
+func _process(_delta):
 	# Only check for results if we're in active recognition mode
 	if recognition_active or (not result_being_processed and JavaScriptBridge.has_method("eval")):
 		var result = JavaScriptBridge.eval("window.getSpeechResult ? window.getSpeechResult() : null;")

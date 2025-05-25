@@ -1,4 +1,4 @@
-[gd_scene load_steps=58 format=3 uid="uid://0unsb1sjvcje"]
+[gd_scene load_steps=57 format=3 uid="uid://0unsb1sjvcje"]
 
 [ext_resource type="Script" uid="uid://cx3vkj8apruat" path="res://Scripts/dungeon_3_map.gd" id="1_1icim"]
 [ext_resource type="Texture2D" uid="uid://chfkysvsxt4eg" path="res://gui/Update/Backgrounds/Plains_Level.png" id="1_qydu8"]
@@ -10,7 +10,6 @@
 [ext_resource type="Texture2D" uid="uid://b3rmvd1s8kk13" path="res://gui/Update/icons/hover next level select.png" id="6_3555f"]
 [ext_resource type="Texture2D" uid="uid://bghwdafec1fjd" path="res://gui/Update/UI/Select Level title bg.png" id="6_xeiu1"]
 [ext_resource type="Texture2D" uid="uid://cp7k7g2my8pgp" path="res://gui/Update/UI/level details.png" id="7_16krn"]
-[ext_resource type="Texture2D" uid="uid://dldjycdlawmeh" path="res://gui/Update/icons/snek enemeh.png" id="7_xeiu1"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="8_1icim"]
 [ext_resource type="Texture2D" uid="uid://dtseuaxep3eve" path="res://gui/Update/icons/bourr enemeh.png" id="8_3555f"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="9_3555f"]
@@ -469,7 +468,6 @@ text = "Select Level"
 uppercase = true
 
 [node name="StageDetails" type="TextureRect" parent="."]
-visible = false
 offset_left = 803.0
 offset_top = 7.0
 offset_right = 1452.0
@@ -521,7 +519,7 @@ theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
 theme_override_fonts/font = ExtResource("8_1icim")
 theme_override_font_sizes/font_size = 20
-text = "Big, venomous sluthering snake that is possessed by dark magic."
+text = "Detail"
 autowrap_mode = 3
 
 [node name="SkillLabel" type="Label" parent="StageDetails/RightContainer"]
@@ -611,8 +609,8 @@ offset_bottom = 645.0
 position = Vector2(120, 233)
 scale = Vector2(2.79408, 2.76731)
 sprite_frames = SubResource("SpriteFrames_o425e")
-animation = &"BossIdle"
-autoplay = "Mob1Idle"
+animation = &"Mob3Idle"
+autoplay = "Mob3Idle"
 
 [node name="LVLabel" type="Label" parent="StageDetails/LeftContainer"]
 layout_mode = 1
@@ -672,7 +670,7 @@ theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
 theme_override_fonts/font = ExtResource("8_1icim")
 theme_override_font_sizes/font_size = 20
-text = "EVIL TREANT"
+text = "name"
 horizontal_alignment = 1
 uppercase = true
 
@@ -718,7 +716,7 @@ offset_left = 6.31601
 offset_top = 7.59498
 offset_right = 21.316
 offset_bottom = 21.595
-texture = ExtResource("7_xeiu1")
+texture = ExtResource("8_3555f")
 
 [node name="Mob2Button" type="TextureButton" parent="StageDetails/MonsterIconButtonContainer"]
 layout_mode = 2
@@ -731,7 +729,7 @@ offset_left = 6.31601
 offset_top = 7.59498
 offset_right = 21.316
 offset_bottom = 21.595
-texture = ExtResource("7_xeiu1")
+texture = ExtResource("8_3555f")
 
 [node name="Mob3Button" type="TextureButton" parent="StageDetails/MonsterIconButtonContainer"]
 layout_mode = 2
@@ -744,7 +742,7 @@ offset_left = 6.31601
 offset_top = 7.59498
 offset_right = 21.316
 offset_bottom = 21.595
-texture = ExtResource("7_xeiu1")
+texture = ExtResource("8_3555f")
 
 [node name="Boss1Button" type="TextureButton" parent="StageDetails/MonsterIconButtonContainer"]
 layout_mode = 2

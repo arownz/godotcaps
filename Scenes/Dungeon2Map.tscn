@@ -1,4 +1,4 @@
-[gd_scene load_steps=58 format=3 uid="uid://cotie2n1uaq7k"]
+[gd_scene load_steps=57 format=3 uid="uid://cotie2n1uaq7k"]
 
 [ext_resource type="Texture2D" uid="uid://chfkysvsxt4eg" path="res://gui/Update/Backgrounds/Plains_Level.png" id="1_c4i23"]
 [ext_resource type="Script" uid="uid://dw8lmitmopbq7" path="res://Scripts/dungeon_2_map.gd" id="1_qpxt0"]
@@ -19,7 +19,6 @@
 [ext_resource type="Texture2D" uid="uid://dr71hrxs7djx0" path="res://Sprites/Frame Sprites/Boar.png" id="13_qexwe"]
 [ext_resource type="Texture2D" uid="uid://dlusv4b6bm07h" path="res://gui/Update/UI/ui 10.png" id="14_546ao"]
 [ext_resource type="Texture2D" uid="uid://ct2kkb4phx2kr" path="res://gui/Update/icons/treant.png" id="16_feumf"]
-[ext_resource type="Texture2D" uid="uid://dtseuaxep3eve" path="res://gui/Update/icons/bourr enemeh.png" id="19_6jspw"]
 [ext_resource type="Texture2D" uid="uid://clbfvil7saw1l" path="res://gui/Update/UI/Fight Button (Default).png" id="20_2uab6"]
 [ext_resource type="Texture2D" uid="uid://8nmtl16kilha" path="res://gui/Update/UI/Fight Button (Hover).png" id="21_le7wy"]
 
@@ -469,7 +468,6 @@ text = "Select Level"
 uppercase = true
 
 [node name="StageDetails" type="TextureRect" parent="."]
-visible = false
 offset_left = 803.0
 offset_top = 7.0
 offset_right = 1452.0
@@ -521,7 +519,7 @@ theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
 theme_override_fonts/font = ExtResource("8_qpxt0")
 theme_override_font_sizes/font_size = 20
-text = "Big, venomous sluthering snake that is possessed by dark magic."
+text = "Detail"
 autowrap_mode = 3
 
 [node name="SkillLabel" type="Label" parent="StageDetails/RightContainer"]
@@ -672,7 +670,7 @@ theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
 theme_override_fonts/font = ExtResource("8_qpxt0")
 theme_override_font_sizes/font_size = 20
-text = "EVIL TREANT"
+text = "name"
 horizontal_alignment = 1
 uppercase = true
 
@@ -717,7 +715,7 @@ offset_left = 6.31601
 offset_top = 7.59498
 offset_right = 21.316
 offset_bottom = 21.595
-texture = ExtResource("19_6jspw")
+texture = ExtResource("8_6jspw")
 
 [node name="Mob2Button" type="TextureButton" parent="StageDetails/MonsterIconButtonContainer"]
 layout_mode = 2
@@ -729,7 +727,7 @@ offset_left = 6.31601
 offset_top = 7.59498
 offset_right = 21.316
 offset_bottom = 21.595
-texture = ExtResource("19_6jspw")
+texture = ExtResource("8_6jspw")
 
 [node name="Mob3Button" type="TextureButton" parent="StageDetails/MonsterIconButtonContainer"]
 layout_mode = 2
@@ -741,7 +739,7 @@ offset_left = 6.31601
 offset_top = 7.59498
 offset_right = 21.316
 offset_bottom = 21.595
-texture = ExtResource("19_6jspw")
+texture = ExtResource("8_6jspw")
 
 [node name="Boss1Button" type="TextureButton" parent="StageDetails/MonsterIconButtonContainer"]
 layout_mode = 2

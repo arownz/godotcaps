@@ -171,7 +171,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_lmaaj")
 }],
-"loop": true,
+"loop": false,
 "name": &"auto_attack",
 "speed": 10.0
 }, {
@@ -212,7 +212,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_2a2hq")
 }],
-"loop": true,
+"loop": false,
 "name": &"dead",
 "speed": 10.0
 }, {
@@ -229,7 +229,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_gk5xt")
 }],
-"loop": true,
+"loop": false,
 "name": &"hurt",
 "speed": 10.0
 }, {
@@ -284,7 +284,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_qhv2p")
 }],
-"loop": true,
+"loop": false,
 "name": &"skill",
 "speed": 7.0
 }]
@@ -292,8 +292,7 @@ animations = [{
 [node name="TreantAnimation" type="Node2D"]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-position = Vector2(50, -196)
-scale = Vector2(2.177, 2.334)
 sprite_frames = SubResource("SpriteFrames_j63xv")
-animation = &"skill"
+animation = &"idle"
 autoplay = "idle"
+frame_progress = 0.293921

@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://buhhqw4k2b2ye"]
 
-[ext_resource type="Script" uid="uid://d3srp5i6rcemv" path="res://Scripts/StatsTester.gd" id="1_ocxrl"]
-[ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="2_nys46"]
+[ext_resource type="Script" uid="uid://d3srp5i6rcemv" path="res://Scripts/StatsTester.gd" id="1_71rwn"]
+[ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="2_e0iim"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
 bg_color = Color(0.227451, 0.266667, 0.4, 0.901961)
@@ -26,7 +26,20 @@ anchor_right = 1.0
 offset_left = -400.0
 offset_bottom = 365.0
 grow_horizontal = 0
-script = ExtResource("1_ocxrl")
+script = ExtResource("1_71rwn")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -1231.0
+offset_top = -210.0
+offset_right = 450.0
+offset_bottom = 484.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.6)
 
 [node name="Panel" type="Panel" parent="."]
 layout_mode = 1
@@ -59,7 +72,7 @@ theme_override_constants/separation = 15
 
 [node name="TitleLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("2_nys46")
+theme_override_fonts/font = ExtResource("2_e0iim")
 theme_override_font_sizes/font_size = 24
 text = "Stats Tester"
 horizontal_alignment = 1
@@ -74,13 +87,13 @@ theme_override_constants/separation = 10
 [node name="EnemyLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/EnemySection"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85098, 0.137255, 0.137255, 1)
-theme_override_fonts/font = ExtResource("2_nys46")
+theme_override_fonts/font = ExtResource("2_e0iim")
 theme_override_font_sizes/font_size = 20
 text = "Enemy Stats"
 
 [node name="EnemyHealthLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/EnemySection"]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("2_nys46")
+theme_override_fonts/font = ExtResource("2_e0iim")
 theme_override_font_sizes/font_size = 16
 text = "Health: 100"
 
@@ -92,7 +105,7 @@ value = 100.0
 
 [node name="EnemyDamageLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/EnemySection"]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("2_nys46")
+theme_override_fonts/font = ExtResource("2_e0iim")
 theme_override_font_sizes/font_size = 16
 text = "Damage: 10"
 
@@ -112,13 +125,13 @@ theme_override_constants/separation = 10
 [node name="PlayerLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/PlayerSection"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0.266667, 0.337255, 1)
-theme_override_fonts/font = ExtResource("2_nys46")
+theme_override_fonts/font = ExtResource("2_e0iim")
 theme_override_font_sizes/font_size = 20
 text = "Player Stats"
 
 [node name="PlayerHealthLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/PlayerSection"]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("2_nys46")
+theme_override_fonts/font = ExtResource("2_e0iim")
 theme_override_font_sizes/font_size = 16
 text = "Health: 100"
 
@@ -130,7 +143,7 @@ value = 100.0
 
 [node name="PlayerDamageLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/PlayerSection"]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("2_nys46")
+theme_override_fonts/font = ExtResource("2_e0iim")
 theme_override_font_sizes/font_size = 16
 text = "Damage: 15"
 
@@ -149,13 +162,13 @@ theme_override_constants/separation = 10
 
 [node name="AutoBattleLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/AutoBattleSection"]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("2_nys46")
+theme_override_fonts/font = ExtResource("2_e0iim")
 theme_override_font_sizes/font_size = 20
 text = "Auto Battle"
 
 [node name="SpeedLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/AutoBattleSection"]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("2_nys46")
+theme_override_fonts/font = ExtResource("2_e0iim")
 theme_override_font_sizes/font_size = 16
 text = "Speed: 1.5s"
 
@@ -170,7 +183,7 @@ layout_mode = 2
 
 [node name="ApplyButton" type="Button" parent="Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("2_nys46")
+theme_override_fonts/font = ExtResource("2_e0iim")
 theme_override_font_sizes/font_size = 20
 text = "Apply Changes"
 

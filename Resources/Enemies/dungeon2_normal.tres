@@ -1,13 +1,14 @@
-[gd_resource type="Resource" script_class="EnemyTypeResource" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="EnemyTypeResource" load_steps=3 format=3 uid="uid://duatpfkra7k5y"]
 
-[ext_resource type="Script" path="res://Scripts/Resources/enemy_type_resource.gd" id="1_rjmtd"]
+[ext_resource type="Script" uid="uid://d2ghh4os1rp2o" path="res://Scripts/Resources/enemy_type_resource.gd" id="1_1"]
+[ext_resource type="PackedScene" uid="uid://detxp7ylydvcd" path="res://Sprites/Animation/Snake_Animation.tscn" id="2_1"]
 
 [resource]
-script = ExtResource("1_rjmtd")
-type_id = "normal"
-names = ["Snake"]
-health_multiplier = 1.2
-defense_multiplier = 1.2
-damage_multiplier = 1.2
-exp_reward = 15
-sprite_scale = Vector2(1, 1)
+script = ExtResource("1_1")
+enemy_name = "Forest Viper"
+health = 120
+damage = 15
+durability = 6
+skill_name = "Poison Bite"
+description = "A venomous snake that lurks in the forest shadows"
+animation_scene = ExtResource("2_1")
