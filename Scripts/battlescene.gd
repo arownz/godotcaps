@@ -137,7 +137,7 @@ func _connect_manager_signals():
 	# EnemyManager signals
 	if enemy_manager and enemy_manager.has_signal("enemy_health_changed"):
 		enemy_manager.enemy_health_changed.connect(_on_enemy_health_changed)
-		enemy_manager.enemy_defeated.connect(_on_enemy_defeated)
+		enemy_manager.enemy_defeated.connect(battle_manager.handle_victory)
 		enemy_manager.enemy_skill_meter_changed.connect(_on_enemy_skill_meter_changed)
 		enemy_manager.enemy_set_up.connect(_on_enemy_set_up)
 	
@@ -171,8 +171,8 @@ func _on_player_health_changed(_current_health, _max_health):
 
 func _on_enemy_defeated(_exp_reward):
 	battle_active = false
-	# Remove redundant call - let battle_manager handle everything
-	battle_manager.handle_victory()
+	# Let battle_manager handle victory only - removed duplicate call
+	# battle_manager.handle_victory() is called from enemy_manager signal
 
 func _on_player_defeated():
 	battle_active = false
@@ -184,6 +184,9 @@ func _on_player_experience_changed(_current_exp, _max_exp):
 
 func _on_player_level_up(new_level):
 	battle_log_manager.add_message("[color=#4CAF50]Congratulations! You reached level " + str(new_level) + "![/color]")
+	# Update power and durability bars when player levels up
+	ui_manager.update_power_bar(player_manager.player_damage)
+	ui_manager.update_durability_bar(player_manager.player_durability)
 
 func _on_enemy_skill_meter_changed(_value):
 	ui_manager.update_enemy_skill_meter()
@@ -194,7 +197,7 @@ func _on_enemy_skill_triggered():
 	pass
 
 func _on_stage_advanced(_dungeon_num, _stage_num):
-	ui_manager.update_stage_info()
+	_update_stage_info()
 
 func _on_dungeon_advanced(dungeon_num):
 	ui_manager.update_background(dungeon_num)

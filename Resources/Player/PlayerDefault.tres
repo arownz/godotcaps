@@ -6,7 +6,7 @@
 script = ExtResource("1_1")
 player_name = "Player"
 player_health = 100
-player_damage = 20
+player_damage = 10
 player_durability = 5
 player_level = 1
 player_exp = 0

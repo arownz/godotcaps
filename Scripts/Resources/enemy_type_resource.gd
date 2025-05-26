@@ -7,6 +7,7 @@ extends Resource
 @export var health: int = 100
 @export var damage: int = 10
 @export var durability: int = 5
+@export var exp_reward: int = 10
 @export var skill_name: String = ""
 @export var description: String = ""
 @export var animation_scene: PackedScene
@@ -32,3 +33,6 @@ func get_skill_name():
 
 func get_description():
 	return description
+
+func get_exp_reward():
+	return exp_reward

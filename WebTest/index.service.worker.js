@@ -4,7 +4,7 @@
 // Incrementing CACHE_VERSION will kick off the install event and force
 // previously cached resources to be updated from the network.
 /** @type {string} */
-const CACHE_VERSION = '1747982320|3757647732';
+const CACHE_VERSION = '1748238634|8922460290';
 /** @type {string} */
 const CACHE_PREFIX = 'Lexia-sw-cache-';
 const CACHE_NAME = CACHE_PREFIX + CACHE_VERSION;

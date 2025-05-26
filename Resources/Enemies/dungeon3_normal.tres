@@ -9,6 +9,7 @@ enemy_name = "Mountain Boar"
 health = 140
 damage = 20
 durability = 8
+exp_reward = 25
 skill_name = "Charge"
 description = "A fierce mountain boar with powerful tusks"
 animation_scene = ExtResource("2_1")

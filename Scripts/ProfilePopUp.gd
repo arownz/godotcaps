@@ -221,6 +221,10 @@ func update_ui():
         $ProfileContainer/StatsArea/Level2.text = str(level)
     
     # Update player stats
+    if has_node("ProfileContainer/StatsArea/HealthValue"):
+        var health = user_data.get("health", 100)
+        $ProfileContainer/StatsArea/HealthValue.text = str(health)
+
     if has_node("ProfileContainer/StatsArea/AttackValue"):
         var attack = user_data.get("attack", 10)
         $ProfileContainer/StatsArea/AttackValue.text = str(attack)

@@ -80,42 +80,46 @@ func _load_user_data():
         var user_id = Firebase.Auth.auth.localid
         var collection = Firebase.Firestore.collection("dyslexia_users")
         
-        var task = collection.get(user_id)
-        if task:
-            # Show loading indicator
-            # ...
-            
-            await task.task_finished
-            
-            if task.error:
-                print("Error loading user data: ", task.error)
-            else:
-                user_data = task.doc_fields
+        var document = await collection.get_doc(user_id)
+        if document and !("error" in document.keys() and document.get_value("error")):
+            # Extract dungeon progress data using the new structure
+            var dungeons = document.get_value("dungeons")
+            if dungeons != null and typeof(dungeons) == TYPE_DICTIONARY:
+                var completed = dungeons.get("completed", {})
                 
-                # Extract dungeon progress data
-                if user_data.has("dungeons_completed"):
-                    # Count unlocked dungeons
-                    unlocked_dungeons = 1 # Dungeon 1 always unlocked
-                    
-                    var dungeons = user_data.dungeons_completed
-                    
-                    # Check if dungeon 1 is completed
-                    if dungeons.has("1") and dungeons["1"].has("completed") and dungeons["1"].completed:
+                # Count unlocked dungeons based on completion
+                unlocked_dungeons = 1 # Dungeon 1 always unlocked
+                
+                # Check if dungeon 1 is completed (all 5 stages)
+                if completed.has("1"):
+                    var dungeon1_data = completed["1"]
+                    if dungeon1_data.get("completed", false) or dungeon1_data.get("stages_completed", 0) >= 5:
                         unlocked_dungeons = 2
                         
-                    # Check if dungeon 2 is completed
-                    if unlocked_dungeons >= 2 and dungeons.has("2") and dungeons["2"].has("completed") and dungeons["2"].completed:
-                        unlocked_dungeons = 3
-                        
-                # Set current dungeon based on user data
-                if user_data.has("current_dungeon"):
-                    current_dungeon = int(user_data.current_dungeon) - 1 # Convert to 0-based index
+                        # Check if dungeon 2 is completed
+                        if completed.has("2"):
+                            var dungeon2_data = completed["2"]
+                            if dungeon2_data.get("completed", false) or dungeon2_data.get("stages_completed", 0) >= 5:
+                                unlocked_dungeons = 3
+                
+                # Get current dungeon from progress
+                var progress = dungeons.get("progress", {})
+                if progress.has("current_dungeon"):
+                    current_dungeon = int(progress.current_dungeon) - 1 # Convert to 0-based index
+                    # Ensure current_dungeon doesn't exceed unlocked dungeons
+                    current_dungeon = min(current_dungeon, unlocked_dungeons - 1)
                 
                 print("Dungeons unlocked: ", unlocked_dungeons)
                 print("Current dungeon: ", current_dungeon + 1)
                 
                 # Update UI with user data
                 update_dungeon_display()
+        else:
+            print("Error loading user data or document not found")
+            # Demo mode - just unlock dungeon 1
+            unlocked_dungeons = 1
+            current_dungeon = 0
+            update_dungeon_display()
     else:
         # Demo mode - just unlock dungeon 1
         unlocked_dungeons = 1

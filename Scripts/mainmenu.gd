@@ -14,7 +14,7 @@ var hover_buttons = []
 
 # Add energy recovery system variables
 var max_energy = 20
-var energy_recovery_rate = 240  # 4 minutes in seconds
+var energy_recovery_rate = 180  # 3 minutes in seconds
 var energy_recovery_amount = 4  # Amount of energy recovered per interval
 var last_energy_update_time = 0
 var energy_recovery_timer = null
@@ -33,6 +33,13 @@ func _ready():
     energy_recovery_timer.timeout.connect(_update_energy_recovery_display)
     energy_recovery_timer.autostart = true
     add_child(energy_recovery_timer)
+    
+    # Add energy processing timer (check every 30 seconds for recovery)
+    var energy_process_timer = Timer.new()
+    energy_process_timer.wait_time = 30.0  # Check every 30 seconds
+    energy_process_timer.timeout.connect(_process_energy_recovery)
+    energy_process_timer.autostart = true
+    add_child(energy_process_timer)
     
     # Load user data - with await
     await load_user_data()
@@ -255,9 +262,6 @@ func _create_default_user_document(user_id):
 # Add energy recovery processing
 func _process_energy_recovery():
     var current_energy = user_data.get("energy", 20)
-    if current_energy >= max_energy:
-        return  # Already at max energy
-    
     var current_time = Time.get_unix_time_from_system()
     var last_update = user_data.get("last_energy_update", current_time)
     
@@ -265,6 +269,12 @@ func _process_energy_recovery():
     if last_update == 0:
         last_update = current_time
         _update_energy_timestamp(current_time)
+        return
+    
+    # If already at max energy, update timestamp to current time to stop recovery attempts
+    if current_energy >= max_energy:
+        if last_update < current_time - energy_recovery_rate:
+            _update_energy_timestamp(current_time)
         return
     
     var time_passed = current_time - last_update
@@ -275,11 +285,16 @@ func _process_energy_recovery():
         var new_energy = min(current_energy + energy_to_recover, max_energy)
         var new_last_update = last_update + (recovery_intervals * energy_recovery_rate)
         
+        # If energy reached max, set timestamp to current time
+        if new_energy >= max_energy:
+            new_last_update = current_time
+        
         if new_energy != current_energy:
             # Update energy in Firebase
             _update_energy_in_firebase(new_energy, new_last_update)
             user_data["energy"] = new_energy
             user_data["last_energy_update"] = new_last_update
+            print("Energy recovered: " + str(current_energy) + " -> " + str(new_energy))
 
 func _update_energy_in_firebase(new_energy: int, new_timestamp: float):
     if !Firebase.Auth.auth:
@@ -288,31 +303,30 @@ func _update_energy_in_firebase(new_energy: int, new_timestamp: float):
     var user_id = Firebase.Auth.auth.localid
     var collection = Firebase.Firestore.collection("dyslexia_users")
     
-    # Get current document to preserve other fields
+    # Get the document first
     var document = await collection.get_doc(user_id)
     if document and !("error" in document.keys() and document.get_value("error")):
-        # Get all current document data
-        var current_data = {}
-        for key in document.keys():
-            if key != "error":
-                current_data[key] = document.get_value(key)
-        
-        # Update energy in the nested structure
-        if current_data.has("stats") and typeof(current_data.stats) == TYPE_DICTIONARY:
-            if current_data.stats.has("player"):
-                current_data.stats.player.energy = new_energy
-                current_data.stats.player.last_energy_update = new_timestamp
+        # Get current stats structure
+        var stats = document.get_value("stats")
+        if stats != null and typeof(stats) == TYPE_DICTIONARY:
+            var player_stats = stats.get("player", {})
+            player_stats["energy"] = new_energy
+            player_stats["last_energy_update"] = new_timestamp
+            stats["player"] = player_stats
+            
+            # Update the document
+            document.add_or_update_field("stats", stats)
+            
+            # Save the updated document
+            var updated_document = await collection.update(document)
+            if updated_document:
+                print("Energy updated to: " + str(new_energy) + " at timestamp: " + str(new_timestamp))
             else:
-                current_data.stats["player"] = {"energy": new_energy, "last_energy_update": new_timestamp}
+                print("Failed to update energy in Firebase")
         else:
-            current_data["stats"] = {"player": {"energy": new_energy, "last_energy_update": new_timestamp}}
-        
-        # Save back to Firebase
-        var task = collection.add(user_id, current_data)
-        if task:
-            var result = await task.task_finished
-            if result and !result.error:
-                print("Energy updated to: " + str(new_energy))
+            print("Stats structure not found in document")
+    else:
+        print("Failed to get document for energy update")
 
 func _update_energy_timestamp(timestamp: float):
     if !Firebase.Auth.auth:
@@ -321,18 +335,29 @@ func _update_energy_timestamp(timestamp: float):
     var user_id = Firebase.Auth.auth.localid
     var collection = Firebase.Firestore.collection("dyslexia_users")
     
-    # Update just the timestamp
+    # Get the document first
     var document = await collection.get_doc(user_id)
     if document and !("error" in document.keys() and document.get_value("error")):
-        var current_data = {}
-        for key in document.keys():
-            if key != "error":
-                current_data[key] = document.get_value(key)
-        
-        if current_data.has("stats") and current_data.stats.has("player"):
-            current_data.stats.player.last_energy_update = timestamp
-        
-        var _task = await collection.add(user_id, current_data)
+        # Get current stats structure
+        var stats = document.get_value("stats")
+        if stats != null and typeof(stats) == TYPE_DICTIONARY:
+            var player_stats = stats.get("player", {})
+            player_stats["last_energy_update"] = timestamp
+            stats["player"] = player_stats
+            
+            # Update the document field
+            document.add_or_update_field("stats", stats)
+            
+            # Update the document using the correct method
+            var updated_document = await collection.update(document)
+            if updated_document:
+                print("Energy timestamp updated to: " + str(timestamp))
+            else:
+                print("Failed to update energy timestamp")
+        else:
+            print("Stats structure not found in document")
+    else:
+        print("Failed to get document for timestamp update")
 
 func _update_energy_recovery_display():
     var current_energy = user_data.get("energy", 20)

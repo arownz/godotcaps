@@ -254,7 +254,7 @@ text = "Player Stats"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="AttackLabel" type="Label" parent="ProfileContainer/StatsArea"]
+[node name="HealthLabel" type="Label" parent="ProfileContainer/StatsArea"]
 layout_mode = 0
 offset_left = -8.0
 offset_top = 62.0
@@ -262,9 +262,9 @@ offset_right = 102.0
 offset_bottom = 99.0
 theme_override_fonts/font = ExtResource("2_73kok")
 theme_override_font_sizes/font_size = 20
-text = "Attack:"
+text = "Health:"
 
-[node name="AttackValue" type="Label" parent="ProfileContainer/StatsArea"]
+[node name="HealthValue" type="Label" parent="ProfileContainer/StatsArea"]
 layout_mode = 0
 offset_left = 101.0
 offset_top = 61.0
@@ -273,24 +273,45 @@ offset_bottom = 98.0
 theme_override_colors/font_color = Color(0.99, 0.99, 0, 1)
 theme_override_fonts/font = ExtResource("3_uyv5l")
 theme_override_font_sizes/font_size = 20
+text = "10000"
+
+[node name="AttackLabel" type="Label" parent="ProfileContainer/StatsArea"]
+layout_mode = 0
+offset_left = -7.0
+offset_top = 97.0
+offset_right = 103.0
+offset_bottom = 134.0
+theme_override_fonts/font = ExtResource("2_73kok")
+theme_override_font_sizes/font_size = 20
+text = "Attack:"
+
+[node name="AttackValue" type="Label" parent="ProfileContainer/StatsArea"]
+layout_mode = 0
+offset_left = 102.0
+offset_top = 96.0
+offset_right = 184.0
+offset_bottom = 133.0
+theme_override_colors/font_color = Color(0.99, 0.99, 0, 1)
+theme_override_fonts/font = ExtResource("3_uyv5l")
+theme_override_font_sizes/font_size = 20
 text = "1000"
 
 [node name="DurabilityLabel" type="Label" parent="ProfileContainer/StatsArea"]
 layout_mode = 0
-offset_left = -8.0
-offset_top = 99.0
-offset_right = 149.0
-offset_bottom = 136.0
+offset_left = -7.0
+offset_top = 134.0
+offset_right = 150.0
+offset_bottom = 171.0
 theme_override_fonts/font = ExtResource("2_73kok")
 theme_override_font_sizes/font_size = 20
 text = "Durability:"
 
 [node name="DurabilityValue" type="Label" parent="ProfileContainer/StatsArea"]
 layout_mode = 0
-offset_left = 148.0
-offset_top = 99.0
-offset_right = 230.0
-offset_bottom = 136.0
+offset_left = 149.0
+offset_top = 134.0
+offset_right = 231.0
+offset_bottom = 171.0
 theme_override_colors/font_color = Color(0.99, 0.99, 0, 1)
 theme_override_fonts/font = ExtResource("3_uyv5l")
 theme_override_font_sizes/font_size = 20
@@ -298,20 +319,20 @@ text = "1000"
 
 [node name="EnergyLabel" type="Label" parent="ProfileContainer/StatsArea"]
 layout_mode = 0
-offset_left = -6.0
-offset_top = 138.0
-offset_right = 114.0
-offset_bottom = 175.0
+offset_left = -5.0
+offset_top = 173.0
+offset_right = 115.0
+offset_bottom = 210.0
 theme_override_fonts/font = ExtResource("2_73kok")
 theme_override_font_sizes/font_size = 20
 text = "Energy:"
 
 [node name="EnergyValue" type="Label" parent="ProfileContainer/StatsArea"]
 layout_mode = 0
-offset_left = 113.0
-offset_top = 138.0
-offset_right = 233.0
-offset_bottom = 175.0
+offset_left = 114.0
+offset_top = 173.0
+offset_right = 234.0
+offset_bottom = 210.0
 theme_override_colors/font_color = Color(0.99, 0.99, 0, 1)
 theme_override_fonts/font = ExtResource("3_uyv5l")
 theme_override_font_sizes/font_size = 20
@@ -319,10 +340,10 @@ text = "100/100"
 
 [node name="Level" type="Label" parent="ProfileContainer/StatsArea"]
 layout_mode = 0
-offset_left = -3.0
-offset_top = 177.0
-offset_right = 80.0
-offset_bottom = 214.0
+offset_left = -2.0
+offset_top = 212.0
+offset_right = 81.0
+offset_bottom = 249.0
 theme_override_fonts/font = ExtResource("2_73kok")
 theme_override_font_sizes/font_size = 20
 text = "Level:"
@@ -330,10 +351,10 @@ horizontal_alignment = 1
 
 [node name="Level2" type="Label" parent="ProfileContainer/StatsArea"]
 layout_mode = 0
-offset_left = 91.0
-offset_top = 177.0
-offset_right = 130.0
-offset_bottom = 214.0
+offset_left = 92.0
+offset_top = 212.0
+offset_right = 131.0
+offset_bottom = 249.0
 theme_override_colors/font_color = Color(0.99, 0.99, 0, 1)
 theme_override_fonts/font = ExtResource("3_uyv5l")
 theme_override_font_sizes/font_size = 20

@@ -10,11 +10,10 @@ func initialize_ui():
 	# Set initial UI state
 	initialize_player_ui()
 	initialize_enemy_ui()
-	update_stage_info()
 	
-	# Initialize PLAYER power and durability bars with default values
-	update_power_bar(10)
-	update_durability_bar(5)
+	# Initialize PLAYER power and durability bars with actual player data
+	update_power_bar(battle_scene.player_manager.player_damage)
+	update_durability_bar(battle_scene.player_manager.player_durability)
 
 func initialize_player_ui():
 	# Set player name
@@ -90,12 +89,13 @@ func update_player_exp():
 	var player_exp = battle_scene.player_manager.player_exp
 	var player_max_exp = battle_scene.player_manager.player_max_exp
 	
-	# Update exp bar value
-	var percentage = (float(player_exp) / float(player_max_exp)) * 100.0
+	# Calculate current level progress (0-100 within current level)
+	var exp_in_current_level = player_exp % player_max_exp
+	var percentage = (float(exp_in_current_level) / float(player_max_exp)) * 100.0
 	exp_bar.value = percentage
 	
-	# Update exp label
-	exp_label.text = str(int(player_exp)) + "/" + str(int(player_max_exp))
+	# Update exp label to show current level progress
+	exp_label.text = str(int(exp_in_current_level)) + "/" + str(int(player_max_exp))
 
 func update_player_info():
 	# Update player name in BattleScene UI
@@ -107,42 +107,33 @@ func update_player_info():
 	var player_level_label = battle_scene.get_node("MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer/PlayerLevelValue")
 	if player_level_label:
 		player_level_label.text = str(battle_scene.player_manager.player_level)
+	
+	# Update enemy level in BattleScene UI
+	var enemy_level_label = battle_scene.get_node("MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer/EnemyLevelValue")
+	if enemy_level_label:
+		enemy_level_label.text = str(battle_scene.enemy_manager.enemy_level)
 
-func update_power_bar(power_value, max_power=100):
+func update_power_bar(power_value, max_power=1000):
 	var power_bar = battle_scene.get_node("MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/PowerContainer/PowerBar")
 	var power_label = power_bar.get_node("PowerValue")
 	
-	# Update power bar value (ensure it's between 0-100)
+	# Update power bar value (ensure it's between 0-1000)
 	var percentage = (float(power_value) / float(max_power)) * 100.0
 	power_bar.value = percentage
 	
 	# Update power label without max value - only show current power
 	power_label.text = str(int(power_value))
 
-func update_durability_bar(durability_value, max_durability=100):
+func update_durability_bar(durability_value, max_durability=1000):
 	var durability_bar = battle_scene.get_node("MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/DurabilityContainer/DurabilityBar")
 	var durability_label = durability_bar.get_node("DurabilityValue")
 	
-	# Update durability bar value (ensure it's between 0-100)
+	# Update durability bar value (ensure it's between 0-1000)
 	var percentage = (float(durability_value) / float(max_durability)) * 100.0
 	durability_bar.value = percentage
 	
 	# Update durability label without max value - only show current durability
 	durability_label.text = str(int(durability_value))
-
-func update_stage_info():
-	var stage_info_label = battle_scene.get_node("MainContainer/BattleAreaContainer/StageInfoLabel")
-	var dungeon_num = battle_scene.dungeon_manager.dungeon_num
-	var stage_num = battle_scene.dungeon_manager.stage_num
-	
-	var dungeon_names = {
-		1: "The Plain",
-		2: "The Forest",
-		3: "The Mountain"
-	}
-	
-	var dungeon_name = dungeon_names.get(dungeon_num, "Dungeon " + str(dungeon_num))
-	stage_info_label.text = dungeon_name + " - Stage " + str(stage_num)
 
 func show_fight_animation(callback = null):
 	var fight_label = battle_scene.get_node("MainContainer/BattleAreaContainer/FightLabel")
@@ -157,3 +148,35 @@ func show_fight_animation(callback = null):
 	# Call the callback after animation
 	if callback:
 		fight_tween.tween_callback(callback)
+
+func update_stage_info():
+	# This method updates the stage information display
+	# The actual stage info updating is handled by battlescene._update_stage_info()
+	# This method can be used for any UI-specific stage updates
+	print("UIManager: Stage info updated")
+
+func update_background(dungeon_num: int):
+	# Update background based on dungeon number
+	var background_sprite = battle_scene.get_node_or_null("Background/ParallaxLayer/Sprite2D")
+	if !background_sprite:
+		print("UIManager: Background sprite not found")
+		return
+	
+	var background_path = ""
+	match dungeon_num:
+		1:
+			background_path = "res://gui/Backgrounds/Dungeon1_background.png"
+		2:
+			background_path = "res://gui/Update/Backgrounds/Plains_Level.png"
+		3:
+			background_path = "res://gui/Update/Backgrounds/bg.png"
+		_:
+			background_path = "res://gui/Update/Backgrounds/battlescene background.png"
+	
+	# Load and set the new background texture
+	var new_texture = load(background_path)
+	if new_texture:
+		background_sprite.texture = new_texture
+		print("UIManager: Background updated to dungeon ", dungeon_num)
+	else:
+		print("UIManager: Failed to load background for dungeon ", dungeon_num)

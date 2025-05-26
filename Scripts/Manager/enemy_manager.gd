@@ -140,6 +140,10 @@ func get_exp_reward():
     var total_exp = int(base_exp * level_multiplier * type_multiplier)
     return max(total_exp, 5) # Minimum 5 exp
 
+# Get enemy level
+func get_enemy_level():
+    return enemy_level
+
 # Set up the enemy
 func setup_enemy():
     print("EnemyManager: Setting up enemy")
@@ -161,14 +165,14 @@ func setup_enemy():
         enemy_type = "normal"
         enemy_skill_damage_multiplier = 2.0
     
-    # Calculate experience reward
-    exp_reward = get_exp_reward()
-    
     # Extract data from resource - FIXED: use correct getter methods
     enemy_name = enemy_data.get_enemy_name()
     enemy_max_health = enemy_data.get_health()
     enemy_damage = enemy_data.get_damage()
     enemy_durability = enemy_data.get_durability()
+    
+    # Get experience reward from resource file
+    exp_reward = enemy_data.get_exp_reward()
     enemy_animation_scene = enemy_data.get_animation_scene()
     
     # Set current health to max health
@@ -383,7 +387,7 @@ func take_damage(damage_amount):
     
     # Check if enemy is defeated
     if enemy_health <= 0:
-        emit_signal("enemy_defeated", enemy_exp_reward)
+        emit_signal("enemy_defeated", exp_reward)
         
         # Play death animation
         if enemy_animation and enemy_animation.get_node("AnimatedSprite2D"):

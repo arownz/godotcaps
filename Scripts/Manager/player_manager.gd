@@ -71,6 +71,14 @@ func load_player_data_from_firebase():
         
         # Extract player stats from Firebase document
         var stats_data = document.get_value("stats")
+        var profile_data = document.get_value("profile")
+        
+        # Get username from profile data
+        if profile_data and profile_data.has("username"):
+            player_name = profile_data["username"]
+        else:
+            player_name = "Player"  # Default fallback
+        
         if stats_data and stats_data.has("player"):
             var player_data = stats_data["player"]
             

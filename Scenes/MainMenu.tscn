@@ -176,7 +176,7 @@ theme_override_constants/shadow_offset_x = 1
 theme_override_constants/shadow_offset_y = 1
 theme_override_fonts/font = ExtResource("11_qm2o7")
 theme_override_font_sizes/font_size = 14
-text = "Next energy in: 5:00"
+text = "Next energy in: 1:00"
 horizontal_alignment = 1
 
 [node name="BottomButtonsContainer" type="Control" parent="."]

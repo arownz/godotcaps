@@ -7,33 +7,59 @@ var current_stage = 1
 var max_stage = 5
 var dungeon_num = 2
 
-# Enemy types for this dungeon
+# Enemy types for this dungeon - stage-specific variations
 var enemy_types = {
-	"normal": {
-		"name": "Snake",
-		"description": "A venomous snake that moves swiftly and strikes with precision.",
-		"health": 110,
+	"stage_1": {
+		"name": "Young Snake",
+		"description": "A small venomous snake that's still learning to hunt.",
+		"health": 90,
+		"attack": 12,
+		"durability": 8,
+		"skill": "Quick Bite",
+		"animation": "idle"
+	},
+	"stage_2": {
+		"name": "Forest Snake",
+		"description": "A cunning snake that uses the forest shadows to its advantage.",
+		"health": 105,
 		"attack": 15,
 		"durability": 10,
-		"skill": "Venom Strike",
-		"animation": "Mob2Idle"
+		"skill": "Shadow Strike",
+		"animation": "idle"
 	},
-
+	"stage_3": {
+		"name": "Viper",
+		"description": "A deadly viper with potent venom and lightning-fast reflexes.",
+		"health": 120,
+		"attack": 18,
+		"durability": 12,
+		"skill": "Venom Strike",
+		"animation": "idle"
+	},
+	"stage_4": {
+		"name": "Ancient Serpent",
+		"description": "An old and wise serpent with years of hunting experience.",
+		"health": 135,
+		"attack": 21,
+		"durability": 15,
+		"skill": "Coiling Crush",
+		"animation": "idle"
+	},
 	"boss": {
-		"name": "The Treant",
+		"name": "Forest Guardian",
 		"description": "An ancient tree guardian with powerful nature magic.",
 		"health": 400,
 		"attack": 30,
 		"durability": 55,
 		"skill": "Root Entangle",
-		"animation": "BossIdle"
+		"animation": "idle"
 	}
 }
 
 # Player progress tracking
 var completed_stages = []
 var current_selected_stage = 0
-var current_selected_enemy_type = "normal"
+var current_selected_enemy_type = "stage_1"
 
 # Constants for popup styling
 const POPUP_BG_COLOR = Color(0.113725, 0.329412, 0.458824, 0.9)
@@ -101,15 +127,18 @@ func _load_player_progress():
 	
 	print("Loading progression data for user: " + user_id)
 	
-	var task = collection.get(user_id)
-	if task:
-		var document = await task.task_finished
-		if document and not document.error:
+	var document = await collection.get_doc(user_id)
+	if document and !("error" in document.keys() and document.get_value("error")):
+		# Extract progression data using new structure
+		var dungeons = document.get_value("dungeons")
+		if dungeons != null and typeof(dungeons) == TYPE_DICTIONARY:
+			var completed = dungeons.get("completed", {})
+			
 			# Check if dungeon 1 is completed to unlock dungeon 2
 			var dungeon1_completed = false
-			if document.doc_fields.has("dungeons_completed") and document.doc_fields.dungeons_completed.has("1"):
-				var dungeon1_data = document.doc_fields.dungeons_completed["1"]
-				if dungeon1_data.has("completed") and dungeon1_data.completed:
+			if completed.has("1"):
+				var dungeon1_data = completed["1"]
+				if dungeon1_data.get("completed", false) or dungeon1_data.get("stages_completed", 0) >= 5:
 					dungeon1_completed = true
 			
 			if not dungeon1_completed:
@@ -117,13 +146,23 @@ func _load_player_progress():
 				await get_tree().create_timer(0.5).timeout
 				get_tree().change_scene_to_file("res://Scenes/DungeonSelection.tscn")
 				return
+			
+			# Load progression data for dungeon 2
+			if completed.has(str(dungeon_num)):
+				var dungeon_data = completed[str(dungeon_num)]
+				var stages_completed_count = dungeon_data.get("stages_completed", 0)
 				
-			# Extract progression data for dungeon 2
-			if document.doc_fields.has("dungeons_completed") and document.doc_fields.dungeons_completed.has(str(dungeon_num)):
-				var dungeon_data = document.doc_fields.dungeons_completed[str(dungeon_num)]
-				if dungeon_data.has("stages_completed"):
-					completed_stages = dungeon_data.stages_completed
-					print("Loaded completed stages: ", completed_stages)
+				# Build completed_stages array from stages_completed count
+				completed_stages = []
+				for i in range(1, stages_completed_count + 1):
+					completed_stages.append(i)
+				
+				print("Loaded completed stages for dungeon " + str(dungeon_num) + ": ", completed_stages)
+	else:
+		print("Failed to load user document or document error")
+		
+	# Update stage button visuals based on progression
+	_update_stage_buttons()
 			
 	# Update stage button visuals based on progression
 	_update_stage_buttons()
@@ -156,12 +195,12 @@ func _update_stage_buttons():
 		if stage_num == 1:
 			button.texture_normal = load("res://gui/Update/icons/next level select.png")
 			indicator_node.visible = true
-		# Completed stages
+		# Completed stages (stage_num is in completed_stages array)
 		elif completed_stages.has(stage_num):
 			button.texture_normal = load("res://gui/Update/icons/player completed level.png")
 			indicator_node.visible = true
-		# Current available stage
-		elif completed_stages.has(stage_num - 1) || stage_num == 2 && completed_stages.has(1):
+		# Next available stage (previous stage is completed or we're at stage 2 and stage 1 is completed)
+		elif (stage_num > 1 and completed_stages.has(stage_num - 1)) or (stage_num == 2 and completed_stages.has(1)):
 			button.texture_normal = load("res://gui/Update/icons/next level select.png")
 			indicator_node.visible = true
 		# Locked stages
@@ -180,7 +219,7 @@ func _initialize_mob_buttons():
 	
 	# Initial setup of animations
 	var animated_sprite = $StageDetails/LeftContainer/AnimatedSprite2D
-	animated_sprite.play("Mob3Idle") # Default to boar animation for dungeon 2
+	animated_sprite.play("idle") # Default to snake animation for dungeon 2
 
 func _connect_signals():
 	# Connect stage button signals
@@ -189,8 +228,8 @@ func _connect_signals():
 	
 	# Connect mob button signals
 	for i in range(mob_buttons.size()):
-		if i < 3:  # Regular mobs
-			mob_buttons[i].pressed.connect(_on_mob_button_pressed.bind("normal", i))
+		if i < 3:  # Regular mobs - pass stage info instead of "normal"
+			mob_buttons[i].pressed.connect(_on_mob_button_pressed.bind("stage_" + str(i + 1), i))
 		else:  # Boss
 			mob_buttons[i].pressed.connect(_on_mob_button_pressed.bind("boss", 0))
 	
@@ -222,25 +261,31 @@ func _on_stage_button_pressed(stage_num):
 	if stage_num == max_stage:
 		current_selected_enemy_type = "boss"
 		# Show boss in the last stage
-		$StageDetails/LeftContainer/AnimatedSprite2D.play("BossIdle")
+		$StageDetails/LeftContainer/AnimatedSprite2D.play("idle")
 		$StageDetails/LeftContainer/MonsterName.text = enemy_types["boss"]["name"]
 		
 		# Show the boss indicator for stage 5
 		if stage_num == 5:
 			$Stage5/BossIndicator.visible = true
 	else:
-		current_selected_enemy_type = "normal"
-		# Show regular mob for stages 1-4 (Boar for dungeon 2)
-		$StageDetails/LeftContainer/AnimatedSprite2D.play("Mob3Idle")
-		$StageDetails/LeftContainer/MonsterName.text = enemy_types["normal"]["name"]
+		current_selected_enemy_type = "stage_" + str(stage_num)
+		# Show regular mob for stages 1-4 with stage-specific data
+		$StageDetails/LeftContainer/AnimatedSprite2D.play("idle")
+		var stage_key = "stage_" + str(current_selected_stage)
+		$StageDetails/LeftContainer/MonsterName.text = enemy_types[stage_key]["name"]
 
 func _update_stage_details(stage_num):
 	# Update stage number
 	$StageDetails/Label2.text = str(stage_num)
 	
-	# Set enemy info based on stage number
-	var enemy_type = "boss" if stage_num == max_stage else "normal"
-	var enemy_data = enemy_types[enemy_type]
+	# Set enemy info based on stage number - use stage-specific enemy data
+	var enemy_key
+	if stage_num == max_stage:
+		enemy_key = "boss"
+	else:
+		enemy_key = "stage_" + str(stage_num)
+	
+	var enemy_data = enemy_types[enemy_key]
 	
 	# Update enemy information
 	$StageDetails/LeftContainer/MonsterName.text = enemy_data["name"].to_upper()
@@ -253,21 +298,16 @@ func _update_stage_details(stage_num):
 	# Set level based on stage number (higher level for dungeon 2)
 	$StageDetails/LeftContainer/LVLabel2.text = str((dungeon_num-1) * 25 + stage_num * 5)
 	
-	# Update boss visibility for stage 5
+	# Update mob button visibility - show only one button per stage
+	for i in range(mob_buttons.size()):
+		mob_buttons[i].visible = false  # Hide all buttons first
+	
 	if stage_num == 5:
 		# Show only boss button for stage 5
-		for i in range(mob_buttons.size()):
-			if i < 3:  # Regular mobs
-				mob_buttons[i].visible = false
-			else:  # Boss
-				mob_buttons[i].visible = true
+		mob_buttons[3].visible = true  # Boss1Button (index 3)
 	else:
-		# Show only regular mob buttons for stages 1-4
-		for i in range(mob_buttons.size()):
-			if i < 3:  # Regular mobs
-				mob_buttons[i].visible = true
-			else:  # Boss
-				mob_buttons[i].visible = false
+		# Show only first mob button for stages 1-4 (since they all use the same enemy type)
+		mob_buttons[0].visible = true  # Mob1Button (index 0)
 
 func _on_mob_button_pressed(type, index):
 	print("Selected enemy type: " + type + " index: " + str(index))
@@ -277,7 +317,7 @@ func _on_mob_button_pressed(type, index):
 	
 	# Update animation and info
 	if type == "boss":
-		$StageDetails/LeftContainer/AnimatedSprite2D.play("BossIdle")
+		$StageDetails/LeftContainer/AnimatedSprite2D.play("idle")
 		$StageDetails/LeftContainer/MonsterName.text = enemy_types["boss"]["name"].to_upper()
 		$StageDetails/RightContainer/Info.text = enemy_types["boss"]["description"]
 		$StageDetails/RightContainer/Health.text = str(enemy_types["boss"]["health"])
@@ -285,14 +325,17 @@ func _on_mob_button_pressed(type, index):
 		$StageDetails/RightContainer/Durability.text = str(enemy_types["boss"]["durability"])
 		$StageDetails/RightContainer/SkillName.text = enemy_types["boss"]["skill"]
 	else:
-		# For normal enemies, we can have variants based on index
-		$StageDetails/LeftContainer/AnimatedSprite2D.play("Mob3Idle") # Boar for dungeon 2
-		$StageDetails/LeftContainer/MonsterName.text = enemy_types["normal"]["name"].to_upper()
-		$StageDetails/RightContainer/Info.text = enemy_types["normal"]["description"]
-		$StageDetails/RightContainer/Health.text = str(enemy_types["normal"]["health"])
-		$StageDetails/RightContainer/Attack.text = str(enemy_types["normal"]["attack"])
-		$StageDetails/RightContainer/Durability.text = str(enemy_types["normal"]["durability"])
-		$StageDetails/RightContainer/SkillName.text = enemy_types["normal"]["skill"]
+		# For normal enemies, use stage-specific data
+		var stage_key = "stage_" + str(current_selected_stage)
+		var enemy_data = enemy_types[stage_key]
+		
+		$StageDetails/LeftContainer/AnimatedSprite2D.play("idle") # Snake for dungeon 2
+		$StageDetails/LeftContainer/MonsterName.text = enemy_data["name"].to_upper()
+		$StageDetails/RightContainer/Info.text = enemy_data["description"]
+		$StageDetails/RightContainer/Health.text = str(enemy_data["health"])
+		$StageDetails/RightContainer/Attack.text = str(enemy_data["attack"])
+		$StageDetails/RightContainer/Durability.text = str(enemy_data["durability"])
+		$StageDetails/RightContainer/SkillName.text = enemy_data["skill"]
 
 func _on_back_button_pressed():
 	if $StageDetails.visible:

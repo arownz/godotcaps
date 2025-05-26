@@ -13,10 +13,10 @@ func _ready():
 	$Background.offset_bottom = 0
 	
 	# Center the ResultPanel properly
-	$ResultPanel.anchors_preset = Control.PRESET_CENTER
-	$ResultPanel.position = Vector2.ZERO
+	# $ResultPanel.anchors_preset = Control.PRESET_CENTER
+	# $ResultPanel.position = Vector2.ZERO
 	
-	# Animate the panel appearing
+	# Animate the ResultPanel appearing
 	$ResultPanel.scale = Vector2(0.5, 0.5)
 	var tween = create_tween()
 	tween.tween_property($ResultPanel, "scale", Vector2(1, 1), 0.3).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
