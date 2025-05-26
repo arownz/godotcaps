@@ -1,0 +1,19 @@
+[gd_scene load_steps=2 format=3 uid="uid://csgj103sy7guc"]
+
+[ext_resource type="Texture2D" uid="uid://dkkb8nek5d6fs" path="res://gui/Update/logos/LEXIA Logo (with text).png" id="1_ihlsn"]
+
+[node name="SplashScene" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LogoRect" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 445.0
+offset_top = 149.0
+offset_right = 945.0
+offset_bottom = 649.0
+texture = ExtResource("1_ihlsn")

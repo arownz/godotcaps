@@ -150,10 +150,16 @@ func show_fight_animation(callback = null):
 		fight_tween.tween_callback(callback)
 
 func update_stage_info():
-	# This method updates the stage information display
-	# The actual stage info updating is handled by battlescene._update_stage_info()
-	# This method can be used for any UI-specific stage updates
-	print("UIManager: Stage info updated")
+	if !battle_scene:
+		return
+		
+	var stage_info_label = battle_scene.get_node_or_null("MainContainer/BattleAreaContainer/StageInfoLabel")
+	if stage_info_label:
+		var dungeon_num = battle_scene.dungeon_manager.dungeon_num
+		var stage_num = battle_scene.dungeon_manager.stage_num
+		var stage_type = "Boss" if stage_num == 5 else "Stage"
+		stage_info_label.text = "Dungeon " + str(dungeon_num) + " - " + stage_type + " " + str(stage_num)
+		print("Updated stage info: ", stage_info_label.text)
 
 func update_background(dungeon_num: int):
 	# Update background based on dungeon number

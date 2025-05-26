@@ -376,39 +376,18 @@ func _toggle_auto_battle():
 
 # Update stage info label
 func _update_stage_info():
-	if Firebase.Auth.auth:
-		var user_id = Firebase.Auth.auth.localid
-		var collection = Firebase.Firestore.collection("dyslexia_users")
-		
-		# Get current document to extract dungeon and stage info
-		document = await collection.get_doc(user_id)
-		
-		if document and !("error" in document.keys() and document.get_value("error")):
-			# Extract current dungeon and stage from the new structure
-			var dungeons = document.get_value("dungeons")
-			if dungeons != null and typeof(dungeons) == TYPE_DICTIONARY:
-				var progress = dungeons.get("progress", {})
-				dungeon_id = progress.get("current_dungeon", 1)
-				stage_id = progress.get("current_stage", 1)
-			else:
-				# Fallback values
-				dungeon_id = 1
-				stage_id = 1
-		else:
-			# Fallback values
-			dungeon_id = 1
-			stage_id = 1
-	else:
-		# Fallback values for non-authenticated users
-		dungeon_id = 1
-		stage_id = 1
+	# Use dungeon manager's current values directly
+	var dungeon_num = dungeon_manager.dungeon_num
+	var stage_num = dungeon_manager.stage_num
 	
-	# Update the stage info label
-	var dungeon_names = ["The Plain", "The Forest", "The Mountain"]
-	var dungeon_name = dungeon_names[dungeon_id - 1] if dungeon_id >= 1 and dungeon_id <= 3 else "Unknown"
+	# Update the stage info label using the existing @onready reference
+	if stage_info_label:
+		var stage_type = "Boss" if stage_num == 5 else "Stage"
+		stage_info_label.text = "Dungeon " + str(dungeon_num) + " - " + stage_type + " " + str(stage_num)
+		print("BattleScene: Updated stage info to: ", stage_info_label.text)
 	
-	if has_node("MainContainer/BattleAreaContainer/StageInfoLabel"):
-		$MainContainer/BattleAreaContainer/StageInfoLabel.text = "D" + str(dungeon_id) + ": " + dungeon_name + " - Stage " + str(stage_id)
+	# Also update the UI manager
+	ui_manager.update_stage_info()
 
 func _on_word_challenge_completed(_bonus_damage):
 	print("Word challenge completed with bonus damage: " + str(_bonus_damage))

@@ -7,54 +7,18 @@ var current_stage = 1
 var max_stage = 5
 var dungeon_num = 2
 
-# Enemy types for this dungeon - stage-specific variations
+# Enemy types for this dungeon - simplified to match .tres structure  
 var enemy_types = {
-	"stage_1": {
-		"name": "Young Snake",
-		"description": "A small venomous snake that's still learning to hunt.",
-		"health": 90,
-		"attack": 12,
-		"durability": 8,
-		"skill": "Quick Bite",
-		"animation": "idle"
-	},
-	"stage_2": {
-		"name": "Forest Snake",
-		"description": "A cunning snake that uses the forest shadows to its advantage.",
-		"health": 105,
-		"attack": 15,
-		"durability": 10,
-		"skill": "Shadow Strike",
-		"animation": "idle"
-	},
-	"stage_3": {
-		"name": "Viper",
-		"description": "A deadly viper with potent venom and lightning-fast reflexes.",
-		"health": 120,
-		"attack": 18,
-		"durability": 12,
-		"skill": "Venom Strike",
-		"animation": "idle"
-	},
-	"stage_4": {
-		"name": "Ancient Serpent",
-		"description": "An old and wise serpent with years of hunting experience.",
-		"health": 135,
-		"attack": 21,
-		"durability": 15,
-		"skill": "Coiling Crush",
-		"animation": "idle"
+	"normal": {
+		"resource_path": "res://Resources/Enemies/dungeon2_normal.tres"
 	},
 	"boss": {
-		"name": "Forest Guardian",
-		"description": "An ancient tree guardian with powerful nature magic.",
-		"health": 400,
-		"attack": 30,
-		"durability": 55,
-		"skill": "Root Entangle",
-		"animation": "idle"
+		"resource_path": "res://Resources/Enemies/dungeon2_boss.tres"
 	}
 }
+
+# Loaded enemy resources cache
+var loaded_enemy_resources = {}
 
 # Player progress tracking
 var completed_stages = []
@@ -76,6 +40,9 @@ var notification_popup: CanvasLayer
 func _ready():
 	# Initialize Firebase if available
 	_initialize_firebase()
+	
+	# Load enemy resources
+	_load_enemy_resources()
 	
 	# Set up stage buttons
 	_initialize_stage_buttons()
@@ -251,7 +218,7 @@ func _on_stage_button_pressed(stage_num):
 		
 	current_selected_stage = stage_num
 	
-	# Update stage details panel
+	# Update stage details panel (this handles all the enemy data display)
 	_update_stage_details(stage_num)
 	
 	# Show the stage details panel
@@ -260,34 +227,23 @@ func _on_stage_button_pressed(stage_num):
 	# Set the appropriate enemy type for this stage
 	if stage_num == max_stage:
 		current_selected_enemy_type = "boss"
-		# Show boss in the last stage
-		$StageDetails/LeftContainer/AnimatedSprite2D.play("idle")
-		$StageDetails/LeftContainer/MonsterName.text = enemy_types["boss"]["name"]
-		
 		# Show the boss indicator for stage 5
 		if stage_num == 5:
 			$Stage5/BossIndicator.visible = true
 	else:
 		current_selected_enemy_type = "stage_" + str(stage_num)
-		# Show regular mob for stages 1-4 with stage-specific data
-		$StageDetails/LeftContainer/AnimatedSprite2D.play("idle")
-		var stage_key = "stage_" + str(current_selected_stage)
-		$StageDetails/LeftContainer/MonsterName.text = enemy_types[stage_key]["name"]
 
 func _update_stage_details(stage_num):
 	# Update stage number
 	$StageDetails/Label2.text = str(stage_num)
 	
-	# Set enemy info based on stage number - use stage-specific enemy data
-	var enemy_key
-	if stage_num == max_stage:
-		enemy_key = "boss"
-	else:
-		enemy_key = "stage_" + str(stage_num)
+	# Get scaled enemy data for this stage
+	var enemy_data = _get_scaled_enemy_data(stage_num)
+	if enemy_data.is_empty():
+		print("Error: Could not get enemy data for stage ", stage_num)
+		return
 	
-	var enemy_data = enemy_types[enemy_key]
-	
-	# Update enemy information
+	# Update enemy information using scaled data
 	$StageDetails/LeftContainer/MonsterName.text = enemy_data["name"].to_upper()
 	$StageDetails/RightContainer/Info.text = enemy_data["description"]
 	$StageDetails/RightContainer/Health.text = str(enemy_data["health"])
@@ -295,8 +251,13 @@ func _update_stage_details(stage_num):
 	$StageDetails/RightContainer/Durability.text = str(enemy_data["durability"])
 	$StageDetails/RightContainer/SkillName.text = enemy_data["skill"]
 	
-	# Set level based on stage number (higher level for dungeon 2)
-	$StageDetails/LeftContainer/LVLabel2.text = str((dungeon_num-1) * 25 + stage_num * 5)
+	# Update experience reward if ExpRewardValue node exists
+	var exp_reward_node = $StageDetails.get_node_or_null("ExpRewardValue")
+	if exp_reward_node:
+		exp_reward_node.text = str(enemy_data["exp_reward"]) + " EXP"
+	
+	# Set level based on calculated level
+	$StageDetails/LeftContainer/LVLabel2.text = str(enemy_data["level"])
 	
 	# Update mob button visibility - show only one button per stage
 	for i in range(mob_buttons.size()):
@@ -306,7 +267,7 @@ func _update_stage_details(stage_num):
 		# Show only boss button for stage 5
 		mob_buttons[3].visible = true  # Boss1Button (index 3)
 	else:
-		# Show only first mob button for stages 1-4 (since they all use the same enemy type)
+		# Show only first mob button for stages 1-4
 		mob_buttons[0].visible = true  # Mob1Button (index 0)
 
 func _on_mob_button_pressed(type, index):
@@ -315,27 +276,21 @@ func _on_mob_button_pressed(type, index):
 	# Update enemy display based on selected type
 	current_selected_enemy_type = type
 	
-	# Update animation and info
-	if type == "boss":
-		$StageDetails/LeftContainer/AnimatedSprite2D.play("idle")
-		$StageDetails/LeftContainer/MonsterName.text = enemy_types["boss"]["name"].to_upper()
-		$StageDetails/RightContainer/Info.text = enemy_types["boss"]["description"]
-		$StageDetails/RightContainer/Health.text = str(enemy_types["boss"]["health"])
-		$StageDetails/RightContainer/Attack.text = str(enemy_types["boss"]["attack"])
-		$StageDetails/RightContainer/Durability.text = str(enemy_types["boss"]["durability"])
-		$StageDetails/RightContainer/SkillName.text = enemy_types["boss"]["skill"]
-	else:
-		# For normal enemies, use stage-specific data
-		var stage_key = "stage_" + str(current_selected_stage)
-		var enemy_data = enemy_types[stage_key]
-		
-		$StageDetails/LeftContainer/AnimatedSprite2D.play("idle") # Snake for dungeon 2
-		$StageDetails/LeftContainer/MonsterName.text = enemy_data["name"].to_upper()
-		$StageDetails/RightContainer/Info.text = enemy_data["description"]
-		$StageDetails/RightContainer/Health.text = str(enemy_data["health"])
-		$StageDetails/RightContainer/Attack.text = str(enemy_data["attack"])
-		$StageDetails/RightContainer/Durability.text = str(enemy_data["durability"])
-		$StageDetails/RightContainer/SkillName.text = enemy_data["skill"]
+	# Get scaled enemy data for the current stage
+	var enemy_data = _get_scaled_enemy_data(current_selected_stage)
+	
+	if enemy_data.is_empty():
+		print("Error: Could not load enemy data for stage ", current_selected_stage)
+		return
+	
+	# Update animation and info with scaled data
+	$StageDetails/LeftContainer/AnimatedSprite2D.play("idle")
+	$StageDetails/LeftContainer/MonsterName.text = enemy_data["name"].to_upper()
+	$StageDetails/RightContainer/Info.text = enemy_data["description"]
+	$StageDetails/RightContainer/Health.text = str(enemy_data["health"])
+	$StageDetails/RightContainer/Attack.text = str(enemy_data["attack"])
+	$StageDetails/RightContainer/Durability.text = str(enemy_data["durability"])
+	$StageDetails/RightContainer/SkillName.text = enemy_data["skill"]
 
 func _on_back_button_pressed():
 	if $StageDetails.visible:
@@ -387,3 +342,60 @@ func _save_current_dungeon_stage():
 func _on_notification_closed():
 	# Handle notification close if needed
 	pass
+
+# Load enemy resources from .tres files
+func _load_enemy_resources():
+	for enemy_type in enemy_types.keys():
+		var resource_path = enemy_types[enemy_type]["resource_path"]
+		var resource = load(resource_path)
+		if resource:
+			loaded_enemy_resources[enemy_type] = resource
+			print("Loaded enemy resource: ", enemy_type, " from ", resource_path)
+		else:
+			print("Failed to load enemy resource: ", resource_path)
+
+# Get stage-based multiplier for enemy stats
+func _get_stage_multiplier(stage_num: int) -> float:
+	# Base multiplier increases with stage progression
+	var stage_multiplier = 1.0 + (stage_num - 1) * 0.25  # 1.0, 1.25, 1.5, 1.75, 2.0
+	
+	# Additional multiplier for higher dungeons
+	var dungeon_multiplier = 1.0 + (dungeon_num - 1) * 0.5  # 1.0, 1.5, 2.0
+	
+	return stage_multiplier * dungeon_multiplier
+
+# Get stage-specific enemy name variations for dungeon 2
+func _get_stage_specific_name(base_name: String, stage_num: int) -> String:
+	# Stage-specific prefixes for forest/snake theme
+	var stage_prefixes = ["Young", "Forest", "Viper", "Ancient", "Boss"]
+	var prefix = stage_prefixes[min(stage_num - 1, stage_prefixes.size() - 1)]
+	
+	# For boss stages, use specific boss names
+	if stage_num == 5:
+		return "Forest Guardian"
+	
+	# For regular stages, add prefix
+	return prefix + " " + base_name
+
+# Get scaled enemy data for a specific stage
+func _get_scaled_enemy_data(stage_num: int) -> Dictionary:
+	var is_boss = (stage_num == 5)
+	var enemy_type = "boss" if is_boss else "normal"
+	
+	if !loaded_enemy_resources.has(enemy_type):
+		print("Error: Enemy resource not loaded for type: ", enemy_type)
+		return {}
+	
+	var enemy_resource = loaded_enemy_resources[enemy_type]
+	var multiplier = _get_stage_multiplier(stage_num)
+	
+	return {
+		"name": _get_stage_specific_name(enemy_resource.get_enemy_name(), stage_num),
+		"description": enemy_resource.description,
+		"health": int(enemy_resource.get_health() * multiplier),
+		"attack": int(enemy_resource.get_damage() * multiplier),
+		"durability": int(enemy_resource.get_durability() * multiplier),
+		"skill": enemy_resource.skill_name,
+		"exp_reward": int(enemy_resource.get_exp_reward() * multiplier),
+		"level": stage_num * 5
+	}

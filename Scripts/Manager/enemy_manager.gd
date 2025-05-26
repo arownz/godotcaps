@@ -165,14 +165,24 @@ func setup_enemy():
         enemy_type = "normal"
         enemy_skill_damage_multiplier = 2.0
     
-    # Extract data from resource - FIXED: use correct getter methods
+    # Extract base data from resource
     enemy_name = enemy_data.get_enemy_name()
-    enemy_max_health = enemy_data.get_health()
-    enemy_damage = enemy_data.get_damage()
-    enemy_durability = enemy_data.get_durability()
+    var base_health = enemy_data.get_health()
+    var base_damage = enemy_data.get_damage()
+    var base_durability = enemy_data.get_durability()
+    var base_exp_reward = enemy_data.get_exp_reward()
     
-    # Get experience reward from resource file
-    exp_reward = enemy_data.get_exp_reward()
+    # Apply stage-based scaling to stats
+    var stage_multiplier = _get_stage_multiplier()
+    enemy_max_health = int(base_health * stage_multiplier)
+    enemy_damage = int(base_damage * stage_multiplier)
+    enemy_durability = int(base_durability * stage_multiplier)
+    exp_reward = int(base_exp_reward * stage_multiplier)
+    
+    # Update enemy name based on stage progression
+    enemy_name = _get_stage_specific_name(enemy_name)
+    
+    # Get animation scene
     enemy_animation_scene = enemy_data.get_animation_scene()
     
     # Set current health to max health
@@ -189,9 +199,43 @@ func setup_enemy():
     print("- Health: ", enemy_health, "/", enemy_max_health)
     print("- Damage: ", enemy_damage)
     print("- Durability: ", enemy_durability)
+    print("- Exp Reward: ", exp_reward)
     
     # Load and setup enemy sprite
     setup_enemy_sprite()
+
+# Get stage-based multiplier for enemy stats
+func _get_stage_multiplier() -> float:
+    var stage_num = battle_scene.dungeon_manager.stage_num
+    var dungeon_num = battle_scene.dungeon_manager.dungeon_num
+    
+    # Base multiplier increases with stage progression
+    var stage_multiplier = 1.0 + (stage_num - 1) * 0.25  # 1.0, 1.25, 1.5, 1.75, 2.0
+    
+    # Additional multiplier for higher dungeons
+    var dungeon_multiplier = 1.0 + (dungeon_num - 1) * 0.5  # 1.0, 1.5, 2.0
+    
+    return stage_multiplier * dungeon_multiplier
+
+# Get stage-specific enemy name variations
+func _get_stage_specific_name(base_name: String) -> String:
+    var stage_num = battle_scene.dungeon_manager.stage_num
+    var dungeon_num = battle_scene.dungeon_manager.dungeon_num
+    
+    # Stage-specific prefixes
+    var stage_prefixes = ["Young", "Regular", "Elder", "Giant", "Boss"]
+    var prefix = stage_prefixes[min(stage_num - 1, stage_prefixes.size() - 1)]
+    
+    # For boss stages, use specific boss names
+    if stage_num == 5:
+        match dungeon_num:
+            1: return "Plain Guardian"
+            2: return "Forest Guardian"
+            3: return "Mountain Guardian"
+            _: return "Boss " + base_name
+    
+    # For regular stages, add prefix
+    return prefix + " " + base_name
 
 func get_enemy_data():
     var dungeon_num = battle_scene.dungeon_manager.dungeon_num

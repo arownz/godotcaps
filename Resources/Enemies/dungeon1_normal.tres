@@ -11,5 +11,5 @@ damage = 5
 durability = 5
 exp_reward = 15
 skill_name = "Slime Bounce"
-description = "A gelatinous creature from the forest depths"
+description = "A gelatinous creature from the forest depths."
 animation_scene = ExtResource("2_1")

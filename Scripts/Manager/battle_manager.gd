@@ -61,7 +61,7 @@ func enemy_attack():
 	var original_position = enemy_node.position
 	
 	var enemy_attack_tween = create_tween()
-	enemy_attack_tween.tween_property(enemy_node, "position", original_position - Vector2(50, 0), 0.3) # Move left
+	enemy_attack_tween.tween_property(enemy_node, "position", original_position - Vector2(80, 0), 0.3) # Move left
 	enemy_attack_tween.tween_property(enemy_node, "position", original_position, 0.2) # Return to original position
 	
 	# Play attack animation
