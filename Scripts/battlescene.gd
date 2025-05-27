@@ -49,8 +49,14 @@ func _ready():
 	# Load player data from Firebase first
 	await player_manager.load_player_data_from_firebase()
 	
+	# Debug: Print player stats after Firebase load
+	print("BattleScene: After Firebase load - Player Level: ", player_manager.player_level, " Damage: ", player_manager.player_damage, " Health: ", player_manager.player_max_health)
+	
 	# Then initialize player with loaded data
 	player_manager.initialize(self)
+	
+	# Debug: Print player stats after initialization
+	print("BattleScene: After initialization - Player Level: ", player_manager.player_level, " Damage: ", player_manager.player_damage, " Health: ", player_manager.player_max_health)
 	
 	# Set up the battle
 	_setup_battle()
@@ -346,7 +352,9 @@ func _auto_battle_turn():
 	# Check if player is defeated
 	if player_manager.player_health <= 0:
 		battle_active = false
-		battle_manager.show_endgame_screen("Defeat")
+		# Check if endgame screen is not already active
+		if not battle_manager.endgame_screen_active:
+			battle_manager.show_endgame_screen("Defeat")
 		return
 	
 	# Check if enemy skill is ready

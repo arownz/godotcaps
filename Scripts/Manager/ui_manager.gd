@@ -109,7 +109,7 @@ func update_player_info():
 		player_level_label.text = str(battle_scene.player_manager.player_level)
 	
 	# Update enemy level in BattleScene UI
-	var enemy_level_label = battle_scene.get_node("MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer/EnemyLevelValue")
+	var enemy_level_label = battle_scene.get_node("MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer/EnemyLevelValue")
 	if enemy_level_label:
 		enemy_level_label.text = str(battle_scene.enemy_manager.enemy_level)
 

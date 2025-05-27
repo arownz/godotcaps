@@ -8,6 +8,9 @@ signal enemy_skill_triggered
 
 var battle_scene # Reference to the main battle scene
 
+# Add flag to prevent multiple endgame screens
+var endgame_screen_active: bool = false
+
 # External resources
 var word_challenge_whiteboard_scene = preload("res://Scenes/WordChallengePanel_Whiteboard.tscn")
 var word_challenge_stt_scene = preload("res://Scenes/WordChallengePanel_STT.tscn")
@@ -146,9 +149,9 @@ func _update_firebase_after_victory(exp_gained: int, completed_dungeon_num: int,
 			new_level += 1
 			
 			# Increase stats on level up
-			current_health += 15
-			current_damage += 8
-			current_durability += 5
+			current_health += 8
+			current_damage += 3
+			current_durability += 4
 		
 		# Get current stages completed for this dungeon using completed stage numbers
 		var dungeons_data = current_data.get("dungeons", {})
@@ -233,10 +236,25 @@ func handle_defeat():
 	show_endgame_screen("Defeat")
 
 func show_endgame_screen(result_type: String, exp_reward: int = 0, completed_dungeon: int = 0, completed_stage: int = 0):
+	# Prevent multiple endgame screens
+	if endgame_screen_active:
+		print("BattleManager: Endgame screen already active, preventing duplicate")
+		return
+	
+	# Check for existing endgame screen in BattleContainer
+	var battle_container = battle_scene.get_node("MainContainer/BattleAreaContainer/BattleContainer")
+	var existing_endgame = battle_container.get_node_or_null("EndgameScreen")
+	if existing_endgame:
+		print("BattleManager: Endgame screen already exists, removing old one")
+		existing_endgame.queue_free()
+		await battle_scene.get_tree().process_frame
+	
+	endgame_screen_active = true
+	
 	var endgame_scene = load("res://Scenes/EndgameScreen.tscn").instantiate()
+	endgame_scene.name = "EndgameScreen"  # Set a consistent name for easy detection
 	
 	# Position in center of BattleContainer
-	var battle_container = battle_scene.get_node("MainContainer/BattleAreaContainer/BattleContainer")
 	battle_container.add_child(endgame_scene)
 	
 	# Center the endgame screen within the BattleContainer
@@ -257,6 +275,9 @@ func show_endgame_screen(result_type: String, exp_reward: int = 0, completed_dun
 	endgame_scene.continue_battle.connect(_on_continue_battle)
 
 func _on_restart_battle():
+	# Reset endgame screen flag
+	endgame_screen_active = false
+	
 	# Reset game state
 	battle_scene.dungeon_manager.reset()
 	
@@ -264,10 +285,16 @@ func _on_restart_battle():
 	battle_scene.get_tree().reload_current_scene()
 
 func _on_quit_to_menu():
+	# Reset endgame screen flag
+	endgame_screen_active = false
+	
 	# Return to main menu
 	battle_scene.get_tree().change_scene_to_file("res://Scenes/MainMenu.tscn")
 
 func _on_continue_battle():
+	# Reset endgame screen flag
+	endgame_screen_active = false
+	
 	# Check if there are more stages in this dungeon
 	var current_stage = battle_scene.dungeon_manager.stage_num
 	var max_stages = 5

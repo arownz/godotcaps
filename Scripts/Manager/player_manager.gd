@@ -18,7 +18,7 @@ var player_health = 100
 var player_max_health = 100  # Max health is calculated based on level
 var player_damage = 10
 var player_exp = 0
-var player_max_exp = 100  # Max exp needed for level up
+var player_max_exp = 100  # Max exp needed for leveling up
 var player_level = 1
 var player_durability = 5
 var player_energy = 20
@@ -43,16 +43,10 @@ func initialize(scene_ref):
     
     print("PlayerManager: Initializing player manager")
     
-    # Load player data from Firebase first
-    await load_player_data_from_firebase()
-    
-    # Load player stats resource
-    _load_player_stats()
-    
-    # Load player animation
+    # Data should already be loaded from battlescene._ready(), so just load animation
     load_player_animation()
     
-    print("PlayerManager: Player initialization complete")
+    print("PlayerManager: Player initialization complete - Level " + str(player_level) + " with " + str(player_damage) + " damage")
 
 func load_player_data_from_firebase():
     if not Firebase.Auth.auth:
@@ -92,6 +86,17 @@ func load_player_data_from_firebase():
             player_energy = player_data.get("energy", 20)
             player_animation_scene = player_data.get("skin", "res://Sprites/Animation/DefaultPlayer_Animation.tscn")
             
+            # Also populate player_firebase_data for backward compatibility
+            player_firebase_data = {
+                "username": player_name,
+                "level": player_level,
+                "exp": player_exp,
+                "health": player_max_health,
+                "damage": player_damage,
+                "durability": player_durability,
+                "energy": player_energy
+            }
+            
             print("Player data loaded successfully:")
             print("- Username: ", player_name)
             print("- Level: ", player_level)
@@ -130,19 +135,24 @@ func _set_default_stats():
     player_animation_scene = "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
 
 func _load_player_stats():
-    # Load from Firebase data
-    player_name = player_firebase_data.get("username", "Player")
-    player_level = player_firebase_data.get("level", 1)
-    player_exp = player_firebase_data.get("exp", 0)
-    player_max_health = player_firebase_data.get("health", 100)
-    player_health = player_max_health
-    player_damage = player_firebase_data.get("damage", 10)
-    player_durability = player_firebase_data.get("durability", 5)
-    
-    # Calculate exp needed for next level
-    player_max_exp = _calculate_exp_for_level(player_level + 1)
-    
-    print("PlayerManager: Loaded player stats - " + player_name + " Level " + str(player_level))
+    # This function is kept for backward compatibility
+    # Firebase data should already be loaded directly in load_player_data_from_firebase()
+    # Only use this if player_firebase_data is populated
+    if player_firebase_data.size() > 0:
+        player_name = player_firebase_data.get("username", "Player")
+        player_level = player_firebase_data.get("level", 1)
+        player_exp = player_firebase_data.get("exp", 0)
+        player_max_health = player_firebase_data.get("health", 100)
+        player_health = player_max_health
+        player_damage = player_firebase_data.get("damage", 10)
+        player_durability = player_firebase_data.get("durability", 5)
+        
+        # Calculate exp needed for next level
+        player_max_exp = _calculate_exp_for_level(player_level + 1)
+        
+        print("PlayerManager: Loaded player stats from cache - " + player_name + " Level " + str(player_level))
+    else:
+        print("PlayerManager: No cached data available, stats should be loaded from Firebase directly")
 
 func _calculate_exp_for_level(level: int) -> int:
     # Simple exp calculation: level * 100
@@ -264,8 +274,8 @@ func add_experience(exp_amount):
         # Update stats on level up
         player_max_health = get_max_health()
         player_health = player_max_health  # Fully heal on level up
-        player_damage += 8
-        player_durability += 6
+        player_damage += 3
+        player_durability += 4
         
         # Recalculate max_exp for next level
         max_exp = get_max_exp()

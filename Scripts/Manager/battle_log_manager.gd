@@ -24,15 +24,6 @@ var introduction_messages = {
 # Log entry properties
 var max_entries: int = 10
 var entries: Array = []
-var entry_colors = {
-	"default": Color(5.1, 5.1, 5.1),     # White for standard messages
-	"player": Color(0.4, 0.9, 0.4),      # Green for player actions
-	"enemy": Color(0.9, 0.4, 0.4),       # Red for enemy actions
-	"damage": Color(0.9, 0.6, 0.2),      # Orange for damage
-	"heal": Color(0.2, 0.7, 0.9),        # Blue for healing
-	"challenge": Color(0.9, 0.9, 0.2),   # Yellow for challenges
-	"system": Color(0.7, 0.7, 0.7)       # Gray for system messages
-}
 
 # Reference to the log UI elements
 @onready var battle_log: Control = null 
@@ -68,38 +59,56 @@ func display_introduction_messages():
 	add_message("[color=#000000]You encounter a " + battle_scene.enemy_manager.enemy_name + "![/color]")
 
 func add_message(text):
-	# Create a panel for the background
-	var log_entry_panel = PanelContainer.new()
+	# Extract message type from color tags for better categorization
+	var message_type = "default"
+	if "[color=#4CAF50]" in text or "Victory" in text:
+		message_type = "player"
+	elif "[color=#EB5E4B]" in text or "[color=#FF0000]" in text:
+		message_type = "enemy"
+	elif "[color=#FFA500]" in text or "[color=#F09C2D]" in text:
+		message_type = "challenge"
+	elif "damage" in text.to_lower():
+		message_type = "damage"
+	elif "heal" in text.to_lower():
+		message_type = "heal"
 	
-	# Add custom style for the background
-	var style = StyleBoxTexture.new()
-	style.texture = load("res://gui/Update/UI/ui_2.png")
-	# Fix: Use content_margin_* properties instead of margin_*
-	style.content_margin_left = 5
-	style.content_margin_right = 5
-	style.content_margin_top = 5
-	style.content_margin_bottom = 5
-	log_entry_panel.add_theme_stylebox_override("panel", style)
+	# Use the consolidated logging system
+	add_log_entry(text, message_type)
 	
-	# Create the text label
-	var log_entry = RichTextLabel.new()
-	log_entry.bbcode_enabled = true
-	log_entry.fit_content = true
-	log_entry.scroll_active = false
-	log_entry.custom_minimum_size = Vector2(0, 30)
-	
-	# Set the text
-	log_entry.text = text
-	
-	# Add the label to the panel
-	log_entry_panel.add_child(log_entry)
-	
-	# Add the panel to the log container
-	battle_log_container.add_child(log_entry_panel)
-	
-	# Scroll to the bottom if user hasn't manually scrolled
-	if !user_scrolled:
-		_scroll_to_bottom()
+	# Legacy panel creation for backward compatibility - only if log_entries_container is not available
+	if not log_entries_container and battle_log_container:
+		# Create a panel for the background
+		var log_entry_panel = PanelContainer.new()
+		
+		# Add custom style for the background
+		var style = StyleBoxTexture.new()
+		style.texture = load("res://gui/Update/UI/ui_2.png")
+		# Fix: Use content_margin_* properties instead of margin_*
+		style.content_margin_left = 5
+		style.content_margin_right = 5
+		style.content_margin_top = 5
+		style.content_margin_bottom = 5
+		log_entry_panel.add_theme_stylebox_override("panel", style)
+		
+		# Create the text label
+		var log_entry = RichTextLabel.new()
+		log_entry.bbcode_enabled = true
+		log_entry.fit_content = true
+		log_entry.scroll_active = false
+		log_entry.custom_minimum_size = Vector2(0, 30)
+		
+		# Set the text
+		log_entry.text = text
+		
+		# Add the label to the panel
+		log_entry_panel.add_child(log_entry)
+		
+		# Add the panel to the log container
+		battle_log_container.add_child(log_entry_panel)
+		
+		# Scroll to the bottom if user hasn't manually scrolled
+		if !user_scrolled:
+			_scroll_to_bottom()
 
 func add_cancellation_message():
 	# Add a specific message for challenge cancellation
@@ -145,10 +154,22 @@ func add_log_entry(text: String, type: String = "default") -> void:
 	# Add timestamp
 	var current_time = Time.get_time_dict_from_system()
 	var timestamp = "%02d:%02d" % [current_time.hour, current_time.minute]
-	var formatted_text = "[%s] %s" % [timestamp, text]
+	
+	# Strip bbcode tags for console output and clean display
+	var clean_text = text
+	var regex = RegEx.new()
+	regex.compile("\\[/?[^\\]]*\\]")
+	clean_text = regex.sub(clean_text, "", true)
+	
+	var formatted_text = "[%s] %s" % [timestamp, clean_text]
+	
+	# Check for duplicate entries to prevent spam
+	if entries.size() > 0 and entries[-1].text == formatted_text:
+		print("Battle Log: Duplicate entry prevented - " + formatted_text)
+		return
 	
 	# Add to entries array
-	entries.push_back({"text": formatted_text, "type": type})
+	entries.push_back({"text": formatted_text, "type": type, "original": text})
 	
 	# Keep only the last max_entries
 	while entries.size() > max_entries:
@@ -171,15 +192,27 @@ func update_ui() -> void:
 	
 	# Add entries from newest to oldest
 	for entry in entries:
-		var label = Label.new()
-		label.text = entry.text
+		# Use RichTextLabel to support bbcode in original text
+		var label = RichTextLabel.new()
+		label.bbcode_enabled = true
+		label.fit_content = true
+		label.scroll_active = false
+		label.custom_minimum_size = Vector2(0, 30)
+		
+		# Use original text with bbcode if available, otherwise use clean text
+		var display_text = entry.get("original", entry.text)
+		var timestamp_part = entry.text.split("] ")[0] + "] "
+		var message_part = display_text
+		
+		# If original has bbcode, combine timestamp with original message
+		if entry.has("original"):
+			label.text = timestamp_part + message_part
+		else:
+			label.text = entry.text
+		
 		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		label.add_theme_font_override("font", preload("res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf"))
 		label.add_theme_font_size_override("font_size", 16)
-		
-		# Set color based on entry type
-		var color = entry_colors.get(entry.type, entry_colors.default)
-		label.add_theme_color_override("font_color", color)
 		
 		# Add to container
 		log_entries_container.add_child(label)
