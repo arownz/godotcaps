@@ -57,6 +57,20 @@ func _ready():
 	add_child(notification_popup)
 	notification_popup.closed.connect(_on_notification_closed)
 
+		# Refresh progression when scene loads (important for when returning from battle)
+	await _refresh_progression_from_firebase()
+
+# Load enemy resources from .tres files
+func _load_enemy_resources():
+	for enemy_type in enemy_types.keys():
+		var resource_path = enemy_types[enemy_type]["resource_path"]
+		var resource = load(resource_path)
+		if resource:
+			loaded_enemy_resources[enemy_type] = resource
+			print("Loaded enemy resource: ", enemy_type, " from ", resource_path)
+		else:
+			print("Failed to load enemy resource: ", resource_path)
+
 # Add this new function to handle clicks outside StageDetails
 func _unhandled_input(event):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
@@ -341,17 +355,6 @@ func _on_notification_closed():
 	# Handle notification close if needed
 	pass
 
-# Load enemy resources from .tres files
-func _load_enemy_resources():
-	for enemy_type in enemy_types.keys():
-		var resource_path = enemy_types[enemy_type]["resource_path"]
-		var resource = load(resource_path)
-		if resource:
-			loaded_enemy_resources[enemy_type] = resource
-			print("Loaded enemy resource: ", enemy_type, " from ", resource_path)
-		else:
-			print("Failed to load enemy resource: ", resource_path)
-
 # Get stage-based multiplier for enemy stats
 func _get_stage_multiplier(stage_num: int) -> float:
 	# Base multiplier increases with stage progression
@@ -397,3 +400,11 @@ func _get_scaled_enemy_data(stage_num: int) -> Dictionary:
 		"exp_reward": int(enemy_resource.get_exp_reward() * multiplier),
 		"level": stage_num * 5
 	}
+
+# Refresh progression data - useful when returning from battle
+func _refresh_progression_from_firebase():
+	print("Refreshing progression data for dungeon ", dungeon_num)
+	if Firebase.Auth.auth:
+		await _load_player_progress()
+	else:
+		print("User not authenticated, skipping progression refresh")

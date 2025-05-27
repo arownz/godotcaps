@@ -5,7 +5,7 @@
 
 [resource]
 script = ExtResource("1_1")
-enemy_name = "Forest Viper"
+enemy_name = "Snake"
 health = 120
 damage = 15
 durability = 6

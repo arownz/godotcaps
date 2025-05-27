@@ -49,17 +49,19 @@ func _ready():
 	
 	# Initialize monster icon buttons
 	_initialize_mob_buttons()
-	
-	# Add signal connections
+		# Add signal connections
 	_connect_signals()
 	
 	# Hide stage details panel initially
 	$StageDetails.visible = false
-
+	
 	# Create notification popup
 	notification_popup = load("res://Scenes/NotificationPopUp.tscn").instantiate()
 	add_child(notification_popup)
 	notification_popup.closed.connect(_on_notification_closed)
+	
+	# Refresh progression when scene loads (important for when returning from battle)
+	await _refresh_progression_from_firebase()
 
 # Add this new function to handle clicks outside StageDetails
 func _unhandled_input(event):

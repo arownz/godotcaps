@@ -25,6 +25,11 @@ var completed_stages = []
 var current_selected_stage = 0
 var current_selected_enemy_type = "stage_1"
 
+# Constants for popup styling
+const POPUP_BG_COLOR = Color(0.113725, 0.329412, 0.458824, 0.9)
+const POPUP_BORDER_COLOR = Color(1, 1, 1, 1)
+const POPUP_TEXT_COLOR = Color(1, 0.92549, 0.756863, 1)
+
 var notification_popup: CanvasLayer
 
 func _ready():
