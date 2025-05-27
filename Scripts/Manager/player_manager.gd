@@ -286,25 +286,33 @@ func add_experience(exp_amount):
 
 # Helper function to update stats in Firebase
 func _update_firebase_stats(leveled_up = false):
-    if Firebase.Auth.auth.has("localid"):
-        var user_id = Firebase.Auth.auth.localid
-        var collection = Firebase.Firestore.collection("dyslexia_users")
+    if !Firebase.Auth.auth:
+        return
         
-        var user_data = {
-            "player_level": player_level,
-            "player_health": player_health,
-            "player_damage": player_damage,
-            "player_durability": player_durability,
-            "player_exp": player_exp
-        }
+    var user_id = Firebase.Auth.auth.localid
+    var collection = Firebase.Firestore.collection("dyslexia_users")
+    
+    # Get current document first
+    var document = await collection.get_doc(user_id)
+    if document and !("error" in document.keys() and document.get_value("error")):
+        # Update player stats using proper Firebase pattern
+        document.add_or_update_field("stats.player.level", player_level)
+        document.add_or_update_field("stats.player.exp", player_exp)
+        document.add_or_update_field("stats.player.health", player_max_health)  # Store max health
+        document.add_or_update_field("stats.player.damage", player_damage)
+        document.add_or_update_field("stats.player.durability", player_durability)
         
-        # Only save base stats to Firebase - we can calculate max values
-        # Current health is saved so players remain damaged between battles
-        collection.update(user_id, user_data)
-        
-        print("Player stats updated in Firebase")
-        if leveled_up:
-            print("LEVEL UP! New level: " + str(player_level))
+        # Update the document using correct method
+        var updated_document = await collection.update(document)
+        if updated_document:
+            print("Player stats updated in Firebase successfully")
+            if leveled_up:
+                print("LEVEL UP! New level: " + str(player_level))
+                print("New stats - Health: " + str(player_max_health) + ", Damage: " + str(player_damage) + ", Durability: " + str(player_durability))
+        else:
+            print("Failed to update player stats in Firebase")
+    else:
+        print("Failed to get document for player stats update")
 
 # Calculate max health based on level (100 + 10 per level)
 func get_max_health():

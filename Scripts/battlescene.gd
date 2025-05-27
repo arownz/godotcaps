@@ -76,11 +76,11 @@ func _initialize_managers():
 	add_child(challenge_manager)
 	add_child(dungeon_manager)
 	
+	# Initialize dungeon manager first to load current progression
+	await dungeon_manager.initialize()
+	
 	# Set up the enemy based on current stage and dungeon
 	enemy_manager.setup_enemy()
-	
-	# Let the dungeon manager initialize
-	dungeon_manager.initialize()
 	
 	print("Managers initialized successfully")
 

@@ -12,10 +12,6 @@ func _ready():
 	$Background.offset_right = 0
 	$Background.offset_bottom = 0
 	
-	# Center the ResultPanel properly
-	# $ResultPanel.anchors_preset = Control.PRESET_CENTER
-	# $ResultPanel.position = Vector2.ZERO
-	
 	# Animate the ResultPanel appearing
 	$ResultPanel.scale = Vector2(0.5, 0.5)
 	var tween = create_tween()

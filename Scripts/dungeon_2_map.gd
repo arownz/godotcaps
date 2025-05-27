@@ -83,6 +83,17 @@ func _initialize_firebase():
 		# Set default progression (only stage 1 is unlocked)
 		completed_stages = []
 
+# Refresh progression data - useful when returning from battle
+func _refresh_progression_from_firebase():
+	print("Refreshing progression data for dungeon ", dungeon_num)
+	if Firebase.Auth.auth:
+		await _load_player_progress()
+	else:
+		print("User not authenticated, skipping progression refresh")
+		print("Firebase not available, using default progression")
+		# Set default progression (only stage 1 is unlocked)
+		completed_stages = []
+
 func _load_player_progress():
 	# Only proceed if authenticated
 	if not Firebase.Auth.auth:
@@ -158,22 +169,24 @@ func _update_stage_buttons():
 			print("Warning: Could not find " + indicator_node_name + " for stage " + str(stage_num))
 			continue
 			
-		# Stage 1 is always unlocked
+		# Stage 1 is always unlocked and available
 		if stage_num == 1:
 			button.texture_normal = load("res://gui/Update/icons/next level select.png")
 			indicator_node.visible = true
-		# Completed stages (stage_num is in completed_stages array)
+		# Completed stages show as completed
 		elif completed_stages.has(stage_num):
 			button.texture_normal = load("res://gui/Update/icons/player completed level.png")
 			indicator_node.visible = true
-		# Next available stage (previous stage is completed or we're at stage 2 and stage 1 is completed)
-		elif (stage_num > 1 and completed_stages.has(stage_num - 1)) or (stage_num == 2 and completed_stages.has(1)):
+		# Next available stage (unlocked but not completed)
+		elif completed_stages.has(stage_num - 1) or (stage_num == 2 and completed_stages.has(1)):
 			button.texture_normal = load("res://gui/Update/icons/next level select.png")
 			indicator_node.visible = true
-		# Locked stages
+		# Future stages that are locked
 		else:
 			button.texture_normal = load("res://gui/Update/icons/unlocked level.png")
 			indicator_node.visible = false
+			
+	print("Updated stage buttons. Completed stages: ", completed_stages)
 
 func _initialize_mob_buttons():
 	# Get mob buttons from the stage details panel
@@ -211,12 +224,16 @@ func _on_stage_button_pressed(stage_num):
 	print("Stage " + str(stage_num) + " selected")
 	
 	# Check if stage is unlocked
-	if stage_num > 1 and not (completed_stages.has(stage_num - 1) or completed_stages.has(stage_num)):
+	# Stage 1 is always unlocked
+	# Stage N is unlocked if Stage N-1 is completed
+	if stage_num > 1 and not completed_stages.has(stage_num - 1):
 		# Stage is locked - show notification
 		notification_popup.show_notification("Stage Locked!", "Complete Stage " + str(stage_num - 1) + " first to unlock this stage.", "OK")
+		print("Stage " + str(stage_num) + " is locked. Completed stages: ", completed_stages)
 		return
 		
 	current_selected_stage = stage_num
+	print("Stage " + str(stage_num) + " is unlocked and selected. Completed stages: ", completed_stages)
 	
 	# Update stage details panel (this handles all the enemy data display)
 	_update_stage_details(stage_num)
@@ -303,7 +320,10 @@ func _on_back_button_pressed():
 func _on_fight_button_pressed():
 	print("Starting battle in Dungeon 2, Stage " + str(current_selected_stage))
 	
-	# Save current stage and dungeon directly to Firebase
+	# Set battle progress in DungeonGlobals for immediate transfer to battle scene
+	DungeonGlobals.set_battle_progress(dungeon_num, current_selected_stage)
+	
+	# Save current stage and dungeon directly to Firebase (for persistence)
 	await _save_current_dungeon_stage()
 
 	# Load the battle scene

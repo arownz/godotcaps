@@ -60,9 +60,9 @@ func _ready():
 		debug.name = "DebugLabel"
 		debug.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 		debug.vertical_alignment = VERTICAL_ALIGNMENT_TOP
-		debug.add_theme_font_override("font", preload("res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf"))
+		debug.add_theme_font_override("font", preload("res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf"))
 		debug.add_theme_font_size_override("font_size", 16)
-		debug.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8, 0.8))
+		debug.add_theme_color_override("font_color", Color(0, 0, 0, 1.0))
 		debug.anchors_preset = Control.PRESET_TOP_LEFT
 		debug.position = Vector2(10, 10)
 		debug.visible = true
@@ -71,6 +71,11 @@ func _ready():
 		debug_label = debug
 	elif has_node("DebugLabel"):
 		debug_label = $DebugLabel
+		
+	# Connect to drawing functions to manage debug label visibility
+	if debug_label:
+		# Show label when drawing is cleared
+		$VBoxContainer/ButtonsContainer/ClearButton.pressed.connect(func(): debug_label.visible = true)
 	
 	# Initialize drawing system
 	setup_drawing()
@@ -119,6 +124,10 @@ func _start_stroke(pposition):
 		"color": stroke_color,
 		"width": stroke_width
 	}
+	
+	# Hide debug label when drawing starts
+	if debug_label:
+		debug_label.visible = false
 
 # Add point to current stroke
 func _add_point_to_stroke(pposition):

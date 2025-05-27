@@ -22,7 +22,15 @@ func _init(scene):
 	battle_scene = scene
 
 func initialize():
-	# Load current progress from Firebase directly
+	# First check if we have data from DungeonGlobals (immediate transfer from dungeon map)
+	var globals_data = DungeonGlobals.get_battle_progress()
+	if globals_data.dungeon > 0 and globals_data.stage > 0:
+		dungeon_num = globals_data.dungeon
+		stage_num = globals_data.stage
+		print("DungeonManager: Using DungeonGlobals data - Dungeon: ", dungeon_num, ", Stage: ", stage_num)
+		return
+	
+	# Fallback to loading from Firebase if no globals data
 	await load_progress_from_firebase()
 
 func load_progress_from_firebase():

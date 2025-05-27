@@ -81,6 +81,10 @@ func enemy_attack():
 func handle_victory():
 	print("BattleManager: Handling victory")
 	
+	# Get CURRENT stage info BEFORE any advancement
+	var completed_dungeon = battle_scene.dungeon_manager.dungeon_num
+	var completed_stage = battle_scene.dungeon_manager.stage_num
+	
 	# Calculate experience reward - fix the enemy_level access
 	var exp_reward = 10  # Base experience
 	if battle_scene.enemy_manager.has_method("get_enemy_level"):
@@ -94,23 +98,20 @@ func handle_victory():
 	# Add victory message
 	battle_scene.battle_log_manager.add_message("[color=#4CAF50]Victory! You defeated the enemy and gained " + str(exp_reward) + " experience.[/color]")
 	
-	# Update Firebase with victory data directly
-	_update_firebase_after_victory(exp_reward)
+	# Update Firebase with victory data using COMPLETED stage info
+	_update_firebase_after_victory(exp_reward, completed_dungeon, completed_stage)
 	
-	# Advance to next stage
-	battle_scene.dungeon_manager.advance_stage()
-	
-	# Update stage info
-	battle_scene.ui_manager.update_stage_info()
+	# DO NOT advance stage here - leave that for continue button
+	# Stage info should still show the completed stage at this point
 	
 	# Wait a moment for the message to be seen
 	await battle_scene.get_tree().create_timer(1.0).timeout
 	
-	# Show victory screen - only called once from here
-	show_endgame_screen("Victory", exp_reward)
+	# Show victory screen - pass completed stage info
+	show_endgame_screen("Victory", exp_reward, completed_dungeon, completed_stage)
 
 # Direct Firebase update after victory
-func _update_firebase_after_victory(exp_gained: int):
+func _update_firebase_after_victory(exp_gained: int, completed_dungeon_num: int, completed_stage_num: int):
 	if !Firebase.Auth.auth:
 		return
 		
@@ -124,10 +125,6 @@ func _update_firebase_after_victory(exp_gained: int):
 		for key in document.keys():
 			if key != "error":
 				current_data[key] = document.get_value(key)
-		
-		# Get current dungeon and stage info
-		var dungeon_num = str(battle_scene.dungeon_manager.dungeon_num)
-		var stage_num = battle_scene.dungeon_manager.stage_num
 		
 		# Get current player stats
 		var stats = current_data.get("stats", {})
@@ -153,10 +150,11 @@ func _update_firebase_after_victory(exp_gained: int):
 			current_damage += 8
 			current_durability += 5
 		
-		# Get current stages completed for this dungeon
+		# Get current stages completed for this dungeon using completed stage numbers
 		var dungeons_data = current_data.get("dungeons", {})
 		var completed_data = dungeons_data.get("completed", {})
-		var dungeon_data = completed_data.get(dungeon_num, {"completed": false, "stages_completed": 0})
+		var dungeon_key = str(completed_dungeon_num)
+		var dungeon_data = completed_data.get(dungeon_key, {"completed": false, "stages_completed": 0})
 		var current_stages_completed = dungeon_data.get("stages_completed", 0)
 		
 		# Prepare update data
@@ -170,11 +168,14 @@ func _update_firebase_after_victory(exp_gained: int):
 		}
 		
 		# Only update stage progression if this stage hasn't been completed before
-		if stage_num > current_stages_completed:
-			update_data["dungeons.completed." + dungeon_num + ".stages_completed"] = stage_num
-			if stage_num >= 5:
-				update_data["dungeons.completed." + dungeon_num + ".completed"] = true
-			print("Updated stages_completed for dungeon " + dungeon_num + " to stage " + str(stage_num))
+		# Use the COMPLETED stage number, not the incremented one
+		if completed_stage_num > current_stages_completed:
+			update_data["dungeons.completed." + dungeon_key + ".stages_completed"] = completed_stage_num
+			if completed_stage_num >= 5:
+				update_data["dungeons.completed." + dungeon_key + ".completed"] = true
+			print("Updated stages_completed for dungeon " + dungeon_key + " to stage " + str(completed_stage_num))
+		else:
+			print("Stage " + str(completed_stage_num) + " already completed for dungeon " + dungeon_key)
 		
 		# Get the document for Firebase update
 		var firebase_doc = await collection.get_doc(user_id)
@@ -231,7 +232,7 @@ func handle_defeat():
 	# Show defeat screen
 	show_endgame_screen("Defeat")
 
-func show_endgame_screen(result_type: String, exp_reward: int = 0):
+func show_endgame_screen(result_type: String, exp_reward: int = 0, completed_dungeon: int = 0, completed_stage: int = 0):
 	var endgame_scene = load("res://Scenes/EndgameScreen.tscn").instantiate()
 	
 	# Position in center of BattleContainer
@@ -245,8 +246,9 @@ func show_endgame_screen(result_type: String, exp_reward: int = 0):
 	endgame_scene.offset_right = 0
 	endgame_scene.offset_bottom = 0
 	
-	var dungeon_num = battle_scene.dungeon_manager.dungeon_num
-	var stage_num = battle_scene.dungeon_manager.stage_num
+	# Use completed stage info if provided, otherwise current dungeon manager values
+	var dungeon_num = completed_dungeon if completed_dungeon > 0 else battle_scene.dungeon_manager.dungeon_num
+	var stage_num = completed_stage if completed_stage > 0 else battle_scene.dungeon_manager.stage_num
 	endgame_scene.setup_endgame(result_type, dungeon_num, stage_num, exp_reward)
 	
 	# Connect EndgameScreen signals
@@ -271,10 +273,10 @@ func _on_continue_battle():
 	var max_stages = 5
 	
 	if current_stage < max_stages:
-		# Advance to next stage
-		battle_scene.dungeon_manager.stage_num += 1
+		# NOW advance to next stage (only when continuing)
+		battle_scene.dungeon_manager.advance_stage()
 		
-		# Update current stage in Firebase
+		# Update current stage in Firebase to track progress
 		_update_current_stage_in_firebase(battle_scene.dungeon_manager.stage_num)
 		
 		# Reset battle state and setup new enemy

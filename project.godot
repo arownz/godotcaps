@@ -26,6 +26,7 @@ general/text_to_speech=true
 [autoload]
 
 Firebase="*res://addons/godot-firebase/firebase/firebase.tscn"
+DungeonGlobals="*res://Scripts/DungeonGlobals.gd"
 
 [config]
 

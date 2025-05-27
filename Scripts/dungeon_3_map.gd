@@ -151,22 +151,24 @@ func _update_stage_buttons():
 			print("Warning: Could not find " + indicator_node_name + " for stage " + str(stage_num))
 			continue
 			
-		# Stage 1 is always unlocked
+		# Stage 1 is always unlocked and available
 		if stage_num == 1:
 			button.texture_normal = load("res://gui/Update/icons/next level select.png")
 			indicator_node.visible = true
-		# Completed stages (stage_num is in completed_stages array)
+		# Completed stages show as completed
 		elif completed_stages.has(stage_num):
 			button.texture_normal = load("res://gui/Update/icons/player completed level.png")
 			indicator_node.visible = true
-		# Next available stage (previous stage is completed or we're at stage 2 and stage 1 is completed)
-		elif (stage_num > 1 and completed_stages.has(stage_num - 1)) or (stage_num == 2 and completed_stages.has(1)):
+		# Next available stage (unlocked but not completed)
+		elif completed_stages.has(stage_num - 1) or (stage_num == 2 and completed_stages.has(1)):
 			button.texture_normal = load("res://gui/Update/icons/next level select.png")
 			indicator_node.visible = true
-		# Locked stages
+		# Future stages that are locked
 		else:
 			button.texture_normal = load("res://gui/Update/icons/unlocked level.png")
 			indicator_node.visible = false
+			
+	print("Updated stage buttons. Completed stages: ", completed_stages)
 
 func _initialize_mob_buttons():
 	# Get mob buttons from the stage details panel
@@ -296,7 +298,10 @@ func _on_back_button_pressed():
 func _on_fight_button_pressed():
 	print("Starting battle in Dungeon 3, Stage " + str(current_selected_stage))
 
-	# Save current stage and dungeon directly to Firebase
+	# Set battle progress in DungeonGlobals for immediate transfer to battle scene
+	DungeonGlobals.set_battle_progress(dungeon_num, current_selected_stage)
+
+	# Save current stage and dungeon directly to Firebase (for persistence)
 	await _save_current_dungeon_stage()
 
 	# Load the battle scene
