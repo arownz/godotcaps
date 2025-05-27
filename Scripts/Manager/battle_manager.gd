@@ -149,7 +149,7 @@ func _update_firebase_after_victory(exp_gained: int, completed_dungeon_num: int,
 			new_level += 1
 			
 			# Increase stats on level up
-			current_health += 8
+			current_health += 5
 			current_damage += 3
 			current_durability += 4
 		

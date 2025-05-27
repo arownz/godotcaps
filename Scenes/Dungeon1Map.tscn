@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://d1cb4djmat1dj"]
+[gd_scene load_steps=18 format=3 uid="uid://d1cb4djmat1dj"]
 
 [ext_resource type="Script" uid="uid://4gerx64y471n" path="res://Scripts/dungeon_1_map.gd" id="1_ocdpx"]
 [ext_resource type="Texture2D" uid="uid://chfkysvsxt4eg" path="res://gui/Update/Backgrounds/Plains_Level.png" id="1_shrlp"]
@@ -16,6 +16,8 @@
 [ext_resource type="Texture2D" uid="uid://caaebspp4lxk4" path="res://gui/Update/icons/slaym enemeh.png" id="13_xrlqr"]
 [ext_resource type="Texture2D" uid="uid://ct2kkb4phx2kr" path="res://gui/Update/icons/treant.png" id="16_lqaqn"]
 [ext_resource type="Texture2D" uid="uid://clbfvil7saw1l" path="res://gui/Update/UI/Fight Button (Default).png" id="19_0ho0y"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_o52iv"]
 
 [node name="DungeonMap1" type="Node2D"]
 script = ExtResource("1_ocdpx")
@@ -382,8 +384,7 @@ offset_bottom = 645.0
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="StageDetails/LeftContainer"]
 position = Vector2(135, 318)
 scale = Vector2(2.79408, 2.76731)
-animation = &""
-autoplay = "Mob1Idle"
+sprite_frames = SubResource("SpriteFrames_o52iv")
 
 [node name="LVLabel" type="Label" parent="StageDetails/LeftContainer"]
 layout_mode = 1
