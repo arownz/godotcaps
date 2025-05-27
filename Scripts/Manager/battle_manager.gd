@@ -289,7 +289,7 @@ func _on_quit_to_menu():
 	endgame_screen_active = false
 	
 	# Return to main menu
-	battle_scene.get_tree().change_scene_to_file("res://Scenes/MainMenu.tscn")
+	battle_scene.get_tree().change_scene_to_file("res://Scenes/DungeonSelection.tscn")
 
 func _on_continue_battle():
 	# Reset endgame screen flag
