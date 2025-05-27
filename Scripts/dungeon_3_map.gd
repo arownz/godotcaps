@@ -56,8 +56,8 @@ func _ready():
 	notification_popup = load("res://Scenes/NotificationPopUp.tscn").instantiate()
 	add_child(notification_popup)
 	notification_popup.closed.connect(_on_notification_closed)
-
-		# Refresh progression when scene loads (important for when returning from battle)
+	
+	# Refresh progression when scene loads (important for when returning from battle)
 	await _refresh_progression_from_firebase()
 
 # Load enemy resources from .tres files
@@ -165,13 +165,13 @@ func _update_stage_buttons():
 			print("Warning: Could not find " + indicator_node_name + " for stage " + str(stage_num))
 			continue
 			
-		# Stage 1 is always unlocked and available
-		if stage_num == 1:
-			button.texture_normal = load("res://gui/Update/icons/next level select.png")
-			indicator_node.visible = true
-		# Completed stages show as completed
-		elif completed_stages.has(stage_num):
+		# Completed stages show as completed (including stage 1)
+		if completed_stages.has(stage_num):
 			button.texture_normal = load("res://gui/Update/icons/player completed level.png")
+			indicator_node.visible = true
+		# Stage 1 is always unlocked and available (but check completion first)
+		elif stage_num == 1:
+			button.texture_normal = load("res://gui/Update/icons/next level select.png")
 			indicator_node.visible = true
 		# Next available stage (unlocked but not completed)
 		elif completed_stages.has(stage_num - 1) or (stage_num == 2 and completed_stages.has(1)):
@@ -267,6 +267,28 @@ func _update_stage_details(stage_num):
 	
 	# Set level based on calculated level
 	$StageDetails/LeftContainer/LVLabel2.text = str(enemy_data["level"])
+	
+	# Load and set the correct AnimatedSprite based on stage type
+	var is_boss = (stage_num == 5)
+	var enemy_type = "boss" if is_boss else "normal"
+	var enemy_resource = loaded_enemy_resources[enemy_type]
+	
+	# Get the AnimatedSprite node
+	var animated_sprite = $StageDetails/LeftContainer/AnimatedSprite2D
+	
+	# Load the correct animation scene
+	if enemy_resource and enemy_resource.animation_scene:
+		# Remove existing children from AnimatedSprite2D if any
+		for child in animated_sprite.get_children():
+			child.queue_free()
+		
+		# Instance the new animation scene
+		var animation_instance = enemy_resource.animation_scene.instantiate()
+		animated_sprite.add_child(animation_instance)
+		
+		# Play idle animation if available
+		if animation_instance.has_method("play"):
+			animation_instance.play("idle")
 	
 	# Update mob button visibility - show only one button per stage
 	for i in range(mob_buttons.size()):
