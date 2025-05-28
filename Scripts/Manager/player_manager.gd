@@ -285,9 +285,15 @@ func add_experience(exp_amount):
         # Emit level up signal
         emit_signal("player_level_up", player_level)
         
+        print("PlayerManager: Player leveled up! New level: ", player_level)
+        print("PlayerManager: New stats - Health: ", player_max_health, ", Damage: ", player_damage, ", Durability: ", player_durability)
+        
         # Update player stats in Firestore if available
         if Engine.has_singleton("Firebase") and Firebase.Auth and Firebase.Auth.auth:
+            print("PlayerManager: Updating stats in Firebase...")
             await _update_player_stats_in_firebase(leveled_up)
+        else:
+            print("PlayerManager: Firebase not available, skipping stats update")
 
 # Heal player to full health
 func heal_to_full():
@@ -305,33 +311,59 @@ func heal_to_full():
 
 # Update player stats in Firebase after level up
 func _update_player_stats_in_firebase(leveled_up: bool = false):
+    print("PlayerManager: _update_player_stats_in_firebase called with leveled_up=", leveled_up)
+    
     if !Firebase.Auth.auth:
+        print("PlayerManager: No Firebase auth, returning")
         return
         
     var user_id = Firebase.Auth.auth.localid
     var collection = Firebase.Firestore.collection("dyslexia_users")
     
+    print("PlayerManager: Getting document for user: ", user_id)
+    
     # Get current document first
     var document = await collection.get_doc(user_id)
     if document and !("error" in document.keys() and document.get_value("error")):
-        # Update player stats using proper Firebase pattern
-        document.add_or_update_field("stats.player.level", player_level)
-        document.add_or_update_field("stats.player.exp", player_exp)
-        document.add_or_update_field("stats.player.health", player_max_health)  # Store max health
-        document.add_or_update_field("stats.player.damage", player_damage)
-        document.add_or_update_field("stats.player.durability", player_durability)
+        print("PlayerManager: Document retrieved successfully")
         
-        # Update the document using correct method
-        var updated_document = await collection.update(document)
-        if updated_document:
-            print("Player stats updated in Firebase successfully")
-            if leveled_up:
-                print("LEVEL UP! New level: " + str(player_level))
-                print("New stats - Health: " + str(player_max_health) + ", Damage: " + str(player_damage) + ", Durability: " + str(player_durability))
+        # Get current stats structure (following mainmenu.gd pattern)
+        var stats = document.get_value("stats")
+        if stats != null and typeof(stats) == TYPE_DICTIONARY:
+            print("PlayerManager: Stats structure found")
+            var player_stats = stats.get("player", {})
+            
+            print("PlayerManager: Current Firebase player stats: ", player_stats)
+            print("PlayerManager: New local player stats - Level: ", player_level, ", Exp: ", player_exp, ", Health: ", player_max_health, ", Damage: ", player_damage, ", Durability: ", player_durability)
+            
+            # Update player stats in the nested structure
+            player_stats["level"] = player_level
+            player_stats["exp"] = player_exp
+            player_stats["health"] = player_max_health  # Store max health
+            player_stats["damage"] = player_damage
+            player_stats["durability"] = player_durability
+            
+            # Update the stats structure
+            stats["player"] = player_stats
+            
+            print("PlayerManager: Updated player stats: ", player_stats)
+            
+            # Update the document with the modified stats structure
+            document.add_or_update_field("stats", stats)
+            
+            # Save the updated document
+            var updated_document = await collection.update(document)
+            if updated_document:
+                print("PlayerManager: Player stats updated in Firebase successfully")
+                if leveled_up:
+                    print("PlayerManager: LEVEL UP! New level: " + str(player_level))
+                    print("PlayerManager: New stats - Health: " + str(player_max_health) + ", Damage: " + str(player_damage) + ", Durability: " + str(player_durability))
+            else:
+                print("PlayerManager: Failed to update player stats in Firebase")
         else:
-            print("Failed to update player stats in Firebase")
+            print("PlayerManager: Stats structure not found in document")
     else:
-        print("Failed to get document for player stats update")
+        print("PlayerManager: Failed to get document for player stats update")
 
 # Calculate max health based on level (100 + 10 per level)
 func get_max_health():
@@ -404,32 +436,31 @@ func update_firebase_stats():
     # Get current document to preserve other fields
     var document = await collection.get_doc(user_id)
     if document and !("error" in document.keys() and document.get_value("error")):
-        # Get all current document data
-        var current_data = {}
-        for key in document.keys():
-            if key != "error":
-                current_data[key] = document.get_value(key)
-        
-        # Update player stats in the nested structure
-        if !current_data.has("stats"):
-            current_data["stats"] = {"player": {}}
-        
-        var player_stats = current_data.stats.get("player", {})
-        player_stats.level = player_level
-        player_stats.exp = player_exp
-        player_stats.health = player_max_health
-        player_stats.damage = player_damage
-        player_stats.durability = player_durability
-        
-        current_data.stats.player = player_stats
-        
-        # Save back to Firebase
-        var task = collection.add(user_id, current_data)
-        if task:
-            var result = await task.task_finished
-            if result and !result.error:
-                print("PlayerManager: Successfully updated player stats in Firebase")
+        # Get current stats structure (following mainmenu.gd pattern)
+        var stats = document.get_value("stats")
+        if stats != null and typeof(stats) == TYPE_DICTIONARY:
+            var player_stats = stats.get("player", {})
+            
+            # Update player stats in the nested structure
+            player_stats["level"] = player_level
+            player_stats["exp"] = player_exp
+            player_stats["health"] = player_max_health
+            player_stats["damage"] = player_damage
+            player_stats["durability"] = player_durability
+            
+            # Update the stats structure
+            stats["player"] = player_stats
+            
+            # Update the document with the modified stats structure
+            document.add_or_update_field("stats", stats)
+            
+            # Save the updated document
+            var updated_document = await collection.update(document)
+            if updated_document:
+                print("Player stats updated in Firebase after battle")
             else:
-                print("PlayerManager: Failed to update player stats in Firebase")
+                print("Failed to update player stats in Firebase after battle")
         else:
-            print("PlayerManager: Failed to get document for player stats update")
+            print("Stats structure not found in document for battle update")
+    else:
+        print("Failed to get document for battle stats update")

@@ -449,8 +449,8 @@ func _on_leaderboard_button_pressed():
     get_tree().change_scene_to_file("res://Scenes/Leaderboard.tscn")
 
 func _on_settings_button_pressed():
-    # Placeholder for settings screen
-    pass
+    print("MainMenu: Navigating to settings screen")
+    get_tree().change_scene_to_file("res://Scenes/SettingScene.tscn")
 
 func _on_profile_button_pressed():
     # Show profile popup

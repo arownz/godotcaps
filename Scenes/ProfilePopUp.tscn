@@ -10,7 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://dpejfssp2t44k" path="res://gui/Update/icons/edit name.png" id="7_rwnca"]
 [ext_resource type="Texture2D" uid="uid://d1y2su33nhh8p" path="res://gui/Update/icons/copy UID.png" id="8_ampbo"]
 [ext_resource type="PackedScene" uid="uid://e6bec84rrthm" path="res://Sprites/Animation/DefaultPlayer_Animation.tscn" id="10_ampbo"]
-[ext_resource type="Texture2D" uid="uid://c32gmv4ss8kvw" path="res://gui/Update/UI/ui 5.png" id="10_kmls2"]
+[ext_resource type="Texture2D" uid="uid://rgl03eh75egv" path="res://gui/Update/UI/victory UI.png" id="10_kmls2"]
 [ext_resource type="Texture2D" uid="uid://bt0tigh26flog" path="res://gui/Update/icons/level selection.png" id="11_ampbo"]
 [ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="12_ampbo"]
 [ext_resource type="Texture2D" uid="uid://dy4pabxg81hga" path="res://gui/UI/ui 2.png" id="12_kmls2"]
@@ -363,15 +363,15 @@ text = "100"
 
 [node name="TextureRect" type="TextureRect" parent="ProfileContainer"]
 layout_mode = 0
-offset_left = -13.0
-offset_top = 354.0
-offset_right = 224.0
-offset_bottom = 673.0
+offset_left = -17.0
+offset_top = 356.0
+offset_right = 220.0
+offset_bottom = 649.0
 texture = ExtResource("10_kmls2")
 
 [node name="CharacterArea" type="Node2D" parent="ProfileContainer/TextureRect"]
-position = Vector2(115, 186)
-scale = Vector2(1.21304, 1.21304)
+position = Vector2(113, 170)
+scale = Vector2(0.854814, 0.854814)
 
 [node name="DefaultPlayerAnimation" parent="ProfileContainer/TextureRect/CharacterArea" instance=ExtResource("10_ampbo")]
 position = Vector2(-9.36205, -9.36209)

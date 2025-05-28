@@ -101,6 +101,8 @@ func handle_victory():
 	battle_scene.battle_log_manager.add_message("[color=#4CAF50]Victory! You defeated the enemy and gained " + str(exp_reward) + " experience.[/color]")
 	
 	# Update Firebase with victory data using COMPLETED stage info
+	# Note: Player stats (exp, level, health, damage, durability) are updated by player_manager.gd
+	# We only update progression and enemy count here
 	_update_firebase_after_victory(exp_reward, completed_dungeon, completed_stage)
 	
 	# DO NOT advance stage here - leave that for continue button
@@ -115,8 +117,8 @@ func handle_victory():
 	# Show victory screen - pass completed stage info and enemy name
 	show_endgame_screen("Victory", exp_reward, completed_dungeon, completed_stage, enemy_name)
 
-# Direct Firebase update after victory
-func _update_firebase_after_victory(exp_gained: int, completed_dungeon_num: int, completed_stage_num: int):
+# Direct Firebase update after victory - only updates progression, not player stats
+func _update_firebase_after_victory(_exp_gained: int, completed_dungeon_num: int, completed_stage_num: int):
 	if !Firebase.Auth.auth:
 		return
 		
@@ -131,25 +133,6 @@ func _update_firebase_after_victory(exp_gained: int, completed_dungeon_num: int,
 			if key != "error":
 				current_data[key] = document.get_value(key)
 		
-		# Get current player stats
-		var stats = current_data.get("stats", {})
-		var player_stats = stats.get("player", {})
-		var current_exp = player_stats.get("exp", 0)
-		var current_level = player_stats.get("level", 1)
-		
-		# Calculate new experience and level
-		var new_exp = current_exp + exp_gained
-		var new_level = current_level
-		
-		# Handle level ups (100 exp per level)
-		var exp_per_level = 100
-		while new_exp >= exp_per_level:
-			new_exp -= exp_per_level
-			new_level += 1
-			
-			# Note: Stat increases are handled by player_manager.gd add_experience() method
-			# No need to duplicate level up logic here
-		
 		# Get current stages completed for this dungeon using completed stage numbers
 		var dungeons_data = current_data.get("dungeons", {})
 		var completed_data = dungeons_data.get("completed", {})
@@ -157,11 +140,9 @@ func _update_firebase_after_victory(exp_gained: int, completed_dungeon_num: int,
 		var dungeon_data = completed_data.get(dungeon_key, {"completed": false, "stages_completed": 0})
 		var current_stages_completed = dungeon_data.get("stages_completed", 0)
 		
-		# Prepare update data - only update exp and level, not stats
-		# Stats are properly managed by player_manager.gd
+		# Prepare update data - ONLY update progression, not player stats
+		# Player stats (exp, level, health, damage, durability) are handled by player_manager.gd
 		var update_data = {
-			"stats.player.exp": new_exp,
-			"stats.player.level": new_level,
 			"dungeons.progress.enemies_defeated": dungeons_data.get("progress", {}).get("enemies_defeated", 0) + 1
 		}
 		
