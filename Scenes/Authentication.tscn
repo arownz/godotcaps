@@ -546,7 +546,6 @@ text = "Lexia v1.0"
 horizontal_alignment = 1
 
 [node name="AdminButton" type="TextureButton" parent="."]
-modulate = Color(1, 1, 1, 0.5)
 layout_mode = 0
 offset_left = 41.0
 offset_top = 725.0
