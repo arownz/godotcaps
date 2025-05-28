@@ -88,12 +88,11 @@ func handle_victory():
 	var completed_dungeon = battle_scene.dungeon_manager.dungeon_num
 	var completed_stage = battle_scene.dungeon_manager.stage_num
 	
-	# Calculate experience reward - fix the enemy_level access
-	var exp_reward = 10  # Base experience
-	if battle_scene.enemy_manager.has_method("get_enemy_level"):
-		exp_reward = battle_scene.enemy_manager.get_enemy_level() * 10
-	elif battle_scene.enemy_manager.get("enemy_level"):
-		exp_reward = battle_scene.enemy_manager.enemy_level * 10
+	# Calculate experience reward - use the actual exp_reward from enemy resource
+	var exp_reward = battle_scene.enemy_manager.exp_reward
+	if exp_reward <= 0:
+		# Fallback calculation if exp_reward not set properly
+		exp_reward = battle_scene.enemy_manager.enemy_level * 2  # Reduced from 10 to 2 for balance
 	
 	# Award experience to player
 	battle_scene.player_manager.add_experience(exp_reward)
@@ -110,8 +109,11 @@ func handle_victory():
 	# Wait a moment for the message to be seen
 	await battle_scene.get_tree().create_timer(1.0).timeout
 	
-	# Show victory screen - pass completed stage info
-	show_endgame_screen("Victory", exp_reward, completed_dungeon, completed_stage)
+	# Get enemy name for endgame screen
+	var enemy_name = battle_scene.enemy_manager.enemy_name
+	
+	# Show victory screen - pass completed stage info and enemy name
+	show_endgame_screen("Victory", exp_reward, completed_dungeon, completed_stage, enemy_name)
 
 # Direct Firebase update after victory
 func _update_firebase_after_victory(exp_gained: int, completed_dungeon_num: int, completed_stage_num: int):
@@ -134,9 +136,6 @@ func _update_firebase_after_victory(exp_gained: int, completed_dungeon_num: int,
 		var player_stats = stats.get("player", {})
 		var current_exp = player_stats.get("exp", 0)
 		var current_level = player_stats.get("level", 1)
-		var current_health = player_stats.get("health", 100)
-		var current_damage = player_stats.get("damage", 10)
-		var current_durability = player_stats.get("durability", 5)
 		
 		# Calculate new experience and level
 		var new_exp = current_exp + exp_gained
@@ -148,10 +147,8 @@ func _update_firebase_after_victory(exp_gained: int, completed_dungeon_num: int,
 			new_exp -= exp_per_level
 			new_level += 1
 			
-			# Increase stats on level up
-			current_health += 5
-			current_damage += 3
-			current_durability += 4
+			# Note: Stat increases are handled by player_manager.gd add_experience() method
+			# No need to duplicate level up logic here
 		
 		# Get current stages completed for this dungeon using completed stage numbers
 		var dungeons_data = current_data.get("dungeons", {})
@@ -160,13 +157,11 @@ func _update_firebase_after_victory(exp_gained: int, completed_dungeon_num: int,
 		var dungeon_data = completed_data.get(dungeon_key, {"completed": false, "stages_completed": 0})
 		var current_stages_completed = dungeon_data.get("stages_completed", 0)
 		
-		# Prepare update data
+		# Prepare update data - only update exp and level, not stats
+		# Stats are properly managed by player_manager.gd
 		var update_data = {
 			"stats.player.exp": new_exp,
 			"stats.player.level": new_level,
-			"stats.player.health": current_health,
-			"stats.player.damage": current_damage,
-			"stats.player.durability": current_durability,
 			"dungeons.progress.enemies_defeated": dungeons_data.get("progress", {}).get("enemies_defeated", 0) + 1
 		}
 		
@@ -232,10 +227,13 @@ func handle_defeat():
 	# Wait a moment for the message to be seen
 	await battle_scene.get_tree().create_timer(1.0).timeout
 	
+	# Get enemy name for endgame screen
+	var enemy_name = battle_scene.enemy_manager.enemy_name
+	
 	# Show defeat screen
-	show_endgame_screen("Defeat")
+	show_endgame_screen("Defeat", 0, 0, 0, enemy_name)
 
-func show_endgame_screen(result_type: String, exp_reward: int = 0, completed_dungeon: int = 0, completed_stage: int = 0):
+func show_endgame_screen(result_type: String, exp_reward: int = 0, completed_dungeon: int = 0, completed_stage: int = 0, enemy_name: String = ""):
 	# Prevent multiple endgame screens
 	if endgame_screen_active:
 		print("BattleManager: Endgame screen already active, preventing duplicate")
@@ -267,7 +265,7 @@ func show_endgame_screen(result_type: String, exp_reward: int = 0, completed_dun
 	# Use completed stage info if provided, otherwise current dungeon manager values
 	var dungeon_num = completed_dungeon if completed_dungeon > 0 else battle_scene.dungeon_manager.dungeon_num
 	var stage_num = completed_stage if completed_stage > 0 else battle_scene.dungeon_manager.stage_num
-	endgame_scene.setup_endgame(result_type, dungeon_num, stage_num, exp_reward)
+	endgame_scene.setup_endgame(result_type, dungeon_num, stage_num, exp_reward, enemy_name)
 	
 	# Connect EndgameScreen signals
 	endgame_scene.restart_battle.connect(_on_restart_battle)
@@ -277,6 +275,10 @@ func show_endgame_screen(result_type: String, exp_reward: int = 0, completed_dun
 func _on_restart_battle():
 	# Reset endgame screen flag
 	endgame_screen_active = false
+	
+	# Heal player to full health on restart
+	if battle_scene and battle_scene.player_manager:
+		battle_scene.player_manager.heal_to_full()
 	
 	# Reset game state
 	battle_scene.dungeon_manager.reset()
@@ -295,6 +297,10 @@ func _on_continue_battle():
 	# Reset endgame screen flag
 	endgame_screen_active = false
 	
+	# Heal player to full health on stage progression
+	if battle_scene and battle_scene.player_manager:
+		battle_scene.player_manager.heal_to_full()
+	
 	# Check if there are more stages in this dungeon
 	var current_stage = battle_scene.dungeon_manager.stage_num
 	var max_stages = 5
@@ -302,6 +308,9 @@ func _on_continue_battle():
 	if current_stage < max_stages:
 		# NOW advance to next stage (only when continuing)
 		battle_scene.dungeon_manager.advance_stage()
+		
+		# IMPORTANT: Update DungeonGlobals with the new stage info before reloading
+		DungeonGlobals.set_battle_progress(battle_scene.dungeon_manager.dungeon_num, battle_scene.dungeon_manager.stage_num)
 		
 		# Update current stage in Firebase to track progress
 		_update_current_stage_in_firebase(battle_scene.dungeon_manager.stage_num)

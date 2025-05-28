@@ -213,15 +213,6 @@ func handle_challenge_failed():
 	if enemy_skill_label:
 		enemy_skill_label.visible = false
 	
-	# Check if player is defeated
-	if player_manager.player_health <= 0:
-		battle_scene.battle_active = false
-		battle_log_manager.add_message("[color=#EB5E4B]You have been defeated by the " + enemy_manager.enemy_name + "![/color]")
-		# Check if endgame screen is not already active
-		if not battle_scene.battle_manager.endgame_screen_active:
-			battle_scene.battle_manager.show_endgame_screen("Defeat")
-		return
-	
 	# Resume battle
 	_resume_battle()
 
@@ -254,11 +245,7 @@ func handle_challenge_cancelled():
 	if player_manager.player_health <= 0:
 		battle_scene.battle_active = false
 		battle_log_manager.add_message("[color=#EB5E4B]You have been defeated by the " + enemy_manager.enemy_name + "![/color]")
-		# Check if endgame screen is not already active
-		if not battle_scene.battle_manager.endgame_screen_active:
-			battle_scene.battle_manager.show_endgame_screen("Defeat")
-		return
-	
+		
 	# Resume battle
 	_resume_battle()
 

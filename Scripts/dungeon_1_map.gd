@@ -295,7 +295,7 @@ func _update_stage_details(stage_num):
 	$StageDetails/RightContainer/SkillName.text = enemy_data["skill"]
 	
 	# Update experience reward if ExpRewardValue node exists
-	var exp_reward_node = $StageDetails.get_node_or_null("ExpRewardValue")
+	var exp_reward_node = $StageDetails/RightContainer.get_node_or_null("ExpRewardValue")
 	if exp_reward_node:
 		exp_reward_node.text = str(enemy_data["exp_reward"]) + " EXP"
 	

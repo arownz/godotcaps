@@ -349,14 +349,6 @@ func _auto_battle_turn():
 	# Give a brief pause for animation
 	await get_tree().create_timer(0.8).timeout
 	
-	# Check if player is defeated
-	if player_manager.player_health <= 0:
-		battle_active = false
-		# Check if endgame screen is not already active
-		if not battle_manager.endgame_screen_active:
-			battle_manager.show_endgame_screen("Defeat")
-		return
-	
 	# Check if enemy skill is ready
 	if enemy_manager.enemy_skill_meter >= enemy_manager.enemy_skill_threshold:
 		await get_tree().create_timer(0.5).timeout

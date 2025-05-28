@@ -271,7 +271,7 @@ func _update_stage_details(stage_num):
 	$StageDetails/RightContainer/SkillName.text = enemy_data["skill"]
 	
 	# Update experience reward if ExpRewardValue node exists
-	var exp_reward_node = $StageDetails.get_node_or_null("ExpRewardValue")
+	var exp_reward_node = $StageDetails/RightContainer.get_node_or_null("ExpRewardValue")
 	if exp_reward_node:
 		exp_reward_node.text = str(enemy_data["exp_reward"]) + " EXP"
 	
@@ -400,11 +400,11 @@ func _load_enemy_resources():
 
 # Get stage-based multiplier for enemy stats
 func _get_stage_multiplier(stage_num: int) -> float:
-	# Base multiplier increases with stage progression
-	var stage_multiplier = 1.0 + (stage_num - 1) * 0.25  # 1.0, 1.25, 1.5, 1.75, 2.0
+	# Base multiplier increases with stage progression - more aggressive scaling
+	var stage_multiplier = 1.0 + (stage_num - 1) * 0.5  # 1.0, 1.5, 2.0, 2.5, 3.0
 	
-	# Additional multiplier for higher dungeons
-	var dungeon_multiplier = 1.0 + (dungeon_num - 1) * 0.5  # 1.0, 1.5, 2.0
+	# Additional multiplier for higher dungeons - higher scaling
+	var dungeon_multiplier = 1.0 + (dungeon_num - 1) * 1.0  # 1.0, 2.0, 3.0
 	
 	return stage_multiplier * dungeon_multiplier
 

@@ -287,15 +287,24 @@ func add_experience(exp_amount):
         
         # Update player stats in Firestore if available
         if Engine.has_singleton("Firebase") and Firebase.Auth and Firebase.Auth.auth:
-            _update_firebase_stats(true)
-            
-    elif exp_amount > 0:
-        # Just gained exp without leveling
-        if Engine.has_singleton("Firebase") and Firebase.Auth and Firebase.Auth.auth:
-            _update_firebase_stats(false)
+            await _update_player_stats_in_firebase(leveled_up)
 
-# Helper function to update stats in Firebase
-func _update_firebase_stats(leveled_up = false):
+# Heal player to full health
+func heal_to_full():
+    print("PlayerManager: Healing player to full health")
+    player_health = player_max_health
+    
+    # Update UI
+    if battle_scene and battle_scene.ui_manager:
+        battle_scene.ui_manager.update_player_health()
+    
+    # Emit signal
+    emit_signal("player_health_changed", player_health, player_max_health)
+    
+    print("PlayerManager: Player healed - Health: " + str(player_health) + "/" + str(player_max_health))
+
+# Update player stats in Firebase after level up
+func _update_player_stats_in_firebase(leveled_up: bool = false):
     if !Firebase.Auth.auth:
         return
         
@@ -422,3 +431,5 @@ func update_firebase_stats():
                 print("PlayerManager: Successfully updated player stats in Firebase")
             else:
                 print("PlayerManager: Failed to update player stats in Firebase")
+        else:
+            print("PlayerManager: Failed to get document for player stats update")

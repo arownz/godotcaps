@@ -20,23 +20,33 @@ func _ready():
 	# Hide continue button by default
 	$ResultPanel/VBoxContainer/ButtonContainer/ContinueButton.visible = false
 
-func set_result(result, dungeon_num: int = 1, stage_num: int = 1, exp_reward: int = 0):
+func set_result(result, dungeon_num: int = 1, stage_num: int = 1, exp_reward: int = 0, enemy_name: String = ""):
 	if result == "Victory":
 		$ResultPanel/VBoxContainer/ResultLabel.text = "Victory!"
-		var message = "You defeated stage " + str(stage_num) + " of dungeon " + str(dungeon_num) + "!"
+		var message = ""
+		if enemy_name != "":
+			message = "You defeated " + enemy_name + "!"
+		else:
+			message = "You defeated the enemy!"
+		
 		if exp_reward > 0:
 			message += " You gained " + str(exp_reward) + " EXP!"
 		$ResultPanel/VBoxContainer/MessageLabel.text = message
 		$ResultPanel/VBoxContainer/ResultLabel.add_theme_color_override("font_color", Color(0.2, 0.8, 0.2))
 	else:
 		$ResultPanel/VBoxContainer/ResultLabel.text = "Defeat"
-		$ResultPanel/VBoxContainer/MessageLabel.text = "You were defeated by the enemy..."
+		var message = ""
+		if enemy_name != "":
+			message = "You were defeated by " + enemy_name + ". You did not gain a reward."
+		else:
+			message = "You were defeated by the enemy. You did not gain a reward."
+		$ResultPanel/VBoxContainer/MessageLabel.text = message
 		$ResultPanel/VBoxContainer/ResultLabel.add_theme_color_override("font_color", Color(0.8, 0.2, 0.2))
 
 # Missing function that was causing the crash - now implemented
-func setup_endgame(result_type: String, dungeon_num: int = 1, stage_num: int = 1, exp_reward: int = 0):
+func setup_endgame(result_type: String, dungeon_num: int = 1, stage_num: int = 1, exp_reward: int = 0, enemy_name: String = ""):
 	print("EndgameScreen: Setting up endgame with result: " + result_type)
-	set_result(result_type, dungeon_num, stage_num, exp_reward)
+	set_result(result_type, dungeon_num, stage_num, exp_reward, enemy_name)
 	
 	# For victory, enable continue button if there are more stages
 	if result_type == "Victory":
@@ -51,7 +61,9 @@ func setup_endgame(result_type: String, dungeon_num: int = 1, stage_num: int = 1
 func set_continue_enabled(enabled):
 	$ResultPanel/VBoxContainer/ButtonContainer/ContinueButton.visible = enabled
 	if enabled:
-		$ResultPanel/VBoxContainer/MessageLabel.text = "You defeated the enemy! Continue to the next stage?"
+		# The message is already set by set_result, just show continue question
+		var current_text = $ResultPanel/VBoxContainer/MessageLabel.text
+		$ResultPanel/VBoxContainer/MessageLabel.text = current_text + " Continue to the next stage?"
 
 func _on_restart_button_pressed():
 	var tween = create_tween()

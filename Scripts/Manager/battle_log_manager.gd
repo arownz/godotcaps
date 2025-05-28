@@ -33,14 +33,14 @@ func _init(scene):
 	battle_scene = scene
 
 func _ready():
-	# Get reference to the battle log container
+	# Get reference to the battle log container - this is the actual container we use
 	battle_log_container = battle_scene.get_node("MainContainer/RightContainer/MarginContainer/VBoxContainer/BattleLogContainer/ScrollContainer/LogsContainer")
 	
-	# Find battle log UI
-	battle_log = get_node_or_null("../BattleUI/BattleLog")
+	# Use the LogsContainer directly as our log entries container
+	log_entries_container = battle_log_container
 	
-	if battle_log:
-		log_entries_container = battle_log.get_node_or_null("VBoxContainer/LogEntries")
+	print("BattleLogManager: Container found: ", log_entries_container != null)
+	print("BattleLogManager: Container type: ", log_entries_container.get_class() if log_entries_container else "null")
 	
 	# Adding a test entry
 	add_log_entry("[color=#EB5E4B]Battle started[/color]", "system")
@@ -74,41 +74,6 @@ func add_message(text):
 	
 	# Use the consolidated logging system
 	add_log_entry(text, message_type)
-	
-	# Legacy panel creation for backward compatibility - only if log_entries_container is not available
-	if not log_entries_container and battle_log_container:
-		# Create a panel for the background
-		var log_entry_panel = PanelContainer.new()
-		
-		# Add custom style for the background
-		var style = StyleBoxTexture.new()
-		style.texture = load("res://gui/Update/UI/ui_2.png")
-		# Fix: Use content_margin_* properties instead of margin_*
-		style.content_margin_left = 5
-		style.content_margin_right = 5
-		style.content_margin_top = 5
-		style.content_margin_bottom = 5
-		log_entry_panel.add_theme_stylebox_override("panel", style)
-		
-		# Create the text label
-		var log_entry = RichTextLabel.new()
-		log_entry.bbcode_enabled = true
-		log_entry.fit_content = true
-		log_entry.scroll_active = false
-		log_entry.custom_minimum_size = Vector2(0, 30)
-		
-		# Set the text
-		log_entry.text = text
-		
-		# Add the label to the panel
-		log_entry_panel.add_child(log_entry)
-		
-		# Add the panel to the log container
-		battle_log_container.add_child(log_entry_panel)
-		
-		# Scroll to the bottom if user hasn't manually scrolled
-		if !user_scrolled:
-			_scroll_to_bottom()
 
 func add_cancellation_message():
 	# Add a specific message for challenge cancellation
@@ -192,6 +157,18 @@ func update_ui() -> void:
 	
 	# Add entries from newest to oldest
 	for entry in entries:
+		# Create a panel container for each log entry with ui_2.png background
+		var log_entry_panel = PanelContainer.new()
+		
+		# Create and apply the ui_2.png style
+		var style = StyleBoxTexture.new()
+		style.texture = load("res://gui/Update/UI/ui_2.png")
+		style.content_margin_left = 8
+		style.content_margin_right = 8
+		style.content_margin_top = 6
+		style.content_margin_bottom = 6
+		log_entry_panel.add_theme_stylebox_override("panel", style)
+		
 		# Use RichTextLabel to support bbcode in original text
 		var label = RichTextLabel.new()
 		label.bbcode_enabled = true
@@ -211,18 +188,34 @@ func update_ui() -> void:
 			label.text = entry.text
 		
 		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		label.add_theme_font_override("font", preload("res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf"))
-		label.add_theme_font_size_override("font_size", 16)
 		
-		# Add to container
-		log_entries_container.add_child(label)
+		# Apply dyslexia-friendly font - using preload to ensure it's loaded
+		var dyslexia_font = preload("res://Fonts/dyslexiafont/OpenDyslexic-Bold-Italic.otf")
+		print("BattleLogManager: Applying font: ", dyslexia_font != null)
+		label.add_theme_font_override("font", dyslexia_font)
+		label.add_theme_font_override("normal_font", dyslexia_font)
+		label.add_theme_font_override("bold_font", dyslexia_font)
+		label.add_theme_font_override("italics_font", dyslexia_font)
+		label.add_theme_font_override("bold_italics_font", dyslexia_font)
+		label.add_theme_font_override("mono_font", dyslexia_font)
+		label.add_theme_font_size_override("font_size", 16)
+		label.add_theme_font_size_override("normal_font_size", 16)
+		
+		print("BattleLogManager: Font applied to label: ", label.get_theme_font("font") != null)
+		
+		# Add the label to the panel
+		log_entry_panel.add_child(label)
+		
+		# Add the panel (with label inside) to the container
+		log_entries_container.add_child(log_entry_panel)
 	
 	# Make sure the newest entry is visible
 	if log_entries_container.get_child_count() > 0:
-		var scroll = log_entries_container.get_parent()
-		if scroll is ScrollContainer:
+		# Get the ScrollContainer from our battle_scene reference
+		var scroll_container = battle_scene.get_node("MainContainer/RightContainer/MarginContainer/VBoxContainer/BattleLogContainer/ScrollContainer")
+		if scroll_container is ScrollContainer:
 			await get_tree().process_frame
-			scroll.scroll_vertical = scroll.get_v_scroll_bar().max_value
+			scroll_container.scroll_vertical = scroll_container.get_v_scroll_bar().max_value
 
 # Clear all log entries
 func clear_log() -> void:
