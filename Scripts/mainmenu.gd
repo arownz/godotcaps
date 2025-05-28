@@ -14,10 +14,15 @@ var hover_buttons = []
 
 # Add energy recovery system variables
 var max_energy = 20
-var energy_recovery_rate = 180  # 3 minutes in seconds
+var energy_recovery_rate = 240  # 4 minutes in seconds
 var energy_recovery_amount = 4  # Amount of energy recovered per interval
 var last_energy_update_time = 0
 var energy_recovery_timer = null
+
+# Add usage time tracking system variables
+var usage_time_start = 0.0
+var usage_time_timer = null
+var usage_time_update_interval = 30.0  # Update every 30 seconds
 
 func _ready():
     
@@ -40,6 +45,16 @@ func _ready():
     energy_process_timer.timeout.connect(_process_energy_recovery)
     energy_process_timer.autostart = true
     add_child(energy_process_timer)
+    
+    # Setup usage time tracking timer
+    usage_time_timer = Timer.new()
+    usage_time_timer.wait_time = usage_time_update_interval
+    usage_time_timer.timeout.connect(_update_usage_time_in_firebase)
+    usage_time_timer.autostart = false  # Don't start automatically
+    add_child(usage_time_timer)
+    
+    # Start usage time tracking when main menu loads
+    _start_usage_time_tracking()
     
     # Load user data - with await
     await load_user_data()
@@ -480,7 +495,81 @@ func _on_profile_popup_closed():
 
 func _on_logout_button_pressed():
     print("Logging out")
+    # Stop usage time tracking before logout
+    _stop_usage_time_tracking()
     Firebase.Auth.logout()
     # Add a short delay before changing scenes
     await get_tree().create_timer(0.2).timeout
     get_tree().change_scene_to_file("res://Scenes/Authentication.tscn")
+
+# ===== Usage Time Tracking System =====
+func _start_usage_time_tracking():
+    # Start tracking usage time when user enters main menu
+    usage_time_start = Time.get_unix_time_from_system()
+    if usage_time_timer:
+        usage_time_timer.start()
+    print("DEBUG: Started usage time tracking at: " + str(usage_time_start))
+
+func _stop_usage_time_tracking():
+    # Stop tracking usage time when user logs out or leaves main menu
+    if usage_time_timer:
+        usage_time_timer.stop()
+    
+    # Update usage time one final time before stopping
+    _update_usage_time_in_firebase()
+    print("DEBUG: Stopped usage time tracking")
+
+func _update_usage_time_in_firebase():
+    # Update usage_time in Firebase following energy system pattern
+    if !Firebase.Auth.auth or !Firebase.Auth.auth.has("localid"):
+        print("DEBUG: No auth data, skipping usage time update")
+        return
+    
+    if usage_time_start <= 0:
+        print("DEBUG: Usage time tracking not started, skipping update")
+        return
+    
+    var current_time = Time.get_unix_time_from_system()
+    var session_time = current_time - usage_time_start
+    
+    # Reset start time for next interval
+    usage_time_start = current_time
+    
+    print("DEBUG: Updating usage time with session time: " + str(session_time))
+    
+    var user_id = Firebase.Auth.auth.localid
+    var collection = Firebase.Firestore.collection("dyslexia_users")
+    
+    # Get the document first - following exact energy system pattern
+    var document = await collection.get_doc(user_id)
+    if document and !("error" in document.keys() and document.get_value("error")):
+        # Handle both profile structure and stats structure
+        var profile_data = document.get_value("profile")
+        if profile_data != null and typeof(profile_data) == TYPE_DICTIONARY:
+            var current_usage_time = profile_data.get("usage_time", 0.0)
+            var new_usage_time = current_usage_time + session_time
+            profile_data["usage_time"] = new_usage_time
+            
+            # Update the document field
+            document.add_or_update_field("profile", profile_data)
+            print("DEBUG: Updated usage time in profile structure: " + str(current_usage_time) + " -> " + str(new_usage_time))
+        else:
+            # Fallback to root level for older accounts
+            var current_usage_time = document.get_value("usage_time") if document.get_value("usage_time") != null else 0.0
+            var new_usage_time = current_usage_time + session_time
+            document.add_or_update_field("usage_time", new_usage_time)
+            print("DEBUG: Updated usage time in root structure: " + str(current_usage_time) + " -> " + str(new_usage_time))
+        
+        # Update the document using the correct method
+        var updated_document = await collection.update(document)
+        if updated_document:
+            print("DEBUG: Usage time successfully updated in Firebase")
+        else:
+            print("ERROR: Failed to update usage time in Firebase")
+    else:
+        print("ERROR: Failed to get document for usage time update")
+
+# Override the scene exit to stop usage time tracking
+func _notification(what):
+    if what == NOTIFICATION_WM_CLOSE_REQUEST or what == NOTIFICATION_PREDELETE:
+        _stop_usage_time_tracking()

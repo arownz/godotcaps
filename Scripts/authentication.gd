@@ -5,6 +5,8 @@ var login_password_visible = false
 var reg_password_visible = false
 var confirm_password_visible = false
 
+
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	Firebase.Auth.login_succeeded.connect(on_login_succeeded)
@@ -32,10 +34,6 @@ func _ready():
 func check_existing_auth():
 	if Firebase.Auth.check_auth_file():
 		show_message("You are already logged in", true)
-		
-		# Update last_login for auto-login scenario
-		_update_last_login_on_auto_login()
-		
 		await get_tree().create_timer(0.5).timeout
 		get_tree().change_scene_to_file("res://Scenes/MainMenu.tscn")
 	elif OS.has_feature('web'):
@@ -237,7 +235,7 @@ func _on_register_button_pressed():
 	
 	# Validate password
 	if password.strip_edges().is_empty() or password.length() < 6:
-		$MarginContainer/ContentContainer/RightPanel/MainContainer	/VBoxContainer/TabContainer/Register/RegPasswordErrorLabel.visible = true
+		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegPasswordErrorLabel.visible = true
 		has_error = true
 	
 	# Validate confirm password
@@ -308,19 +306,19 @@ func get_web_redirect_uri():
 func _on_forgot_password_button_pressed():
 	# Switch to the forgot password tab
 	$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer.current_tab = 2
-	$MarginContainer/ContentContainer/RightPanel/MainContainer/	VBoxContainer/TabContainer/ForgotPassword/ResetEmailLineEdit.grab_focus()
+	$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword/ResetEmailLineEdit.grab_focus()
 	
 	# Copy email address from login tab if available
-	var login_email = $MarginContainer/ContentContainer/RightPanel/MainContainer/	VBoxContainer/TabContainer/Login/EmailLineEdit.text
+	var login_email = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/EmailLineEdit.text
 	if not login_email.strip_edges().is_empty():
-		$MarginContainer/ContentContainer/RightPanel/MainContainer/	VBoxContainer/TabContainer/ForgotPassword/ResetEmailLineEdit.text = login_email
+		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword/ResetEmailLineEdit.text = login_email
 
 func _on_back_to_login_button_pressed():
 	# Switch back to login tab
-	$MarginContainer/ContentContainer/RightPanel/MainContainer/	VBoxContainer/TabContainer.current_tab = 0
+	$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer.current_tab = 0
 
 func _on_reset_password_button_pressed():
-	var email = $MarginContainer/ContentContainer/RightPanel/MainContainer	/VBoxContainer/TabContainer/ForgotPassword/ResetEmailLineEdit.text
+	var email = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword/ResetEmailLineEdit.text
 	
 	# Validate email
 	if email.strip_edges().is_empty() or not "@" in email or not "." in email:
@@ -335,7 +333,7 @@ func _on_reset_password_button_pressed():
 	
 	# Switch back to login tab after a short delay
 	await get_tree().create_timer(1.0).timeout
-	$MarginContainer/ContentContainer/RightPanel/MainContainer	/VBoxContainer/TabContainer.current_tab = 0
+	$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer.current_tab = 0
 
 # ===== Firebase Authentication Callbacks =====
 func on_login_succeeded(auth):
@@ -364,92 +362,194 @@ func on_login_succeeded(auth):
 	
 	var current_time = Time.get_datetime_string_from_system(false, true)
 	
-	# First check if user exists, then update last_login
-	print("DEBUG: Checking if user exists: " + user_id)
-	var get_task = collection.get(user_id)
-	if get_task != null:
-		var get_result = await get_task.task_finished
+	# First check if this user already exists in the database
+	var task = collection.get(user_id)
+	if task == null:
+		# Handle task creation failure
+		print("Failed to create task for user check")
+		# Create a new user anyway
+		var display_name = auth.get("displayname", "")
+		var email = auth.get("email", "")
 		
-		if get_result != null and not get_result.error and get_result.doc_fields != null:
-			# User exists - update last_login in the profile section
-			print("DEBUG: User exists, updating last_login to: " + current_time)
-			var current_data = get_result.doc_fields
-			
-			# Ensure profile section exists
-			if not current_data.has("profile"):
-				current_data["profile"] = {}
-			
-			# Update last_login in the correct nested structure
-			current_data["profile"]["last_login"] = current_time
-			
-			# Use add() to update the entire document (this is how Firestore works in this plugin)
-			collection.add(user_id, current_data)
-			
-			# Navigate to main menu - user exists and was updated
-			navigate_to_main_menu(is_returning_from_google)
-			return
-		else:
-			print("DEBUG: User doesn't exist or error occurred. Creating new user.")
-	
-	# If update failed, user doesn't exist - create new user
-	print("DEBUG: Creating new user document")
-	var display_name = auth.get("displayname", "")
-	var email = auth.get("email", "")
-	
-	# Create new user document with default values
-	var user_doc = {
-		"profile": {
-			"username": display_name,
-			"email": email,
-			"birth_date": "",
-			"age": 0,
-			"profile_picture": "default",
-			"rank": "bronze",
-			"created_at": current_time,
-			"last_login": current_time
-		},
-		"stats": {
-			"player": {
-				"level": 1,
-				"exp": 0,
-				"health": 100,
-				"damage": 10,
-				"durability": 5,
-				"energy": 20,
-				"skin": "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
-			}
-		},
-		"word_challenges": {
-			"completed": {
-				"stt": 0,
-				"whiteboard": 0
+		# Create new user document with default values
+		var user_doc = {
+			"profile": {
+				"username": display_name,
+				"email": email,
+				"birth_date": "",
+				"age": 0,
+				"profile_picture": "default",
+				"rank": "bronze",
+				"created_at": current_time,
+				"usage_time": 0,
+				"session": 1,
+				"last_session_date": Time.get_date_string_from_system()
 			},
-			"failed": {
-				"stt": 0,
-				"whiteboard": 0
-			}
-		},
-		"dungeons": {
-			"completed": {
-				"1": {"completed": false, "stages_completed": 0},
-				"2": {"completed": false, "stages_completed": 0},
-				"3": {"completed": false, "stages_completed": 0}
+			"stats": {
+				"player": {
+					"level": 1,
+					"exp": 0,
+					"health": 100,
+					"damage": 10,
+					"durability": 5,
+					"energy": 20,
+					"skin": "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
+				}
 			},
-			"progress": {
-				"enemies_defeated": 0,
-				"current_dungeon": 1
+			"word_challenges": {
+				"completed": {
+					"stt": 0,
+					"whiteboard": 0
+				},
+				"failed": {
+					"stt": 0,
+					"whiteboard": 0
+				}
+			},
+			"dungeons": {
+				"completed": {
+					"1": {"completed": false, "stages_completed": 0},
+					"2": {"completed": false, "stages_completed": 0},
+					"3": {"completed": false, "stages_completed": 0}
+				},
+				"progress": {
+					"enemies_defeated": 0,
+					"current_dungeon": 1,
+				}
 			}
 		}
-	}
 
-	# Save the user data
-	collection.add(user_id, user_doc)
+		# Save the user data
+		collection.add(user_id, user_doc)
+		
+		# Navigate to main menu
+		navigate_to_main_menu(is_returning_from_google)
+	else:
+		# Add proper error handling
+		var result = await task.task_finished
+		
+		if result == null or result.error:
+			print("Error handling Firestore task")
+			# Fallback - create a new user anyway
+			var display_name = auth.get("displayname", "")
+			var email = auth.get("email", "")
+			
+			# Create new user document with default values
+			var user_doc = {
+				"profile": {
+					"username": display_name,
+					"email": email,
+					"birth_date": "",
+					"age": 0,
+					"profile_picture": "default",
+					"rank": "bronze",
+					"created_at": current_time,
+					"usage_time": 0,
+					"session": 1,
+					"last_session_date": Time.get_date_string_from_system()
+				},
+				"stats": {
+					"player": {
+						"level": 1,
+						"exp": 0,
+						"health": 100,
+						"damage": 10,
+						"durability": 5,
+						"energy": 20,
+						"skin": "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
+					}
+				},
+				"word_challenges": {
+					"completed": {
+						"stt": 0,
+						"whiteboard": 0
+					},
+					"failed": {
+						"stt": 0,
+						"whiteboard": 0
+					}
+				},
+				"dungeons": {
+					"completed": {
+						"1": {"completed": false, "stages_completed": 0},
+						"2": {"completed": false, "stages_completed": 0},
+						"3": {"completed": false, "stages_completed": 0}
+					},
+					"progress": {
+						"enemies_defeated": 0,
+						"current_dungeon": 1, }
+				}
+			}
+			
+			collection.add(user_id, user_doc)
+			
+			# Navigate to main menu
+			navigate_to_main_menu(is_returning_from_google)
+		else:
+			# Existing user - update usage_time and increment session per day
+			if result.doc_fields != null:
+				var current_data = result.doc_fields
+				var today_date = Time.get_date_string_from_system()  # Format: YYYY-MM-DD
+				
+				# Update profile fields for usage tracking
+				if current_data.has("profile") and typeof(current_data["profile"]) == TYPE_DICTIONARY:
+					var profile = current_data["profile"]
+					# Initialize usage_time if it doesn't exist (migration from old last_login)
+					if not profile.has("usage_time"):
+						profile["usage_time"] = 0
+					
+					# Handle daily session tracking
+					if not profile.has("session"):
+						profile["session"] = 1
+						profile["last_session_date"] = today_date
+					elif not profile.has("last_session_date") or profile.get("last_session_date", "") != today_date:
+						# Increment session count only if user hasn't played today
+						profile["session"] = profile.get("session", 0) + 1
+						profile["last_session_date"] = today_date
+						print("DEBUG: Session incremented to " + str(profile["session"]) + " for new day: " + today_date)
+					else:
+						print("DEBUG: User already played today (" + today_date + "), session count remains: " + str(profile.get("session", 0)))
+				else:
+					# Handle old structure or missing profile
+					if not current_data.has("usage_time"):
+						current_data["usage_time"] = 0
+					
+					# Handle daily session tracking for old structure
+					if not current_data.has("session"):
+						current_data["session"] = 1
+						current_data["last_session_date"] = today_date
+					elif not current_data.has("last_session_date") or current_data.get("last_session_date", "") != today_date:
+						# Increment session count only if user hasn't played today
+						current_data["session"] = current_data.get("session", 0) + 1
+						current_data["last_session_date"] = today_date
+						print("DEBUG: Session incremented to " + str(current_data["session"]) + " for new day: " + today_date)
+					else:
+						print("DEBUG: User already played today (" + today_date + "), session count remains: " + str(current_data.get("session", 0)))
+
+				# Make sure dungeons exist
+				if not current_data.has("dungeons"):
+					current_data["dungeons"] = {
+						"1": {"completed": false, "stages_completed": 0},
+						"2": {"completed": false, "stages_completed": 0},
+						"3": {"completed": false, "stages_completed": 0}
+					}
+				
+				# Make sure dungeon progress exists
+				if not current_data.has("current_dungeon"):
+					current_data["current_dungeon"] = 1
+				
+				# Complete document update instead of just updating one field
+				collection.add(user_id, current_data)
+				
+				# Navigate to main menu
+				navigate_to_main_menu(is_returning_from_google)
 	
 	# Navigate to main menu
 	navigate_to_main_menu(is_returning_from_google)
 
 # Helper function to navigate to main menu
 func navigate_to_main_menu(is_google_auth := false):
+	
 	# Show success message and redirect to main menu
 	show_message("Login Successful! Redirecting...", true)
 	
@@ -494,13 +594,13 @@ func on_signup_succeeded(auth):
 	
 	# Get user data from registration form
 	var username = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/UsernameLineEdit.text
-	var email = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegEmailLineEdit.text
+	var email = $MarginContainer/ContentContainer/RightPanel/MainContainer	/VBoxContainer/TabContainer/Register/RegEmailLineEdit.text
 
 	# Get birthdate components
 	var day_option = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/BirthDateContainer/DayOptionButton
 	var month_option = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/BirthDateContainer/MonthOptionButton
 	var year_option = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/BirthDateContainer/YearOptionButton
-	
+
 	var birth_date = ""
 	var age = 0
 	if day_option.selected > -1 and month_option.selected > -1 and year_option.selected > -1:
@@ -528,7 +628,9 @@ func on_signup_succeeded(auth):
 			"profile_picture": "default",
 			"rank": "bronze",
 			"created_at": current_time,
-			"last_login": current_time
+			"usage_time": 0,
+			"session": 1,
+			"last_session_date": Time.get_date_string_from_system()
 		},
 		"stats": {
 			"player": {
@@ -662,47 +764,6 @@ func clear_web_storage():
 		return JavaScriptBridge.eval(js_code)
 	return false
 
-# Function to update last_login on auto-login scenario
-func _update_last_login_on_auto_login():
-	print("DEBUG: Updating last_login for auto-login user")
-	
-	# Get the current authenticated user ID
-	var auth = Firebase.Auth.auth
-	if auth == null or not auth.has("localid"):
-		print("DEBUG: No auth data found for auto-login update")
-		return
-	
-	var user_id = auth.localid
-	var collection = Firebase.Firestore.collection("dyslexia_users")
-	var current_time = Time.get_datetime_string_from_system(false, true)
-	
-	# Get current user data
-	var task = collection.get(user_id)
-	if task == null:
-		print("DEBUG: Failed to create task for auto-login last_login update")
-		return
-	
-	var result = await task.task_finished
-	
-	if result == null or result.error:
-		print("DEBUG: Error getting user data for auto-login last_login update")
-		return
-	
-	if result.doc_fields != null:
-		var current_data = result.doc_fields
-		
-		# Update last_login in the profile section (correct nested structure)
-		if not current_data.has("profile"):
-			current_data["profile"] = {}
-		
-		current_data["profile"]["last_login"] = current_time
-		print("DEBUG: Auto-login updating last_login to: " + current_time)
-		
-		# Update the document using add() method
-		collection.add(user_id, current_data)
-	else:
-		print("DEBUG: No document fields found for auto-login last_login update")
-
 # Function to handle Super Admin button press
 func _on_admin_button_pressed():
 	print("DEBUG: Super Admin button pressed")
@@ -714,4 +775,3 @@ func _on_admin_button_pressed():
 	else:
 		# Open with system default browser for desktop builds
 		OS.shell_open(admin_url)
-

@@ -226,7 +226,8 @@ func _create_user_document(user_id):
             "profile_picture": "default",
             "rank": "bronze",
             "created_at": current_time,
-            "last_login": current_time
+            "usage_time": 0,
+			"session": 1
         },
         "stats": {
             "player": {
