@@ -497,3 +497,13 @@ func _consume_battle_energy() -> bool:
 	else:
 		print("Failed to get user document")
 		return false
+
+func _input(event):
+	# Handle input for different functions
+	if event.is_action_pressed("ui_cancel"):  # ESC key
+		_show_battle_settings_popup()
+	
+	# Temporary test for Firebase level-up updates
+	if event.is_action_pressed("ui_accept"):  # Enter key
+		print("Testing Firebase level-up updates...")
+		await player_manager.test_firebase_level_up()

@@ -283,7 +283,9 @@ func add_experience(exp_amount):
         # Recalculate max_exp for next level
         max_exp = get_max_exp()
         leveled_up = true
+        
     print("PlayerManager: Current stats after exp gain - Level: ", player_level, ", Exp: ", player_exp, "/", get_max_exp())
+    
     if leveled_up:
         # Emit level up signal
         emit_signal("player_level_up", player_level)
@@ -291,13 +293,10 @@ func add_experience(exp_amount):
         print("PlayerManager: ✓ PLAYER LEVELED UP! New level: ", player_level)
         print("PlayerManager: ✓ New stats - Health: ", player_max_health, ", Damage: ", player_damage, ", Durability: ", player_durability)
         
-        # Update player stats in Firestore if available
-        if Engine.has_singleton("Firebase") and Firebase.Auth and Firebase.Auth.auth:
-            print("PlayerManager: ✓ Firebase available, calling _update_player_stats_in_firebase...")
-            await _update_player_stats_in_firebase(leveled_up)
-            print("PlayerManager: ✓ _update_player_stats_in_firebase completed")
-        else:
-            print("PlayerManager: ✗ Firebase not available, skipping stats update")
+        # Update Firebase stats - using same pattern as _update_player_stats_in_firebase method
+        print("PlayerManager: ✓ Updating Firebase after level up...")
+        await _update_player_stats_in_firebase(true)
+        print("PlayerManager: ✓ Firebase update completed")
     else:
         print("PlayerManager: Experience added, no level up. Current exp: ", player_exp, "/", get_max_exp())
 
@@ -318,6 +317,8 @@ func heal_to_full():
 # Update player stats in Firebase after level up - FIXED to follow exact working pattern from mainmenu.gd
 func _update_player_stats_in_firebase(leveled_up: bool = false):
     print("PlayerManager: _update_player_stats_in_firebase called with leveled_up=", leveled_up)
+    print("PlayerManager: Firebase.Auth: ", Firebase.Auth)
+    print("PlayerManager: Firebase.Auth.auth: ", Firebase.Auth.auth if Firebase.Auth else "N/A")
     
     if !Firebase.Auth.auth:
         print("PlayerManager: No Firebase auth, returning")
@@ -327,6 +328,7 @@ func _update_player_stats_in_firebase(leveled_up: bool = false):
     var collection = Firebase.Firestore.collection("dyslexia_users")
     
     print("PlayerManager: Getting document for user: ", user_id)
+    print("PlayerManager: Collection object: ", collection)
     
     # Get the document first using exact same pattern as working energy update
     var document = await collection.get_doc(user_id)
@@ -375,18 +377,6 @@ func _update_player_stats_in_firebase(leveled_up: bool = false):
             print("PlayerManager: Stats structure not found in document")
     else:
         print("PlayerManager: Failed to get document for player stats update")
-
-# DEBUG: Force level up for testing (remove after testing)
-func debug_force_level_up():
-    print("DEBUG: Forcing level up for testing...")
-    
-    # Give enough exp to level up
-    var exp_needed = get_max_exp() - player_exp + 10
-    print("DEBUG: Adding ", exp_needed, " experience to force level up")
-    
-    add_experience(exp_needed)
-    
-    print("DEBUG: After level up - Level: ", player_level, " Exp: ", player_exp, "/", get_max_exp())
 
 # Calculate max health based on level (100 + 10 per level)
 func get_max_health():
@@ -487,3 +477,15 @@ func update_firebase_stats():
             print("Stats structure not found in document for battle update")
     else:
         print("Failed to get document for battle stats update")
+
+# Temporary test function to verify Firebase level-up updates work
+func test_firebase_level_up():
+    print("=== TESTING FIREBASE LEVEL-UP UPDATE ===")
+    print("Before: Level " + str(player_level) + ", Exp " + str(player_exp) + ", Health " + str(player_max_health) + ", Damage " + str(player_damage) + ", Durability " + str(player_durability))
+    
+    # Add enough experience to level up (simulate winning a battle)
+    var exp_needed = get_max_exp() - player_exp + 1
+    await add_experience(exp_needed)
+    
+    print("After: Level " + str(player_level) + ", Exp " + str(player_exp) + ", Health " + str(player_max_health) + ", Damage " + str(player_damage) + ", Durability " + str(player_durability))
+    print("=== TEST COMPLETE ===")

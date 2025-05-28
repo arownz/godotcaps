@@ -4,6 +4,7 @@ extends Control
 @onready var tab_container = $MainContainer/TabContainer
 @onready var dungeon_ranking_tab = $MainContainer/TabContainer/DungeonRankings
 @onready var power_scale_tab = $MainContainer/TabContainer/PowerScale
+@onready var word_recognize_tab = $MainContainer/TabContainer/WordRecognize
 @onready var back_button = $MainContainer/BackButton
 
 # Leaderboard data containers
@@ -11,6 +12,8 @@ extends Control
 @onready var dungeon_list = $MainContainer/TabContainer/DungeonRankings/ScrollContainer/VBoxContainer
 @onready var power_scroll = $MainContainer/TabContainer/PowerScale/ScrollContainer
 @onready var power_list = $MainContainer/TabContainer/PowerScale/ScrollContainer/VBoxContainer
+@onready var word_scroll = $MainContainer/TabContainer/WordRecognize/ScrollContainer
+@onready var word_list = $MainContainer/TabContainer/WordRecognize/ScrollContainer/VBoxContainer
 
 # Cached leaderboard data
 var all_users_data = []
@@ -123,11 +126,6 @@ func _create_simple_dungeon_header() -> Control:
 	var stages_container = _create_bordered_container(stages_label, Vector2(70, 45), Color(0.2, 0.2, 0.3, 0.6))
 	header.add_child(stages_container)
 	
-	# Level
-	var level_label = _create_simple_label("Level", 16, Color(1, 1, 0.8))
-	var level_container = _create_bordered_container(level_label, Vector2(60, 45), Color(0.2, 0.2, 0.3, 0.6))
-	header.add_child(level_container)
-	
 	return header
 
 # Simplified header function for power scale rankings with reliable text display
@@ -179,6 +177,45 @@ func _create_simple_power_header() -> Control:
 	
 	return header
 
+# Simplified header function for word recognize rankings with reliable text display
+func _create_simple_word_recognize_header() -> Control:
+	var header = HBoxContainer.new()
+	header.add_theme_constant_override("separation", 2)
+	header.custom_minimum_size = Vector2(0, 45)
+	header.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	
+	# Rank
+	var rank_label = _create_simple_label("Rank", 16, Color(1, 1, 0.8))
+	var rank_container = _create_bordered_container(rank_label, Vector2(80, 45), Color(0.2, 0.2, 0.3, 0.6))
+	header.add_child(rank_container)
+	
+	# Avatar
+	var pic_label = _create_simple_label("Avatar", 16, Color(1, 1, 0.8))
+	var pic_container = _create_bordered_container(pic_label, Vector2(60, 45), Color(0.2, 0.2, 0.3, 0.6))
+	header.add_child(pic_container)
+	
+	# Player
+	var name_label = _create_simple_label("Player", 16, Color(1, 1, 0.8))
+	var name_container = _create_bordered_container(name_label, Vector2(220, 45), Color(0.2, 0.2, 0.3, 0.6))
+	header.add_child(name_container)
+	
+	# STT Completed (blue-green color)
+	var stt_label = _create_simple_label("STT", 16, Color(0.2, 0.8, 1))
+	var stt_container = _create_bordered_container(stt_label, Vector2(80, 45), Color(0.2, 0.2, 0.3, 0.6))
+	header.add_child(stt_container)
+	
+	# Whiteboard Completed (green-blue color)
+	var wb_label = _create_simple_label("Whiteboard", 16, Color(0.2, 1, 0.8))
+	var wb_container = _create_bordered_container(wb_label, Vector2(120, 45), Color(0.2, 0.2, 0.3, 0.6))
+	header.add_child(wb_container)
+	
+	# Total WordRecognize (bright green color)
+	var total_label = _create_simple_label("Total", 16, Color(0.4, 1, 0.4))
+	var total_container = _create_bordered_container(total_label, Vector2(80, 45), Color(0.2, 0.2, 0.3, 0.6))
+	header.add_child(total_container)
+	
+	return header
+
 # Helper function to create a simple, reliable label
 func _create_simple_label(text: String, font_size: int = 16, color: Color = Color(1, 1, 1), alignment: HorizontalAlignment = HORIZONTAL_ALIGNMENT_CENTER) -> Label:
 	var label = Label.new()
@@ -206,15 +243,21 @@ func _ready():
 	# Load leaderboard data
 	await _load_leaderboard_data()
 	
-	# Populate both tabs
+	# Populate all tabs
 	_populate_dungeon_rankings()
 	_populate_power_scale_rankings()
+	
+	# Only populate word recognize tab if the nodes exist
+	if word_recognize_tab and word_scroll and word_list:
+		_populate_word_recognize_rankings()
+	else:
+		print("WordRecognize tab not found in scene - please add it to Leaderboard.tscn")
 
 # Load all user data from Firestore for leaderboard
 func _load_leaderboard_data():
 	if !Firebase.Auth or !Firebase.Auth.auth:
 		print("Leaderboard: No authentication found")
-		return
+		return;
 	
 	print("Leaderboard: Loading user data from Firestore...")
 	
@@ -313,6 +356,18 @@ func _extract_user_data(document) -> Dictionary:
 		user_data["total_stages_completed"] = 0
 		user_data["enemies_defeated"] = 0
 		user_data["rank"] = "bronze"
+	
+	# Get word challenges data
+	var word_challenges = document.get_value("word_challenges")
+	if word_challenges and typeof(word_challenges) == TYPE_DICTIONARY:
+		var completed = word_challenges.get("completed", {})
+		user_data["stt_completed"] = completed.get("stt", 0)
+		user_data["whiteboard_completed"] = completed.get("whiteboard", 0)
+		user_data["word_recognize"] = user_data["stt_completed"] + user_data["whiteboard_completed"]
+	else:
+		user_data["stt_completed"] = 0
+		user_data["whiteboard_completed"] = 0
+		user_data["word_recognize"] = 0
 	
 	# Calculate power score (combined stats)
 	user_data["power_score"] = user_data["health"] + user_data["damage"] + user_data["durability"]
@@ -472,11 +527,6 @@ func _create_dungeon_entry(user_data: Dictionary, rank: int) -> Control:
 	var stages_container = _create_bordered_container(stages_label, Vector2(70, 50), Color(0.05, 0.05, 0.05, 0.2))
 	entry.add_child(stages_container)
 	
-	# Level
-	var level_label = _create_simple_label(str(user_data.get("level", 1)), 16, Color(1, 1, 1))
-	var level_container = _create_bordered_container(level_label, Vector2(60, 50), Color(0.05, 0.05, 0.05, 0.2))
-	entry.add_child(level_container)
-	
 	return entry
 
 # Create entry for power scale rankings
@@ -539,6 +589,106 @@ func _create_power_entry(user_data: Dictionary, rank: int) -> Control:
 	entry.add_child(power_container)
 	
 	return entry
+
+# Create entry for word recognize rankings
+func _create_word_recognize_entry(user_data: Dictionary, rank: int) -> Control:
+	var entry = HBoxContainer.new()
+	entry.add_theme_constant_override("separation", 2)
+	entry.custom_minimum_size = Vector2(0, 50)
+	
+	# Rank number
+	var rank_label = _create_simple_label(str(rank), 16, Color(1, 1, 1))
+	var rank_container = _create_bordered_container(rank_label, Vector2(80, 45), Color(0.2, 0.2, 0.3, 0.6))
+	entry.add_child(rank_container)
+	
+	# Profile picture
+	var profile_rect = TextureRect.new()
+	profile_rect.custom_minimum_size = Vector2(40, 40)
+	profile_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	profile_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	var profile_id = user_data.get("profile_picture", "13")
+	if profile_id == "default":
+		profile_id = "13"
+	var profile_texture = load("res://gui/ProfileScene/Profile/portrait" + profile_id + ".png")
+	if profile_texture:
+		profile_rect.texture = profile_texture
+	
+	var profile_center = Control.new()
+	profile_center.custom_minimum_size = Vector2(60, 50)
+	profile_center.add_child(profile_rect)
+	profile_rect.position = Vector2(10, 5)
+	var profile_container = _create_bordered_container(profile_center, Vector2(60, 50), Color(0.05, 0.05, 0.05, 0.2))
+	entry.add_child(profile_container)
+	
+	# Player name
+	var name_label = _create_simple_label(user_data.get("username", "Unknown"), 16, Color(1, 1, 1), HORIZONTAL_ALIGNMENT_LEFT)
+	var name_container = _create_bordered_container(name_label, Vector2(220, 45), Color(0.2, 0.2, 0.3, 0.6))
+	entry.add_child(name_container)
+	
+	# STT Completed (with color)
+	var stt_completed = user_data.get("stt_completed", 0)
+	var stt_label = _create_simple_label(str(stt_completed), 16, Color(0.2, 0.8, 1))
+	var stt_container = _create_bordered_container(stt_label, Vector2(80, 50), Color(0.05, 0.05, 0.05, 0.2))
+	entry.add_child(stt_container)
+	
+	# Whiteboard Completed (with color)
+	var whiteboard_completed = user_data.get("whiteboard_completed", 0)
+	var wb_label = _create_simple_label(str(whiteboard_completed), 16, Color(0.2, 1, 0.8))
+	var wb_container = _create_bordered_container(wb_label, Vector2(120, 50), Color(0.05, 0.05, 0.05, 0.2))
+	entry.add_child(wb_container)
+	
+	# Total WordRecognize (with color)
+	var total_word_recognize = user_data.get("word_recognize", 0)
+	var total_label = _create_simple_label(str(total_word_recognize), 16, Color(0.4, 1, 0.4))
+	var total_container = _create_bordered_container(total_label, Vector2(80, 50), Color(0.05, 0.05, 0.05, 0.2))
+	entry.add_child(total_container)
+	
+	return entry
+
+# Populate word recognize rankings tab
+func _populate_word_recognize_rankings():
+	# Safety check - ensure all required nodes exist
+	if not word_list:
+		print("WordRecognize tab nodes not found - skipping population")
+		return
+		
+	# Clear existing entries
+	for child in word_list.get_children():
+		child.queue_free()
+	
+	# Sort users by total word recognize challenges (highest first)
+	var sorted_users = all_users_data.duplicate()
+	sorted_users.sort_custom(func(a, b): 
+		if a["word_recognize"] != b["word_recognize"]:
+			return a["word_recognize"] > b["word_recognize"]
+		# If word recognize is tied, sort by level
+		return a["level"] > b["level"]
+	)
+	
+	# Add header
+	var header = _create_simple_word_recognize_header()
+	word_list.add_child(header)
+	
+	# Add spacer after header
+	var header_spacer = Control.new()
+	header_spacer.custom_minimum_size = Vector2(0, 5)
+	word_list.add_child(header_spacer)
+	
+	# Add user entries
+	for i in range(sorted_users.size()):
+		var user = sorted_users[i]
+		var entry = _create_word_recognize_entry(user, i + 1)
+		word_list.add_child(entry)
+		
+		# Highlight current user
+		if user.get("is_current_user", false):
+			entry.modulate = Color(1.2, 1.2, 0.8)  # Slightly golden tint
+		
+		# Add small spacer between entries (except last one)
+		if i < sorted_users.size() - 1:
+			var spacer = Control.new()
+			spacer.custom_minimum_size = Vector2(0, 3)
+			word_list.add_child(spacer)
 
 # Back button handler
 func _on_back_button_pressed():
