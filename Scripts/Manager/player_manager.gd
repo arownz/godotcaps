@@ -256,6 +256,9 @@ func take_damage(damage_amount):
 
 # Add experience and handle leveling up
 func add_experience(exp_amount):
+    print("PlayerManager: add_experience called with ", exp_amount, " exp")
+    print("PlayerManager: Current stats before exp gain - Level: ", player_level, ", Exp: ", player_exp, "/", get_max_exp())
+    
     # Add experience
     player_exp += exp_amount
     
@@ -274,26 +277,29 @@ func add_experience(exp_amount):
         # Update stats on level up
         player_max_health = get_max_health()
         player_health = player_max_health  # Fully heal on level up
-        player_damage += 3
-        player_durability += 4
+        player_damage += 11
+        player_durability += 8
         
         # Recalculate max_exp for next level
         max_exp = get_max_exp()
         leveled_up = true
-    
+    print("PlayerManager: Current stats after exp gain - Level: ", player_level, ", Exp: ", player_exp, "/", get_max_exp())
     if leveled_up:
         # Emit level up signal
         emit_signal("player_level_up", player_level)
         
-        print("PlayerManager: Player leveled up! New level: ", player_level)
-        print("PlayerManager: New stats - Health: ", player_max_health, ", Damage: ", player_damage, ", Durability: ", player_durability)
+        print("PlayerManager: ✓ PLAYER LEVELED UP! New level: ", player_level)
+        print("PlayerManager: ✓ New stats - Health: ", player_max_health, ", Damage: ", player_damage, ", Durability: ", player_durability)
         
         # Update player stats in Firestore if available
         if Engine.has_singleton("Firebase") and Firebase.Auth and Firebase.Auth.auth:
-            print("PlayerManager: Updating stats in Firebase...")
+            print("PlayerManager: ✓ Firebase available, calling _update_player_stats_in_firebase...")
             await _update_player_stats_in_firebase(leveled_up)
+            print("PlayerManager: ✓ _update_player_stats_in_firebase completed")
         else:
-            print("PlayerManager: Firebase not available, skipping stats update")
+            print("PlayerManager: ✗ Firebase not available, skipping stats update")
+    else:
+        print("PlayerManager: Experience added, no level up. Current exp: ", player_exp, "/", get_max_exp())
 
 # Heal player to full health
 func heal_to_full():
@@ -309,7 +315,7 @@ func heal_to_full():
     
     print("PlayerManager: Player healed - Health: " + str(player_health) + "/" + str(player_max_health))
 
-# Update player stats in Firebase after level up
+# Update player stats in Firebase after level up - FIXED to follow exact working pattern from mainmenu.gd
 func _update_player_stats_in_firebase(leveled_up: bool = false):
     print("PlayerManager: _update_player_stats_in_firebase called with leveled_up=", leveled_up)
     
@@ -322,48 +328,65 @@ func _update_player_stats_in_firebase(leveled_up: bool = false):
     
     print("PlayerManager: Getting document for user: ", user_id)
     
-    # Get current document first
+    # Get the document first using exact same pattern as working energy update
     var document = await collection.get_doc(user_id)
     if document and !("error" in document.keys() and document.get_value("error")):
         print("PlayerManager: Document retrieved successfully")
         
-        # Get current stats structure (following mainmenu.gd pattern)
+        # Get current stats structure - exact same pattern as mainmenu.gd energy update
         var stats = document.get_value("stats")
         if stats != null and typeof(stats) == TYPE_DICTIONARY:
             print("PlayerManager: Stats structure found")
             var player_stats = stats.get("player", {})
             
             print("PlayerManager: Current Firebase player stats: ", player_stats)
-            print("PlayerManager: New local player stats - Level: ", player_level, ", Exp: ", player_exp, ", Health: ", player_max_health, ", Damage: ", player_damage, ", Durability: ", player_durability)
+            print("PlayerManager: Updating with local stats - Level: ", player_level, ", Exp: ", player_exp, ", Health: ", player_max_health, ", Damage: ", player_damage, ", Durability: ", player_durability)
             
-            # Update player stats in the nested structure
+            # Update player stats using exact same pattern as energy update
             player_stats["level"] = player_level
             player_stats["exp"] = player_exp
-            player_stats["health"] = player_max_health  # Store max health
+            player_stats["health"] = player_max_health  # Store max health as health field
             player_stats["damage"] = player_damage
             player_stats["durability"] = player_durability
-            
-            # Update the stats structure
+            # Preserve existing energy and last_energy_update fields
+            if !player_stats.has("energy"):
+                player_stats["energy"] = 20
+            if !player_stats.has("skin"):
+                player_stats["skin"] = "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
+                
+            # Update the stats structure - exact same pattern as mainmenu.gd
             stats["player"] = player_stats
             
-            print("PlayerManager: Updated player stats: ", player_stats)
+            print("PlayerManager: Final player stats to save: ", player_stats)
             
-            # Update the document with the modified stats structure
+            # Update the document field - exact same pattern as energy update
             document.add_or_update_field("stats", stats)
             
-            # Save the updated document
+            # Save the updated document - exact same pattern as energy update
             var updated_document = await collection.update(document)
             if updated_document:
-                print("PlayerManager: Player stats updated in Firebase successfully")
+                print("PlayerManager: ✓ Player stats updated in Firebase successfully!")
                 if leveled_up:
-                    print("PlayerManager: LEVEL UP! New level: " + str(player_level))
-                    print("PlayerManager: New stats - Health: " + str(player_max_health) + ", Damage: " + str(player_damage) + ", Durability: " + str(player_durability))
+                    print("PlayerManager: ✓ LEVEL UP SAVED! New level: " + str(player_level))
+                    print("PlayerManager: ✓ New stats saved - Health: " + str(player_max_health) + ", Damage: " + str(player_damage) + ", Durability: " + str(player_durability))
             else:
-                print("PlayerManager: Failed to update player stats in Firebase")
+                print("PlayerManager: ✗ Failed to update player stats in Firebase")
         else:
             print("PlayerManager: Stats structure not found in document")
     else:
         print("PlayerManager: Failed to get document for player stats update")
+
+# DEBUG: Force level up for testing (remove after testing)
+func debug_force_level_up():
+    print("DEBUG: Forcing level up for testing...")
+    
+    # Give enough exp to level up
+    var exp_needed = get_max_exp() - player_exp + 10
+    print("DEBUG: Adding ", exp_needed, " experience to force level up")
+    
+    add_experience(exp_needed)
+    
+    print("DEBUG: After level up - Level: ", player_level, " Exp: ", player_exp, "/", get_max_exp())
 
 # Calculate max health based on level (100 + 10 per level)
 func get_max_health():

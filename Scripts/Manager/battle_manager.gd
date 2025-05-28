@@ -95,7 +95,10 @@ func handle_victory():
 		exp_reward = battle_scene.enemy_manager.enemy_level * 2  # Reduced from 10 to 2 for balance
 	
 	# Award experience to player
+	print("BattleManager: Awarding ", exp_reward, " experience to player")
+	print("BattleManager: Player stats before exp gain - Level: ", battle_scene.player_manager.player_level, ", Exp: ", battle_scene.player_manager.player_exp, "/", battle_scene.player_manager.get_max_exp())
 	battle_scene.player_manager.add_experience(exp_reward)
+	print("BattleManager: Player stats after exp gain - Level: ", battle_scene.player_manager.player_level, ", Exp: ", battle_scene.player_manager.player_exp, "/", battle_scene.player_manager.get_max_exp())
 	
 	# Add victory message
 	battle_scene.battle_log_manager.add_message("[color=#4CAF50]Victory! You defeated the enemy and gained " + str(exp_reward) + " experience.[/color]")

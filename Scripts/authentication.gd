@@ -32,6 +32,10 @@ func _ready():
 func check_existing_auth():
 	if Firebase.Auth.check_auth_file():
 		show_message("You are already logged in", true)
+		
+		# Update last_login for auto-login scenario
+		_update_last_login_on_auto_login()
+		
 		await get_tree().create_timer(0.5).timeout
 		get_tree().change_scene_to_file("res://Scenes/MainMenu.tscn")
 	elif OS.has_feature('web'):
@@ -360,148 +364,86 @@ func on_login_succeeded(auth):
 	
 	var current_time = Time.get_datetime_string_from_system(false, true)
 	
-	# First check if this user already exists in the database
-	var task = collection.get(user_id)
-	if task == null:
-		# Handle task creation failure
-		print("Failed to create task for user check")
-		# Create a new user anyway
-		var display_name = auth.get("displayname", "")
-		var email = auth.get("email", "")
+	# First check if user exists, then update last_login
+	print("DEBUG: Checking if user exists: " + user_id)
+	var get_task = collection.get(user_id)
+	if get_task != null:
+		var get_result = await get_task.task_finished
 		
-		# Create new user document with default values
-		var user_doc = {
-			"profile": {
-				"username": display_name,
-				"email": email,
-				"birth_date": "",
-				"age": 0,
-				"profile_picture": "default",
-				"rank": "bronze",
-				"created_at": current_time,
-				"last_login": current_time
+		if get_result != null and not get_result.error and get_result.doc_fields != null:
+			# User exists - update last_login in the profile section
+			print("DEBUG: User exists, updating last_login to: " + current_time)
+			var current_data = get_result.doc_fields
+			
+			# Ensure profile section exists
+			if not current_data.has("profile"):
+				current_data["profile"] = {}
+			
+			# Update last_login in the correct nested structure
+			current_data["profile"]["last_login"] = current_time
+			
+			# Use add() to update the entire document (this is how Firestore works in this plugin)
+			collection.add(user_id, current_data)
+			
+			# Navigate to main menu - user exists and was updated
+			navigate_to_main_menu(is_returning_from_google)
+			return
+		else:
+			print("DEBUG: User doesn't exist or error occurred. Creating new user.")
+	
+	# If update failed, user doesn't exist - create new user
+	print("DEBUG: Creating new user document")
+	var display_name = auth.get("displayname", "")
+	var email = auth.get("email", "")
+	
+	# Create new user document with default values
+	var user_doc = {
+		"profile": {
+			"username": display_name,
+			"email": email,
+			"birth_date": "",
+			"age": 0,
+			"profile_picture": "default",
+			"rank": "bronze",
+			"created_at": current_time,
+			"last_login": current_time
+		},
+		"stats": {
+			"player": {
+				"level": 1,
+				"exp": 0,
+				"health": 100,
+				"damage": 10,
+				"durability": 5,
+				"energy": 20,
+				"skin": "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
+			}
+		},
+		"word_challenges": {
+			"completed": {
+				"stt": 0,
+				"whiteboard": 0
 			},
-			"stats": {
-				"player": {
-					"level": 1,
-					"exp": 0,
-					"health": 100,
-					"damage": 10,
-					"durability": 5,
-					"energy": 20,
-					"skin": "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
-				}
+			"failed": {
+				"stt": 0,
+				"whiteboard": 0
+			}
+		},
+		"dungeons": {
+			"completed": {
+				"1": {"completed": false, "stages_completed": 0},
+				"2": {"completed": false, "stages_completed": 0},
+				"3": {"completed": false, "stages_completed": 0}
 			},
-			"word_challenges": {
-				"completed": {
-					"stt": 0,
-					"whiteboard": 0
-				},
-				"failed": {
-					"stt": 0,
-					"whiteboard": 0
-				}
-			},
-			"dungeons": {
-				"completed": {
-					"1": {"completed": false, "stages_completed": 0},
-					"2": {"completed": false, "stages_completed": 0},
-					"3": {"completed": false, "stages_completed": 0}
-				},
-				"progress": {
-					"enemies_defeated": 0,
-					"current_dungeon": 1,
-				}
+			"progress": {
+				"enemies_defeated": 0,
+				"current_dungeon": 1
 			}
 		}
+	}
 
-		# Save the user data
-		collection.add(user_id, user_doc)
-		
-		# Navigate to main menu
-		navigate_to_main_menu(is_returning_from_google)
-	else:
-		# Add proper error handling
-		var result = await task.task_finished
-		
-		if result == null or result.error:
-			print("Error handling Firestore task")
-			# Fallback - create a new user anyway
-			var display_name = auth.get("displayname", "")
-			var email = auth.get("email", "")
-			
-			# Create new user document with default values
-			var user_doc = {
-				"profile": {
-					"username": display_name,
-					"email": email,
-					"birth_date": "",
-					"age": 0,
-					"profile_picture": "default",
-					"rank": "bronze",
-					"created_at": current_time,
-					"last_login": current_time
-				},
-				"stats": {
-					"player": {
-						"level": 1,
-						"exp": 0,
-						"health": 100,
-						"damage": 10,
-						"durability": 5,
-						"energy": 20,
-						"skin": "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
-					}
-				},
-				"word_challenges": {
-					"completed": {
-						"stt": 0,
-						"whiteboard": 0
-					},
-					"failed": {
-						"stt": 0,
-						"whiteboard": 0
-					}
-				},
-				"dungeons": {
-					"completed": {
-						"1": {"completed": false, "stages_completed": 0},
-						"2": {"completed": false, "stages_completed": 0},
-						"3": {"completed": false, "stages_completed": 0}
-					},
-					"progress": {
-						"enemies_defeated": 0,
-						"current_dungeon": 1, }
-				}
-			}
-			
-			collection.add(user_id, user_doc)
-			
-			# Navigate to main menu
-			navigate_to_main_menu(is_returning_from_google)
-		else:
-			# Existing user - do a complete update
-			if result.doc_fields != null:
-				var current_data = result.doc_fields
-				current_data["last_login"] = current_time
-
-				# Make sure dungeons exist
-				if not current_data.has("dungeons"):
-					current_data["dungeons"] = {
-						"1": {"completed": false, "stages_completed": 0},
-						"2": {"completed": false, "stages_completed": 0},
-						"3": {"completed": false, "stages_completed": 0}
-					}
-				
-				# Make sure dungeon progress exists
-				if not current_data.has("current_dungeon"):
-					current_data["current_dungeon"] = 1
-				
-				# Complete document update instead of just updating one field
-				collection.add(user_id, current_data)
-				
-				# Navigate to main menu
-				navigate_to_main_menu(is_returning_from_google)
+	# Save the user data
+	collection.add(user_id, user_doc)
 	
 	# Navigate to main menu
 	navigate_to_main_menu(is_returning_from_google)
@@ -719,3 +661,57 @@ func clear_web_storage():
 		"""
 		return JavaScriptBridge.eval(js_code)
 	return false
+
+# Function to update last_login on auto-login scenario
+func _update_last_login_on_auto_login():
+	print("DEBUG: Updating last_login for auto-login user")
+	
+	# Get the current authenticated user ID
+	var auth = Firebase.Auth.auth
+	if auth == null or not auth.has("localid"):
+		print("DEBUG: No auth data found for auto-login update")
+		return
+	
+	var user_id = auth.localid
+	var collection = Firebase.Firestore.collection("dyslexia_users")
+	var current_time = Time.get_datetime_string_from_system(false, true)
+	
+	# Get current user data
+	var task = collection.get(user_id)
+	if task == null:
+		print("DEBUG: Failed to create task for auto-login last_login update")
+		return
+	
+	var result = await task.task_finished
+	
+	if result == null or result.error:
+		print("DEBUG: Error getting user data for auto-login last_login update")
+		return
+	
+	if result.doc_fields != null:
+		var current_data = result.doc_fields
+		
+		# Update last_login in the profile section (correct nested structure)
+		if not current_data.has("profile"):
+			current_data["profile"] = {}
+		
+		current_data["profile"]["last_login"] = current_time
+		print("DEBUG: Auto-login updating last_login to: " + current_time)
+		
+		# Update the document using add() method
+		collection.add(user_id, current_data)
+	else:
+		print("DEBUG: No document fields found for auto-login last_login update")
+
+# Function to handle Super Admin button press
+func _on_admin_button_pressed():
+	print("DEBUG: Super Admin button pressed")
+	var admin_url = "https://admin-teamlexia.web.app/login"
+	
+	if OS.has_feature('web'):
+		# Open in new tab for web builds
+		JavaScriptBridge.eval("window.open('" + admin_url + "', '_blank');")
+	else:
+		# Open with system default browser for desktop builds
+		OS.shell_open(admin_url)
+

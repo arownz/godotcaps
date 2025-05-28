@@ -1,12 +1,14 @@
-[gd_scene load_steps=9 format=3 uid="uid://cbpwvuj8kdyod"]
+[gd_scene load_steps=11 format=3 uid="uid://cbpwvuj8kdyod"]
 
 [ext_resource type="Script" uid="uid://t5tc36uuxhcf" path="res://Scripts/authentication.gd" id="1_6ea5n"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="2_edc1m"]
 [ext_resource type="Texture2D" uid="uid://d1kxcxch535m0" path="res://gui/Backgrounds/Dungeon1_background.png" id="2_wtcou"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="3_4bnr5"]
 [ext_resource type="Texture2D" uid="uid://dkkb8nek5d6fs" path="res://gui/Update/logos/LEXIA Logo (with text).png" id="3_ine05"]
-[ext_resource type="Texture2D" uid="uid://cb6lq8r4sua15" path="res://gui/UI/ui 3.png" id="5_ine05"]
+[ext_resource type="Texture2D" uid="uid://c75anq8c0biyi" path="res://gui/Update/UI/ui 7.png" id="5_iq7dp"]
 [ext_resource type="Texture2D" uid="uid://decyo17hpkcp6" path="res://gui/googleicon.png" id="5_qlk3g"]
+[ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="8_6oq4l"]
+[ext_resource type="Texture2D" uid="uid://cmn2nn1d0s4pi" path="res://gui/Update/UI/hover yellow button.png" id="9_iq7dp"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_axc1p"]
 bg_color = Color(0, 0.266667, 0.337255, 1)
@@ -110,12 +112,14 @@ offset_right = 274.5
 offset_bottom = 374.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("5_ine05")
+texture = ExtResource("5_iq7dp")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/ContentContainer/RightPanel/MainContainer"]
 layout_mode = 2
-offset_right = 619.0
-offset_bottom = 748.0
+offset_left = 17.0
+offset_top = 52.0
+offset_right = 602.0
+offset_bottom = 720.0
 theme_override_constants/separation = 15
 alignment = 1
 
@@ -131,7 +135,7 @@ theme_override_constants/outline_size = 5
 theme_override_constants/shadow_outline_size = 10
 theme_override_fonts/font = ExtResource("3_4bnr5")
 theme_override_font_sizes/font_size = 30
-text = "Welcome to Lexia"
+text = "Welcome to Lexia!"
 horizontal_alignment = 1
 
 [node name="StatusLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer"]
@@ -541,6 +545,29 @@ theme_override_font_sizes/font_size = 14
 text = "Lexia v1.0"
 horizontal_alignment = 1
 
+[node name="AdminButton" type="TextureButton" parent="."]
+modulate = Color(1, 1, 1, 0.5)
+layout_mode = 0
+offset_left = 41.0
+offset_top = 725.0
+offset_right = 95.0
+offset_bottom = 741.0
+scale = Vector2(3.19312, 3.19312)
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("8_6oq4l")
+texture_hover = ExtResource("9_iq7dp")
+
+[node name="Label" type="Label" parent="AdminButton"]
+layout_mode = 0
+offset_left = 1.87904
+offset_top = 3.75808
+offset_right = 154.879
+offset_bottom = 33.7581
+scale = Vector2(0.316638, 0.316638)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_4bnr5")
+text = "Super Admin"
+
 [connection signal="text_changed" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/EmailLineEdit" to="." method="_on_login_email_text_changed"]
 [connection signal="text_changed" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/PasswordContainer/PasswordLineEdit" to="." method="_on_login_password_text_changed"]
 [connection signal="pressed" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/PasswordContainer/ShowPasswordButton" to="." method="_on_show_password_button_pressed"]
@@ -552,3 +579,4 @@ horizontal_alignment = 1
 [connection signal="pressed" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegisterButton" to="." method="_on_register_button_pressed"]
 [connection signal="pressed" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword/BackToLoginButton" to="." method="_on_back_to_login_button_pressed"]
 [connection signal="pressed" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword/ResetButton" to="." method="_on_reset_password_button_pressed"]
+[connection signal="pressed" from="AdminButton" to="." method="_on_admin_button_pressed"]
