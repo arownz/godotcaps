@@ -446,8 +446,7 @@ func _on_character_button_pressed():
     pass
 
 func _on_leaderboard_button_pressed():
-    # Placeholder for leaderboard screen
-    pass
+    get_tree().change_scene_to_file("res://Scenes/Leaderboard.tscn")
 
 func _on_settings_button_pressed():
     # Placeholder for settings screen

@@ -20,7 +20,7 @@ func _ready():
 	# Hide continue button by default
 	$ResultPanel/VBoxContainer/ButtonContainer/ContinueButton.visible = false
 
-func set_result(result, dungeon_num: int = 1, stage_num: int = 1, exp_reward: int = 0, enemy_name: String = ""):
+func set_result(result, _dungeon_num: int = 1, _stage_num: int = 1, exp_reward: int = 0, enemy_name: String = ""):
 	if result == "Victory":
 		$ResultPanel/VBoxContainer/ResultLabel.text = "Victory!"
 		var message = ""
