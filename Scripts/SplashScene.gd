@@ -1,6 +1,7 @@
 extends Control
 
-@onready var logo_rect = $CenterContainer/LogoContainer/LogoRect
+@onready var logo_rect = $CenterContainer/LogoPanel/LogoContainer/LogoClipPanel/LogoRect
+@onready var logo_panel = $CenterContainer/LogoPanel
 @onready var loading_label = $LoadingLabel
 @onready var loading_dots = $LoadingDots
 
@@ -15,8 +16,8 @@ func _ready():
 func start_splash_animation():
 	print("SplashScene: Starting splash animation")
 	# Initially hide the logo and loading elements
-	logo_rect.modulate = Color(1, 1, 1, 0)
-	logo_rect.scale = Vector2(0.5, 0.5)
+	logo_panel.modulate = Color(1, 1, 1, 0)
+	logo_panel.scale = Vector2(0.5, 0.5)
 	loading_label.modulate = Color(1, 1, 1, 0)
 	loading_dots.modulate = Color(1, 1, 1, 0)
 	
@@ -24,8 +25,8 @@ func start_splash_animation():
 	var tween = create_tween()
 	tween.set_parallel(true)  # Allow multiple animations to run simultaneously
 		# Logo fade-in and scale animation (dyslexia-friendly: smooth, predictable movement)
-	tween.tween_property(logo_rect, "modulate", Color(1, 1, 1, 1), 1.2).set_ease(Tween.EASE_OUT)
-	tween.tween_property(logo_rect, "scale", Vector2(1.0, 1.0), 1.0).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
+	tween.tween_property(logo_panel, "modulate", Color(1, 1, 1, 1), 1.2).set_ease(Tween.EASE_OUT)
+	tween.tween_property(logo_panel, "scale", Vector2(1.0, 1.0), 1.0).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
 	
 	# Loading text fade-in (delayed, smooth transitions)
 	tween.tween_property(loading_label, "modulate", Color(1, 1, 1, 1), 0.8).set_delay(1.2)
@@ -56,8 +57,8 @@ func start_breathing_effect():
 	# Create a gentle, slow pulsing effect (dyslexia-friendly: subtle, non-distracting)
 	var breath_tween = create_tween()
 	breath_tween.set_loops()
-	breath_tween.tween_property(logo_rect, "scale", Vector2(1.02, 1.02), 2.0).set_ease(Tween.EASE_IN_OUT)
-	breath_tween.tween_property(logo_rect, "scale", Vector2(1.0, 1.0), 2.0).set_ease(Tween.EASE_IN_OUT)
+	breath_tween.tween_property(logo_panel, "scale", Vector2(1.02, 1.02), 2.0).set_ease(Tween.EASE_IN_OUT)
+	breath_tween.tween_property(logo_panel, "scale", Vector2(1.0, 1.0), 2.0).set_ease(Tween.EASE_IN_OUT)
 
 func start_loading_dots_animation():
 	# Animate loading dots with consistent timing (dyslexia-friendly)
@@ -86,10 +87,10 @@ func transition_to_next_scene():
 	var fade_tween = create_tween()
 	fade_tween.set_parallel(true)
 	
-	fade_tween.tween_property(logo_rect, "modulate", Color(1, 1, 1, 0), 0.8)
+	fade_tween.tween_property(logo_panel, "modulate", Color(1, 1, 1, 0), 0.8)
 	fade_tween.tween_property(loading_label, "modulate", Color(1, 1, 1, 0), 0.8)
 	fade_tween.tween_property(loading_dots, "modulate", Color(1, 1, 1, 0), 0.8)
-	fade_tween.tween_property(logo_rect, "scale", Vector2(1.1, 1.1), 0.8).set_ease(Tween.EASE_IN)
+	fade_tween.tween_property(logo_panel, "scale", Vector2(1.1, 1.1), 0.8).set_ease(Tween.EASE_IN)
 	
 	await fade_tween.finished
 	
