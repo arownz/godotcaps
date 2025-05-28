@@ -32,8 +32,8 @@ func _ready():
     # Preload dungeon textures
     dungeon_textures.unlocked = [
         preload("res://gui/Update/icons/level selection.png"),
-        preload("res://gui/Update/icons/highest level.png"),
-        preload("res://gui/Update/icons/level selection.png")
+        preload("res://gui/Update/icons/level selection.png"),
+        preload("res://gui/Update/icons/highest level.png")
     ]
     dungeon_textures.locked = [
         null, # Dungeon 1 is always unlocked

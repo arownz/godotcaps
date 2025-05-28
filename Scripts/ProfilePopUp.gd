@@ -12,6 +12,13 @@ var rank_textures = {
 }
 var dungeon_names = ["The Plain", "The Forest", "The Mountain"]
 
+# Preload dungeon images for better performance
+var dungeon_images = {
+    1: preload("res://gui/Update/icons/level selection.png"),
+    2: preload("res://gui/Update/icons/level selection.png"), 
+    3: preload("res://gui/Update/icons/highest level.png")
+}
+
 func _ready():
     # Check signal connections
     if !$ProfileContainer/CloseButton.is_connected("pressed", Callable(self, "_on_close_button_pressed")):
@@ -24,6 +31,9 @@ func _ready():
     $ProfileContainer/UserInfoArea/EditNameButton.pressed.connect(_on_edit_name_button_pressed)
     $ProfileContainer/UserInfoArea/CopyUIDButton.pressed.connect(_on_copy_uid_button_pressed)
     $Background.gui_input.connect(_on_background_input)
+    
+    # Connect DungeonArea button for navigation
+    $ProfileContainer/DungeonArea.pressed.connect(_on_dungeon_area_pressed)
     
     # Load user data from Firestore
     await load_user_data()
@@ -106,23 +116,66 @@ func load_user_data():
                         var completed = dungeons.get("completed", {})
                         var progress = dungeons.get("progress", {})
                         
-                        user_data["current_dungeon"] = progress.get("current_dungeon", 1)
-                        user_data["current_stage"] = progress.get("current_stage", 1)
+                        # Get the basic progress values
+                        var stored_current_dungeon = progress.get("current_dungeon", 1)
+                        var stored_current_stage = progress.get("current_stage", 1)
                         
-                        # Calculate highest unlocked dungeon
-                        var unlocked_dungeons = 1 # Dungeon 1 always unlocked
-                        if completed.has("1") and completed["1"].get("completed", false):
-                            unlocked_dungeons = 2
-                        if unlocked_dungeons >= 2 and completed.has("2") and completed["2"].get("completed", false):
-                            unlocked_dungeons = 3
+                        # Calculate highest unlocked/accessible dungeon based on completion
+                        var highest_accessible_dungeon = 1 # Dungeon 1 always unlocked
+                        var dungeon_1_completed = false
+                        var dungeon_2_completed = false
+                        var dungeon_3_completed = false
                         
-                        # Update rank based on unlocked dungeons
-                        if unlocked_dungeons == 3:
+                        # Check dungeon 1 completion
+                        if completed.has("1"):
+                            var d1_data = completed["1"]
+                            var d1_stages = d1_data.get("stages_completed", 0)
+                            if d1_data.get("completed", false) or d1_stages >= 5:
+                                dungeon_1_completed = true
+                                highest_accessible_dungeon = 2
+                        
+                        # Check dungeon 2 completion
+                        if dungeon_1_completed and completed.has("2"):
+                            var d2_data = completed["2"]
+                            var d2_stages = d2_data.get("stages_completed", 0)
+                            if d2_data.get("completed", false) or d2_stages >= 5:
+                                dungeon_2_completed = true
+                                highest_accessible_dungeon = 3
+                        
+                        # Check dungeon 3 completion
+                        if dungeon_2_completed and completed.has("3"):
+                            var d3_data = completed["3"]
+                            var d3_stages = d3_data.get("stages_completed", 0)
+                            if d3_data.get("completed", false) or d3_stages >= 5:
+                                dungeon_3_completed = true
+                        
+                        print("ProfilePopUp: Dungeon completion status - D1:", dungeon_1_completed, " D2:", dungeon_2_completed, " D3:", dungeon_3_completed)
+                        print("ProfilePopUp: Highest accessible dungeon:", highest_accessible_dungeon)
+                        print("ProfilePopUp: Stored current dungeon/stage:", stored_current_dungeon, "/", stored_current_stage)
+                        
+                        # Determine current dungeon and stage based on completion status
+                        if dungeon_3_completed:
+                            # All dungeons completed - show dungeon 3 as current
+                            user_data["current_dungeon"] = 3
+                            user_data["current_stage"] = 5  # Show as completed
                             user_data["rank"] = "gold"
-                        elif unlocked_dungeons == 2:
+                        elif dungeon_2_completed:
+                            # Dungeon 1 & 2 completed, working on dungeon 3
+                            user_data["current_dungeon"] = 3
+                            user_data["current_stage"] = stored_current_stage if stored_current_dungeon == 3 else 1
+                            user_data["rank"] = "gold"
+                        elif dungeon_1_completed:
+                            # Dungeon 1 completed, working on dungeon 2
+                            user_data["current_dungeon"] = 2
+                            user_data["current_stage"] = stored_current_stage if stored_current_dungeon == 2 else 1
                             user_data["rank"] = "silver"
                         else:
+                            # Still working on dungeon 1
+                            user_data["current_dungeon"] = 1
+                            user_data["current_stage"] = stored_current_stage if stored_current_dungeon == 1 else 1
                             user_data["rank"] = "bronze"
+                        
+                        print("ProfilePopUp: Final current dungeon/stage:", user_data["current_dungeon"], "/", user_data["current_stage"])
                 
                 print("ProfilePopUp: Successfully loaded user data: ", user_data)
                 
@@ -257,6 +310,8 @@ func update_ui():
     var current_dungeon = user_data.get("current_dungeon", 1)
     var current_stage = user_data.get("current_stage", 1)
     
+    print("ProfilePopUp: Updating UI - Current Dungeon: ", current_dungeon, " Current Stage: ", current_stage)
+    
     # Display current dungeon and stage
     if has_node("ProfileContainer/DungeonArea/DungeonValue"):
         var dungeon_name = dungeon_names[current_dungeon - 1] if current_dungeon >= 1 and current_dungeon <= 3 else "Unknown"
@@ -264,8 +319,15 @@ func update_ui():
         $ProfileContainer/DungeonArea/DungeonValue.text = dungeon_text
     
     if has_node("ProfileContainer/DungeonArea/StageValue"):
-        var stage_text = str(current_stage) + "/5"
+        var stage_text = ""
+        # if current_stage >= 5:
+        #     stage_text = "Done!"
+        # else:
+        stage_text = str(current_stage) + "/5"
         $ProfileContainer/DungeonArea/StageValue.text = stage_text
+    
+    # Update dungeon image based on current dungeon
+    _update_dungeon_image(current_dungeon)
     
     # Update profile picture
     update_profile_picture()
@@ -294,6 +356,50 @@ func update_profile_picture():
             print("ProfilePopUp: Profile picture updated successfully")
         else:
             print("ProfilePopUp: Failed to load texture from path: " + texture_path)
+
+# Update dungeon image based on current dungeon
+func _update_dungeon_image(current_dungeon: int):
+    print("ProfilePopUp: Updating dungeon image for dungeon: ", current_dungeon)
+    
+    if has_node("ProfileContainer/DungeonArea/DungeonImage"):
+        var dungeon_image = $ProfileContainer/DungeonArea/DungeonImage
+        
+        # Use preloaded texture based on current dungeon
+        var texture = dungeon_images.get(current_dungeon, dungeon_images[1])
+        
+        if texture:
+            dungeon_image.texture = texture
+            print("ProfilePopUp: Dungeon image updated successfully for dungeon: ", current_dungeon)
+        else:
+            print("ProfilePopUp: Failed to load dungeon image for dungeon: ", current_dungeon)
+
+# Handle dungeon area button press for navigation
+func _on_dungeon_area_pressed():
+    print("ProfilePopUp: Dungeon area pressed, navigating to current dungeon")
+    
+    var current_dungeon = user_data.get("current_dungeon", 1)
+    var dungeon_scene_path = ""
+    
+    # Determine which dungeon map to load
+    match current_dungeon:
+        1:
+            dungeon_scene_path = "res://Scenes/Dungeon1Map.tscn"
+        2:
+            dungeon_scene_path = "res://Scenes/Dungeon2Map.tscn"
+        3:
+            dungeon_scene_path = "res://Scenes/Dungeon3Map.tscn"
+        _:
+            # Default to dungeon 1 if unknown
+            dungeon_scene_path = "res://Scenes/Dungeon1Map.tscn"
+    
+    print("ProfilePopUp: Navigating to dungeon scene: ", dungeon_scene_path)
+    
+    # Close the popup first
+    emit_signal("closed")
+    queue_free()
+    
+    # Navigate to the dungeon map
+    get_tree().change_scene_to_file(dungeon_scene_path)
 
 # Button handlers - keeping just what we need
 func _on_close_button_pressed():

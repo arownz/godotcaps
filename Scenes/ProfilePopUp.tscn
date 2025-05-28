@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://bysyq46j6ycis"]
+[gd_scene load_steps=16 format=3 uid="uid://bysyq46j6ycis"]
 
 [ext_resource type="Script" uid="uid://caa84ntbsorb8" path="res://Scripts/ProfilePopUp.gd" id="1_script"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="2_73kok"]
@@ -13,6 +13,7 @@
 [ext_resource type="Texture2D" uid="uid://b1vdji3n0ktqv" path="res://gui/Update/UI/defeat UI.png" id="10_vhpl5"]
 [ext_resource type="Texture2D" uid="uid://bt0tigh26flog" path="res://gui/Update/icons/level selection.png" id="11_ampbo"]
 [ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="12_ampbo"]
+[ext_resource type="Texture2D" uid="uid://dy4pabxg81hga" path="res://gui/UI/ui 2.png" id="12_kmls2"]
 [ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="13_r1smr"]
 
 [node name="ProfilePopUp" type="Node2D"]
@@ -239,7 +240,7 @@ layout_mode = 1
 anchors_preset = 0
 offset_left = 241.0
 offset_top = 353.0
-offset_right = 511.0
+offset_right = 470.0
 offset_bottom = 604.0
 
 [node name="StatsTitle" type="Label" parent="ProfileContainer/StatsArea"]
@@ -376,42 +377,44 @@ scale = Vector2(0.854514, 0.854514)
 position = Vector2(-9.36205, -9.36209)
 scale = Vector2(3.94353, 3.94353)
 
-[node name="DungeonArea" type="Control" parent="ProfileContainer"]
+[node name="DungeonArea" type="Button" parent="ProfileContainer"]
 layout_mode = 1
-anchors_preset = 0
-offset_left = 510.0
-offset_top = 349.0
-offset_right = 754.0
-offset_bottom = 626.0
-
-[node name="DungeonImage" type="TextureRect" parent="ProfileContainer/DungeonArea"]
-layout_mode = 0
-offset_left = 83.0
-offset_top = 62.0
-offset_right = 178.0
-offset_bottom = 224.0
+offset_left = 502.0
+offset_top = 357.0
+offset_right = 750.0
+offset_bottom = 670.0
 mouse_default_cursor_shape = 2
-texture = ExtResource("11_ampbo")
-expand_mode = 1
-stretch_mode = 6
+icon = ExtResource("12_kmls2")
+icon_alignment = 1
+expand_icon = true
 
 [node name="DungeonValue" type="Label" parent="ProfileContainer/DungeonArea"]
 layout_mode = 0
-offset_left = 19.0
-offset_top = 19.0
-offset_right = 220.0
-offset_bottom = 55.0
+offset_left = 26.0
+offset_top = 14.0
+offset_right = 227.0
+offset_bottom = 50.0
 theme_override_colors/font_color = Color(0.988235, 0.988235, 0, 1)
 theme_override_fonts/font = ExtResource("3_uyv5l")
 theme_override_font_sizes/font_size = 18
 text = "3: The Mountain"
 
+[node name="DungeonImage" type="TextureRect" parent="ProfileContainer/DungeonArea"]
+layout_mode = 0
+offset_left = 73.0
+offset_top = 53.0
+offset_right = 196.0
+offset_bottom = 259.0
+texture = ExtResource("11_ampbo")
+expand_mode = 1
+stretch_mode = 6
+
 [node name="StageLabel" type="Label" parent="ProfileContainer/DungeonArea"]
 layout_mode = 0
 offset_left = 10.0
-offset_top = 226.0
+offset_top = 259.0
 offset_right = 193.0
-offset_bottom = 262.0
+offset_bottom = 295.0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("3_uyv5l")
 theme_override_font_sizes/font_size = 18
@@ -419,10 +422,10 @@ text = "Current Stage:"
 
 [node name="StageValue" type="Label" parent="ProfileContainer/DungeonArea"]
 layout_mode = 0
-offset_left = 203.0
-offset_top = 227.0
-offset_right = 276.0
-offset_bottom = 263.0
+offset_left = 204.0
+offset_top = 261.0
+offset_right = 248.0
+offset_bottom = 297.0
 theme_override_colors/font_color = Color(0.988235, 0.988235, 0, 1)
 theme_override_fonts/font = ExtResource("3_uyv5l")
 theme_override_font_sizes/font_size = 18
