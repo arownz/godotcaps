@@ -87,15 +87,14 @@ func update_player_exp():
 	var exp_label = exp_bar.get_node("EXPValue")
 	
 	var player_exp = battle_scene.player_manager.player_exp
-	var player_max_exp = battle_scene.player_manager.player_max_exp
+	var player_max_exp = battle_scene.player_manager.get_max_exp()  # Use the calculated max exp
 	
 	# Calculate current level progress (0-100 within current level)
-	var exp_in_current_level = player_exp % player_max_exp
-	var percentage = (float(exp_in_current_level) / float(player_max_exp)) * 100.0
+	var percentage = (float(player_exp) / float(player_max_exp)) * 100.0
 	exp_bar.value = percentage
 	
 	# Update exp label to show current level progress
-	exp_label.text = str(int(exp_in_current_level)) + "/" + str(int(player_max_exp))
+	exp_label.text = str(int(player_exp)) + "/" + str(int(player_max_exp))
 
 func update_player_info():
 	# Update player name in BattleScene UI

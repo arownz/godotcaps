@@ -293,12 +293,25 @@ func add_experience(exp_amount):
         print("PlayerManager: ✓ PLAYER LEVELED UP! New level: ", player_level)
         print("PlayerManager: ✓ New stats - Health: ", player_max_health, ", Damage: ", player_damage, ", Durability: ", player_durability)
         
+        # Update all UI elements that depend on level up
+        if battle_scene and battle_scene.ui_manager:
+            battle_scene.ui_manager.update_player_health()  # Update health bar with new max health
+            battle_scene.ui_manager.update_player_exp()     # Update exp bar with new values
+            battle_scene.ui_manager.update_power_bar(player_damage)    # Update power bar
+            battle_scene.ui_manager.update_durability_bar(player_durability)  # Update durability bar
+            battle_scene.ui_manager.update_player_info()    # Update player level display
+        
         # Update Firebase stats - using same pattern as _update_player_stats_in_firebase method
         print("PlayerManager: ✓ Updating Firebase after level up...")
         await _update_player_stats_in_firebase(true)
         print("PlayerManager: ✓ Firebase update completed")
     else:
         print("PlayerManager: Experience added, no level up. Current exp: ", player_exp, "/", get_max_exp())
+        
+        # Update Firebase even without level up to save current exp progress
+        print("PlayerManager: ✓ Updating Firebase with current exp progress...")
+        await _update_player_stats_in_firebase(false)
+        print("PlayerManager: ✓ Firebase exp update completed")
 
 # Heal player to full health
 func heal_to_full():
@@ -384,20 +397,14 @@ func get_max_health():
 
 # Calculate max experience needed for level up
 func get_max_exp():
-    # Calculate based on player level using a formula
-    return int(100 * pow(1.2, player_level - 1))
+    # Simple 100 exp per level for easy leveling
+    return 100
 
 # Update health bar UI
 func update_health_bar():
-    var health_bar = battle_scene.get_node("MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer/PlayerHealthBar")
-    var health_label = battle_scene.get_node("MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer/PlayerHealthBar/HealthLabel")
-    
-    if health_bar:
-        # Calculate percentage based on health
-        health_bar.value = (float(player_health) / float(player_max_health)) * 100.0
-        
-    if health_label:
-        health_label.text = str(player_health) + "/" + str(player_max_health)
+    # Use the UI manager to update both health bars (battle area and stats panel)
+    if battle_scene and battle_scene.ui_manager:
+        battle_scene.ui_manager.update_player_health()
 
 # Update UI elements
 func update_ui_elements():
