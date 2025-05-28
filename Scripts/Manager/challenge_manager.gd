@@ -167,7 +167,7 @@ func handle_challenge_completed(bonus_damage):
 	
 	# Add battle log messages
 	battle_log_manager.add_message("[color=#4CAF50]You successfully countered the " + enemy_manager.enemy_name + "'s special attack![/color]")
-	battle_log_manager.add_message("You dealt " + str(bonus_damage) + " bonus damage!")
+	battle_log_manager.add_message("[color=#000000]You dealt " + str(bonus_damage) + " bonus damage![/color]")
 	
 	# Reset enemy skill meter
 	enemy_manager.enemy_skill_meter = 0
@@ -202,7 +202,7 @@ func handle_challenge_failed():
 	
 	# Add battle log messages
 	battle_log_manager.add_message("[color=#EB5E4B]You failed to counter the " + enemy_manager.enemy_name + "'s special attack![/color]")
-	battle_log_manager.add_message("The " + enemy_manager.enemy_name + " dealt " + str(skill_damage) + " critical damage!")
+	battle_log_manager.add_message("[color=#000000]The " + enemy_manager.enemy_name + " dealt " + str(skill_damage) + " critical damage![/color]")
 	
 	# Reset enemy skill meter
 	enemy_manager.enemy_skill_meter = 0
@@ -230,7 +230,7 @@ func handle_challenge_cancelled():
 	
 	# Add battle log messages
 	battle_log_manager.add_message("[color=#EB5E4B]You cancelled your counter! The " + enemy_manager.enemy_name + " takes advantage![/color]")
-	battle_log_manager.add_message("The " + enemy_manager.enemy_name + " dealt " + str(cancellation_damage) + " damage!")
+	battle_log_manager.add_message("[color=#000000]The " + enemy_manager.enemy_name + " dealt " + str(cancellation_damage) + " damage![color=#000000]")
 	
 	# Reset enemy skill meter
 	enemy_manager.enemy_skill_meter = 0

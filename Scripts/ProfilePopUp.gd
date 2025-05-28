@@ -601,14 +601,14 @@ func _on_copy_uid_button_pressed():
         popup.add_theme_font_override("font", load("res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf"))
         popup.add_theme_font_size_override("font_size", 16)
         popup.add_theme_color_override("font_color", Color(0, 0.8, 0.2)) # Green color
-        popup.position = $ProfileContainer/UserInfoArea/CopyUIDButton.position + Vector2(0, 10)
+        popup.position = $ProfileContainer/UserInfoArea/CopyUIDButton.position + Vector2(-55, 35)
         popup.z_index = 100
         
         $ProfileContainer/UserInfoArea.add_child(popup)
         
         # Remove popup after a short delay
         var tween = create_tween()
-        tween.tween_property(popup, "modulate", Color(1, 1, 1, 0), 1.0)
+        tween.tween_property(popup, "modulate", Color(1, 1, 1, 0), 2.0)
         tween.tween_callback(popup.queue_free)
 
 func _on_background_input(event):

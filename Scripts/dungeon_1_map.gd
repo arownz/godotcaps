@@ -72,11 +72,11 @@ func _load_enemy_resources():
 
 # Get stage-based multiplier for enemy stats
 func _get_stage_multiplier(stage_num: int) -> float:
-	# Base multiplier increases with stage progression
-	var stage_multiplier = 1.0 + (stage_num - 1) * 0.25  # 1.0, 1.25, 1.5, 1.75, 2.0
+	# Base multiplier increases with stage progression - more aggressive scaling
+	var stage_multiplier = 1.0 + (stage_num - 1) * 0.5  # 1.0, 1.5, 2.0, 2.5, 3.0
 	
-	# Additional multiplier for higher dungeons
-	var dungeon_multiplier = 1.0 + (dungeon_num - 1) * 0.5  # 1.0, 1.5, 2.0
+	# Additional multiplier for higher dungeons - higher scaling
+	var dungeon_multiplier = 1.0 + (dungeon_num - 1) * 1.0  # 1.0, 2.0, 3.0
 	
 	return stage_multiplier * dungeon_multiplier
 
@@ -113,7 +113,7 @@ func _get_scaled_enemy_data(stage_num: int) -> Dictionary:
 		"durability": int(enemy_resource.get_durability() * multiplier),
 		"skill": enemy_resource.skill_name,
 		"exp_reward": int(enemy_resource.get_exp_reward() * multiplier),
-		"level": stage_num * 5
+		"level": stage_num * 1
 	}
 
 # Add this new function to handle clicks outside StageDetails

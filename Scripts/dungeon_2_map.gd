@@ -441,5 +441,5 @@ func _get_scaled_enemy_data(stage_num: int) -> Dictionary:
 		"durability": int(enemy_resource.get_durability() * multiplier),
 		"skill": enemy_resource.skill_name,
 		"exp_reward": int(enemy_resource.get_exp_reward() * multiplier),
-		"level": stage_num * 5
+		"level": stage_num * 1
 	}

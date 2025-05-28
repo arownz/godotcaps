@@ -287,11 +287,29 @@ func _on_restart_battle():
 	battle_scene.get_tree().reload_current_scene()
 
 func _on_quit_to_menu():
+	# Called when leaving from EndgameScreen - returns to current dungeon map
+	# Note: This is different from _on_battle_quit_requested() in battlescene.gd 
+	# which handles quitting from the battle settings popup
+	
 	# Reset endgame screen flag
 	endgame_screen_active = false
 	
-	# Return to main menu
-	battle_scene.get_tree().change_scene_to_file("res://Scenes/DungeonSelection.tscn")
+	# Return to current dungeon map based on dungeon_num
+	var dungeon_scene_path = ""
+	var current_dungeon = battle_scene.dungeon_manager.dungeon_num
+	
+	match current_dungeon:
+		1:
+			dungeon_scene_path = "res://Scenes/Dungeon1Map.tscn"
+		2:
+			dungeon_scene_path = "res://Scenes/Dungeon2Map.tscn"
+		3:
+			dungeon_scene_path = "res://Scenes/Dungeon3Map.tscn"
+		_:
+			# Default to dungeon selection if unknown
+			dungeon_scene_path = "res://Scenes/DungeonSelection.tscn"
+	
+	battle_scene.get_tree().change_scene_to_file(dungeon_scene_path)
 
 func _on_continue_battle():
 	# Reset endgame screen flag

@@ -155,7 +155,7 @@ func setup_enemy():
         return
     
     # Calculate level based on current dungeon and stage
-    enemy_level = ((battle_scene.dungeon_manager.dungeon_num - 1) * 25) + (battle_scene.dungeon_manager.stage_num * 5)
+    enemy_level = ((battle_scene.dungeon_manager.dungeon_num - 1) * 25) + (battle_scene.dungeon_manager.stage_num)
     
     # Determine enemy type based on stage (stage 5 = boss, others = normal)
     if battle_scene.dungeon_manager.stage_num == 5:
