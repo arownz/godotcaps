@@ -120,8 +120,16 @@ func load_user_data():
                         var stored_current_dungeon = progress.get("current_dungeon", 1)
                         var stored_current_stage = progress.get("current_stage", 1)
                         
-                        # Calculate highest unlocked/accessible dungeon based on completion
-                        var highest_accessible_dungeon = 1 # Dungeon 1 always unlocked
+                        print("ProfilePopUp: Raw dungeons data:", dungeons)
+                        print("ProfilePopUp: Raw completed data:", completed)
+                        print("ProfilePopUp: Raw progress data:", progress)
+                        print("ProfilePopUp: Stored current dungeon/stage from progress:", stored_current_dungeon, "/", stored_current_stage)
+                        
+                        # Calculate the actual current dungeon and stage based on completion status
+                        var current_dungeon = 1  # Start with dungeon 1
+                        var current_stage = 1   # Default to stage 1
+                        
+                        # Determine current dungeon based on completion status
                         var dungeon_1_completed = false
                         var dungeon_2_completed = false
                         var dungeon_3_completed = false
@@ -132,7 +140,7 @@ func load_user_data():
                             var d1_stages = d1_data.get("stages_completed", 0)
                             if d1_data.get("completed", false) or d1_stages >= 5:
                                 dungeon_1_completed = true
-                                highest_accessible_dungeon = 2
+                                current_dungeon = 2  # Move to dungeon 2
                         
                         # Check dungeon 2 completion
                         if dungeon_1_completed and completed.has("2"):
@@ -140,42 +148,55 @@ func load_user_data():
                             var d2_stages = d2_data.get("stages_completed", 0)
                             if d2_data.get("completed", false) or d2_stages >= 5:
                                 dungeon_2_completed = true
-                                highest_accessible_dungeon = 3
+                                current_dungeon = 3  # Move to dungeon 3
                         
                         # Check dungeon 3 completion
-                        if dungeon_2_completed and completed.has("3"):
+                        if completed.has("3"):
                             var d3_data = completed["3"]
                             var d3_stages = d3_data.get("stages_completed", 0)
                             if d3_data.get("completed", false) or d3_stages >= 5:
                                 dungeon_3_completed = true
                         
                         print("ProfilePopUp: Dungeon completion status - D1:", dungeon_1_completed, " D2:", dungeon_2_completed, " D3:", dungeon_3_completed)
-                        print("ProfilePopUp: Highest accessible dungeon:", highest_accessible_dungeon)
-                        print("ProfilePopUp: Stored current dungeon/stage:", stored_current_dungeon, "/", stored_current_stage)
+                        print("ProfilePopUp: Calculated current dungeon:", current_dungeon)
                         
-                        # Determine current dungeon and stage based on completion status
+                        # Calculate current stage for the determined current dungeon
+                        if completed.has(str(current_dungeon)):
+                            var current_dungeon_data = completed[str(current_dungeon)]
+                            var stages_completed = current_dungeon_data.get("stages_completed", 0)
+                            
+                            print("ProfilePopUp: Dungeon", current_dungeon, "has", stages_completed, "stages completed")
+                            
+                            # Current stage is the next stage after completed ones
+                            # If 2 stages completed, current stage should be 3
+                            if stages_completed >= 5:
+                                # All stages completed in this dungeon
+                                current_stage = 5  # Show as completed
+                            else:
+                                current_stage = stages_completed + 1  # Next stage to play
+                        else:
+                            # No completion data for current dungeon, start at stage 1
+                            current_stage = 1
+                        
+                        # Set the calculated values
+                        user_data["current_dungeon"] = current_dungeon
+                        user_data["current_stage"] = current_stage
+                        
+                        # Set rank based on completion
                         if dungeon_3_completed:
-                            # All dungeons completed - show dungeon 3 as current
-                            user_data["current_dungeon"] = 3
-                            user_data["current_stage"] = 5  # Show as completed
                             user_data["rank"] = "gold"
                         elif dungeon_2_completed:
-                            # Dungeon 1 & 2 completed, working on dungeon 3
-                            user_data["current_dungeon"] = 3
-                            user_data["current_stage"] = stored_current_stage if stored_current_dungeon == 3 else 1
                             user_data["rank"] = "gold"
                         elif dungeon_1_completed:
-                            # Dungeon 1 completed, working on dungeon 2
-                            user_data["current_dungeon"] = 2
-                            user_data["current_stage"] = stored_current_stage if stored_current_dungeon == 2 else 1
                             user_data["rank"] = "silver"
                         else:
-                            # Still working on dungeon 1
-                            user_data["current_dungeon"] = 1
-                            user_data["current_stage"] = stored_current_stage if stored_current_dungeon == 1 else 1
                             user_data["rank"] = "bronze"
                         
-                        print("ProfilePopUp: Final current dungeon/stage:", user_data["current_dungeon"], "/", user_data["current_stage"])
+                        # Ensure valid values
+                        user_data["current_stage"] = max(1, min(5, user_data.get("current_stage", 1)))
+                        user_data["current_dungeon"] = max(1, min(3, user_data.get("current_dungeon", 1)))
+                        
+                        print("ProfilePopUp: Final calculated current dungeon/stage:", user_data["current_dungeon"], "/", user_data["current_stage"])
                 
                 print("ProfilePopUp: Successfully loaded user data: ", user_data)
                 
