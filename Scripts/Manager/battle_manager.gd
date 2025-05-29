@@ -97,7 +97,7 @@ func handle_victory():
 	# Award experience to player
 	print("BattleManager: Awarding ", exp_reward, " experience to player")
 	print("BattleManager: Player stats before exp gain - Level: ", battle_scene.player_manager.player_level, ", Exp: ", battle_scene.player_manager.player_exp, "/", battle_scene.player_manager.get_max_exp())
-	battle_scene.player_manager.add_experience(exp_reward)
+	await battle_scene.player_manager.add_experience(exp_reward)
 	print("BattleManager: Player stats after exp gain - Level: ", battle_scene.player_manager.player_level, ", Exp: ", battle_scene.player_manager.player_exp, "/", battle_scene.player_manager.get_max_exp())
 	
 	# Add victory message

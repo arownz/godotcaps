@@ -485,6 +485,65 @@ func update_firebase_stats():
     else:
         print("Failed to get document for battle stats update")
 
+# Test function to verify Firebase updates work correctly after battles
+func test_battle_exp_gain():
+    print("=== TESTING BATTLE EXP GAIN AND FIREBASE UPDATE ===")
+    print("Before battle: Level " + str(player_level) + ", Exp " + str(player_exp) + ", Health " + str(player_max_health) + ", Damage " + str(player_damage) + ", Durability " + str(player_durability))
+    
+    # Simulate gaining exp from defeating an enemy (like in battle_manager.gd)
+    var exp_reward = 50  # Typical reward amount
+    print("Simulating exp gain of " + str(exp_reward) + " exp from defeating enemy...")
+    
+    # Call add_experience just like battle_manager does
+    await add_experience(exp_reward)
+    
+    print("After exp gain: Level " + str(player_level) + ", Exp " + str(player_exp) + ", Health " + str(player_max_health) + ", Damage " + str(player_damage) + ", Durability " + str(player_durability))
+    print("=== BATTLE EXP TEST COMPLETE ===")
+    
+    # Verify Firebase was updated by checking if we can load the data back
+    print("=== VERIFYING FIREBASE UPDATE ===")
+    await _verify_firebase_update()
+    
+func _verify_firebase_update():
+    if !Firebase.Auth.auth:
+        print("No Firebase auth for verification")
+        return
+        
+    var user_id = Firebase.Auth.auth.localid
+    var collection = Firebase.Firestore.collection("dyslexia_users")
+    
+    # Get fresh document from Firebase
+    var document = await collection.get_doc(user_id)
+    if document and !("error" in document.keys() and document.get_value("error")):
+        var stats = document.get_value("stats")
+        if stats and stats.has("player"):
+            var firebase_player_stats = stats["player"]
+            print("Firebase verification - Level: " + str(firebase_player_stats.get("level", "ERROR")) + 
+                  ", Exp: " + str(firebase_player_stats.get("exp", "ERROR")) + 
+                  ", Health: " + str(firebase_player_stats.get("health", "ERROR")) + 
+                  ", Damage: " + str(firebase_player_stats.get("damage", "ERROR")) + 
+                  ", Durability: " + str(firebase_player_stats.get("durability", "ERROR")))
+            
+            # Compare with local values
+            var local_matches_firebase = (
+                firebase_player_stats.get("level") == player_level and
+                firebase_player_stats.get("exp") == player_exp and
+                firebase_player_stats.get("health") == player_max_health and
+                firebase_player_stats.get("damage") == player_damage and
+                firebase_player_stats.get("durability") == player_durability
+            )
+            
+            if local_matches_firebase:
+                print("✓ SUCCESS: Local player stats match Firebase data!")
+            else:
+                print("✗ MISMATCH: Local and Firebase data don't match!")
+        else:
+            print("✗ ERROR: No player stats found in Firebase document")
+    else:
+        print("✗ ERROR: Could not retrieve document from Firebase")
+    
+    print("=== FIREBASE VERIFICATION COMPLETE ===")
+
 # Temporary test function to verify Firebase level-up updates work
 func test_firebase_level_up():
     print("=== TESTING FIREBASE LEVEL-UP UPDATE ===")

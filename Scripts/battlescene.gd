@@ -507,3 +507,8 @@ func _input(event):
 	if event.is_action_pressed("ui_accept"):  # Enter key
 		print("Testing Firebase level-up updates...")
 		await player_manager.test_firebase_level_up()
+		
+	# Test battle exp gain and Firebase update (F1 key)
+	if event.is_action_pressed("ui_home"):  # F1 key
+		print("Testing battle exp gain and Firebase update...")
+		await player_manager.test_battle_exp_gain()
