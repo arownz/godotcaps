@@ -97,11 +97,11 @@ func log_result():
 	if battle_log and battle_log.has_method("add_log_entry"):
 		var log_message = ""
 		if is_successful:
-			log_message = "Challenge successful! You " + input_type + ": \"" + recognized_text + "\""
+			log_message = "[color=#000000]Challenge successful! You " + input_type + ": \"" + recognized_text + "\"[/color]"
 			if bonus_damage > 0:
-				log_message += " (Bonus damage: +" + str(bonus_damage) + ")"
+				log_message += "[color=#000000] (Bonus damage: +" + str(bonus_damage) + ")[/color]"
 		else:
-			log_message = "Challenge failed. You " + input_type + ": \"" + recognized_text + "\". The word was: \"" + challenge_word + "\""
+			log_message = "[color=#000000]Challenge failed. You " + input_type + ": \"" + recognized_text + "\". The word was: \"" + challenge_word + "\"[/color]"
 		
 		battle_log.add_log_entry(log_message, "challenge")
 

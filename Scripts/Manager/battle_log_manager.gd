@@ -84,11 +84,11 @@ func add_challenge_result_log(recognized_text: String, target_word: String, succ
 	var log_message = ""
 	
 	if success:
-		log_message = "Challenge successful! You wrote: \"" + recognized_text + "\""
+		log_message = "[color=#000000]Challenge successful! You wrote: \"" + recognized_text + "\"[/color]"
 		if bonus_damage > 0:
-			log_message += " (Bonus damage: +" + str(bonus_damage) + ")"
+			log_message += "[color=#000000] (Bonus damage: +" + str(bonus_damage) + ")[/color]"
 	else:
-		log_message = "Challenge failed. You wrote: \"" + recognized_text + "\". The word was: \"" + target_word + "\""
+		log_message = "[color=#000000]Challenge failed. You wrote: \"" + recognized_text + "\". The word was: \"" + target_word + "\"[/color]"
 	
 	# Use the existing add_log_entry function with a challenge type
 	add_log_entry(log_message, "challenge")
@@ -116,9 +116,9 @@ func _on_scroll_value_changed(value):
 
 # Function to add a new log entry with optional type for color coding
 func add_log_entry(text: String, type: String = "default") -> void:
-	# Add timestamp
+	# Add timestamp with black color
 	var current_time = Time.get_time_dict_from_system()
-	var timestamp = "%02d:%02d" % [current_time.hour, current_time.minute]
+	var timestamp = "[color=#000000]%02d:%02d[/color]" % [current_time.hour, current_time.minute]
 	
 	# Strip bbcode tags for console output and clean display
 	var clean_text = text
@@ -200,6 +200,9 @@ func update_ui() -> void:
 		label.add_theme_font_override("mono_font", dyslexia_font)
 		label.add_theme_font_size_override("font_size", 16)
 		label.add_theme_font_size_override("normal_font_size", 16)
+		
+		# Set default font color to black for any text without explicit color tags
+		label.add_theme_color_override("default_color", Color.BLACK)
 		
 		print("BattleLogManager: Font applied to label: ", label.get_theme_font("font") != null)
 		

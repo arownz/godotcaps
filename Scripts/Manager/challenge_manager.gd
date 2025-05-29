@@ -230,7 +230,7 @@ func handle_challenge_cancelled():
 	
 	# Add battle log messages
 	battle_log_manager.add_message("[color=#EB5E4B]You cancelled your counter! The " + enemy_manager.enemy_name + " takes advantage![/color]")
-	battle_log_manager.add_message("[color=#000000]The " + enemy_manager.enemy_name + " dealt " + str(cancellation_damage) + " damage![color=#000000]")
+	battle_log_manager.add_message("[color=#000000]The " + enemy_manager.enemy_name + " dealt " + str(cancellation_damage) + " damage![/color]")
 	
 	# Reset enemy skill meter
 	enemy_manager.enemy_skill_meter = 0
