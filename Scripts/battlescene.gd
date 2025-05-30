@@ -189,7 +189,19 @@ func _on_player_experience_changed(_current_exp, _max_exp):
 	ui_manager.update_player_exp()
 
 func _on_player_level_up(new_level):
-	battle_log_manager.add_message("[color=#4CAF50]Congratulations! You reached level " + str(new_level) + "![/color]")
+	# Get the stat increases from player_manager
+	var health_increase = 20  # Based on get_max_health() calculation
+	var damage_increase = 11  # Based on player_manager level up logic
+	var durability_increase = 8  # Based on player_manager level up logic
+	
+	# Get current stats
+	var new_health = player_manager.player_max_health
+	var new_damage = player_manager.player_damage
+	var new_durability = player_manager.player_durability
+	
+	# Use enhanced level-up message with emojis and colors
+	battle_log_manager.add_level_up_message(new_level, health_increase, damage_increase, durability_increase, new_health, new_damage, new_durability)
+	
 	# Update power and durability bars when player levels up
 	ui_manager.update_power_bar(player_manager.player_damage)
 	ui_manager.update_durability_bar(player_manager.player_durability)

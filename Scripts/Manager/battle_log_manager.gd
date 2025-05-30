@@ -220,6 +220,19 @@ func update_ui() -> void:
 			await get_tree().process_frame
 			scroll_container.scroll_vertical = scroll_container.get_v_scroll_bar().max_value
 
+# Add enhanced level-up message with emojis and colors
+func add_level_up_message(new_level: int, health_increase: int, damage_increase: int, durability_increase: int, new_health: int, new_damage: int, new_durability: int):
+	# Main level-up announcement with celebration emoji
+	add_message("[color=#FFD700]🎉 LEVEL UP! 🎉 You reached level " + str(new_level) + "![/color]")
+	
+	# Show stat increases with appropriate emojis and colors
+	add_message("[color=#4CAF50]💚 Health increased by +" + str(health_increase) + " (now " + str(new_health) + ")[/color]")
+	add_message("[color=#FF6B6B]⚔️ Damage increased by +" + str(damage_increase) + " (now " + str(new_damage) + ")[/color]")
+	add_message("[color=#42A5F5]🛡️ Durability increased by +" + str(durability_increase) + " (now " + str(new_durability) + ")[/color]")
+	
+	# Motivational message with star emoji
+	add_message("[color=#FFD700]⭐ You are growing stronger! Keep fighting! ⭐[/color]")
+
 # Clear all log entries
 func clear_log() -> void:
 	entries.clear()

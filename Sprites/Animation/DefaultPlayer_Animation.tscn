@@ -508,3 +508,4 @@ animations = [{
 sprite_frames = SubResource("SpriteFrames_fdt5l")
 animation = &"battle_idle"
 autoplay = "battle_idle"
+frame_progress = 0.376593
