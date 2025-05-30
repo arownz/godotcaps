@@ -22,8 +22,6 @@ var _base_url : String
 var _extended_url : String
 var _config : Dictionary
 
-var _documents := {}
-
 # ----------------------- Requests
 
 ## @args document_id
@@ -44,11 +42,16 @@ func get_doc(document_id : String, from_cache : bool = false, is_listener : bool
 	_process_request(task, document_id, url)
 	var result = await Firebase.Firestore._handle_task_finished(task)
 	if result != null:
+		var found_document = false
 		for child in get_children():
 			if child.doc_name == document_id:
 				child.replace(result, true)
 				result = child
+				found_document = true
 				break
+		
+		if not found_document:
+			add_child(result, true)
 	else:
 		print("get_document returned null for %s %s" % [collection_name, document_id])
 		
@@ -96,7 +99,7 @@ func update(document : FirestoreDocument) -> FirestoreDocument:
 	var temp_transforms
 	if document._transforms != null:
 		temp_transforms = document._transforms
-		document._transforms = null
+		document._transforms = FieldTransformArray.new()
 	
 	var body = JSON.stringify({"fields": document.document})
 
@@ -110,6 +113,8 @@ func update(document : FirestoreDocument) -> FirestoreDocument:
 	
 		if temp_transforms != null:
 			result._transforms = temp_transforms
+		
+		document.field_added_or_updated = false
 	
 	return result
 
@@ -176,3 +181,24 @@ func _process_request(task : FirestoreTask, document_id : String, url : String, 
 
 func get_database_url(append) -> String:
 	return _base_url + _extended_url.rstrip("/") + ":" + append
+
+
+## @args document_id: StringName, data: Variant
+## @return void
+# used to SET a document, specify the document ID and new data
+func set_doc(document_id: StringName, data: Variant) -> void:
+	var task: FirestoreTask = FirestoreTask.new()
+	task.action = FirestoreTask.Task.TASK_PATCH
+	task.data = collection_name + "/" + document_id
+	var url = _get_request_url() + _separator + document_id.replace(" ", "%20")
+
+	_process_request(task, document_id, url, JSON.stringify(Utilities.dict2fields(data)))
+	var result = await Firebase.Firestore._handle_task_finished(task)
+
+	if result != null:
+		for child in get_children():
+			if child.doc_name == document_id:
+				child.replace(result, true)
+				break
+	else:
+		print("set_document returned null for %s %s" % [collection_name, document_id])
