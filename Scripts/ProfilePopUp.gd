@@ -30,7 +30,6 @@ func _ready():
     # Connect edit and copy UID buttons
     $ProfileContainer/UserInfoArea/EditNameButton.pressed.connect(_on_edit_name_button_pressed)
     $ProfileContainer/UserInfoArea/CopyUIDButton.pressed.connect(_on_copy_uid_button_pressed)
-    $Background.gui_input.connect(_on_background_input)
     
     # Connect DungeonArea button for navigation
     $ProfileContainer/DungeonArea.pressed.connect(_on_dungeon_area_pressed)
@@ -633,11 +632,6 @@ func _on_copy_uid_button_pressed():
         var tween = create_tween()
         tween.tween_property(popup, "modulate", Color(1, 1, 1, 0), 2.0)
         tween.tween_callback(popup.queue_free)
-
-func _on_background_input(event):
-    if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-        # Close the popup when clicking outside
-        _close_popup()
 
 func _close_popup():
     var tween = create_tween()
