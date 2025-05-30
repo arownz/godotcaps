@@ -15,7 +15,7 @@ var dungeon_names = ["The Plain", "The Forest", "The Mountain"]
 # Preload dungeon images for better performance
 var dungeon_images = {
     1: preload("res://gui/Update/icons/level selection.png"),
-    2: preload("res://gui/Update/icons/level selection.png"), 
+    2: preload("res://gui/Update/icons/level selection.png"),
     3: preload("res://gui/Update/icons/highest level.png")
 }
 
@@ -126,8 +126,8 @@ func load_user_data():
                         print("ProfilePopUp: Stored current dungeon/stage from progress:", stored_current_dungeon, "/", stored_current_stage)
                         
                         # Calculate the actual current dungeon and stage based on completion status
-                        var current_dungeon = 1  # Start with dungeon 1
-                        var current_stage = 1   # Default to stage 1
+                        var current_dungeon = 1 # Start with dungeon 1
+                        var current_stage = 1 # Default to stage 1
                         
                         # Determine current dungeon based on completion status
                         var dungeon_1_completed = false
@@ -140,7 +140,7 @@ func load_user_data():
                             var d1_stages = d1_data.get("stages_completed", 0)
                             if d1_data.get("completed", false) or d1_stages >= 5:
                                 dungeon_1_completed = true
-                                current_dungeon = 2  # Move to dungeon 2
+                                current_dungeon = 2 # Move to dungeon 2
                         
                         # Check dungeon 2 completion
                         if dungeon_1_completed and completed.has("2"):
@@ -148,7 +148,7 @@ func load_user_data():
                             var d2_stages = d2_data.get("stages_completed", 0)
                             if d2_data.get("completed", false) or d2_stages >= 5:
                                 dungeon_2_completed = true
-                                current_dungeon = 3  # Move to dungeon 3
+                                current_dungeon = 3 # Move to dungeon 3
                         
                         # Check dungeon 3 completion
                         if completed.has("3"):
@@ -171,9 +171,9 @@ func load_user_data():
                             # If 2 stages completed, current stage should be 3
                             if stages_completed >= 5:
                                 # All stages completed in this dungeon
-                                current_stage = 5  # Show as completed
+                                current_stage = 5 # Show as completed
                             else:
-                                current_stage = stages_completed + 1  # Next stage to play
+                                current_stage = stages_completed + 1 # Next stage to play
                         else:
                             # No completion data for current dungeon, start at stage 1
                             current_stage = 1
@@ -227,7 +227,8 @@ func _create_user_document(user_id):
             "rank": "bronze",
             "created_at": current_time,
             "usage_time": 0,
-			"session": 1
+			"session": 1,
+			"last_session_date": Time.get_date_string_from_system()
         },
         "stats": {
             "player": {
