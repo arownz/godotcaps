@@ -225,12 +225,12 @@ func add_level_up_message(new_level: int, health_increase: int, damage_increase:
 	# Main level-up announcement with celebration emoji
 	add_message("[color=#FFD700]🎉 LEVEL UP! 🎉 You reached level " + str(new_level) + "![/color]")
 	
-	# Show stat increases with appropriate emojis and colors
+	# Show stat increases with appropriate website emojis and colors
 	add_message("[color=#4CAF50]💚 Health increased by +" + str(health_increase) + " (now " + str(new_health) + ")[/color]")
-	add_message("[color=#FF6B6B]⚔️ Damage increased by +" + str(damage_increase) + " (now " + str(new_damage) + ")[/color]")
+	add_message("[color=#FF6B6B]💪 Damage increased by +" + str(damage_increase) + " (now " + str(new_damage) + ")[/color]")
 	add_message("[color=#42A5F5]🛡️ Durability increased by +" + str(durability_increase) + " (now " + str(new_durability) + ")[/color]")
-	
-	# Motivational message with star emoji
+
+# Add a motivational message for player growth
 	add_message("[color=#FFD700]⭐ You are growing stronger! Keep fighting! ⭐[/color]")
 
 # Clear all log entries

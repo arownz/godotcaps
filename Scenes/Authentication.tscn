@@ -1,10 +1,10 @@
 [gd_scene load_steps=11 format=3 uid="uid://cbpwvuj8kdyod"]
 
-[ext_resource type="Script" uid="uid://t5tc36uuxhcf" path="res://Scripts/authentication.gd" id="1_6ea5n"]
+[ext_resource type="Script" path="res://Scripts/authentication.gd" id="1_6ea5n"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="2_edc1m"]
-[ext_resource type="Texture2D" uid="uid://d1kxcxch535m0" path="res://gui/Backgrounds/Dungeon1_background.png" id="2_wtcou"]
+[ext_resource type="Texture2D" uid="uid://chfkysvsxt4eg" path="res://gui/Update/Backgrounds/Plains_Level.png" id="2_iq7dp"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="3_4bnr5"]
-[ext_resource type="Texture2D" uid="uid://b8dwfqwi4y2ji" path="res://gui/Update/icons/game logo lexia (vector).png" id="3_iq7dp"]
+[ext_resource type="Texture2D" uid="uid://dkkb8nek5d6fs" path="res://gui/Update/logos/LEXIA Logo (with text).png" id="3_c45f6"]
 [ext_resource type="Texture2D" uid="uid://c75anq8c0biyi" path="res://gui/Update/UI/ui 7.png" id="5_iq7dp"]
 [ext_resource type="Texture2D" uid="uid://decyo17hpkcp6" path="res://gui/googleicon.png" id="5_qlk3g"]
 [ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="8_6oq4l"]
@@ -37,7 +37,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_wtcou")
+texture = ExtResource("2_iq7dp")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -62,17 +62,18 @@ size_flags_stretch_ratio = 0.8
 
 [node name="BrandContainer" type="VBoxContainer" parent="MarginContainer/ContentContainer/LeftPanel"]
 layout_mode = 1
-anchors_preset = 8
+anchors_preset = -1
 anchor_left = 0.5
-anchor_top = 0.5
+anchor_top = 0.318
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -180.0
-offset_top = -180.0
-offset_right = 180.0
-offset_bottom = 180.0
+offset_left = -240.0
+offset_top = -53.86
+offset_right = 145.0
+offset_bottom = 166.0
 grow_horizontal = 2
 grow_vertical = 2
+scale = Vector2(1.37771, 1.37771)
 alignment = 1
 
 [node name="LogoTexture" type="TextureRect" parent="MarginContainer/ContentContainer/LeftPanel/BrandContainer"]
@@ -80,13 +81,14 @@ custom_minimum_size = Vector2(200, 180)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_stretch_ratio = 0.0
-texture = ExtResource("3_iq7dp")
+texture = ExtResource("3_c45f6")
 expand_mode = 1
 stretch_mode = 5
 
 [node name="Subtitle" type="Label" parent="MarginContainer/ContentContainer/LeftPanel/BrandContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 25
 text = "Gamified made 

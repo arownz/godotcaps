@@ -450,17 +450,19 @@ func update_profile_picture(profile_id):
 
 # Button handlers
 func _on_journey_mode_button_pressed():
+    print("MainMenu: Navigating to journey mode scene")
     get_tree().change_scene_to_file("res://Scenes/DungeonSelection.tscn")
 
 func _on_modules_button_pressed():
-    # Placeholder for modules screen
-    pass
+    print("MainMenu: Navigating to modules scene")
+    get_tree().change_scene_to_file("res://Scenes/ModulesScene.tscn")
 
 func _on_character_button_pressed():
-    # Placeholder for character screen
-    pass
+    print("MainMenu: Navigating to character selection screen")
+    get_tree().change_scene_to_file("res://Scenes/ChangeCharacterScene.tscn")
 
 func _on_leaderboard_button_pressed():
+    print("MainMenu: Navigating to leaderboard screen")
     get_tree().change_scene_to_file("res://Scenes/Leaderboard.tscn")
 
 func _on_settings_button_pressed():
@@ -468,6 +470,7 @@ func _on_settings_button_pressed():
     get_tree().change_scene_to_file("res://Scenes/SettingScene.tscn")
 
 func _on_profile_button_pressed():
+    print("MainMenu: Navigating to profile popup")
     # Show profile popup
     var profile_popup_scene = load("res://Scenes/ProfilePopUp.tscn")
     if profile_popup_scene:

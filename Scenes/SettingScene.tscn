@@ -114,7 +114,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.2, 0.8, 0.2, 1)
 theme_override_fonts/font = ExtResource("1_font_bold")
 theme_override_font_sizes/font_size = 24
-text = "📖 Accessibility"
+text = "Accessibility"
 
 [node name="FontSizeContainer" type="HBoxContainer" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection"]
 layout_mode = 2
@@ -227,7 +227,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.2, 0.8, 0.8, 1)
 theme_override_fonts/font = ExtResource("1_font_bold")
 theme_override_font_sizes/font_size = 24
-text = "🔊 Audio (Coming Soon)"
+text = "Audio (Coming Soon)"
 
 [node name="MasterVolumeContainer" type="HBoxContainer" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/AudioSection"]
 layout_mode = 2
@@ -329,7 +329,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.8, 0.6, 0.2, 1)
 theme_override_fonts/font = ExtResource("1_font_bold")
 theme_override_font_sizes/font_size = 24
-text = "🎮 Gameplay"
+text = "Gameplay"
 
 [node name="DifficultyContainer" type="HBoxContainer" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/GameplaySection"]
 layout_mode = 2
