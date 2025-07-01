@@ -1,6 +1,103 @@
-[gd_scene load_steps=2 format=3 uid="uid://cpuv0hhhcq6sv"]
+[gd_scene load_steps=14 format=3 uid="uid://cpuv0hhhcq6sv"]
 
-[ext_resource type="Texture2D" uid="uid://bedyjdu5rblv8" path="res://gui/Update/UI/ui (1).png" id="1_hsuv7"]
+[ext_resource type="Texture2D" uid="uid://c75anq8c0biyi" path="res://gui/Update/UI/ui 7.png" id="2_178ft"]
+[ext_resource type="Script" uid="uid://dgboy6v1hc540" path="res://Scripts/ModuleScene.gd" id="2_module_script"]
+[ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="3_regular_font"]
+[ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="4_bold_font"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_header"]
+bg_color = Color(1, 1, 1, 0.95)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.8, 0.85, 0.9, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+shadow_color = Color(0, 0, 0, 0.1)
+shadow_size = 8
+shadow_offset = Vector2(0, 4)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nav_btn_hover"]
+bg_color = Color(0.35, 0.4, 0.84, 1)
+corner_radius_top_left = 25
+corner_radius_top_right = 25
+corner_radius_bottom_right = 25
+corner_radius_bottom_left = 25
+shadow_color = Color(0, 0, 0, 0.3)
+shadow_size = 6
+shadow_offset = Vector2(0, 4)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nav_btn"]
+bg_color = Color(0.4, 0.49, 0.92, 1)
+corner_radius_top_left = 25
+corner_radius_top_right = 25
+corner_radius_bottom_right = 25
+corner_radius_bottom_left = 25
+shadow_color = Color(0, 0, 0, 0.2)
+shadow_size = 4
+shadow_offset = Vector2(0, 2)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_card"]
+bg_color = Color(1, 1, 1, 0.95)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.8, 0.85, 0.9, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0, 0, 0, 0.1)
+shadow_size = 8
+shadow_offset = Vector2(0, 4)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_icon"]
+bg_color = Color(0.4, 0.49, 0.92, 1)
+corner_radius_top_left = 40
+corner_radius_top_right = 40
+corner_radius_bottom_right = 40
+corner_radius_bottom_left = 40
+shadow_color = Color(0, 0, 0, 0.2)
+shadow_size = 6
+shadow_offset = Vector2(0, 3)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_progress_bg"]
+bg_color = Color(0.88, 0.91, 0.94, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_progress_fill"]
+bg_color = Color(0.28, 0.73, 0.47, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_action_btn_hover"]
+bg_color = Color(0.22, 0.66, 0.41, 1)
+corner_radius_top_left = 25
+corner_radius_top_right = 25
+corner_radius_bottom_right = 25
+corner_radius_bottom_left = 25
+shadow_color = Color(0, 0, 0, 0.3)
+shadow_size = 6
+shadow_offset = Vector2(0, 4)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_action_btn"]
+bg_color = Color(0.28, 0.73, 0.47, 1)
+corner_radius_top_left = 25
+corner_radius_top_right = 25
+corner_radius_bottom_right = 25
+corner_radius_bottom_left = 25
+shadow_color = Color(0, 0, 0, 0.2)
+shadow_size = 4
+shadow_offset = Vector2(0, 2)
 
 [node name="ModuleScene" type="Control"]
 layout_mode = 3
@@ -9,9 +106,583 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("2_module_script")
 
 [node name="Background" type="TextureRect" parent="."]
-layout_mode = 0
-offset_right = 1460.0
-offset_bottom = 810.0
-texture = ExtResource("1_hsuv7")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_178ft")
+
+[node name="MainContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 57.0
+offset_top = 41.0
+offset_right = -58.0
+offset_bottom = -35.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 50
+
+[node name="HeaderPanel" type="Panel" parent="MainContainer"]
+custom_minimum_size = Vector2(0, 150)
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_header")
+
+[node name="HeaderContainer" type="VBoxContainer" parent="MainContainer/HeaderPanel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -558.5
+offset_top = -36.0
+offset_right = 630.5
+offset_bottom = 37.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+
+[node name="TitleContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.29, 0.33, 0.41, 1)
+theme_override_fonts/font = ExtResource("4_bold_font")
+theme_override_font_sizes/font_size = 40
+text = "🎓MODULE LEARNING"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MenuButton" type="Button" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer"]
+custom_minimum_size = Vector2(140, 50)
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("3_regular_font")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/hover = SubResource("StyleBoxFlat_nav_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_nav_btn_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_nav_btn")
+text = "Menu"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="ContentContainer" type="VBoxContainer" parent="MainContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 20
+
+[node name="ModulesGrid" type="GridContainer" parent="MainContainer/ScrollContainer/ContentContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+theme_override_constants/h_separation = 25
+theme_override_constants/v_separation = 20
+columns = 2
+
+[node name="PhonicsCard" type="Panel" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid"]
+custom_minimum_size = Vector2(350, 360)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+
+[node name="CardContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/PhonicsCard"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 30.0
+offset_top = 30.0
+offset_right = -30.0
+offset_bottom = -30.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 15
+
+[node name="Header" type="HBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/PhonicsCard/CardContent"]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_constants/separation = 20
+
+[node name="IconPanel" type="Panel" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/PhonicsCard/CardContent/Header"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_icon")
+
+[node name="IconLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/PhonicsCard/CardContent/Header/IconPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("3_regular_font")
+theme_override_font_sizes/font_size = 36
+text = "🔤"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/PhonicsCard/CardContent/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.18, 0.22, 0.28, 1)
+theme_override_fonts/font = ExtResource("4_bold_font")
+theme_override_font_sizes/font_size = 24
+text = "Phonics Interactive"
+vertical_alignment = 1
+
+[node name="DescriptionLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/PhonicsCard/CardContent"]
+custom_minimum_size = Vector2(1, 0)
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_colors/font_color = Color(0.29, 0.33, 0.41, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_regular_font")
+theme_override_font_sizes/font_size = 16
+text = "Trace letters and hear sounds with interactive whiteboard exercises. Perfect for building word recognition skills."
+autowrap_mode = 3
+
+[node name="ProgressContainer" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/PhonicsCard/CardContent"]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_constants/separation = 8
+
+[node name="ProgressBar" type="ProgressBar" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/PhonicsCard/CardContent/ProgressContainer"]
+custom_minimum_size = Vector2(0, 12)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_progress_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_progress_fill")
+value = 65.0
+show_percentage = false
+
+[node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/PhonicsCard/CardContent/ProgressContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.45, 0.51, 0.59, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_regular_font")
+theme_override_font_sizes/font_size = 14
+text = "65% Complete"
+horizontal_alignment = 2
+
+[node name="ActionButton" type="Button" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/PhonicsCard/CardContent"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+size_flags_vertical = 8
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("4_bold_font")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/hover = SubResource("StyleBoxFlat_action_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_action_btn_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_action_btn")
+text = "Start Learning"
+
+[node name="FlipQuizCard" type="Panel" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid"]
+custom_minimum_size = Vector2(350, 360)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+
+[node name="CardContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 30.0
+offset_top = 21.0
+offset_right = -30.0
+offset_bottom = -21.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 15
+
+[node name="Header" type="HBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent"]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_constants/separation = 20
+
+[node name="IconPanel" type="Panel" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent/Header"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_icon")
+
+[node name="IconLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent/Header/IconPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("3_regular_font")
+theme_override_font_sizes/font_size = 36
+text = "🎭"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.18, 0.22, 0.28, 1)
+theme_override_fonts/font = ExtResource("4_bold_font")
+theme_override_font_sizes/font_size = 24
+text = "Flip Quiz"
+vertical_alignment = 1
+
+[node name="DescriptionLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent"]
+custom_minimum_size = Vector2(1, 0)
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_colors/font_color = Color(0.29, 0.33, 0.41, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_regular_font")
+theme_override_font_sizes/font_size = 16
+text = "Fast-paced flashcard quizzes with voice input and text recognition. Build vocabulary through engaging challenges."
+autowrap_mode = 3
+
+[node name="ProgressContainer" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent"]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_constants/separation = 8
+
+[node name="ProgressBar" type="ProgressBar" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent/ProgressContainer"]
+custom_minimum_size = Vector2(0, 12)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_progress_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_progress_fill")
+value = 40.0
+show_percentage = false
+
+[node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent/ProgressContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.45, 0.51, 0.59, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_regular_font")
+theme_override_font_sizes/font_size = 14
+text = "40% Complete"
+horizontal_alignment = 2
+
+[node name="ActionButton" type="Button" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+size_flags_vertical = 8
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("4_bold_font")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/hover = SubResource("StyleBoxFlat_action_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_action_btn_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_action_btn")
+text = "Play Quiz"
+
+[node name="ReadAloudCard" type="Panel" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid"]
+custom_minimum_size = Vector2(350, 360)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+
+[node name="CardContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 30.0
+offset_top = 30.0
+offset_right = -30.0
+offset_bottom = -30.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 15
+
+[node name="Header" type="HBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent"]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_constants/separation = 20
+
+[node name="IconPanel" type="Panel" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent/Header"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_icon")
+
+[node name="IconLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent/Header/IconPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("3_regular_font")
+theme_override_font_sizes/font_size = 36
+text = "📖"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.18, 0.22, 0.28, 1)
+theme_override_fonts/font = ExtResource("4_bold_font")
+theme_override_font_sizes/font_size = 24
+text = "Interactive Read-Aloud"
+vertical_alignment = 1
+
+[node name="DescriptionLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent"]
+custom_minimum_size = Vector2(1, 0)
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_colors/font_color = Color(0.29, 0.33, 0.41, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_regular_font")
+theme_override_font_sizes/font_size = 16
+text = "Text passages with real-time highlighting. Follow along as words are read aloud with pause and replay options."
+autowrap_mode = 3
+
+[node name="ProgressContainer" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent"]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_constants/separation = 8
+
+[node name="ProgressBar" type="ProgressBar" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent/ProgressContainer"]
+custom_minimum_size = Vector2(0, 12)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_progress_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_progress_fill")
+value = 55.0
+show_percentage = false
+
+[node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent/ProgressContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.45, 0.51, 0.59, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_regular_font")
+theme_override_font_sizes/font_size = 14
+text = "55% Complete"
+horizontal_alignment = 2
+
+[node name="ActionButton" type="Button" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+size_flags_vertical = 8
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("4_bold_font")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/hover = SubResource("StyleBoxFlat_action_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_action_btn_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_action_btn")
+text = "Start Reading"
+
+[node name="ChunkedReadingCard" type="Panel" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid"]
+custom_minimum_size = Vector2(350, 360)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+
+[node name="CardContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ChunkedReadingCard"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 30.0
+offset_top = 30.0
+offset_right = -30.0
+offset_bottom = -30.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 15
+
+[node name="Header" type="HBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ChunkedReadingCard/CardContent"]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_constants/separation = 20
+
+[node name="IconPanel" type="Panel" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ChunkedReadingCard/CardContent/Header"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_icon")
+
+[node name="IconLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ChunkedReadingCard/CardContent/Header/IconPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("3_regular_font")
+theme_override_font_sizes/font_size = 36
+text = "📝"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ChunkedReadingCard/CardContent/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.18, 0.22, 0.28, 1)
+theme_override_fonts/font = ExtResource("4_bold_font")
+theme_override_font_sizes/font_size = 24
+text = "Chunked Reading"
+vertical_alignment = 1
+
+[node name="DescriptionLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ChunkedReadingCard/CardContent"]
+custom_minimum_size = Vector2(1, 0)
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_colors/font_color = Color(0.29, 0.33, 0.41, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_regular_font")
+theme_override_font_sizes/font_size = 16
+text = "Break texts into manageable sections with guided questions. Reduce cognitive overload and improve comprehension."
+autowrap_mode = 3
+
+[node name="ProgressContainer" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ChunkedReadingCard/CardContent"]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_constants/separation = 8
+
+[node name="ProgressBar" type="ProgressBar" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ChunkedReadingCard/CardContent/ProgressContainer"]
+custom_minimum_size = Vector2(0, 12)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_progress_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_progress_fill")
+value = 25.0
+show_percentage = false
+
+[node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ChunkedReadingCard/CardContent/ProgressContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.45, 0.51, 0.59, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_regular_font")
+theme_override_font_sizes/font_size = 14
+text = "25% Complete"
+horizontal_alignment = 2
+
+[node name="ActionButton" type="Button" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ChunkedReadingCard/CardContent"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+size_flags_vertical = 8
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("4_bold_font")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/hover = SubResource("StyleBoxFlat_action_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_action_btn_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_action_btn")
+text = "Start Reading"
+
+[node name="SyllableBuildingCard" type="Panel" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid"]
+custom_minimum_size = Vector2(350, 360)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+
+[node name="CardContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/SyllableBuildingCard"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 30.0
+offset_top = 21.0
+offset_right = -30.0
+offset_bottom = -21.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 15
+
+[node name="Header" type="HBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/SyllableBuildingCard/CardContent"]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_constants/separation = 20
+
+[node name="IconPanel" type="Panel" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/SyllableBuildingCard/CardContent/Header"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_icon")
+
+[node name="IconLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/SyllableBuildingCard/CardContent/Header/IconPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("3_regular_font")
+theme_override_font_sizes/font_size = 36
+text = "🌈"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/SyllableBuildingCard/CardContent/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.18, 0.22, 0.28, 1)
+theme_override_fonts/font = ExtResource("4_bold_font")
+theme_override_font_sizes/font_size = 24
+text = "Syllable Building"
+vertical_alignment = 1
+
+[node name="DescriptionLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/SyllableBuildingCard/CardContent"]
+custom_minimum_size = Vector2(1, 0)
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_colors/font_color = Color(0.29, 0.33, 0.41, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_regular_font")
+theme_override_font_sizes/font_size = 16
+text = "Manipulate letters and syllables to form words. Color-coded syllables and rainbow reading for better decoding."
+autowrap_mode = 3
+
+[node name="ProgressContainer" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/SyllableBuildingCard/CardContent"]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_constants/separation = 8
+
+[node name="ProgressBar" type="ProgressBar" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/SyllableBuildingCard/CardContent/ProgressContainer"]
+custom_minimum_size = Vector2(0, 12)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_progress_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_progress_fill")
+value = 70.0
+show_percentage = false
+
+[node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/SyllableBuildingCard/CardContent/ProgressContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.45, 0.51, 0.59, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_regular_font")
+theme_override_font_sizes/font_size = 14
+text = "70% Complete"
+horizontal_alignment = 2
+
+[node name="ActionButton" type="Button" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/SyllableBuildingCard/CardContent"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+size_flags_vertical = 8
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("4_bold_font")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/hover = SubResource("StyleBoxFlat_action_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_action_btn_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_action_btn")
+text = "Build Words"

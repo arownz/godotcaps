@@ -636,6 +636,12 @@ func _on_speech_recognized(text):
 		func():
 			print("RESULT PANEL CONTINUE SIGNAL RECEIVED")
 			if is_success:
+				# Track module progress if we came from read-aloud module
+				if GlobalData and GlobalData.current_module == "read_aloud":
+					var lesson_number = _get_current_lesson_number()
+					GlobalData.complete_lesson("read_aloud", lesson_number)
+					print("WordChallengePanel_STT: Completed read-aloud lesson " + str(lesson_number))
+				
 				emit_signal("challenge_completed", bonus_damage)
 			else:
 				emit_signal("challenge_failed")
@@ -751,7 +757,7 @@ func _on_tts_speech_error(error_msg):
 	if tts.is_connected("speech_ended", Callable(self, "_on_tts_speech_ended")):
 		tts.disconnect("speech_ended", Callable(self, "_on_tts_speech_ended"))
 	
-	if tts.is_connected("speech_error", Callable(self, "_on_tts_speech_error")):
+	if tts.is_connected("speech_error", Callable(self, "_on_tts_speech_ended")):
 		tts.disconnect("speech_error", Callable(self, "_on_tts_speech_ended"))
 
 func _on_tts_settings_button_pressed():
@@ -784,6 +790,14 @@ func _on_close_button_pressed():
 func _on_cancel_button_pressed():
 	print("Cancel button pressed - cancelling speak challenge")
 	emit_signal("challenge_cancelled")
+	
+	# Return to the correct scene based on where we came from
+	if GlobalData and GlobalData.previous_scene != "":
+		print("WordChallengePanel_STT: Returning to " + GlobalData.previous_scene)
+		GlobalData.return_to_previous_scene()
+	else:
+		# Default fallback
+		get_tree().change_scene_to_file("res://Scenes/ModuleScene.tscn")
 
 # Make sure to clean up resources when this node is about to be removed
 func _exit_tree():
@@ -827,3 +841,11 @@ func _process(_delta):
 		if result and typeof(result) == TYPE_STRING:
 			print("Found result from polling: " + result)
 			speech_result_callback(result)
+			
+# Helper function to determine current lesson number
+func _get_current_lesson_number() -> int:
+	if GlobalData and GlobalData.current_module != "":
+		var module_progress = GlobalData.get_module_progress(GlobalData.current_module)
+		if not module_progress.is_empty():
+			return module_progress.current_lesson
+	return 1 # Default to lesson 1

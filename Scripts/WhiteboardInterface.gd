@@ -198,6 +198,14 @@ func _on_clear_button_pressed():
 func _on_cancel_button_pressed():
 	print("Cancel button pressed - cancelling whiteboard challenge")
 	emit_signal("drawing_cancelled")
+	
+	# Return to the correct scene based on where we came from
+	if GlobalData and GlobalData.previous_scene != "":
+		print("WhiteboardInterface: Returning to " + GlobalData.previous_scene)
+		GlobalData.return_to_previous_scene()
+	else:
+		# Default fallback
+		get_tree().change_scene_to_file("res://Scenes/ModuleScene.tscn")
 
 # Submit drawing for recognition
 func _on_done_button_pressed():
@@ -420,6 +428,13 @@ func _on_recognition_completed(text_result: String):
 	# Emit signal with recognized text
 	emit_signal("drawing_submitted", text_result)
 	
+	# Track module progress if we came from phonics module
+	if GlobalData and GlobalData.current_module == "phonics":
+		# Award points for successful recognition
+		var lesson_number = _get_current_lesson_number()
+		GlobalData.complete_lesson("phonics", lesson_number)
+		print("WhiteboardInterface: Completed phonics lesson " + str(lesson_number))
+	
 	# Update status display
 	if status_label:
 		status_label.visible = true
@@ -506,3 +521,11 @@ func _show_status_message(text, color = Color(1, 1, 1, 1)):
 func _hide_status_message():
 	var tween = create_tween()
 	tween.tween_property(status_label, "modulate:a", 0.0, 0.3)
+
+# Helper function to determine current lesson number
+func _get_current_lesson_number() -> int:
+	if GlobalData and GlobalData.current_module != "":
+		var module_progress = GlobalData.get_module_progress(GlobalData.current_module)
+		if not module_progress.is_empty():
+			return module_progress.current_lesson
+	return 1 # Default to lesson 1

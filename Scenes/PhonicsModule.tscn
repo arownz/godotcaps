@@ -1,0 +1,120 @@
+[gd_scene load_steps=5 format=3 uid="uid://bh3v5d8f2hak1"]
+
+[ext_resource type="Texture2D" uid="uid://cp6h0easasnmc" path="res://gui/Update/UI/ui 6.png" id="2_e2csw"]
+[ext_resource type="Script" uid="uid://c8qtq6lp3uc26" path="res://Scripts/PhonicsModule.gd" id="2_script"]
+[ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="3_regular_font"]
+[ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="4_bold_font"]
+
+[node name="PhonicsModule" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_script")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_e2csw")
+
+[node name="MainContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 50.0
+offset_top = 50.0
+offset_right = -50.0
+offset_bottom = -50.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HeaderContainer" type="HBoxContainer" parent="MainContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="BackButton" type="Button" parent="MainContainer/HeaderContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_regular_font")
+text = "← Back to Modules"
+flat = true
+
+[node name="TitleLabel" type="Label" parent="MainContainer/HeaderContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold_font")
+text = "✏️ Phonics Interactive"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CenterContainer" type="CenterContainer" parent="MainContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ContentPanel" type="Panel" parent="MainContainer/CenterContainer"]
+custom_minimum_size = Vector2(600, 400)
+layout_mode = 2
+
+[node name="ContentContainer" type="VBoxContainer" parent="MainContainer/CenterContainer/ContentPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ModuleTitle" type="Label" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_bold_font")
+text = "Welcome to Phonics Interactive!"
+horizontal_alignment = 1
+
+[node name="Description" type="Label" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_regular_font")
+text = "Trace letters while hearing their sounds. This module will help you learn letter recognition and phonetic awareness."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="ComingSoonLabel" type="Label" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_fonts/font = ExtResource("3_regular_font")
+text = "🚧 This module is under development 🚧
+
+For now, you can practice with the whiteboard interface!"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="ButtonContainer" type="HBoxContainer" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+alignment = 1
+
+[node name="WhiteboardButton" type="Button" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/ButtonContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_bold_font")
+text = "Open Whiteboard"
+
+[node name="BackButton2" type="Button" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/ButtonContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_regular_font")
+text = "Back to Modules"
+
+[connection signal="pressed" from="MainContainer/HeaderContainer/BackButton" to="." method="_on_back_button_pressed"]
+[connection signal="pressed" from="MainContainer/CenterContainer/ContentPanel/ContentContainer/ButtonContainer/WhiteboardButton" to="." method="_on_whiteboard_button_pressed"]
+[connection signal="pressed" from="MainContainer/CenterContainer/ContentPanel/ContentContainer/ButtonContainer/BackButton2" to="." method="_on_back_button_pressed"]

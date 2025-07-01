@@ -455,7 +455,7 @@ func _on_journey_mode_button_pressed():
 
 func _on_modules_button_pressed():
     print("MainMenu: Navigating to modules scene")
-    get_tree().change_scene_to_file("res://Scenes/ModulesScene.tscn")
+    get_tree().change_scene_to_file("res://Scenes/ModuleScene.tscn")
 
 func _on_character_button_pressed():
     print("MainMenu: Navigating to character selection screen")

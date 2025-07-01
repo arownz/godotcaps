@@ -1,6 +1,7 @@
-[gd_scene load_steps=10 format=3 uid="uid://beu8uw5oqkvxd"]
+[gd_scene load_steps=11 format=3 uid="uid://beu8uw5oqkvxd"]
 
 [ext_resource type="Texture2D" uid="uid://chfkysvsxt4eg" path="res://gui/Update/Backgrounds/Plains_Level.png" id="1_nn5pp"]
+[ext_resource type="Script" uid="uid://liwnmmbqa706" path="res://Scripts/change_character_scene.gd" id="1_rnq7s"]
 [ext_resource type="Texture2D" uid="uid://n08ji1i2co16" path="res://gui/Update/UI/small button.png" id="2_6nemp"]
 [ext_resource type="Texture2D" uid="uid://da6rdtvo1nlwj" path="res://gui/Update/icons/return.png" id="3_oxpqv"]
 [ext_resource type="Texture2D" uid="uid://bs34pjd8hpq1v" path="res://gui/Update/UI/Character Select Unlocked.png" id="4_rnq7s"]
@@ -13,6 +14,7 @@
 [node name="ChangeCharacterScene" type="Control"]
 layout_mode = 3
 anchors_preset = 0
+script = ExtResource("1_rnq7s")
 
 [node name="Background" type="TextureRect" parent="."]
 layout_mode = 1

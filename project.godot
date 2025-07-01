@@ -13,7 +13,7 @@ config_version=5
 config/name="Lexia"
 config/description="dyslexia web 2d gamification"
 config/version="1.0"
-run/main_scene="uid://csgj103sy7guc"
+run/main_scene="uid://cbpwvuj8kdyod"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="uid://dkkb8nek5d6fs"
 x`run/main_scene="uid://cbpwvuj8kdyod"
@@ -28,6 +28,7 @@ general/text_to_speech=true
 Firebase="*res://addons/godot-firebase/firebase/firebase.tscn"
 DungeonGlobals="*res://Scripts/DungeonGlobals.gd"
 SettingsManager="*res://Scripts/SettingsManager.gd"
+GlobalData="*res://Scripts/GlobalData.gd"
 
 [config]
 
