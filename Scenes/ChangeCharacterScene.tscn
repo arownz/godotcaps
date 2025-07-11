@@ -313,3 +313,5 @@ icon = ExtResource("9_ccovg")
 flat = true
 icon_alignment = 1
 expand_icon = true
+
+[connection signal="pressed" from="Background/BackButton" to="." method="_on_back_button_pressed"]

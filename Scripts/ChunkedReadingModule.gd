@@ -9,10 +9,7 @@ func _on_back_button_pressed():
 
 func _on_start_lesson_pressed(lesson_number: int):
 	print("ChunkedReadingModule: Starting lesson ", lesson_number)
-	# Store that we came from chunked reading module
-	if GlobalData:
-		GlobalData.current_module = "chunked_reading"
-		GlobalData.previous_scene = "res://Scenes/ChunkedReadingModule.tscn"
+
 	
 	# For now, show a placeholder message
 	var dialog = AcceptDialog.new()

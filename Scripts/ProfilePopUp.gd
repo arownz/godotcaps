@@ -185,9 +185,9 @@ func load_user_data():
                         if dungeon_3_completed:
                             user_data["rank"] = "gold"
                         elif dungeon_2_completed:
-                            user_data["rank"] = "gold"
-                        elif dungeon_1_completed:
                             user_data["rank"] = "silver"
+                        elif dungeon_1_completed:
+                            user_data["rank"] = "bronze"
                         else:
                             user_data["rank"] = "bronze"
                         

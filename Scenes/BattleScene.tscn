@@ -89,7 +89,7 @@ script = ExtResource("3_vhj2j")
 
 [node name="Sprite2D" type="Sprite2D" parent="Background/ParallaxLayer"]
 texture_filter = 1
-position = Vector2(-71, -64)
+position = Vector2(-62, -41)
 scale = Vector2(5.51875, 4.91667)
 texture = ExtResource("2_ixjr5")
 centered = false

@@ -36,8 +36,6 @@ var challenge_active = false
 @onready var stage_info_label = $MainContainer/BattleAreaContainer/StageInfoLabel
 
 # Add these missing variables at the top of the script
-var dungeon_id = 1
-var stage_id = 1
 var document = null
 
 func _ready():
@@ -276,9 +274,13 @@ func _on_battle_quit_requested():
 	# Player chose not to engage, return to dungeon map
 	print("Player quit battle engagement, returning to dungeon")
 	
-	# Determine which dungeon to return to based on current dungeon_id
+	# Get the current dungeon from dungeon_manager instead of using hardcoded dungeon_id
+	var current_dungeon = dungeon_manager.dungeon_num
+	print("Returning to dungeon: ", current_dungeon)
+	
+	# Determine which dungeon to return to based on current dungeon from dungeon_manager
 	var dungeon_scene_path = ""
-	match dungeon_id:
+	match current_dungeon:
 		1:
 			dungeon_scene_path = "res://Scenes/Dungeon1Map.tscn"
 		2:
@@ -386,19 +388,8 @@ func _toggle_auto_battle():
 	else:
 		battle_log_manager.add_message("[color=#000000]Auto battle deactivated![/color]")
 
-# Update stage info label
+# Update stage info label - delegated to UI manager to avoid redundancy
 func _update_stage_info():
-	# Use dungeon manager's current values directly
-	var dungeon_num = dungeon_manager.dungeon_num
-	var stage_num = dungeon_manager.stage_num
-	
-	# Update the stage info label using the existing @onready reference
-	if stage_info_label:
-		var stage_type = "Boss" if stage_num == 5 else "Stage"
-		stage_info_label.text = "Dungeon " + str(dungeon_num) + " - " + stage_type + " " + str(stage_num)
-		print("BattleScene: Updated stage info to: ", stage_info_label.text)
-	
-	# Also update the UI manager
 	ui_manager.update_stage_info()
 
 func _on_word_challenge_completed(_bonus_damage):
@@ -406,7 +397,6 @@ func _on_word_challenge_completed(_bonus_damage):
 
 func _on_word_challenge_failed():
 	print("Word challenge failed")
-
 
 # Direct Firebase challenge stats update - FIXED shadowed variable warning
 func _update_firebase_challenge_stats(challenge_type: String, success: bool):
@@ -460,10 +450,10 @@ func _update_firebase_challenge_stats(challenge_type: String, success: bool):
 		print("BattleScene: Failed to get user document for challenge stats update")
 
 func get_current_dungeon() -> int:
-	return dungeon_id
+	return dungeon_manager.dungeon_num
 
 func get_current_stage() -> int:
-	return stage_id
+	return dungeon_manager.stage_num
 
 func _on_settings_button_pressed():
 	print("Settings button pressed - showing battle settings popup")

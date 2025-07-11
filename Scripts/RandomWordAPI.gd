@@ -118,10 +118,10 @@ func _process_primary_api_response(body):
 		_try_fallback()
 		return
 	
-	# For 4-letter words from the API, ensure it's actually a clean 4-letter word
+	# For 4-letter words from the API, ensure it's actually a clean 3-letter word
 	# This helps eliminate potential junk or longer strings that might come through
 	if API_URLS[current_api_index].contains("sp=????"):
-		# Ensure it's actually close to 4 letters (allowing for minor variations)
+		# Ensure it's actually close to 3 letters (allowing for minor variations)
 		if random_word.length() < 3 or random_word.length() > 6:
 			print("RandomWordAPI: Word length not in range 3-6: " + random_word)
 			_try_fallback()

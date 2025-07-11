@@ -5,7 +5,7 @@ signal voices_loaded
 signal speech_started
 signal speech_finished
 # Add these compatibility signals
-signal speech_ended 
+signal speech_ended
 signal speech_error  # Missing signal that needs to be added
 
 # Add this compatibility property
@@ -16,7 +16,7 @@ var voices = []
 var selected_voice_id = ""
 var speech_rate = 0.8  # Default to a slightly slower rate (Range: 0.1 to 2.0)
 var speech_volume = 1.0 # Volume (Range: 0.0 to 1.0)
-var speech_pitch = 1.0  # Pitch (Range: 0.5 to 2.0)
+var speech_pitch = 1.0 # Pitch (Range: 0.5 to 2.0)
 
 func _ready():
 	# Check if TTS is available on this platform

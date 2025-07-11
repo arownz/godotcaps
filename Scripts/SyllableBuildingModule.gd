@@ -18,10 +18,6 @@ func _on_back_button_pressed():
 
 func _on_start_activity_pressed(activity_number: int):
 	print("SyllableBuildingModule: Starting activity ", activity_number)
-	# Store that we came from syllable building module
-	if GlobalData:
-		GlobalData.current_module = "syllable_building"
-		GlobalData.previous_scene = "res://Scenes/SyllableBuildingModule.tscn"
 	
 	# For now, show a placeholder message
 	var dialog = AcceptDialog.new()
@@ -65,12 +61,6 @@ func _on_build_word_pressed():
 	if built_word == target_word:
 		dialog.dialog_text = "🎉 Excellent! You built the word '" + target_word + "'!\n\nYou combined:\n• but\n• ter\n• fly\n\nWell done!"
 		dialog.title = "Success!"
-		# Track progress if GlobalData is available
-		if GlobalData:
-			GlobalData.complete_current_lesson("syllable_building")
-	else:
-		dialog.dialog_text = "Not quite right! Try selecting all three syllables:\n• but\n• ter\n• fly\n\nYou currently have: " + str(selected_syllables)
-		dialog.title = "Try Again"
 	
 	add_child(dialog)
 	dialog.popup_centered()

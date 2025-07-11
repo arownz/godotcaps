@@ -5,8 +5,6 @@ var login_password_visible = false
 var reg_password_visible = false
 var confirm_password_visible = false
 
-
-
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	Firebase.Auth.login_succeeded.connect(on_login_succeeded)
@@ -414,9 +412,31 @@ func on_login_succeeded(auth):
 				},
 				"progress": {
 					"enemies_defeated": 0,
-					"current_dungeon": 1,
+					"current_dungeon": 1
 				}
-			}
+					},
+				"modules": {
+					"phonics": {
+						"completed": false,
+						"progress": 0
+					},
+					"flip_quiz": {
+						"completed": false,
+						"progress": 0
+					},
+					"read_aloud": {
+						"completed": false,
+						"progress": 0
+					},
+					"chunked_reading": {
+						"completed": false,
+						"progress": 0
+					},
+					"syllable_building": {
+						"completed": false,
+						"progress": 0
+					}
+				}
 		}
 
 		# Save the user data
@@ -477,8 +497,31 @@ func on_login_succeeded(auth):
 					},
 					"progress": {
 						"enemies_defeated": 0,
-						"current_dungeon": 1, }
-				}
+						"current_dungeon": 1
+					}
+						},
+					"modules": {
+						"phonics": {
+							"completed": false,
+							"progress": 0
+						},
+						"flip_quiz": {
+							"completed": false,
+							"progress": 0
+						},
+						"read_aloud": {
+							"completed": false,
+							"progress": 0
+						},
+						"chunked_reading": {
+							"completed": false,
+							"progress": 0
+						},
+						"syllable_building": {
+							"completed": false,
+							"progress": 0
+						}
+					}
 			}
 			
 			collection.add(user_id, user_doc)
@@ -489,7 +532,7 @@ func on_login_succeeded(auth):
 			# Existing user - update usage_time and increment session per day
 			if result.doc_fields != null:
 				var current_data = result.doc_fields
-				var today_date = Time.get_date_string_from_system()  # Format: YYYY-MM-DD
+				var today_date = Time.get_date_string_from_system() # Format: YYYY-MM-DD
 				
 				# Update profile fields for usage tracking
 				if current_data.has("profile") and typeof(current_data["profile"]) == TYPE_DICTIONARY:
@@ -529,14 +572,57 @@ func on_login_succeeded(auth):
 				# Make sure dungeons exist
 				if not current_data.has("dungeons"):
 					current_data["dungeons"] = {
-						"1": {"completed": false, "stages_completed": 0},
-						"2": {"completed": false, "stages_completed": 0},
-						"3": {"completed": false, "stages_completed": 0}
+						"completed": {
+							"1": {"completed": false, "stages_completed": 0},
+							"2": {"completed": false, "stages_completed": 0},
+							"3": {"completed": false, "stages_completed": 0}
+						},
+						"progress": {
+							"enemies_defeated": 0,
+							"current_dungeon": 1
+						}
 					}
-				
-				# Make sure dungeon progress exists
+
+				# Make sure dungeon progress exists (legacy support)
 				if not current_data.has("current_dungeon"):
 					current_data["current_dungeon"] = 1
+				
+				# Make sure modules exist with correct naming
+				if not current_data.has("modules"):
+					current_data["modules"] = {
+						"phonics": {
+							"completed": false,
+							"progress": 0
+						},
+						"flip_quiz": {
+							"completed": false,
+							"progress": 0
+						},
+						"read_aloud": {
+							"completed": false,
+							"progress": 0
+						},
+						"chunked_reading": {
+							"completed": false,
+							"progress": 0
+						},
+						"syllable_building": {
+							"completed": false,
+							"progress": 0
+						}
+					}
+				else:
+					# Migrate old module names to new standardized names
+					var modules = current_data["modules"]
+					if modules.has("flipquiz") and not modules.has("flip_quiz"):
+						modules["flip_quiz"] = modules["flipquiz"]
+						modules.erase("flipquiz")
+					if modules.has("interactive_reading") and not modules.has("read_aloud"):
+						modules["read_aloud"] = modules["interactive_reading"]
+						modules.erase("interactive_reading")
+					if modules.has("syllable_reading") and not modules.has("syllable_building"):
+						modules["syllable_building"] = modules["syllable_reading"]
+						modules.erase("syllable_reading")
 				
 				# Complete document update instead of just updating one field
 				collection.add(user_id, current_data)
@@ -549,7 +635,6 @@ func on_login_succeeded(auth):
 
 # Helper function to navigate to main menu
 func navigate_to_main_menu(is_google_auth := false):
-	
 	# Show success message and redirect to main menu
 	show_message("Login Successful! Redirecting...", true)
 	
@@ -594,7 +679,7 @@ func on_signup_succeeded(auth):
 	
 	# Get user data from registration form
 	var username = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/UsernameLineEdit.text
-	var email = $MarginContainer/ContentContainer/RightPanel/MainContainer	/VBoxContainer/TabContainer/Register/RegEmailLineEdit.text
+	var email = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegEmailLineEdit.text
 
 	# Get birthdate components
 	var day_option = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/BirthDateContainer/DayOptionButton
@@ -662,6 +747,28 @@ func on_signup_succeeded(auth):
 			"progress": {
 				"enemies_defeated": 0,
 				"current_dungeon": 1,
+			}
+		},
+		"modules": {
+			"phonics": {
+				"completed": false,
+				"progress": 0
+			},
+			"flip_quiz": {
+				"completed": false,
+				"progress": 0
+			},
+			"read_aloud": {
+				"completed": false,
+				"progress": 0
+			},
+			"chunked_reading": {
+				"completed": false,
+				"progress": 0
+			},
+			"syllable_building": {
+				"completed": false,
+				"progress": 0
 			}
 		}
 	}

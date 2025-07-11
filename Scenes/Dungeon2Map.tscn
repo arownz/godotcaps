@@ -201,7 +201,7 @@ offset_top = 11.0
 offset_right = 426.0
 offset_bottom = 80.0
 theme_override_font_sizes/font_size = 50
-text = "Select Level"
+text = "Select Stage"
 uppercase = true
 
 [node name="StageDetails" type="TextureRect" parent="."]
@@ -389,47 +389,6 @@ position = Vector2(135, 318)
 scale = Vector2(2.79408, 2.76731)
 sprite_frames = SubResource("SpriteFrames_u8y63")
 
-[node name="LVLabel" type="Label" parent="StageDetails/LeftContainer"]
-layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 80.0
-offset_top = -312.0
-offset_right = -113.0
-offset_bottom = -275.0
-grow_horizontal = 2
-grow_vertical = 0
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_constants/shadow_offset_x = 2
-theme_override_constants/shadow_offset_y = 2
-theme_override_fonts/font = ExtResource("8_qpxt0")
-theme_override_font_sizes/font_size = 20
-text = "LvL."
-horizontal_alignment = 1
-
-[node name="LVLabel2" type="Label" parent="StageDetails/LeftContainer"]
-layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 143.0
-offset_top = -313.0
-offset_right = -68.0
-offset_bottom = -276.0
-grow_horizontal = 2
-grow_vertical = 0
-theme_override_colors/font_color = Color(0.964706, 1, 0, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_constants/shadow_offset_x = 2
-theme_override_constants/shadow_offset_y = 2
-theme_override_fonts/font = ExtResource("8_qpxt0")
-theme_override_font_sizes/font_size = 20
-text = "100"
-
 [node name="MonsterName" type="Label" parent="StageDetails/LeftContainer"]
 layout_mode = 2
 anchor_top = 1.0
@@ -452,6 +411,47 @@ horizontal_alignment = 1
 vertical_alignment = 2
 autowrap_mode = 3
 uppercase = true
+
+[node name="LVLabel" type="Label" parent="StageDetails/LeftContainer"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 71.0
+offset_top = -308.0
+offset_right = -98.0
+offset_bottom = -271.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_fonts/font = ExtResource("8_qpxt0")
+theme_override_font_sizes/font_size = 20
+text = "Stage"
+horizontal_alignment = 1
+
+[node name="LVLabel2" type="Label" parent="StageDetails/LeftContainer"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 158.0
+offset_top = -308.0
+offset_right = -53.0
+offset_bottom = -271.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.964706, 1, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_fonts/font = ExtResource("8_qpxt0")
+theme_override_font_sizes/font_size = 20
+text = "5"
 
 [node name="Label" type="Label" parent="StageDetails"]
 layout_mode = 0

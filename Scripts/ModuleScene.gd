@@ -294,7 +294,7 @@ func _apply_dyslexia_font_to_node(node: Node):
 
 # Module button event handlers
 func _on_menu_button_pressed():
-	print("ModuleScene: Opening menu")
+	print("ModuleScene: Going back to Main Menu")
 	_show_coming_soon_notification("Menu", "📋")
 
 func _on_phonics_button_pressed():
@@ -319,9 +319,7 @@ func _on_syllable_building_button_pressed():
 
 func _launch_module(module_key: String):
 	# Store current module for returning later
-	if GlobalData:
-		GlobalData.current_module = module_key
-		GlobalData.previous_scene = "res://Scenes/ModuleScene.tscn"
+
 	
 	# Navigate to appropriate module scene
 	match module_key:

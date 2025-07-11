@@ -154,9 +154,9 @@ func setup_enemy():
         print("ERROR: Could not load enemy data")
         return
     
-    # Calculate level based on current dungeon and stage
-    enemy_level = ((battle_scene.dungeon_manager.dungeon_num - 1) * 25) + (battle_scene.dungeon_manager.stage_num)
-    
+    # Calculate level based on current stage (1-5 for each dungeon)
+    enemy_level = battle_scene.dungeon_manager.stage_num
+
     # Determine enemy type based on stage (stage 5 = boss, others = normal)
     if battle_scene.dungeon_manager.stage_num == 5:
         enemy_type = "boss"

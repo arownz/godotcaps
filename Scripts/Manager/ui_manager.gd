@@ -157,8 +157,10 @@ func update_stage_info():
 		var dungeon_num = battle_scene.dungeon_manager.dungeon_num
 		var stage_num = battle_scene.dungeon_manager.stage_num
 		var stage_type = "Boss" if stage_num == 5 else "Stage"
+		
+		# Use the actual stage number (1-5) for each dungeon
 		stage_info_label.text = "Dungeon " + str(dungeon_num) + " - " + stage_type + " " + str(stage_num)
-		print("Updated stage info: ", stage_info_label.text)
+		print("UIManager: Updated stage info to: ", stage_info_label.text)
 
 func update_background(dungeon_num: int):
 	# Update background based on dungeon number

@@ -233,16 +233,4 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [connection signal="pressed" from="Panel/CloseButton" to="." method="_on_close_button_pressed"]
-[connection signal="pressed" from="Panel/ScrollContainer/GridContainer/Portrait13" to="." method="_on_portrait_button_pressed" binds= ["13"]]
-[connection signal="pressed" from="Panel/ScrollContainer/GridContainer/Portrait14" to="." method="_on_portrait_button_pressed" binds= ["14"]]
-[connection signal="pressed" from="Panel/ScrollContainer/GridContainer/Portrait15" to="." method="_on_portrait_button_pressed" binds= ["15"]]
-[connection signal="pressed" from="Panel/ScrollContainer/GridContainer/Portrait16" to="." method="_on_portrait_button_pressed" binds= ["16"]]
-[connection signal="pressed" from="Panel/ScrollContainer/GridContainer/Portrait17" to="." method="_on_portrait_button_pressed" binds= ["17"]]
-[connection signal="pressed" from="Panel/ScrollContainer/GridContainer/Portrait18" to="." method="_on_portrait_button_pressed" binds= ["18"]]
-[connection signal="pressed" from="Panel/ScrollContainer/GridContainer/Portrait19" to="." method="_on_portrait_button_pressed" binds= ["19"]]
-[connection signal="pressed" from="Panel/ScrollContainer/GridContainer/Portrait20" to="." method="_on_portrait_button_pressed" binds= ["20"]]
-[connection signal="pressed" from="Panel/ScrollContainer/GridContainer/Portrait21" to="." method="_on_portrait_button_pressed" binds= ["21"]]
-[connection signal="pressed" from="Panel/ScrollContainer/GridContainer/Portrait22" to="." method="_on_portrait_button_pressed" binds= ["22"]]
-[connection signal="pressed" from="Panel/ScrollContainer/GridContainer/Portrait23" to="." method="_on_portrait_button_pressed" binds= ["23"]]
-[connection signal="pressed" from="Panel/ScrollContainer/GridContainer/Portrait24" to="." method="_on_portrait_button_pressed" binds= ["24"]]
 [connection signal="pressed" from="Panel/ConfirmButton" to="." method="_on_confirm_button_pressed"]
