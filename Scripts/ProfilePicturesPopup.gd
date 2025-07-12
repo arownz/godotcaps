@@ -10,10 +10,13 @@ var checkmark_icons = {}
 
 func _ready():
 	# Initialize UI
-	$Panel/ConfirmButton.disabled = true
+	$PictureContainer/ConfirmButton.disabled = true
 	
-	# Create checkmark icons for all portrait buttons but make them invisible
-	for child in $Panel/ScrollContainer/GridContainer.get_children():
+	# Connect background click to close popup
+	$Background.gui_input.connect(_on_background_clicked)
+	
+		# Create checkmark icons for all portrait buttons but make them invisible
+	for child in $PictureContainer/ScrollContainer/GridContainer.get_children():
 		if child is TextureButton:
 			var portrait_id = child.name.replace("Portrait", "")
 			
@@ -22,12 +25,13 @@ func _ready():
 			checkmark.texture = load("res://gui/ProfileScene/Profile/Done 1.png")
 			checkmark.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 			checkmark.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-			checkmark.size_flags_horizontal = Control.SIZE_SHRINK_END
-			checkmark.size_flags_vertical = Control.SIZE_SHRINK_END
-			checkmark.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
-			checkmark.position = Vector2(child.size.x - 30, child.size.y - 30)
+			checkmark.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+			checkmark.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+			checkmark.set_anchors_preset(Control.PRESET_CENTER)
+			checkmark.position = Vector2((child.size.x - 30) / 2, (child.size.y - 30) / 2)
 			checkmark.visible = false
 			checkmark.custom_minimum_size = Vector2(30, 30)
+			checkmark.z_index = 10  # Ensure it appears above the button
 			child.add_child(checkmark)
 			
 			# Store reference to the checkmark
@@ -95,20 +99,28 @@ func _on_portrait_button_pressed(picture_id):
 	# Find the button that was pressed
 	selected_picture_id = picture_id
 	
-	# Reset styling for all portrait buttons
-	for child in $Panel/ScrollContainer/GridContainer.get_children():
+	# Reset styling for all portrait buttons and hide all checkmarks
+	for child in $PictureContainer/ScrollContainer/GridContainer.get_children():
 		if child is TextureButton:
 			child.modulate = Color(1, 1, 1, 1)
+			# Hide checkmark for this button
+			var child_portrait_id = child.name.replace("Portrait", "")
+			if child_portrait_id in checkmark_icons:
+				checkmark_icons[child_portrait_id].visible = false
 	
 	# Highlight the selected button - find it by name
 	var button_name = "Portrait" + picture_id
-	var selected_portrait = $Panel/ScrollContainer/GridContainer.get_node_or_null(button_name)
+	var selected_portrait = $PictureContainer/ScrollContainer/GridContainer.get_node_or_null(button_name)
 	if selected_portrait and selected_portrait is TextureButton:
 		selected_portrait.modulate = Color(0.5, 0.8, 1.0, 1.0)
 		selected_button = selected_portrait
+		
+		# Show checkmark for the selected portrait
+		if picture_id in checkmark_icons:
+			checkmark_icons[picture_id].visible = true
 	
 	# Enable confirm button
-	$Panel/ConfirmButton.disabled = false
+	$PictureContainer/ConfirmButton.disabled = false
 
 func _on_confirm_button_pressed():
 	print("ProfilePicturesPopup: Confirming selection " + selected_picture_id)
@@ -180,3 +192,9 @@ func _on_close_button_pressed():
 	
 	# Self-destruct
 	queue_free()
+
+# Handle background click to close popup
+func _on_background_clicked(event):
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		print("ProfilePicturesPopup: Background clicked, closing popup")
+		_on_close_button_pressed()

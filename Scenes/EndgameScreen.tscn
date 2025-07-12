@@ -1,7 +1,6 @@
-[gd_scene load_steps=8 format=3 uid="uid://3mxcrytk1kud"]
+[gd_scene load_steps=7 format=3 uid="uid://3mxcrytk1kud"]
 
 [ext_resource type="Script" uid="uid://dc6lqw6dmfe1y" path="res://Scripts/EndgameScreen.gd" id="1_mgr3d"]
-[ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="2_6d17n"]
 [ext_resource type="Texture2D" uid="uid://rgl03eh75egv" path="res://gui/Update/UI/victory UI.png" id="2_frm3f"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="3_3xqox"]
 [ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="4_hehfl"]
@@ -92,7 +91,7 @@ layout_mode = 2
 size_flags_horizontal = 4
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("2_6d17n")
+theme_override_fonts/font = ExtResource("3_3xqox")
 theme_override_font_sizes/font_size = 24
 text = "Continue"
 icon = ExtResource("4_hehfl")
@@ -110,7 +109,7 @@ custom_minimum_size = Vector2(200, 50)
 layout_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("2_6d17n")
+theme_override_fonts/font = ExtResource("3_3xqox")
 theme_override_font_sizes/font_size = 24
 text = "Retry"
 icon = ExtResource("5_3xqox")
@@ -123,7 +122,7 @@ custom_minimum_size = Vector2(200, 60)
 layout_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("2_6d17n")
+theme_override_fonts/font = ExtResource("3_3xqox")
 theme_override_font_sizes/font_size = 24
 text = "Leave"
 icon = ExtResource("7_3xqox")

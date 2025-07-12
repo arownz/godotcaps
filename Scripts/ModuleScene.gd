@@ -295,7 +295,7 @@ func _apply_dyslexia_font_to_node(node: Node):
 # Module button event handlers
 func _on_menu_button_pressed():
 	print("ModuleScene: Going back to Main Menu")
-	_show_coming_soon_notification("Menu", "📋")
+	get_tree().change_scene_to_file("res://Scenes/MainMenu.tscn")
 
 func _on_phonics_button_pressed():
 	print("ModuleScene: Starting Phonics Interactive module")

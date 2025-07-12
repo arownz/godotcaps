@@ -1,8 +1,9 @@
-[gd_scene load_steps=14 format=3 uid="uid://cpuv0hhhcq6sv"]
+[gd_scene load_steps=15 format=3 uid="uid://cpuv0hhhcq6sv"]
 
 [ext_resource type="Texture2D" uid="uid://c75anq8c0biyi" path="res://gui/Update/UI/ui 7.png" id="2_178ft"]
 [ext_resource type="Script" uid="uid://dgboy6v1hc540" path="res://Scripts/ModuleScene.gd" id="2_module_script"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="3_regular_font"]
+[ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="4_6atma"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="4_bold_font"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_header"]
@@ -159,7 +160,7 @@ alignment = 1
 [node name="TitleLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.29, 0.33, 0.41, 1)
+theme_override_colors/font_color = Color(0.138866, 0.162532, 0.209941, 1)
 theme_override_fonts/font = ExtResource("4_bold_font")
 theme_override_font_sizes/font_size = 40
 text = "🎓MODULE LEARNING"
@@ -171,13 +172,16 @@ custom_minimum_size = Vector2(140, 50)
 layout_mode = 2
 size_flags_horizontal = 0
 mouse_default_cursor_shape = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = ExtResource("3_regular_font")
-theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold_font")
 theme_override_styles/hover = SubResource("StyleBoxFlat_nav_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_nav_btn_hover")
 theme_override_styles/normal = SubResource("StyleBoxFlat_nav_btn")
-text = "Menu"
+text = "Back"
+icon = ExtResource("4_6atma")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [node name="ScrollContainer" type="ScrollContainer" parent="MainContainer"]
 layout_mode = 2

@@ -36,7 +36,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.6)
 
-[node name="Panel" type="TextureRect" parent="."]
+[node name="PictureContainer" type="TextureRect" parent="."]
 custom_minimum_size = Vector2(500, 400)
 layout_mode = 1
 anchors_preset = 8
@@ -52,23 +52,23 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_kxfne")
 
-[node name="CloseButton" type="TextureButton" parent="Panel"]
+[node name="CloseButton" type="TextureButton" parent="PictureContainer"]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 1.0
 anchor_right = 1.0
 anchor_bottom = 0.015
-offset_left = -34.0
-offset_top = -8.0
-offset_right = 6.0
-offset_bottom = 24.02
+offset_left = -28.0
+offset_top = -10.0
+offset_right = 12.0
+offset_bottom = 22.02
 grow_horizontal = 0
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("3_kxfne")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="TitleLabel" type="Label" parent="Panel"]
+[node name="TitleLabel" type="Label" parent="PictureContainer"]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -83,7 +83,7 @@ theme_override_font_sizes/font_size = 25
 text = "Choose Profile Picture"
 horizontal_alignment = 1
 
-[node name="ScrollContainer" type="ScrollContainer" parent="Panel"]
+[node name="ScrollContainer" type="ScrollContainer" parent="PictureContainer"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -96,7 +96,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_default_cursor_shape = 2
 
-[node name="GridContainer" type="GridContainer" parent="Panel/ScrollContainer"]
+[node name="GridContainer" type="GridContainer" parent="PictureContainer/ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -105,7 +105,7 @@ theme_override_constants/h_separation = 20
 theme_override_constants/v_separation = 20
 columns = 4
 
-[node name="Portrait13" type="TextureButton" parent="Panel/ScrollContainer/GridContainer"]
+[node name="Portrait13" type="TextureButton" parent="PictureContainer/ScrollContainer/GridContainer"]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -113,7 +113,7 @@ texture_normal = ExtResource("3_portrait14")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="Portrait14" type="TextureButton" parent="Panel/ScrollContainer/GridContainer"]
+[node name="Portrait14" type="TextureButton" parent="PictureContainer/ScrollContainer/GridContainer"]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -121,7 +121,7 @@ texture_normal = ExtResource("6_mg4gf")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="Portrait15" type="TextureButton" parent="Panel/ScrollContainer/GridContainer"]
+[node name="Portrait15" type="TextureButton" parent="PictureContainer/ScrollContainer/GridContainer"]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -129,7 +129,7 @@ texture_normal = ExtResource("4_portrait15")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="Portrait16" type="TextureButton" parent="Panel/ScrollContainer/GridContainer"]
+[node name="Portrait16" type="TextureButton" parent="PictureContainer/ScrollContainer/GridContainer"]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -137,7 +137,7 @@ texture_normal = ExtResource("7_kxfne")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="Portrait17" type="TextureButton" parent="Panel/ScrollContainer/GridContainer"]
+[node name="Portrait17" type="TextureButton" parent="PictureContainer/ScrollContainer/GridContainer"]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -145,7 +145,7 @@ texture_normal = ExtResource("8_yxql3")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="Portrait18" type="TextureButton" parent="Panel/ScrollContainer/GridContainer"]
+[node name="Portrait18" type="TextureButton" parent="PictureContainer/ScrollContainer/GridContainer"]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -153,7 +153,7 @@ texture_normal = ExtResource("9_h1a42")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="Portrait19" type="TextureButton" parent="Panel/ScrollContainer/GridContainer"]
+[node name="Portrait19" type="TextureButton" parent="PictureContainer/ScrollContainer/GridContainer"]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -161,7 +161,7 @@ texture_normal = ExtResource("10_v70ae")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="Portrait20" type="TextureButton" parent="Panel/ScrollContainer/GridContainer"]
+[node name="Portrait20" type="TextureButton" parent="PictureContainer/ScrollContainer/GridContainer"]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -169,7 +169,7 @@ texture_normal = ExtResource("11_00j4d")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="Portrait21" type="TextureButton" parent="Panel/ScrollContainer/GridContainer"]
+[node name="Portrait21" type="TextureButton" parent="PictureContainer/ScrollContainer/GridContainer"]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -177,7 +177,7 @@ texture_normal = ExtResource("12_5fqu5")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="Portrait22" type="TextureButton" parent="Panel/ScrollContainer/GridContainer"]
+[node name="Portrait22" type="TextureButton" parent="PictureContainer/ScrollContainer/GridContainer"]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -185,7 +185,7 @@ texture_normal = ExtResource("13_pwh4d")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="Portrait23" type="TextureButton" parent="Panel/ScrollContainer/GridContainer"]
+[node name="Portrait23" type="TextureButton" parent="PictureContainer/ScrollContainer/GridContainer"]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -193,7 +193,7 @@ texture_normal = ExtResource("14_almhk")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="Portrait24" type="TextureButton" parent="Panel/ScrollContainer/GridContainer"]
+[node name="Portrait24" type="TextureButton" parent="PictureContainer/ScrollContainer/GridContainer"]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -201,7 +201,7 @@ texture_normal = ExtResource("15_u6s02")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="ConfirmButton" type="TextureButton" parent="Panel"]
+[node name="ConfirmButton" type="TextureButton" parent="PictureContainer"]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -218,7 +218,7 @@ texture_normal = ExtResource("17_yxql3")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="Label" type="Label" parent="Panel/ConfirmButton"]
+[node name="Label" type="Label" parent="PictureContainer/ConfirmButton"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -232,5 +232,17 @@ text = "Confirm"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[connection signal="pressed" from="Panel/CloseButton" to="." method="_on_close_button_pressed"]
-[connection signal="pressed" from="Panel/ConfirmButton" to="." method="_on_confirm_button_pressed"]
+[connection signal="pressed" from="PictureContainer/CloseButton" to="." method="_on_close_button_pressed"]
+[connection signal="pressed" from="PictureContainer/ScrollContainer/GridContainer/Portrait13" to="." method="_on_portrait_button_pressed" binds= ["13"]]
+[connection signal="pressed" from="PictureContainer/ScrollContainer/GridContainer/Portrait14" to="." method="_on_portrait_button_pressed" binds= ["14"]]
+[connection signal="pressed" from="PictureContainer/ScrollContainer/GridContainer/Portrait15" to="." method="_on_portrait_button_pressed" binds= ["15"]]
+[connection signal="pressed" from="PictureContainer/ScrollContainer/GridContainer/Portrait16" to="." method="_on_portrait_button_pressed" binds= ["16"]]
+[connection signal="pressed" from="PictureContainer/ScrollContainer/GridContainer/Portrait17" to="." method="_on_portrait_button_pressed" binds= ["17"]]
+[connection signal="pressed" from="PictureContainer/ScrollContainer/GridContainer/Portrait18" to="." method="_on_portrait_button_pressed" binds= ["18"]]
+[connection signal="pressed" from="PictureContainer/ScrollContainer/GridContainer/Portrait19" to="." method="_on_portrait_button_pressed" binds= ["19"]]
+[connection signal="pressed" from="PictureContainer/ScrollContainer/GridContainer/Portrait20" to="." method="_on_portrait_button_pressed" binds= ["20"]]
+[connection signal="pressed" from="PictureContainer/ScrollContainer/GridContainer/Portrait21" to="." method="_on_portrait_button_pressed" binds= ["21"]]
+[connection signal="pressed" from="PictureContainer/ScrollContainer/GridContainer/Portrait22" to="." method="_on_portrait_button_pressed" binds= ["22"]]
+[connection signal="pressed" from="PictureContainer/ScrollContainer/GridContainer/Portrait23" to="." method="_on_portrait_button_pressed" binds= ["23"]]
+[connection signal="pressed" from="PictureContainer/ScrollContainer/GridContainer/Portrait24" to="." method="_on_portrait_button_pressed" binds= ["24"]]
+[connection signal="pressed" from="PictureContainer/ConfirmButton" to="." method="_on_confirm_button_pressed"]

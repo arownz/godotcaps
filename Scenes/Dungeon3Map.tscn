@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://0unsb1sjvcje"]
+[gd_scene load_steps=19 format=3 uid="uid://cofdjvw7ybc6r"]
 
 [ext_resource type="Script" uid="uid://cx3vkj8apruat" path="res://Scripts/dungeon_3_map.gd" id="1_1icim"]
 [ext_resource type="Texture2D" uid="uid://chfkysvsxt4eg" path="res://gui/Update/Backgrounds/Plains_Level.png" id="1_qydu8"]
@@ -15,6 +15,7 @@
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="9_3555f"]
 [ext_resource type="Texture2D" uid="uid://dlusv4b6bm07h" path="res://gui/Update/UI/ui 10.png" id="14_8ojmt"]
 [ext_resource type="Texture2D" uid="uid://ct2kkb4phx2kr" path="res://gui/Update/icons/treant.png" id="16_oabpg"]
+[ext_resource type="Texture2D" uid="uid://cmvfv5h4u7j6e" path="res://gui/Update/icons/close icon.png" id="18_07erb"]
 [ext_resource type="Texture2D" uid="uid://clbfvil7saw1l" path="res://gui/Update/UI/Fight Button (Default).png" id="20_mqaq1"]
 [ext_resource type="Texture2D" uid="uid://8nmtl16kilha" path="res://gui/Update/UI/Fight Button (Hover).png" id="21_a70df"]
 
@@ -535,11 +536,10 @@ offset_bottom = 22.412
 texture = ExtResource("16_oabpg")
 
 [node name="FightButton" type="TextureButton" parent="StageDetails"]
-layout_mode = 0
-offset_left = 202.0
-offset_top = 679.0
-offset_right = 305.0
-offset_bottom = 701.0
+offset_left = 175.0
+offset_top = 682.0
+offset_right = 278.0
+offset_bottom = 704.0
 scale = Vector2(2.88017, 3.15688)
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("20_mqaq1")
@@ -554,3 +554,12 @@ offset_bottom = 23.6832
 theme_override_fonts/font = ExtResource("9_3555f")
 theme_override_font_sizes/font_size = 13
 text = "FIGHT"
+
+[node name="CloseButton" type="TextureButton" parent="StageDetails"]
+offset_left = 614.0
+offset_top = -5.0
+offset_right = 623.0
+offset_bottom = 4.0
+scale = Vector2(4.9143, 4.9143)
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("18_07erb")

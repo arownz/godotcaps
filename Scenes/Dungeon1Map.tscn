@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://d1cb4djmat1dj"]
+[gd_scene load_steps=20 format=3 uid="uid://d1cb4djmat1dj"]
 
 [ext_resource type="Script" uid="uid://4gerx64y471n" path="res://Scripts/dungeon_1_map.gd" id="1_ocdpx"]
 [ext_resource type="Texture2D" uid="uid://chfkysvsxt4eg" path="res://gui/Update/Backgrounds/Plains_Level.png" id="1_shrlp"]
@@ -13,8 +13,10 @@
 [ext_resource type="Texture2D" uid="uid://cp7k7g2my8pgp" path="res://gui/Update/UI/level details.png" id="8_xrlqr"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="9_o4t43"]
 [ext_resource type="Texture2D" uid="uid://dlusv4b6bm07h" path="res://gui/Update/UI/ui 10.png" id="12_y4tkd"]
+[ext_resource type="Texture2D" uid="uid://cmvfv5h4u7j6e" path="res://gui/Update/icons/close icon.png" id="13_1g3o1"]
 [ext_resource type="Texture2D" uid="uid://caaebspp4lxk4" path="res://gui/Update/icons/slaym enemeh.png" id="13_xrlqr"]
 [ext_resource type="Texture2D" uid="uid://ct2kkb4phx2kr" path="res://gui/Update/icons/treant.png" id="16_lqaqn"]
+[ext_resource type="Texture2D" uid="uid://8nmtl16kilha" path="res://gui/Update/UI/Fight Button (Hover).png" id="18_lqaqn"]
 [ext_resource type="Texture2D" uid="uid://clbfvil7saw1l" path="res://gui/Update/UI/Fight Button (Default).png" id="19_0ho0y"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_o52iv"]
@@ -201,7 +203,7 @@ offset_top = 11.0
 offset_right = 426.0
 offset_bottom = 80.0
 theme_override_font_sizes/font_size = 50
-text = "Select Stage"
+text = "DUNGEON 1"
 uppercase = true
 
 [node name="StageDetails" type="TextureRect" parent="."]
@@ -210,6 +212,15 @@ offset_top = 7.0
 offset_right = 1452.0
 offset_bottom = 803.0
 texture = ExtResource("8_xrlqr")
+
+[node name="CloseButton" type="TextureButton" parent="StageDetails"]
+offset_left = 614.0
+offset_top = -5.0
+offset_right = 623.0
+offset_bottom = 4.0
+scale = Vector2(4.9143, 4.9143)
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("13_1g3o1")
 
 [node name="RightContainer" type="Control" parent="StageDetails"]
 anchors_preset = 0
@@ -533,19 +544,22 @@ offset_right = 20.5764
 offset_bottom = 22.412
 texture = ExtResource("16_lqaqn")
 
-[node name="FightButton" type="Button" parent="StageDetails"]
-layout_mode = 0
-offset_left = 202.0
-offset_top = 679.0
-offset_right = 305.0
-offset_bottom = 701.0
+[node name="FightButton" type="TextureButton" parent="StageDetails"]
+offset_left = 175.0
+offset_top = 682.0
+offset_right = 278.0
+offset_bottom = 704.0
 scale = Vector2(2.88017, 3.15688)
 mouse_default_cursor_shape = 2
-theme_override_colors/icon_hover_color = Color(0, 0, 0, 1)
+texture_normal = ExtResource("19_0ho0y")
+texture_hover = ExtResource("18_lqaqn")
+
+[node name="Label" type="Label" parent="StageDetails/FightButton"]
+layout_mode = 0
+offset_left = 19.7905
+offset_top = -0.316793
+offset_right = 83.7905
+offset_bottom = 23.6832
 theme_override_fonts/font = ExtResource("9_o4t43")
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 13
 text = "FIGHT"
-icon = ExtResource("19_0ho0y")
-flat = true
-icon_alignment = 1
-expand_icon = true

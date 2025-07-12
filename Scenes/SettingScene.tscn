@@ -43,7 +43,8 @@ theme_override_constants/separation = 20
 
 [node name="HeaderContainer" type="HBoxContainer" parent="MainContainer/VBoxContainer"]
 layout_mode = 2
-size_flags_vertical = 0
+size_flags_vertical = 2
+size_flags_stretch_ratio = 0.0
 
 [node name="BackButton" type="Button" parent="MainContainer/VBoxContainer/HeaderContainer"]
 custom_minimum_size = Vector2(120, 60)
@@ -52,7 +53,7 @@ mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("1_font_bold")
 theme_override_font_sizes/font_size = 18
-text = "← Back"
+text = "Back"
 icon = ExtResource("4_ch0ic")
 flat = true
 icon_alignment = 1
@@ -68,7 +69,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("1_font_bold")
 theme_override_font_sizes/font_size = 40
-text = "Settings"
+text = "Setting"
 horizontal_alignment = 1
 
 [node name="Spacer2" type="Control" parent="MainContainer/VBoxContainer/HeaderContainer"]
@@ -227,7 +228,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.2, 0.8, 0.8, 1)
 theme_override_fonts/font = ExtResource("1_font_bold")
 theme_override_font_sizes/font_size = 24
-text = "Audio (Coming Soon)"
+text = "Audio"
 
 [node name="MasterVolumeContainer" type="HBoxContainer" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/AudioSection"]
 layout_mode = 2

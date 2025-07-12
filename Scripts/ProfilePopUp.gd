@@ -34,6 +34,9 @@ func _ready():
     # Connect DungeonArea button for navigation
     $ProfileContainer/DungeonArea.pressed.connect(_on_dungeon_area_pressed)
     
+    # Connect background click to close popup
+    $Background.gui_input.connect(_on_background_clicked)
+    
     # Load user data from Firestore
     await load_user_data()
 
@@ -557,7 +560,7 @@ func _on_edit_name_button_pressed():
     
     # Show the edit username panel
     var edit_panel = $EditUsernamePanel
-    var username_input = $EditUsernamePanel/EditContainer/ContentContainer/VBoxContainer/InputContainer/UsernameLineEdit
+    var username_input = $EditUsernamePanel/EditContainer/ContentContainer/VBoxContainer/UsernameLineEdit
     var error_label = $EditUsernamePanel/EditContainer/ContentContainer/VBoxContainer/ErrorLabel
     
     # Set current username as default text
@@ -640,3 +643,9 @@ func _close_popup():
     tween.parallel().tween_property($Background, "modulate:a", 0.0, 0.2)
     await tween.finished
     queue_free()
+
+# Handle background click to close popup
+func _on_background_clicked(event):
+    if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+        print("ProfilePopUp: Background clicked, closing popup")
+        _on_close_button_pressed()

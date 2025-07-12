@@ -364,14 +364,14 @@ text = "100"
 [node name="CharacterContainer" type="TextureRect" parent="ProfileContainer"]
 layout_mode = 0
 offset_left = -9.0
-offset_top = 366.0
+offset_top = 348.0
 offset_right = 221.0
 offset_bottom = 624.0
 texture = ExtResource("10_kmls2")
 
 [node name="DefaultPlayerAnimation" parent="ProfileContainer/CharacterContainer" instance=ExtResource("10_ampbo")]
-position = Vector2(117, 170)
-scale = Vector2(3.97752, 3.97752)
+position = Vector2(104, 155)
+scale = Vector2(3.50675, 3.50675)
 
 [node name="DungeonArea" type="Button" parent="ProfileContainer"]
 layout_mode = 1

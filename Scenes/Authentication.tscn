@@ -296,7 +296,7 @@ expand_mode = 1
 
 [node name="Label" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/SignInGoogleButton/HBoxContainer"]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("2_edc1m")
+theme_override_fonts/font = ExtResource("3_4bnr5")
 theme_override_font_sizes/font_size = 18
 text = "Sign In with Google"
 
@@ -559,12 +559,11 @@ texture_hover = ExtResource("9_iq7dp")
 
 [node name="Label" type="Label" parent="AdminButton"]
 layout_mode = 0
-offset_left = 1.87904
-offset_top = 3.75808
-offset_right = 154.879
-offset_bottom = 33.7581
+offset_left = 2.81856
+offset_top = 2.19221
+offset_right = 155.819
+offset_bottom = 32.1922
 scale = Vector2(0.316638, 0.316638)
-theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_4bnr5")
 text = "Super Admin"
 

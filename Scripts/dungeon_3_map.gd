@@ -81,7 +81,18 @@ func _unhandled_input(event):
 			
 			if not rect.has_point(click_pos):
 				$StageDetails.visible = false
+				$SelectLevel.visible = true  # Show SelectLevel when StageDetails is closed
 				get_viewport().set_input_as_handled()
+
+func _on_close_button_pressed():
+	# Close the StageDetails panel
+	$StageDetails.visible = false
+
+	# Show the SelectLevel panel again
+	$SelectLevel.visible = true
+
+	# Ensure input is handled to prevent further clicks
+	get_viewport().set_input_as_handled()
 
 func _initialize_firebase():
 	if Engine.has_singleton("Firebase"):
@@ -214,6 +225,8 @@ func _connect_signals():
 	
 	# Connect fight button
 	$StageDetails/FightButton.pressed.connect(_on_fight_button_pressed)
+
+	$StageDetails/CloseButton.pressed.connect(_on_close_button_pressed)
 
 func _on_stage_button_pressed(stage_num):
 	$SelectLevel.visible = false
