@@ -30,10 +30,10 @@ texture = ExtResource("1_nn5pp")
 [node name="BackButton" type="TextureButton" parent="Background"]
 custom_minimum_size = Vector2(1, 1)
 layout_mode = 0
-offset_left = 92.0
-offset_top = 663.0
-offset_right = 119.0
-offset_bottom = 690.0
+offset_left = 135.0
+offset_top = 678.0
+offset_right = 162.0
+offset_bottom = 705.0
 scale = Vector2(3.76293, 3.83557)
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("2_6nemp")
@@ -46,6 +46,22 @@ offset_right = 33.732
 offset_bottom = 31.0294
 scale = Vector2(0.612926, 0.537912)
 texture = ExtResource("3_oxpqv")
+
+[node name="BackLabel" type="Label" parent="Background/BackButton"]
+visible = false
+layout_mode = 0
+offset_left = 15.4135
+offset_top = 7.03938
+offset_right = 74.4135
+offset_bottom = 26.0394
+theme_override_colors/font_color = Color(0.054902, 0.27451, 0.47451, 1)
+theme_override_colors/font_shadow_color = Color(1, 1, 1, 1)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_fonts/font = ExtResource("5_hnmjh")
+theme_override_font_sizes/font_size = 8
+text = "Back"
+horizontal_alignment = 1
 
 [node name="Control" type="Control" parent="Background"]
 anchors_preset = 0
@@ -259,6 +275,22 @@ ignore_texture_size = true
 stretch_mode = 5
 flip_h = true
 
+[node name="NextLabel" type="Label" parent="Background/DungeonContainer/NextButton"]
+visible = false
+layout_mode = 0
+offset_left = 24.4515
+offset_top = -10.5736
+offset_right = 81.4515
+offset_bottom = 23.4264
+theme_override_colors/font_color = Color(0.054902, 0.27451, 0.47451, 1)
+theme_override_colors/font_shadow_color = Color(1, 1, 1, 1)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_fonts/font = ExtResource("5_hnmjh")
+theme_override_font_sizes/font_size = 18
+text = "Next"
+horizontal_alignment = 1
+
 [node name="PreviousButton" type="TextureButton" parent="Background/DungeonContainer"]
 layout_mode = 1
 anchors_preset = 4
@@ -274,6 +306,21 @@ mouse_default_cursor_shape = 2
 texture_normal = ExtResource("7_tc6no")
 ignore_texture_size = true
 stretch_mode = 5
+
+[node name="PreviousLabel" type="Label" parent="Background/DungeonContainer/PreviousButton"]
+visible = false
+layout_mode = 0
+offset_left = -11.5571
+offset_right = 90.4429
+offset_bottom = 34.0
+theme_override_colors/font_color = Color(0.054902, 0.27451, 0.47451, 1)
+theme_override_colors/font_shadow_color = Color(1, 1, 1, 1)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_fonts/font = ExtResource("5_hnmjh")
+theme_override_font_sizes/font_size = 18
+text = "Previous"
+horizontal_alignment = 1
 
 [node name="TitleLabel" type="Label" parent="."]
 layout_mode = 1

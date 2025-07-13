@@ -9,7 +9,6 @@ func _on_back_button_pressed():
 
 func _on_start_lesson_pressed(lesson_number: int):
 	print("ChunkedReadingModule: Starting lesson ", lesson_number)
-
 	
 	# For now, show a placeholder message
 	var dialog = AcceptDialog.new()

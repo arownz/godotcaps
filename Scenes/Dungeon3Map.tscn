@@ -30,10 +30,10 @@ texture = ExtResource("1_qydu8")
 [node name="BackButton" type="TextureButton" parent="TextureRect"]
 custom_minimum_size = Vector2(1, 1)
 layout_mode = 0
-offset_left = 92.0
-offset_top = 663.0
-offset_right = 119.0
-offset_bottom = 690.0
+offset_left = 135.0
+offset_top = 678.0
+offset_right = 162.0
+offset_bottom = 705.0
 scale = Vector2(3.76293, 3.83557)
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("2_oabpg")
@@ -46,6 +46,22 @@ offset_right = 33.732
 offset_bottom = 31.0294
 scale = Vector2(0.612926, 0.537912)
 texture = ExtResource("3_0cogd")
+
+[node name="BackLabel" type="Label" parent="TextureRect/BackButton"]
+visible = false
+layout_mode = 0
+offset_left = 15.4135
+offset_top = 7.03938
+offset_right = 74.4135
+offset_bottom = 26.0394
+theme_override_colors/font_color = Color(0.054902, 0.27451, 0.47451, 1)
+theme_override_colors/font_shadow_color = Color(1, 1, 1, 1)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_fonts/font = ExtResource("8_1icim")
+theme_override_font_sizes/font_size = 8
+text = "Back"
+horizontal_alignment = 1
 
 [node name="Stage1" type="TextureButton" parent="."]
 offset_left = 238.0
@@ -195,15 +211,17 @@ texture = ExtResource("6_xeiu1")
 
 [node name="Label" type="Label" parent="SelectLevel"]
 layout_mode = 0
-offset_left = 84.0
-offset_top = 11.0
-offset_right = 426.0
-offset_bottom = 80.0
-theme_override_font_sizes/font_size = 50
-text = "Select Stage"
+offset_left = 34.0
+offset_top = 6.0
+offset_right = 459.0
+offset_bottom = 89.0
+theme_override_fonts/font = ExtResource("8_1icim")
+theme_override_font_sizes/font_size = 45
+text = "DUNGEON 3"
 uppercase = true
 
 [node name="StageDetails" type="TextureRect" parent="."]
+visible = false
 offset_left = 803.0
 offset_top = 7.0
 offset_right = 1452.0
@@ -536,6 +554,7 @@ offset_bottom = 22.412
 texture = ExtResource("16_oabpg")
 
 [node name="FightButton" type="TextureButton" parent="StageDetails"]
+layout_mode = 0
 offset_left = 175.0
 offset_top = 682.0
 offset_right = 278.0
@@ -556,6 +575,7 @@ theme_override_font_sizes/font_size = 13
 text = "FIGHT"
 
 [node name="CloseButton" type="TextureButton" parent="StageDetails"]
+layout_mode = 0
 offset_left = 614.0
 offset_top = -5.0
 offset_right = 623.0

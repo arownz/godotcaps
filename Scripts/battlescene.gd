@@ -20,6 +20,7 @@ var dungeon_manager
 
 # Battle state
 var battle_active = false
+var battle_session_started = false  # Tracks if any battle has occurred in this session
 var auto_battle = false
 var auto_battle_timer = null
 var auto_battle_speed = 5.0
@@ -255,6 +256,9 @@ func _show_battle_settings_popup():
 	# Set energy cost (2 energy per battle)
 	popup.set_energy_cost(2)
 	
+	# Set the battle session state - hide engage button if any battle has occurred
+	popup.set_battle_session_state(battle_session_started, battle_active)
+	
 	# Connect signals
 	popup.engage_confirmed.connect(_on_engage_confirmed)
 	popup.quit_requested.connect(_on_battle_quit_requested)
@@ -298,6 +302,7 @@ func _start_battle():
 		return
 	
 	battle_active = true
+	battle_session_started = true  # Mark that a battle has occurred in this session
 	
 	# Get the engage button and make it transparent/disabled looking
 	engage_button.disabled = true

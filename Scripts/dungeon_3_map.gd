@@ -222,6 +222,8 @@ func _connect_signals():
 	
 	# Connect back button
 	$TextureRect/BackButton.pressed.connect(_on_back_button_pressed)
+	$TextureRect/BackButton.mouse_entered.connect(_on_back_button_hover_entered)
+	$TextureRect/BackButton.mouse_exited.connect(_on_back_button_hover_exited)
 	
 	# Connect fight button
 	$StageDetails/FightButton.pressed.connect(_on_fight_button_pressed)
@@ -385,6 +387,17 @@ func _save_current_dungeon_stage():
 			# Save back to Firestore
 			collection.add(user_id, update_data)
 			print("Saved current dungeon/stage to Firebase")
+
+# Button hover handlers
+func _on_back_button_hover_entered():
+	var back_label = $TextureRect/BackButton/BackLabel
+	if back_label:
+		back_label.visible = true
+
+func _on_back_button_hover_exited():
+	var back_label = $TextureRect/BackButton/BackLabel
+	if back_label:
+		back_label.visible = false
 
 func _on_notification_closed():
 	# Handle notification close if needed

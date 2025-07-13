@@ -101,9 +101,9 @@ expand_icon = true
 
 [node name="CloseButton" type="TextureButton" parent="PopupPanel"]
 layout_mode = 0
-offset_left = 369.0
+offset_left = 370.0
 offset_top = -12.0
-offset_right = 378.0
+offset_right = 379.0
 offset_bottom = -3.0
 scale = Vector2(4.23823, 4.23823)
 mouse_default_cursor_shape = 2

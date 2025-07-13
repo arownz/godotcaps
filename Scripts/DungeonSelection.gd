@@ -67,12 +67,29 @@ func _ready():
     add_child(notification_popup)
     notification_popup.closed.connect(_on_notification_closed)
     
+    # Setup hover functionality for navigation buttons
+    _setup_hover_functionality()
+    
     # Load user data and update UI
     _load_user_data()
     
     # Set initial carousel position
     dungeon_carousel.position.x = 0
     update_dungeon_display()
+
+# Setup hover functionality for navigation buttons
+func _setup_hover_functionality():
+    # Connect hover events for back button
+    $BackButton.mouse_entered.connect(_on_back_button_hover_entered)
+    $BackButton.mouse_exited.connect(_on_back_button_hover_exited)
+    
+    # Connect hover events for next button
+    $NextButton.mouse_entered.connect(_on_next_button_hover_entered)
+    $NextButton.mouse_exited.connect(_on_next_button_hover_exited)
+    
+    # Connect hover events for previous button
+    $PreviousButton.mouse_entered.connect(_on_previous_button_hover_entered)
+    $PreviousButton.mouse_exited.connect(_on_previous_button_hover_exited)
 
 # Load user data from Firebase
 func _load_user_data():
@@ -225,6 +242,37 @@ func _animate_carousel_to_position(dungeon_index):
 func _on_notification_closed():
     # Handle notification close if needed
     pass
+
+# Button hover handlers
+func _on_back_button_hover_entered():
+    var back_label = $BackButton/BackLabel
+    if back_label:
+        back_label.visible = true
+
+func _on_back_button_hover_exited():
+    var back_label = $BackButton/BackLabel
+    if back_label:
+        back_label.visible = false
+
+func _on_next_button_hover_entered():
+    var next_label = $NextButton/NextLabel
+    if next_label:
+        next_label.visible = true
+
+func _on_next_button_hover_exited():
+    var next_label = $NextButton/NextLabel
+    if next_label:
+        next_label.visible = false
+
+func _on_previous_button_hover_entered():
+    var previous_label = $PreviousButton/PreviousLabel
+    if previous_label:
+        previous_label.visible = true
+
+func _on_previous_button_hover_exited():
+    var previous_label = $PreviousButton/PreviousLabel
+    if previous_label:
+        previous_label.visible = false
 
 # Handle navigation and play buttons
 func _on_back_button_pressed():

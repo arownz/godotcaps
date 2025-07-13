@@ -197,24 +197,6 @@ layout_mode = 2
 theme_override_fonts/font = ExtResource("2_font_regular")
 theme_override_font_sizes/font_size = 16
 
-[node name="AnimationContainer" type="HBoxContainer" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection"]
-layout_mode = 2
-theme_override_constants/separation = 20
-
-[node name="AnimationLabel" type="Label" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/AnimationContainer"]
-custom_minimum_size = Vector2(250, 0)
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = ExtResource("2_font_regular")
-theme_override_font_sizes/font_size = 18
-text = "Reduce Animations:"
-vertical_alignment = 1
-
-[node name="AnimationToggle" type="CheckBox" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/AnimationContainer"]
-layout_mode = 2
-theme_override_fonts/font = ExtResource("2_font_regular")
-theme_override_font_sizes/font_size = 16
-
 [node name="Separator1" type="HSeparator" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox"]
 layout_mode = 2
 theme_override_constants/separation = 3
@@ -332,44 +314,6 @@ theme_override_fonts/font = ExtResource("1_font_bold")
 theme_override_font_sizes/font_size = 24
 text = "Gameplay"
 
-[node name="DifficultyContainer" type="HBoxContainer" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/GameplaySection"]
-layout_mode = 2
-theme_override_constants/separation = 20
-
-[node name="DifficultyLabel" type="Label" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/GameplaySection/DifficultyContainer"]
-custom_minimum_size = Vector2(200, 0)
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = ExtResource("2_font_regular")
-theme_override_font_sizes/font_size = 18
-text = "Difficulty:"
-vertical_alignment = 1
-
-[node name="DifficultyOption" type="OptionButton" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/GameplaySection/DifficultyContainer"]
-custom_minimum_size = Vector2(150, 40)
-layout_mode = 2
-theme_override_fonts/font = ExtResource("2_font_regular")
-theme_override_font_sizes/font_size = 16
-
-[node name="AutoSaveContainer" type="HBoxContainer" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/GameplaySection"]
-layout_mode = 2
-theme_override_constants/separation = 20
-
-[node name="AutoSaveLabel" type="Label" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/GameplaySection/AutoSaveContainer"]
-custom_minimum_size = Vector2(250, 0)
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = ExtResource("2_font_regular")
-theme_override_font_sizes/font_size = 18
-text = "Auto Save Progress:"
-vertical_alignment = 1
-
-[node name="AutoSaveToggle" type="CheckBox" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/GameplaySection/AutoSaveContainer"]
-layout_mode = 2
-theme_override_fonts/font = ExtResource("2_font_regular")
-theme_override_font_sizes/font_size = 16
-button_pressed = true
-
 [node name="TutorialsContainer" type="HBoxContainer" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/GameplaySection"]
 layout_mode = 2
 theme_override_constants/separation = 20
@@ -403,14 +347,6 @@ theme_override_colors/font_color = Color(0.8, 0.2, 0.2, 1)
 theme_override_fonts/font = ExtResource("1_font_bold")
 theme_override_font_sizes/font_size = 24
 text = "💾 Data & Privacy"
-
-[node name="ResetProgressButton" type="Button" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/DataSection"]
-custom_minimum_size = Vector2(200, 50)
-layout_mode = 2
-size_flags_horizontal = 0
-theme_override_fonts/font = ExtResource("2_font_regular")
-theme_override_font_sizes/font_size = 16
-text = "Reset Game Progress"
 
 [node name="ExportDataButton" type="Button" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/DataSection"]
 custom_minimum_size = Vector2(200, 50)

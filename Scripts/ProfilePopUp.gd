@@ -560,7 +560,7 @@ func _on_edit_name_button_pressed():
     
     # Show the edit username panel
     var edit_panel = $EditUsernamePanel
-    var username_input = $EditUsernamePanel/EditContainer/ContentContainer/VBoxContainer/UsernameLineEdit
+    var username_input = $EditUsernamePanel/EditContainer/ContentContainer/VBoxContainer/InputContainer/UsernameLineEdit
     var error_label = $EditUsernamePanel/EditContainer/ContentContainer/VBoxContainer/ErrorLabel
     
     # Set current username as default text

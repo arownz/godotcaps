@@ -265,6 +265,21 @@ texture_normal = ExtResource("7_bu21u")
 ignore_texture_size = true
 stretch_mode = 5
 
+[node name="NextLabel" type="Label" parent="NextButton"]
+visible = false
+layout_mode = 0
+offset_left = 9.25191
+offset_right = 66.2519
+offset_bottom = 34.0
+theme_override_colors/font_color = Color(0.054902, 0.27451, 0.47451, 1)
+theme_override_colors/font_shadow_color = Color(1, 1, 1, 1)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_fonts/font = ExtResource("7_vkjng")
+theme_override_font_sizes/font_size = 18
+text = "Next"
+horizontal_alignment = 1
+
 [node name="PreviousButton" type="TextureButton" parent="."]
 layout_mode = 1
 anchors_preset = 4
@@ -282,25 +297,20 @@ ignore_texture_size = true
 stretch_mode = 5
 flip_h = true
 
-[node name="BackButton" type="TextureButton" parent="."]
-custom_minimum_size = Vector2(1, 1)
-layout_mode = 2
-offset_left = 135.0
-offset_top = 678.0
-offset_right = 162.0
-offset_bottom = 705.0
-scale = Vector2(3.76293, 3.83557)
-mouse_default_cursor_shape = 2
-texture_normal = ExtResource("8_xb6di")
-
-[node name="TextureRect" type="TextureRect" parent="BackButton"]
+[node name="PreviousLabel" type="Label" parent="PreviousButton"]
+visible = false
 layout_mode = 0
-offset_left = 4.73197
-offset_top = 7.02944
-offset_right = 33.732
-offset_bottom = 31.0294
-scale = Vector2(0.612926, 0.537912)
-texture = ExtResource("8_r0sib")
+offset_top = -8.15793
+offset_right = 102.0
+offset_bottom = 25.8421
+theme_override_colors/font_color = Color(0.054902, 0.27451, 0.47451, 1)
+theme_override_colors/font_shadow_color = Color(1, 1, 1, 1)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_fonts/font = ExtResource("7_vkjng")
+theme_override_font_sizes/font_size = 18
+text = "Previous"
+horizontal_alignment = 1
 
 [node name="PlayButton" type="Button" parent="."]
 physics_interpolation_mode = 0
@@ -319,10 +329,46 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
+[node name="BackButton" type="TextureButton" parent="."]
+custom_minimum_size = Vector2(1, 1)
+layout_mode = 0
+offset_left = 135.0
+offset_top = 678.0
+offset_right = 162.0
+offset_bottom = 705.0
+scale = Vector2(3.76293, 3.83557)
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("8_xb6di")
+
+[node name="TextureRect" type="TextureRect" parent="BackButton"]
+layout_mode = 0
+offset_left = 4.73197
+offset_top = 7.02944
+offset_right = 33.732
+offset_bottom = 31.0294
+scale = Vector2(0.612926, 0.537912)
+texture = ExtResource("8_r0sib")
+
+[node name="BackLabel" type="Label" parent="BackButton"]
+visible = false
+layout_mode = 0
+offset_left = 27.0
+offset_top = 4.0
+offset_right = 57.0
+offset_bottom = 26.0
+theme_override_colors/font_color = Color(0.054902, 0.27451, 0.47451, 1)
+theme_override_colors/font_shadow_color = Color(1, 1, 1, 1)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_fonts/font = ExtResource("7_vkjng")
+theme_override_font_sizes/font_size = 8
+text = "Back"
+horizontal_alignment = 1
+
 [connection signal="pressed" from="DungeonContainer/DungeonCarousel/Dungeon1/TextureButton" to="." method="_on_dungeon1_pressed"]
 [connection signal="pressed" from="DungeonContainer/DungeonCarousel/Dungeon2/TextureButton" to="." method="_on_dungeon2_pressed"]
 [connection signal="pressed" from="DungeonContainer/DungeonCarousel/Dungeon3/TextureButton" to="." method="_on_dungeon3_pressed"]
 [connection signal="pressed" from="NextButton" to="." method="_on_next_button_pressed"]
 [connection signal="pressed" from="PreviousButton" to="." method="_on_previous_button_pressed"]
-[connection signal="pressed" from="BackButton" to="." method="_on_back_button_pressed"]
 [connection signal="pressed" from="PlayButton" to="." method="_on_play_button_pressed"]
+[connection signal="pressed" from="BackButton" to="." method="_on_back_button_pressed"]

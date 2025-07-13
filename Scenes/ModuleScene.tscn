@@ -1,10 +1,11 @@
-[gd_scene load_steps=15 format=3 uid="uid://cpuv0hhhcq6sv"]
+[gd_scene load_steps=16 format=3 uid="uid://cpuv0hhhcq6sv"]
 
 [ext_resource type="Texture2D" uid="uid://c75anq8c0biyi" path="res://gui/Update/UI/ui 7.png" id="2_178ft"]
 [ext_resource type="Script" uid="uid://dgboy6v1hc540" path="res://Scripts/ModuleScene.gd" id="2_module_script"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="3_regular_font"]
 [ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="4_6atma"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="4_bold_font"]
+[ext_resource type="Texture2D" uid="uid://bmjd8nkagj08e" path="res://gui/Update/UI/long uncolored button.png" id="6_wwwj0"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_header"]
 bg_color = Color(1, 1, 1, 0.95)
@@ -237,6 +238,8 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = 3.0
+offset_bottom = 3.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -293,13 +296,17 @@ custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 size_flags_vertical = 8
 mouse_default_cursor_shape = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold_font")
 theme_override_font_sizes/font_size = 18
 theme_override_styles/hover = SubResource("StyleBoxFlat_action_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_action_btn_hover")
 theme_override_styles/normal = SubResource("StyleBoxFlat_action_btn")
-text = "Start Learning"
+text = "Start Phonics"
+icon = ExtResource("6_wwwj0")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [node name="FlipQuizCard" type="Panel" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid"]
 custom_minimum_size = Vector2(350, 360)
@@ -336,6 +343,10 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = -1.0
+offset_top = 5.0
+offset_right = -1.0
+offset_bottom = 5.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -392,13 +403,17 @@ custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 size_flags_vertical = 8
 mouse_default_cursor_shape = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold_font")
 theme_override_font_sizes/font_size = 18
 theme_override_styles/hover = SubResource("StyleBoxFlat_action_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_action_btn_hover")
 theme_override_styles/normal = SubResource("StyleBoxFlat_action_btn")
-text = "Play Quiz"
+text = "Start Quiz"
+icon = ExtResource("6_wwwj0")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [node name="ReadAloudCard" type="Panel" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid"]
 custom_minimum_size = Vector2(350, 360)
@@ -491,13 +506,17 @@ custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 size_flags_vertical = 8
 mouse_default_cursor_shape = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold_font")
 theme_override_font_sizes/font_size = 18
 theme_override_styles/hover = SubResource("StyleBoxFlat_action_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_action_btn_hover")
 theme_override_styles/normal = SubResource("StyleBoxFlat_action_btn")
 text = "Start Reading"
+icon = ExtResource("6_wwwj0")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [node name="ChunkedReadingCard" type="Panel" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid"]
 custom_minimum_size = Vector2(350, 360)
@@ -590,13 +609,17 @@ custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 size_flags_vertical = 8
 mouse_default_cursor_shape = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold_font")
 theme_override_font_sizes/font_size = 18
 theme_override_styles/hover = SubResource("StyleBoxFlat_action_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_action_btn_hover")
 theme_override_styles/normal = SubResource("StyleBoxFlat_action_btn")
-text = "Start Reading"
+text = "Start Chunked"
+icon = ExtResource("6_wwwj0")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [node name="SyllableBuildingCard" type="Panel" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid"]
 custom_minimum_size = Vector2(350, 360)
@@ -689,10 +712,14 @@ custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 size_flags_vertical = 8
 mouse_default_cursor_shape = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold_font")
 theme_override_font_sizes/font_size = 18
 theme_override_styles/hover = SubResource("StyleBoxFlat_action_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_action_btn_hover")
 theme_override_styles/normal = SubResource("StyleBoxFlat_action_btn")
-text = "Build Words"
+text = "Start Building"
+icon = ExtResource("6_wwwj0")
+flat = true
+icon_alignment = 1
+expand_icon = true

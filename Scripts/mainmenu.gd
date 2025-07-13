@@ -14,18 +14,17 @@ var hover_buttons = []
 
 # Add energy recovery system variables
 var max_energy = 20
-var energy_recovery_rate = 240  # 4 minutes in seconds
-var energy_recovery_amount = 4  # Amount of energy recovered per interval
+var energy_recovery_rate = 240 # 4 minutes in seconds
+var energy_recovery_amount = 4 # Amount of energy recovered per interval
 var last_energy_update_time = 0
 var energy_recovery_timer = null
 
 # Add usage time tracking system variables
 var usage_time_start = 0.0
 var usage_time_timer = null
-var usage_time_update_interval = 30.0  # Update every 30 seconds
+var usage_time_update_interval = 30.0 # Update every 30 seconds
 
 func _ready():
-    
     # Setup hover buttons for UI interaction
     _setup_hover_buttons()
     
@@ -34,14 +33,14 @@ func _ready():
     
     # Setup energy recovery timer
     energy_recovery_timer = Timer.new()
-    energy_recovery_timer.wait_time = 1.0  # Update every second
+    energy_recovery_timer.wait_time = 1.0 # Update every second
     energy_recovery_timer.timeout.connect(_update_energy_recovery_display)
     energy_recovery_timer.autostart = true
     add_child(energy_recovery_timer)
     
     # Add energy processing timer (check every 30 seconds for recovery)
     var energy_process_timer = Timer.new()
-    energy_process_timer.wait_time = 30.0  # Check every 30 seconds
+    energy_process_timer.wait_time = 30.0 # Check every 30 seconds
     energy_process_timer.timeout.connect(_process_energy_recovery)
     energy_process_timer.autostart = true
     add_child(energy_process_timer)
@@ -50,7 +49,7 @@ func _ready():
     usage_time_timer = Timer.new()
     usage_time_timer.wait_time = usage_time_update_interval
     usage_time_timer.timeout.connect(_update_usage_time_in_firebase)
-    usage_time_timer.autostart = false  # Don't start automatically
+    usage_time_timer.autostart = false # Don't start automatically
     add_child(usage_time_timer)
     
     # Start usage time tracking when main menu loads
@@ -173,7 +172,7 @@ func _process_document(document):
         
         if !has_error:
             # Extract fields from new nested structure into our flat user_data dictionary
-            user_data = {}  # Reset user_data to avoid mixing old and new data
+            user_data = {} # Reset user_data to avoid mixing old and new data
             
             if document.has_method("get_value"):
                 # Get profile data
@@ -248,7 +247,7 @@ func _create_default_user_document(user_id):
                 "stt": 0,
                 "whiteboard": 0
             }
-        },  
+        },
         "dungeons": {
             "completed": {
                 "1": {"completed": false, "stages_completed": 0},
@@ -419,7 +418,7 @@ func update_profile_picture(profile_id):
         # Set texture path based on profile ID
         if profile_id == "default":
             print("MainMenu: Converting 'default' to profile ID '13'")
-            profile_id = "13"  # Map default to portrait 13
+            profile_id = "13" # Map default to portrait 13
         
         texture_path = "res://gui/ProfileScene/Profile/portrait" + profile_id + ".png"
         print("MainMenu: Loading texture from: " + texture_path)
