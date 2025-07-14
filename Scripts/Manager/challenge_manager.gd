@@ -8,6 +8,7 @@ signal challenge_cancelled
 var battle_scene
 var challenge_type = ""
 var current_word_challenge = null
+var enemy_defeated_during_challenge = false  # Track if enemy was defeated during challenge
 
 # Preload challenge scenes
 var word_challenge_whiteboard_scene = preload("res://Scenes/WordChallengePanel_Whiteboard.tscn")
@@ -21,6 +22,7 @@ func _ready():
 
 func start_word_challenge(challenge_type_param: String):
 	challenge_type = challenge_type_param
+	enemy_defeated_during_challenge = false  # Reset flag
 	print("ChallengeManager: Starting " + challenge_type + " challenge")
 	
 	# Stop battle and show challenge
@@ -113,6 +115,11 @@ func _center_popup_deferred(popup: Control):
 func _on_word_challenge_completed(bonus_damage):
 	print("ChallengeManager: Challenge completed with bonus: " + str(bonus_damage))
 	
+	# If enemy was already defeated, don't process completion again
+	if enemy_defeated_during_challenge:
+		print("ChallengeManager: Enemy already defeated, skipping completion processing")
+		return
+	
 	# Update Firebase challenge stats
 	battle_scene._update_firebase_challenge_stats(challenge_type, true)
 	
@@ -162,12 +169,16 @@ func handle_challenge_completed(bonus_damage):
 			await player_sprite.animation_finished
 			player_sprite.play("battle_idle")
 	
-	# Deal bonus damage to enemy
-	enemy_manager.take_damage(bonus_damage)
+	# Calculate total damage (base + bonus)
+	var player_base_damage = player_manager.player_damage
+	var total_damage = player_base_damage + bonus_damage
 	
-	# Add battle log messages
+	# Deal total damage to enemy
+	enemy_manager.take_damage(total_damage)
+	
+	# Add battle log messages with detailed damage breakdown
 	battle_log_manager.add_message("[color=#4CAF50]You successfully countered the " + enemy_manager.enemy_name + "'s special attack![/color]")
-	battle_log_manager.add_message("[color=#000000]You dealt " + str(bonus_damage) + " bonus damage![/color]")
+	battle_log_manager.add_message("[color=#000000]Counter Attack: " + str(player_base_damage) + " base damage + " + str(bonus_damage) + " bonus = " + str(total_damage) + " total damage![/color]")
 	
 	# Reset enemy skill meter
 	enemy_manager.enemy_skill_meter = 0
@@ -180,8 +191,11 @@ func handle_challenge_completed(bonus_damage):
 	
 	# Check if enemy is defeated
 	if enemy_manager.enemy_health <= 0:
+		enemy_defeated_during_challenge = true  # Set flag
 		battle_scene.battle_active = false
 		battle_log_manager.add_message("[color=#4CAF50]You defeated the " + enemy_manager.enemy_name + " with your counter-attack![/color]")
+		# Clean up challenge UI immediately when enemy is defeated
+		_cleanup_challenge()
 		# Don't call handle_victory here - let the normal enemy_defeated signal handle it
 		return
 	
@@ -259,6 +273,15 @@ func _cleanup_challenge():
 	if current_word_challenge and is_instance_valid(current_word_challenge):
 		current_word_challenge.queue_free()
 		current_word_challenge = null
+	
+	# Clean up any active result panels that might be blocking the EndgameScreen
+	var root = battle_scene.get_tree().root
+	for child in root.get_children():
+		if child.name == "ChallengeResultPanel" or child.get_script() != null:
+			var script_path = child.get_script().resource_path if child.get_script() else ""
+			if "ChallengeResultPanel" in script_path:
+				print("ChallengeManager: Cleaning up active result panel")
+				child.queue_free()
 
 func _resume_battle():
 	# Show engage button again

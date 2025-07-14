@@ -155,6 +155,11 @@ func _update_firebase_after_victory(_exp_gained: int, completed_dungeon_num: int
 			update_data["dungeons.completed." + dungeon_key + ".stages_completed"] = completed_stage_num
 			if completed_stage_num >= 5:
 				update_data["dungeons.completed." + dungeon_key + ".completed"] = true
+				# When completing a dungeon (boss defeated), unlock the next dungeon
+				var next_dungeon = completed_dungeon_num + 1
+				if next_dungeon <= 3:  # Max 3 dungeons
+					update_data["dungeons.progress.current_dungeon"] = next_dungeon
+					print("Dungeon " + str(completed_dungeon_num) + " completed! Unlocked dungeon " + str(next_dungeon))
 			print("Updated stages_completed for dungeon " + dungeon_key + " to stage " + str(completed_stage_num))
 		else:
 			print("Stage " + str(completed_stage_num) + " already completed for dungeon " + dungeon_key)
@@ -326,15 +331,9 @@ func _on_continue_battle():
 		# Reload battle scene with new stage
 		battle_scene.get_tree().reload_current_scene()
 	else:
-		# Completed all stages, return to dungeon map
-		var dungeon_num = battle_scene.dungeon_manager.dungeon_num
-		var dungeon_map_scene = ""
-		match dungeon_num:
-			1: dungeon_map_scene = "res://Scenes/Dungeon1Map.tscn"
-			2: dungeon_map_scene = "res://Scenes/Dungeon2Map.tscn"
-			3: dungeon_map_scene = "res://Scenes/Dungeon3Map.tscn"
-		
-		battle_scene.get_tree().change_scene_to_file(dungeon_map_scene)
+		# Completed all stages (defeated boss), go to dungeon selection to show unlocked dungeons
+		print("BattleManager: Dungeon " + str(battle_scene.dungeon_manager.dungeon_num) + " completed! Going to DungeonSelection")
+		battle_scene.get_tree().change_scene_to_file("res://Scenes/DungeonSelection.tscn")
 
 func _update_current_stage_in_firebase(new_stage: int):
 	if !Firebase.Auth.auth:

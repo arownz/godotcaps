@@ -142,7 +142,7 @@ func _connect_manager_signals():
 	# EnemyManager signals
 	if enemy_manager and enemy_manager.has_signal("enemy_health_changed"):
 		enemy_manager.enemy_health_changed.connect(_on_enemy_health_changed)
-		enemy_manager.enemy_defeated.connect(battle_manager.handle_victory)
+		enemy_manager.enemy_defeated.connect(_on_enemy_defeated)
 		enemy_manager.enemy_skill_meter_changed.connect(_on_enemy_skill_meter_changed)
 		enemy_manager.enemy_set_up.connect(_on_enemy_set_up)
 	
@@ -176,8 +176,8 @@ func _on_player_health_changed(_current_health, _max_health):
 
 func _on_enemy_defeated(_exp_reward):
 	battle_active = false
-	# Let battle_manager handle victory only - removed duplicate call
-	# battle_manager.handle_victory() is called from enemy_manager signal
+	# Call battle_manager to handle victory
+	battle_manager.handle_victory()
 
 func _on_player_defeated():
 	battle_active = false

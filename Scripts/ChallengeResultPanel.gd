@@ -82,10 +82,14 @@ func update_ui():
 	
 	# Update status message and color
 	if is_successful:
-		status_label.text = "CHALLENGE SUCCESSFUL!"
+		status_label.text = "COUNTERED SUCCESSFUL!"
 		status_label.add_theme_color_override("font_color", success_color)
 		bonus_damage_label.visible = true
-		bonus_damage_label.text = "Bonus Damage: +" + str(bonus_damage)
+		# Enhanced bonus damage display
+		if bonus_damage > 0:
+			bonus_damage_label.text = "Bonus Damage: +" + str(bonus_damage)
+		else:
+			bonus_damage_label.text = "Perfect Counter!"
 	else:
 		status_label.text = "CHALLENGE FAILED!"
 		status_label.add_theme_color_override("font_color", failure_color)

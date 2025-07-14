@@ -80,15 +80,18 @@ func add_cancellation_message():
 	add_message("[color=#FFA500]You chose to cancel countering the enemy skill.[/color]")
 
 # Add a function to handle challenge result logs specifically
-func add_challenge_result_log(recognized_text: String, target_word: String, success: bool, bonus_damage: int = 0):
+func add_challenge_result_log(recognized_text: String, target_word: String, success: bool, bonus_damage: int = 0, player_base_damage: int = 0):
 	var log_message = ""
 	
 	if success:
-		log_message = "[color=#000000]Challenge successful! You wrote: \"" + recognized_text + "\"[/color]"
-		if bonus_damage > 0:
+		log_message = "[color=#000000]Challenge successful! You recognized: \"" + recognized_text + "\"[/color]"
+		if bonus_damage > 0 and player_base_damage > 0:
+			var total_damage = player_base_damage + bonus_damage
+			log_message += "[color=#000000] (Damage: " + str(player_base_damage) + " + " + str(bonus_damage) + " = " + str(total_damage) + ")[/color]"
+		elif bonus_damage > 0:
 			log_message += "[color=#000000] (Bonus damage: +" + str(bonus_damage) + ")[/color]"
 	else:
-		log_message = "[color=#000000]Challenge failed. You wrote: \"" + recognized_text + "\". The word was: \"" + target_word + "\"[/color]"
+		log_message = "[color=#000000]Challenge failed. You recognized: \"" + recognized_text + "\". The word was: \"" + target_word + "\"[/color]"
 	
 	# Use the existing add_log_entry function with a challenge type
 	add_log_entry(log_message, "challenge")

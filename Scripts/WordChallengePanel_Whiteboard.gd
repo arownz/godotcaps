@@ -12,7 +12,7 @@ var api_status_label
 
 # Word challenge properties
 var challenge_word = ""
-var bonus_damage = 5
+var bonus_damage = 5  # This will be calculated dynamically
 var random_word_api = null
 var tts = null
 
@@ -49,6 +49,23 @@ func _ready():
 # Function to provide the challenge word to the WhiteboardInterface
 func get_challenge_word():
 	return challenge_word
+
+# Function to calculate bonus damage based on player stats
+func calculate_bonus_damage() -> int:
+	# Get player's current damage from battle scene
+	var battle_scene = get_node("/root/BattleScene")
+	if battle_scene and battle_scene.has_method("get") and battle_scene.player_manager:
+		var player_base_damage = battle_scene.player_manager.player_damage
+		# Random bonus between 30% to 60% of base damage (same as STT for consistency)
+		var bonus_percent = randf_range(0.30, 0.60)
+		var bonus_amount = int(player_base_damage * bonus_percent)
+		# Ensure minimum bonus of 3 and reasonable maximum (not overpowered)
+		bonus_amount = max(3, min(bonus_amount, int(player_base_damage * 0.75)))
+		print("Whiteboard Challenge: Base damage: ", player_base_damage, " Bonus: ", bonus_amount, " Total: ", player_base_damage + bonus_amount)
+		return bonus_amount  # Return only the bonus, not base + bonus
+	else:
+		# Fallback to fixed value if battle scene not accessible
+		return 8
 
 # Function to handle cancellation from whiteboard
 func _on_drawing_cancelled():
@@ -144,6 +161,14 @@ func _on_drawing_submitted(text_result):
 		var match_ratio = float(match_count) / target_word.length()
 		if match_ratio > 0.7:
 			is_success = true
+	
+	# Calculate bonus damage only if successful
+	if is_success:
+		bonus_damage = calculate_bonus_damage()
+	else:
+		bonus_damage = 0
+	
+	print("Whiteboard Challenge Result: Success = " + str(is_success) + ", Bonus Damage = " + str(bonus_damage))
 	
 	# Create and show the result panel
 	var result_panel = load("res://Scenes/ChallengeResultPanels.tscn").instantiate()

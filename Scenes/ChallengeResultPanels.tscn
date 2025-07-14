@@ -116,8 +116,10 @@ offset_bottom = 307.0
 
 [node name="InputLabel" type="Label" parent="ResultPanel/ContentContainer/ResultContainer"]
 layout_mode = 2
-offset_right = 560.0
-offset_bottom = 41.0
+offset_left = 1.00278
+offset_top = 10.6933
+offset_right = 561.003
+offset_bottom = 51.6933
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.501961)
 theme_override_constants/shadow_offset_x = 1
@@ -184,7 +186,7 @@ theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
 theme_override_fonts/font = ExtResource("3_idjw4")
 theme_override_font_sizes/font_size = 22
-text = "CHALLENGE SUCCESSFUL!"
+text = "COUNTERED SUCCESSFUL!"
 horizontal_alignment = 1
 
 [node name="BonusDamageLabel" type="Label" parent="ResultPanel/ContentContainer/StatusContainer"]
