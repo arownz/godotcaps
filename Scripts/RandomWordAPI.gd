@@ -3,10 +3,10 @@ class_name RandomWordAPI
 
 signal word_fetched
 
-# API URLs to try in order of preference
+# API URLs to try in order of preference (will be dynamically updated based on word length)
 var API_URLS = [
-    "https://api.datamuse.com/words?sp=???&max=10", # 3-letter words default
-    "https://random-word-api.herokuapp.com/word"	
+    "https://api.datamuse.com/words?sp=???&max=10", # Default 3-letter words
+    #"https://random-word-api.herokuapp.com/word"	
 ]
 
 # State variables
@@ -15,6 +15,7 @@ var random_word = ""
 var current_api_index = 0
 var current_retry = 0
 var last_error = ""
+var current_word_length = 3  # Default word length for dungeon 1
 
 # Constants
 const MAX_RETRIES = 3
@@ -25,8 +26,14 @@ func _init():
 	http_request = HTTPRequest.new()
 	http_request.request_completed.connect(_on_request_completed)
 
-# Public function to fetch a random word
-func fetch_random_word():
+# Public function to fetch a random word with configurable length
+func fetch_random_word(word_length: int = 3):
+	# Set the word length for this request
+	current_word_length = word_length
+	
+	# Update API URL based on word length
+	_update_api_url_for_length(word_length)
+	
 	# Reset word
 	random_word = ""
 	
@@ -37,6 +44,15 @@ func fetch_random_word():
 	current_api_index = 0
 	current_retry = 0
 	_make_request()
+
+# Update API URL based on desired word length
+func _update_api_url_for_length(word_length: int):
+	var question_marks = ""
+	for i in range(word_length):
+		question_marks += "?"
+	
+	API_URLS[0] = "https://api.datamuse.com/words?sp=" + question_marks + "&max=10"
+	print("RandomWordAPI: Updated URL for " + str(word_length) + "-letter words: " + API_URLS[0])
 
 # Make an HTTP request to the current API endpoint
 func _make_request():
@@ -118,12 +134,11 @@ func _process_primary_api_response(body):
 		_try_fallback()
 		return
 	
-	# For 4-letter words from the API, ensure it's actually a clean 3-letter word
-	# This helps eliminate potential junk or longer strings that might come through
-	if API_URLS[current_api_index].contains("sp=????"):
-		# Ensure it's actually close to 3 letters (allowing for minor variations)
-		if random_word.length() < 3 or random_word.length() > 6:
-			print("RandomWordAPI: Word length not in range 3-6: " + random_word)
+	# For word length validation, ensure it matches our target length (with small tolerance)
+	if API_URLS[current_api_index].contains("sp="):
+		# Ensure it's actually the target length (allowing for minor variations)
+		if random_word.length() < current_word_length or random_word.length() > current_word_length + 2:
+			print("RandomWordAPI: Word length not matching target " + str(current_word_length) + ": " + random_word)
 			_try_fallback()
 			return
 		
@@ -187,25 +202,49 @@ func _try_fallback():
 		random_word = _get_fallback_word()
 		emit_signal("word_fetched")
 
-# Improve fallback word selection with categories and ensure we have 4-letter words
+# Improve fallback word selection with categories for different word lengths
 func _get_fallback_word() -> String:
-	# Add more word categories for better variety - ensure we have enough 4-letter words
-	var word_categories = {
-		"animals": ["wolf", "frog", "bear", "lion", "duck", "bird", "fish", "deer", "goat", "seal"],
-		"objects": ["book", "lamp", "desk", "fork", "door", "bowl", "mug", "ring", "coat", "pipe"],
-		"nature": ["tree", "rock", "fire", "lake", "hill", "moon", "star", "rain", "snow", "leaf"],
-		"food": ["cake", "fish", "meat", "rice", "soup", "pear", "plum", "milk", "corn", "beef"],
-		"colors": ["blue", "pink", "teal", "grey", "gold", "ruby", "mint", "aqua", "lime", "navy"],
-		"verbs": ["walk", "talk", "make", "read", "swim", "sing", "play", "ride", "push", "pull"]
+	# Word categories organized by length
+	var word_categories_by_length = {
+		3: {
+			"animals": ["cat", "dog", "fox", "bee", "owl", "pig", "cow", "bat", "rat", "elk"],
+			"objects": ["cup", "pan", "box", "key", "pen", "hat", "bag", "car", "bed", "toy"],
+			"nature": ["sun", "sky", "sea", "ice", "mud", "dew", "fog", "air", "oil", "gas"],
+			"food": ["pie", "tea", "egg", "jam", "nut", "ham", "gum", "oat", "fig", "yam"],
+			"colors": ["red", "tan", "bay", "ash", "jet", "sky", "sea", "ice", "mud", "dew"],
+			"verbs": ["run", "sit", "eat", "see", "get", "put", "cut", "dig", "fly", "try"]
+		},
+		4: {
+			"animals": ["wolf", "frog", "bear", "lion", "duck", "bird", "fish", "deer", "goat", "seal"],
+			"objects": ["book", "lamp", "desk", "fork", "door", "bowl", "mug", "ring", "coat", "pipe"],
+			"nature": ["tree", "rock", "fire", "lake", "hill", "moon", "star", "rain", "snow", "leaf"],
+			"food": ["cake", "fish", "meat", "rice", "soup", "pear", "plum", "milk", "corn", "beef"],
+			"colors": ["blue", "pink", "teal", "grey", "gold", "ruby", "mint", "aqua", "lime", "navy"],
+			"verbs": ["walk", "talk", "make", "read", "swim", "sing", "play", "ride", "push", "pull"]
+		},
+		5: {
+			"animals": ["horse", "shark", "eagle", "tiger", "mouse", "whale", "sheep", "snake", "zebra", "llama"],
+			"objects": ["table", "chair", "phone", "watch", "glass", "knife", "spoon", "plate", "tower", "wheel"],
+			"nature": ["ocean", "river", "beach", "field", "grass", "plant", "stone", "cloud", "storm", "light"],
+			"food": ["bread", "apple", "honey", "grape", "lemon", "pasta", "salad", "pizza", "cream", "sugar"],
+			"colors": ["green", "black", "white", "brown", "coral", "peach", "ivory", "amber", "olive", "beige"],
+			"verbs": ["dance", "smile", "laugh", "write", "think", "learn", "teach", "build", "climb", "throw"]
+		}
 	}
 	
+	# Get the word categories for the current word length
+	var categories_for_length = word_categories_by_length.get(current_word_length, word_categories_by_length[3])
+	
 	# Select a random category
-	var categories = word_categories.keys()
+	var categories = categories_for_length.keys()
 	var category = categories[randi() % categories.size()]
 	
 	# Select a random word from that category
-	var words = word_categories[category]
-	return words[randi() % words.size()]
+	var words = categories_for_length[category]
+	var selected_word = words[randi() % words.size()]
+	
+	print("RandomWordAPI: Using fallback " + str(current_word_length) + "-letter word: " + selected_word)
+	return selected_word
 
 # Public function to get the fetched word - enhance for better error handling
 func get_random_word() -> String:

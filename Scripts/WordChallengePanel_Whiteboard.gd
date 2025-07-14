@@ -36,8 +36,9 @@ func _ready():
 	add_child(random_word_api)
 	random_word_api.word_fetched.connect(_on_word_fetched)
 	
-	# Fetch a random word
-	random_word_api.fetch_random_word()
+	# Fetch a random word based on current dungeon
+	var word_length = _get_word_length_for_dungeon()
+	random_word_api.fetch_random_word(word_length)
 	
 	# Connect whiteboard signals
 	whiteboard_interface.drawing_submitted.connect(_on_drawing_submitted)
@@ -302,7 +303,7 @@ func _on_tts_speech_ended():
 		tts.disconnect("speech_ended", Callable(self, "_on_tts_speech_ended"))
 	
 	if tts.is_connected("speech_error", Callable(self, "_on_tts_speech_error")):
-		tts.disconnect("speech_error", Callable(self, "_on_tts_speech_error"))
+		tts.disconnect("speech_error", Callable(self, "_on_tts_speech_ended"))
 
 func _on_tts_speech_error(error_msg):
 	api_status_label.text = "TTS Error: " + error_msg
@@ -312,7 +313,7 @@ func _on_tts_speech_error(error_msg):
 		tts.disconnect("speech_ended", Callable(self, "_on_tts_speech_ended"))
 	
 	if tts.is_connected("speech_error", Callable(self, "_on_tts_speech_error")):
-		tts.disconnect("speech_error", Callable(self, "_on_tts_speech_error"))
+		tts.disconnect("speech_error", Callable(self, "_on_tts_speech_ended"))
 
 func _on_tts_settings_button_pressed():
 	# Load and show the TTS settings popup
@@ -342,3 +343,18 @@ func _on_test_button_pressed():
 func _on_close_button_pressed():
 	# This is handled by the popup now
 	tts_settings_panel.visible = false
+
+# Function to get word length based on current dungeon
+func _get_word_length_for_dungeon() -> int:
+	# Get current dungeon from battle scene
+	var battle_scene = get_node("/root/BattleScene")
+	if battle_scene and battle_scene.has_method("get_current_dungeon"):
+		var current_dungeon = battle_scene.get_current_dungeon()
+		match current_dungeon:
+			1: return 3  # Dungeon 1: 3-letter words
+			2: return 4  # Dungeon 2: 4-letter words  
+			3: return 5  # Dungeon 3: 5-letter words
+			_: return 3  # Default fallback
+	else:
+		print("Warning: Could not get current dungeon, using default 3-letter words")
+		return 3

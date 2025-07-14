@@ -106,7 +106,7 @@ func handle_victory():
 	# Update Firebase with victory data using COMPLETED stage info
 	# Note: Player stats (exp, level, health, damage, durability) are updated by player_manager.gd
 	# We only update progression and enemy count here
-	_update_firebase_after_victory(exp_reward, completed_dungeon, completed_stage)
+	var dungeon_completed = await _update_firebase_after_victory(exp_reward, completed_dungeon, completed_stage)
 	
 	# DO NOT advance stage here - leave that for continue button
 	# Stage info should still show the completed stage at this point
@@ -117,13 +117,18 @@ func handle_victory():
 	# Get enemy name for endgame screen
 	var enemy_name = battle_scene.enemy_manager.enemy_name
 	
+	# Show notification if dungeon was completed (boss defeated)
+	if dungeon_completed and completed_stage >= 5:
+		_show_dungeon_completion_notification(completed_dungeon)
+	
 	# Show victory screen - pass completed stage info and enemy name
 	show_endgame_screen("Victory", exp_reward, completed_dungeon, completed_stage, enemy_name)
 
 # Direct Firebase update after victory - only updates progression, not player stats
-func _update_firebase_after_victory(_exp_gained: int, completed_dungeon_num: int, completed_stage_num: int):
+# Returns true if a dungeon was completed (boss defeated)
+func _update_firebase_after_victory(_exp_gained: int, completed_dungeon_num: int, completed_stage_num: int) -> bool:
 	if !Firebase.Auth.auth:
-		return
+		return false
 		
 	var user_id = Firebase.Auth.auth.localid
 	var collection = Firebase.Firestore.collection("dyslexia_users")
@@ -151,10 +156,12 @@ func _update_firebase_after_victory(_exp_gained: int, completed_dungeon_num: int
 		
 		# Only update stage progression if this stage hasn't been completed before
 		# Use the COMPLETED stage number, not the incremented one
+		var dungeon_was_completed = false
 		if completed_stage_num > current_stages_completed:
 			update_data["dungeons.completed." + dungeon_key + ".stages_completed"] = completed_stage_num
 			if completed_stage_num >= 5:
 				update_data["dungeons.completed." + dungeon_key + ".completed"] = true
+				dungeon_was_completed = true
 				# When completing a dungeon (boss defeated), unlock the next dungeon
 				var next_dungeon = completed_dungeon_num + 1
 				if next_dungeon <= 3:  # Max 3 dungeons
@@ -202,10 +209,16 @@ func _update_firebase_after_victory(_exp_gained: int, completed_dungeon_num: int
 			var updated_document = await collection.update(firebase_doc)
 			if updated_document:
 				print("Firebase progression updated successfully")
+				return dungeon_was_completed
 			else:
 				print("Failed to update Firebase progression")
+				return false
 		else:
 			print("Failed to get document for progression update")
+			return false
+	else:
+		print("Failed to load user document or document error")
+		return false
 
 func handle_defeat():
 	print("BattleManager: Handling defeat")
@@ -406,3 +419,30 @@ func _on_challenge_failed():
 
 func _on_challenge_cancelled():
 	battle_scene.challenge_manager.handle_challenge_cancelled()
+
+# Show notification when a dungeon is completed
+func _show_dungeon_completion_notification(completed_dungeon_num: int):
+	var next_dungeon = completed_dungeon_num + 1
+	var next_word_length = ""
+	
+	# Determine the word length message for the next dungeon
+	match next_dungeon:
+		2: next_word_length = "4-letter"
+		3: next_word_length = "5-letter"
+		_: next_word_length = "advanced"
+	
+	var title = "Dungeon Completed!"
+	var message = ""
+	
+	if next_dungeon <= 3:
+		message = "Congratulations! You have unlocked Dungeon " + str(next_dungeon) + "!\n\nWord challenges will now become " + next_word_length + " words to help improve your reading skills."
+	else:
+		message = "Congratulations! You have completed all dungeons!\n\nYou are now a master reader!"
+	
+	# Get notification popup from battle scene (should exist)
+	var notification_popup = battle_scene.get_node_or_null("NotificationPopUp")
+	if notification_popup:
+		print("BattleManager: Showing dungeon completion notification")
+		notification_popup.show_notification(title, message, "Continue")
+	else:
+		print("BattleManager: Warning - notification popup not found")

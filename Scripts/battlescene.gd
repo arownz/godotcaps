@@ -81,6 +81,11 @@ func _initialize_managers():
 	add_child(challenge_manager)
 	add_child(dungeon_manager)
 	
+	# Create notification popup for dungeon completion notifications
+	var notification_popup = load("res://Scenes/NotificationPopUp.tscn").instantiate()
+	notification_popup.name = "NotificationPopUp"
+	add_child(notification_popup)
+	
 	# Initialize dungeon manager first to load current progression
 	await dungeon_manager.initialize()
 	
