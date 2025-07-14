@@ -43,7 +43,7 @@ func _ready():
 	print("BattleLogManager: Container type: ", log_entries_container.get_class() if log_entries_container else "null")
 	
 	# Adding a test entry
-	add_log_entry("[color=#EB5E4B]Battle started[/color]", "system")
+	add_log_entry("[color=#EB5E4B]You met a Monster![/color]", "system")
 
 func display_introduction_messages():
 	# Get the current dungeon number
