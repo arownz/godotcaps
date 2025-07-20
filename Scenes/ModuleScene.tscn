@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://cpuv0hhhcq6sv"]
+[gd_scene load_steps=17 format=3 uid="uid://cpuv0hhhcq6sv"]
 
 [ext_resource type="Texture2D" uid="uid://c75anq8c0biyi" path="res://gui/Update/UI/ui 7.png" id="2_178ft"]
 [ext_resource type="Script" uid="uid://dgboy6v1hc540" path="res://Scripts/ModuleScene.gd" id="2_module_script"]
@@ -21,6 +21,8 @@ corner_radius_bottom_left = 15
 shadow_color = Color(0, 0, 0, 0.1)
 shadow_size = 8
 shadow_offset = Vector2(0, 4)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_wwwj0"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nav_btn_hover"]
 bg_color = Color(0.35, 0.4, 0.84, 1)
@@ -175,6 +177,7 @@ size_flags_horizontal = 0
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold_font")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_wwwj0")
 theme_override_styles/hover = SubResource("StyleBoxFlat_nav_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_nav_btn_hover")
 theme_override_styles/normal = SubResource("StyleBoxFlat_nav_btn")
@@ -299,6 +302,7 @@ mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold_font")
 theme_override_font_sizes/font_size = 18
+theme_override_styles/focus = SubResource("StyleBoxEmpty_wwwj0")
 theme_override_styles/hover = SubResource("StyleBoxFlat_action_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_action_btn_hover")
 theme_override_styles/normal = SubResource("StyleBoxFlat_action_btn")
@@ -406,6 +410,7 @@ mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold_font")
 theme_override_font_sizes/font_size = 18
+theme_override_styles/focus = SubResource("StyleBoxEmpty_wwwj0")
 theme_override_styles/hover = SubResource("StyleBoxFlat_action_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_action_btn_hover")
 theme_override_styles/normal = SubResource("StyleBoxFlat_action_btn")
@@ -509,6 +514,7 @@ mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold_font")
 theme_override_font_sizes/font_size = 18
+theme_override_styles/focus = SubResource("StyleBoxEmpty_wwwj0")
 theme_override_styles/hover = SubResource("StyleBoxFlat_action_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_action_btn_hover")
 theme_override_styles/normal = SubResource("StyleBoxFlat_action_btn")
@@ -612,6 +618,7 @@ mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold_font")
 theme_override_font_sizes/font_size = 18
+theme_override_styles/focus = SubResource("StyleBoxEmpty_wwwj0")
 theme_override_styles/hover = SubResource("StyleBoxFlat_action_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_action_btn_hover")
 theme_override_styles/normal = SubResource("StyleBoxFlat_action_btn")
@@ -715,6 +722,7 @@ mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold_font")
 theme_override_font_sizes/font_size = 18
+theme_override_styles/focus = SubResource("StyleBoxEmpty_wwwj0")
 theme_override_styles/hover = SubResource("StyleBoxFlat_action_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_action_btn_hover")
 theme_override_styles/normal = SubResource("StyleBoxFlat_action_btn")

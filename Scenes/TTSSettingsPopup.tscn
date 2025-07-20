@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://7wtij707stht"]
+[gd_scene load_steps=9 format=3 uid="uid://7wtij707stht"]
 
 [ext_resource type="Script" uid="uid://di3xy4fn8ivv" path="res://Scripts/TTSSettingsPopup.gd" id="1_y2dfs"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="2_m3f5r"]
@@ -6,6 +6,10 @@
 [ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="4_7wrw6"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="5_jb0wy"]
 [ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="6_e2f2d"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_jb0wy"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_7wrw6"]
 
 [node name="TTSSettingsPopup" type="Control"]
 layout_mode = 3
@@ -85,6 +89,7 @@ layout_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_fonts/font = ExtResource("2_m3f5r")
 theme_override_font_sizes/font_size = 16
+theme_override_styles/focus = SubResource("StyleBoxEmpty_jb0wy")
 
 [node name="RateContainer" type="VBoxContainer" parent="Panel/VBoxContainer"]
 layout_mode = 2
@@ -134,6 +139,7 @@ mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("5_jb0wy")
 theme_override_font_sizes/font_size = 5
+theme_override_styles/focus = SubResource("StyleBoxEmpty_7wrw6")
 text = "Test Button"
 icon = ExtResource("4_7wrw6")
 flat = true
@@ -150,6 +156,7 @@ mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("5_jb0wy")
 theme_override_font_sizes/font_size = 5
+theme_override_styles/focus = SubResource("StyleBoxEmpty_7wrw6")
 text = "Save & Close"
 icon = ExtResource("6_e2f2d")
 flat = true

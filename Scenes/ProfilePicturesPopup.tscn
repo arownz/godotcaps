@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://b16uc2y8w57k1"]
+[gd_scene load_steps=19 format=3 uid="uid://b16uc2y8w57k1"]
 
 [ext_resource type="Script" uid="uid://dysw762c4jib3" path="res://Scripts/ProfilePicturesPopup.gd" id="1_popup_script"]
 [ext_resource type="Texture2D" uid="uid://clo1votqbo4bs" path="res://gui/Update/UI/ui 13.png" id="2_kxfne"]
@@ -17,6 +17,8 @@
 [ext_resource type="Texture2D" uid="uid://5o1l1bijp3ey" path="res://gui/ProfileScene/Profile/portrait23.png" id="14_almhk"]
 [ext_resource type="Texture2D" uid="uid://dyj20er5r25q" path="res://gui/ProfileScene/Profile/portrait24.png" id="15_u6s02"]
 [ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="17_yxql3"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_yxql3"]
 
 [node name="ProfilePicturesPopup" type="Control"]
 layout_mode = 3
@@ -201,7 +203,7 @@ texture_normal = ExtResource("15_u6s02")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="ConfirmButton" type="TextureButton" parent="PictureContainer"]
+[node name="ConfirmButton" type="Button" parent="PictureContainer"]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -214,23 +216,15 @@ offset_right = 100.0
 grow_horizontal = 2
 grow_vertical = 0
 mouse_default_cursor_shape = 2
-texture_normal = ExtResource("17_yxql3")
-ignore_texture_size = true
-stretch_mode = 5
-
-[node name="Label" type="Label" parent="PictureContainer/ConfirmButton"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_colors/font_color = Color(0.101961, 0.101961, 0.101961, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_popup_font")
-theme_override_font_sizes/font_size = 22
+theme_override_font_sizes/font_size = 20
+theme_override_styles/focus = SubResource("StyleBoxEmpty_yxql3")
 text = "Confirm"
-horizontal_alignment = 1
-vertical_alignment = 1
+icon = ExtResource("17_yxql3")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [connection signal="pressed" from="PictureContainer/CloseButton" to="." method="_on_close_button_pressed"]
 [connection signal="pressed" from="PictureContainer/ScrollContainer/GridContainer/Portrait13" to="." method="_on_portrait_button_pressed" binds= ["13"]]

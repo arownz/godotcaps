@@ -1,10 +1,12 @@
-[gd_scene load_steps=6 format=3 uid="uid://bhsb4od5anjae"]
+[gd_scene load_steps=7 format=3 uid="uid://bhsb4od5anjae"]
 
 [ext_resource type="Script" uid="uid://cpyo81gkxoads" path="res://Scripts/Leaderboard.gd" id="1_8k3l4"]
 [ext_resource type="Texture2D" uid="uid://clo1votqbo4bs" path="res://gui/Update/UI/ui 13.png" id="2_ldouh"]
 [ext_resource type="Texture2D" uid="uid://cct70l6wbh13s" path="res://gui/Update/UI/ui 9.png" id="2_qaei5"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="3_font"]
 [ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="4_ldouh"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ldouh"]
 
 [node name="Leaderboard" type="Control"]
 layout_mode = 3
@@ -72,6 +74,7 @@ mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 18
+theme_override_styles/focus = SubResource("StyleBoxEmpty_ldouh")
 text = "Back"
 icon = ExtResource("4_ldouh")
 flat = true

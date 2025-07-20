@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://bysyq46j6ycis"]
+[gd_scene load_steps=18 format=3 uid="uid://bysyq46j6ycis"]
 
 [ext_resource type="Script" uid="uid://caa84ntbsorb8" path="res://Scripts/ProfilePopUp.gd" id="1_script"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="2_73kok"]
@@ -15,6 +15,10 @@
 [ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="12_ampbo"]
 [ext_resource type="Texture2D" uid="uid://dy4pabxg81hga" path="res://gui/UI/ui 2.png" id="12_kmls2"]
 [ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="13_r1smr"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_kmls2"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_tilb2"]
 
 [node name="ProfilePopUp" type="Node2D"]
 script = ExtResource("1_script")
@@ -380,6 +384,7 @@ offset_top = 357.0
 offset_right = 750.0
 offset_bottom = 670.0
 mouse_default_cursor_shape = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_kmls2")
 icon = ExtResource("12_kmls2")
 autowrap_mode = 3
 icon_alignment = 1
@@ -438,6 +443,7 @@ scale = Vector2(1.14248, 1.12309)
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_73kok")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_kmls2")
 text = "Logout
 "
 icon = ExtResource("12_ampbo")
@@ -555,6 +561,7 @@ layout_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_73kok")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_tilb2")
 text = "Cancel"
 icon = ExtResource("12_ampbo")
 flat = true
@@ -568,6 +575,7 @@ mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_73kok")
 theme_override_font_sizes/font_size = 0
+theme_override_styles/focus = SubResource("StyleBoxEmpty_tilb2")
 text = "Confirm"
 icon = ExtResource("13_r1smr")
 flat = true

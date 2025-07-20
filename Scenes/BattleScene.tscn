@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://cfead7bcuslp4"]
+[gd_scene load_steps=15 format=3 uid="uid://cfead7bcuslp4"]
 
 [ext_resource type="Texture2D" uid="uid://cxqd6wyqy8g22" path="res://gui/Update/Backgrounds/battlescene background.png" id="2_ixjr5"]
 [ext_resource type="Script" uid="uid://cnnycoui3l3ef" path="res://Scripts/battlescene.gd" id="3_vhj2j"]
@@ -79,6 +79,8 @@ corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_8uoga"]
 
 [node name="BattleScene" type="Node2D"]
 script = ExtResource("3_vhj2j")
@@ -304,21 +306,6 @@ theme_override_font_sizes/font_size = 18
 text = "Enemy Name"
 horizontal_alignment = 1
 vertical_alignment = 2
-
-[node name="EnemySkillLabel" type="Label" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer"]
-visible = false
-layout_mode = 0
-offset_left = -380.0
-offset_top = 59.0
-offset_right = 92.0
-offset_bottom = 105.0
-theme_override_colors/font_color = Color(0.952941, 0.215686, 0.188235, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 3
-theme_override_fonts/font = ExtResource("4_akpf4")
-theme_override_font_sizes/font_size = 25
-text = "Enemy Uses Special Skill!"
-vertical_alignment = 1
 
 [node name="EnemyLevel" type="Label" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer"]
 layout_mode = 0
@@ -610,6 +597,7 @@ mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("8_2tp6q")
 theme_override_font_sizes/font_size = 35
+theme_override_styles/focus = SubResource("StyleBoxEmpty_8uoga")
 text = "Engage Battle"
 icon = ExtResource("7_2tp6q")
 flat = true

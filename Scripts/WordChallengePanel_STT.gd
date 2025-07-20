@@ -6,7 +6,9 @@ signal challenge_cancelled
 
 # References to child nodes
 var random_word_label
-var recognized_text_label
+var live_transcription_label
+var live_transcription_text
+var permission_status_label
 var speak_button
 var status_label
 var tts_settings_panel
@@ -20,14 +22,12 @@ var tts = null
 var voice_options = []
 var recognition_active = false
 
-# Google Cloud Speech API variables
-var max_recording_time = 10.0 # Maximum recording time in seconds
-var unique_callback_id = ""
-var recognition_in_progress = false
-
-# Constants for API
-const SPEECH_API_ENDPOINT = "https://speech.googleapis.com/v1/speech:recognize"
-const DEFAULT_API_KEY = "AIzaSyCz9BNjDlDYDvioKMwzR2_f8D1vHseQtZ0" # Default key if none provided
+# Permission and transcription state
+var mic_permission_granted = false
+var permission_check_complete = false
+var live_transcription_enabled = false
+var current_interim_result = ""
+var debounce_timer = null
 
 # Flag to track if result panel is already showing
 var result_panel_active = false
@@ -38,7 +38,9 @@ var result_being_processed = false
 func _ready():
 	# Get node references
 	random_word_label = $ChallengePanel/VBoxContainer/WordContainer/RandomWordLabel
-	recognized_text_label = $ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer/RecognizedText
+	live_transcription_label = $ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer/LiveTranscriptionContainer/LiveTranscriptionLabel
+	live_transcription_text = $ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer/LiveTranscriptionContainer/LiveTranscriptionText
+	permission_status_label = $ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer/PermissionStatusLabel
 	speak_button = $ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer/SpeakButton
 	status_label = $ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer/StatusLabel
 	tts_settings_panel = $ChallengePanel/VBoxContainer/TTSSettingsPanel
@@ -50,36 +52,89 @@ func _ready():
 	tts.speech_ended.connect(_on_tts_speech_ended)
 	tts.speech_error.connect(_on_tts_speech_error)
 	
+	# Create debounce timer for live transcription
+	debounce_timer = Timer.new()
+	debounce_timer.wait_time = 0.3  # 300ms debounce
+	debounce_timer.one_shot = true
+	add_child(debounce_timer)
+	
 	# Hide TTS settings panel initially
 	if tts_settings_panel:
 		tts_settings_panel.visible = false
 	
+	# Initialize UI state - Always enable button for permission requests
+	speak_button.disabled = false
+	speak_button.text = "Start Speaking"
+	permission_status_label.text = "Click Start Speaking to begin"
+	permission_status_label.modulate = Color.WHITE
+	status_label.text = "Say the word shown above when ready"
+	
 	# Setup speech recognition capabilities
 	_setup_speech_recognition()
 	
-	# Check existing permissions status WITHOUT requesting them
-	_check_existing_permissions()
+	# We'll check permissions when user clicks the button instead of blocking here
 	
-	# Get a random word for the challenge
+	# Create and initialize the random word API
 	random_word_api = RandomWordAPI.new()
 	add_child(random_word_api)
 	random_word_api.word_fetched.connect(_on_word_fetched)
 
 	# Fetch a random word based on current dungeon
 	var word_length = _get_word_length_for_dungeon()
+	print("Fetching " + str(word_length) + "-letter word for STT challenge...")
 	random_word_api.fetch_random_word(word_length)
+	
+	# Set loading text while API loads
+	if random_word_label:
+		random_word_label.text = "Loading word..."
 	
 	# Reset result processing flag at start
 	result_being_processed = false
 
+func _process(_delta):
+	# Poll for speech recognition results from JavaScript
+	if live_transcription_enabled and JavaScriptBridge.has_method("eval"):
+		# Check for interim results
+		var interim_js = """
+			(function() {
+				if (window.latestInterimResult) {
+					var result = window.latestInterimResult;
+					window.latestInterimResult = null;
+					return result;
+				}
+				return null;
+			})();
+		"""
+		var interim_result = JavaScriptBridge.eval(interim_js)
+		if interim_result != null and str(interim_result) != "null" and str(interim_result) != "":
+			print("POLLING: Found interim result: " + str(interim_result))
+			live_transcription_callback(str(interim_result), false)
+		
+		# Check for final results
+		var final_js = """
+			(function() {
+				if (window.latestFinalResult) {
+					var result = window.latestFinalResult;
+					window.latestFinalResult = null;
+					return result;
+				}
+				return null;
+			})();
+		"""
+		var final_result = JavaScriptBridge.eval(final_js)
+		if final_result != null and str(final_result) != "null" and str(final_result) != "":
+			print("POLLING: Found final result: " + str(final_result))
+			live_transcription_callback(str(final_result), true)
+
 func _setup_speech_recognition():
 	print("Setting up web speech recognition...")
-	_initialize_web_audio_environment()
-	_setup_web_audio_callbacks()
+	# Simple setup - we handle everything in the button press now
 
-# Function to check if the browser already has microphone permissions
-# Modified to only check, not request permissions
-func _check_existing_permissions():
+# Function to check and wait for microphone permissions
+func _check_and_wait_for_permissions():
+	print("Checking microphone permissions...")
+	permission_status_label.text = "Checking microphone permission..."
+	
 	if JavaScriptBridge.has_method("eval"):
 		var js_code = """
 			(function() {
@@ -93,29 +148,7 @@ func _check_existing_permissions():
 						}
 						console.log('Microphone permission state:', permissionStatus.state);
 						
-						// Set up permission change listener
-						permissionStatus.onchange = function() {
-							if (window.godot_speech) {
-								window.godot_speech.permissionState = this.state;
-							}
-							console.log('Microphone permission state changed to:', this.state);
-							
-							// Use engine.call instead of sendToGodot
-							var engine = null;
-							if (window.godot && typeof window.godot.getEngine === 'function') {
-								engine = window.godot.getEngine();
-							} else if (window.engine) {
-								engine = window.engine;
-							} else if (window.Module && window.Module.engine) {
-								engine = window.Module.engine;
-							}
-							
-							if (engine && typeof engine.call === 'function') {
-								engine.call('""" + str(get_path()) + """', 'update_mic_permission_state', this.state);
-							}
-						};
-						
-						// Initial update to Godot using available engine
+						// Send current state to Godot
 						var engine = null;
 						if (window.godot && typeof window.godot.getEngine === 'function') {
 							engine = window.godot.getEngine();
@@ -129,37 +162,173 @@ func _check_existing_permissions():
 							engine.call('""" + str(get_path()) + """', 'update_mic_permission_state', permissionStatus.state);
 						}
 						
-						return permissionStatus.state;
+						// Set up permission change listener
+						permissionStatus.onchange = function() {
+							if (window.godot_speech) {
+								window.godot_speech.permissionState = this.state;
+							}
+							console.log('Microphone permission state changed to:', this.state);
+							
+							if (engine && typeof engine.call === 'function') {
+								engine.call('""" + str(get_path()) + """', 'update_mic_permission_state', this.state);
+							}
+						};
 					})
 					.catch(function(error) {
 						console.error('Error checking microphone permission:', error);
-						return 'unknown';
+						// Default to prompt state if query fails
+						var engine = null;
+						if (window.godot && typeof window.godot.getEngine === 'function') {
+							engine = window.godot.getEngine();
+						} else if (window.engine) {
+							engine = window.engine;
+						}
+						
+						if (engine && typeof engine.call === 'function') {
+							engine.call('""" + str(get_path()) + """', 'update_mic_permission_state', 'prompt');
+						}
 					});
 				} else {
-					console.log('Permissions API not supported');
-					return 'unknown';
+					// Permissions API not available, default to prompt
+					console.log('Permissions API not available, defaulting to prompt');
+					var engine = null;
+					if (window.godot && typeof window.godot.getEngine === 'function') {
+						engine = window.godot.getEngine();
+					} else if (window.engine) {
+						engine = window.engine;
+					}
+					
+					if (engine && typeof engine.call === 'function') {
+						engine.call('""" + str(get_path()) + """', 'update_mic_permission_state', 'prompt');
+					}
 				}
 				return 'checking';
 			})();
 		"""
 		JavaScriptBridge.eval(js_code)
+		
+		# Wait for permission check to complete
+		while not permission_check_complete:
+			await get_tree().process_frame
+		
+		print("Permission check completed. Granted: ", mic_permission_granted)
+
+# Function to request microphone permission
+func _request_microphone_permission():
+	print("Requesting Mic...")
+	permission_check_complete = false
+	
+	if JavaScriptBridge.has_method("eval"):
+		var js_code = """
+			(function() {
+				// Request microphone permission by attempting to access media
+				navigator.mediaDevices.getUserMedia({ 
+					audio: { 
+						echoCancellation: true,
+						noiseSuppression: true,
+						autoGainControl: true
+					}, 
+					video: false 
+				})
+				.then(function(stream) {
+					// Permission granted
+					console.log('Microphone permission granted');
+					
+					// Stop the stream immediately as we only needed it for permission
+					stream.getTracks().forEach(track => track.stop());
+					
+					// Update permission state
+					if (window.godot_speech) {
+						window.godot_speech.permissionState = 'granted';
+					}
+					
+					// Notify Godot
+					var engine = null;
+					if (window.godot && typeof window.godot.getEngine === 'function') {
+						engine = window.godot.getEngine();
+					} else if (window.engine) {
+						engine = window.engine;
+					}
+					
+					if (engine && typeof engine.call === 'function') {
+						engine.call('""" + str(get_path()) + """', 'update_mic_permission_state', 'granted');
+					}
+				})
+				.catch(function(err) {
+					// Permission denied or error
+					console.error('Error requesting microphone permission:', err);
+					
+					var state = 'denied';
+					if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+						state = 'denied';
+					} else {
+						state = 'prompt'; // Other errors, maybe try again
+					}
+					
+					// Update permission state
+					if (window.godot_speech) {
+						window.godot_speech.permissionState = state;
+					}
+					
+					// Notify Godot
+					var engine = null;
+					if (window.godot && typeof window.godot.getEngine === 'function') {
+						engine = window.godot.getEngine();
+					} else if (window.engine) {
+						engine = window.engine;
+					}
+					
+					if (engine && typeof engine.call === 'function') {
+						engine.call('""" + str(get_path()) + """', 'update_mic_permission_state', state);
+					}
+				});
+				
+				return true;
+			})();
+		"""
+		JavaScriptBridge.eval(js_code)
+		
+		# Wait for permission request to complete
+		while not permission_check_complete:
+			await get_tree().process_frame
+		
+		print("Permission request completed. Granted: ", mic_permission_granted)
+
+# Function to check if the browser already has microphone permissions
+# Modified to only check, not request permissions
+func _check_existing_permissions():
+	print("Checking existing permissions...")
+	_check_and_wait_for_permissions()
 
 # Callback function for permission state updates from JavaScript
 func update_mic_permission_state(state):
 	print("Microphone permission state updated: " + state)
+	permission_check_complete = true
 	
 	if state == "granted":
 		# Permission already granted, update UI to show this
-		status_label.text = "Click mic button to start"
+		mic_permission_granted = true
+		permission_status_label.text = "✓ Microphone permission granted"
+		permission_status_label.modulate = Color.GREEN
+		status_label.text = "Ready to record - Click Start Speaking"
 		speak_button.disabled = false
+		speak_button.text = "Start Speaking"
 	elif state == "denied":
-		# Permission denied, update UI to show this
-		status_label.text = "Microphone access denied. Check browser settings."
-		speak_button.disabled = false # Still allow clicking to trigger permission prompt
+		# Permission denied, but keep button enabled for retry
+		mic_permission_granted = false
+		permission_status_label.text = "✗ Microphone access denied"
+		permission_status_label.modulate = Color.RED
+		status_label.text = "Permission denied. Click Start Speaking to try again."
+		speak_button.disabled = false  # Keep enabled for retry
+		speak_button.text = "Try Again"
 	else:
 		# Permission not determined yet, will be requested when button is clicked
-		status_label.text = "Click mic button to start"
+		mic_permission_granted = false
+		permission_status_label.text = "⚠ Need permission - click Start to grant"
+		permission_status_label.modulate = Color.YELLOW
+		status_label.text = "Click Start Speaking to grant microphone permission"
 		speak_button.disabled = false
+		speak_button.text = "Start Speaking"
 
 # Initialize JavaScript environment for web audio - FIXED ENGINE DETECTION
 func _initialize_web_audio_environment():
@@ -172,51 +341,71 @@ func _initialize_web_audio_environment():
 					delete window.godot_speech;
 				}
 				
-				// Create fresh godot_speech object
+				// Create fresh godot_speech object with live transcription support
 				window.godot_speech = {
-					mediaRecorder: null,
-					audioChunks: [],
-					audioStream: null,
-					recording: false,
 					permissionState: 'prompt',
 					engineReady: false,
+					recognition: null,
+					isListening: false,
 					
 					// Debug logging function
 					debugLog: function(message) {
 						console.log("Speech Debug:", message);
 					},
 					
-					// Fixed result handler with more robust engine detection
+					// Enhanced result handler for final results
 					onResult: function(text) {
-						this.debugLog("Recognition result: " + text);
+						this.debugLog("Final recognition result: " + text);
 						if (text) {
+							// Store result in window variable as primary method
+							window.latestFinalResult = text;
+							this.debugLog("Stored final result in window.latestFinalResult");
+							
+							// Try engine call as secondary method
 							try {
 								var engine = this.getEngine();
 								if (engine) {
-									this.debugLog("Calling Godot with recognition result");
+									this.debugLog("Found engine, calling Godot with final recognition result");
 									engine.call('""" + str(get_path()) + """', 'speech_result_callback', text);
-									this.debugLog("Call to Godot completed");
+									this.debugLog("Engine call to Godot completed successfully");
 								} else {
-									this.debugLog("ERROR: Could not find Godot engine");
-									// Fallback approach using a global function
-									if (typeof window.godotSpeechResultCallback === 'function') {
-										this.debugLog("Using fallback global callback");
-										window.godotSpeechResultCallback(text);
-									}
+									this.debugLog("No engine found, relying on window variable polling");
 								}
 							} catch (e) {
-								console.error("Error calling Godot:", e);
-								// Try alternate method with setTimeout
-								setTimeout(() => {
-									var engine = this.getEngine();
-									if (engine) {
-										this.debugLog("Retrying Godot call after delay");
-										engine.call('""" + str(get_path()) + """', 'speech_result_callback', text);
-									}
-								}, 100);
+								this.debugLog("Error calling Godot: " + e.message);
+								// Don't retry with setTimeout since we have window variables
 							}
 						} else {
 							this.onError("Empty result from speech recognition");
+						}
+					},
+					
+					// New handler for live transcription (interim results)
+					onLiveResult: function(text, isFinal) {
+						this.debugLog("Live transcription: " + text + " (final: " + isFinal + ")");
+						
+						// Store in window variables as primary fallback since engine detection often fails
+						if (isFinal) {
+							window.latestFinalResult = text;
+							this.debugLog("Stored final result in window.latestFinalResult");
+						} else {
+							window.latestInterimResult = text;
+							this.debugLog("Stored interim result in window.latestInterimResult");
+						}
+						
+						// Try engine call as secondary method
+						try {
+							var engine = this.getEngine();
+							if (engine) {
+								this.debugLog("Found engine, calling Godot with live transcription");
+								engine.call('""" + str(get_path()) + """', 'live_transcription_callback', text, isFinal);
+								this.debugLog("Live transcription callback completed successfully");
+							} else {
+								this.debugLog("No engine found, relying on window variable polling");
+							}
+						} catch (e) {
+							this.debugLog("Error calling Godot with live transcription: " + e.message);
+							// Don't retry here, just rely on the window variables
 						}
 					},
 					
@@ -229,8 +418,9 @@ func _initialize_web_audio_environment():
 						}
 					},
 					
-					 // Enhanced engine detection
+					 // Enhanced engine detection with more fallbacks
 					getEngine: function() {
+						// Try multiple ways to find the Godot engine
 						if (window.godot && typeof window.godot.getEngine === 'function') {
 							return window.godot.getEngine();
 						} else if (window.engine) {
@@ -239,7 +429,32 @@ func _initialize_web_audio_environment():
 							return window.Module.engine;
 						} else if (typeof _engine !== 'undefined') {
 							return _engine;
+						} else if (window.Godot && window.Godot.engine) {
+							return window.Godot.engine;
+						} else if (window.unityInstance && window.unityInstance.SendMessage) {
+							// This is actually for Unity, but some people confuse the two
+							return null;
 						}
+						
+						// More aggressive search - look for any object with a 'call' method
+						var candidates = [window.godot, window.engine, window.Module?.engine, window.Godot?.engine];
+						for (var i = 0; i < candidates.length; i++) {
+							if (candidates[i] && typeof candidates[i].call === 'function') {
+								this.debugLog("Found engine candidate: " + i);
+								return candidates[i];
+							}
+						}
+						
+						// Final fallback - check if we can find it in global scope
+						try {
+							if (typeof engine !== 'undefined' && engine && typeof engine.call === 'function') {
+								return engine;
+							}
+						} catch (e) {
+							// engine is not defined, continue
+						}
+						
+						this.debugLog("Could not find Godot engine for callback");
 						return null;
 					}
 				};
@@ -356,197 +571,415 @@ func _setup_web_audio_callbacks():
 # Process function - removed since we don't need desktop functionality
 
 func _on_word_fetched():
-	# Get word from the API - FIX: Use the proper method to get the word
+	# Get word from the API
 	challenge_word = random_word_api.get_random_word()
+	print("STT Challenge: Word fetched: " + challenge_word)
 	
-	# Update UI
+	# Update UI with detailed debugging
 	if random_word_label:
 		random_word_label.text = challenge_word
+		print("STT Challenge: Updated word label to: " + challenge_word)
+		print("STT Challenge: Label node path: " + str(random_word_label.get_path()))
+	else:
+		print("ERROR: random_word_label is null!")
+		# Try to find it again
+		random_word_label = get_node_or_null("ChallengePanel/VBoxContainer/WordContainer/RandomWordLabel")
+		if random_word_label:
+			random_word_label.text = challenge_word
+			print("STT Challenge: Found and updated label on retry")
+		else:
+			print("ERROR: Could not find RandomWordLabel node!")
 		
-	# Send word to JavaScript for debug - FIX: Properly escape the string
+	# Send word to JavaScript for debug
 	if JavaScriptBridge.has_method("eval"):
 		var escaped_word = challenge_word.replace("'", "\\'").replace("\n", "\\n").replace("\r", "\\r")
-		var js_code = "window.setChallengeWord(\"" + escaped_word + "\");"
+		var js_code = "if (window.setChallengeWord) { window.setChallengeWord(\"" + escaped_word + "\"); } else { console.log('Challenge word: " + escaped_word + "'); }"
 		JavaScriptBridge.eval(js_code)
 	
 # Handle button press to start/stop speech recognition
 func _on_speak_button_pressed():
+	print("Speak button pressed. Current state - recognition_active: " + str(recognition_active))
+	
 	if recognition_active:
-		# Stop recording
-		recognition_active = false
-		speak_button.text = "Speak"
-		status_label.text = "Processing speech..."
+		print("Stopping current recognition...")
+		# Stop current recognition and process the final result
+		speak_button.text = "Processing..."
+		speak_button.disabled = true
+		status_label.text = "Processing what you said..."
+		live_transcription_enabled = false
+		_stop_live_recognition()
 		
-		_stop_web_recording()
+		# Give a moment for any final results to come through
+		await get_tree().create_timer(0.5).timeout
+		
+		# Check if we got any final result from the last session
+		var final_result = ""
+		if JavaScriptBridge.has_method("eval"):
+			var final_check_js = """
+				(function() {
+					if (window.latestFinalResult) {
+						var result = window.latestFinalResult;
+						window.latestFinalResult = null;
+						return result;
+					} else if (window.latestInterimResult) {
+						var result = window.latestInterimResult;
+						window.latestInterimResult = null;
+						return result;
+					}
+					return null;
+				})();
+			"""
+			var js_result = JavaScriptBridge.eval(final_check_js)
+			if js_result != null and str(js_result) != "null" and str(js_result) != "":
+				final_result = str(js_result)
+		
+		# If no result from JavaScript, use the current live transcription
+		if final_result.is_empty() and live_transcription_text and not live_transcription_text.text.is_empty():
+			# Extract text from live transcription (remove emoji and formatting)
+			var live_text = live_transcription_text.text
+			if "🎤 " in live_text:
+				final_result = live_text.replace("🎤 ", "").strip_edges()
+			elif "✓ " in live_text:
+				final_result = live_text.replace("✓ ", "").replace(" (Perfect!)", "").strip_edges()
+			elif "~ " in live_text:
+				final_result = live_text.replace("~ ", "").replace(" (Close!)", "").strip_edges()
+		
+		# Process the result if we have one
+		if not final_result.is_empty():
+			print("Processing final result: " + final_result)
+			# Extract the best word and process it
+			var best_word = _extract_best_word_match(final_result, challenge_word)
+			_on_speech_recognized(best_word)
+		else:
+			# No result found, reset UI
+			recognition_active = false
+			speak_button.text = "Start Speaking" 
+			speak_button.disabled = false
+			status_label.text = "No speech detected. Try again."
+			
+			# Clear the live transcription display
+			if live_transcription_text:
+				live_transcription_text.text = ""
+				live_transcription_text.visible = false
+			
+			print("Recognition stopped by user with no result")
 	else:
-		# Update UI first
-		status_label.text = "Starting microphone..."
+		print("Starting new recognition session...")
+		# Clear previous results
+		if live_transcription_text:
+			live_transcription_text.text = "Preparing to listen..."
+			live_transcription_text.visible = true
+			live_transcription_text.modulate = Color.WHITE
 		
-		# Start recording - this will request permission if needed
-		recognition_active = true
-		speak_button.text = "Stop"
-		recognized_text_label.text = ""
+		# Start new recognition session
+		speak_button.text = "Requesting..."
+		speak_button.disabled = false
+		status_label.text = "Please allow microphone access..."
 		
-		_start_web_recording()
+		# Try to start recognition (this will handle permissions automatically)
+		var success = await _start_live_recognition()
+		
+		if success:
+			print("Recognition started successfully")
+			# Successfully started
+			recognition_active = true
+			live_transcription_enabled = true
+			speak_button.text = "Stop Recording"
+			speak_button.disabled = false
+			status_label.text = "Listening... Say the word clearly, then click Stop Recording"
+			
+			if live_transcription_text:
+				live_transcription_text.text = "Listening..."
+			
+			permission_status_label.text = "✓ Recording active"
+			permission_status_label.modulate = Color.GREEN
+		else:
+			print("Failed to start recognition")
+			# Failed to start (permission denied or error)
+			speak_button.text = "Try Again"
+			speak_button.disabled = false
+			status_label.text = "Microphone access needed. Click 'Try Again' to retry."
+			permission_status_label.text = "✗ Microphone access required"
+			permission_status_label.modulate = Color.RED
 
-# Web platform recording functions using Google Cloud Speech-to-Text API
-func _start_web_recording():
+# Start live speech recognition using Web Speech API
+func _start_live_recognition() -> bool:
+	print("Starting live speech recognition...")
+	
 	if JavaScriptBridge.has_method("eval"):
 		var js_code = """
-			(function() {
-				window.godot_speech.debugLog('Starting web recording');
+			(async function() {
+				console.log('Starting Web Speech Recognition...');
 				
-				// Clean up any existing MediaRecorder
-				if (window.godot_speech.mediaRecorder && window.godot_speech.mediaRecorder.state !== 'inactive') {
-					window.godot_speech.mediaRecorder.stop();
+				// Check if speech recognition is supported
+				if (!window.SpeechRecognition && !window.webkitSpeechRecognition) {
+					console.error('Speech recognition not supported');
+					return false;
 				}
 				
-				if (window.godot_speech.audioStream) {
-					window.godot_speech.audioStream.getTracks().forEach(track => track.stop());
-					window.godot_speech.audioStream = null;
-				}
-				
-				window.godot_speech.audioChunks = [];
-				window.godot_speech.recording = true;
-				
-				// Request microphone permission now (or use existing permission)
-				navigator.mediaDevices.getUserMedia({ 
-					audio: { 
-						echoCancellation: true,
-						noiseSuppression: true,
-						autoGainControl: true
-					}, 
-					video: false 
-				})
-				.then(function(stream) {
-					// Update our tracked permission state
-					window.godot_speech.permissionState = 'granted';
+				try {
+					// Request microphone permission first
+					const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+					console.log('Microphone permission granted');
 					
-					window.godot_speech.audioStream = stream;
-					window.godot_speech.audioChunks = [];
+					// Stop the permission stream immediately
+					stream.getTracks().forEach(track => track.stop());
 					
-					try {
-						// Create MediaRecorder with optimal settings for speech
-						window.godot_speech.mediaRecorder = new MediaRecorder(stream, {
-							mimeType: 'audio/webm;codecs=opus',
-							audioBitsPerSecond: 24000
-						});
-						
-						// Listen for data available event
-						window.godot_speech.mediaRecorder.ondataavailable = function(e) {
-							if (e.data.size > 0) {
-								window.godot_speech.audioChunks.push(e.data);
-							}
-						};
-						
-						// Setup completion handler
-						window.godot_speech.mediaRecorder.onstop = function() {
-							window.godot_speech.debugLog('MediaRecorder stopped');
-							window.godot_speech.recording = false;
+					// Create speech recognition instance
+					const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+					window.currentRecognition = new SpeechRecognition();
+					
+					// Configure for live transcription
+					window.currentRecognition.continuous = true;
+					window.currentRecognition.interimResults = true;
+					window.currentRecognition.lang = 'en-US';
+					window.currentRecognition.maxAlternatives = 1;
+					
+					// Set up event handlers
+					window.currentRecognition.onresult = function(event) {
+						console.log('Speech recognition onresult triggered, event:', event);
+						for (let i = event.resultIndex; i < event.results.length; i++) {
+							const result = event.results[i];
+							const transcript = result[0].transcript.trim();
+							const isFinal = result.isFinal;
 							
-							// Process the audio chunks
-							if (window.godot_speech.audioChunks.length > 0) {
-								var audioBlob = new Blob(window.godot_speech.audioChunks, { type: 'audio/webm;codecs=opus' });
-								window.godot_speech.debugLog('Audio recorded: ' + (audioBlob.size / 1024).toFixed(2) + ' KB');
-								
-								// Process the audio
-								window.godot_speech.processAudio(audioBlob);
+							console.log('Speech result:', transcript, 'Final:', isFinal, 'Confidence:', result[0].confidence);
+							
+							// Store the result globally for Godot to poll
+							if (isFinal) {
+								window.latestFinalResult = transcript;
+								console.log('Stored final result:', transcript);
 							} else {
-								// Use with proper function call
-								if (typeof window.godot_speech.onError === 'function') {
-									window.godot_speech.onError('No audio data recorded');
-								}
+								window.latestInterimResult = transcript;
+								console.log('Stored interim result:', transcript);
 							}
-						};
-						
-						// Setup error handler
-						window.godot_speech.mediaRecorder.onerror = function(event) {
-							// Use with proper function call
-							if (typeof window.godot_speech.onError === 'function') {
-								window.godot_speech.onError('MediaRecorder error: ' + event.name);
-							}
-						};
-						
-						// Start recording
-						window.godot_speech.mediaRecorder.start();
-						window.godot_speech.debugLog('MediaRecorder started');
-						
-						return true;
-					} catch (err) {
-						// Use with proper function call
-						if (typeof window.godot_speech.onError === 'function') {
-							window.godot_speech.onError('Error initializing MediaRecorder: ' + err.message);
 						}
-						return false;
-					}
-				})
-				.catch(function(err) {
-					console.error('Error accessing media devices:', err);
+					};
 					
-					// Update our tracked permission state if denied
-					if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
-						window.godot_speech.permissionState = 'denied';
-					}
+					window.currentRecognition.onerror = function(event) {
+						console.error('Speech recognition error:', event.error, 'Event:', event);
+						try {
+							const engine = window.godot?.getEngine?.() || window.engine || window.Module?.engine;
+							if (engine && engine.call) {
+								console.log('Calling Godot speech_error_callback...');
+								engine.call('""" + str(get_path()) + """', 'speech_error_callback', event.error);
+							}
+						} catch (e) {
+							console.error('Error calling Godot with error:', e);
+						}
+					};
 					
-					// Use with proper function call
-					if (typeof window.godot_speech.onError === 'function') {
-						window.godot_speech.onError('Microphone access error: ' + err.message);
-					}
-					return false;
-				});
-				
-				return true;
-			})();
-		"""
-		
-		var result = JavaScriptBridge.eval(js_code)
-		print("Starting web recording: ", result)
-
-func _stop_web_recording():
-	if JavaScriptBridge.has_method("eval"):
-		var js_code = """
-			(function() {
-				window.godot_speech.debugLog('MediaRecorder stopped by user');
-				
-				if (window.godot_speech.mediaRecorder && window.godot_speech.mediaRecorder.state !== 'inactive') {
-					window.godot_speech.mediaRecorder.stop();
+					window.currentRecognition.onend = function() {
+						console.log('Speech recognition ended');
+						try {
+							const engine = window.godot?.getEngine?.() || window.engine || window.Module?.engine;
+							if (engine && engine.call) {
+								console.log('Calling Godot recognition_ended_callback...');
+								engine.call('""" + str(get_path()) + """', 'recognition_ended_callback');
+							}
+						} catch (e) {
+							console.error('Error calling Godot on end:', e);
+						}
+					};
+					
+					window.currentRecognition.onstart = function() {
+						console.log('Speech recognition started successfully');
+					};
+					
+					// Start recognition
+					window.currentRecognition.start();
+					console.log('Speech recognition started successfully');
 					return true;
-				} else {
-					if (typeof window.godot_speech.onError === 'function') {
-						window.godot_speech.onError('No active recording to stop');
-					}
+					
+				} catch (error) {
+					console.error('Error starting speech recognition:', error);
 					return false;
 				}
 			})();
 		"""
 		
-		var result = JavaScriptBridge.eval(js_code)
-		print("Stopping web recording: ", result)
+		var _result = JavaScriptBridge.eval(js_code)
+		
+		# Wait a moment for the async operation to complete
+		await get_tree().create_timer(0.5).timeout
+		
+		# Check if recognition started successfully
+		var success_check = JavaScriptBridge.eval("window.currentRecognition ? true : false")
+		print("Live recognition started successfully: ", success_check)
+		return success_check
+	
+	return false
+
+# Stop live speech recognition
+func _stop_live_recognition():
+	print("Stopping live speech recognition...")
+	
+	if JavaScriptBridge.has_method("eval"):
+		var js_code = """
+			(function() {
+				if (window.currentRecognition) {
+					console.log('Stopping speech recognition...');
+					window.currentRecognition.stop();
+					window.currentRecognition = null;
+					return true;
+				}
+				return false;
+			})();
+		"""
+		
+		var _result = JavaScriptBridge.eval(js_code)
+		print("Live recognition stopped: ", _result)
+
+# Callback when recognition ends (called from JavaScript)
+func recognition_ended_callback():
+	print("Recognition ended callback received")
+	if recognition_active:
+		recognition_active = false
+		live_transcription_enabled = false
+		speak_button.text = "Start Speaking"
+		speak_button.disabled = false
+		status_label.text = "Recognition stopped. Click Start Speaking to try again."
 
 # Callback function for speech recognition result from JavaScript
 func speech_result_callback(text):
 	print("SPEECH RECOGNITION CALLBACK: Received text from JavaScript: " + text)
 	
-	# Reset the flag for safety
-	result_being_processed = false
-	
 	if text and text.length() > 0:
-		# Call our rewritten function with the recognized text
 		print("CALLING RECOGNITION HANDLER with text: " + text)
 		call_deferred("_on_speech_recognized", text)
 	else:
 		print("EMPTY RECOGNITION RESULT")
 		status_label.text = "Could not understand speech"
-		speak_button.text = "Speak"
+		speak_button.text = "Start Speaking"
 		speak_button.disabled = false
 		recognition_active = false
+
+# New callback function for live/interim transcription results
+func live_transcription_callback(text, is_final):
+	print("LIVE TRANSCRIPTION CALLBACK: text='" + str(text) + "', is_final=" + str(is_final) + ", enabled=" + str(live_transcription_enabled))
+	
+	if not live_transcription_enabled:
+		print("Live transcription disabled, ignoring callback")
+		return
+		
+	# Ensure we have valid text
+	if text == null or (typeof(text) == TYPE_STRING and text.is_empty()):
+		print("Empty or null text received")
+		return
+		
+	var text_str = str(text).strip_edges()
+	print("LIVE TRANSCRIPTION: '" + text_str + "' (final: " + str(is_final) + ")")
+	
+	# Always process as interim - let user decide when to stop manually
+	_process_interim_transcription(text_str)
+
+# Process interim (live) transcription results
+func _process_interim_transcription(text):
+	if not live_transcription_enabled:
+		print("Live transcription disabled in interim processing")
+		return
+	
+	print("Processing interim text: '" + text + "'")
+		
+	# Update live transcription display
+	current_interim_result = text.to_lower().strip_edges()
+	
+	# Ensure we have the live transcription text node
+	if not live_transcription_text:
+		live_transcription_text = get_node_or_null("ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer/LiveTranscriptionContainer/LiveTranscriptionText")
+		if not live_transcription_text:
+			print("ERROR: Could not find live_transcription_text node!")
+			return
+	
+	live_transcription_text.text = "🎤 " + text
+	live_transcription_text.visible = true
+	print("Updated live transcription text to: '" + live_transcription_text.text + "'")
+	
+	# Check if interim result matches target word
+	if not challenge_word.is_empty():
+		var normalized_target = challenge_word.to_lower().strip_edges()
+		var normalized_interim = current_interim_result.replace(" ", "")
+		
+		# Visual feedback for close matches
+		if normalized_interim == normalized_target:
+			live_transcription_text.modulate = Color.GREEN
+			live_transcription_text.text = "✓ " + text + " (Perfect!)"
+			print("Perfect match detected!")
+		elif _is_close_match(normalized_interim, normalized_target):
+			live_transcription_text.modulate = Color.YELLOW
+			live_transcription_text.text = "~ " + text + " (Close!)"
+			print("Close match detected!")
+		else:
+			live_transcription_text.modulate = Color.WHITE
+			live_transcription_text.text = "🎤 " + text
+
+# Extract the best matching word from a phrase compared to target
+func _extract_best_word_match(phrase, target_word):
+	var words = phrase.to_lower().strip_edges().split(" ")
+	var target_normalized = target_word.to_lower().strip_edges()
+	
+	var best_word = ""
+	var best_score = 0.0
+	
+	# Check each word in the phrase
+	for word in words:
+		var word_cleaned = word.replace(",", "").replace(".", "").replace("!", "").replace("?", "")
+		var score = _calculate_word_similarity(word_cleaned, target_normalized)
+		
+		if score > best_score:
+			best_score = score
+			best_word = word_cleaned
+	
+	# If no good match found, use the first word
+	if best_word.is_empty() and words.size() > 0:
+		best_word = words[0].replace(",", "").replace(".", "").replace("!", "").replace("?", "")
+	
+	return best_word if not best_word.is_empty() else phrase
+
+# Calculate similarity between two words (0.0 to 1.0)
+func _calculate_word_similarity(word1, word2):
+	if word1 == word2:
+		return 1.0
+	
+	# Calculate Levenshtein distance
+	var distance = levenshtein_distance(word1, word2)
+	var max_length = max(word1.length(), word2.length())
+	
+	if max_length == 0:
+		return 0.0
+	
+	return 1.0 - (float(distance) / max_length)
+
+# Check if two words are close matches (for live feedback)
+func _is_close_match(word1, word2):
+	var similarity = _calculate_word_similarity(word1, word2)
+	return similarity > 0.7  # 70% similarity threshold
 
 # Callback function for speech recognition error from JavaScript
 func speech_error_callback(error):
 	print("Speech recognition error: ", error)
-	status_label.text = "Error: " + error
+	
+	# Stop current recognition
 	recognition_active = false
-	speak_button.text = "Speak"
+	live_transcription_enabled = false
+	
+	# Update UI based on error type
+	if error == "not-allowed" or error == "permission-denied":
+		status_label.text = "Microphone permission denied. Click 'Try Again' to retry."
+		speak_button.text = "Try Again"
+		permission_status_label.text = "✗ Permission denied"
+		permission_status_label.modulate = Color.RED
+	elif error == "no-speech":
+		status_label.text = "No speech detected. Try speaking louder."
+		speak_button.text = "Start Speaking"
+		permission_status_label.text = "⚠ No speech heard"
+		permission_status_label.modulate = Color.YELLOW
+	else:
+		status_label.text = "Error: " + error + ". Click to try again."
+		speak_button.text = "Try Again"
+		permission_status_label.text = "✗ Recognition error"
+		permission_status_label.modulate = Color.RED
+	
 	speak_button.disabled = false
 
 # Function to calculate bonus damage based on player stats
@@ -578,8 +1011,7 @@ func _on_speech_recognized(text):
 	# Mark that we're processing to prevent duplicates
 	result_being_processed = true
 	
-	# Update UI elements
-	recognized_text_label.text = text
+	# Update UI elements (removed recognized_text_label reference)
 	speak_button.disabled = true
 	status_label.text = "Processing result..."
 	
@@ -634,7 +1066,7 @@ func _on_speech_recognized(text):
 	else:
 		bonus_damage = 0
 	
-	print("WORD COMPARISON: Success = " + str(is_success) + ", Bonus Damage = " + str(bonus_damage))
+	print("STT Challenge Result: Success = " + str(is_success) + ", Bonus Damage = " + str(bonus_damage))
 	
 	# Create and show the result panel
 	print("OPENING RESULT PANEL")
@@ -766,7 +1198,7 @@ func _on_tts_speech_ended():
 	if tts.is_connected("speech_ended", Callable(self, "_on_tts_speech_ended")):
 		tts.disconnect("speech_ended", Callable(self, "_on_tts_speech_ended"))
 	
-	if tts.is_connected("speech_error", Callable(self, "_on_tts_speech_error")):
+	if tts.is_connected("speech_error", Callable(self, "_on_tts_speech_ended")):
 		tts.disconnect("speech_error", Callable(self, "_on_tts_speech_ended"))
 
 func _on_tts_speech_error(error_msg):
@@ -819,23 +1251,21 @@ func _cleanup_web_audio():
 	if JavaScriptBridge.has_method("eval"):
 		var js_code = """
 			(function() {
-				if (window.godot_speech && window.godot_speech.audioStream) {
-					window.godot_speech.audioStream.getTracks().forEach(track => track.stop());
-					window.godot_speech.audioStream = null;
+				// Clean up current recognition if active
+				if (window.currentRecognition) {
+					window.currentRecognition.stop();
+					window.currentRecognition = null;
 				}
 				
-				if (window.godot_speech && window.godot_speech.mediaRecorder) {
-					if (window.godot_speech.mediaRecorder.state !== 'inactive') {
-						window.godot_speech.mediaRecorder.stop();
-					}
-					window.godot_speech.mediaRecorder = null;
-				}
-				
+				// Reset speech object
 				if (window.godot_speech) {
-					window.godot_speech.audioChunks = [];
-					window.godot_speech.recording = false;
 					window.godot_speech.engineReady = false;
+					window.godot_speech.isListening = false;
 				}
+				
+				// Clear result variables
+				window.latestFinalResult = null;
+				window.latestInterimResult = null;
 
 				return true;
 			})();
@@ -843,15 +1273,6 @@ func _cleanup_web_audio():
 		
 		JavaScriptBridge.eval(js_code)
 		print("Web audio resources cleaned up")
-
-# Add a polling mechanism to check for results
-func _process(_delta):
-	# Only check for results if we're in active recognition mode
-	if recognition_active or (not result_being_processed and JavaScriptBridge.has_method("eval")):
-		var result = JavaScriptBridge.eval("window.getSpeechResult ? window.getSpeechResult() : null;")
-		if result and typeof(result) == TYPE_STRING:
-			print("Found result from polling: " + result)
-			speech_result_callback(result)
 
 # Function to get word length based on current dungeon
 func _get_word_length_for_dungeon() -> int:

@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://sdyk7ldijega"]
+[gd_scene load_steps=13 format=3 uid="uid://sdyk7ldijega"]
 
 [ext_resource type="Script" uid="uid://t3y57n5oleps" path="res://Scripts/DungeonSelection.gd" id="1_bfmdj"]
 [ext_resource type="Texture2D" uid="uid://chfkysvsxt4eg" path="res://gui/Update/Backgrounds/Plains_Level.png" id="2_bu21u"]
@@ -11,6 +11,8 @@
 [ext_resource type="Texture2D" uid="uid://n08ji1i2co16" path="res://gui/Update/UI/small button.png" id="8_xb6di"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="10_bu21u"]
 [ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="11_v81g5"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bu21u"]
 
 [node name="DungeonSelection" type="Control"]
 layout_mode = 3
@@ -323,6 +325,7 @@ scale = Vector2(1.24648, 1.24648)
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("10_bu21u")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_bu21u")
 text = "Enter Dungeon"
 icon = ExtResource("11_v81g5")
 flat = true

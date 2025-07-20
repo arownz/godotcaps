@@ -385,11 +385,6 @@ func _update_current_stage_in_firebase(new_stage: int):
 func trigger_enemy_skill():
 	print("BattleManager: Enemy skill triggered!")
 	
-	# Show enemy skill label
-	var enemy_skill_label = battle_scene.get_node_or_null("MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer/EnemySkillLabel")
-	if enemy_skill_label:
-		enemy_skill_label.visible = true
-	
 	# Add battle log message
 	battle_scene.battle_log_manager.add_message("[color=#EB5E4B]The " + battle_scene.enemy_manager.enemy_name + " is preparing a special attack![/color]")
 	

@@ -172,6 +172,7 @@ func _on_drawing_submitted(text_result):
 	print("Whiteboard Challenge Result: Success = " + str(is_success) + ", Bonus Damage = " + str(bonus_damage))
 	
 	# Create and show the result panel
+	print("OPENING RESULT PANEL")
 	var result_panel = load("res://Scenes/ChallengeResultPanels.tscn").instantiate()
 
 	# Add directly to the scene root to ensure it appears on top of everything

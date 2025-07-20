@@ -184,11 +184,6 @@ func handle_challenge_completed(bonus_damage):
 	enemy_manager.enemy_skill_meter = 0
 	ui_manager.update_enemy_skill_meter()
 	
-	# Hide enemy skill label
-	var enemy_skill_label = battle_scene.get_node_or_null("MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer/EnemySkillLabel")
-	if enemy_skill_label:
-		enemy_skill_label.visible = false
-	
 	# Check if enemy is defeated
 	if enemy_manager.enemy_health <= 0:
 		enemy_defeated_during_challenge = true  # Set flag
@@ -222,11 +217,6 @@ func handle_challenge_failed():
 	enemy_manager.enemy_skill_meter = 0
 	ui_manager.update_enemy_skill_meter()
 	
-	# Hide enemy skill label
-	var enemy_skill_label = battle_scene.get_node_or_null("MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer/EnemySkillLabel")
-	if enemy_skill_label:
-		enemy_skill_label.visible = false
-	
 	# Resume battle
 	_resume_battle()
 
@@ -249,11 +239,6 @@ func handle_challenge_cancelled():
 	# Reset enemy skill meter
 	enemy_manager.enemy_skill_meter = 0
 	ui_manager.update_enemy_skill_meter()
-	
-	# Hide enemy skill label
-	var enemy_skill_label = battle_scene.get_node_or_null("MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer/EnemySkillLabel")
-	if enemy_skill_label:
-		enemy_skill_label.visible = false
 	
 	# Check if player is defeated
 	if player_manager.player_health <= 0:

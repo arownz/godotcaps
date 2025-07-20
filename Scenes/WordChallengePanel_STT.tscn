@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://dhb04kp6rp2xh"]
+[gd_scene load_steps=14 format=3 uid="uid://dhb04kp6rp2xh"]
 
 [ext_resource type="Script" uid="uid://5556075jac2c" path="res://Scripts/WordChallengePanel_STT.gd" id="1_4yifo"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="2_8hfec"]
@@ -8,6 +8,8 @@
 [ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="6_y470y"]
 [ext_resource type="Texture2D" uid="uid://drwre8l5sq5ql" path="res://gui/Update/UI/hover long button.png" id="7_th1nk"]
 [ext_resource type="Texture2D" uid="uid://bmjd8nkagj08e" path="res://gui/Update/UI/long uncolored button.png" id="8_00oi0"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_y2iqy"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tts_panel"]
 bg_color = Color(0.862745, 0.901961, 0.929412, 1)
@@ -32,6 +34,10 @@ corner_radius_top_left = 10
 corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_4cav1"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_0l2ru"]
 
 [node name="WordChallengePanel_STT" type="Control"]
 layout_mode = 3
@@ -69,10 +75,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -400.0
-offset_top = -300.0
-offset_right = 400.0
-offset_bottom = 300.0
+offset_left = -397.0
+offset_top = -346.0
+offset_right = 403.0
+offset_bottom = 361.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_ys01y")
@@ -134,7 +140,8 @@ mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_0l2ru")
 theme_override_font_sizes/font_size = 15
-text = "Read"
+theme_override_styles/focus = SubResource("StyleBoxEmpty_y2iqy")
+text = "Read Word"
 icon = ExtResource("5_y2iqy")
 flat = true
 icon_alignment = 1
@@ -147,6 +154,7 @@ mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_0l2ru")
 theme_override_font_sizes/font_size = 15
+theme_override_styles/focus = SubResource("StyleBoxEmpty_y2iqy")
 text = "TTS Setting"
 icon = ExtResource("6_y470y")
 flat = true
@@ -266,7 +274,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("2_8hfec")
 theme_override_font_sizes/font_size = 20
-text = "Press the button and say the word"
+text = "Say the word!"
 horizontal_alignment = 1
 
 [node name="SpeakButton" type="Button" parent="ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer"]
@@ -278,6 +286,7 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_8hfec")
 theme_override_font_sizes/font_size = 20
 theme_override_icons/icon = ExtResource("7_th1nk")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_4cav1")
 text = "Start Speaking"
 icon = ExtResource("8_00oi0")
 flat = true
@@ -291,19 +300,41 @@ size_flags_horizontal = 4
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_8hfec")
-theme_override_font_sizes/font_size = 15
+theme_override_font_sizes/font_size = 20
+theme_override_styles/focus = SubResource("StyleBoxEmpty_0l2ru")
 text = "Cancel Counter"
 icon = ExtResource("8_00oi0")
 flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="RecognizedText" type="Label" parent="ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer"]
+[node name="LiveTranscriptionContainer" type="VBoxContainer" parent="ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
+
+[node name="LiveTranscriptionLabel" type="Label" parent="ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer/LiveTranscriptionContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 1, 0.8, 1)
 theme_override_fonts/font = ExtResource("2_8hfec")
-theme_override_font_sizes/font_size = 15
+theme_override_font_sizes/font_size = 14
+text = "Live: "
+horizontal_alignment = 1
+
+[node name="LiveTranscriptionText" type="Label" parent="ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer/LiveTranscriptionContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 0.6, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 2
+theme_override_fonts/font = ExtResource("2_8hfec")
+theme_override_font_sizes/font_size = 18
 text = "..."
+horizontal_alignment = 1
+
+[node name="PermissionStatusLabel" type="Label" parent="ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.8, 0.6, 1)
+theme_override_fonts/font = ExtResource("2_8hfec")
+theme_override_font_sizes/font_size = 14
+text = "Checking microphone permission..."
 horizontal_alignment = 1
 
 [node name="StatusLabel" type="Label" parent="ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer"]

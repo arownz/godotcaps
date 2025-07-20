@@ -8,7 +8,8 @@
 [ext_resource type="Texture2D" uid="uid://c75anq8c0biyi" path="res://gui/Update/UI/ui 7.png" id="5_iq7dp"]
 [ext_resource type="Texture2D" uid="uid://decyo17hpkcp6" path="res://gui/googleicon.png" id="5_qlk3g"]
 [ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="8_6oq4l"]
-[ext_resource type="Texture2D" uid="uid://cmn2nn1d0s4pi" path="res://gui/Update/UI/hover yellow button.png" id="9_iq7dp"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6oq4l"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_axc1p"]
 bg_color = Color(0, 0.266667, 0.337255, 1)
@@ -209,6 +210,7 @@ secret = true
 layout_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_fonts/font = ExtResource("3_4bnr5")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_6oq4l")
 text = "Show"
 
 [node name="PasswordErrorLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login"]
@@ -225,6 +227,7 @@ theme_override_colors/font_hover_color = Color(0, 0.342275, 0.342276, 1)
 theme_override_constants/outline_size = 3
 theme_override_fonts/font = ExtResource("3_4bnr5")
 theme_override_font_sizes/font_size = 16
+theme_override_styles/focus = SubResource("StyleBoxEmpty_6oq4l")
 text = "Forgot your password?"
 underline = 1
 
@@ -238,6 +241,7 @@ layout_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_fonts/font = ExtResource("3_4bnr5")
 theme_override_font_sizes/font_size = 20
+theme_override_styles/focus = SubResource("StyleBoxEmpty_6oq4l")
 theme_override_styles/normal = SubResource("StyleBoxFlat_axc1p")
 text = "Sign In"
 
@@ -268,6 +272,7 @@ layout_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 18
+theme_override_styles/focus = SubResource("StyleBoxEmpty_6oq4l")
 icon_alignment = 1
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/SignInGoogleButton"]
@@ -349,6 +354,7 @@ size_flags_horizontal = 3
 mouse_default_cursor_shape = 2
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 16
+theme_override_styles/focus = SubResource("StyleBoxEmpty_6oq4l")
 
 [node name="MonthOptionButton" type="OptionButton" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/BirthDateContainer"]
 layout_mode = 2
@@ -356,6 +362,7 @@ size_flags_horizontal = 3
 mouse_default_cursor_shape = 2
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 16
+theme_override_styles/focus = SubResource("StyleBoxEmpty_6oq4l")
 
 [node name="YearOptionButton" type="OptionButton" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/BirthDateContainer"]
 layout_mode = 2
@@ -363,6 +370,7 @@ size_flags_horizontal = 3
 mouse_default_cursor_shape = 2
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 16
+theme_override_styles/focus = SubResource("StyleBoxEmpty_6oq4l")
 
 [node name="BirthDateErrorLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
 visible = false
@@ -414,6 +422,7 @@ secret = true
 [node name="ShowRegPasswordButton" type="Button" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegPasswordContainer"]
 layout_mode = 2
 mouse_default_cursor_shape = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_6oq4l")
 text = "Show"
 
 [node name="RegPasswordErrorLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
@@ -445,6 +454,7 @@ secret = true
 [node name="ShowConfirmPasswordButton" type="Button" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/ConfirmPasswordContainer"]
 layout_mode = 2
 mouse_default_cursor_shape = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_6oq4l")
 text = "Show"
 
 [node name="ConfirmPasswordErrorLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
@@ -460,6 +470,7 @@ layout_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_fonts/font = ExtResource("3_4bnr5")
 theme_override_font_sizes/font_size = 20
+theme_override_styles/focus = SubResource("StyleBoxEmpty_6oq4l")
 theme_override_styles/normal = SubResource("StyleBoxFlat_axc1p")
 text = "Create Account"
 
@@ -482,6 +493,7 @@ theme_override_colors/font_hover_color = Color(0, 0.263969, 0.263969, 1)
 theme_override_constants/outline_size = 3
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 16
+theme_override_styles/focus = SubResource("StyleBoxEmpty_6oq4l")
 text = "← Back to Login"
 underline = 1
 
@@ -531,6 +543,7 @@ layout_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_fonts/font = ExtResource("3_4bnr5")
 theme_override_font_sizes/font_size = 20
+theme_override_styles/focus = SubResource("StyleBoxEmpty_6oq4l")
 theme_override_styles/normal = SubResource("StyleBoxFlat_axc1p")
 text = "Reset Password"
 
@@ -546,7 +559,7 @@ theme_override_font_sizes/font_size = 14
 text = "Lexia v1.0"
 horizontal_alignment = 1
 
-[node name="AdminButton" type="TextureButton" parent="."]
+[node name="AdminButton" type="Button" parent="."]
 layout_mode = 0
 offset_left = 41.0
 offset_top = 725.0
@@ -554,18 +567,14 @@ offset_right = 95.0
 offset_bottom = 741.0
 scale = Vector2(3.19312, 3.19312)
 mouse_default_cursor_shape = 2
-texture_normal = ExtResource("8_6oq4l")
-texture_hover = ExtResource("9_iq7dp")
-
-[node name="Label" type="Label" parent="AdminButton"]
-layout_mode = 0
-offset_left = 2.81856
-offset_top = 2.19221
-offset_right = 155.819
-offset_bottom = 32.1922
-scale = Vector2(0.316638, 0.316638)
 theme_override_fonts/font = ExtResource("3_4bnr5")
-text = "Super Admin"
+theme_override_font_sizes/font_size = 8
+theme_override_styles/focus = SubResource("StyleBoxEmpty_6oq4l")
+text = "Admin"
+icon = ExtResource("8_6oq4l")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [connection signal="text_changed" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/EmailLineEdit" to="." method="_on_login_email_text_changed"]
 [connection signal="text_changed" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/PasswordContainer/PasswordLineEdit" to="." method="_on_login_password_text_changed"]
