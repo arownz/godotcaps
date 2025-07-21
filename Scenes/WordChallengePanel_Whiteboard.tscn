@@ -129,6 +129,7 @@ alignment = 1
 [node name="TTSButton" type="Button" parent="ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer"]
 custom_minimum_size = Vector2(80, 50)
 layout_mode = 2
+mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_ft8xs")
 theme_override_font_sizes/font_size = 16
@@ -141,6 +142,7 @@ expand_icon = true
 [node name="TTSSettingsButton" type="Button" parent="ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer"]
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
+mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_ft8xs")
 theme_override_font_sizes/font_size = 14

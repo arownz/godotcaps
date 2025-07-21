@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://coam7h4k8b2q1"]
 
-[ext_resource type="Script" uid="uid://dgboy6v1hc540" path="res://Scripts/ModuleScene.gd" id="2_script"]
+[ext_resource type="Script" uid="uid://bpm4fs4clb2en" path="res://Scripts/SyllableBuildingModule.gd" id="1_18jxr"]
 [ext_resource type="Texture2D" uid="uid://cp6h0easasnmc" path="res://gui/Update/UI/ui 6.png" id="2_wljjf"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="3_regular_font"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="4_bold_font"]
@@ -12,7 +12,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("2_script")
+script = ExtResource("1_18jxr")
 
 [node name="Background" type="TextureRect" parent="."]
 layout_mode = 1

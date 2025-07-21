@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://bm8j5k6f3bar2"]
 
+[ext_resource type="Script" uid="uid://bcbs2h67y83do" path="res://Scripts/ChunkedReadingModule.gd" id="1_3n1kb"]
 [ext_resource type="Texture2D" uid="uid://cp6h0easasnmc" path="res://gui/Update/UI/ui 6.png" id="2_i1p1d"]
-[ext_resource type="Script" uid="uid://dgboy6v1hc540" path="res://Scripts/ModuleScene.gd" id="2_script"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="3_regular_font"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="4_bold_font"]
 
@@ -12,7 +12,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("2_script")
+script = ExtResource("1_3n1kb")
 
 [node name="Background" type="TextureRect" parent="."]
 layout_mode = 1
@@ -231,4 +231,3 @@ layout_mode = 2
 text = "Back to Modules"
 
 [connection signal="pressed" from="MainContainer/HeaderContainer/BackButton" to="." method="_on_back_button_pressed"]
-[connection signal="pressed" from="MainContainer/CenterContainer/ContentPanel/ContentContainer/BackButtonBottom" to="." method="_on_back_button_pressed"]

@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://cofdjvw7ybc6r"]
+[gd_scene load_steps=19 format=3 uid="uid://cofdjvw7ybc6r"]
 
 [ext_resource type="Script" uid="uid://cx3vkj8apruat" path="res://Scripts/dungeon_3_map.gd" id="1_1icim"]
 [ext_resource type="Texture2D" uid="uid://chfkysvsxt4eg" path="res://gui/Update/Backgrounds/Plains_Level.png" id="1_qydu8"]
@@ -17,6 +17,8 @@
 [ext_resource type="Texture2D" uid="uid://ct2kkb4phx2kr" path="res://gui/Update/icons/treant.png" id="16_oabpg"]
 [ext_resource type="Texture2D" uid="uid://cmvfv5h4u7j6e" path="res://gui/Update/icons/close icon.png" id="18_07erb"]
 [ext_resource type="Texture2D" uid="uid://clbfvil7saw1l" path="res://gui/Update/UI/Fight Button (Default).png" id="20_mqaq1"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_0cogd"]
 
 [node name="Dungeon3Map" type="Node2D"]
 script = ExtResource("1_1icim")
@@ -562,14 +564,20 @@ mouse_default_cursor_shape = 2
 texture_normal = ExtResource("18_07erb")
 
 [node name="FightButton" type="Button" parent="StageDetails"]
+layout_mode = 0
 offset_left = 175.0
 offset_top = 682.0
 offset_right = 278.0
 offset_bottom = 704.0
 scale = Vector2(2.88017, 3.15688)
 mouse_default_cursor_shape = 2
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("9_3555f")
 theme_override_font_sizes/font_size = 10
+theme_override_styles/focus = SubResource("StyleBoxEmpty_0cogd")
 text = "FIGHT"
 icon = ExtResource("20_mqaq1")
 flat = true

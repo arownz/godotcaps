@@ -637,8 +637,8 @@ func _on_speak_button_pressed():
 		if final_result.is_empty() and live_transcription_text and not live_transcription_text.text.is_empty():
 			# Extract text from live transcription (remove emoji and formatting)
 			var live_text = live_transcription_text.text
-			if "🎤 " in live_text:
-				final_result = live_text.replace("🎤 ", "").strip_edges()
+			if "| " in live_text:
+				final_result = live_text.replace("| ", "").strip_edges()
 			elif "✓ " in live_text:
 				final_result = live_text.replace("✓ ", "").replace(" (Perfect!)", "").strip_edges()
 			elif "~ " in live_text:
@@ -891,7 +891,7 @@ func _process_interim_transcription(text):
 			print("ERROR: Could not find live_transcription_text node!")
 			return
 	
-	live_transcription_text.text = "🎤 " + text
+	live_transcription_text.text = "| " + text
 	live_transcription_text.visible = true
 	print("Updated live transcription text to: '" + live_transcription_text.text + "'")
 	
@@ -911,7 +911,7 @@ func _process_interim_transcription(text):
 			print("Close match detected!")
 		else:
 			live_transcription_text.modulate = Color.WHITE
-			live_transcription_text.text = "🎤 " + text
+			live_transcription_text.text = "| " + text
 
 # Extract the best matching word from a phrase compared to target
 func _extract_best_word_match(phrase, target_word):
