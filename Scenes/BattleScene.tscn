@@ -1,8 +1,9 @@
-[gd_scene load_steps=15 format=3 uid="uid://cfead7bcuslp4"]
+[gd_scene load_steps=16 format=3 uid="uid://cfead7bcuslp4"]
 
 [ext_resource type="Texture2D" uid="uid://cxqd6wyqy8g22" path="res://gui/Update/Backgrounds/battlescene background.png" id="2_ixjr5"]
 [ext_resource type="Script" uid="uid://cnnycoui3l3ef" path="res://Scripts/battlescene.gd" id="3_vhj2j"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="4_akpf4"]
+[ext_resource type="Texture2D" uid="uid://bb3yuiy6n0i2" path="res://gui/Update/icons/small settings_hover.png" id="5_47u5s"]
 [ext_resource type="Texture2D" uid="uid://c6clhmrkbmg0u" path="res://gui/UI/ui 4.png" id="6_2tp6q"]
 [ext_resource type="Texture2D" uid="uid://bmjd8nkagj08e" path="res://gui/Update/UI/long uncolored button.png" id="7_2tp6q"]
 [ext_resource type="Texture2D" uid="uid://c8vnqmxwy0lsw" path="res://gui/Update/icons/small settings.png" id="7_ixjr5"]
@@ -91,8 +92,8 @@ script = ExtResource("3_vhj2j")
 
 [node name="Sprite2D" type="Sprite2D" parent="Background/ParallaxLayer"]
 texture_filter = 1
-position = Vector2(-62, -41)
-scale = Vector2(5.51875, 4.91667)
+position = Vector2(-3.8147e-06, -3.8147e-06)
+scale = Vector2(4.57812, 4.5)
 texture = ExtResource("2_ixjr5")
 centered = false
 
@@ -362,28 +363,46 @@ layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -67.5
-offset_top = 31.0
-offset_right = 361.5
-offset_bottom = 83.0
+offset_left = -196.5
+offset_top = 33.0
+offset_right = 232.5
+offset_bottom = 85.0
 grow_horizontal = 2
 theme_override_colors/font_color = Color(1, 0.836, 0.18, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 5
 theme_override_fonts/font = ExtResource("4_akpf4")
 theme_override_font_sizes/font_size = 25
-text = "D1: The Plain - Stage 1"
+text = "Dungeon 1 - Stage 1"
 horizontal_alignment = 1
 
 [node name="SettingButton" type="TextureButton" parent="MainContainer/BattleAreaContainer"]
 layout_mode = 0
-offset_left = 31.0
-offset_top = 40.0
-offset_right = 41.0
-offset_bottom = 50.0
+offset_left = 56.0
+offset_top = 50.0
+offset_right = 66.0
+offset_bottom = 60.0
 scale = Vector2(6.38275, 6.15812)
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("7_ixjr5")
+texture_hover = ExtResource("5_47u5s")
+
+[node name="SettingLabel" type="Label" parent="MainContainer/BattleAreaContainer/SettingButton"]
+visible = false
+layout_mode = 0
+offset_left = -4.70017
+offset_top = 10.068
+offset_right = 118.3
+offset_bottom = 55.068
+scale = Vector2(0.163519, 0.163519)
+theme_override_colors/font_color = Color(0.054902, 0.27451, 0.47451, 1)
+theme_override_colors/font_shadow_color = Color(1, 1, 1, 1)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_fonts/font = ExtResource("4_akpf4")
+theme_override_font_sizes/font_size = 24
+text = "Setting"
+horizontal_alignment = 1
 
 [node name="RightContainer" type="Control" parent="MainContainer"]
 layout_mode = 2
@@ -394,8 +413,8 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -22.0
-offset_right = 21.25
+offset_left = -25.0
+offset_right = 25.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("6_2tp6q")
@@ -407,6 +426,8 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = -13.0
+offset_right = 16.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/margin_left = 20
@@ -416,7 +437,7 @@ theme_override_constants/margin_bottom = 20
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MainContainer/RightContainer/MarginContainer"]
 layout_mode = 2
-theme_override_constants/separation = 15
+theme_override_constants/separation = 30
 
 [node name="StatsContainer" type="HBoxContainer" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -594,6 +615,7 @@ layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 3
 mouse_default_cursor_shape = 2
+theme_override_colors/font_hover_color = Color(0.871619, 0.169487, 0.20025, 1)
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
 theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
@@ -606,4 +628,5 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
+[connection signal="pressed" from="MainContainer/BattleAreaContainer/SettingButton" to="." method="_on_setting_button_pressed"]
 [connection signal="pressed" from="MainContainer/RightContainer/MarginContainer/VBoxContainer/ButtonContainer/EngageButton" to="." method="_on_engage_button_pressed"]

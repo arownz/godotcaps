@@ -176,6 +176,7 @@ text = "Email"
 
 [node name="EmailLineEdit" type="LineEdit" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 16
 placeholder_text = "Enter your email"
 clear_button_enabled = true
@@ -201,6 +202,7 @@ layout_mode = 2
 [node name="PasswordLineEdit" type="LineEdit" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/PasswordContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 16
 placeholder_text = "Enter your password"
 clear_button_enabled = true
@@ -325,6 +327,7 @@ text = "Username"
 
 [node name="UsernameLineEdit" type="LineEdit" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 16
 placeholder_text = "Choose a username"
 clear_button_enabled = true
@@ -389,6 +392,7 @@ text = "Email"
 
 [node name="RegEmailLineEdit" type="LineEdit" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 16
 placeholder_text = "Enter your email"
 clear_button_enabled = true
@@ -414,6 +418,7 @@ layout_mode = 2
 [node name="RegPasswordLineEdit" type="LineEdit" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegPasswordContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 16
 placeholder_text = "Create a password"
 clear_button_enabled = true
@@ -446,6 +451,7 @@ layout_mode = 2
 [node name="ConfirmPasswordLineEdit" type="LineEdit" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/ConfirmPasswordContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 16
 placeholder_text = "Confirm your password"
 clear_button_enabled = true
@@ -522,6 +528,7 @@ text = "Email"
 
 [node name="ResetEmailLineEdit" type="LineEdit" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 16
 placeholder_text = "Enter your email"
 clear_button_enabled = true
@@ -546,18 +553,6 @@ theme_override_font_sizes/font_size = 20
 theme_override_styles/focus = SubResource("StyleBoxEmpty_6oq4l")
 theme_override_styles/normal = SubResource("StyleBoxFlat_axc1p")
 text = "Reset Password"
-
-[node name="VersionLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer"]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 4
-theme_override_constants/shadow_outline_size = 3
-theme_override_fonts/font = ExtResource("2_edc1m")
-theme_override_font_sizes/font_size = 14
-text = "Lexia v1.0"
-horizontal_alignment = 1
 
 [node name="AdminButton" type="Button" parent="."]
 layout_mode = 0

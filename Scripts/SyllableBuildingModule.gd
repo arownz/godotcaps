@@ -59,7 +59,7 @@ func _on_build_word_pressed():
 	var dialog = AcceptDialog.new()
 	
 	if built_word == target_word:
-		dialog.dialog_text = "🎉 Excellent! You built the word '" + target_word + "'!\n\nYou combined:\n• but\n• ter\n• fly\n\nWell done!"
+		dialog.dialog_text = "Excellent! You built the word '" + target_word + "'!\n\nYou combined:\n• but\n• ter\n• fly\n\nWell done!"
 		dialog.title = "Success!"
 	
 	add_child(dialog)

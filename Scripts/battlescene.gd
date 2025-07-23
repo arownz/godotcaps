@@ -27,7 +27,7 @@ var auto_battle_speed = 5.0
 var battle_result = ""
 var fresh_start = true
 
-# Challengef
+# Challenge
 var challenge_active = false
 
 # References
@@ -126,6 +126,12 @@ func _connect_signals():
 	if !settings_button.is_connected("pressed", _on_settings_button_pressed):
 		settings_button.pressed.connect(_on_settings_button_pressed)
 	
+	# Connect settings button hover events
+	if !settings_button.is_connected("mouse_entered", _on_settings_button_hover_enter):
+		settings_button.mouse_entered.connect(_on_settings_button_hover_enter)
+	if !settings_button.is_connected("mouse_exited", _on_settings_button_hover_exit):
+		settings_button.mouse_exited.connect(_on_settings_button_hover_exit)
+	
 	# Connect scroll container to detect user scrolling
 	var scroll_container = $MainContainer/RightContainer/MarginContainer/VBoxContainer/BattleLogContainer/ScrollContainer
 	if scroll_container:
@@ -140,30 +146,43 @@ func _connect_signals():
 func _connect_manager_signals():
 	# BattleManager signals
 	if battle_manager and battle_manager.has_signal("player_attack_performed"):
-		battle_manager.player_attack_performed.connect(_on_player_attack_performed)
-		battle_manager.enemy_attack_performed.connect(_on_enemy_attack_performed)
-		battle_manager.enemy_skill_triggered.connect(_on_enemy_skill_triggered)
+		if !battle_manager.is_connected("player_attack_performed", _on_player_attack_performed):
+			battle_manager.player_attack_performed.connect(_on_player_attack_performed)
+		if !battle_manager.is_connected("enemy_attack_performed", _on_enemy_attack_performed):
+			battle_manager.enemy_attack_performed.connect(_on_enemy_attack_performed)
+		if !battle_manager.is_connected("enemy_skill_triggered", _on_enemy_skill_triggered):
+			battle_manager.enemy_skill_triggered.connect(_on_enemy_skill_triggered)
 	
 	# EnemyManager signals
 	if enemy_manager and enemy_manager.has_signal("enemy_health_changed"):
-		enemy_manager.enemy_health_changed.connect(_on_enemy_health_changed)
-		enemy_manager.enemy_defeated.connect(_on_enemy_defeated)
-		enemy_manager.enemy_skill_meter_changed.connect(_on_enemy_skill_meter_changed)
-		enemy_manager.enemy_set_up.connect(_on_enemy_set_up)
+		if !enemy_manager.is_connected("enemy_health_changed", _on_enemy_health_changed):
+			enemy_manager.enemy_health_changed.connect(_on_enemy_health_changed)
+		if !enemy_manager.is_connected("enemy_defeated", _on_enemy_defeated):
+			enemy_manager.enemy_defeated.connect(_on_enemy_defeated)
+		if !enemy_manager.is_connected("enemy_skill_meter_changed", _on_enemy_skill_meter_changed):
+			enemy_manager.enemy_skill_meter_changed.connect(_on_enemy_skill_meter_changed)
+		if !enemy_manager.is_connected("enemy_set_up", _on_enemy_set_up):
+			enemy_manager.enemy_set_up.connect(_on_enemy_set_up)
 	
 	# PlayerManager signals
 	if player_manager and player_manager.has_signal("player_health_changed"):
-		player_manager.player_health_changed.connect(_on_player_health_changed)
-		player_manager.player_defeated.connect(_on_player_defeated)
-		player_manager.player_experience_changed.connect(_on_player_experience_changed)
-		player_manager.player_level_up.connect(_on_player_level_up)
+		if !player_manager.is_connected("player_health_changed", _on_player_health_changed):
+			player_manager.player_health_changed.connect(_on_player_health_changed)
+		if !player_manager.is_connected("player_defeated", _on_player_defeated):
+			player_manager.player_defeated.connect(_on_player_defeated)
+		if !player_manager.is_connected("player_experience_changed", _on_player_experience_changed):
+			player_manager.player_experience_changed.connect(_on_player_experience_changed)
+		if !player_manager.is_connected("player_level_up", _on_player_level_up):
+			player_manager.player_level_up.connect(_on_player_level_up)
 	
 	# DungeonManager signals
 	if dungeon_manager:
 		if dungeon_manager.has_signal("stage_advanced"):
-			dungeon_manager.stage_advanced.connect(_on_stage_advanced)
+			if !dungeon_manager.is_connected("stage_advanced", _on_stage_advanced):
+				dungeon_manager.stage_advanced.connect(_on_stage_advanced)
 		if dungeon_manager.has_signal("dungeon_advanced"):
-			dungeon_manager.dungeon_advanced.connect(_on_dungeon_advanced)
+			if !dungeon_manager.is_connected("dungeon_advanced", _on_dungeon_advanced):
+				dungeon_manager.dungeon_advanced.connect(_on_dungeon_advanced)
 
 # Signal callbacks
 func _on_player_attack_performed(damage):
@@ -203,7 +222,7 @@ func _on_player_level_up(new_level):
 	var new_damage = player_manager.player_damage
 	var new_durability = player_manager.player_durability
 	
-	# Use enhanced level-up message with emojis and colors
+	# Use enhanced level-up message with high contrast colors (no emojis for dyslexia font compatibility)
 	battle_log_manager.add_level_up_message(new_level, health_increase, damage_increase, durability_increase, new_health, new_damage, new_durability)
 	
 	# Update power and durability bars when player levels up
@@ -223,7 +242,7 @@ func _on_stage_advanced(_dungeon_num, _stage_num):
 
 func _on_dungeon_advanced(dungeon_num):
 	ui_manager.update_background(dungeon_num)
-	battle_log_manager.add_message("[color=#4CAF50]You've entered a new dungeon! Prepare for stronger enemies.[/color]")
+	battle_log_manager.add_message("[color=#006400]You've entered a new dungeon! Prepare for stronger enemies.[/color]")
 
 func _on_enemy_set_up(_enemy_name, _enemy_type):
 	ui_manager.initialize_enemy_ui()
@@ -360,10 +379,10 @@ func _auto_battle_turn():
 	# Give a brief pause for animation
 	await get_tree().create_timer(0.8).timeout
 	
-	# Check if enemy is defeated
+	# Check if enemy is defeated - the enemy_defeated signal will handle victory automatically
 	if enemy_manager.enemy_health <= 0:
 		battle_active = false
-		battle_manager.handle_victory()
+		# Don't call handle_victory here - the enemy_defeated signal will handle it
 		return
 	
 	# After a small delay, enemy attacks
@@ -469,6 +488,16 @@ func _on_settings_button_pressed():
 	print("Settings button pressed - showing battle settings popup")
 	_show_battle_settings_popup()
 
+func _on_settings_button_hover_enter():
+	var setting_label = $MainContainer/BattleAreaContainer/SettingButton/SettingLabel
+	if setting_label:
+		setting_label.visible = true
+
+func _on_settings_button_hover_exit():
+	var setting_label = $MainContainer/BattleAreaContainer/SettingButton/SettingLabel
+	if setting_label:
+		setting_label.visible = false
+
 func _consume_battle_energy() -> bool:
 	# Check if player has enough energy (2 energy required)
 	if !Firebase.Auth.auth:
@@ -524,3 +553,7 @@ func _input(event):
 	if event.is_action_pressed("ui_home"):  # F1 key
 		print("Testing battle exp gain and Firebase update...")
 		await player_manager.test_battle_exp_gain()
+
+
+func _on_setting_button_pressed() -> void:
+	pass # Replace with function body.

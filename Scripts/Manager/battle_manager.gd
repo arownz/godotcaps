@@ -10,6 +10,7 @@ var battle_scene # Reference to the main battle scene
 
 # Add flag to prevent multiple endgame screens
 var endgame_screen_active: bool = false
+var victory_processing: bool = false  # Add flag to prevent duplicate victory processing
 
 # External resources
 var word_challenge_whiteboard_scene = preload("res://Scenes/WordChallengePanel_Whiteboard.tscn")
@@ -82,6 +83,12 @@ func enemy_attack():
 
 # Centralize all endgame handling here
 func handle_victory():
+	# Prevent multiple victory processing
+	if victory_processing:
+		print("BattleManager: Victory already being processed, preventing duplicate")
+		return
+	
+	victory_processing = true
 	print("BattleManager: Handling victory")
 	
 	# Get CURRENT stage info BEFORE any advancement
@@ -101,7 +108,7 @@ func handle_victory():
 	print("BattleManager: Player stats after exp gain - Level: ", battle_scene.player_manager.player_level, ", Exp: ", battle_scene.player_manager.player_exp, "/", battle_scene.player_manager.get_max_exp())
 	
 	# Add victory message
-	battle_scene.battle_log_manager.add_message("[color=#4CAF50]Victory! You defeated the enemy and gained " + str(exp_reward) + " experience.[/color]")
+	battle_scene.battle_log_manager.add_message("[color=#006400]Victory! You defeated the enemy and gained " + str(exp_reward) + " experience.[/color]")
 	
 	# Update Firebase with victory data using COMPLETED stage info
 	# Note: Player stats (exp, level, health, damage, durability) are updated by player_manager.gd
@@ -224,7 +231,7 @@ func handle_defeat():
 	print("BattleManager: Handling defeat")
 	
 	# Add defeat message
-	battle_scene.battle_log_manager.add_message("[color=#FF0000]Defeat! You have been defeated by the enemy.[/color]")
+	battle_scene.battle_log_manager.add_message("[color=#8B0000]Defeat! You have been defeated by the enemy.[/color]")
 	
 	# Wait a moment for the message to be seen
 	await battle_scene.get_tree().create_timer(1.0).timeout
@@ -277,6 +284,7 @@ func show_endgame_screen(result_type: String, exp_reward: int = 0, completed_dun
 func _on_restart_battle():
 	# Reset endgame screen flag
 	endgame_screen_active = false
+	victory_processing = false  # Reset victory processing flag
 	
 	# Heal player to full health on restart
 	if battle_scene and battle_scene.player_manager:
@@ -295,6 +303,7 @@ func _on_quit_to_menu():
 	
 	# Reset endgame screen flag
 	endgame_screen_active = false
+	victory_processing = false  # Reset victory processing flag
 	
 	# Return to current dungeon map based on dungeon_num
 	var dungeon_scene_path = ""
@@ -316,6 +325,7 @@ func _on_quit_to_menu():
 func _on_continue_battle():
 	# Reset endgame screen flag
 	endgame_screen_active = false
+	victory_processing = false  # Reset victory processing flag
 	
 	# Heal player to full health on stage progression
 	if battle_scene and battle_scene.player_manager:
@@ -386,14 +396,14 @@ func trigger_enemy_skill():
 	print("BattleManager: Enemy skill triggered!")
 	
 	# Add battle log message
-	battle_scene.battle_log_manager.add_message("[color=#EB5E4B]The " + battle_scene.enemy_manager.enemy_name + " is preparing a special attack![/color]")
+	battle_scene.battle_log_manager.add_message("[color=#8B0000]The " + battle_scene.enemy_manager.enemy_name + " is preparing a special attack![/color]")
 	
 	# Emit signal
 	emit_signal("enemy_skill_triggered")
 	
 	# Start word challenge - FIXED: Use challenge_manager
 	var challenge_type = "whiteboard" if randf() < 0.5 else "stt"
-	battle_scene.battle_log_manager.add_message("[color=#F09C2D]Counter by " + ("writing" if challenge_type == "whiteboard" else "speaking") + " the word![/color]")
+	battle_scene.battle_log_manager.add_message("[color=#B8860B]Counter by " + ("writing" if challenge_type == "whiteboard" else "speaking") + " the word![/color]")
 	
 	# Connect challenge manager signals if not already connected
 	if !battle_scene.challenge_manager.is_connected("challenge_completed", _on_challenge_completed):

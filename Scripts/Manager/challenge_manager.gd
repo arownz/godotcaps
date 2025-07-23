@@ -177,7 +177,7 @@ func handle_challenge_completed(bonus_damage):
 	enemy_manager.take_damage(total_damage)
 	
 	# Add battle log messages with detailed damage breakdown
-	battle_log_manager.add_message("[color=#4CAF50]You successfully countered the " + enemy_manager.enemy_name + "'s special attack![/color]")
+	battle_log_manager.add_message("[color=#006400]You successfully countered the " + enemy_manager.enemy_name + "'s special attack![/color]")
 	battle_log_manager.add_message("[color=#000000]Counter Attack: " + str(player_base_damage) + " base damage + " + str(bonus_damage) + " bonus = " + str(total_damage) + " total damage![/color]")
 	
 	# Reset enemy skill meter
@@ -188,7 +188,7 @@ func handle_challenge_completed(bonus_damage):
 	if enemy_manager.enemy_health <= 0:
 		enemy_defeated_during_challenge = true  # Set flag
 		battle_scene.battle_active = false
-		battle_log_manager.add_message("[color=#4CAF50]You defeated the " + enemy_manager.enemy_name + " with your counter-attack![/color]")
+		battle_log_manager.add_message("[color=#006400]You defeated the " + enemy_manager.enemy_name + " with your counter-attack![/color]")
 		# Clean up challenge UI immediately when enemy is defeated
 		_cleanup_challenge()
 		# Don't call handle_victory here - let the normal enemy_defeated signal handle it
@@ -210,7 +210,7 @@ func handle_challenge_failed():
 	player_manager.take_damage(skill_damage)
 	
 	# Add battle log messages
-	battle_log_manager.add_message("[color=#EB5E4B]You failed to counter the " + enemy_manager.enemy_name + "'s special attack![/color]")
+	battle_log_manager.add_message("[color=#8B0000]You failed to counter the " + enemy_manager.enemy_name + "'s special attack![/color]")
 	battle_log_manager.add_message("[color=#000000]The " + enemy_manager.enemy_name + " dealt " + str(skill_damage) + " critical damage![/color]")
 	
 	# Reset enemy skill meter

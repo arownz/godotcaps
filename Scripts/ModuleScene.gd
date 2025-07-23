@@ -4,7 +4,7 @@ extends Control
 var module_data = {
 	"phonics": {
 		"name": "Phonics Interactive",
-		"icon": "✏️",
+		"icon": "ABC",
 		"description": "Trace letters while hearing sounds",
 		"current_lesson": 7,
 		"total_lessons": 20,
@@ -13,8 +13,8 @@ var module_data = {
 	},
 	"flip_quiz": {
 		"name": "Flip Quiz",
-		"icon": "🎯",
-		"description": "Flashcard game with emojis",
+		"icon": "QUIZ",
+		"description": "Flashcard game with symbols",
 		"current_lesson": 12,
 		"total_lessons": 20,
 		"progress_percent": 60.0,
@@ -22,7 +22,7 @@ var module_data = {
 	},
 	"read_aloud": {
 		"name": "Interactive Read-Aloud",
-		"icon": "📖",
+		"icon": "READ",
 		"description": "Follow highlighted text with audio",
 		"current_lesson": 5,
 		"total_lessons": 20,
@@ -31,7 +31,7 @@ var module_data = {
 	},
 	"chunked_reading": {
 		"name": "Chunked Reading",
-		"icon": "🔎",
+		"icon": "SCAN",
 		"description": "Small sections with guided questions",
 		"current_lesson": 2,
 		"total_lessons": 20,
@@ -39,7 +39,7 @@ var module_data = {
 		"scene_path": "res://Scenes/ChunkedReadingModule.tscn"
 	},	"syllable_building": {
 		"name": "Syllable Building",
-		"icon": "🌈",
+		"icon": "BUILD",
 		"description": "Drag syllables to build words",
 		"current_lesson": 9,
 		"total_lessons": 20,
@@ -48,7 +48,7 @@ var module_data = {
 	},
 	"speech": {
 		"name": "Speech Recognition",
-		"icon": "🎤",
+		"icon": "SPEAK",
 		"description": "Practice pronunciation with AI feedback",
 		"current_lesson": 1,
 		"total_lessons": 20,
@@ -119,7 +119,7 @@ func _get_node_references():
 		menu_button.pressed.connect(_on_menu_button_pressed)
 
 	if adaptive_button:
-		adaptive_button.pressed.connect(_show_coming_soon_notification.bind("Adaptive Learning", "🧠"))
+		adaptive_button.pressed.connect(_show_coming_soon_notification.bind("Adaptive Learning", "AI"))
 	
 	# Debug: Check if nodes were found
 	if not menu_button:
@@ -230,7 +230,7 @@ func _update_card_progress(module_key: String, card_name: String):
 			if completed_count == 0:
 				action_button.text = "Start Learning"
 			elif completed_count == total_lessons:
-				action_button.text = "✅ Completed"
+				action_button.text = "COMPLETED"
 			else:
 				action_button.text = "Continue Learning"
 

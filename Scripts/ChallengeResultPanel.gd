@@ -11,9 +11,9 @@ var bonus_damage: int = 0
 var input_type: String = "" # "wrote" or "said" based on input method
 var display_time: float = 3.5 # Increased display time for dyslexia users
 
-# Colors
-var success_color = Color("1ddd62") # Green
-var failure_color = Color("dd1d1d") # Red
+# Colors - using high contrast versions for dyslexia accessibility
+var success_color = Color("#006400") # Dark green (high contrast)
+var failure_color = Color("#8B0000") # Dark red (high contrast)
 
 # References to UI elements
 @onready var title_label = $ResultPanel/ContentContainer/TitleLabel
@@ -82,7 +82,7 @@ func update_ui():
 	
 	# Update status message and color
 	if is_successful:
-		status_label.text = "COUNTERED SUCCESSFUL!"
+		status_label.text = "COUNTER SUCCESSFUL!"
 		status_label.add_theme_color_override("font_color", success_color)
 		bonus_damage_label.visible = true
 		# Enhanced bonus damage display

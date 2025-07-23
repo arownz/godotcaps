@@ -1104,7 +1104,7 @@ func _on_speech_recognized(text):
 	
 	# Print confirmation message
 	print("RESULT PANEL SETUP COMPLETE - panel should now be visible")
-
+	
 # Simple failure handling function
 func _fail_challenge():
 	api_status_label.text = "You failed to counter the skill"

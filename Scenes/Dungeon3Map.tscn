@@ -1,10 +1,11 @@
-[gd_scene load_steps=19 format=3 uid="uid://cofdjvw7ybc6r"]
+[gd_scene load_steps=22 format=3 uid="uid://cofdjvw7ybc6r"]
 
 [ext_resource type="Script" uid="uid://cx3vkj8apruat" path="res://Scripts/dungeon_3_map.gd" id="1_1icim"]
 [ext_resource type="Texture2D" uid="uid://chfkysvsxt4eg" path="res://gui/Update/Backgrounds/Plains_Level.png" id="1_qydu8"]
 [ext_resource type="Texture2D" uid="uid://n08ji1i2co16" path="res://gui/Update/UI/small button.png" id="2_oabpg"]
 [ext_resource type="Texture2D" uid="uid://da6rdtvo1nlwj" path="res://gui/Update/icons/return.png" id="3_0cogd"]
 [ext_resource type="Texture2D" uid="uid://dfy42u6wycc3x" path="res://gui/Update/icons/next level select.png" id="4_07erb"]
+[ext_resource type="Texture2D" uid="uid://cghh3806ycwdb" path="res://gui/Update/UI/small button_hovers.png" id="4_62ino"]
 [ext_resource type="Texture2D" uid="uid://dkhwbc22y8hv6" path="res://gui/Update/icons/level indicator.png" id="5_16krn"]
 [ext_resource type="Texture2D" uid="uid://bmnybgl8oe1l" path="res://gui/Update/icons/unlocked level.png" id="5_62ino"]
 [ext_resource type="Texture2D" uid="uid://b3rmvd1s8kk13" path="res://gui/Update/icons/hover next level select.png" id="6_3555f"]
@@ -15,7 +16,9 @@
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="9_3555f"]
 [ext_resource type="Texture2D" uid="uid://dlusv4b6bm07h" path="res://gui/Update/UI/ui 10.png" id="14_8ojmt"]
 [ext_resource type="Texture2D" uid="uid://ct2kkb4phx2kr" path="res://gui/Update/icons/treant.png" id="16_oabpg"]
+[ext_resource type="Texture2D" uid="uid://djvsvmhtt816b" path="res://gui/Update/UI/ui 10_hover.png" id="17_xeiu1"]
 [ext_resource type="Texture2D" uid="uid://cmvfv5h4u7j6e" path="res://gui/Update/icons/close icon.png" id="18_07erb"]
+[ext_resource type="Texture2D" uid="uid://c5cpf575pv2ee" path="res://gui/Update/icons/close icon_hover.png" id="18_62ino"]
 [ext_resource type="Texture2D" uid="uid://clbfvil7saw1l" path="res://gui/Update/UI/Fight Button (Default).png" id="20_mqaq1"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_0cogd"]
@@ -38,6 +41,7 @@ offset_bottom = 705.0
 scale = Vector2(3.76293, 3.83557)
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("2_oabpg")
+texture_hover = ExtResource("4_62ino")
 
 [node name="TextureRect" type="TextureRect" parent="TextureRect/BackButton"]
 layout_mode = 0
@@ -51,16 +55,17 @@ texture = ExtResource("3_0cogd")
 [node name="BackLabel" type="Label" parent="TextureRect/BackButton"]
 visible = false
 layout_mode = 0
-offset_left = 15.4135
-offset_top = 7.03938
-offset_right = 74.4135
-offset_bottom = 26.0394
+offset_left = 29.4983
+offset_top = 3.91076
+offset_right = 62.4983
+offset_bottom = 27.9108
+scale = Vector2(0.401947, 0.401947)
 theme_override_colors/font_color = Color(0.054902, 0.27451, 0.47451, 1)
 theme_override_colors/font_shadow_color = Color(1, 1, 1, 1)
 theme_override_constants/shadow_offset_x = 1
 theme_override_constants/shadow_offset_y = 1
 theme_override_fonts/font = ExtResource("8_1icim")
-theme_override_font_sizes/font_size = 8
+theme_override_font_sizes/font_size = 24
 text = "Back"
 horizontal_alignment = 1
 
@@ -505,6 +510,7 @@ alignment = 1
 layout_mode = 2
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("14_8ojmt")
+texture_hover = ExtResource("17_xeiu1")
 
 [node name="TextureRect" type="TextureRect" parent="StageDetails/MonsterIconButtonContainer/Mob1Button"]
 layout_mode = 0
@@ -518,6 +524,7 @@ texture = ExtResource("8_3555f")
 layout_mode = 2
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("14_8ojmt")
+texture_hover = ExtResource("17_xeiu1")
 
 [node name="TextureRect" type="TextureRect" parent="StageDetails/MonsterIconButtonContainer/Mob2Button"]
 layout_mode = 0
@@ -531,6 +538,7 @@ texture = ExtResource("8_3555f")
 layout_mode = 2
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("14_8ojmt")
+texture_hover = ExtResource("17_xeiu1")
 
 [node name="TextureRect" type="TextureRect" parent="StageDetails/MonsterIconButtonContainer/Mob3Button"]
 layout_mode = 0
@@ -544,6 +552,7 @@ texture = ExtResource("8_3555f")
 layout_mode = 2
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("14_8ojmt")
+texture_hover = ExtResource("17_xeiu1")
 
 [node name="TextureRect" type="TextureRect" parent="StageDetails/MonsterIconButtonContainer/Boss1Button"]
 layout_mode = 0
@@ -562,6 +571,7 @@ offset_bottom = 4.0
 scale = Vector2(4.9143, 4.9143)
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("18_07erb")
+texture_hover = ExtResource("18_62ino")
 
 [node name="FightButton" type="Button" parent="StageDetails"]
 layout_mode = 0

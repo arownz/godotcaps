@@ -1,22 +1,64 @@
-[gd_scene load_steps=18 format=3 uid="uid://bysyq46j6ycis"]
+[gd_scene load_steps=27 format=3 uid="uid://bysyq46j6ycis"]
 
 [ext_resource type="Script" uid="uid://caa84ntbsorb8" path="res://Scripts/ProfilePopUp.gd" id="1_script"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="2_73kok"]
 [ext_resource type="Texture2D" uid="uid://0con8ixqofpr" path="res://gui/Update/UI/ui 8.png" id="2_rwnca"]
 [ext_resource type="Texture2D" uid="uid://cmvfv5h4u7j6e" path="res://gui/Update/icons/close icon.png" id="3_rwnca"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="3_uyv5l"]
+[ext_resource type="Texture2D" uid="uid://c5cpf575pv2ee" path="res://gui/Update/icons/close icon_hover.png" id="4_7j5ql"]
 [ext_resource type="Texture2D" uid="uid://bctgpjuu2tes7" path="res://gui/profile pic with border.png" id="5_r1smr"]
+[ext_resource type="Texture2D" uid="uid://b4ufiaccf4npq" path="res://gui/profile pic with border_hover.png" id="6_tilb2"]
 [ext_resource type="Texture2D" uid="uid://bky3s7o7g08k8" path="res://gui/Update/icons/bronze medal.png" id="7_medal"]
 [ext_resource type="Texture2D" uid="uid://dpejfssp2t44k" path="res://gui/Update/icons/edit name.png" id="7_rwnca"]
 [ext_resource type="Texture2D" uid="uid://d1y2su33nhh8p" path="res://gui/Update/icons/copy UID.png" id="8_ampbo"]
+[ext_resource type="Texture2D" uid="uid://dkccpks7klx5p" path="res://gui/ProfileScene/Profile/portrait13.png" id="8_fe476"]
 [ext_resource type="PackedScene" uid="uid://e6bec84rrthm" path="res://Sprites/Animation/DefaultPlayer_Animation.tscn" id="10_ampbo"]
-[ext_resource type="Texture2D" uid="uid://b1vdji3n0ktqv" path="res://gui/Update/UI/defeat UI.png" id="10_kmls2"]
-[ext_resource type="Texture2D" uid="uid://bt0tigh26flog" path="res://gui/Update/icons/level selection.png" id="11_ampbo"]
+[ext_resource type="Texture2D" uid="uid://0elvpx33cd3o" path="res://gui/Update/icons/edit name_hover.png" id="11_6o1ar"]
+[ext_resource type="Texture2D" uid="uid://rgl03eh75egv" path="res://gui/Update/UI/victory UI.png" id="11_tilb2"]
+[ext_resource type="Texture2D" uid="uid://cib18me7jfbqj" path="res://gui/Update/UI/victory UI_hover.png" id="12_82scp"]
 [ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="12_ampbo"]
-[ext_resource type="Texture2D" uid="uid://dy4pabxg81hga" path="res://gui/UI/ui 2.png" id="12_kmls2"]
+[ext_resource type="Texture2D" uid="uid://dlusv4b6bm07h" path="res://gui/Update/UI/ui 10.png" id="12_kmls2"]
+[ext_resource type="Texture2D" uid="uid://2ck0j4rkkc1i" path="res://gui/Update/icons/copy UID_hover.png" id="13_q75ak"]
 [ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="13_r1smr"]
+[ext_resource type="Texture2D" uid="uid://b2qy87ktakwus" path="res://gui/Update/icons/mountaintransplant.png" id="13_tilb2"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_kmls2"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hover"]
+bg_color = Color(0.4, 0.22, 0.14, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pressed"]
+bg_color = Color(0.15, 0.08, 0.05, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_normal"]
+bg_color = Color(0.259622, 0.14214, 0.0862142, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_tilb2"]
 
@@ -77,6 +119,7 @@ offset_bottom = 8.0
 grow_horizontal = 0
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("3_rwnca")
+texture_hover = ExtResource("4_7j5ql")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -91,22 +134,26 @@ theme_override_font_sizes/font_size = 36
 text = "PROFILE"
 horizontal_alignment = 1
 
-[node name="PictureContainer" type="TextureRect" parent="ProfileContainer"]
+[node name="ProfilePictureButton" type="TextureButton" parent="ProfileContainer"]
 layout_mode = 0
 offset_left = 8.0
 offset_top = 148.0
 offset_right = 181.0
 offset_bottom = 322.0
-texture = ExtResource("5_r1smr")
-
-[node name="ProfilePictureButton" type="TextureButton" parent="ProfileContainer/PictureContainer"]
-layout_mode = 0
-offset_left = 25.0
-offset_top = 26.0
-offset_right = 149.0
-offset_bottom = 148.0
 mouse_default_cursor_shape = 2
-ignore_texture_size = true
+texture_normal = ExtResource("5_r1smr")
+texture_hover = ExtResource("6_tilb2")
+stretch_mode = 0
+
+[node name="PictureContainer" type="TextureRect" parent="ProfileContainer/ProfilePictureButton"]
+layout_mode = 0
+offset_left = 23.0
+offset_top = 17.0
+offset_right = 150.0
+offset_bottom = 157.0
+mouse_default_cursor_shape = 2
+texture = ExtResource("8_fe476")
+expand_mode = 1
 stretch_mode = 5
 
 [node name="UserInfoArea" type="Control" parent="ProfileContainer"]
@@ -147,6 +194,7 @@ scale = Vector2(2.89615, 3.31034)
 tooltip_text = "Edit Username"
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("7_rwnca")
+texture_hover = ExtResource("11_6o1ar")
 
 [node name="EmailLabel" type="Label" parent="ProfileContainer/UserInfoArea"]
 layout_mode = 0
@@ -199,6 +247,7 @@ scale = Vector2(2.92016, 3.53089)
 tooltip_text = "Copy UID to Clipboard"
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("8_ampbo")
+texture_hover = ExtResource("13_q75ak")
 
 [node name="RankLabel" type="Label" parent="ProfileContainer/UserInfoArea"]
 layout_mode = 0
@@ -236,8 +285,8 @@ layout_mode = 0
 offset_left = 33.0
 offset_top = 334.0
 offset_right = 716.0
-offset_bottom = 336.0
-color = Color(0.203922, 0.203922, 0.203922, 0.501961)
+offset_bottom = 337.0
+color = Color(0, 0, 0, 0.895)
 
 [node name="StatsArea" type="Control" parent="ProfileContainer"]
 layout_mode = 1
@@ -322,33 +371,12 @@ theme_override_fonts/font = ExtResource("3_uyv5l")
 theme_override_font_sizes/font_size = 20
 text = "1000"
 
-[node name="EnergyLabel" type="Label" parent="ProfileContainer/StatsArea"]
-layout_mode = 0
-offset_left = -5.0
-offset_top = 173.0
-offset_right = 115.0
-offset_bottom = 210.0
-theme_override_fonts/font = ExtResource("2_73kok")
-theme_override_font_sizes/font_size = 20
-text = "Energy:"
-
-[node name="EnergyValue" type="Label" parent="ProfileContainer/StatsArea"]
-layout_mode = 0
-offset_left = 114.0
-offset_top = 173.0
-offset_right = 234.0
-offset_bottom = 210.0
-theme_override_colors/font_color = Color(0.99, 0.99, 0, 1)
-theme_override_fonts/font = ExtResource("3_uyv5l")
-theme_override_font_sizes/font_size = 20
-text = "100/100"
-
 [node name="Level" type="Label" parent="ProfileContainer/StatsArea"]
 layout_mode = 0
-offset_left = -2.0
-offset_top = 212.0
-offset_right = 81.0
-offset_bottom = 249.0
+offset_left = -6.0
+offset_top = 174.0
+offset_right = 77.0
+offset_bottom = 211.0
 theme_override_fonts/font = ExtResource("2_73kok")
 theme_override_font_sizes/font_size = 20
 text = "Level:"
@@ -356,35 +384,40 @@ horizontal_alignment = 1
 
 [node name="Level2" type="Label" parent="ProfileContainer/StatsArea"]
 layout_mode = 0
-offset_left = 92.0
-offset_top = 212.0
-offset_right = 131.0
-offset_bottom = 249.0
+offset_left = 88.0
+offset_top = 174.0
+offset_right = 127.0
+offset_bottom = 211.0
 theme_override_colors/font_color = Color(0.99, 0.99, 0, 1)
 theme_override_fonts/font = ExtResource("3_uyv5l")
 theme_override_font_sizes/font_size = 20
 text = "100"
 
-[node name="CharacterContainer" type="TextureRect" parent="ProfileContainer"]
+[node name="CharacterContainer" type="TextureButton" parent="ProfileContainer"]
 layout_mode = 0
-offset_left = -9.0
-offset_top = 348.0
-offset_right = 221.0
-offset_bottom = 624.0
-texture = ExtResource("10_kmls2")
+offset_left = 5.0
+offset_top = 345.0
+offset_right = 214.0
+offset_bottom = 621.0
+texture_normal = ExtResource("11_tilb2")
+texture_hover = ExtResource("12_82scp")
+stretch_mode = 0
 
 [node name="DefaultPlayerAnimation" parent="ProfileContainer/CharacterContainer" instance=ExtResource("10_ampbo")]
-position = Vector2(104, 155)
-scale = Vector2(3.50675, 3.50675)
+position = Vector2(110, 166)
+scale = Vector2(4.19841, 4.19841)
 
 [node name="DungeonArea" type="Button" parent="ProfileContainer"]
 layout_mode = 1
-offset_left = 502.0
+offset_left = 506.0
 offset_top = 357.0
-offset_right = 750.0
-offset_bottom = 670.0
+offset_right = 747.0
+offset_bottom = 679.0
 mouse_default_cursor_shape = 2
 theme_override_styles/focus = SubResource("StyleBoxEmpty_kmls2")
+theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_normal")
 icon = ExtResource("12_kmls2")
 autowrap_mode = 3
 icon_alignment = 1
@@ -393,9 +426,9 @@ expand_icon = true
 [node name="DungeonValue" type="Label" parent="ProfileContainer/DungeonArea"]
 layout_mode = 0
 offset_left = 26.0
-offset_top = 14.0
+offset_top = 8.0
 offset_right = 227.0
-offset_bottom = 50.0
+offset_bottom = 44.0
 theme_override_colors/font_color = Color(0.988235, 0.988235, 0, 1)
 theme_override_fonts/font = ExtResource("3_uyv5l")
 theme_override_font_sizes/font_size = 18
@@ -403,20 +436,21 @@ text = "3: The Mountain"
 
 [node name="DungeonImage" type="TextureRect" parent="ProfileContainer/DungeonArea"]
 layout_mode = 0
-offset_left = 73.0
-offset_top = 53.0
-offset_right = 196.0
-offset_bottom = 259.0
-texture = ExtResource("11_ampbo")
+offset_left = 54.0
+offset_top = 52.0
+offset_right = 226.0
+offset_bottom = 298.0
+scale = Vector2(0.844785, 0.844785)
+texture = ExtResource("13_tilb2")
 expand_mode = 1
 stretch_mode = 6
 
 [node name="StageLabel" type="Label" parent="ProfileContainer/DungeonArea"]
 layout_mode = 0
-offset_left = 10.0
-offset_top = 259.0
-offset_right = 193.0
-offset_bottom = 295.0
+offset_left = 12.0
+offset_top = 285.0
+offset_right = 195.0
+offset_bottom = 321.0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("3_uyv5l")
 theme_override_font_sizes/font_size = 18
@@ -424,10 +458,10 @@ text = "Current Stage:"
 
 [node name="StageValue" type="Label" parent="ProfileContainer/DungeonArea"]
 layout_mode = 0
-offset_left = 204.0
-offset_top = 261.0
-offset_right = 248.0
-offset_bottom = 297.0
+offset_left = 203.0
+offset_top = 286.0
+offset_right = 247.0
+offset_bottom = 322.0
 theme_override_colors/font_color = Color(0.988235, 0.988235, 0, 1)
 theme_override_fonts/font = ExtResource("3_uyv5l")
 theme_override_font_sizes/font_size = 18
@@ -594,7 +628,7 @@ text = "Username cannot be empty!"
 horizontal_alignment = 1
 
 [connection signal="pressed" from="ProfileContainer/CloseButton" to="." method="_on_close_button_pressed"]
-[connection signal="pressed" from="ProfileContainer/PictureContainer/ProfilePictureButton" to="." method="_on_profile_picture_button_pressed"]
+[connection signal="pressed" from="ProfileContainer/ProfilePictureButton" to="." method="_on_profile_picture_button_pressed"]
 [connection signal="pressed" from="ProfileContainer/LogoutButton" to="." method="_on_logout_button_pressed"]
 [connection signal="text_submitted" from="EditUsernamePanel/EditContainer/ContentContainer/VBoxContainer/InputContainer/UsernameLineEdit" to="." method="_on_username_text_submitted"]
 [connection signal="pressed" from="EditUsernamePanel/EditContainer/ContentContainer/VBoxContainer/ButtonContainer/CancelButton" to="." method="_on_edit_username_cancel_pressed"]

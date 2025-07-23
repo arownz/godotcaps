@@ -1,12 +1,14 @@
-[gd_scene load_steps=15 format=3 uid="uid://d36ytiqg31edd"]
+[gd_scene load_steps=18 format=3 uid="uid://d36ytiqg31edd"]
 
 [ext_resource type="Script" uid="uid://datbxxer3mwvc" path="res://Scripts/mainmenu.gd" id="1_tt5f1"]
 [ext_resource type="Texture2D" uid="uid://ckkds573c15wj" path="res://gui/Backgrounds/Main_menu_Background.png" id="2_kpa4r"]
 [ext_resource type="PackedScene" uid="uid://e6bec84rrthm" path="res://Sprites/Animation/DefaultPlayer_Animation.tscn" id="4_8e205"]
 [ext_resource type="Texture2D" uid="uid://bctgpjuu2tes7" path="res://gui/profile pic with border.png" id="5_8e205"]
 [ext_resource type="Texture2D" uid="uid://cn716b8kx5vgr" path="res://gui/energy.png" id="6_7q2f4"]
+[ext_resource type="Texture2D" uid="uid://b4ufiaccf4npq" path="res://gui/profile pic with border_hover.png" id="6_riqfo"]
 [ext_resource type="Texture2D" uid="uid://dxy5okvgwlv6o" path="res://gui/learning modules.png" id="7_3ylv5"]
 [ext_resource type="Texture2D" uid="uid://ddv767r634oaw" path="res://gui/Update/UI/hover short button.png" id="8_7467j"]
+[ext_resource type="Texture2D" uid="uid://cghh3806ycwdb" path="res://gui/Update/UI/small button_hovers.png" id="9_7467j"]
 [ext_resource type="Texture2D" uid="uid://cgs6saoh3771b" path="res://gui/journey mode.png" id="9_ndgqr"]
 [ext_resource type="Texture2D" uid="uid://buoabv72l54hn" path="res://gui/character customization.png" id="10_2x1g0"]
 [ext_resource type="Texture2D" uid="uid://0pd5aetjcpr6" path="res://gui/leaderboards.png" id="10_vgdm8"]
@@ -14,6 +16,7 @@
 [ext_resource type="Texture2D" uid="uid://ckytnr3x3xgkv" path="res://gui/Update/UI/long button.png" id="11_riqfo"]
 [ext_resource type="Texture2D" uid="uid://m6ls0r18o3xg" path="res://gui/settings.png" id="12_q0r2p"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="13_uaqt0"]
+[ext_resource type="Texture2D" uid="uid://drwre8l5sq5ql" path="res://gui/Update/UI/hover long button.png" id="14_yxkem"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -78,13 +81,14 @@ layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -629.0
+offset_left = -623.0
 offset_top = 20.0
 offset_right = -514.0
 offset_bottom = 163.0
 grow_horizontal = 2
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("5_8e205")
+texture_hover = ExtResource("6_riqfo")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -95,9 +99,9 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -41.5
+offset_left = -44.5
 offset_top = -40.5
-offset_right = 48.5
+offset_right = 52.5
 offset_bottom = 46.5
 grow_horizontal = 2
 grow_vertical = 2
@@ -201,6 +205,7 @@ offset_bottom = -21.0
 grow_vertical = 0
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("8_7467j")
+texture_hover = ExtResource("9_7467j")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -247,6 +252,7 @@ offset_bottom = -23.0
 grow_vertical = 0
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("8_7467j")
+texture_hover = ExtResource("9_7467j")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -296,6 +302,7 @@ grow_horizontal = 2
 grow_vertical = 0
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("11_riqfo")
+texture_hover = ExtResource("14_yxkem")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -352,6 +359,7 @@ grow_horizontal = 0
 grow_vertical = 0
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("8_7467j")
+texture_hover = ExtResource("9_7467j")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -402,6 +410,7 @@ grow_horizontal = 0
 grow_vertical = 0
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("8_7467j")
+texture_hover = ExtResource("9_7467j")
 ignore_texture_size = true
 stretch_mode = 5
 

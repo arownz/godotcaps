@@ -5,20 +5,20 @@ var battle_scene  # Reference to the main battle scene
 var battle_log_container  # Reference to the log container
 var user_scrolled = false  # Track if user has manually scrolled
 
-# Introduction messages for different dungeons
+# Introduction messages for different dungeons with high contrast colors
 var introduction_messages = {
-	"dungeon1": [
-		"[color=#000000]You have arrived at The Plains. This is the start of your adventure.[/color]",
-		"[color=#000000]While traveling, you encounter an enemy blocking your path.[/color]"
-	],
-	"dungeon2": [
-		"[color=#000000]You enter The Forest, a more dangerous area with tougher enemies.[/color]",
-		"[color=#000000]The trees rustle as an enemy appears before you.[/color]"
-	],
-	"dungeon3": [
-		"[color=#000000]You've reached The Mountain, home to the most fearsome creatures.[/color]",
-		"[color=#000000]An enemy rams behind the rocks, ready to attack![/color]"
-	]
+	"dungeon1": {
+		"arrival": "[color=#000000]You have arrived at The Plains. This is the start of your adventure.[/color]",
+		"stage_intro": "[color=#000000]A wild creature blocks your path![/color]"
+	},
+	"dungeon2": {
+		"arrival": "[color=#000000]You enter The Forest, a more dangerous area with tougher enemies.[/color]",
+		"stage_intro": "[color=#000000]Something moves in the shadows![/color]"
+	},
+	"dungeon3": {
+		"arrival": "[color=#000000]You've reached The Mountain, home to the most fearsome creatures.[/color]",
+		"stage_intro": "[color=#000000]A powerful enemy appears![/color]"
+	}
 }
 
 # Log entry properties
@@ -28,6 +28,27 @@ var entries: Array = []
 # Reference to the log UI elements
 @onready var battle_log: Control = null 
 @onready var log_entries_container: VBoxContainer = null
+
+# Convert colors to high contrast versions for dyslexia accessibility
+func _convert_to_high_contrast_colors(text: String) -> String:
+	var high_contrast_colors = {
+		"#FFD700": "#B8860B",  # Gold -> Dark goldenrod (high contrast)
+		"#4CAF50": "#006400",  # Light green -> Dark green (high contrast)
+		"#FF6B6B": "#DC143C",  # Light red -> Crimson (high contrast)
+		"#42A5F5": "#000080",  # Light blue -> Navy blue (high contrast)
+		"#EB5E4B": "#8B0000",  # Orange-red -> Dark red (high contrast)
+		"#F09C2D": "#B8860B",  # Orange -> Dark goldenrod (high contrast)
+		"#FF0000": "#be0f0fff",  # Red -> Dark red (high contrast)
+		"#FFA500": "#FF8C00",  # Orange -> Dark orange (high contrast)
+		"#000000": "#000000"   # Black stays black (already high contrast)
+	}
+	
+	var result = text
+	for original_color in high_contrast_colors:
+		var new_color = high_contrast_colors[original_color]
+		result = result.replace(original_color, new_color)
+	
+	return result
 
 func _init(scene):
 	battle_scene = scene
@@ -41,22 +62,54 @@ func _ready():
 	
 	print("BattleLogManager: Container found: ", log_entries_container != null)
 	print("BattleLogManager: Container type: ", log_entries_container.get_class() if log_entries_container else "null")
-	
-	# Adding a test entry
-	add_log_entry("[color=#EB5E4B]You met a Monster![/color]", "system")
 
 func display_introduction_messages():
-	# Get the current dungeon number
+	# Get the current dungeon number and stage
 	var dungeon_num = battle_scene.dungeon_manager.dungeon_num
+	var current_stage = battle_scene.dungeon_manager.stage_num
 	var dungeon_key = "dungeon" + str(dungeon_num)
 	
-	# Add dungeon introduction messages
-	if introduction_messages.has(dungeon_key):
-		for message in introduction_messages[dungeon_key]:
-			add_message(message)
+	# Dungeon names for display
+	var dungeon_names = {
+		1: "The Plains",
+		2: "The Forest", 
+		3: "The Mountain"
+	}
 	
-	# Add enemy introduction message
-	add_message("[color=#000000]You encounter a " + battle_scene.enemy_manager.enemy_name + "![/color]")
+	var dungeon_name = dungeon_names.get(dungeon_num, "Unknown Area")
+	
+	# Show dungeon arrival message only on stage 1
+	if current_stage == 1 and introduction_messages.has(dungeon_key):
+		add_message(introduction_messages[dungeon_key]["arrival"])
+		add_message("[color=#000000]Stage " + str(current_stage) + " of 5[/color]")
+	else:
+		# For other stages, show simple progress
+		add_message("[color=#000000]" + dungeon_name + " - Stage " + str(current_stage) + " of 5[/color]")
+	
+	# Add stage-specific context message (simplified for dyslexia-friendly reading)
+	var stage_context = ""
+	match current_stage:
+		1:
+			stage_context = "Your journey begins here."
+		2:
+			stage_context = "You move forward."
+		3:
+			stage_context = "Halfway through!"
+		4:
+			stage_context = "Almost there!"
+		5:
+			stage_context = "Final challenge!"
+		_:
+			stage_context = "Keep going!"
+	
+	add_message("[color=#000080]" + stage_context + "[/color]")
+	
+	# Add enemy encounter message
+	if introduction_messages.has(dungeon_key):
+		add_message(introduction_messages[dungeon_key]["stage_intro"])
+	
+	# Add specific enemy name
+	add_message("[color=#8B0000]" + battle_scene.enemy_manager.enemy_name + " wants to fight![/color]")
 
 func add_message(text):
 	# Extract message type from color tags for better categorization
@@ -119,25 +172,47 @@ func _on_scroll_value_changed(value):
 
 # Function to add a new log entry with optional type for color coding
 func add_log_entry(text: String, type: String = "default") -> void:
+	# Convert colors to high contrast for dyslexia accessibility
+	var high_contrast_text = _convert_to_high_contrast_colors(text)
+	
+	# Check for duplicate entries BEFORE adding timestamp - compare just the content
+	var clean_message_text = high_contrast_text
+	var regex = RegEx.new()
+	regex.compile("\\[/?[^\\]]*\\]")
+	clean_message_text = regex.sub(clean_message_text, "", true).strip_edges()
+	
+	# Check if the same message content was added recently (within last 5 entries)
+	var recent_entries_to_check = min(5, entries.size())
+	for i in range(recent_entries_to_check):
+		var recent_entry = entries[entries.size() - 1 - i]
+		var recent_clean_text = recent_entry.get("original", recent_entry.text)
+		var recent_clean_regex = RegEx.new()
+		recent_clean_regex.compile("\\[/?[^\\]]*\\]")
+		recent_clean_text = recent_clean_regex.sub(recent_clean_text, "", true).strip_edges()
+		
+		# Also remove timestamp pattern like "[12:34] " from the stored text for comparison
+		var timestamp_regex = RegEx.new()
+		timestamp_regex.compile("^\\[\\d{2}:\\d{2}\\] ")
+		if recent_entry.has("text"):
+			var text_without_timestamp = timestamp_regex.sub(recent_entry.text, "", 1)
+			recent_clean_text = recent_clean_regex.sub(text_without_timestamp, "", true).strip_edges()
+		
+		if clean_message_text == recent_clean_text:
+			print("Battle Log: Duplicate content prevented - " + clean_message_text)
+			return
+	
 	# Add timestamp with black color
 	var current_time = Time.get_time_dict_from_system()
 	var timestamp = "[color=#000000]%02d:%02d[/color]" % [current_time.hour, current_time.minute]
 	
 	# Strip bbcode tags for console output and clean display
-	var clean_text = text
-	var regex = RegEx.new()
-	regex.compile("\\[/?[^\\]]*\\]")
+	var clean_text = high_contrast_text
 	clean_text = regex.sub(clean_text, "", true)
 	
 	var formatted_text = "[%s] %s" % [timestamp, clean_text]
 	
-	# Check for duplicate entries to prevent spam
-	if entries.size() > 0 and entries[-1].text == formatted_text:
-		print("Battle Log: Duplicate entry prevented - " + formatted_text)
-		return
-	
-	# Add to entries array
-	entries.push_back({"text": formatted_text, "type": type, "original": text})
+	# Add to entries array (use high contrast text for display)
+	entries.push_back({"text": formatted_text, "type": type, "original": high_contrast_text})
 	
 	# Keep only the last max_entries
 	while entries.size() > max_entries:
@@ -223,18 +298,18 @@ func update_ui() -> void:
 			await get_tree().process_frame
 			scroll_container.scroll_vertical = scroll_container.get_v_scroll_bar().max_value
 
-# Add enhanced level-up message with emojis and colors
+# Add enhanced level-up message with high contrast colors (no emojis for dyslexia font compatibility)
 func add_level_up_message(new_level: int, health_increase: int, damage_increase: int, durability_increase: int, new_health: int, new_damage: int, new_durability: int):
-	# Main level-up announcement with celebration emoji
-	add_message("[color=#FFD700]🎉 LEVEL UP! 🎉 You reached level " + str(new_level) + "![/color]")
+	# Main level-up announcement
+	add_message("[color=#B8860B]LEVEL UP! You reached level " + str(new_level) + "![/color]")
 	
-	# Show stat increases with appropriate website emojis and colors
-	add_message("[color=#4CAF50]💚 Health increased by +" + str(health_increase) + " (now " + str(new_health) + ")[/color]")
-	add_message("[color=#FF6B6B]💪 Damage increased by +" + str(damage_increase) + " (now " + str(new_damage) + ")[/color]")
-	add_message("[color=#42A5F5]🛡️ Durability increased by +" + str(durability_increase) + " (now " + str(new_durability) + ")[/color]")
+	# Show stat increases with high contrast colors
+	add_message("[color=#006400]Health increased by +" + str(health_increase) + " (now " + str(new_health) + ")[/color]")
+	add_message("[color=#8B0000]Damage increased by +" + str(damage_increase) + " (now " + str(new_damage) + ")[/color]")
+	add_message("[color=#000080]Durability increased by +" + str(durability_increase) + " (now " + str(new_durability) + ")[/color]")
 
 # Add a motivational message for player growth
-	add_message("[color=#FFD700]⭐ You are growing stronger! Keep fighting! ⭐[/color]")
+	add_message("[color=#B8860B]You are growing stronger! Keep fighting![/color]")
 
 # Clear all log entries
 func clear_log() -> void:

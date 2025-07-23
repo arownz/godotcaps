@@ -15,8 +15,8 @@ var dungeon_names = ["The Plain", "The Forest", "The Mountain"]
 # Preload dungeon images for better performance
 var dungeon_images = {
     1: preload("res://gui/Update/icons/level selection.png"),
-    2: preload("res://gui/Update/icons/level selection.png"),
-    3: preload("res://gui/Update/icons/highest level.png")
+    2: preload("res://gui/Update/icons/theforesttransplant.png"),
+    3: preload("res://gui/Update/icons/mountaintransplant.png")
 }
 
 func _ready():
@@ -364,8 +364,8 @@ func update_profile_picture():
     print("ProfilePopUp: Updating profile picture to: ", current_profile_picture)
     
     # Get reference to the profile picture texture rect
-    if has_node("ProfileContainer/PictureContainer/ProfilePictureButton"):
-        var profile_button = $ProfileContainer/PictureContainer/ProfilePictureButton
+    if has_node("ProfileContainer/ProfilePictureButton/PictureContainer"):
+        var profile_texture_rect = $ProfileContainer/ProfilePictureButton/PictureContainer
         # Try to load the profile picture
         var texture_path
         
@@ -377,7 +377,7 @@ func update_profile_picture():
             
         var texture = load(texture_path)
         if texture:
-            profile_button.texture_normal = texture
+            profile_texture_rect.texture = texture
             print("ProfilePopUp: Profile picture updated successfully")
         else:
             print("ProfilePopUp: Failed to load texture from path: " + texture_path)

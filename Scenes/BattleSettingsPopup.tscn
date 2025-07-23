@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://bd0cyhnqckqid"]
+[gd_scene load_steps=10 format=3 uid="uid://bd0cyhnqckqid"]
 
 [ext_resource type="Script" uid="uid://c04fg2q27t7iw" path="res://Scripts/BattleSettingsPopup.gd" id="1_abc123"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="2_def456"]
@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="5_vsnvw"]
 [ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="6_lpdrl"]
 [ext_resource type="Texture2D" uid="uid://cmvfv5h4u7j6e" path="res://gui/Update/icons/close icon.png" id="7_lpdrl"]
+[ext_resource type="Texture2D" uid="uid://c5cpf575pv2ee" path="res://gui/Update/icons/close icon_hover.png" id="8_wstvl"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_lpdrl"]
 
@@ -116,3 +117,4 @@ offset_bottom = -3.0
 scale = Vector2(4.23823, 4.23823)
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("7_lpdrl")
+texture_hover = ExtResource("8_wstvl")
