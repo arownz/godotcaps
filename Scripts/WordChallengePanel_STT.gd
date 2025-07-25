@@ -29,6 +29,11 @@ var live_transcription_enabled = false
 var current_interim_result = ""
 var debounce_timer = null
 
+# Enhanced debouncing for similar-sounding words
+var last_interim_result = ""
+var interim_change_count = 0
+var last_change_time = 0
+
 # Flag to track if result panel is already showing
 var result_panel_active = false
 
@@ -79,14 +84,14 @@ func _ready():
 	add_child(random_word_api)
 	random_word_api.word_fetched.connect(_on_word_fetched)
 
-	# Fetch a random word based on current dungeon
-	var word_length = _get_word_length_for_dungeon()
-	print("Fetching " + str(word_length) + "-letter word for STT challenge...")
-	random_word_api.fetch_random_word(word_length)
-	
 	# Set loading text while API loads
 	if random_word_label:
 		random_word_label.text = "Loading word..."
+	
+	# Fetch a random word based on current dungeon (defer to ensure everything is ready)
+	var word_length = _get_word_length_for_dungeon()
+	print("Fetching " + str(word_length) + "-letter word for STT challenge...")
+	call_deferred("_fetch_word_deferred", word_length)
 	
 	# Reset result processing flag at start
 	result_being_processed = false
@@ -316,7 +321,7 @@ func update_mic_permission_state(state):
 	elif state == "denied":
 		# Permission denied, but keep button enabled for retry
 		mic_permission_granted = false
-		permission_status_label.text = "✗ Microphone access denied"
+		permission_status_label.text = "X Microphone access denied"
 		permission_status_label.modulate = Color.RED
 		status_label.text = "Permission denied. Click Start Speaking to try again."
 		speak_button.disabled = false  # Keep enabled for retry
@@ -324,7 +329,7 @@ func update_mic_permission_state(state):
 	else:
 		# Permission not determined yet, will be requested when button is clicked
 		mic_permission_granted = false
-		permission_status_label.text = "⚠ Need permission - click Start to grant"
+		permission_status_label.text = "! Need permission - click Start to grant"
 		permission_status_label.modulate = Color.YELLOW
 		status_label.text = "Click Start Speaking to grant microphone permission"
 		speak_button.disabled = false
@@ -574,12 +579,15 @@ func _on_word_fetched():
 	# Get word from the API
 	challenge_word = random_word_api.get_random_word()
 	print("STT Challenge: Word fetched: " + challenge_word)
+	print("STT Challenge: Signal received, updating UI...")
 	
 	# Update UI with detailed debugging
 	if random_word_label:
 		random_word_label.text = challenge_word
 		print("STT Challenge: Updated word label to: " + challenge_word)
 		print("STT Challenge: Label node path: " + str(random_word_label.get_path()))
+		print("STT Challenge: Label visible: " + str(random_word_label.visible))
+		print("STT Challenge: Label modulate: " + str(random_word_label.modulate))
 	else:
 		print("ERROR: random_word_label is null!")
 		# Try to find it again
@@ -589,12 +597,21 @@ func _on_word_fetched():
 			print("STT Challenge: Found and updated label on retry")
 		else:
 			print("ERROR: Could not find RandomWordLabel node!")
+			# Print the scene tree to debug
+			print("STT Challenge: Current scene children:")
+			for child in get_children():
+				print("  - " + child.name + " (" + str(child.get_class()) + ")")
 		
 	# Send word to JavaScript for debug
 	if JavaScriptBridge.has_method("eval"):
 		var escaped_word = challenge_word.replace("'", "\\'").replace("\n", "\\n").replace("\r", "\\r")
 		var js_code = "if (window.setChallengeWord) { window.setChallengeWord(\"" + escaped_word + "\"); } else { console.log('Challenge word: " + escaped_word + "'); }"
 		JavaScriptBridge.eval(js_code)
+
+# Deferred function to fetch word after scene is fully ready
+func _fetch_word_deferred(word_length: int):
+	print("STT Challenge: Fetching word deferred with length: " + str(word_length))
+	random_word_api.fetch_random_word(word_length)
 	
 # Handle button press to start/stop speech recognition
 func _on_speak_button_pressed():
@@ -667,11 +684,16 @@ func _on_speak_button_pressed():
 			print("Recognition stopped by user with no result")
 	else:
 		print("Starting new recognition session...")
-		# Clear previous results
+		# Clear previous results and reset debouncing
 		if live_transcription_text:
 			live_transcription_text.text = "Preparing to listen..."
 			live_transcription_text.visible = true
 			live_transcription_text.modulate = Color.WHITE
+		
+		# Reset debouncing variables
+		last_interim_result = ""
+		interim_change_count = 0
+		last_change_time = 0
 		
 		# Start new recognition session
 		speak_button.text = "Requesting..."
@@ -701,7 +723,7 @@ func _on_speak_button_pressed():
 			speak_button.text = "Try Again"
 			speak_button.disabled = false
 			status_label.text = "Microphone access needed. Click 'Try Again' to retry."
-			permission_status_label.text = "✗ Microphone access required"
+			permission_status_label.text = "X Microphone access required"
 			permission_status_label.modulate = Color.RED
 
 # Start live speech recognition using Web Speech API
@@ -712,6 +734,12 @@ func _start_live_recognition() -> bool:
 		var js_code = """
 			(async function() {
 				console.log('Starting Web Speech Recognition...');
+				
+				// Helper function to clean transcript and keep only letters and spaces
+				function cleanTranscriptForWords(text) {
+					// Remove punctuation but keep letters and spaces
+					return text.replace(/[^a-zA-Z ]/g, '').replace(/[ ]+/g, ' ').trim();
+				}
 				
 				// Check if speech recognition is supported
 				if (!window.SpeechRecognition && !window.webkitSpeechRecognition) {
@@ -731,19 +759,48 @@ func _start_live_recognition() -> bool:
 					const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 					window.currentRecognition = new SpeechRecognition();
 					
-					// Configure for live transcription
+					// Configure for live transcription with better accuracy settings
 					window.currentRecognition.continuous = true;
 					window.currentRecognition.interimResults = true;
 					window.currentRecognition.lang = 'en-US';
-					window.currentRecognition.maxAlternatives = 1;
+					window.currentRecognition.maxAlternatives = 3;  // Get multiple alternatives for better accuracy
 					
-					// Set up event handlers
+					// Add grammar hints to prefer words over numbers
+					if (window.currentRecognition.grammars) {
+						const grammar = '#JSGF V1.0; grammar words; public <word> = alphabet | letters | words | spelling;';
+						const speechRecognitionList = new (window.SpeechGrammarList || window.webkitSpeechGrammarList)();
+						speechRecognitionList.addFromString(grammar, 1);
+						window.currentRecognition.grammars = speechRecognitionList;
+					}
+					
+					// Set up event handlers with improved processing
 					window.currentRecognition.onresult = function(event) {
 						console.log('Speech recognition onresult triggered, event:', event);
 						for (let i = event.resultIndex; i < event.results.length; i++) {
 							const result = event.results[i];
-							const transcript = result[0].transcript.trim();
+							let transcript = result[0].transcript.trim();
 							const isFinal = result.isFinal;
+							
+							// Process multiple alternatives for better accuracy
+							if (result.length > 1) {
+								let bestTranscript = transcript;
+								let bestScore = result[0].confidence;
+								
+								for (let j = 1; j < result.length; j++) {
+									const altTranscript = result[j].transcript.trim();
+									const altConfidence = result[j].confidence;
+									
+									// Prefer word-like alternatives over numbers
+									if (altConfidence > bestScore * 0.8 && !altTranscript.match(/^[0-9]+$/)) {
+										bestTranscript = altTranscript;
+										bestScore = altConfidence;
+									}
+								}
+								transcript = bestTranscript;
+							}
+							
+							// Clean transcript of non-letter characters (except spaces)
+							transcript = cleanTranscriptForWords(transcript);
 							
 							console.log('Speech result:', transcript, 'Final:', isFinal, 'Confidence:', result[0].confidence);
 							
@@ -875,16 +932,39 @@ func live_transcription_callback(text, is_final):
 	# Always process as interim - let user decide when to stop manually
 	_process_interim_transcription(text_str)
 
-# Process interim (live) transcription results
+# Process interim (live) transcription results with improved phonetic handling
 func _process_interim_transcription(text):
 	if not live_transcription_enabled:
 		print("Live transcription disabled in interim processing")
 		return
 	
 	print("Processing interim text: '" + text + "'")
+	
+	# Debouncing mechanism to prevent getting stuck on similar-sounding words
+	var current_time = Time.get_time_dict_from_system()
+	var time_ms = current_time.hour * 3600000 + current_time.minute * 60000 + current_time.second * 1000 + current_time.get("millisecond", 0)
+	
+	# Check if this is a new/different result
+	if text != last_interim_result:
+		last_interim_result = text
+		interim_change_count += 1
+		last_change_time = time_ms
+	else:
+		# Same result - check if it's been too long without change
+		if time_ms - last_change_time > 1500:  # 1.5 seconds of same result
+			# Try to unstick by slightly modifying the display
+			if not text.is_empty():
+				print("Detected potential stuck recognition, trying to unstick...")
+				# Don't return early - continue processing to give feedback
+	
+	# Convert numbers to words first
+	var processed_text = _convert_numbers_to_words(text)
+	
+	# Clean the text to remove non-letter characters except spaces
+	processed_text = _clean_text_for_words(processed_text)
 		
 	# Update live transcription display - normalize to lowercase for consistency
-	current_interim_result = text.to_lower().strip_edges()
+	current_interim_result = processed_text.to_lower().strip_edges()
 	
 	# Ensure we have the live transcription text node
 	if not live_transcription_text:
@@ -893,8 +973,11 @@ func _process_interim_transcription(text):
 			print("ERROR: Could not find live_transcription_text node!")
 			return
 	
-	# Display text in lowercase to match the API word format
-	var display_text = text.to_lower()
+	# Apply phonetic improvement for similar-sounding words
+	var improved_text = _apply_phonetic_improvements(current_interim_result, challenge_word)
+	
+	# Display the improved text
+	var display_text = improved_text
 	live_transcription_text.text = "| " + display_text
 	live_transcription_text.visible = true
 	print("Updated live transcription text to: '" + live_transcription_text.text + "'")
@@ -902,15 +985,19 @@ func _process_interim_transcription(text):
 	# Check if interim result matches target word (both normalized to lowercase)
 	if not challenge_word.is_empty():
 		var normalized_target = challenge_word.to_lower().strip_edges()
-		var normalized_interim = current_interim_result.replace(" ", "")
+		var normalized_interim = improved_text.replace(" ", "")
 		
 		print("DEBUG: Comparing '" + normalized_interim + "' with target '" + normalized_target + "'")
 		
-		# Visual feedback for close matches
+		# Visual feedback for close matches with improved phonetic matching
 		if normalized_interim == normalized_target:
 			live_transcription_text.modulate = Color.GREEN
 			live_transcription_text.text = "✓ " + display_text + " (Perfect!)"
 			print("Perfect match detected!")
+		elif _is_phonetic_match(normalized_interim, normalized_target):
+			live_transcription_text.modulate = Color.LIME
+			live_transcription_text.text = "✓ " + display_text + " (Sounds right!)"
+			print("Phonetic match detected!")
 		elif _is_close_match(normalized_interim, normalized_target):
 			live_transcription_text.modulate = Color.YELLOW
 			live_transcription_text.text = "~ " + display_text + " (Close!)"
@@ -918,6 +1005,129 @@ func _process_interim_transcription(text):
 		else:
 			live_transcription_text.modulate = Color.WHITE
 			live_transcription_text.text = "| " + display_text
+
+# Helper function to convert numbers to words in Godot
+func _convert_numbers_to_words(text: String) -> String:
+	var number_map = {
+		"0": "zero", "1": "one", "2": "two", "3": "three", "4": "four",
+		"5": "five", "6": "six", "7": "seven", "8": "eight", "9": "nine",
+		"10": "ten", "11": "eleven", "12": "twelve", "13": "thirteen",
+		"14": "fourteen", "15": "fifteen", "16": "sixteen", "17": "seventeen",
+		"18": "eighteen", "19": "nineteen", "20": "twenty"
+	}
+	
+	var result = text
+	for num in number_map.keys():
+		# Use word boundaries to replace standalone numbers
+		var regex = RegEx.new()
+		regex.compile("\\b" + num + "\\b")
+		result = regex.sub(result, number_map[num], true)
+	
+	return result
+
+# Helper function to clean text and keep only letters and spaces
+func _clean_text_for_words(text: String) -> String:
+	var regex = RegEx.new()
+	regex.compile("[^a-zA-Z ]")
+	var cleaned = regex.sub(text, "", true)
+	
+	# Normalize multiple spaces to single space
+	var space_regex = RegEx.new()
+	space_regex.compile("[ ]+")
+	cleaned = space_regex.sub(cleaned, " ", true)
+	
+	return cleaned.strip_edges()
+
+# Improved phonetic matching for similar-sounding words
+func _apply_phonetic_improvements(recognized_text: String, target_word: String) -> String:
+	if recognized_text.is_empty() or target_word.is_empty():
+		return recognized_text
+	
+	var target_lower = target_word.to_lower().strip_edges()
+	var recognized_lower = recognized_text.to_lower().strip_edges()
+	
+	# Handle common phonetic variations for dyslexic learners
+	var phonetic_substitutions = {
+		# Common sound confusions
+		"bae": "bay",
+		"kay": "gay", "gay": "kay",
+		"dae": "day", "dai": "day", 
+		"mae": "may", "mai": "may",
+		"wae": "way", "wei": "way",
+		"sae": "say", "sei": "say",
+		"lae": "lay", "lei": "lay",
+		"pae": "pay", "pai": "pay",
+		"rae": "ray", "rei": "ray",
+		"hae": "hay", "hei": "hay",
+		"jae": "jay", "jei": "jay",
+		"fae": "fay", "fei": "fay",
+		
+		# Reverse mappings
+		"bay": "bae", "day": "dae", "may": "mae", "way": "wae",
+		"say": "sae", "lay": "lae", "pay": "pae", "ray": "rae",
+		"hay": "hae", "jay": "jae", "fay": "fae",
+		
+		# Common letter reversals for dyslexia
+		"bd": "db", "pq": "qp", "mn": "nm",
+		"was": "saw", "no": "on", "net": "ten"
+	}
+	
+	# Check if recognized text with phonetic correction matches target
+	for wrong_sound in phonetic_substitutions.keys():
+		var correct_sound = phonetic_substitutions[wrong_sound]
+		if recognized_lower == wrong_sound and target_lower == correct_sound:
+			print("Applied phonetic correction: " + wrong_sound + " -> " + correct_sound)
+			return correct_sound
+		elif recognized_lower == correct_sound and target_lower == wrong_sound:
+			print("Applied reverse phonetic correction: " + correct_sound + " -> " + wrong_sound)
+			return wrong_sound
+	
+	# Check for partial word phonetic matching
+	var words = recognized_lower.split(" ")
+	for i in range(words.size()):
+		if words[i] in phonetic_substitutions:
+			var corrected = phonetic_substitutions[words[i]]
+			if _is_close_match(corrected, target_lower):
+				words[i] = corrected
+				print("Applied word-level phonetic correction: " + recognized_lower + " -> " + " ".join(words))
+				return " ".join(words)
+	
+	return recognized_text
+
+# Enhanced phonetic matching function
+func _is_phonetic_match(word1: String, word2: String) -> bool:
+	if word1 == word2:
+		return true
+	
+	# Common phonetic patterns for dyslexic learners
+	var phonetic_equivalents = [
+		["ay", "ae", "ai"], # bay, bae, bai
+		["ey", "ee", "ei"], # hey, hee, hei  
+		["ow", "ou", "oo"], # how, hou, hoo
+		["er", "ur", "ir"], # her, hur, hir
+		["or", "our", "oar"], # for, four, foar
+		["ch", "sh", "tch"], # church sounds
+		["th", "f", "v"], # think/fink/vink
+		["b", "d"], ["p", "q"], ["m", "n"] # common letter confusions
+	]
+	
+	# Check if words are phonetically equivalent
+	for pattern_group in phonetic_equivalents:
+		for pattern1 in pattern_group:
+			for pattern2 in pattern_group:
+				if pattern1 != pattern2:
+					var word1_alt = word1.replace(pattern1, pattern2)
+					var word2_alt = word2.replace(pattern1, pattern2)
+					if word1_alt == word2 or word2_alt == word1:
+						return true
+	
+	# Check sound similarity with Levenshtein distance
+	var distance = levenshtein_distance(word1, word2)
+	var max_length = max(word1.length(), word2.length())
+	var similarity = 1.0 - (float(distance) / max_length) if max_length > 0 else 0.0
+	
+	# More lenient phonetic threshold (80% similarity)
+	return similarity >= 0.8
 
 # Extract the best matching word from a phrase compared to target
 func _extract_best_word_match(phrase, target_word):
@@ -929,17 +1139,31 @@ func _extract_best_word_match(phrase, target_word):
 	
 	# Check each word in the phrase
 	for word in words:
-		var word_cleaned = word.replace(",", "").replace(".", "").replace("!", "").replace("?", "")
-		var score = _calculate_word_similarity(word_cleaned, target_normalized)
+		# Clean the word
+		var word_cleaned = _clean_text_for_words(word)
 		
-		if score > best_score:
-			best_score = score
-			best_word = word_cleaned
+		# Apply phonetic improvements
+		var word_improved = _apply_phonetic_improvements(word_cleaned, target_normalized)
+		
+		# Calculate similarity scores
+		var similarity_score = _calculate_word_similarity(word_improved, target_normalized)
+		var phonetic_score = 1.0 if _is_phonetic_match(word_improved, target_normalized) else 0.0
+		
+		# Combine scores (phonetic match gets highest priority)
+		var total_score = max(similarity_score, phonetic_score)
+		
+		print("Word analysis: '" + word + "' -> cleaned: '" + word_cleaned + "' -> improved: '" + word_improved + "' -> score: " + str(total_score))
+		
+		if total_score > best_score:
+			best_score = total_score
+			best_word = word_improved
 	
-	# If no good match found, use the first word
+	# If no good match found, use the first word (cleaned and improved)
 	if best_word.is_empty() and words.size() > 0:
-		best_word = words[0].replace(",", "").replace(".", "").replace("!", "").replace("?", "")
+		var first_word = _clean_text_for_words(words[0])
+		best_word = _apply_phonetic_improvements(first_word, target_normalized)
 	
+	print("Best word match: '" + best_word + "' with score: " + str(best_score))
 	return best_word if not best_word.is_empty() else phrase
 
 # Calculate similarity between two words (0.0 to 1.0)
@@ -956,10 +1180,29 @@ func _calculate_word_similarity(word1, word2):
 	
 	return 1.0 - (float(distance) / max_length)
 
-# Check if two words are close matches (for live feedback)
+# Enhanced close match function for dyslexic-friendly recognition
 func _is_close_match(word1, word2):
+	# First check phonetic matching
+	if _is_phonetic_match(word1, word2):
+		return true
+	
 	var similarity = _calculate_word_similarity(word1, word2)
-	return similarity > 0.7  # 70% similarity threshold
+	
+	# More lenient thresholds based on word length for dyslexic learners
+	var threshold = 0.6  # Base threshold of 60%
+	
+	if word2.length() <= 3:
+		threshold = 0.7  # 70% for short words (need to be more accurate)
+	elif word2.length() <= 5:
+		threshold = 0.65  # 65% for medium words
+	else:
+		threshold = 0.6  # 60% for longer words
+	
+	# Special case for very similar lengths (likely just pronunciation differences)
+	if abs(word1.length() - word2.length()) <= 1:
+		threshold -= 0.1  # More lenient by 10%
+	
+	return similarity > threshold
 
 # Callback function for speech recognition error from JavaScript
 func speech_error_callback(error):
@@ -973,17 +1216,17 @@ func speech_error_callback(error):
 	if error == "not-allowed" or error == "permission-denied":
 		status_label.text = "Microphone permission denied. Click 'Try Again' to retry."
 		speak_button.text = "Try Again"
-		permission_status_label.text = "✗ Permission denied"
+		permission_status_label.text = "X Permission denied"
 		permission_status_label.modulate = Color.RED
 	elif error == "no-speech":
 		status_label.text = "No speech detected. Try speaking louder."
 		speak_button.text = "Start Speaking"
-		permission_status_label.text = "⚠ No speech heard"
+		permission_status_label.text = "! No speech heard"
 		permission_status_label.modulate = Color.YELLOW
 	else:
 		status_label.text = "Error: " + error + ". Click to try again."
 		speak_button.text = "Try Again"
-		permission_status_label.text = "✗ Recognition error"
+		permission_status_label.text = "X Recognition error"
 		permission_status_label.modulate = Color.RED
 	
 	speak_button.disabled = false
@@ -1005,7 +1248,7 @@ func calculate_bonus_damage() -> int:
 		# Fallback to fixed value if battle scene not accessible
 		return 8
 
-# Function to process recognized speech - COMPLETELY REWRITTEN FOR RELIABILITY
+# Function to process recognized speech - ENHANCED FOR ACCURACY
 func _on_speech_recognized(text):
 	print("PROCESSING RECOGNITION: Recognized text = '" + text + "', challenge word = '" + challenge_word + "'")
 	
@@ -1017,54 +1260,71 @@ func _on_speech_recognized(text):
 	# Mark that we're processing to prevent duplicates
 	result_being_processed = true
 	
-	# Update UI elements (removed recognized_text_label reference)
+	# Update UI elements
 	speak_button.disabled = true
 	status_label.text = "Processing result..."
 	
-	# Normalize texts for comparison
-	var recognized_normalized = text.to_lower().strip_edges()
+	# Enhanced text processing pipeline
+	var processed_text = text
+	
+	# Step 1: Convert numbers to words
+	processed_text = _convert_numbers_to_words(processed_text)
+	
+	# Step 2: Clean text (remove non-letters except spaces)
+	processed_text = _clean_text_for_words(processed_text)
+	
+	# Step 3: Apply phonetic improvements
+	processed_text = _apply_phonetic_improvements(processed_text, challenge_word)
+	
+	# Step 4: Normalize for comparison
+	var recognized_normalized = processed_text.to_lower().strip_edges()
 	var target_normalized = challenge_word.to_lower().strip_edges()
 	
-	# Apply more text normalization
+	# Step 5: Remove spaces for final comparison
 	recognized_normalized = recognized_normalized.replace(" ", "")
-	recognized_normalized = recognized_normalized.replace("\n", "")
-	recognized_normalized = recognized_normalized.replace(".", "")
-	recognized_normalized = recognized_normalized.replace(",", "")
 	
-	# Filter special characters
-	var regex = RegEx.new()
-	regex.compile("[^a-z0-9]")
-	recognized_normalized = regex.sub(recognized_normalized, "", true)
+	print("Enhanced processing pipeline:")
+	print("  Original: '" + text + "'")
+	print("  After numbers->words: '" + _convert_numbers_to_words(text) + "'")
+	print("  After cleaning: '" + _clean_text_for_words(_convert_numbers_to_words(text)) + "'")
+	print("  After phonetic: '" + processed_text + "'")
+	print("  Final normalized: '" + recognized_normalized + "'")
+	print("  Target: '" + target_normalized + "'")
 	
-	print("Normalized recognized text: " + recognized_normalized)
-	print("Normalized target word: " + target_normalized)
-	
-	# Check for success conditions
+	# Enhanced success condition checks
 	var is_success = false
+	var match_type = ""
 	
-	# Exact match check
+	# 1. Exact match check
 	if recognized_normalized == target_normalized:
 		is_success = true
+		match_type = "exact"
 	
-	# Partial match checks for better UX
-	elif target_normalized.begins_with(recognized_normalized) and recognized_normalized.length() >= target_normalized.length() / 2:
+	# 2. Phonetic match check
+	elif _is_phonetic_match(recognized_normalized, target_normalized):
 		is_success = true
+		match_type = "phonetic"
 	
-	elif recognized_normalized.begins_with(target_normalized) and target_normalized.length() >= 2:
-		is_success = true
-	
-	# Fuzzy matching for longer words
-	elif target_normalized.length() > 3 and recognized_normalized.length() > 2:
-		# Count matching characters
-		var match_count = 0
-		for c in target_normalized:
-			if recognized_normalized.find(c) >= 0:
-				match_count += 1
-				
-		# If 70% or more characters match, accept it
-		var match_ratio = float(match_count) / target_normalized.length()
-		if match_ratio > 0.7:
+	# 3. Extract best word match from phrase
+	elif " " in processed_text:
+		var best_word = _extract_best_word_match(processed_text, challenge_word)
+		if _is_phonetic_match(best_word.to_lower(), target_normalized) or best_word.to_lower() == target_normalized:
 			is_success = true
+			match_type = "word_extraction"
+			recognized_normalized = best_word.to_lower()
+	
+	# 4. Fuzzy matching for longer words (more lenient for dyslexic learners)
+	elif target_normalized.length() > 3 and recognized_normalized.length() > 2:
+		var similarity = _calculate_word_similarity(recognized_normalized, target_normalized)
+		# Increased threshold to 75% for better dyslexic support
+		if similarity >= 0.75:
+			is_success = true
+			match_type = "fuzzy"
+	
+	# 5. Partial match for very close attempts
+	elif _is_close_match(recognized_normalized, target_normalized):
+		is_success = true
+		match_type = "close"
 	
 	# Calculate bonus damage only if successful
 	if is_success:
@@ -1072,7 +1332,7 @@ func _on_speech_recognized(text):
 	else:
 		bonus_damage = 0
 	
-	print("STT Challenge Result: Success = " + str(is_success) + ", Bonus Damage = " + str(bonus_damage))
+	print("STT Challenge Result: Success = " + str(is_success) + " (" + match_type + "), Bonus Damage = " + str(bonus_damage))
 	
 	# Create and show the result panel
 	print("OPENING RESULT PANEL")

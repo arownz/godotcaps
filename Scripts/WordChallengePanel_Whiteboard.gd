@@ -383,7 +383,6 @@ func calculate_improved_word_similarity(recognized: String, target: String) -> f
 	
 	# Character position matching with dyslexia considerations
 	var position_score = 0.0
-	var max_positions = max(recognized.length(), target.length())
 	
 	# Check each position in the target word
 	for i in range(target.length()):

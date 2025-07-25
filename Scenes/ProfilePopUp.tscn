@@ -404,7 +404,7 @@ texture_hover = ExtResource("12_82scp")
 stretch_mode = 0
 
 [node name="DefaultPlayerAnimation" parent="ProfileContainer/CharacterContainer" instance=ExtResource("10_ampbo")]
-position = Vector2(110, 166)
+position = Vector2(107, 186)
 scale = Vector2(4.19841, 4.19841)
 
 [node name="DungeonArea" type="Button" parent="ProfileContainer"]

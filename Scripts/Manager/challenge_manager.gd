@@ -164,10 +164,38 @@ func handle_challenge_completed(bonus_damage):
 	if player_manager.player_animation:
 		var player_sprite = player_manager.player_animation.get_node_or_null("AnimatedSprite2D")
 		if player_sprite:
-			player_sprite.play("counter")
-			# Wait for animation to finish, then return to idle
-			await player_sprite.animation_finished
-			player_sprite.play("battle_idle")
+			# Store original position
+			var original_position = player_manager.player_animation.position
+			
+			# Move player closer to enemy for counter attack
+			if enemy_manager and enemy_manager.enemy_animation:
+				# Move player to the RIGHT toward enemy (player is on left, enemy on right)
+				# Use same movement distance as regular attack (47 pixels) for consistency
+				var counter_position = Vector2(original_position.x + 47, original_position.y)
+				
+				# Create smooth movement tween to enemy
+				var move_tween = battle_scene.create_tween()
+				move_tween.tween_property(player_manager.player_animation, "position", counter_position, 0.3)
+				move_tween.tween_callback(func(): player_sprite.play("counter"))
+				
+				# Wait for movement to complete, then play counter animation
+				await move_tween.finished
+				
+				# Wait for counter animation to finish
+				await player_sprite.animation_finished
+				
+				# Move player back to original position and play idle
+				var return_tween = battle_scene.create_tween()
+				return_tween.tween_property(player_manager.player_animation, "position", original_position, 0.3)
+				return_tween.tween_callback(func(): player_sprite.play("battle_idle"))
+				
+				# Wait for return movement to complete
+				await return_tween.finished
+			else:
+				# Fallback: just play animation in place if enemy not found
+				player_sprite.play("counter")
+				await player_sprite.animation_finished
+				player_sprite.play("battle_idle")
 	
 	# Calculate total damage (base + bonus)
 	var player_base_damage = player_manager.player_damage

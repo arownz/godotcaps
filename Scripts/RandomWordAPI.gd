@@ -5,7 +5,7 @@ signal word_fetched
 
 # API URLs to try in order of preference (will be dynamically updated based on word length)
 var API_URLS = [
-    "https://api.datamuse.com/words?sp=???&max=10", # Default 3-letter words and 10 words per request
+    "https://api.datamuse.com/words?sp=???&max=100", # Default 3-letter words and 100 words per request
 ]
 
 # State variables
@@ -30,19 +30,13 @@ func fetch_random_word(word_length: int = 3):
 	# Set the word length for this request
 	current_word_length = word_length
 	
-	# Update API URL based on word length
-	_update_api_url_for_length(word_length)
+	# FOR CHILD SAFETY: Use fallback words instead of API to avoid inappropriate content
+	# The API can return words like "ass", "sex", etc. which are not suitable for children
+	print("RandomWordAPI: Using curated fallback words for child-safe content")
+	random_word = _get_fallback_word()
 	
-	# Reset word
-	random_word = ""
-	
-	# Reset error
-	last_error = ""
-	
-	# Try primary API first
-	current_api_index = 0
-	current_retry = 0
-	_make_request()
+	# Emit signal immediately since we're not making an API call
+	emit_signal("word_fetched")
 
 # Update API URL based on desired word length
 func _update_api_url_for_length(word_length: int):
@@ -50,7 +44,7 @@ func _update_api_url_for_length(word_length: int):
 	for i in range(word_length):
 		question_marks += "?"
 	
-	API_URLS[0] = "https://api.datamuse.com/words?sp=" + question_marks + "&max=10"
+	API_URLS[0] = "https://api.datamuse.com/words?sp=" + question_marks + "&max=100"
 	print("RandomWordAPI: Updated URL for " + str(word_length) + "-letter words: " + API_URLS[0])
 
 # Make an HTTP request to the current API endpoint
@@ -203,22 +197,22 @@ func _try_fallback():
 
 # Improve fallback word selection with categories for different word lengths
 func _get_fallback_word() -> String:
-	# Word categories organized by length
+	# Word categories organized by length - PHONETICALLY DISTINCT for STT accuracy
 	var word_categories_by_length = {
 		3: {
-			"animals": ["cat", "dog", "fox", "bee", "owl", "pig", "cow", "bat", "rat", "elk"],
+			"animals": ["cat", "dog", "fox", "owl", "pig", "cow", "bat", "elk", "ape", "ant"],
 			"objects": ["cup", "pan", "box", "key", "pen", "hat", "bag", "car", "bed", "toy"],
-			"nature": ["sun", "sky", "sea", "ice", "mud", "dew", "fog", "air", "oil", "gas"],
+			"nature": ["sun", "mud", "fog", "air", "oil", "gas", "web", "oak", "gem", "ore"],
 			"food": ["pie", "tea", "egg", "jam", "nut", "ham", "gum", "oat", "fig", "yam"],
-			"colors": ["red", "tan", "bay", "ash", "jet", "sky", "sea", "ice", "mud", "dew"],
-			"verbs": ["run", "sit", "eat", "see", "get", "put", "cut", "dig", "fly", "try"]
+			"colors": ["red", "tan", "jet", "ash", "ink", "dye", "hue", "ore", "wax", "tar"],
+			"verbs": ["run", "sit", "eat", "get", "put", "cut", "dig", "fly", "try", "hop"]
 		},
 		4: {
 			"animals": ["wolf", "frog", "bear", "lion", "duck", "bird", "fish", "deer", "goat", "seal"],
-			"objects": ["book", "lamp", "desk", "fork", "door", "bowl", "mug", "ring", "coat", "pipe"],
-			"nature": ["tree", "rock", "fire", "lake", "hill", "moon", "star", "rain", "snow", "leaf"],
-			"food": ["cake", "fish", "meat", "rice", "soup", "pear", "plum", "milk", "corn", "beef"],
-			"colors": ["blue", "pink", "teal", "grey", "gold", "ruby", "mint", "aqua", "lime", "navy"],
+			"objects": ["book", "lamp", "desk", "fork", "door", "bowl", "ring", "coat", "pipe", "disk"],
+			"nature": ["tree", "rock", "fire", "lake", "hill", "moon", "star", "snow", "leaf", "wind"],
+			"food": ["cake", "meat", "rice", "soup", "pear", "plum", "milk", "corn", "beef", "tuna"],
+			"colors": ["blue", "pink", "teal", "gold", "ruby", "mint", "lime", "rust", "jade", "rose"],
 			"verbs": ["walk", "talk", "make", "read", "swim", "sing", "play", "ride", "push", "pull"]
 		},
 		5: {

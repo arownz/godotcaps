@@ -180,6 +180,7 @@ clear_button_enabled = true
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85098, 0.137255, 0.137255, 1)
+theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 14
 text = "Please enter a valid email"
 
@@ -214,6 +215,7 @@ text = "Show"
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85098, 0.137255, 0.137255, 1)
+theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 14
 text = "Please enter your password"
 
@@ -331,6 +333,7 @@ clear_button_enabled = true
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85098, 0.137255, 0.137255, 1)
+theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 14
 text = "Please enter a username"
 
@@ -374,6 +377,7 @@ theme_override_styles/focus = SubResource("StyleBoxEmpty_6oq4l")
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85098, 0.137255, 0.137255, 1)
+theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 14
 text = "Please select your birth date"
 
@@ -396,6 +400,7 @@ clear_button_enabled = true
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85098, 0.137255, 0.137255, 1)
+theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 14
 text = "Please enter a valid email address"
 
@@ -430,6 +435,7 @@ text = "Show"
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85098, 0.137255, 0.137255, 1)
+theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 14
 text = "Password must be at least 6 characters"
 
@@ -464,6 +470,7 @@ text = "Show"
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85098, 0.137255, 0.137255, 1)
+theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 14
 text = "Passwords do not match"
 
@@ -534,6 +541,7 @@ clear_button_enabled = true
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85098, 0.137255, 0.137255, 1)
+theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 14
 text = "Please enter a valid email address"
 
