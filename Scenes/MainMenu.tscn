@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://d36ytiqg31edd"]
+[gd_scene load_steps=19 format=3 uid="uid://d36ytiqg31edd"]
 
 [ext_resource type="Script" uid="uid://datbxxer3mwvc" path="res://Scripts/mainmenu.gd" id="1_tt5f1"]
 [ext_resource type="Texture2D" uid="uid://ckkds573c15wj" path="res://gui/Backgrounds/Main_menu_Background.png" id="2_kpa4r"]
@@ -17,6 +17,7 @@
 [ext_resource type="Texture2D" uid="uid://m6ls0r18o3xg" path="res://gui/settings.png" id="12_q0r2p"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="13_uaqt0"]
 [ext_resource type="Texture2D" uid="uid://drwre8l5sq5ql" path="res://gui/Update/UI/hover long button.png" id="14_yxkem"]
+[ext_resource type="Script" uid="uid://brblauco221pt" path="res://Scripts/title_animation.gd" id="18_title_anim"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -47,6 +48,7 @@ offset_top = 77.0
 offset_right = -463.0
 offset_bottom = 289.0
 grow_horizontal = 2
+script = ExtResource("18_title_anim")
 
 [node name="TitleLabel" type="Label" parent="TitleContainer"]
 layout_mode = 1
@@ -55,18 +57,19 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -138.0
-offset_top = -73.0
-offset_right = 247.0
-offset_bottom = 73.0
+offset_left = -161.0
+offset_top = -59.0
+offset_right = 252.0
+offset_bottom = 87.0
 grow_horizontal = 2
 grow_vertical = 2
+scale = Vector2(1.05947, 1.05947)
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 8
 theme_override_fonts/font = ExtResource("13_uaqt0")
 theme_override_font_sizes/font_size = 80
-text = "LEXIA"
+text = "LEXIA."
 horizontal_alignment = 1
 
 [node name="CharacterArea" type="Node2D" parent="."]

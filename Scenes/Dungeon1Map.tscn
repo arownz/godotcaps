@@ -230,10 +230,11 @@ text = "DUNGEON 1"
 uppercase = true
 
 [node name="StageDetails" type="TextureRect" parent="."]
-offset_left = 803.0
-offset_top = 7.0
-offset_right = 1452.0
-offset_bottom = 803.0
+offset_left = 834.0
+offset_top = 45.0
+offset_right = 1483.0
+offset_bottom = 841.0
+scale = Vector2(0.899498, 0.899498)
 texture = ExtResource("8_xrlqr")
 
 [node name="CloseButton" type="TextureButton" parent="StageDetails"]

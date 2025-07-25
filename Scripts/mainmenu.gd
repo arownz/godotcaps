@@ -84,10 +84,6 @@ func _setup_hover_buttons():
         {
             "button": $ProfileButton,
             "label": $ProfileButton/ProfileLabel
-        },
-        {
-            "button": $EnergyDisplay,
-            "label": $EnergyDisplay/EnergyTooltip
         }
     ]
     
@@ -181,11 +177,9 @@ func _process_document(document):
                     # Extract the profile data we need into our user_data dictionary
                     user_data["username"] = profile.get("username", "Player")
                     user_data["profile_picture"] = profile.get("profile_picture", "default")
-                    user_data["last_login"] = profile.get("last_login", "")
                 else:
                     user_data["username"] = "Player"
                     user_data["profile_picture"] = "default"
-                    user_data["last_login"] = ""
                 
                 # Get stats data
                 var stats = document.get_value("stats")
@@ -201,6 +195,9 @@ func _process_document(document):
                 
                 # Process energy recovery based on time passed
                 _process_energy_recovery()
+                
+                # Handle session tracking and usage_time for returning users
+                _update_session_tracking()
                 
                 print("Loaded user data from new structure: ", user_data)
     
@@ -225,7 +222,9 @@ func _create_default_user_document(user_id):
             "profile_picture": "default",
             "rank": "bronze",
             "created_at": current_time,
-            "last_login": current_time
+            "usage_time": 0,
+            "session": 1,
+            "last_session_date": Time.get_date_string_from_system()
         },
         "stats": {
             "player": {
@@ -258,7 +257,29 @@ func _create_default_user_document(user_id):
                 "enemies_defeated": 0,
                 "current_dungeon": 1,
             }
-        }
+        }, #temporary structures for modules for future update
+        "modules": {
+			"phonics": {
+				"completed": false,
+				"progress": 0
+			},
+			"flip_quiz": {
+				"completed": false,
+				"progress": 0
+			},
+			"read_aloud": {
+				"completed": false,
+				"progress": 0
+			},
+			"chunked_reading": {
+				"completed": false,
+				"progress": 0
+			},
+			"syllable_building": {
+				"completed": false,
+				"progress": 0
+			}
+		}
     }
     
     # Add document to Firestore
@@ -309,6 +330,40 @@ func _process_energy_recovery():
             user_data["energy"] = new_energy
             user_data["last_energy_update"] = new_last_update
             print("Energy recovered: " + str(current_energy) + " -> " + str(new_energy))
+
+# Handle session and usage_time tracking for returning users
+func _update_session_tracking():
+    var user_id = Firebase.Auth.auth.localid
+    if not user_id:
+        return
+        
+    var collection = Firebase.Firestore.collection("dyslexia_users")
+    var today_date = Time.get_date_string_from_system() # Format: YYYY-MM-DD
+    
+    # Get the document to update session tracking
+    var document = await collection.get_doc(user_id)
+    if document and document.has_method("get_value"):
+        var profile = document.get_value("profile")
+        if profile != null and typeof(profile) == TYPE_DICTIONARY:
+            # Initialize usage_time if it doesn't exist (migration from old last_login to last_session_date)
+            if not profile.has("usage_time"):
+                profile["usage_time"] = 0
+            
+            # Handle daily session tracking
+            if not profile.has("session"):
+                profile["session"] = 1
+                profile["last_session_date"] = today_date
+            elif not profile.has("last_session_date") or profile.get("last_session_date", "") != today_date:
+                # Increment session count only if user hasn't played today
+                profile["session"] = profile.get("session", 0) + 1
+                profile["last_session_date"] = today_date
+                print("DEBUG: Session incremented to " + str(profile["session"]) + " for new day: " + today_date)
+            else:
+                print("DEBUG: User already played today (" + today_date + "), session count remains: " + str(profile.get("session", 0)))
+            
+            # Update the document
+            document.add_or_update_field("profile", profile)
+            await collection.update(document)
 
 func _update_energy_in_firebase(new_energy: int, new_timestamp: float):
     if !Firebase.Auth.auth:

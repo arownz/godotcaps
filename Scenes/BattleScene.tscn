@@ -628,5 +628,4 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[connection signal="pressed" from="MainContainer/BattleAreaContainer/SettingButton" to="." method="_on_setting_button_pressed"]
 [connection signal="pressed" from="MainContainer/RightContainer/MarginContainer/VBoxContainer/ButtonContainer/EngageButton" to="." method="_on_engage_button_pressed"]

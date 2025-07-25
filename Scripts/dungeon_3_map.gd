@@ -204,9 +204,8 @@ func _initialize_mob_buttons():
 		$StageDetails/MonsterIconButtonContainer/Boss1Button
 	]
 	
-	# Initial setup of animations
-	var animated_sprite = $StageDetails/LeftContainer/AnimatedSprite2D
-	animated_sprite.play("idle") # Default to boar animation for dungeon 3
+	# Note: Don't play animation here - will be set when enemy is selected
+	# The AnimatedSprite2D will be populated when _update_stage_details() is called
 
 func _connect_signals():
 	# Connect stage button signals
@@ -330,7 +329,13 @@ func _on_mob_button_pressed(type, index):
 		return
 	
 	# Update animation and info with scaled data
-	$StageDetails/LeftContainer/AnimatedSprite2D.play("idle")
+	# Only play animation if it exists and has been properly loaded
+	var animated_sprite = $StageDetails/LeftContainer/AnimatedSprite2D
+	if animated_sprite.get_child_count() > 0:
+		var animation_instance = animated_sprite.get_child(0)
+		if animation_instance.has_method("play") and animation_instance.sprite_frames and animation_instance.sprite_frames.has_animation("idle"):
+			animation_instance.play("idle")
+	
 	$StageDetails/LeftContainer/MonsterName.text = enemy_data["name"].to_upper()
 	$StageDetails/RightContainer/Info.text = enemy_data["description"]
 	$StageDetails/RightContainer/Health.text = str(enemy_data["health"])

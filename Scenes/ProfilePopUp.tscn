@@ -437,9 +437,9 @@ text = "3: The Mountain"
 [node name="DungeonImage" type="TextureRect" parent="ProfileContainer/DungeonArea"]
 layout_mode = 0
 offset_left = 54.0
-offset_top = 52.0
+offset_top = 57.0
 offset_right = 226.0
-offset_bottom = 298.0
+offset_bottom = 303.0
 scale = Vector2(0.844785, 0.844785)
 texture = ExtResource("13_tilb2")
 expand_mode = 1

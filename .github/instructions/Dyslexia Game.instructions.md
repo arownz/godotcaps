@@ -1,137 +1,120 @@
-# Copilot Instructions for Lexia Dyslexia Learning Game
+
+# iCopilot Instructions for Godot Dyslexia Learning Game
 
 ## Project Overview
 
-This is a **Godot 4.4.1 (stable version) web-based dyslexia learning game** called "Lexia" that combines turn-based combat with educational challenges. Players progress through dungeons (1-3) with 5 stages each, completing Speech-to-Text (STT) and Whiteboard challenges to counter enemy attacks.
+This is a Godot 4.4.1 web-based educational RPG designed for dyslexic learners, featuring a manager-based architecture with Firebase integration, progressive word challenges, and accessibility-focused design.
 
-## Architecture Patterns
+## Architecture Principles
 
-### Manager Pattern Architecture
+### Manager-Based Battle System
 
-The battle system uses a **centralized manager pattern** where `battlescene.gd` orchestrates multiple specialized managers:
+The core battle system uses a decoupled manager pattern in `Scripts/Manager/`:
 
-- `BattleManager`: Combat flow and endgame handling
-- `EnemyManager`: Enemy stats, animations, and level scaling
-- `PlayerManager`: Player stats, experience, and leveling
-- `UIManager`: All UI updates and visual feedback
-- `DungeonManager`: Progress tracking and Firebase persistence
-- `ChallengeManager`: STT/Whiteboard challenge coordination
+- **BattleManager**: Victory/defeat flow, Firebase progression, endgame routing
+- **EnemyManager**: Dynamic enemy scaling, resource loading, animation setup
+- **PlayerManager**: Experience, leveling, stats, Firebase stat persistence
+- **ChallengeManager**: STT/Whiteboard word challenges, UI cleanup, signal coordination
+- **UIManager**: Health bars, player info, stage displays, background management
+- **DungeonManager**: Stage progression, global state coordination
 
-**Example**: All managers are instantiated in `battlescene.gd._initialize_managers()` and communicate via signals:
+Each manager takes `battle_scene` reference in constructor: `var manager = ManagerScript.new(self)`
+
+### Progressive Difficulty System
+
+Word challenges scale with dungeon progression:
+
+- **Dungeon 1**: 3-letter words (`sp=???` in Datamuse API)
+- **Dungeon 2**: 4-letter words (`sp=????` in Datamuse API)
+- **Dungeon 3**: 5-letter words (`sp=?????` in Datamuse API)
+
+Implement via `_get_word_length_for_dungeon()` in challenge panels and `RandomWordAPI.fetch_random_word(word_length)`.
+
+### Firebase Integration Patterns
+
+Always use document retrieval → field update → collection.update() pattern:
 
 ```gdscript
-battle_manager.player_attack_performed.connect(_on_player_attack_performed)
-enemy_manager.enemy_defeated.connect(_on_enemy_defeated)
+var user_doc = await collection.get_doc(user_id)
+user_doc.add_or_update_field("field_name", value)
+var updated_doc = await collection.update(user_doc)
 ```
 
-### Firebase Integration Pattern
+Player stats updated by `PlayerManager`, progression by `BattleManager` - never mix responsibilities.
 
-User data uses a **nested document structure** in Firestore collection `dyslexia_users`:
+## Key Development Patterns
+
+### Signal-Driven Architecture
+
+Managers communicate via signals, not direct method calls:
+
+- `enemy_defeated(exp_reward)` → triggers victory flow
+- `challenge_completed(bonus_damage)` → applies counter-attack damage
+- Connect signals in `battlescene.gd` `_connect_signals()` method
+
+### Scene Transitions & State Management
+
+Use `DungeonGlobals` autoload for immediate scene data transfer:
 
 ```gdscript
-{
-  "profile": { "username", "email", "profile_picture", "rank" },
-  "stats": { "player": { "level", "exp", "health", "damage", "energy" } },
-  "dungeons": { "progress": { "current_dungeon", "current_stage" } },
-  "word_challenges": { "completed": { "stt": 0, "whiteboard": 0 } }
-}
+DungeonGlobals.set_battle_progress(dungeon_num, stage_num)
 ```
 
-**Critical**: Always use `await collection.get_doc(user_id)` then `collection.update(document)` for updates, never `collection.add()` for existing users.
+Boss defeats route to `DungeonSelection.tscn`, regular continues to next stage.
 
-### Stage Progression System
+### Challenge System Implementation
 
-- **Level Calculation**: `enemy_level = stage_num` (1-5 per dungeon, resets per dungeon)
-- **Stat Scaling**: Uses `_get_stage_multiplier()` combining stage and dungeon progression
-- **Resource Loading**: Each dungeon has `dungeon{N}_normal.tres` and `dungeon{N}_boss.tres` enemy resources
+STT/Whiteboard challenges follow this flow:
 
-## Critical Development Workflows
-
-### Testing Battle System
-
-1. Use `DungeonGlobals.set_battle_progress(dungeon, stage)` to set specific battle contexts
-2. Test progression with `dungeon_manager.advance_stage()`
-3. Verify Firebase updates in `_save_current_dungeon_stage()`
-
-### Challenge Development
-
-**STT Challenges** (`WordChallengePanel_STT.gd`):
-
-- Use Google Cloud Speech API with JavaScript bridge for web platform
-- Implement fuzzy matching with `levenshtein_distance()` for dyslexia-friendly recognition
-- Always call `JavaScriptBridge.eval()` to setup web audio environment
-
-**Whiteboard Challenges** (`WordChallengePanel_Whiteboard.gd`):
-
-- Integrate with Google Cloud Vision API for handwriting recognition
-- Use dyslexia-friendly letter swap detection (`common_swaps` dictionary)
+1. `trigger_enemy_skill()` → `challenge_manager.start_word_challenge(type)`
+2. Word fetched via `RandomWordAPI.fetch_random_word(dungeon_word_length)`
+3. Recognition results processed with dyslexia-friendly fuzzy matching
+4. Success grants bonus damage, failure/cancellation applies enemy skill damage
+5. `_cleanup_challenge()` removes overlays to prevent EndgameScreen blocking
 
 ### Web Platform Specifics
 
-- **Audio Setup**: Call `_initialize_web_audio_environment()` before any speech operations
-- **JavaScript Bridge**: Use `JavaScriptBridge.eval()` with proper error handling and escape sequences
-- **Permissions**: Check existing microphone permissions before requesting new ones
+For JavaScript integration (STT):
 
-## Project-Specific Conventions
+- Use `JavaScriptBridge.eval()` for all web audio operations
+- Implement polling mechanism in `_process()` for async speech results
+- Handle microphone permissions gracefully with user-initiated requests
+- Google Cloud Speech API integration via `window.godot_speech` object
 
-### File Organization
+## Important about godot
 
-- **Managers**: `Scripts/Manager/` - All game logic managers
-- **Challenges**: `WordChallengePanel_*.gd` - STT and Whiteboard implementations
-- **Dungeons**: `dungeon_*_map.gd` - Stage selection and progression per dungeon
-- **Resources**: `Resources/Enemies/` - Enemy stat configurations (.tres files)
+- Always use tab indentation as the space indentation always made error
+- Make sure to always have a connection that are setup to godot as I'm using visuat studio code for scripting instead of built in godot scripter
 
-### Signal Communication
+### UI Cleanup Race Conditions
 
-Use descriptive signal names with typed parameters:
+Always call `_cleanup_challenge()` when enemy defeated during challenge to prevent EndgameScreen blocking.
 
-```gdscript
-signal enemy_defeated(exp_reward: int)
-signal challenge_completed(bonus_damage: int)
-signal stage_advanced(dungeon_num: int, stage_num: int)
-```
+### Firebase Document Structure
 
-### Error Handling Pattern
+Respect nested structure: `dungeons.completed.{dungeon_id}.stages_completed`, `word_challenges.completed.{type}`
 
-Always check for null references and Firebase errors:
+### Enemy Resource Loading
 
-```gdscript
-if document and !("error" in document.keys() and document.get_value("error")):
-    # Safe to proceed with document operations
-```
+Load enemy resources in dungeon maps: `load("res://Resources/Enemies/dungeon{N}_{type}.tres")` with multipliers for stage scaling.
 
-### Dyslexia Accessibility
+### Animation State Management
 
-- **Fonts**: Use OpenDyslexic font family (`Fonts/dyslexiafont/`)
-- **Text Comparison**: Implement fuzzy matching for common dyslexic letter swaps (b/d, p/q, m/w)
-- **UI Feedback**: Provide audio feedback for all text-based interactions
+Reset sprites to "idle" after animations, use `await animation_finished` for timing.
 
-## Firebase Authentication Flow
+## File Organization
 
-1. **Login**: `Firebase.Auth.signup_with_email_and_password()` or Google OAuth
-2. **Document Creation**: Use nested structure template from `authentication.gd._create_user_document()`
-3. **Progress Persistence**: Update `dungeons.progress` fields for battle continuity
-4. **Energy System**: Battle costs 2 energy, regenerates 1 per hour (max 20)
+- `/Scripts/Manager/`: Core battle system managers
+- `/Scripts/`: Scene-specific scripts (dungeon maps, authentication, etc.)
+- `/Resources/Enemies/`: Enemy data resources (.tres files)
+- `/Scenes/`: All game scenes (.tscn files)
+- `/gui/`: UI assets and backgrounds
 
-## Common Integration Points
+## Testing & Debugging
 
-### Dungeon Map → Battle Scene
+- Use `print()` statements liberally for async operations
+- Check Firebase responses with `("error" in document.keys())` pattern
+- Validate manager initialization in `battlescene.gd` `_ready()`
+- Test challenge UI cleanup with rapid enemy defeats
 
-Transfer uses `DungeonGlobals.set_battle_progress()` → `BattleScene` reads via `DungeonManager.initialize()`
-
-### Battle → Challenge
-
-Instantiate challenge scenes dynamically: `load("res://Scenes/WordChallengePanel_STT.tscn").instantiate()`
-
-### Profile System
-
-- **Popup Management**: Use `_unhandled_input()` or background click detection for modal behavior
-- **Firebase Updates**: Always preserve existing document structure when updating fields
-
-## Build and Deploy
-
-- **Target**: Web platform with WebGL compatibility
-- **Export**: Uses `export_presets.cfg` for web build configuration
-- **Testing**: `WebTest/index.html` provides local testing environment with speech API integration
-
-When implementing new features, follow the manager pattern for separation of concerns and always consider web platform limitations for audio/input handling.
+When working on this codebase, always consider dyslexic users' needs: readable fonts, forgiving word matching, clear feedback, and progressive difficulty scaling.

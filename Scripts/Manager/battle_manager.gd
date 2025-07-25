@@ -11,6 +11,7 @@ var battle_scene # Reference to the main battle scene
 # Add flag to prevent multiple endgame screens
 var endgame_screen_active: bool = false
 var victory_processing: bool = false  # Add flag to prevent duplicate victory processing
+var defeat_processing: bool = false  # Add flag to prevent duplicate defeat processing
 
 # External resources
 var word_challenge_whiteboard_scene = preload("res://Scenes/WordChallengePanel_Whiteboard.tscn")
@@ -228,16 +229,22 @@ func _update_firebase_after_victory(_exp_gained: int, completed_dungeon_num: int
 		return false
 
 func handle_defeat():
+	# Prevent multiple defeat processing
+	if defeat_processing:
+		print("BattleManager: Defeat already being processed, preventing duplicate")
+		return
+	
+	defeat_processing = true
 	print("BattleManager: Handling defeat")
 	
-	# Add defeat message
-	battle_scene.battle_log_manager.add_message("[color=#8B0000]Defeat! You have been defeated by the enemy.[/color]")
+	# Get enemy name for the defeat message
+	var enemy_name = battle_scene.enemy_manager.enemy_name
+	
+	# Add defeat message with enemy name
+	battle_scene.battle_log_manager.add_message("[color=#8B0000]You have been defeated by the " + enemy_name + "![/color]")
 	
 	# Wait a moment for the message to be seen
 	await battle_scene.get_tree().create_timer(1.0).timeout
-	
-	# Get enemy name for endgame screen
-	var enemy_name = battle_scene.enemy_manager.enemy_name
 	
 	# Show defeat screen
 	show_endgame_screen("Defeat", 0, 0, 0, enemy_name)
@@ -285,6 +292,7 @@ func _on_restart_battle():
 	# Reset endgame screen flag
 	endgame_screen_active = false
 	victory_processing = false  # Reset victory processing flag
+	defeat_processing = false  # Reset defeat processing flag
 	
 	# Heal player to full health on restart
 	if battle_scene and battle_scene.player_manager:
@@ -326,6 +334,7 @@ func _on_continue_battle():
 	# Reset endgame screen flag
 	endgame_screen_active = false
 	victory_processing = false  # Reset victory processing flag
+	defeat_processing = false  # Reset defeat processing flag
 	
 	# Heal player to full health on stage progression
 	if battle_scene and battle_scene.player_manager:

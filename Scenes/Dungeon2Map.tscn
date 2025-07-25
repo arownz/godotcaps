@@ -21,9 +21,9 @@
 [ext_resource type="Texture2D" uid="uid://c5cpf575pv2ee" path="res://gui/Update/icons/close icon_hover.png" id="18_8wno4"]
 [ext_resource type="Texture2D" uid="uid://clbfvil7saw1l" path="res://gui/Update/UI/Fight Button (Default).png" id="20_2uab6"]
 
-[sub_resource type="SpriteFrames" id="SpriteFrames_u8y63"]
+[sub_resource type="SpriteFrames" id="SpriteFrames_v6wxw"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_u8y63"]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_cqtj6"]
 
 [node name="Dungeon2Map" type="Node2D"]
 script = ExtResource("1_qpxt0")
@@ -229,11 +229,23 @@ text = "DUNGEON 2"
 uppercase = true
 
 [node name="StageDetails" type="TextureRect" parent="."]
-offset_left = 803.0
-offset_top = 7.0
-offset_right = 1452.0
-offset_bottom = 803.0
+offset_left = 834.0
+offset_top = 45.0
+offset_right = 1483.0
+offset_bottom = 841.0
+scale = Vector2(0.899498, 0.899498)
 texture = ExtResource("7_cqtj6")
+
+[node name="CloseButton" type="TextureButton" parent="StageDetails"]
+layout_mode = 0
+offset_left = 614.0
+offset_top = -5.0
+offset_right = 623.0
+offset_bottom = 4.0
+scale = Vector2(4.9143, 4.9143)
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("18_0olnv")
+texture_hover = ExtResource("18_8wno4")
 
 [node name="RightContainer" type="Control" parent="StageDetails"]
 anchors_preset = 0
@@ -260,8 +272,7 @@ theme_override_constants/shadow_offset_y = 2
 theme_override_fonts/font = ExtResource("8_qpxt0")
 theme_override_font_sizes/font_size = 20
 text = "DETAILS"
-vertical_alignment = 1
-autowrap_mode = 3
+horizontal_alignment = 1
 
 [node name="Info" type="Label" parent="StageDetails/RightContainer"]
 layout_mode = 2
@@ -271,7 +282,7 @@ anchor_bottom = 1.0
 offset_left = 10.0
 offset_top = -321.0
 offset_right = -11.0
-offset_bottom = -99.0
+offset_bottom = -159.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_colors/font_color = Color(0.937255, 1, 1, 1)
@@ -281,6 +292,46 @@ theme_override_constants/shadow_offset_y = 2
 theme_override_fonts/font = ExtResource("8_qpxt0")
 theme_override_font_sizes/font_size = 20
 text = "Detail"
+autowrap_mode = 3
+
+[node name="ExpReward" type="Label" parent="StageDetails/RightContainer"]
+layout_mode = 2
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = -133.0
+offset_right = -124.0
+offset_bottom = -96.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.937255, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_fonts/font = ExtResource("8_qpxt0")
+theme_override_font_sizes/font_size = 20
+text = "EXP Reward:"
+autowrap_mode = 3
+
+[node name="ExpRewardValue" type="Label" parent="StageDetails/RightContainer"]
+layout_mode = 2
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 200.0
+offset_top = -127.0
+offset_right = -2.0
+offset_bottom = -99.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.937255, 1, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_fonts/font = ExtResource("8_qpxt0")
+theme_override_font_sizes/font_size = 15
+text = "100"
 autowrap_mode = 3
 
 [node name="SkillLabel" type="Label" parent="StageDetails/RightContainer"]
@@ -314,7 +365,7 @@ offset_right = -55.0
 offset_bottom = -67.0
 grow_horizontal = 2
 grow_vertical = 0
-theme_override_colors/font_color = Color(0.937255, 1, 1, 1)
+theme_override_colors/font_color = Color(0.937255, 1, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
@@ -359,48 +410,6 @@ text = "100"
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="ExpReward" type="Label" parent="StageDetails/RightContainer"]
-layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 10.0
-offset_top = -133.0
-offset_right = -124.0
-offset_bottom = -96.0
-grow_horizontal = 2
-grow_vertical = 0
-theme_override_colors/font_color = Color(0.937255, 1, 1, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_constants/shadow_offset_x = 2
-theme_override_constants/shadow_offset_y = 2
-theme_override_fonts/font = ExtResource("8_qpxt0")
-theme_override_font_sizes/font_size = 20
-text = "EXP Reward:"
-autowrap_mode = 3
-
-[node name="ExpRewardValue" type="Label" parent="StageDetails/RightContainer"]
-layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 200.0
-offset_top = -127.0
-offset_right = -2.0
-offset_bottom = -99.0
-grow_horizontal = 2
-grow_vertical = 0
-theme_override_colors/font_color = Color(0.937255, 1, 0, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_constants/shadow_offset_x = 2
-theme_override_constants/shadow_offset_y = 2
-theme_override_fonts/font = ExtResource("8_qpxt0")
-theme_override_font_sizes/font_size = 15
-text = "100"
-autowrap_mode = 3
-
 [node name="LeftContainer" type="Control" parent="StageDetails"]
 anchors_preset = 0
 offset_left = 39.0
@@ -411,7 +420,7 @@ offset_bottom = 645.0
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="StageDetails/LeftContainer"]
 position = Vector2(135, 318)
 scale = Vector2(2.79408, 2.76731)
-sprite_frames = SubResource("SpriteFrames_u8y63")
+sprite_frames = SubResource("SpriteFrames_v6wxw")
 
 [node name="MonsterName" type="Label" parent="StageDetails/LeftContainer"]
 layout_mode = 2
@@ -419,9 +428,9 @@ anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 31.0
-offset_top = -346.0
+offset_top = -355.0
 offset_right = -26.0
-offset_bottom = -309.0
+offset_bottom = -302.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_colors/font_color = Color(0.964706, 0, 0.47451, 1)
@@ -510,6 +519,7 @@ alignment = 1
 
 [node name="Mob1Button" type="TextureButton" parent="StageDetails/MonsterIconButtonContainer"]
 layout_mode = 2
+mouse_default_cursor_shape = 2
 texture_normal = ExtResource("14_546ao")
 texture_hover = ExtResource("17_v6wxw")
 
@@ -523,6 +533,7 @@ texture = ExtResource("8_6jspw")
 
 [node name="Mob2Button" type="TextureButton" parent="StageDetails/MonsterIconButtonContainer"]
 layout_mode = 2
+mouse_default_cursor_shape = 2
 texture_normal = ExtResource("14_546ao")
 texture_hover = ExtResource("17_v6wxw")
 
@@ -536,6 +547,7 @@ texture = ExtResource("8_6jspw")
 
 [node name="Mob3Button" type="TextureButton" parent="StageDetails/MonsterIconButtonContainer"]
 layout_mode = 2
+mouse_default_cursor_shape = 2
 texture_normal = ExtResource("14_546ao")
 texture_hover = ExtResource("17_v6wxw")
 
@@ -561,17 +573,6 @@ offset_right = 20.5764
 offset_bottom = 22.412
 texture = ExtResource("16_feumf")
 
-[node name="CloseButton" type="TextureButton" parent="StageDetails"]
-layout_mode = 0
-offset_left = 614.0
-offset_top = -5.0
-offset_right = 623.0
-offset_bottom = 4.0
-scale = Vector2(4.9143, 4.9143)
-mouse_default_cursor_shape = 2
-texture_normal = ExtResource("18_0olnv")
-texture_hover = ExtResource("18_8wno4")
-
 [node name="FightButton" type="Button" parent="StageDetails"]
 layout_mode = 0
 offset_left = 175.0
@@ -586,7 +587,7 @@ theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
 theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("9_6jspw")
 theme_override_font_sizes/font_size = 10
-theme_override_styles/focus = SubResource("StyleBoxEmpty_u8y63")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_cqtj6")
 text = "FIGHT"
 icon = ExtResource("20_2uab6")
 flat = true

@@ -136,32 +136,43 @@ func _on_drawing_submitted(text_result):
 	print("Recognized text (normalized): " + recognized_text)
 	print("Target word (normalized): " + target_word)
 	
-	# Check for success conditions
+	# NEW IMPROVED VALIDATION LOGIC
 	var is_success = false
 	
-	# Exact match check
+	# 1. Exact match - always accept
 	if recognized_text == target_word:
 		is_success = true
+		print("Validation: Exact match")
 	
-	# Partial match checks for better UX
-	elif target_word.begins_with(recognized_text) and recognized_text.length() >= target_word.length() / 2:
-		is_success = true
+	# 2. Length-based validation - prevent accepting words that are too short
+	elif recognized_text.length() < max(2, target_word.length() - 2):
+		# Reject if recognized text is more than 2 characters shorter than target
+		# For 3-letter words: minimum 2 characters (missing max 1)
+		# For 4-letter words: minimum 2 characters (missing max 2) 
+		# For 5+ letter words: minimum 3 characters (missing max 2)
+		is_success = false
+		print("Validation: Too short - recognized: %d chars, target: %d chars" % [recognized_text.length(), target_word.length()])
 	
-	elif recognized_text.begins_with(target_word) and target_word.length() >= 2:
-		is_success = true
-	
-	# Fuzzy matching for longer words
-	elif target_word.length() > 3 and recognized_text.length() > 2:
-		# Count matching characters
-		var match_count = 0
-		for c in target_word:
-			if recognized_text.find(c) >= 0:
-				match_count += 1
-				
-		# If 70% or more characters match, accept it
-		var match_ratio = float(match_count) / target_word.length()
-		if match_ratio > 0.7:
+	# 3. Dyslexia-friendly similarity check for acceptable length differences
+	elif recognized_text.length() >= max(2, target_word.length() - 2):
+		var similarity = calculate_improved_word_similarity(recognized_text, target_word)
+		print("Validation: Similarity score: %.2f" % similarity)
+		
+		# Stricter thresholds based on word length
+		var required_similarity = 0.0
+		if target_word.length() <= 3:
+			required_similarity = 0.85  # 85% for short words (very strict)
+		elif target_word.length() == 4:
+			required_similarity = 0.80  # 80% for medium words
+		else:
+			required_similarity = 0.75  # 75% for longer words
+		
+		if similarity >= required_similarity:
 			is_success = true
+			print("Validation: Similarity match - %.2f >= %.2f" % [similarity, required_similarity])
+		else:
+			is_success = false
+			print("Validation: Similarity too low - %.2f < %.2f" % [similarity, required_similarity])
 	
 	# Calculate bonus damage only if successful
 	if is_success:
@@ -359,3 +370,108 @@ func _get_word_length_for_dungeon() -> int:
 	else:
 		print("Warning: Could not get current dungeon, using default 3-letter words")
 		return 3
+
+# IMPROVED similarity calculation for dyslexia-friendly but accurate validation
+func calculate_improved_word_similarity(recognized: String, target: String) -> float:
+	if recognized.is_empty() or target.is_empty():
+		return 0.0
+	
+	# If length difference is too large, return low similarity
+	var length_diff = abs(recognized.length() - target.length())
+	if length_diff > 2:
+		return 0.0
+	
+	# Character position matching with dyslexia considerations
+	var position_score = 0.0
+	var max_positions = max(recognized.length(), target.length())
+	
+	# Check each position in the target word
+	for i in range(target.length()):
+		var target_char = target[i]
+		var found_match = false
+		
+		# Look for exact match at same position first
+		if i < recognized.length() and recognized[i] == target_char:
+			position_score += 1.0
+			found_match = true
+		# Then check adjacent positions for dyslexic transpositions
+		elif not found_match:
+			# Check position +/- 1 for common dyslexic letter swaps
+			for offset in [-1, 1]:
+				var check_pos = i + offset
+				if check_pos >= 0 and check_pos < recognized.length():
+					if recognized[check_pos] == target_char:
+						position_score += 0.7  # Partial credit for transposition
+						found_match = true
+						break
+			
+			# Check for common dyslexic letter confusions
+			if not found_match and i < recognized.length():
+				var recognized_char = recognized[i]
+				if _are_dyslexic_similar(recognized_char, target_char):
+					position_score += 0.8  # Good credit for dyslexic similarities
+					found_match = true
+	
+	# Character coverage - ensure most characters from target are present
+	var coverage_score = 0.0
+	for target_char in target:
+		if recognized.find(target_char) >= 0:
+			coverage_score += 1.0
+		else:
+			# Check for dyslexic similar characters
+			var found_similar = false
+			for recognized_char in recognized:
+				if _are_dyslexic_similar(recognized_char, target_char):
+					coverage_score += 0.8
+					found_similar = true
+					break
+			if not found_similar:
+				coverage_score += 0.0  # Penalty for missing characters
+	
+	# Calculate weighted similarity
+	var position_weight = 0.6
+	var coverage_weight = 0.4
+	
+	var position_similarity = position_score / target.length()
+	var coverage_similarity = coverage_score / target.length()
+	
+	var final_similarity = (position_similarity * position_weight) + (coverage_similarity * coverage_weight)
+	
+	# Apply length penalty for significantly different lengths
+	if length_diff > 0:
+		var length_penalty = (float(length_diff) / target.length()) * 0.3
+		final_similarity = max(0.0, final_similarity - length_penalty)
+	
+	print("Position score: %.2f/%.2f, Coverage: %.2f/%.2f, Final: %.2f" % [
+		position_score, float(target.length()), 
+		coverage_score, float(target.length()), 
+		final_similarity
+	])
+	
+	return final_similarity
+
+# Helper function to check for common dyslexic letter confusions
+func _are_dyslexic_similar(char1: String, char2: String) -> bool:
+	var dyslexic_pairs = {
+		"b": ["d", "p"],
+		"d": ["b", "q"], 
+		"p": ["b", "q"],
+		"q": ["p", "d"],
+		"m": ["w", "n"],
+		"w": ["m"],
+		"n": ["u", "m"],
+		"u": ["n"],
+		"f": ["v"],
+		"v": ["f"],
+		"s": ["z"],
+		"z": ["s"],
+		"g": ["j"],
+		"j": ["g"],
+		"c": ["k"],
+		"k": ["c"]
+	}
+	
+	if dyslexic_pairs.has(char1):
+		return char2 in dyslexic_pairs[char1]
+	
+	return false

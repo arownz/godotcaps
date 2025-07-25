@@ -638,11 +638,13 @@ func _on_speak_button_pressed():
 			# Extract text from live transcription (remove emoji and formatting)
 			var live_text = live_transcription_text.text
 			if "| " in live_text:
-				final_result = live_text.replace("| ", "").strip_edges()
+				final_result = live_text.replace("| ", "").strip_edges().to_lower()
 			elif "✓ " in live_text:
-				final_result = live_text.replace("✓ ", "").replace(" (Perfect!)", "").strip_edges()
+				final_result = live_text.replace("✓ ", "").replace(" (Perfect!)", "").strip_edges().to_lower()
 			elif "~ " in live_text:
-				final_result = live_text.replace("~ ", "").replace(" (Close!)", "").strip_edges()
+				final_result = live_text.replace("~ ", "").replace(" (Close!)", "").strip_edges().to_lower()
+			
+			print("DEBUG: Extracted final result from live transcription: '" + final_result + "'")
 		
 		# Process the result if we have one
 		if not final_result.is_empty():
@@ -881,7 +883,7 @@ func _process_interim_transcription(text):
 	
 	print("Processing interim text: '" + text + "'")
 		
-	# Update live transcription display
+	# Update live transcription display - normalize to lowercase for consistency
 	current_interim_result = text.to_lower().strip_edges()
 	
 	# Ensure we have the live transcription text node
@@ -891,27 +893,31 @@ func _process_interim_transcription(text):
 			print("ERROR: Could not find live_transcription_text node!")
 			return
 	
-	live_transcription_text.text = "| " + text
+	# Display text in lowercase to match the API word format
+	var display_text = text.to_lower()
+	live_transcription_text.text = "| " + display_text
 	live_transcription_text.visible = true
 	print("Updated live transcription text to: '" + live_transcription_text.text + "'")
 	
-	# Check if interim result matches target word
+	# Check if interim result matches target word (both normalized to lowercase)
 	if not challenge_word.is_empty():
 		var normalized_target = challenge_word.to_lower().strip_edges()
 		var normalized_interim = current_interim_result.replace(" ", "")
 		
+		print("DEBUG: Comparing '" + normalized_interim + "' with target '" + normalized_target + "'")
+		
 		# Visual feedback for close matches
 		if normalized_interim == normalized_target:
 			live_transcription_text.modulate = Color.GREEN
-			live_transcription_text.text = "✓ " + text + " (Perfect!)"
+			live_transcription_text.text = "✓ " + display_text + " (Perfect!)"
 			print("Perfect match detected!")
 		elif _is_close_match(normalized_interim, normalized_target):
 			live_transcription_text.modulate = Color.YELLOW
-			live_transcription_text.text = "~ " + text + " (Close!)"
+			live_transcription_text.text = "~ " + display_text + " (Close!)"
 			print("Close match detected!")
 		else:
 			live_transcription_text.modulate = Color.WHITE
-			live_transcription_text.text = "| " + text
+			live_transcription_text.text = "| " + display_text
 
 # Extract the best matching word from a phrase compared to target
 func _extract_best_word_match(phrase, target_word):

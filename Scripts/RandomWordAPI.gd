@@ -6,7 +6,6 @@ signal word_fetched
 # API URLs to try in order of preference (will be dynamically updated based on word length)
 var API_URLS = [
     "https://api.datamuse.com/words?sp=???&max=10", # Default 3-letter words and 10 words per request
-    #"https://random-word-api.herokuapp.com/word"	
 ]
 
 # State variables
