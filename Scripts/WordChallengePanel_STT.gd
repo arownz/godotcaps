@@ -16,7 +16,7 @@ var api_status_label
 
 # Word challenge properties
 var challenge_word = ""
-var bonus_damage = 5  # This will be calculated dynamically
+var bonus_damage = 5 # This will be calculated dynamically
 var random_word_api = null
 var tts = null
 var voice_options = []
@@ -59,7 +59,7 @@ func _ready():
 	
 	# Create debounce timer for live transcription
 	debounce_timer = Timer.new()
-	debounce_timer.wait_time = 0.3  # 300ms debounce
+	debounce_timer.wait_time = 0.3 # 300ms debounce
 	debounce_timer.one_shot = true
 	add_child(debounce_timer)
 	
@@ -324,7 +324,7 @@ func update_mic_permission_state(state):
 		permission_status_label.text = "X Microphone access denied"
 		permission_status_label.modulate = Color.RED
 		status_label.text = "Permission denied. Click Start Speaking to try again."
-		speak_button.disabled = false  # Keep enabled for retry
+		speak_button.disabled = false # Keep enabled for retry
 		speak_button.text = "Try Again"
 	else:
 		# Permission not determined yet, will be requested when button is clicked
@@ -672,7 +672,7 @@ func _on_speak_button_pressed():
 		else:
 			# No result found, reset UI
 			recognition_active = false
-			speak_button.text = "Start Speaking" 
+			speak_button.text = "Start Speaking"
 			speak_button.disabled = false
 			status_label.text = "No speech detected. Try again."
 			
@@ -951,7 +951,7 @@ func _process_interim_transcription(text):
 		last_change_time = time_ms
 	else:
 		# Same result - check if it's been too long without change
-		if time_ms - last_change_time > 1500:  # 1.5 seconds of same result
+		if time_ms - last_change_time > 1500: # 1.5 seconds of same result
 			# Try to unstick by slightly modifying the display
 			if not text.is_empty():
 				print("Detected potential stuck recognition, trying to unstick...")
@@ -1051,7 +1051,7 @@ func _apply_phonetic_improvements(recognized_text: String, target_word: String) 
 		# Common sound confusions
 		"bae": "bay",
 		"kay": "gay", "gay": "kay",
-		"dae": "day", "dai": "day", 
+		"dae": "day", "dai": "day",
 		"mae": "may", "mai": "may",
 		"wae": "way", "wei": "way",
 		"sae": "say", "sei": "say",
@@ -1102,7 +1102,7 @@ func _is_phonetic_match(word1: String, word2: String) -> bool:
 	# Common phonetic patterns for dyslexic learners
 	var phonetic_equivalents = [
 		["ay", "ae", "ai"], # bay, bae, bai
-		["ey", "ee", "ei"], # hey, hee, hei  
+		["ey", "ee", "ei"], # hey, hee, hei
 		["ow", "ou", "oo"], # how, hou, hoo
 		["er", "ur", "ir"], # her, hur, hir
 		["or", "our", "oar"], # for, four, foar
@@ -1189,18 +1189,18 @@ func _is_close_match(word1, word2):
 	var similarity = _calculate_word_similarity(word1, word2)
 	
 	# More lenient thresholds based on word length for dyslexic learners
-	var threshold = 0.6  # Base threshold of 60%
+	var threshold = 0.6 # Base threshold of 60%
 	
 	if word2.length() <= 3:
-		threshold = 0.7  # 70% for short words (need to be more accurate)
+		threshold = 0.7 # 70% for short words (need to be more accurate)
 	elif word2.length() <= 5:
-		threshold = 0.65  # 65% for medium words
+		threshold = 0.65 # 65% for medium words
 	else:
-		threshold = 0.6  # 60% for longer words
+		threshold = 0.6 # 60% for longer words
 	
 	# Special case for very similar lengths (likely just pronunciation differences)
 	if abs(word1.length() - word2.length()) <= 1:
-		threshold -= 0.1  # More lenient by 10%
+		threshold -= 0.1 # More lenient by 10%
 	
 	return similarity > threshold
 
@@ -1243,7 +1243,7 @@ func calculate_bonus_damage() -> int:
 		# Ensure minimum bonus of 3 and reasonable maximum (not overpowered)
 		bonus_amount = max(3, min(bonus_amount, int(player_base_damage * 0.75)))
 		print("STT Challenge: Base damage: ", player_base_damage, " Bonus: ", bonus_amount, " Total: ", player_base_damage + bonus_amount)
-		return bonus_amount  # Return only the bonus, not base + bonus
+		return bonus_amount # Return only the bonus, not base + bonus
 	else:
 		# Fallback to fixed value if battle scene not accessible
 		return 8
@@ -1362,7 +1362,7 @@ func _on_speech_recognized(text):
 				emit_signal("challenge_completed", bonus_damage)
 			else:
 				emit_signal("challenge_failed")
-			queue_free()  # Free our panel
+			queue_free() # Free our panel
 	)
 	
 	# Hide our entire panel, not just the VBoxContainer
@@ -1392,10 +1392,10 @@ func _compare_words(spoken_word, target_word):
 			return true
 		
 		# Check for common speech recognition errors with short words
-		if target_word.length() <= 4:  # Updated to handle 4-letter words better
+		if target_word.length() <= 4: # Updated to handle 4-letter words better
 			# For short words like "gate" or "blue", check for near-matches
 			var distance = levenshtein_distance(word, target_word)
-			if distance <= 1:  # Allow 1 character difference for short words
+			if distance <= 1: # Allow 1 character difference for short words
 				return true
 	
 	# Calculate Levenshtein distance for words that are similar lengths
@@ -1547,10 +1547,10 @@ func _get_word_length_for_dungeon() -> int:
 	if battle_scene and battle_scene.has_method("get_current_dungeon"):
 		var current_dungeon = battle_scene.get_current_dungeon()
 		match current_dungeon:
-			1: return 3  # Dungeon 1: 3-letter words
-			2: return 4  # Dungeon 2: 4-letter words  
-			3: return 5  # Dungeon 3: 5-letter words
-			_: return 3  # Default fallback
+			1: return 3 # Dungeon 1: 3-letter words
+			2: return 4 # Dungeon 2: 4-letter words
+			3: return 5 # Dungeon 3: 5-letter words
+			_: return 3 # Default fallback
 	else:
 		print("Warning: Could not get current dungeon, using default 3-letter words")
 		return 3

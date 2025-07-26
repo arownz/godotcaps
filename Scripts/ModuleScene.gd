@@ -277,7 +277,7 @@ func _load_dyslexia_font():
 	if not dyslexia_font:
 		print("Warning: Could not load OpenDyslexic font, falling back to default")
 
-func _apply_dyslexia_font_to_node(node: Node):
+func _apply_dyslexia_font_to_node(node: Node):	
 	if node is Label:
 		if dyslexia_font:
 			node.add_theme_font_override("font", dyslexia_font)
