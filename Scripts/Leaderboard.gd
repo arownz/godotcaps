@@ -29,7 +29,7 @@ var medal_textures = {
 # Dungeon names
 var dungeon_names = {
 	1: "The Plain",
-	2: "The Forest", 
+	2: "The Forest",
 	3: "The Mountain"
 }
 
@@ -320,7 +320,7 @@ func _setup_tab_styling():
 func _load_leaderboard_data():
 	if !Firebase.Auth or !Firebase.Auth.auth:
 		print("Leaderboard: No authentication found")
-		return;
+		return ;
 	
 	print("Leaderboard: Loading user data from Firestore...")
 	
@@ -444,9 +444,9 @@ func _extract_user_data(document) -> Dictionary:
 
 # Calculate rank based on dungeon progress
 func _calculate_rank_from_progress(highest_dungeon: int, total_stages: int) -> String:
-	if highest_dungeon >= 3 and total_stages >= 10:  # Completed multiple dungeons
+	if highest_dungeon >= 3 and total_stages >= 10: # Completed multiple dungeons
 		return "gold"
-	elif highest_dungeon >= 2 and total_stages >= 5:  # Reached second dungeon
+	elif highest_dungeon >= 2 and total_stages >= 5: # Reached second dungeon
 		return "silver"
 	else:
 		return "bronze"
@@ -459,7 +459,7 @@ func _populate_dungeon_rankings():
 	
 	# Sort users by dungeon progress (highest dungeon first, then total stages)
 	var sorted_users = all_users_data.duplicate()
-	sorted_users.sort_custom(func(a, b): 
+	sorted_users.sort_custom(func(a, b):
 		if a["highest_dungeon"] != b["highest_dungeon"]:
 			return a["highest_dungeon"] > b["highest_dungeon"]
 		if a["total_stages_completed"] != b["total_stages_completed"]:
@@ -467,7 +467,7 @@ func _populate_dungeon_rankings():
 		return a["level"] > b["level"]
 	)
 		# Add header
-	var header = _create_simple_dungeon_header()  # Use simplified version
+	var header = _create_simple_dungeon_header() # Use simplified version
 	dungeon_list.add_child(header)
 	
 	# Add spacer after header
@@ -483,7 +483,7 @@ func _populate_dungeon_rankings():
 		
 		# Highlight current user
 		if user.get("is_current_user", false):
-			entry.modulate = Color(1.2, 1.2, 0.8)  # Slightly golden tint
+			entry.modulate = Color(1.2, 1.2, 0.8) # Slightly golden tint
 		
 		# Add small spacer between entries (except last one)
 		if i < sorted_users.size() - 1:
@@ -499,13 +499,13 @@ func _populate_power_scale_rankings():
 	
 	# Sort users by power score (health + damage + durability)
 	var sorted_users = all_users_data.duplicate()
-	sorted_users.sort_custom(func(a, b): 
+	sorted_users.sort_custom(func(a, b):
 		if a["power_score"] != b["power_score"]:
 			return a["power_score"] > b["power_score"]
 		return a["level"] > b["level"]
 	)
 		# Add header
-	var header = _create_simple_power_header()  # Use simplified version
+	var header = _create_simple_power_header() # Use simplified version
 	power_list.add_child(header)
 	
 	# Add spacer after header
@@ -520,7 +520,7 @@ func _populate_power_scale_rankings():
 		
 		# Highlight current user
 		if user.get("is_current_user", false):
-			entry.modulate = Color(1.2, 1.2, 0.8)  # Slightly golden tint
+			entry.modulate = Color(1.2, 1.2, 0.8) # Slightly golden tint
 		
 		# Add small spacer between entries (except last one)
 		if i < sorted_users.size() - 1:
@@ -625,11 +625,11 @@ func _create_dungeon_entry(user_data: Dictionary, rank: int) -> Control:
 		dungeon_text = dungeon_names.get(highest_dungeon, "Unknown")
 		# Color code dungeons
 		if highest_dungeon == 1:
-			dungeon_color = Color(0.6, 0.9, 0.6)  # Green for Plains
+			dungeon_color = Color(0.6, 0.9, 0.6) # Green for Plains
 		elif highest_dungeon == 2:
-			dungeon_color = Color(0.6, 0.8, 0.4)  # Forest Green
+			dungeon_color = Color(0.6, 0.8, 0.4) # Forest Green
 		elif highest_dungeon == 3:
-			dungeon_color = Color(0.7, 0.7, 0.9)  # Mountain Blue
+			dungeon_color = Color(0.7, 0.7, 0.9) # Mountain Blue
 	else:
 		dungeon_text = "Not Started"
 		dungeon_color = Color(0.6, 0.6, 0.6)
@@ -645,15 +645,15 @@ func _create_dungeon_entry(user_data: Dictionary, rank: int) -> Control:
 	
 	# Color code based on progress
 	if stages_completed >= 15:
-		stages_color = Color(0.2, 1, 0.2)  # Green for high progress
+		stages_color = Color(0.2, 1, 0.2) # Green for high progress
 	elif stages_completed >= 10:
-		stages_color = Color(1, 1, 0.2)  # Yellow for medium progress  
+		stages_color = Color(1, 1, 0.2) # Yellow for medium progress
 	elif stages_completed >= 5:
-		stages_color = Color(1, 0.7, 0.2)  # Orange for some progress
+		stages_color = Color(1, 0.7, 0.2) # Orange for some progress
 	elif stages_completed > 0:
-		stages_color = Color(0.8, 0.8, 0.8)  # Light gray for started
+		stages_color = Color(0.8, 0.8, 0.8) # Light gray for started
 	else:
-		stages_color = Color(0.5, 0.5, 0.5)  # Dark gray for not started
+		stages_color = Color(0.5, 0.5, 0.5) # Dark gray for not started
 	
 	var stages_label = _create_simple_label(stages_text, 16, stages_color)
 	var stages_container = _create_bordered_container(stages_label, Vector2(90, 55), Color(0.05, 0.05, 0.05, 0.3))
@@ -738,9 +738,9 @@ func _create_power_entry(user_data: Dictionary, rank: int) -> Control:
 	var level = user_data.get("level", 1)
 	var level_color = Color(1, 1, 0.3)
 	if level >= 10:
-		level_color = Color(1, 0.8, 0.2)  # Gold for high levels
+		level_color = Color(1, 0.8, 0.2) # Gold for high levels
 	elif level >= 5:
-		level_color = Color(0.8, 0.8, 1)   # Light blue for medium levels
+		level_color = Color(0.8, 0.8, 1) # Light blue for medium levels
 	
 	var level_label = _create_simple_label(str(level), 16, level_color)
 	var level_container = _create_bordered_container(level_label, Vector2(80, 55), Color(0.05, 0.05, 0.05, 0.3))
@@ -771,11 +771,11 @@ func _create_power_entry(user_data: Dictionary, rank: int) -> Control:
 	
 	# Add special indicators for high power
 	if power_score >= 200:
-		power_color = Color(1, 0.2, 0.2)  # Red for very high power
+		power_color = Color(1, 0.2, 0.2) # Red for very high power
 	elif power_score >= 150:
-		power_color = Color(1, 0.6, 0.2)  # Orange for high power
+		power_color = Color(1, 0.6, 0.2) # Orange for high power
 	elif power_score >= 120:
-		power_color = Color(1, 1, 0.2)    # Yellow for good power
+		power_color = Color(1, 1, 0.2) # Yellow for good power
 	
 	var power_label = _create_simple_label(power_text, 16, power_color)
 	var power_container = _create_bordered_container(power_label, Vector2(100, 55), Color(0.05, 0.05, 0.05, 0.3))
@@ -899,13 +899,13 @@ func _create_word_recognize_entry(user_data: Dictionary, rank: int) -> Control:
 	
 	if total_words >= 100:
 		total_text += " MASTER"
-		total_color = Color(1, 0.2, 0.2)  # Red for word masters
+		total_color = Color(1, 0.2, 0.2) # Red for word masters
 	elif total_words >= 75:
 		total_text += " EXPERT"
-		total_color = Color(1, 0.6, 0.2)  # Orange for advanced
+		total_color = Color(1, 0.6, 0.2) # Orange for advanced
 	elif total_words >= 50:
 		total_text += " SKILLED"
-		total_color = Color(1, 1, 0.2)   # Yellow for intermediate
+		total_color = Color(1, 1, 0.2) # Yellow for intermediate
 	elif total_words >= 25:
 		total_color = Color(1, 0.9, 0.5) # Light yellow for beginner+
 	
@@ -928,7 +928,7 @@ func _populate_word_recognize_rankings():
 	
 	# Sort users by total word recognize challenges (highest first)
 	var sorted_users = all_users_data.duplicate()
-	sorted_users.sort_custom(func(a, b): 
+	sorted_users.sort_custom(func(a, b):
 		if a["word_recognize"] != b["word_recognize"]:
 			return a["word_recognize"] > b["word_recognize"]
 		# If word recognize is tied, sort by level
@@ -952,7 +952,7 @@ func _populate_word_recognize_rankings():
 		
 		# Highlight current user
 		if user.get("is_current_user", false):
-			entry.modulate = Color(1.2, 1.2, 0.8)  # Slightly golden tint
+			entry.modulate = Color(1.2, 1.2, 0.8) # Slightly golden tint
 		
 		# Add small spacer between entries (except last one)
 		if i < sorted_users.size() - 1:

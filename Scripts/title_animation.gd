@@ -1,10 +1,10 @@
 extends Control
 
 @onready var title_label = $TitleLabel
-var full_text = "LEXIA."
+var full_text = "LEXIA"
 var current_text = ""
-var typing_speed = 0.30  # Time between each character
-var pause_duration = 3.0  # Pause before restarting animation
+var typing_speed = 0.30 # Time between each character
+var pause_duration = 3.0 # Pause before restarting animation
 var char_index = 0
 var is_typing = true
 
