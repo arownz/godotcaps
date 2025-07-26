@@ -29,64 +29,61 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("1_nn5pp")
 
-[node name="BackButton" type="TextureButton" parent="Background"]
-custom_minimum_size = Vector2(1, 1)
-layout_mode = 0
-offset_left = 135.0
-offset_top = 678.0
-offset_right = 162.0
-offset_bottom = 705.0
-scale = Vector2(3.76293, 3.83557)
-mouse_default_cursor_shape = 2
-texture_normal = ExtResource("2_6nemp")
-texture_hover = ExtResource("4_c2xce")
-
-[node name="TextureRect" type="TextureRect" parent="Background/BackButton"]
-layout_mode = 0
-offset_left = 4.73197
-offset_top = 7.02944
-offset_right = 33.732
-offset_bottom = 31.0294
-scale = Vector2(0.612926, 0.537912)
-texture = ExtResource("3_oxpqv")
-
-[node name="Control" type="Control" parent="Background"]
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="DungeonContainer" type="Control" parent="Background"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = 173.0
-offset_bottom = -195.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="DungeonCarousel" type="HBoxContainer" parent="Background/DungeonContainer"]
+[node name="TitleLabel" type="Label" parent="."]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -879.5
-offset_top = -274.5
-offset_right = 928.5
-offset_bottom = 225.5
+offset_left = 448.0
+offset_top = 39.0
+offset_right = 1055.0
+offset_bottom = 127.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 8
+theme_override_fonts/font = ExtResource("5_hnmjh")
+theme_override_font_sizes/font_size = 48
+text = "Change Character"
+horizontal_alignment = 1
+
+[node name="DungeonContainer" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 687.0
+offset_top = 415.0
+offset_right = 687.0
+offset_bottom = 415.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="DungeonCarousel" type="HBoxContainer" parent="DungeonContainer"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -879.0
+offset_top = -243.0
+offset_right = 929.0
+offset_bottom = 257.0
 grow_horizontal = 2
 grow_vertical = 2
 alignment = 1
 
-[node name="Character1" type="Control" parent="Background/DungeonContainer/DungeonCarousel"]
+[node name="Character1" type="Control" parent="DungeonContainer/DungeonCarousel"]
 custom_minimum_size = Vector2(600, 500)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="TextureButton" type="TextureButton" parent="Background/DungeonContainer/DungeonCarousel/Character1"]
+[node name="TextureButton" type="TextureButton" parent="DungeonContainer/DungeonCarousel/Character1"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -98,7 +95,7 @@ texture_normal = ExtResource("4_rnq7s")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="NameLabel" type="Label" parent="Background/DungeonContainer/DungeonCarousel/Character1"]
+[node name="NameLabel" type="Label" parent="DungeonContainer/DungeonCarousel/Character1"]
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
@@ -116,7 +113,7 @@ theme_override_font_sizes/font_size = 36
 text = "Lexia"
 horizontal_alignment = 1
 
-[node name="StatusLabel" type="Label" parent="Background/DungeonContainer/DungeonCarousel/Character1"]
+[node name="StatusLabel" type="Label" parent="DungeonContainer/DungeonCarousel/Character1"]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
@@ -134,13 +131,13 @@ theme_override_font_sizes/font_size = 24
 text = "Unlocked"
 horizontal_alignment = 1
 
-[node name="Character2" type="Control" parent="Background/DungeonContainer/DungeonCarousel"]
+[node name="Character2" type="Control" parent="DungeonContainer/DungeonCarousel"]
 custom_minimum_size = Vector2(600, 500)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="TextureButton" type="TextureButton" parent="Background/DungeonContainer/DungeonCarousel/Character2"]
+[node name="TextureButton" type="TextureButton" parent="DungeonContainer/DungeonCarousel/Character2"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -152,7 +149,7 @@ texture_normal = ExtResource("6_c2xce")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="NameLabel" type="Label" parent="Background/DungeonContainer/DungeonCarousel/Character2"]
+[node name="NameLabel" type="Label" parent="DungeonContainer/DungeonCarousel/Character2"]
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
@@ -170,7 +167,7 @@ theme_override_font_sizes/font_size = 36
 text = "Magi"
 horizontal_alignment = 1
 
-[node name="StatusLabel" type="Label" parent="Background/DungeonContainer/DungeonCarousel/Character2"]
+[node name="StatusLabel" type="Label" parent="DungeonContainer/DungeonCarousel/Character2"]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
@@ -188,13 +185,13 @@ theme_override_font_sizes/font_size = 24
 text = "Locked"
 horizontal_alignment = 1
 
-[node name="Character3" type="Control" parent="Background/DungeonContainer/DungeonCarousel"]
+[node name="Character3" type="Control" parent="DungeonContainer/DungeonCarousel"]
 custom_minimum_size = Vector2(600, 500)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="TextureButton" type="TextureButton" parent="Background/DungeonContainer/DungeonCarousel/Character3"]
+[node name="TextureButton" type="TextureButton" parent="DungeonContainer/DungeonCarousel/Character3"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -206,7 +203,7 @@ texture_normal = ExtResource("6_c2xce")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="NameLabel" type="Label" parent="Background/DungeonContainer/DungeonCarousel/Character3"]
+[node name="NameLabel" type="Label" parent="DungeonContainer/DungeonCarousel/Character3"]
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
@@ -224,7 +221,7 @@ theme_override_font_sizes/font_size = 36
 text = "Ragnar"
 horizontal_alignment = 1
 
-[node name="StatusLabel" type="Label" parent="Background/DungeonContainer/DungeonCarousel/Character3"]
+[node name="StatusLabel" type="Label" parent="DungeonContainer/DungeonCarousel/Character3"]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
@@ -242,17 +239,17 @@ theme_override_font_sizes/font_size = 24
 text = "Locked"
 horizontal_alignment = 1
 
-[node name="NextButton" type="TextureButton" parent="Background/DungeonContainer"]
+[node name="NextButton" type="TextureButton" parent="DungeonContainer"]
 layout_mode = 1
 anchors_preset = 6
 anchor_left = 1.0
 anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
-offset_left = -1125.0
-offset_top = -111.5
-offset_right = -1025.0
-offset_bottom = 19.5
+offset_left = -362.0
+offset_top = -111.0
+offset_right = -262.0
+offset_bottom = 20.0
 grow_horizontal = 0
 grow_vertical = 2
 scale = Vector2(1.5132, 1.5132)
@@ -263,7 +260,7 @@ ignore_texture_size = true
 stretch_mode = 5
 flip_h = true
 
-[node name="NextLabel" type="Label" parent="Background/DungeonContainer/NextButton"]
+[node name="NextLabel" type="Label" parent="DungeonContainer/NextButton"]
 visible = false
 layout_mode = 0
 offset_left = 24.4515
@@ -279,15 +276,15 @@ theme_override_font_sizes/font_size = 18
 text = "Next"
 horizontal_alignment = 1
 
-[node name="PreviousButton" type="TextureButton" parent="Background/DungeonContainer"]
+[node name="PreviousButton" type="TextureButton" parent="DungeonContainer"]
 layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
-offset_left = 990.0
-offset_top = -111.5
-offset_right = 1090.0
-offset_bottom = 19.5
+offset_left = 261.0
+offset_top = -111.0
+offset_right = 361.0
+offset_bottom = 20.0
 grow_vertical = 2
 scale = Vector2(1.47096, 1.47096)
 mouse_default_cursor_shape = 2
@@ -296,7 +293,7 @@ texture_hover = ExtResource("9_hnmjh")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="PreviousLabel" type="Label" parent="Background/DungeonContainer/PreviousButton"]
+[node name="PreviousLabel" type="Label" parent="DungeonContainer/PreviousButton"]
 visible = false
 layout_mode = 0
 offset_left = -11.5571
@@ -311,26 +308,26 @@ theme_override_font_sizes/font_size = 18
 text = "Previous"
 horizontal_alignment = 1
 
-[node name="TitleLabel" type="Label" parent="."]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 419.0
-offset_top = 22.0
-offset_right = 1026.0
-offset_bottom = 110.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 8
-theme_override_fonts/font = ExtResource("5_hnmjh")
-theme_override_font_sizes/font_size = 48
-text = "Change Character"
-horizontal_alignment = 1
+[node name="BackButton" type="TextureButton" parent="."]
+custom_minimum_size = Vector2(1, 1)
+layout_mode = 0
+offset_left = 123.0
+offset_top = 690.0
+offset_right = 150.0
+offset_bottom = 717.0
+scale = Vector2(3.76293, 3.83557)
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("2_6nemp")
+texture_hover = ExtResource("4_c2xce")
+
+[node name="TextureRect" type="TextureRect" parent="BackButton"]
+layout_mode = 0
+offset_left = 4.73197
+offset_top = 7.02944
+offset_right = 33.732
+offset_bottom = 31.0294
+scale = Vector2(0.612926, 0.537912)
+texture = ExtResource("3_oxpqv")
 
 [node name="SelectButton" type="Button" parent="."]
 physics_interpolation_mode = 0
@@ -352,4 +349,4 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[connection signal="pressed" from="Background/BackButton" to="." method="_on_back_button_pressed"]
+[connection signal="pressed" from="BackButton" to="." method="_on_back_button_pressed"]

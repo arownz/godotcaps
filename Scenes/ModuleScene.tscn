@@ -1,11 +1,16 @@
-[gd_scene load_steps=17 format=3 uid="uid://cpuv0hhhcq6sv"]
+[gd_scene load_steps=22 format=3 uid="uid://cpuv0hhhcq6sv"]
 
 [ext_resource type="Texture2D" uid="uid://c75anq8c0biyi" path="res://gui/Update/UI/ui 7.png" id="2_178ft"]
 [ext_resource type="Script" uid="uid://dgboy6v1hc540" path="res://Scripts/ModuleScene.gd" id="2_module_script"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="3_regular_font"]
 [ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="4_6atma"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="4_bold_font"]
+[ext_resource type="Texture2D" uid="uid://y3p8ua2ex5oy" path="res://gui/Update/icons/phonicsicon.png" id="5_o7nev"]
 [ext_resource type="Texture2D" uid="uid://bmjd8nkagj08e" path="res://gui/Update/UI/long uncolored button.png" id="6_wwwj0"]
+[ext_resource type="Texture2D" uid="uid://bpafutairj0k6" path="res://gui/Update/icons/flipquizicon.png" id="8_jsrwg"]
+[ext_resource type="Texture2D" uid="uid://blijwx5trtlcr" path="res://gui/Update/icons/readaloudicon.png" id="9_bmnuq"]
+[ext_resource type="Texture2D" uid="uid://wjhcl5yb28ii" path="res://gui/Update/icons/chuckedicon.png" id="10_eollr"]
+[ext_resource type="Texture2D" uid="uid://cqx6x07u267ym" path="res://gui/Update/icons/syllableicon.png" id="11_d4mch"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_header"]
 bg_color = Color(0.933333, 0.764706, 0.603922, 1)
@@ -238,21 +243,19 @@ layout_mode = 2
 size_flags_horizontal = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_icon")
 
-[node name="IconLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/PhonicsCard/CardContent/Header/IconPanel"]
+[node name="IconTexture" type="TextureRect" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/PhonicsCard/CardContent/Header/IconPanel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = 3.0
-offset_bottom = 3.0
+offset_left = -10.0
+offset_top = -10.0
+offset_right = 410.0
+offset_bottom = 410.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = ExtResource("3_regular_font")
-theme_override_font_sizes/font_size = 36
-text = "🔤"
-horizontal_alignment = 1
-vertical_alignment = 1
+scale = Vector2(0.200074, 0.200074)
+texture = ExtResource("5_o7nev")
 
 [node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/PhonicsCard/CardContent/Header"]
 layout_mode = 2
@@ -346,23 +349,19 @@ layout_mode = 2
 size_flags_horizontal = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_icon")
 
-[node name="IconLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent/Header/IconPanel"]
+[node name="IconTexture" type="TextureRect" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent/Header/IconPanel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -1.0
-offset_top = 5.0
-offset_right = -1.0
-offset_bottom = 5.0
+offset_left = -11.0
+offset_top = -11.0
+offset_right = 409.0
+offset_bottom = 409.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = ExtResource("3_regular_font")
-theme_override_font_sizes/font_size = 36
-text = "🎭"
-horizontal_alignment = 1
-vertical_alignment = 1
+scale = Vector2(0.202719, 0.202719)
+texture = ExtResource("8_jsrwg")
 
 [node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent/Header"]
 layout_mode = 2
@@ -456,19 +455,19 @@ layout_mode = 2
 size_flags_horizontal = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_icon")
 
-[node name="IconLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent/Header/IconPanel"]
+[node name="IconTexture" type="TextureRect" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent/Header/IconPanel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = -10.0
+offset_top = -14.0
+offset_right = 410.0
+offset_bottom = 406.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = ExtResource("3_regular_font")
-theme_override_font_sizes/font_size = 36
-text = "📖"
-horizontal_alignment = 1
-vertical_alignment = 1
+scale = Vector2(0.204558, 0.204558)
+texture = ExtResource("9_bmnuq")
 
 [node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent/Header"]
 layout_mode = 2
@@ -562,19 +561,19 @@ layout_mode = 2
 size_flags_horizontal = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_icon")
 
-[node name="IconLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ChunkedReadingCard/CardContent/Header/IconPanel"]
+[node name="IconTexture" type="TextureRect" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ChunkedReadingCard/CardContent/Header/IconPanel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = -8.00001
+offset_top = -7.00001
+offset_right = 412.0
+offset_bottom = 413.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = ExtResource("3_regular_font")
-theme_override_font_sizes/font_size = 36
-text = "📝"
-horizontal_alignment = 1
-vertical_alignment = 1
+scale = Vector2(0.193897, 0.193897)
+texture = ExtResource("10_eollr")
 
 [node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ChunkedReadingCard/CardContent/Header"]
 layout_mode = 2
@@ -668,19 +667,19 @@ layout_mode = 2
 size_flags_horizontal = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_icon")
 
-[node name="IconLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/SyllableBuildingCard/CardContent/Header/IconPanel"]
+[node name="IconTexture" type="TextureRect" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/SyllableBuildingCard/CardContent/Header/IconPanel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = -10.0
+offset_top = -12.0
+offset_right = 410.0
+offset_bottom = 408.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = ExtResource("3_regular_font")
-theme_override_font_sizes/font_size = 36
-text = "🌈"
-horizontal_alignment = 1
-vertical_alignment = 1
+scale = Vector2(0.207245, 0.207245)
+texture = ExtResource("11_d4mch")
 
 [node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/SyllableBuildingCard/CardContent/Header"]
 layout_mode = 2

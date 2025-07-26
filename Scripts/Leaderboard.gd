@@ -1,19 +1,19 @@
 extends Control
 
 # UI References
-@onready var tab_container = $MainContainer/TabContainer
-@onready var dungeon_ranking_tab = $MainContainer/TabContainer/DungeonRankings
-@onready var power_scale_tab = $MainContainer/TabContainer/PowerScale
-@onready var word_recognize_tab = $MainContainer/TabContainer/WordRecognize
-@onready var back_button = $MainContainer/BackButton
+@onready var tab_container = $MainContainer/ContentContainer/TabContainer
+@onready var dungeon_ranking_tab = $MainContainer/ContentContainer/TabContainer.get_node("Dungeon Rankings")
+@onready var power_scale_tab = $MainContainer/ContentContainer/TabContainer.get_node("Power Scale")
+@onready var word_recognize_tab = $MainContainer/ContentContainer/TabContainer.get_node("Word Masters")
+@onready var back_button = $MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton
 
-# Leaderboard data containers
-@onready var dungeon_scroll = $MainContainer/TabContainer/DungeonRankings/ScrollContainer
-@onready var dungeon_list = $MainContainer/TabContainer/DungeonRankings/ScrollContainer/VBoxContainer
-@onready var power_scroll = $MainContainer/TabContainer/PowerScale/ScrollContainer
-@onready var power_list = $MainContainer/TabContainer/PowerScale/ScrollContainer/VBoxContainer
-@onready var word_scroll = $MainContainer/TabContainer/WordRecognize/ScrollContainer
-@onready var word_list = $MainContainer/TabContainer/WordRecognize/ScrollContainer/VBoxContainer
+# Leaderboard data containers  
+@onready var dungeon_scroll = $MainContainer/ContentContainer/TabContainer.get_node("Dungeon Rankings/ScrollContainer")
+@onready var dungeon_list = $MainContainer/ContentContainer/TabContainer.get_node("Dungeon Rankings/ScrollContainer/VBoxContainer")
+@onready var power_scroll = $MainContainer/ContentContainer/TabContainer.get_node("Power Scale/ScrollContainer")
+@onready var power_list = $MainContainer/ContentContainer/TabContainer.get_node("Power Scale/ScrollContainer/VBoxContainer")
+@onready var word_scroll = $MainContainer/ContentContainer/TabContainer.get_node("Word Masters/ScrollContainer")
+@onready var word_list = $MainContainer/ContentContainer/TabContainer.get_node("Word Masters/ScrollContainer/VBoxContainer")
 
 # Cached leaderboard data
 var all_users_data = []
@@ -92,38 +92,38 @@ func _create_responsive_bordered_container(content: Control, min_size: Vector2, 
 # Simplified header function for dungeon rankings with reliable text display
 func _create_simple_dungeon_header() -> Control:
 	var header = HBoxContainer.new()
-	header.add_theme_constant_override("separation", 2)
-	header.custom_minimum_size = Vector2(0, 45)
+	header.add_theme_constant_override("separation", 3)
+	header.custom_minimum_size = Vector2(0, 55)
 	header.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	
 	# Rank
-	var rank_label = _create_simple_label("Rank", 16, Color(1, 1, 0.8))
-	var rank_container = _create_bordered_container(rank_label, Vector2(80, 45), Color(0.2, 0.2, 0.3, 0.6))
+	var rank_label = _create_simple_label("RANK", 16, Color(1, 0.9, 0.3))
+	var rank_container = _create_bordered_container(rank_label, Vector2(100, 50), Color(0.15, 0.25, 0.35, 0.8))
 	header.add_child(rank_container)
 	
 	# Avatar
-	var pic_label = _create_simple_label("Avatar", 16, Color(1, 1, 0.8))
-	var pic_container = _create_bordered_container(pic_label, Vector2(60, 45), Color(0.2, 0.2, 0.3, 0.6))
+	var pic_label = _create_simple_label("AVATAR", 14, Color(0.8, 0.9, 1))
+	var pic_container = _create_bordered_container(pic_label, Vector2(80, 50), Color(0.15, 0.25, 0.35, 0.8))
 	header.add_child(pic_container)
-		# Player
-	var name_label = _create_simple_label("Player", 16, Color(1, 1, 0.8))
-	var name_container = _create_bordered_container(name_label, Vector2(220, 45), Color(0.2, 0.2, 0.3, 0.6))  # was 200
-
+	
+	# Player
+	var name_label = _create_simple_label("PLAYER", 16, Color(0.9, 0.95, 1))
+	var name_container = _create_bordered_container(name_label, Vector2(240, 50), Color(0.15, 0.25, 0.35, 0.8))
 	header.add_child(name_container)
 	
 	# Medal
-	var medal_label = _create_simple_label("Medal", 16, Color(1, 1, 0.8))
-	var medal_container = _create_bordered_container(medal_label, Vector2(80, 45), Color(0.2, 0.2, 0.3, 0.6))
+	var medal_label = _create_simple_label("MEDAL", 16, Color(1, 0.8, 0.2))
+	var medal_container = _create_bordered_container(medal_label, Vector2(100, 50), Color(0.15, 0.25, 0.35, 0.8))
 	header.add_child(medal_container)
 	
 	# Highest Dungeon
-	var dungeon_label = _create_simple_label("Dungeon", 16, Color(1, 1, 0.8))
-	var dungeon_container = _create_bordered_container(dungeon_label, Vector2(160, 45), Color(0.2, 0.2, 0.3, 0.6))
+	var dungeon_label = _create_simple_label("DUNGEON", 16, Color(0.7, 0.9, 0.7))
+	var dungeon_container = _create_bordered_container(dungeon_label, Vector2(180, 50), Color(0.15, 0.25, 0.35, 0.8))
 	header.add_child(dungeon_container)
 	
 	# Stages
-	var stages_label = _create_simple_label("Stage", 16, Color(1, 1, 0.8))
-	var stages_container = _create_bordered_container(stages_label, Vector2(70, 45), Color(0.2, 0.2, 0.3, 0.6))
+	var stages_label = _create_simple_label("STAGE", 16, Color(0.9, 0.7, 0.9))
+	var stages_container = _create_bordered_container(stages_label, Vector2(90, 50), Color(0.15, 0.25, 0.35, 0.8))
 	header.add_child(stages_container)
 	
 	return header
@@ -131,48 +131,48 @@ func _create_simple_dungeon_header() -> Control:
 # Simplified header function for power scale rankings with reliable text display
 func _create_simple_power_header() -> Control:
 	var header = HBoxContainer.new()
-	header.add_theme_constant_override("separation", 2)
-	header.custom_minimum_size = Vector2(0, 45)
+	header.add_theme_constant_override("separation", 3)
+	header.custom_minimum_size = Vector2(0, 55)
 	header.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	
 	# Rank
-	var rank_label = _create_simple_label("Rank", 16, Color(1, 1, 0.8))
-	var rank_container = _create_bordered_container(rank_label, Vector2(80, 45), Color(0.2, 0.2, 0.3, 0.6))
+	var rank_label = _create_simple_label("RANK", 16, Color(1, 0.9, 0.3))
+	var rank_container = _create_bordered_container(rank_label, Vector2(100, 50), Color(0.15, 0.25, 0.35, 0.8))
 	header.add_child(rank_container)
 	
 	# Avatar
-	var pic_label = _create_simple_label("Avatar", 16, Color(1, 1, 0.8))
-	var pic_container = _create_bordered_container(pic_label, Vector2(60, 45), Color(0.2, 0.2, 0.3, 0.6))
+	var pic_label = _create_simple_label("AVATAR", 14, Color(0.8, 0.9, 1))
+	var pic_container = _create_bordered_container(pic_label, Vector2(80, 50), Color(0.15, 0.25, 0.35, 0.8))
 	header.add_child(pic_container)
-		# Player
-	var name_label = _create_simple_label("Player", 16, Color(1, 1, 0.8))
-	var name_container = _create_bordered_container(name_label, Vector2(220, 45), Color(0.2, 0.2, 0.3, 0.6))  # was 200
-
+	
+	# Player
+	var name_label = _create_simple_label("PLAYER", 16, Color(0.9, 0.95, 1))
+	var name_container = _create_bordered_container(name_label, Vector2(200, 50), Color(0.15, 0.25, 0.35, 0.8))
 	header.add_child(name_container)
 	
 	# Level
-	var level_label = _create_simple_label("Level", 16, Color(1, 1, 0.8))
-	var level_container = _create_bordered_container(level_label, Vector2(60, 45), Color(0.2, 0.2, 0.3, 0.6))
+	var level_label = _create_simple_label("LEVEL", 16, Color(1, 1, 0.3))
+	var level_container = _create_bordered_container(level_label, Vector2(80, 50), Color(0.15, 0.25, 0.35, 0.8))
 	header.add_child(level_container)
 	
 	# Health (green color)
-	var health_label = _create_simple_label("Health", 16, Color(0.2, 1, 0.2))
-	var health_container = _create_bordered_container(health_label, Vector2(90, 45), Color(0.2, 0.2, 0.3, 0.6))
+	var health_label = _create_simple_label("HEALTH", 16, Color(0.3, 1, 0.3))
+	var health_container = _create_bordered_container(health_label, Vector2(100, 50), Color(0.15, 0.25, 0.35, 0.8))
 	header.add_child(health_container)
 	
 	# Attack (red color)
-	var attack_label = _create_simple_label("Attack", 16, Color(1, 0.2, 0.2))
-	var attack_container = _create_bordered_container(attack_label, Vector2(90, 45), Color(0.2, 0.2, 0.3, 0.6))
+	var attack_label = _create_simple_label("ATTACK", 16, Color(1, 0.3, 0.3))
+	var attack_container = _create_bordered_container(attack_label, Vector2(100, 50), Color(0.15, 0.25, 0.35, 0.8))
 	header.add_child(attack_container)
 	
 	# Durability (blue color)
-	var durability_label = _create_simple_label("Defense", 16, Color(0.2, 0.6, 1))
-	var durability_container = _create_bordered_container(durability_label, Vector2(100, 45), Color(0.2, 0.2, 0.3, 0.6))
+	var durability_label = _create_simple_label("DEFENSE", 16, Color(0.3, 0.7, 1))
+	var durability_container = _create_bordered_container(durability_label, Vector2(110, 50), Color(0.15, 0.25, 0.35, 0.8))
 	header.add_child(durability_container)
 	
 	# Power Scale (yellow color)
-	var power_label = _create_simple_label("Scale", 16, Color(1, 1, 0.2))
-	var power_container = _create_bordered_container(power_label, Vector2(100, 45), Color(0.2, 0.2, 0.3, 0.6))
+	var power_label = _create_simple_label("POWER", 16, Color(1, 0.8, 0.2))
+	var power_container = _create_bordered_container(power_label, Vector2(100, 50), Color(0.15, 0.25, 0.35, 0.8))
 	header.add_child(power_container)
 	
 	return header
@@ -180,38 +180,38 @@ func _create_simple_power_header() -> Control:
 # Simplified header function for word recognize rankings with reliable text display
 func _create_simple_word_recognize_header() -> Control:
 	var header = HBoxContainer.new()
-	header.add_theme_constant_override("separation", 2)
-	header.custom_minimum_size = Vector2(0, 45)
+	header.add_theme_constant_override("separation", 3)
+	header.custom_minimum_size = Vector2(0, 55)
 	header.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	
 	# Rank
-	var rank_label = _create_simple_label("Rank", 16, Color(1, 1, 0.8))
-	var rank_container = _create_bordered_container(rank_label, Vector2(80, 45), Color(0.2, 0.2, 0.3, 0.6))
+	var rank_label = _create_simple_label("RANK", 16, Color(1, 0.9, 0.3))
+	var rank_container = _create_bordered_container(rank_label, Vector2(100, 50), Color(0.15, 0.25, 0.35, 0.8))
 	header.add_child(rank_container)
 	
 	# Avatar
-	var pic_label = _create_simple_label("Avatar", 16, Color(1, 1, 0.8))
-	var pic_container = _create_bordered_container(pic_label, Vector2(60, 45), Color(0.2, 0.2, 0.3, 0.6))
+	var pic_label = _create_simple_label("AVATAR", 14, Color(0.8, 0.9, 1))
+	var pic_container = _create_bordered_container(pic_label, Vector2(80, 50), Color(0.15, 0.25, 0.35, 0.8))
 	header.add_child(pic_container)
 	
 	# Player
-	var name_label = _create_simple_label("Player", 16, Color(1, 1, 0.8))
-	var name_container = _create_bordered_container(name_label, Vector2(220, 45), Color(0.2, 0.2, 0.3, 0.6))
+	var name_label = _create_simple_label("PLAYER", 16, Color(0.9, 0.95, 1))
+	var name_container = _create_bordered_container(name_label, Vector2(220, 50), Color(0.15, 0.25, 0.35, 0.8))
 	header.add_child(name_container)
 	
 	# STT Completed (blue-green color)
-	var stt_label = _create_simple_label("STT", 16, Color(0.2, 0.8, 1))
-	var stt_container = _create_bordered_container(stt_label, Vector2(80, 45), Color(0.2, 0.2, 0.3, 0.6))
+	var stt_label = _create_simple_label("STT", 16, Color(0.3, 0.8, 1))
+	var stt_container = _create_bordered_container(stt_label, Vector2(100, 50), Color(0.15, 0.25, 0.35, 0.8))
 	header.add_child(stt_container)
 	
 	# Whiteboard Completed (green-blue color)
-	var wb_label = _create_simple_label("Whiteboard", 16, Color(0.2, 1, 0.8))
-	var wb_container = _create_bordered_container(wb_label, Vector2(120, 45), Color(0.2, 0.2, 0.3, 0.6))
+	var wb_label = _create_simple_label("WHITEBOARD", 14, Color(0.3, 1, 0.8))
+	var wb_container = _create_bordered_container(wb_label, Vector2(140, 50), Color(0.15, 0.25, 0.35, 0.8))
 	header.add_child(wb_container)
 	
 	# Total WordRecognize (bright green color)
-	var total_label = _create_simple_label("Total", 16, Color(0.4, 1, 0.4))
-	var total_container = _create_bordered_container(total_label, Vector2(80, 45), Color(0.2, 0.2, 0.3, 0.6))
+	var total_label = _create_simple_label("TOTAL", 16, Color(0.5, 1, 0.5))
+	var total_container = _create_bordered_container(total_label, Vector2(100, 50), Color(0.15, 0.25, 0.35, 0.8))
 	header.add_child(total_container)
 	
 	return header
@@ -237,21 +237,84 @@ func _create_simple_label(text: String, font_size: int = 16, color: Color = Colo
 	return label
 
 func _ready():
+	_setup_tab_styling()
+	_load_leaderboard_data()
+	
 	# Connect back button
-	back_button.pressed.connect(_on_back_button_pressed)
+	if back_button:
+		back_button.pressed.connect(_on_back_button_pressed)
+
+# Setup enhanced tab styling for modern appearance
+func _setup_tab_styling():
+	var tabs = tab_container
 	
-	# Load leaderboard data
-	await _load_leaderboard_data()
+	# Create tab bar style
+	var tab_style = StyleBoxFlat.new()
+	tab_style.bg_color = Color(0.15, 0.2, 0.3, 0.8)
+	tab_style.corner_radius_top_left = 8
+	tab_style.corner_radius_top_right = 8
+	tab_style.border_width_top = 2
+	tab_style.border_width_left = 1
+	tab_style.border_width_right = 1
+	tab_style.border_color = Color(0.4, 0.5, 0.7, 0.8)
+	tab_style.content_margin_left = 15
+	tab_style.content_margin_right = 15
+	tab_style.content_margin_top = 8
+	tab_style.content_margin_bottom = 8
 	
-	# Populate all tabs
-	_populate_dungeon_rankings()
-	_populate_power_scale_rankings()
+	# Active tab style
+	var tab_selected_style = StyleBoxFlat.new()
+	tab_selected_style.bg_color = Color(0.25, 0.35, 0.5, 0.9)
+	tab_selected_style.corner_radius_top_left = 8
+	tab_selected_style.corner_radius_top_right = 8
+	tab_selected_style.border_width_top = 3
+	tab_selected_style.border_width_left = 2
+	tab_selected_style.border_width_right = 2
+	tab_selected_style.border_color = Color(0.6, 0.7, 0.9, 1.0)
+	tab_selected_style.content_margin_left = 15
+	tab_selected_style.content_margin_right = 15
+	tab_selected_style.content_margin_top = 8
+	tab_selected_style.content_margin_bottom = 8
 	
-	# Only populate word recognize tab if the nodes exist
-	if word_recognize_tab and word_scroll and word_list:
-		_populate_word_recognize_rankings()
-	else:
-		print("WordRecognize tab not found in scene - please add it to Leaderboard.tscn")
+	# Hover style
+	var tab_hover_style = StyleBoxFlat.new()
+	tab_hover_style.bg_color = Color(0.2, 0.25, 0.35, 0.85)
+	tab_hover_style.corner_radius_top_left = 8
+	tab_hover_style.corner_radius_top_right = 8
+	tab_hover_style.border_width_top = 2
+	tab_hover_style.border_width_left = 1
+	tab_hover_style.border_width_right = 1
+	tab_hover_style.border_color = Color(0.5, 0.6, 0.8, 0.9)
+	tab_hover_style.content_margin_left = 15
+	tab_hover_style.content_margin_right = 15
+	tab_hover_style.content_margin_top = 8
+	tab_hover_style.content_margin_bottom = 8
+	
+	# Apply styles to tab container
+	tabs.add_theme_stylebox_override("tab_unselected", tab_style)
+	tabs.add_theme_stylebox_override("tab_selected", tab_selected_style)
+	tabs.add_theme_stylebox_override("tab_hovered", tab_hover_style)
+	
+	# Tab font styling
+	tabs.add_theme_color_override("font_unselected_color", Color(0.9, 0.9, 0.9, 0.8))
+	tabs.add_theme_color_override("font_selected_color", Color(1, 1, 1, 1))
+	tabs.add_theme_color_override("font_hovered_color", Color(1, 1, 0.9, 0.9))
+	
+	# Panel background for tab content
+	var panel_style = StyleBoxFlat.new()
+	panel_style.bg_color = Color(0.05, 0.08, 0.12, 0.95)
+	panel_style.corner_radius_bottom_left = 12
+	panel_style.corner_radius_bottom_right = 12
+	panel_style.border_width_left = 2
+	panel_style.border_width_right = 2
+	panel_style.border_width_bottom = 2
+	panel_style.border_color = Color(0.4, 0.5, 0.7, 0.6)
+	panel_style.content_margin_left = 15
+	panel_style.content_margin_right = 15
+	panel_style.content_margin_top = 15
+	panel_style.content_margin_bottom = 15
+	
+	tabs.add_theme_stylebox_override("panel", panel_style)
 
 # Load all user data from Firestore for leaderboard
 func _load_leaderboard_data():
@@ -279,6 +342,11 @@ func _load_leaderboard_data():
 					all_users_data.append(user_data)
 		
 		print("Leaderboard: Processed " + str(all_users_data.size()) + " valid user profiles")
+		
+		# Populate all ranking tabs
+		_populate_dungeon_rankings()
+		_populate_power_scale_rankings()
+		_populate_word_recognize_rankings()
 	else:
 		print("Leaderboard: No user documents found")
 
@@ -463,16 +531,46 @@ func _populate_power_scale_rankings():
 # Create entry for dungeon rankings
 func _create_dungeon_entry(user_data: Dictionary, rank: int) -> Control:
 	var entry = HBoxContainer.new()
-	entry.add_theme_constant_override("separation", 2)
-	entry.custom_minimum_size = Vector2(0, 50)
+	entry.add_theme_constant_override("separation", 3)
+	entry.custom_minimum_size = Vector2(0, 60)
 	
-	# Rank number
-	var rank_label = _create_simple_label(str(rank), 16, Color(1, 1, 1))
-	var rank_container = _create_bordered_container(rank_label, Vector2(80, 45), Color(0.2, 0.2, 0.3, 0.6))
+	# Add alternating row colors for better readability
+	var row_bg = Panel.new()
+	if rank % 2 == 0:
+		var style_box = StyleBoxFlat.new()
+		style_box.bg_color = Color(0.95, 0.96, 0.98, 0.3)
+		style_box.corner_radius_top_left = 8
+		style_box.corner_radius_top_right = 8
+		style_box.corner_radius_bottom_right = 8
+		style_box.corner_radius_bottom_left = 8
+		row_bg.add_theme_stylebox_override("panel", style_box)
+		row_bg.z_index = -1
+	
+	# Rank number with special styling for top 3
+	var rank_text = str(rank)
+	var rank_color = Color(1, 1, 1)
+	var bg_color = Color(0.15, 0.2, 0.3, 0.7)
+	
+	if rank == 1:
+		rank_text = "#" + str(rank)
+		rank_color = Color(1, 0.85, 0.2)
+		bg_color = Color(0.8, 0.6, 0.1, 0.3)
+	elif rank == 2:
+		rank_text = "#" + str(rank)
+		rank_color = Color(0.9, 0.9, 0.9)
+		bg_color = Color(0.6, 0.6, 0.6, 0.3)
+	elif rank == 3:
+		rank_text = "#" + str(rank)
+		rank_color = Color(0.8, 0.5, 0.2)
+		bg_color = Color(0.6, 0.4, 0.1, 0.3)
+	
+	var rank_label = _create_simple_label(rank_text, 16, rank_color)
+	var rank_container = _create_bordered_container(rank_label, Vector2(100, 55), bg_color)
 	entry.add_child(rank_container)
-		# Profile picture
+	
+	# Profile picture with better styling
 	var profile_rect = TextureRect.new()
-	profile_rect.custom_minimum_size = Vector2(40, 40)
+	profile_rect.custom_minimum_size = Vector2(45, 45)
 	profile_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	profile_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	var profile_id = user_data.get("profile_picture", "13")
@@ -483,21 +581,29 @@ func _create_dungeon_entry(user_data: Dictionary, rank: int) -> Control:
 		profile_rect.texture = profile_texture
 	
 	var profile_center = Control.new()
-	profile_center.custom_minimum_size = Vector2(60, 50)
+	profile_center.custom_minimum_size = Vector2(80, 60)
 	profile_center.add_child(profile_rect)
-	profile_rect.position = Vector2(10, 5)
-	var profile_container = _create_bordered_container(profile_center, Vector2(60, 50), Color(0.05, 0.05, 0.05, 0.2))
+	profile_rect.position = Vector2(17, 7)
+	var profile_container = _create_bordered_container(profile_center, Vector2(80, 55), Color(0.05, 0.05, 0.05, 0.3))
 	entry.add_child(profile_container)
 	
-	# Player name
-	var name_label = _create_simple_label(user_data.get("username", "Unknown"), 16, Color(1, 1, 1), HORIZONTAL_ALIGNMENT_LEFT)
-	var name_container = _create_bordered_container(name_label, Vector2(220, 45), Color(0.2, 0.2, 0.3, 0.6))  # was 200
-
+	# Player name with highlighting for current user
+	var player_name = user_data.get("username", "Unknown")
+	var name_color = Color(1, 1, 1)
+	var name_bg_color = Color(0.1, 0.15, 0.25, 0.7)
+	
+	if user_data.get("is_current_user", false):
+		name_color = Color(1, 1, 0.3)
+		name_bg_color = Color(0.3, 0.25, 0.1, 0.5)
+		player_name = "* " + player_name + " (You)"
+	
+	var name_label = _create_simple_label(player_name, 16, name_color, HORIZONTAL_ALIGNMENT_LEFT)
+	var name_container = _create_bordered_container(name_label, Vector2(240, 55), name_bg_color)
 	entry.add_child(name_container)
 	
-	# Medal
+	# Medal with glow effect
 	var medal_rect = TextureRect.new()
-	medal_rect.custom_minimum_size = Vector2(30, 30)
+	medal_rect.custom_minimum_size = Vector2(35, 35)
 	medal_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	medal_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	var rank_key = user_data.get("rank", "bronze")
@@ -505,26 +611,52 @@ func _create_dungeon_entry(user_data: Dictionary, rank: int) -> Control:
 		medal_rect.texture = medal_textures[rank_key]
 	
 	var medal_center = Control.new()
-	medal_center.custom_minimum_size = Vector2(80, 50)
+	medal_center.custom_minimum_size = Vector2(100, 60)
 	medal_center.add_child(medal_rect)
-	medal_rect.position = Vector2(25, 10)
-	var medal_container = _create_bordered_container(medal_center, Vector2(80, 50), Color(0.05, 0.05, 0.05, 0.2))
+	medal_rect.position = Vector2(32, 12)
+	var medal_container = _create_bordered_container(medal_center, Vector2(100, 55), Color(0.05, 0.05, 0.05, 0.3))
 	entry.add_child(medal_container)
 	
-	# Highest dungeon
+	# Highest dungeon with color coding
 	var dungeon_text = ""
+	var dungeon_color = Color(0.8, 0.8, 0.8)
 	var highest_dungeon = user_data.get("highest_dungeon", 0)
 	if highest_dungeon > 0:
 		dungeon_text = dungeon_names.get(highest_dungeon, "Unknown")
+		# Color code dungeons
+		if highest_dungeon == 1:
+			dungeon_color = Color(0.6, 0.9, 0.6)  # Green for Plains
+		elif highest_dungeon == 2:
+			dungeon_color = Color(0.6, 0.8, 0.4)  # Forest Green
+		elif highest_dungeon == 3:
+			dungeon_color = Color(0.7, 0.7, 0.9)  # Mountain Blue
 	else:
 		dungeon_text = "Not Started"
-	var dungeon_label = _create_simple_label(dungeon_text, 16, Color(1, 1, 1))
-	var dungeon_container = _create_bordered_container(dungeon_label, Vector2(160, 50), Color(0.05, 0.05, 0.05, 0.2))
+		dungeon_color = Color(0.6, 0.6, 0.6)
+	
+	var dungeon_label = _create_simple_label(dungeon_text, 16, dungeon_color)
+	var dungeon_container = _create_bordered_container(dungeon_label, Vector2(180, 55), Color(0.05, 0.05, 0.05, 0.3))
 	entry.add_child(dungeon_container)
 	
-	# Total stages completed
-	var stages_label = _create_simple_label(str(user_data.get("total_stages_completed", 0)), 16, Color(1, 1, 1))
-	var stages_container = _create_bordered_container(stages_label, Vector2(70, 50), Color(0.05, 0.05, 0.05, 0.2))
+	# Total stages completed with progress indication
+	var stages_completed = user_data.get("total_stages_completed", 0)
+	var stages_text = str(stages_completed)
+	var stages_color = Color(1, 1, 1)
+	
+	# Color code based on progress
+	if stages_completed >= 15:
+		stages_color = Color(0.2, 1, 0.2)  # Green for high progress
+	elif stages_completed >= 10:
+		stages_color = Color(1, 1, 0.2)  # Yellow for medium progress  
+	elif stages_completed >= 5:
+		stages_color = Color(1, 0.7, 0.2)  # Orange for some progress
+	elif stages_completed > 0:
+		stages_color = Color(0.8, 0.8, 0.8)  # Light gray for started
+	else:
+		stages_color = Color(0.5, 0.5, 0.5)  # Dark gray for not started
+	
+	var stages_label = _create_simple_label(stages_text, 16, stages_color)
+	var stages_container = _create_bordered_container(stages_label, Vector2(90, 55), Color(0.05, 0.05, 0.05, 0.3))
 	entry.add_child(stages_container)
 	
 	return entry
@@ -532,17 +664,46 @@ func _create_dungeon_entry(user_data: Dictionary, rank: int) -> Control:
 # Create entry for power scale rankings
 func _create_power_entry(user_data: Dictionary, rank: int) -> Control:
 	var entry = HBoxContainer.new()
-	entry.add_theme_constant_override("separation", 2)
-	entry.custom_minimum_size = Vector2(0, 50)
+	entry.add_theme_constant_override("separation", 3)
+	entry.custom_minimum_size = Vector2(0, 60)
 	
-	# Rank number
-	var rank_label = _create_simple_label(str(rank), 16, Color(1, 1, 1))
-	var rank_container = _create_bordered_container(rank_label, Vector2(80, 45), Color(0.2, 0.2, 0.3, 0.6))
+	# Add alternating row colors for better readability
+	var row_bg = Panel.new()
+	if rank % 2 == 0:
+		var style_box = StyleBoxFlat.new()
+		style_box.bg_color = Color(0.95, 0.96, 0.98, 0.3)
+		style_box.corner_radius_top_left = 8
+		style_box.corner_radius_top_right = 8
+		style_box.corner_radius_bottom_right = 8
+		style_box.corner_radius_bottom_left = 8
+		row_bg.add_theme_stylebox_override("panel", style_box)
+		row_bg.z_index = -1
+	
+	# Rank number with special styling for top 3
+	var rank_text = str(rank)
+	var rank_color = Color(1, 1, 1)
+	var bg_color = Color(0.15, 0.2, 0.3, 0.7)
+	
+	if rank == 1:
+		rank_text = "#" + str(rank)
+		rank_color = Color(1, 0.85, 0.2)
+		bg_color = Color(0.8, 0.6, 0.1, 0.3)
+	elif rank == 2:
+		rank_text = "#" + str(rank)
+		rank_color = Color(0.9, 0.9, 0.9)
+		bg_color = Color(0.6, 0.6, 0.6, 0.3)
+	elif rank == 3:
+		rank_text = "#" + str(rank)
+		rank_color = Color(0.8, 0.5, 0.2)
+		bg_color = Color(0.6, 0.4, 0.1, 0.3)
+	
+	var rank_label = _create_simple_label(rank_text, 16, rank_color)
+	var rank_container = _create_bordered_container(rank_label, Vector2(100, 55), bg_color)
 	entry.add_child(rank_container)
 	
 	# Profile picture
 	var profile_rect = TextureRect.new()
-	profile_rect.custom_minimum_size = Vector2(40, 40)
+	profile_rect.custom_minimum_size = Vector2(45, 45)
 	profile_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	profile_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	var profile_id = user_data.get("profile_picture", "13")
@@ -553,39 +714,71 @@ func _create_power_entry(user_data: Dictionary, rank: int) -> Control:
 		profile_rect.texture = profile_texture
 	
 	var profile_center = Control.new()
-	profile_center.custom_minimum_size = Vector2(60, 50)
+	profile_center.custom_minimum_size = Vector2(80, 60)
 	profile_center.add_child(profile_rect)
-	profile_rect.position = Vector2(10, 5)
-	var profile_container = _create_bordered_container(profile_center, Vector2(60, 50), Color(0.05, 0.05, 0.05, 0.2))
+	profile_rect.position = Vector2(17, 7)
+	var profile_container = _create_bordered_container(profile_center, Vector2(80, 55), Color(0.05, 0.05, 0.05, 0.3))
 	entry.add_child(profile_container)
-		# Player name
-	var name_label = _create_simple_label(user_data.get("username", "Unknown"), 16, Color(1, 1, 1), HORIZONTAL_ALIGNMENT_LEFT)
-	var name_container = _create_bordered_container(name_label, Vector2(220, 45), Color(0.2, 0.2, 0.3, 0.6))  # was 200
-
+	
+	# Player name with highlighting for current user
+	var player_name = user_data.get("username", "Unknown")
+	var name_color = Color(1, 1, 1)
+	var name_bg_color = Color(0.1, 0.15, 0.25, 0.7)
+	
+	if user_data.get("is_current_user", false):
+		name_color = Color(1, 1, 0.3)
+		name_bg_color = Color(0.3, 0.25, 0.1, 0.5)
+		player_name = "* " + player_name + " (You)"
+	
+	var name_label = _create_simple_label(player_name, 16, name_color, HORIZONTAL_ALIGNMENT_LEFT)
+	var name_container = _create_bordered_container(name_label, Vector2(200, 55), name_bg_color)
 	entry.add_child(name_container)
 	
-	# Level
-	var level_label = _create_simple_label(str(user_data.get("level", 1)), 16, Color(1, 1, 1))
-	var level_container = _create_bordered_container(level_label, Vector2(60, 50), Color(0.05, 0.05, 0.05, 0.2))
+	# Level with color coding
+	var level = user_data.get("level", 1)
+	var level_color = Color(1, 1, 0.3)
+	if level >= 10:
+		level_color = Color(1, 0.8, 0.2)  # Gold for high levels
+	elif level >= 5:
+		level_color = Color(0.8, 0.8, 1)   # Light blue for medium levels
+	
+	var level_label = _create_simple_label(str(level), 16, level_color)
+	var level_container = _create_bordered_container(level_label, Vector2(80, 55), Color(0.05, 0.05, 0.05, 0.3))
 	entry.add_child(level_container)
 	
 	# Health (with color)
-	var health_label = _create_simple_label(str(user_data.get("health", 100)), 16, Color(0.8, 1, 0.8))
-	var health_container = _create_bordered_container(health_label, Vector2(90, 50), Color(0.05, 0.05, 0.05, 0.2))
+	var health = user_data.get("health", 100)
+	var health_label = _create_simple_label(str(health), 16, Color(0.3, 1, 0.3))
+	var health_container = _create_bordered_container(health_label, Vector2(100, 55), Color(0.05, 0.05, 0.05, 0.3))
 	entry.add_child(health_container)
 	
 	# Attack/Damage (with color)
-	var attack_label = _create_simple_label(str(user_data.get("damage", 10)), 16, Color(1, 0.8, 0.8))
-	var attack_container = _create_bordered_container(attack_label, Vector2(90, 50), Color(0.05, 0.05, 0.05, 0.2))
-	entry.add_child(attack_container)
+	var damage = user_data.get("damage", 10)
+	var damage_label = _create_simple_label(str(damage), 16, Color(1, 0.3, 0.3))
+	var damage_container = _create_bordered_container(damage_label, Vector2(100, 55), Color(0.05, 0.05, 0.05, 0.3))
+	entry.add_child(damage_container)
 	
-	# Durability (with color)
-	var durability_label = _create_simple_label(str(user_data.get("durability", 5)), 16, Color(0.8, 0.8, 1))
-	var durability_container = _create_bordered_container(durability_label, Vector2(100, 50), Color(0.05, 0.05, 0.05, 0.2))
+	# Durability/Defense (with color)
+	var durability = user_data.get("durability", 5)
+	var durability_label = _create_simple_label(str(durability), 16, Color(0.3, 0.7, 1))
+	var durability_container = _create_bordered_container(durability_label, Vector2(110, 55), Color(0.05, 0.05, 0.05, 0.3))
 	entry.add_child(durability_container)
-		# Power score (with color)
-	var power_label = _create_simple_label(str(user_data.get("power_score", 115)), 16, Color(1, 1, 0.8))
-	var power_container = _create_bordered_container(power_label, Vector2(100, 50), Color(0.05, 0.05, 0.05, 0.2))
+	
+	# Power score (total with special styling)
+	var power_score = user_data.get("power_score", health + damage + durability)
+	var power_text = str(power_score)
+	var power_color = Color(1, 0.8, 0.2)
+	
+	# Add special indicators for high power
+	if power_score >= 200:
+		power_color = Color(1, 0.2, 0.2)  # Red for very high power
+	elif power_score >= 150:
+		power_color = Color(1, 0.6, 0.2)  # Orange for high power
+	elif power_score >= 120:
+		power_color = Color(1, 1, 0.2)    # Yellow for good power
+	
+	var power_label = _create_simple_label(power_text, 16, power_color)
+	var power_container = _create_bordered_container(power_label, Vector2(100, 55), Color(0.05, 0.05, 0.05, 0.3))
 	entry.add_child(power_container)
 	
 	return entry
@@ -593,17 +786,46 @@ func _create_power_entry(user_data: Dictionary, rank: int) -> Control:
 # Create entry for word recognize rankings
 func _create_word_recognize_entry(user_data: Dictionary, rank: int) -> Control:
 	var entry = HBoxContainer.new()
-	entry.add_theme_constant_override("separation", 2)
-	entry.custom_minimum_size = Vector2(0, 50)
+	entry.add_theme_constant_override("separation", 3)
+	entry.custom_minimum_size = Vector2(0, 60)
 	
-	# Rank number
-	var rank_label = _create_simple_label(str(rank), 16, Color(1, 1, 1))
-	var rank_container = _create_bordered_container(rank_label, Vector2(80, 45), Color(0.2, 0.2, 0.3, 0.6))
+	# Add alternating row colors for better readability
+	var row_bg = Panel.new()
+	if rank % 2 == 0:
+		var style_box = StyleBoxFlat.new()
+		style_box.bg_color = Color(0.95, 0.96, 0.98, 0.3)
+		style_box.corner_radius_top_left = 8
+		style_box.corner_radius_top_right = 8
+		style_box.corner_radius_bottom_right = 8
+		style_box.corner_radius_bottom_left = 8
+		row_bg.add_theme_stylebox_override("panel", style_box)
+		row_bg.z_index = -1
+	
+	# Rank number with special styling for top 3
+	var rank_text = str(rank)
+	var rank_color = Color(1, 1, 1)
+	var bg_color = Color(0.15, 0.2, 0.3, 0.7)
+	
+	if rank == 1:
+		rank_text = "#" + str(rank)
+		rank_color = Color(1, 0.85, 0.2)
+		bg_color = Color(0.8, 0.6, 0.1, 0.3)
+	elif rank == 2:
+		rank_text = "#" + str(rank)
+		rank_color = Color(0.9, 0.9, 0.9)
+		bg_color = Color(0.6, 0.6, 0.6, 0.3)
+	elif rank == 3:
+		rank_text = "#" + str(rank)
+		rank_color = Color(0.8, 0.5, 0.2)
+		bg_color = Color(0.6, 0.4, 0.1, 0.3)
+	
+	var rank_label = _create_simple_label(rank_text, 16, rank_color)
+	var rank_container = _create_bordered_container(rank_label, Vector2(100, 55), bg_color)
 	entry.add_child(rank_container)
 	
 	# Profile picture
 	var profile_rect = TextureRect.new()
-	profile_rect.custom_minimum_size = Vector2(40, 40)
+	profile_rect.custom_minimum_size = Vector2(45, 45)
 	profile_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	profile_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	var profile_id = user_data.get("profile_picture", "13")
@@ -614,33 +836,81 @@ func _create_word_recognize_entry(user_data: Dictionary, rank: int) -> Control:
 		profile_rect.texture = profile_texture
 	
 	var profile_center = Control.new()
-	profile_center.custom_minimum_size = Vector2(60, 50)
+	profile_center.custom_minimum_size = Vector2(80, 60)
 	profile_center.add_child(profile_rect)
-	profile_rect.position = Vector2(10, 5)
-	var profile_container = _create_bordered_container(profile_center, Vector2(60, 50), Color(0.05, 0.05, 0.05, 0.2))
+	profile_rect.position = Vector2(17, 7)
+	var profile_container = _create_bordered_container(profile_center, Vector2(80, 55), Color(0.05, 0.05, 0.05, 0.3))
 	entry.add_child(profile_container)
 	
-	# Player name
-	var name_label = _create_simple_label(user_data.get("username", "Unknown"), 16, Color(1, 1, 1), HORIZONTAL_ALIGNMENT_LEFT)
-	var name_container = _create_bordered_container(name_label, Vector2(220, 45), Color(0.2, 0.2, 0.3, 0.6))
+	# Player name with highlighting for current user
+	var player_name = user_data.get("username", "Unknown")
+	var name_color = Color(1, 1, 1)
+	var name_bg_color = Color(0.1, 0.15, 0.25, 0.7)
+	
+	if user_data.get("is_current_user", false):
+		name_color = Color(1, 1, 0.3)
+		name_bg_color = Color(0.3, 0.25, 0.1, 0.5)
+		player_name = "* " + player_name + " (You)"
+	
+	var name_label = _create_simple_label(player_name, 16, name_color, HORIZONTAL_ALIGNMENT_LEFT)
+	var name_container = _create_bordered_container(name_label, Vector2(220, 55), name_bg_color)
 	entry.add_child(name_container)
 	
-	# STT Completed (with color)
+	# STT challenges completed with icons
 	var stt_completed = user_data.get("stt_completed", 0)
-	var stt_label = _create_simple_label(str(stt_completed), 16, Color(0.2, 0.8, 1))
-	var stt_container = _create_bordered_container(stt_label, Vector2(80, 50), Color(0.05, 0.05, 0.05, 0.2))
+	var stt_text = str(stt_completed)
+	var stt_color = Color(0.3, 1, 0.3)
+	
+	if stt_completed >= 50:
+		stt_text += " PRO"
+		stt_color = Color(0.2, 1, 0.2)
+	elif stt_completed >= 25:
+		stt_text += " ADV"
+		stt_color = Color(0.5, 1, 0.5)
+	elif stt_completed >= 10:
+		stt_color = Color(0.7, 1, 0.7)
+	
+	var stt_label = _create_simple_label(stt_text, 16, stt_color)
+	var stt_container = _create_bordered_container(stt_label, Vector2(110, 55), Color(0.05, 0.05, 0.05, 0.3))
 	entry.add_child(stt_container)
 	
-	# Whiteboard Completed (with color)
+	# Whiteboard challenges completed with icons
 	var whiteboard_completed = user_data.get("whiteboard_completed", 0)
-	var wb_label = _create_simple_label(str(whiteboard_completed), 16, Color(0.2, 1, 0.8))
-	var wb_container = _create_bordered_container(wb_label, Vector2(120, 50), Color(0.05, 0.05, 0.05, 0.2))
-	entry.add_child(wb_container)
+	var whiteboard_text = str(whiteboard_completed)
+	var whiteboard_color = Color(0.3, 0.7, 1)
 	
-	# Total WordRecognize (with color)
-	var total_word_recognize = user_data.get("word_recognize", 0)
-	var total_label = _create_simple_label(str(total_word_recognize), 16, Color(0.4, 1, 0.4))
-	var total_container = _create_bordered_container(total_label, Vector2(80, 50), Color(0.05, 0.05, 0.05, 0.2))
+	if whiteboard_completed >= 50:
+		whiteboard_text += " PRO"
+		whiteboard_color = Color(0.2, 0.6, 1)
+	elif whiteboard_completed >= 25:
+		whiteboard_text += " ADV"
+		whiteboard_color = Color(0.4, 0.7, 1)
+	elif whiteboard_completed >= 10:
+		whiteboard_color = Color(0.6, 0.8, 1)
+	
+	var whiteboard_label = _create_simple_label(whiteboard_text, 16, whiteboard_color)
+	var whiteboard_container = _create_bordered_container(whiteboard_label, Vector2(110, 55), Color(0.05, 0.05, 0.05, 0.3))
+	entry.add_child(whiteboard_container)
+	
+	# Total word challenges with special styling
+	var total_words = stt_completed + whiteboard_completed
+	var total_text = str(total_words)
+	var total_color = Color(1, 0.8, 0.2)
+	
+	if total_words >= 100:
+		total_text += " MASTER"
+		total_color = Color(1, 0.2, 0.2)  # Red for word masters
+	elif total_words >= 75:
+		total_text += " EXPERT"
+		total_color = Color(1, 0.6, 0.2)  # Orange for advanced
+	elif total_words >= 50:
+		total_text += " SKILLED"
+		total_color = Color(1, 1, 0.2)   # Yellow for intermediate
+	elif total_words >= 25:
+		total_color = Color(1, 0.9, 0.5) # Light yellow for beginner+
+	
+	var total_label = _create_simple_label(total_text, 16, total_color)
+	var total_container = _create_bordered_container(total_label, Vector2(100, 55), Color(0.05, 0.05, 0.05, 0.3))
 	entry.add_child(total_container)
 	
 	return entry

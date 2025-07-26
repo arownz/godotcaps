@@ -109,6 +109,9 @@ func _setup_battle():
 	# Update player info in UI (username and level)
 	ui_manager.update_player_info()
 	
+	# Set the correct background for the current dungeon
+	ui_manager.update_background(dungeon_manager.dungeon_num)
+	
 	# Display dungeon introduction messages
 	battle_log_manager.display_introduction_messages()
 	

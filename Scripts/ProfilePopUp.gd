@@ -432,9 +432,42 @@ func _on_close_button_pressed():
     queue_free()
 
 func _on_logout_button_pressed():
-    Firebase.Auth.logout()
-    var scene = load("res://Scenes/Authentication.tscn")
-    get_tree().change_scene_to_packed(scene)
+    print("ProfilePopUp: Logout button pressed")
+    
+    # Load the authentication scene to access its logout functionality
+    var auth_scene = load("res://Scenes/Authentication.tscn").instantiate()
+    
+    # Check if it has the logout_user method
+    if auth_scene.has_method("logout_user"):
+        print("ProfilePopUp: Using enhanced logout function")
+        # Add the auth scene temporarily to call its method
+        get_tree().root.add_child(auth_scene)
+        # Call the enhanced logout function which handles all cleanup
+        auth_scene.logout_user()
+        # Remove ourselves since the auth scene will handle navigation
+        queue_free()
+    else:
+        print("ProfilePopUp: Fallback to simple logout")
+        # Fallback to simple logout
+        Firebase.Auth.logout()
+        
+        # Clear web storage data if on web platform
+        if OS.has_feature('web'):
+            if JavaScriptBridge.eval("typeof JavaScriptBridge !== 'undefined'"):
+                JavaScriptBridge.eval("""
+                    // Clear all authentication-related data
+                    localStorage.removeItem('last_successful_auth');
+                    localStorage.removeItem('firebase_user_id');
+                    localStorage.removeItem('firebase_current_user_id');
+                    localStorage.removeItem('google_oauth_user_confirmed');
+                    localStorage.removeItem('firebase_auth_method');
+                    localStorage.setItem('auto_login_enabled', 'false');
+                    sessionStorage.clear();
+                    console.log('Auth data cleared on logout');
+                """)
+        
+        var scene = load("res://Scenes/Authentication.tscn")
+        get_tree().change_scene_to_packed(scene)
 
 func _on_profile_picture_button_pressed():
     print("ProfilePopUp: Profile picture button pressed")

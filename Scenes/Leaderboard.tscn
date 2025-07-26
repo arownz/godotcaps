@@ -1,33 +1,65 @@
-[gd_scene load_steps=7 format=3 uid="uid://bhsb4od5anjae"]
+[gd_scene load_steps=10 format=3 uid="uid://bhsb4od5anjae"]
 
 [ext_resource type="Script" uid="uid://cpyo81gkxoads" path="res://Scripts/Leaderboard.gd" id="1_8k3l4"]
-[ext_resource type="Texture2D" uid="uid://clo1votqbo4bs" path="res://gui/Update/UI/ui 13.png" id="2_ldouh"]
-[ext_resource type="Texture2D" uid="uid://cct70l6wbh13s" path="res://gui/Update/UI/ui 9.png" id="2_qaei5"]
+[ext_resource type="Texture2D" uid="uid://c75anq8c0biyi" path="res://gui/Update/UI/ui 7.png" id="2_ldouh"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="3_font"]
 [ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="4_ldouh"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ldouh"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_header"]
+bg_color = Color(0.933333, 0.764706, 0.603922, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.8, 0.85, 0.9, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+shadow_color = Color(0, 0, 0, 0.1)
+shadow_size = 8
+shadow_offset = Vector2(0, 4)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_button"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nav_btn_hover"]
+bg_color = Color(0.35, 0.4, 0.84, 1)
+corner_radius_top_left = 25
+corner_radius_top_right = 25
+corner_radius_bottom_right = 25
+corner_radius_bottom_left = 25
+shadow_color = Color(0, 0, 0, 0.3)
+shadow_size = 6
+shadow_offset = Vector2(0, 4)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nav_btn"]
+bg_color = Color(0.4, 0.49, 0.92, 1)
+corner_radius_top_left = 25
+corner_radius_top_right = 25
+corner_radius_bottom_right = 25
+corner_radius_bottom_left = 25
+shadow_color = Color(0, 0, 0, 0.2)
+shadow_size = 4
+shadow_offset = Vector2(0, 2)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tab_container"]
+bg_color = Color(0.95, 0.95, 0.95, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_color = Color(0, 0, 0, 0.1)
+shadow_size = 4
+shadow_offset = Vector2(0, 2)
 
 [node name="Leaderboard" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 170.0
-offset_top = 89.0
-offset_right = -154.0
-offset_bottom = -91.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_8k3l4")
-
-[node name="TextureRect" type="TextureRect" parent="."]
-layout_mode = 0
-offset_left = -172.0
-offset_top = -89.0
-offset_right = 1290.0
-offset_bottom = 726.0
-texture = ExtResource("2_ldouh")
 
 [node name="Background" type="TextureRect" parent="."]
 layout_mode = 1
@@ -36,122 +68,156 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_qaei5")
-expand_mode = 1
-stretch_mode = 6
+texture = ExtResource("2_ldouh")
 
 [node name="MainContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 50.0
-offset_top = 30.0
-offset_right = -50.0
-offset_bottom = -30.0
+offset_left = 57.0
+offset_top = 41.0
+offset_right = -58.0
+offset_bottom = -35.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/separation = 50
 
-[node name="TitleContainer" type="HBoxContainer" parent="MainContainer"]
+[node name="HeaderPanel" type="Panel" parent="MainContainer"]
+custom_minimum_size = Vector2(0, 150)
 layout_mode = 2
 size_flags_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_header")
 
-[node name="TitleLabel" type="Label" parent="MainContainer/TitleContainer"]
+[node name="HeaderContainer" type="VBoxContainer" parent="MainContainer/HeaderPanel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -558.5
+offset_top = -36.0
+offset_right = 558.5
+offset_bottom = 37.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+
+[node name="TitleContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(0.138866, 0.162532, 0.209941, 1)
 theme_override_fonts/font = ExtResource("3_font")
-theme_override_font_sizes/font_size = 32
-text = "Lexia Leaderboard"
+theme_override_font_sizes/font_size = 40
+text = "LEADERBOARD"
 horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="BackButton" type="Button" parent="MainContainer"]
-custom_minimum_size = Vector2(120, 50)
+[node name="BackButton" type="Button" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer"]
+custom_minimum_size = Vector2(140, 50)
 layout_mode = 2
 size_flags_horizontal = 0
-size_flags_vertical = 0
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
 theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_font")
-theme_override_font_sizes/font_size = 18
-theme_override_styles/focus = SubResource("StyleBoxEmpty_ldouh")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_nav_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_nav_btn_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_nav_btn")
 text = "Back"
 icon = ExtResource("4_ldouh")
 flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="TabContainer" type="TabContainer" parent="MainContainer"]
+[node name="ContentContainer" type="VBoxContainer" parent="MainContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-mouse_default_cursor_shape = 2
+theme_override_constants/separation = 20
+
+[node name="TabContainer" type="TabContainer" parent="MainContainer/ContentContainer"]
+layout_mode = 2
+size_flags_vertical = 3
 theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 18
+theme_override_styles/panel = SubResource("StyleBoxFlat_tab_container")
 current_tab = 0
 
-[node name="DungeonRankings" type="Control" parent="MainContainer/TabContainer"]
+[node name="Dungeon Rankings" type="Control" parent="MainContainer/ContentContainer/TabContainer"]
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer/TabContainer/DungeonRankings"]
+[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer/ContentContainer/TabContainer/Dungeon Rankings"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 10.0
-offset_top = 10.0
-offset_right = -10.0
-offset_bottom = -10.0
+offset_left = 15.0
+offset_top = 15.0
+offset_right = -15.0
+offset_bottom = -15.0
 grow_horizontal = 2
 grow_vertical = 2
+horizontal_scroll_mode = 0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MainContainer/TabContainer/DungeonRankings/ScrollContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MainContainer/ContentContainer/TabContainer/Dungeon Rankings/ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+theme_override_constants/separation = 8
 
-[node name="PowerScale" type="Control" parent="MainContainer/TabContainer"]
+[node name="Power Scale" type="Control" parent="MainContainer/ContentContainer/TabContainer"]
 visible = false
 layout_mode = 2
 metadata/_tab_index = 1
 
-[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer/TabContainer/PowerScale"]
+[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer/ContentContainer/TabContainer/Power Scale"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 10.0
-offset_top = 10.0
-offset_right = -10.0
-offset_bottom = -10.0
+offset_left = 15.0
+offset_top = 15.0
+offset_right = -15.0
+offset_bottom = -15.0
 grow_horizontal = 2
 grow_vertical = 2
+horizontal_scroll_mode = 0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MainContainer/TabContainer/PowerScale/ScrollContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MainContainer/ContentContainer/TabContainer/Power Scale/ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+theme_override_constants/separation = 8
 
-[node name="WordRecognize" type="Control" parent="MainContainer/TabContainer"]
+[node name="Word Masters" type="Control" parent="MainContainer/ContentContainer/TabContainer"]
 visible = false
 layout_mode = 2
 metadata/_tab_index = 2
 
-[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer/TabContainer/WordRecognize"]
+[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer/ContentContainer/TabContainer/Word Masters"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 10.0
-offset_top = 10.0
-offset_right = -10.0
-offset_bottom = -10.0
+offset_left = 15.0
+offset_top = 15.0
+offset_right = -15.0
+offset_bottom = -15.0
 grow_horizontal = 2
 grow_vertical = 2
+horizontal_scroll_mode = 0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MainContainer/TabContainer/WordRecognize/ScrollContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MainContainer/ContentContainer/TabContainer/Word Masters/ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+theme_override_constants/separation = 8

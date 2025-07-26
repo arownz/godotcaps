@@ -1,7 +1,7 @@
 extends Control
 
 # UI References
-@onready var back_button = $MainContainer/VBoxContainer/HeaderContainer/BackButton
+@onready var back_button = $MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton
 
 # Accessibility Settings
 @onready var font_size_slider = $MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/FontSizeContainer/FontSizeSlider

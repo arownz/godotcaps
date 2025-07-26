@@ -34,44 +34,6 @@ offset_right = 1463.0
 offset_bottom = 810.0
 texture = ExtResource("1_shrlp")
 
-[node name="BackButton" type="TextureButton" parent="TextureRect"]
-custom_minimum_size = Vector2(1, 1)
-layout_mode = 0
-offset_left = 135.0
-offset_top = 678.0
-offset_right = 162.0
-offset_bottom = 705.0
-scale = Vector2(3.76293, 3.83557)
-mouse_default_cursor_shape = 2
-texture_normal = ExtResource("3_st54u")
-texture_hover = ExtResource("4_lqaqn")
-
-[node name="TextureRect" type="TextureRect" parent="TextureRect/BackButton"]
-layout_mode = 0
-offset_left = 4.73197
-offset_top = 7.02944
-offset_right = 33.732
-offset_bottom = 31.0294
-scale = Vector2(0.612926, 0.537912)
-texture = ExtResource("4_taxvn")
-
-[node name="BackLabel" type="Label" parent="TextureRect/BackButton"]
-visible = false
-layout_mode = 0
-offset_left = 29.4983
-offset_top = 3.91076
-offset_right = 62.4983
-offset_bottom = 27.9108
-scale = Vector2(0.401947, 0.401947)
-theme_override_colors/font_color = Color(0.054902, 0.27451, 0.47451, 1)
-theme_override_colors/font_shadow_color = Color(1, 1, 1, 1)
-theme_override_constants/shadow_offset_x = 1
-theme_override_constants/shadow_offset_y = 1
-theme_override_fonts/font = ExtResource("8_oyrip")
-theme_override_font_sizes/font_size = 24
-text = "Back"
-horizontal_alignment = 1
-
 [node name="Stage1" type="TextureButton" parent="."]
 offset_left = 224.0
 offset_top = 311.0
@@ -230,6 +192,7 @@ text = "DUNGEON 1"
 uppercase = true
 
 [node name="StageDetails" type="TextureRect" parent="."]
+visible = false
 offset_left = 834.0
 offset_top = 45.0
 offset_right = 1483.0
@@ -576,21 +539,58 @@ texture = ExtResource("16_lqaqn")
 
 [node name="FightButton" type="Button" parent="StageDetails"]
 layout_mode = 0
-offset_left = 175.0
-offset_top = 682.0
-offset_right = 278.0
-offset_bottom = 704.0
-scale = Vector2(2.88017, 3.15688)
+offset_left = 156.754
+offset_top = 641.469
+offset_right = 499.754
+offset_bottom = 787.469
+scale = Vector2(1.05196, 1.15303)
 mouse_default_cursor_shape = 2
 theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
 theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("9_o4t43")
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 50
 theme_override_styles/focus = SubResource("StyleBoxEmpty_1g3o1")
 text = "FIGHT"
 icon = ExtResource("19_0ho0y")
 flat = true
 icon_alignment = 1
 expand_icon = true
+
+[node name="BackButton" type="TextureButton" parent="."]
+custom_minimum_size = Vector2(1, 1)
+offset_left = 133.233
+offset_top = 621.702
+offset_right = 160.233
+offset_bottom = 648.702
+scale = Vector2(3.76293, 3.83557)
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("3_st54u")
+texture_hover = ExtResource("4_lqaqn")
+
+[node name="TextureRect" type="TextureRect" parent="BackButton"]
+layout_mode = 0
+offset_left = 4.73197
+offset_top = 7.02944
+offset_right = 33.732
+offset_bottom = 31.0294
+scale = Vector2(0.612926, 0.537912)
+texture = ExtResource("4_taxvn")
+
+[node name="BackLabel" type="Label" parent="BackButton"]
+visible = false
+layout_mode = 0
+offset_left = 29.4983
+offset_top = 3.91076
+offset_right = 62.4983
+offset_bottom = 27.9108
+scale = Vector2(0.401947, 0.401947)
+theme_override_colors/font_color = Color(0.054902, 0.27451, 0.47451, 1)
+theme_override_colors/font_shadow_color = Color(1, 1, 1, 1)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_fonts/font = ExtResource("8_oyrip")
+theme_override_font_sizes/font_size = 24
+text = "Back"
+horizontal_alignment = 1

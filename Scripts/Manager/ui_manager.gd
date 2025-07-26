@@ -3,6 +3,20 @@ extends Node
 
 var battle_scene  # Reference to the main battle scene
 
+# Preloaded background textures for faster switching
+var background_textures = {
+	1: preload("res://gui/Update/Backgrounds/battlescene background.png"),
+	2: preload("res://gui/Update/Backgrounds/battlescene background.png"),
+	3: preload("res://gui/Update/Backgrounds/battlescene background.png")
+}
+
+# Background scales for different dungeons
+var background_scales = {
+	1: Vector2(4.57812, 4.5),  # Original scale for 320x180
+	2: Vector2(4.57812, 4.5),     # Reduced scale for larger image (1536x1024)
+	3: Vector2(4.57812, 4.5)      # Reduced scale for larger image (1536x1024)
+}
+
 func _init(scene):
 	battle_scene = scene
 
@@ -164,26 +178,23 @@ func update_stage_info():
 
 func update_background(dungeon_num: int):
 	# Update background based on dungeon number
+	print("UIManager: Attempting to update background for dungeon ", dungeon_num)
+	
 	var background_sprite = battle_scene.get_node_or_null("Background/ParallaxLayer/Sprite2D")
 	if !background_sprite:
-		print("UIManager: Background sprite not found")
+		print("UIManager: Background sprite not found at path: Background/ParallaxLayer/Sprite2D")
 		return
 	
-	var background_path = ""
-	match dungeon_num:
-		1:
-			background_path = "res://gui/Backgrounds/Dungeon1_background.png"
-		2:
-			background_path = "res://gui/Update/Backgrounds/Plains_Level.png"
-		3:
-			background_path = "res://gui/Update/Backgrounds/bg.png"
-		_:
-			background_path = "res://gui/Update/Backgrounds/battlescene background.png"
+	print("UIManager: Background sprite found successfully")
 	
-	# Load and set the new background texture
-	var new_texture = load(background_path)
-	if new_texture:
-		background_sprite.texture = new_texture
-		print("UIManager: Background updated to dungeon ", dungeon_num)
-	else:
-		print("UIManager: Failed to load background for dungeon ", dungeon_num)
+	# Get preloaded texture and scale
+	var texture = background_textures.get(dungeon_num, background_textures[1])
+	var target_scale = background_scales.get(dungeon_num, background_scales[1])
+	
+	print("UIManager: Setting background for dungeon ", dungeon_num, " with scale: ", target_scale)
+	
+	# Set the new background texture and scale immediately (no loading delay)
+	background_sprite.texture = texture
+	background_sprite.scale = target_scale
+	
+	print("UIManager: Background updated successfully to dungeon ", dungeon_num)

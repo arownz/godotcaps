@@ -1,8 +1,8 @@
 [gd_scene load_steps=23 format=3 uid="uid://cofdjvw7ybc6r"]
 
 [ext_resource type="Script" uid="uid://cx3vkj8apruat" path="res://Scripts/dungeon_3_map.gd" id="1_1icim"]
-[ext_resource type="Texture2D" uid="uid://chfkysvsxt4eg" path="res://gui/Update/Backgrounds/Plains_Level.png" id="1_qydu8"]
 [ext_resource type="Texture2D" uid="uid://n08ji1i2co16" path="res://gui/Update/UI/small button.png" id="2_oabpg"]
+[ext_resource type="Texture2D" uid="uid://bn430flyluaew" path="res://gui/Update/Backgrounds/mountamap2.png" id="2_xeiu1"]
 [ext_resource type="Texture2D" uid="uid://da6rdtvo1nlwj" path="res://gui/Update/icons/return.png" id="3_0cogd"]
 [ext_resource type="Texture2D" uid="uid://dfy42u6wycc3x" path="res://gui/Update/icons/next level select.png" id="4_07erb"]
 [ext_resource type="Texture2D" uid="uid://cghh3806ycwdb" path="res://gui/Update/UI/small button_hovers.png" id="4_62ino"]
@@ -23,59 +23,22 @@
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_xeiu1"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_16krn"]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_xeiu1"]
 
 [node name="Dungeon3Map" type="Node2D"]
 script = ExtResource("1_1icim")
 
 [node name="TextureRect" type="TextureRect" parent="."]
-offset_right = 1463.0
-offset_bottom = 810.0
-texture = ExtResource("1_qydu8")
-
-[node name="BackButton" type="TextureButton" parent="TextureRect"]
-custom_minimum_size = Vector2(1, 1)
-layout_mode = 0
-offset_left = 135.0
-offset_top = 678.0
-offset_right = 162.0
-offset_bottom = 705.0
-scale = Vector2(3.76293, 3.83557)
-mouse_default_cursor_shape = 2
-texture_normal = ExtResource("2_oabpg")
-texture_hover = ExtResource("4_62ino")
-
-[node name="TextureRect" type="TextureRect" parent="TextureRect/BackButton"]
-layout_mode = 0
-offset_left = 4.73197
-offset_top = 7.02944
-offset_right = 33.732
-offset_bottom = 31.0294
-scale = Vector2(0.612926, 0.537912)
-texture = ExtResource("3_0cogd")
-
-[node name="BackLabel" type="Label" parent="TextureRect/BackButton"]
-visible = false
-layout_mode = 0
-offset_left = 29.4983
-offset_top = 3.91076
-offset_right = 62.4983
-offset_bottom = 27.9108
-scale = Vector2(0.401947, 0.401947)
-theme_override_colors/font_color = Color(0.054902, 0.27451, 0.47451, 1)
-theme_override_colors/font_shadow_color = Color(1, 1, 1, 1)
-theme_override_constants/shadow_offset_x = 1
-theme_override_constants/shadow_offset_y = 1
-theme_override_fonts/font = ExtResource("8_1icim")
-theme_override_font_sizes/font_size = 24
-text = "Back"
-horizontal_alignment = 1
+offset_right = 1536.0
+offset_bottom = 1117.0
+scale = Vector2(0.946753, 0.782783)
+texture = ExtResource("2_xeiu1")
 
 [node name="Stage1" type="TextureButton" parent="."]
-offset_left = 238.0
-offset_top = 315.0
-offset_right = 253.0
-offset_bottom = 324.0
+offset_left = 174.0
+offset_top = 317.0
+offset_right = 189.0
+offset_bottom = 326.0
 scale = Vector2(6.5654, 6.5654)
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("4_07erb")
@@ -99,10 +62,10 @@ offset_bottom = 20.6497
 texture = ExtResource("8_3555f")
 
 [node name="Stage2" type="TextureButton" parent="."]
-offset_left = 416.0
-offset_top = 583.0
-offset_right = 431.0
-offset_bottom = 592.0
+offset_left = 359.0
+offset_top = 566.0
+offset_right = 374.0
+offset_bottom = 575.0
 scale = Vector2(6.5654, 6.5654)
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("5_62ino")
@@ -127,10 +90,10 @@ offset_bottom = 20.6497
 texture = ExtResource("8_3555f")
 
 [node name="Stage3" type="TextureButton" parent="."]
-offset_left = 733.0
-offset_top = 364.0
-offset_right = 748.0
-offset_bottom = 373.0
+offset_left = 744.0
+offset_top = 320.0
+offset_right = 759.0
+offset_bottom = 329.0
 scale = Vector2(6.5654, 6.5654)
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("5_62ino")
@@ -155,10 +118,10 @@ offset_bottom = 20.6497
 texture = ExtResource("8_3555f")
 
 [node name="Stage4" type="TextureButton" parent="."]
-offset_left = 1001.0
-offset_top = 586.0
-offset_right = 1016.0
-offset_bottom = 595.0
+offset_left = 1017.0
+offset_top = 544.0
+offset_right = 1032.0
+offset_bottom = 553.0
 scale = Vector2(6.5654, 6.5654)
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("5_62ino")
@@ -183,10 +146,10 @@ offset_bottom = 20.6497
 texture = ExtResource("8_3555f")
 
 [node name="Stage5" type="TextureButton" parent="."]
-offset_left = 1218.0
-offset_top = 309.0
-offset_right = 1233.0
-offset_bottom = 318.0
+offset_left = 1240.0
+offset_top = 317.0
+offset_right = 1255.0
+offset_bottom = 326.0
 scale = Vector2(6.5654, 6.5654)
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("5_62ino")
@@ -229,6 +192,7 @@ text = "DUNGEON 3"
 uppercase = true
 
 [node name="StageDetails" type="TextureRect" parent="."]
+visible = false
 offset_left = 834.0
 offset_top = 45.0
 offset_right = 1483.0
@@ -575,21 +539,58 @@ texture = ExtResource("16_oabpg")
 
 [node name="FightButton" type="Button" parent="StageDetails"]
 layout_mode = 0
-offset_left = 175.0
-offset_top = 682.0
-offset_right = 278.0
-offset_bottom = 704.0
-scale = Vector2(2.88017, 3.15688)
+offset_left = 156.754
+offset_top = 641.469
+offset_right = 499.754
+offset_bottom = 787.469
+scale = Vector2(1.05196, 1.15303)
 mouse_default_cursor_shape = 2
 theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
 theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("9_3555f")
-theme_override_font_sizes/font_size = 10
-theme_override_styles/focus = SubResource("StyleBoxEmpty_16krn")
+theme_override_font_sizes/font_size = 50
+theme_override_styles/focus = SubResource("StyleBoxEmpty_xeiu1")
 text = "FIGHT"
 icon = ExtResource("20_mqaq1")
 flat = true
 icon_alignment = 1
 expand_icon = true
+
+[node name="BackButton" type="TextureButton" parent="."]
+custom_minimum_size = Vector2(1, 1)
+offset_left = 133.233
+offset_top = 621.702
+offset_right = 160.233
+offset_bottom = 648.702
+scale = Vector2(3.76293, 3.83557)
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("2_oabpg")
+texture_hover = ExtResource("4_62ino")
+
+[node name="TextureRect" type="TextureRect" parent="BackButton"]
+layout_mode = 0
+offset_left = 4.73197
+offset_top = 7.02944
+offset_right = 33.732
+offset_bottom = 31.0294
+scale = Vector2(0.612926, 0.537912)
+texture = ExtResource("3_0cogd")
+
+[node name="BackLabel" type="Label" parent="BackButton"]
+visible = false
+layout_mode = 0
+offset_left = 29.4983
+offset_top = 3.91076
+offset_right = 62.4983
+offset_bottom = 27.9108
+scale = Vector2(0.401947, 0.401947)
+theme_override_colors/font_color = Color(0.054902, 0.27451, 0.47451, 1)
+theme_override_colors/font_shadow_color = Color(1, 1, 1, 1)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_fonts/font = ExtResource("8_1icim")
+theme_override_font_sizes/font_size = 24
+text = "Back"
+horizontal_alignment = 1

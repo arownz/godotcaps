@@ -125,7 +125,40 @@ func check_existing_auth():
 	
 	# For web builds, check for existing authentication state more thoroughly
 	if OS.has_feature('web'):
-		# Check for persistent auto-login preference and existing auth state
+		# First priority: Check for OAuth tokens in URL (new login completing)
+		print("DEBUG: Web platform detected, checking for auth token")
+		var provider = Firebase.Auth.get_GoogleProvider()
+		var redirect_uri = get_web_redirect_uri()
+		print("DEBUG: Setting redirect URI: " + redirect_uri)
+		Firebase.Auth.set_redirect_uri(redirect_uri)
+		
+		var token = Firebase.Auth.get_token_from_url(provider)
+		if token:
+			print("DEBUG: Token found on page load: " + str(token).substr(0, 10) + "...")
+			show_message("Completing Google Sign-In...", true)
+			# Use a deferred call to ensure the GUI is ready
+			await get_tree().process_frame
+			# Store a flag to indicate we're processing a sign-in
+			save_web_data("processing_signin", "true")
+			save_web_data("google_auth_in_progress", "true")
+			# Save successful auth for auto-login (persistent)
+			save_web_data("last_successful_auth", "google", true)
+			Firebase.Auth.login_with_oauth(token, provider)
+			return
+		
+		# Check if we were in the middle of a Google auth that might have failed
+		if JavaScriptBridge.eval("window.location.href.indexOf('#state=google_auth') !== -1"):
+			print("DEBUG: Google auth state found but no token - possible auth error")
+			show_message("Google Sign-In failed. Please try again.", false)
+			# Clean up URL
+			JavaScriptBridge.eval("""
+				if (window.history && window.history.replaceState) {
+					window.history.replaceState({}, document.title, window.location.pathname);
+				}
+			""")
+			return
+		
+		# Second priority: Check for existing authenticated session to restore
 		var auto_login_enabled = get_web_data("auto_login_enabled", true)
 		var last_successful_auth = get_web_data("last_successful_auth", true)
 		var firebase_user_id = get_web_data("firebase_current_user_id", true)
@@ -138,156 +171,32 @@ func check_existing_auth():
 		print("DEBUG: Google OAuth confirmed: " + str(google_oauth_confirmed))
 		print("DEBUG: Firebase auth method: " + str(firebase_auth_method))
 		
-		# Check specifically for Google OAuth users first with enhanced detection
+		# Check specifically for Google OAuth users first with streamlined detection
 		if last_successful_auth == "google" and google_oauth_confirmed and google_oauth_confirmed != "null" and google_oauth_confirmed != "":
 			print("DEBUG: Google OAuth user detected, attempting to restore session")
 			show_message("Restoring your Google session...", true)
 			
-			# Wait longer for Firebase to fully initialize Google OAuth
-			await get_tree().create_timer(2.5).timeout
+			# Initialize Firebase persistence first
+			_initialize_firebase_persistence()
 			
-			# Enhanced Google OAuth restoration with multiple detection methods
-			var firebase_auth_valid = null
-			var google_restoration_attempts = 0
+			# Wait for Firebase auth state to be restored properly with timeout
+			var restoration_start_time = Time.get_ticks_msec()
+			var auth_restored = await _wait_for_firebase_auth_restoration()
+			var restoration_time = (Time.get_ticks_msec() - restoration_start_time) / 1000.0
 			
-			while google_restoration_attempts < 8 and (firebase_auth_valid == null or firebase_auth_valid == "null"):
-				google_restoration_attempts += 1
-				print("DEBUG: Google OAuth restoration attempt " + str(google_restoration_attempts))
-				
-				firebase_auth_valid = JavaScriptBridge.eval("""
-					(function() {
-						try {
-							console.log('Google OAuth restoration attempt """ + str(google_restoration_attempts) + """');
-							
-							// Method 1: Check Firebase currentUser
-							if (window.firebase && window.firebase.auth) {
-								var user = window.firebase.auth().currentUser;
-								if (user && user.uid) {
-									console.log('Firebase currentUser found: ' + user.uid);
-									// Verify it's a Google user
-									if (user.providerData && user.providerData.length > 0) {
-										for (var i = 0; i < user.providerData.length; i++) {
-											if (user.providerData[i].providerId === 'google.com') {
-												console.log('Confirmed Google OAuth provider');
-												return user.uid;
-											}
-										}
-									}
-									// If provider check fails but we have a user and expect Google auth
-									console.log('User found but provider unclear, checking auth method');
-									var authMethod = localStorage.getItem('firebase_auth_method');
-									if (authMethod === 'google') {
-										console.log('Auth method confirms Google, returning user ID');
-										return user.uid;
-									}
-								}
-							}
-							
-							// Method 2: Check Firebase auth persistence storage
-							var authKeys = [];
-							for (var i = 0; i < localStorage.length; i++) {
-								var key = localStorage.key(i);
-								if (key && key.includes('firebase:authUser')) {
-									authKeys.push(key);
-								}
-							}
-							
-							console.log('Found Firebase auth keys: ' + authKeys.length);
-							for (var j = 0; j < authKeys.length; j++) {
-								try {
-									var authData = localStorage.getItem(authKeys[j]);
-									if (authData && authData !== 'null') {
-										var parsed = JSON.parse(authData);
-										if (parsed && parsed.uid) {
-											console.log('Found Firebase auth data in storage: ' + parsed.uid);
-											// Check if this is Google auth
-											if (parsed.providerData) {
-												for (var k = 0; k < parsed.providerData.length; k++) {
-													if (parsed.providerData[k].providerId === 'google.com') {
-														console.log('Confirmed Google auth from storage data');
-														// Try to restore this auth state
-														return parsed.uid;
-													}
-												}
-											}
-											// Fallback if provider data is unclear but we expect Google
-											var expectedGoogle = localStorage.getItem('firebase_auth_method') === 'google';
-											if (expectedGoogle) {
-												console.log('Expected Google auth, returning stored UID');
-												return parsed.uid;
-											}
-										}
-									}
-								} catch(e) {
-									console.log('Error parsing auth data: ' + e.message);
-								}
-							}
-							
-							// Method 3: Force Firebase to check auth state
-							if (window.firebase && window.firebase.auth && """ + str(google_restoration_attempts) + """ > 3) {
-								console.log('Attempting to force Firebase auth state check');
-								try {
-									// This might trigger auth state restoration
-									window.firebase.auth().onAuthStateChanged(function(user) {
-										if (user) {
-											console.log('Auth state change detected user: ' + user.uid);
-											localStorage.setItem('firebase_current_user_id', user.uid);
-										}
-									});
-									
-									// Check again after triggering listener
-									var user = window.firebase.auth().currentUser;
-									if (user && user.uid) {
-										console.log('User found after forcing auth state check: ' + user.uid);
-										return user.uid;
-									}
-								} catch(e) {
-									console.error('Error forcing auth state check: ' + e.message);
-								}
-							}
-							
-							console.log('No Google OAuth user found in attempt """ + str(google_restoration_attempts) + """');
-							return null;
-						} catch(e) {
-							console.error('Error in Google OAuth restoration attempt """ + str(google_restoration_attempts) + """: ' + e.message);
-							return null;
-						}
-					})();
-				""")
-				
-				if firebase_auth_valid and firebase_auth_valid != "null":
-					print("DEBUG: Google OAuth user found after " + str(google_restoration_attempts) + " attempts")
-					break
-				
-				# Progressive delays for restoration attempts
-				if google_restoration_attempts <= 3:
-					await get_tree().create_timer(0.8).timeout
-				elif google_restoration_attempts <= 5:
-					await get_tree().create_timer(1.2).timeout
-				else:
-					await get_tree().create_timer(1.5).timeout
+			print("DEBUG: Firebase auth restoration took " + str(restoration_time) + " seconds")
 			
-			print("DEBUG: Final Google OAuth Firebase auth validation result: " + str(firebase_auth_valid))
-			
-			if firebase_auth_valid and firebase_auth_valid != "null":
-				print("DEBUG: Google OAuth authentication confirmed, navigating to main menu")
-				# Update localStorage to confirm the session is active
-				JavaScriptBridge.eval("""
-					localStorage.setItem('firebase_current_user_id', '""" + str(firebase_auth_valid) + """');
-					localStorage.setItem('google_oauth_user_confirmed', '""" + str(firebase_auth_valid) + """');
-					localStorage.setItem('firebase_auth_method', 'google');
-					console.log('Updated localStorage with confirmed Google OAuth user');
-				""")
-				await get_tree().create_timer(0.5).timeout
+			if auth_restored:
+				print("DEBUG: Firebase auth restoration successful, navigating to main menu")
 				get_tree().change_scene_to_file("res://Scenes/MainMenu.tscn")
 				return
 			else:
-				print("DEBUG: Google OAuth user expected but auth not valid, clearing invalid data")
-				# Clear potentially corrupted Google auth data
-				JavaScriptBridge.eval("""
-					localStorage.removeItem('google_oauth_user_confirmed');
-					console.log('Cleared invalid Google OAuth data');
-				""")
+				print("DEBUG: Firebase auth restoration failed, clearing Google auth data")
+				show_message("Google session expired. Please sign in again.", false)
+				clear_google_auth_data()
+				# Wait a moment before clearing message
+				await get_tree().create_timer(2.0).timeout
+				show_message("Please sign in", true)
 		
 		
 		# If we have a Firebase user ID (fallback for other cases), user is likely authenticated
@@ -421,38 +330,7 @@ func check_existing_auth():
 				get_tree().change_scene_to_file("res://Scenes/MainMenu.tscn")
 				return
 			else:
-				print("DEBUG: Could not restore auth automatically, checking for OAuth tokens")
-		
-		# Continue with the existing OAuth token checking logic
-		print("DEBUG: Web platform detected, checking for auth token")
-		var provider = Firebase.Auth.get_GoogleProvider()
-		var redirect_uri = get_web_redirect_uri()
-		print("DEBUG: Setting redirect URI: " + redirect_uri)
-		Firebase.Auth.set_redirect_uri(redirect_uri)
-		
-		var token = Firebase.Auth.get_token_from_url(provider)
-		if token:
-			print("DEBUG: Token found on page load: " + str(token).substr(0, 10) + "...")
-			show_message("Completing Google Sign-In...", true)
-			# Use a deferred call to ensure the GUI is ready
-			await get_tree().process_frame
-			# Store a flag to indicate we're processing a sign-in
-			save_web_data("processing_signin", "true")
-			save_web_data("google_auth_in_progress", "true")
-			# Save successful auth for auto-login (persistent)
-			save_web_data("last_successful_auth", "google", true)
-			Firebase.Auth.login_with_oauth(token, provider)
-		else:
-			# Check if we were in the middle of a Google auth that might have failed
-			if JavaScriptBridge.eval("window.location.href.indexOf('#state=google_auth') !== -1"):
-				print("DEBUG: Google auth state found but no token - possible auth error")
-				show_message("Google Sign-In failed. Please try again.", false)
-				# Clean up URL
-				JavaScriptBridge.eval("""
-					if (window.history && window.history.replaceState) {
-						window.history.replaceState({}, document.title, window.location.pathname);
-					}
-				""")
+				print("DEBUG: Firebase user ID found but auth not valid, continuing with normal flow")
 
 # Function to hide the ForgotPassword tab in the TabContainer
 func _hide_forgot_password_tab():
@@ -1125,6 +1003,9 @@ func _get_auth_headers():
 func logout_user():
 	print("DEBUG: Logging out user and clearing persistent data")
 	
+	# Clear the status message first to prevent confusion
+	show_message("Signing out...", true)
+	
 	# Clear Firebase auth
 	Firebase.Auth.logout()
 	
@@ -1133,7 +1014,7 @@ func logout_user():
 		# Clear all our custom auth data
 		save_web_data("auto_login_enabled", "false", true)
 		JavaScriptBridge.eval("""
-			// Clear all authentication-related localStorage data
+			// Clear all authentication-related localStorage and sessionStorage data
 			localStorage.removeItem('last_successful_auth');
 			localStorage.removeItem('firebase_user_id');
 			localStorage.removeItem('firebase_id_token');
@@ -1144,6 +1025,11 @@ func logout_user():
 			localStorage.removeItem('google_provider_confirmed');
 			localStorage.removeItem('firebase_auth_method');
 			
+			// Clear session storage as well
+			sessionStorage.removeItem('processing_signin');
+			sessionStorage.removeItem('google_auth_in_progress');
+			sessionStorage.removeItem('google_auth_started');
+			
 			// Clear any Firebase auth storage patterns
 			for (var i = localStorage.length - 1; i >= 0; i--) {
 				var key = localStorage.key(i);
@@ -1151,6 +1037,16 @@ func logout_user():
 					localStorage.removeItem(key);
 				}
 			}
+			
+			// Clear any Firebase auth session storage patterns
+			for (var i = sessionStorage.length - 1; i >= 0; i--) {
+				var key = sessionStorage.key(i);
+				if (key && (key.includes('firebase:auth') || key.includes('google_') || key.includes('processing_'))) {
+					sessionStorage.removeItem(key);
+				}
+			}
+			
+			console.log('All auth storage cleared for logout');
 		""")
 		
 		# Sign out from Firebase as well
@@ -1172,6 +1068,12 @@ func logout_user():
 		
 		print("DEBUG: Cleared all persistent auth data and signed out from Firebase")
 	
+	# Clear the status message before returning to auth scene
+	show_message("Signed out successfully", true)
+	
+	# Wait a moment to show the success message
+	await get_tree().create_timer(0.5).timeout
+	
 	# Return to authentication scene
 	get_tree().change_scene_to_file("res://Scenes/Authentication.tscn")
 
@@ -1181,22 +1083,7 @@ func clear_web_storage():
 		var js_code = """
 		(function() {
 			try {
-				// Clear session storage
-				sessionStorage.clear();
-				// Clear all authentication-related localStorage data
-				localStorage.removeItem('auto_login_enabled');
-				localStorage.removeItem('last_successful_auth');
-				localStorage.removeItem('google_auth_started');
-				localStorage.removeItem('firebase_user_id');
-				localStorage.removeItem('firebase_id_token');
-				localStorage.removeItem('firebase_user_email');
-				localStorage.removeItem('firebase_current_user_id');
-				localStorage.removeItem('firebase_current_user_email');
-				localStorage.removeItem('google_oauth_user_confirmed');
-				localStorage.removeItem('google_provider_confirmed');
-				localStorage.removeItem('firebase_auth_method');
-				
-				// Also clear any Firebase auth storage patterns
+				// Clear specific Firebase auth keys to avoid clearing everything
 				for (var i = localStorage.length - 1; i >= 0; i--) {
 					var key = localStorage.key(i);
 					if (key && (key.includes('firebase:auth') || key.includes('processing_signin') || key.includes('google_auth'))) {
@@ -1215,7 +1102,65 @@ func clear_web_storage():
 		return JavaScriptBridge.eval(js_code)
 	return false
 
-# Function to handle Super Admin button press
+# Helper function to clear Google auth data specifically
+func clear_google_auth_data():
+	print("DEBUG: Clearing Google auth data")
+	if is_web_platform():
+		var js_code = """
+		(function() {
+			try {
+				// Clear Google-specific auth data
+				localStorage.removeItem('google_oauth_user_confirmed');
+				localStorage.removeItem('last_successful_auth');
+				localStorage.setItem('auto_login_enabled', 'false');
+				localStorage.removeItem('firebase_auth_method');
+				localStorage.removeItem('google_provider_confirmed');
+				localStorage.removeItem('firebase_current_user_id');
+				localStorage.removeItem('firebase_current_user_email');
+				localStorage.removeItem('firebase_user_id');
+				localStorage.removeItem('firebase_id_token');
+				localStorage.removeItem('firebase_user_email');
+				
+				// Clear session storage for Google auth
+				sessionStorage.removeItem('processing_signin');
+				sessionStorage.removeItem('google_auth_in_progress');
+				sessionStorage.removeItem('google_auth_started');
+				
+				// Clear Firebase auth data for Google users
+				for (var i = localStorage.length - 1; i >= 0; i--) {
+					var key = localStorage.key(i);
+					if (key && (key.includes('firebase:authUser') || key.includes('google_'))) {
+						localStorage.removeItem(key);
+					}
+				}
+				
+				// Clear any remaining session storage auth patterns
+				for (var i = sessionStorage.length - 1; i >= 0; i--) {
+					var key = sessionStorage.key(i);
+					if (key && (key.includes('firebase:auth') || key.includes('google_') || key.includes('processing_'))) {
+						sessionStorage.removeItem(key);
+					}
+				}
+				
+				// Sign out from Firebase to ensure clean state
+				if (window.firebase && window.firebase.auth) {
+					window.firebase.auth().signOut().then(function() {
+						console.log('Firebase signOut completed during Google auth clear');
+					}).catch(function(error) {
+						console.error('Error during Firebase signOut in clear: ' + error.message);
+					});
+				}
+				
+				console.log('Google auth data cleared completely');
+				return true;
+			} catch(e) {
+				console.error('Error clearing Google auth data: ' + e.message);
+				return false;
+			}
+		})();
+		"""
+		return JavaScriptBridge.eval(js_code)
+	return false# Function to handle Super Admin button press
 func _on_admin_button_pressed():
 	print("DEBUG: Super Admin button pressed")
 	var admin_url = "https://admin-teamlexia.web.app/login"
@@ -1226,3 +1171,215 @@ func _on_admin_button_pressed():
 	else:
 		# Open with system default browser for desktop builds
 		OS.shell_open(admin_url)
+
+# Function to properly wait for Firebase auth restoration using Firebase's own mechanisms
+func _wait_for_firebase_auth_restoration() -> bool:
+	print("DEBUG: Starting Firebase auth restoration wait")
+	
+	# Wait for Firebase to be properly loaded with multiple attempts
+	var firebase_ready = false
+	var max_firebase_wait = 10.0  # Wait up to 10 seconds for Firebase
+	var firebase_wait_time = 0.0
+	var firebase_check_interval = 0.5
+	
+	while firebase_wait_time < max_firebase_wait and not firebase_ready:
+		await get_tree().create_timer(firebase_check_interval).timeout
+		firebase_wait_time += firebase_check_interval
+		
+		firebase_ready = JavaScriptBridge.eval("""
+			(function() {
+				try {
+					return !!(window.firebase && window.firebase.auth && typeof window.firebase.auth === 'function');
+				} catch(e) {
+					return false;
+				}
+			})();
+		""")
+		
+		if firebase_ready:
+			print("DEBUG: Firebase is ready after " + str(firebase_wait_time) + " seconds")
+			break
+		else:
+			print("DEBUG: Still waiting for Firebase... (" + str(firebase_wait_time) + "s)")
+	
+	if not firebase_ready:
+		print("DEBUG: Firebase failed to load after " + str(max_firebase_wait) + " seconds")
+		return false
+	
+	# Use Firebase's own auth state restoration mechanism with a Promise-based approach
+	JavaScriptBridge.eval("""
+		(function() {
+			console.log('Starting Firebase auth restoration check...');
+			
+			if (!window.firebase || !window.firebase.auth) {
+				console.log('Firebase not available during restoration');
+				window.authRestorationResult = false;
+				return;
+			}
+			
+			var auth = window.firebase.auth();
+			var timeoutId;
+			var resolved = false;
+			
+			function resolveAuth(result) {
+				if (!resolved) {
+					resolved = true;
+					clearTimeout(timeoutId);
+					window.authRestorationResult = result;
+					console.log('Auth restoration resolved with:', result);
+				}
+			}
+			
+			// Set a timeout to prevent hanging forever
+			timeoutId = setTimeout(function() {
+				console.log('Firebase auth restoration timed out');
+				resolveAuth(false);
+			}, 6000); // Reduced timeout to 6 seconds
+			
+			// First check if we already have a current user
+			var currentUser = auth.currentUser;
+			if (currentUser) {
+				console.log('Current user already available:', currentUser.uid);
+				
+				// Verify this is a Google user if we expect it to be
+				var isGoogleUser = false;
+				if (currentUser.providerData && currentUser.providerData.length > 0) {
+					for (var i = 0; i < currentUser.providerData.length; i++) {
+						if (currentUser.providerData[i].providerId === 'google.com') {
+							isGoogleUser = true;
+							break;
+						}
+					}
+				}
+				
+				// If we expect Google auth, verify it
+				var expectedGoogle = localStorage.getItem('firebase_auth_method') === 'google';
+				if (expectedGoogle && !isGoogleUser) {
+					console.log('Expected Google user but provider mismatch');
+					resolveAuth(false);
+				} else {
+					// Update storage with confirmed auth
+					localStorage.setItem('firebase_current_user_id', currentUser.uid);
+					localStorage.setItem('firebase_current_user_email', currentUser.email || '');
+					if (isGoogleUser) {
+						localStorage.setItem('google_oauth_user_confirmed', currentUser.uid);
+						localStorage.setItem('last_successful_auth', 'google');
+					}
+					resolveAuth(true);
+				}
+				return;
+			}
+			
+			console.log('No current user found immediately, waiting for auth state change...');
+			
+			// Use Firebase's auth state observer to detect restoration
+			var unsubscribe = auth.onAuthStateChanged(function(user) {
+				if (!resolved) {
+					unsubscribe(); // Clean up the observer
+					
+					if (user) {
+						console.log('Firebase auth restored via state change for user:', user.uid);
+						
+						// Verify this is a Google user if we expect it to be
+						var isGoogleUser = false;
+						if (user.providerData && user.providerData.length > 0) {
+							for (var i = 0; i < user.providerData.length; i++) {
+								if (user.providerData[i].providerId === 'google.com') {
+									isGoogleUser = true;
+									break;
+								}
+							}
+						}
+						
+						// If we expect Google auth, verify it
+						var expectedGoogle = localStorage.getItem('firebase_auth_method') === 'google';
+						if (expectedGoogle && !isGoogleUser) {
+							console.log('Expected Google user but provider mismatch');
+							resolveAuth(false);
+						} else {
+							// Update storage with confirmed auth
+							localStorage.setItem('firebase_current_user_id', user.uid);
+							localStorage.setItem('firebase_current_user_email', user.email || '');
+							if (isGoogleUser) {
+								localStorage.setItem('google_oauth_user_confirmed', user.uid);
+								localStorage.setItem('last_successful_auth', 'google');
+							}
+							resolveAuth(true);
+						}
+					} else {
+						console.log('No authenticated user found during restoration');
+						resolveAuth(false);
+					}
+				}
+			});
+			
+			// Also check for auth restoration after a brief delay
+			setTimeout(function() {
+				if (!resolved) {
+					var delayedUser = auth.currentUser;
+					if (delayedUser) {
+						unsubscribe();
+						console.log('Found current user after delay:', delayedUser.uid);
+						
+						// Same verification logic as above
+						var isGoogleUser = false;
+						if (delayedUser.providerData && delayedUser.providerData.length > 0) {
+							for (var i = 0; i < delayedUser.providerData.length; i++) {
+								if (delayedUser.providerData[i].providerId === 'google.com') {
+									isGoogleUser = true;
+									break;
+								}
+							}
+						}
+						
+						var expectedGoogle = localStorage.getItem('firebase_auth_method') === 'google';
+						if (expectedGoogle && !isGoogleUser) {
+							console.log('Expected Google user but provider mismatch (delayed check)');
+							resolveAuth(false);
+						} else {
+							localStorage.setItem('firebase_current_user_id', delayedUser.uid);
+							localStorage.setItem('firebase_current_user_email', delayedUser.email || '');
+							if (isGoogleUser) {
+								localStorage.setItem('google_oauth_user_confirmed', delayedUser.uid);
+								localStorage.setItem('last_successful_auth', 'google');
+							}
+							resolveAuth(true);
+						}
+					} else {
+						console.log('Still no user found after delay');
+					}
+				}
+			}, 1000); // Check again after 1 second
+		})();
+	""")
+	
+	# Wait for the JavaScript to resolve with polling
+	var max_wait_time = 8.0  # Maximum 8 seconds total
+	var poll_interval = 0.2   # Check every 200ms (less frequent)
+	var waited_time = 0.0
+	
+	while waited_time < max_wait_time:
+		await get_tree().create_timer(poll_interval).timeout
+		waited_time += poll_interval
+		
+		# Check if the result has been set
+		var result = JavaScriptBridge.eval("""
+			(function() {
+				// This will be true/false if resolved, or undefined if still pending
+				if (window.authRestorationResult !== undefined) {
+					var result = window.authRestorationResult;
+					delete window.authRestorationResult; // Clean up
+					return result;
+				}
+				return null;
+			})();
+		""")
+		
+		if result != null:
+			print("DEBUG: Firebase auth restoration completed with result: " + str(result))
+			return result
+	
+	print("DEBUG: Firebase auth restoration timed out after " + str(max_wait_time) + " seconds")
+	# Clean up in case of timeout
+	JavaScriptBridge.eval("delete window.authRestorationResult;")
+	return false
