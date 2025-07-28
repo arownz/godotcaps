@@ -11,8 +11,16 @@ var registration_email = ""
 var registration_birth_date = ""
 var registration_age = 0
 
+# Notification popup for user feedback
+var notification_popup
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	# Load and setup notification popup
+	var notification_scene = preload("res://Scenes/NotificationPopUp.tscn")
+	notification_popup = notification_scene.instantiate()
+	add_child(notification_popup)
+	
 	Firebase.Auth.login_succeeded.connect(on_login_succeeded)
 	Firebase.Auth.signup_succeeded.connect(on_signup_succeeded)
 	Firebase.Auth.login_failed.connect(on_login_failed)
@@ -38,111 +46,77 @@ func _ready():
 	# Handle authentication check on startup
 	check_existing_auth()
 
-# Initialize Firebase auth persistence for web builds
+# Initialize Firebase auth persistence for web builds (simplified approach)
 func _initialize_firebase_persistence():
 	JavaScriptBridge.eval("""
 		(function() {
-			console.log('Initializing Firebase auth persistence...');
+			console.log('Setting Firebase auth persistence to LOCAL for web builds');
 			
-			// Wait for Firebase to be ready
-			function initFirebaseAuth() {
+			// Simple persistence setup - just ensure it's set to LOCAL like standalone
+			function setFirebasePersistence() {
 				try {
 					if (window.firebase && window.firebase.auth) {
-						// Set persistence to LOCAL to survive browser restarts
 						window.firebase.auth().setPersistence(window.firebase.auth.Auth.Persistence.LOCAL)
 							.then(function() {
-								console.log('Firebase auth persistence set to LOCAL - auth will survive browser restarts');
-								
-								// Check for existing auth state immediately
-								var currentUser = window.firebase.auth().currentUser;
-								if (currentUser) {
-									console.log('Firebase detected existing authenticated user on init:', currentUser.uid);
-									localStorage.setItem('firebase_current_user_id', currentUser.uid);
-									localStorage.setItem('firebase_current_user_email', currentUser.email || '');
-								}
-								
-								// Set up auth state change listener for future changes
-								window.firebase.auth().onAuthStateChanged(function(user) {
-									if (user) {
-										console.log('Firebase auth state changed - user signed in:', user.uid);
-										// Store user info for Godot to access
-										localStorage.setItem('firebase_current_user_id', user.uid);
-										localStorage.setItem('firebase_current_user_email', user.email || '');
-										
-										// Check if this is a Google OAuth user and store accordingly
-										if (user.providerData && user.providerData.length > 0) {
-											for (var i = 0; i < user.providerData.length; i++) {
-												if (user.providerData[i].providerId === 'google.com') {
-													console.log('Google OAuth user detected and persisted');
-													localStorage.setItem('last_successful_auth', 'google');
-													localStorage.setItem('auto_login_enabled', 'true');
-													localStorage.setItem('google_oauth_user_confirmed', user.uid);
-													localStorage.setItem('firebase_auth_method', 'google');
-													localStorage.setItem('google_provider_confirmed', 'true');
-													
-													// Force Firebase persistence for Google users
-													window.firebase.auth().setPersistence(window.firebase.auth.Auth.Persistence.LOCAL);
-													break;
-												}
-											}
-										} else {
-											// Likely email/password user
-											localStorage.setItem('firebase_auth_method', 'email');
-										}
-									} else {
-										console.log('Firebase auth state changed - user signed out');
-										localStorage.removeItem('firebase_current_user_id');
-										localStorage.removeItem('firebase_current_user_email');
-										localStorage.removeItem('google_oauth_user_confirmed');
-										localStorage.removeItem('google_provider_confirmed');
-									}
-								});
+								console.log('Firebase auth persistence set to LOCAL');
 							})
 							.catch(function(error) {
 								console.error('Error setting Firebase persistence:', error);
 							});
 					} else {
 						// Retry if Firebase isn't ready yet
-						setTimeout(initFirebaseAuth, 100);
+						setTimeout(setFirebasePersistence, 100);
 					}
 				} catch(e) {
 					console.error('Error initializing Firebase auth:', e);
 				}
 			}
 			
-			initFirebaseAuth();
+			setFirebasePersistence();
 		})();
 	""")
 
 # Consolidate auth checking to avoid duplicate code
 func check_existing_auth():
-	# First check Firebase's built-in auth state
-	if Firebase.Auth.check_auth_file():
-		show_message("You are already logged in", true)
-		await get_tree().create_timer(0.5).timeout
-		get_tree().change_scene_to_file("res://Scenes/MainMenu.tscn")
+	# If logout just occurred, skip auto-login and clear the flag
+	if DungeonGlobals.logout_just_occurred:
+		print("DEBUG: Logout just occurred, skipping auto-login")
+		DungeonGlobals.logout_just_occurred = false
 		return
+		
+	# Add a small delay to allow logout operations to complete
+	await get_tree().create_timer(0.1).timeout
 	
-	# For web builds, check for existing authentication state more thoroughly
+	# Use Firebase's built-in auth persistence mechanism for both web and standalone
+	if Firebase.Auth.check_auth_file():
+		print("DEBUG: Firebase auth file found, loading existing authentication")
+		Firebase.Auth.load_auth()
+		
+		# Verify that the loaded auth is valid
+		if Firebase.Auth.auth != null and Firebase.Auth.auth.has("localid"):
+			print("DEBUG: Valid auth loaded, user already logged in")
+			show_message("You are already logged in", true)
+			await get_tree().create_timer(0.5).timeout
+			get_tree().change_scene_to_file("res://Scenes/MainMenu.tscn")
+			return
+		else:
+			print("DEBUG: Auth file exists but no valid auth object, proceeding with login screen")
+	
+	# For web builds, check for OAuth redirect tokens following Firebase Godot extension pattern
 	if OS.has_feature('web'):
-		# First priority: Check for OAuth tokens in URL (new login completing)
-		print("DEBUG: Web platform detected, checking for auth token")
+		print("DEBUG: Web platform detected, checking for OAuth redirect")
 		var provider = Firebase.Auth.get_GoogleProvider()
 		var redirect_uri = get_web_redirect_uri()
 		print("DEBUG: Setting redirect URI: " + redirect_uri)
 		Firebase.Auth.set_redirect_uri(redirect_uri)
 		
+		# Check for OAuth token in URL (following documentation pattern)
 		var token = Firebase.Auth.get_token_from_url(provider)
 		if token:
-			print("DEBUG: Token found on page load: " + str(token).substr(0, 10) + "...")
+			print("DEBUG: OAuth token found on page load, completing sign-in")
 			show_message("Completing Google Sign-In...", true)
 			# Use a deferred call to ensure the GUI is ready
 			await get_tree().process_frame
-			# Store a flag to indicate we're processing a sign-in
-			save_web_data("processing_signin", "true")
-			save_web_data("google_auth_in_progress", "true")
-			# Save successful auth for auto-login (persistent)
-			save_web_data("last_successful_auth", "google", true)
 			Firebase.Auth.login_with_oauth(token, provider)
 			return
 		
@@ -157,180 +131,6 @@ func check_existing_auth():
 				}
 			""")
 			return
-		
-		# Second priority: Check for existing authenticated session to restore
-		var auto_login_enabled = get_web_data("auto_login_enabled", true)
-		var last_successful_auth = get_web_data("last_successful_auth", true)
-		var firebase_user_id = get_web_data("firebase_current_user_id", true)
-		var google_oauth_confirmed = get_web_data("google_oauth_user_confirmed", true)
-		var firebase_auth_method = get_web_data("firebase_auth_method", true)
-		
-		print("DEBUG: Auto-login enabled: " + str(auto_login_enabled))
-		print("DEBUG: Last successful auth: " + str(last_successful_auth))
-		print("DEBUG: Firebase user ID: " + str(firebase_user_id))
-		print("DEBUG: Google OAuth confirmed: " + str(google_oauth_confirmed))
-		print("DEBUG: Firebase auth method: " + str(firebase_auth_method))
-		
-		# Check specifically for Google OAuth users first with streamlined detection
-		if last_successful_auth == "google" and google_oauth_confirmed and google_oauth_confirmed != "null" and google_oauth_confirmed != "":
-			print("DEBUG: Google OAuth user detected, attempting to restore session")
-			show_message("Restoring your Google session...", true)
-			
-			# Initialize Firebase persistence first
-			_initialize_firebase_persistence()
-			
-			# Wait for Firebase auth state to be restored properly with timeout
-			var restoration_start_time = Time.get_ticks_msec()
-			var auth_restored = await _wait_for_firebase_auth_restoration()
-			var restoration_time = (Time.get_ticks_msec() - restoration_start_time) / 1000.0
-			
-			print("DEBUG: Firebase auth restoration took " + str(restoration_time) + " seconds")
-			
-			if auth_restored:
-				print("DEBUG: Firebase auth restoration successful, navigating to main menu")
-				get_tree().change_scene_to_file("res://Scenes/MainMenu.tscn")
-				return
-			else:
-				print("DEBUG: Firebase auth restoration failed, clearing Google auth data")
-				show_message("Google session expired. Please sign in again.", false)
-				clear_google_auth_data()
-				# Wait a moment before clearing message
-				await get_tree().create_timer(2.0).timeout
-				show_message("Please sign in", true)
-		
-		
-		# If we have a Firebase user ID (fallback for other cases), user is likely authenticated
-		elif firebase_user_id and firebase_user_id != "null" and firebase_user_id != "":
-			print("DEBUG: Firebase user found in storage, attempting to restore session")
-			show_message("Restoring your session...", true)
-			
-			# Wait for Firebase to fully initialize
-			await get_tree().create_timer(1.5).timeout
-			
-			# Try to get the current Firebase auth state with multiple attempts
-			var firebase_auth_valid = null
-			for attempt in range(3):  # Try 3 times with delays
-				firebase_auth_valid = JavaScriptBridge.eval("""
-					(function() {
-						try {
-							if (window.firebase && window.firebase.auth) {
-								var user = window.firebase.auth().currentUser;
-								if (user && user.uid) {
-									console.log('Firebase currentUser confirmed (attempt """ + str(attempt + 1) + """): ' + user.uid);
-									return user.uid;
-								}
-							}
-							console.log('No Firebase currentUser found (attempt """ + str(attempt + 1) + """)');
-							return null;
-						} catch(e) {
-							console.error('Error checking Firebase currentUser (attempt """ + str(attempt + 1) + """): ' + e.message);
-							return null;
-						}
-					})();
-				""")
-				
-				if firebase_auth_valid and firebase_auth_valid != "null":
-					break
-				
-				# Wait before next attempt
-				if attempt < 2:
-					await get_tree().create_timer(0.5).timeout
-			
-			print("DEBUG: Firebase auth validation result after all attempts: " + str(firebase_auth_valid))
-			
-			if firebase_auth_valid and firebase_auth_valid != "null":
-				print("DEBUG: Authentication confirmed, navigating to main menu")
-				await get_tree().create_timer(0.5).timeout
-				get_tree().change_scene_to_file("res://Scenes/MainMenu.tscn")
-				return
-			else:
-				print("DEBUG: Firebase user ID found but auth not valid, continuing with normal flow")
-		
-		# Check if Firebase has stored auth data in web storage (fallback method)
-		var has_firebase_auth = JavaScriptBridge.eval("""
-			(function() {
-				try {
-					// Check multiple possible Firebase auth storage locations
-					var firebaseAuth = localStorage.getItem('firebase:authUser:AIzaSyBvmRgUVaQGCzaEGKnr9O5rV_sMKhKGiKQ:[DEFAULT]') ||
-									   sessionStorage.getItem('firebase:authUser:AIzaSyBvmRgUVaQGCzaEGKnr9O5rV_sMKhKGiKQ:[DEFAULT]') ||
-									   localStorage.getItem('firebase:authUser') ||
-									   sessionStorage.getItem('firebase:authUser');
-					
-					if (firebaseAuth && firebaseAuth !== 'null') {
-						console.log('Found Firebase auth data in storage');
-						return true;
-					}
-					
-					// Also check for any Firebase auth data patterns
-					for (var i = 0; i < localStorage.length; i++) {
-						var key = localStorage.key(i);
-						if (key && (key.includes('firebase:authUser') || key.includes('firebase:auth'))) {
-							console.log('Found Firebase auth pattern: ' + key);
-							return true;
-						}
-					}
-					
-					return false;
-				} catch(e) {
-					console.error('Error checking Firebase auth storage: ' + e.message);
-					return false;
-				}
-			})();
-		""")
-		
-		print("DEBUG: Firebase auth found in storage: " + str(has_firebase_auth))
-		
-		# If we have persistent auth enabled and Firebase auth data exists, try to restore session
-		if auto_login_enabled == "true" and has_firebase_auth:
-			print("DEBUG: Attempting to restore authentication session via Firebase storage")
-			show_message("Checking authentication...", true)
-			
-			# Wait longer for Firebase to initialize if needed (important for Google OAuth)
-			await get_tree().create_timer(2.0).timeout
-			
-			# Try to restore auth state using Firebase's built-in functionality with multiple attempts
-			var auth_restored = null
-			for attempt in range(5):  # Try 5 times for this fallback method
-				auth_restored = JavaScriptBridge.eval("""
-					(function() {
-						try {
-							// Try to get the current user from Firebase Auth
-							if (window.firebase && window.firebase.auth) {
-								var user = window.firebase.auth().currentUser;
-								if (user) {
-									console.log('Firebase user found (fallback attempt """ + str(attempt + 1) + """): ' + user.uid);
-									// Check provider data to confirm Google OAuth if expected
-									if (user.providerData && user.providerData.length > 0) {
-										for (var i = 0; i < user.providerData.length; i++) {
-											console.log('Provider: ' + user.providerData[i].providerId);
-										}
-									}
-									return user.uid;
-								}
-							}
-							console.log('No Firebase user found (fallback attempt """ + str(attempt + 1) + """)');
-							return null;
-						} catch(e) {
-							console.error('Error checking Firebase current user (fallback attempt """ + str(attempt + 1) + """): ' + e.message);
-							return null;
-						}
-					})();
-				""")
-				
-				if auth_restored and auth_restored != "null":
-					break
-				
-				# Wait before next attempt
-				if attempt < 4:
-					await get_tree().create_timer(0.8).timeout
-			
-			if auth_restored:
-				print("DEBUG: Authentication restored successfully via fallback, navigating to main menu")
-				await get_tree().create_timer(0.5).timeout
-				get_tree().change_scene_to_file("res://Scenes/MainMenu.tscn")
-				return
-			else:
-				print("DEBUG: Firebase user ID found but auth not valid, continuing with normal flow")
 
 # Function to hide the ForgotPassword tab in the TabContainer
 func _hide_forgot_password_tab():
@@ -387,14 +187,19 @@ func _adjust_layout_for_screen_size():
 	else:
 		$MarginContainer/ContentContainer/RightPanel/MainContainer.custom_minimum_size.y = 0
 
-# Helper function to show messages
+# Helper function to show messages using notification popup with dyslexia-friendly feedback
 func show_message(text: String, is_success: bool = true):
-	var label = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/StatusLabel
-	label.text = text
-	if is_success:
-		label.add_theme_color_override("font_color", Color(0, 0.6, 0.3))
+	if notification_popup:
+		# Use different titles based on message type
+		var title = "Success" if is_success else "Error"
+		# Use standard "OK" button text
+		var button_text = "OK"
+		
+		# Show the notification popup with appropriate title and message
+		notification_popup.show_notification(title, text, button_text)
 	else:
-		label.add_theme_color_override("font_color", Color(0.85, 0.137, 0.137))
+		# Fallback in case notification popup isn't available
+		print("AUTH MESSAGE: ", text)
 
 # ===== Password Visibility Functions =====
 func _on_show_password_button_pressed():
@@ -449,7 +254,6 @@ func clear_all_error_labels():
 func _on_login_button_pressed():
 	# Don't clear storage for regular login - we want persistence
 	# Only clear storage if there are authentication conflicts
-	
 	var email = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/EmailLineEdit.text
 	var password = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/PasswordContainer/PasswordLineEdit.text
 	var has_error = false
@@ -559,8 +363,8 @@ func _on_sign_in_google_button_pressed():
 			};
 		""")
 		
-		# Save flag that we're starting Google auth
-		save_web_data("google_auth_started", "true")
+		# Save flag that we're starting Google auth (for debugging only)
+		print("DEBUG: Starting Google OAuth with redirect")
 		
 		print("DEBUG: Redirecting to Google OAuth in same tab with forced account selection")
 		
@@ -622,120 +426,30 @@ func _on_reset_password_button_pressed():
 func on_login_succeeded(auth):
 	print("DEBUG: Login successful with auth data: " + str(auth.keys()))
 	
-	# Make sure we save the auth data properly
+	# Use Firebase's built-in auth persistence (works for both web and standalone)
 	var save_result = Firebase.Auth.save_auth(auth)
-	print("DEBUG: Auth save result: " + str(save_result))
+	print("DEBUG: Firebase auth save result: " + str(save_result))
 	
-	# Enable persistent auto-login for web builds with additional auth data storage
+	# For web builds, set Firebase persistence to LOCAL to match standalone behavior
 	if OS.has_feature('web'):
-		save_web_data("auto_login_enabled", "true", true)
-		
-		# Determine if this is a Google OAuth login or email/password login
-		var auth_method = "email"
-		if auth.has("providerId") and auth.providerId == "google.com":
-			auth_method = "google"
-		elif str(auth).contains("google") or JavaScriptBridge.eval("sessionStorage.getItem('google_auth_in_progress') === 'true'"):
-			auth_method = "google"
-		
-		save_web_data("last_successful_auth", auth_method, true)
-		print("DEBUG: Detected auth method: " + auth_method)
-		
-		# Store additional auth data for session restoration
-		if auth.has("localid"):
-			save_web_data("firebase_user_id", auth.localid, true)
-		if auth.has("idtoken"):
-			save_web_data("firebase_id_token", auth.idtoken, true)
-		if auth.has("email"):
-			save_web_data("firebase_user_email", auth.email, true)
-		
-		# For Google OAuth, ensure Firebase auth state is properly set with enhanced persistence
-		if auth_method == "google":
-			print("DEBUG: Processing Google OAuth login - ensuring Firebase persistence")
-			JavaScriptBridge.eval("""
-				(function() {
-					try {
-						// Ensure Firebase auth persistence is set to LOCAL
-						if (window.firebase && window.firebase.auth) {
-							window.firebase.auth().setPersistence(window.firebase.auth.Auth.Persistence.LOCAL)
-								.then(function() {
-									console.log('Firebase auth persistence set to LOCAL for Google OAuth');
-									
-									// Force a check to ensure the user is properly authenticated
-									var user = window.firebase.auth().currentUser;
-									if (user) {
-										console.log('Google OAuth user confirmed in Firebase: ' + user.uid);
-										// Store the user state more explicitly for Google OAuth
-										localStorage.setItem('google_oauth_user_confirmed', user.uid);
-										localStorage.setItem('firebase_auth_method', 'google');
-										localStorage.setItem('firebase_current_user_id', user.uid);
-										localStorage.setItem('firebase_current_user_email', user.email || '');
-										
-										// Additional Google OAuth specific data
-										if (user.providerData && user.providerData.length > 0) {
-											for (var i = 0; i < user.providerData.length; i++) {
-												if (user.providerData[i].providerId === 'google.com') {
-													localStorage.setItem('google_provider_confirmed', 'true');
-													console.log('Google provider data confirmed and stored');
-													break;
-												}
-											}
-										}
-									} else {
-										console.log('Warning: Google OAuth completed but Firebase currentUser not found');
-										// Try to restore from auth parameter
-										console.log('Attempting to restore from auth data...');
-									}
-								})
-								.catch(function(error) {
-									console.error('Error setting Firebase persistence for Google OAuth: ' + error.message);
-								});
-						}
-					} catch(e) {
-						console.error('Error configuring Firebase persistence for Google OAuth: ' + e.message);
+		JavaScriptBridge.eval("""
+			(function() {
+				try {
+					if (window.firebase && window.firebase.auth) {
+						// Set persistence to LOCAL so auth survives browser restarts (like standalone)
+						window.firebase.auth().setPersistence(window.firebase.auth.Auth.Persistence.LOCAL)
+							.then(function() {
+								console.log('Firebase auth persistence set to LOCAL for web build');
+							})
+							.catch(function(error) {
+								console.error('Error setting Firebase persistence:', error);
+							});
 					}
-				})();
-			""")
-			
-			# Also store additional Google OAuth data from the auth response
-			save_web_data("google_oauth_user_confirmed", auth.localid, true)
-			save_web_data("google_provider_confirmed", "true", true)
-			save_web_data("firebase_current_user_id", auth.localid, true)
-		else:
-			# Regular email/password login
-			JavaScriptBridge.eval("""
-				(function() {
-					try {
-						// Ensure Firebase auth persistence is set to LOCAL
-						if (window.firebase && window.firebase.auth) {
-							window.firebase.auth().setPersistence(window.firebase.auth.Auth.Persistence.LOCAL)
-								.then(function() {
-									console.log('Firebase auth persistence set to LOCAL');
-									localStorage.setItem('firebase_auth_method', 'email');
-								})
-								.catch(function(error) {
-									console.error('Error setting Firebase persistence: ' + error.message);
-								});
-						}
-					} catch(e) {
-						console.error('Error configuring Firebase persistence: ' + e.message);
-					}
-				})();
-			""")
-		
-		print("DEBUG: Enabled persistent auto-login for web with enhanced storage")
-	
-	# Check if this is a returning web user from Google auth
-	var is_returning_from_google = false
-	if OS.has_feature('web'):
-		if JavaScriptBridge.eval("sessionStorage.getItem('processing_signin') === 'true' || sessionStorage.getItem('google_auth_in_progress') === 'true'"):
-			is_returning_from_google = true
-			JavaScriptBridge.eval("sessionStorage.removeItem('processing_signin'); sessionStorage.removeItem('google_auth_in_progress');")
-			print("DEBUG: User returning from Google auth")
-		
-		# Also check URL for Google auth state
-		if JavaScriptBridge.eval("window.location.href.indexOf('#state=google_auth') !== -1"):
-			is_returning_from_google = true
-			print("DEBUG: Google auth state found in URL")
+				} catch(e) {
+					console.error('Error configuring Firebase persistence:', e);
+				}
+			})();
+		""")
 	
 	# For new users, create a default user document in Firestore
 	var collection = Firebase.Firestore.collection("dyslexia_users")
@@ -751,7 +465,7 @@ func on_login_succeeded(auth):
 		print("DEBUG: User document already exists, skipping creation")
 	
 	# Navigate to main menu
-	navigate_to_main_menu(is_returning_from_google)
+	navigate_to_main_menu()
 
 # Helper function to navigate to main menu
 func navigate_to_main_menu(is_google_auth := false):
@@ -918,46 +632,6 @@ func _create_user_document(collection, user_id: String, auth):
 	registration_birth_date = ""
 	registration_age = 0
 
-# Add this to your authentication.gd
-func is_web_platform():
-	return OS.has_feature('web')
-
-# Replace any file storage with web storage when in browser
-func save_web_data(key, data, persistent = false):
-	if is_web_platform():
-		var storage_type = "localStorage" if persistent else "sessionStorage"
-		var js_code = """
-		(function() {
-			try {
-				""" + storage_type + """.setItem('""" + key + """', '""" + str(data) + """');
-				console.log('Saved """ + storage_type + """ data for key: """ + key + """');
-				return true;
-			} catch(e) {
-				console.error('Error saving """ + storage_type + """ data: ' + e.message);
-				return false;
-			}
-		})();
-		"""
-		return JavaScriptBridge.eval(js_code)
-	return false
-
-func get_web_data(key, persistent = false):
-	if is_web_platform():
-		var storage_type = "localStorage" if persistent else "sessionStorage"
-		var js_code = """
-		(function() {
-			try {
-				return """ + storage_type + """.getItem('""" + key + """');
-			} catch(e) {
-				console.error('Error reading """ + storage_type + """ data: ' + e.message);
-				return null;
-			}
-		})();
-		"""
-		return JavaScriptBridge.eval(js_code)
-	return null
-
-
 # Add these missing functions
 func on_login_failed(error_code, message):
 	print("DEBUG: Login failed: ", error_code, " - ", message)
@@ -968,18 +642,34 @@ func on_login_failed(error_code, message):
 	# Common Firebase error codes
 	match error_code:
 		"auth/user-not-found":
-			user_message = "Account does not exist. Please check your email or sign up."
+			user_message = "Account does not exist."
 		"auth/wrong-password":
-			user_message = "Incorrect password. Please try again."
+			user_message = "Incorrect password."
 		"auth/invalid-email":
-			user_message = "Invalid email format."
+			user_message = "Invalid email address."
 		"auth/user-disabled":
 			user_message = "This account has been disabled."
 		"auth/too-many-requests":
-			user_message = "Too many failed login attempts. Please try again later."
+			user_message = "Too many failed login attempts."
+		"auth/invalid-credential":
+			user_message = "Invalid email or password."
+		"INVALID_LOGIN_CREDENTIALS":
+			user_message = "Invalid email or password."
 		_:
-			# Default error message
-			user_message = "Login failed: " + message
+			# Handle specific technical messages that might appear
+			if message.contains("INVALID_LOGIN_CREDENTIALS") or message.contains("invalid-credential"):
+				user_message = "Invalid email or password. Please check and try again."
+			elif message.contains("USER_NOT_FOUND") or message.contains("user-not-found"):
+				user_message = "Account does not exist."
+			elif message.contains("WEAK_PASSWORD") or message.contains("weak-password"):
+				user_message = "Please use at least 6 characters."
+			elif message.contains("network") or message.contains("connection"):
+				user_message = "Connection problem."
+			elif message.contains("database") or message.contains("firestore"):
+				user_message = "Service temporarily unavailable."
+			else:
+				# Last resort - still make it friendly
+				user_message = "Sign-in failed. Please check your email and password."
 	
 	# Show the error message
 	show_message(user_message, false)
@@ -990,7 +680,39 @@ func on_login_failed(error_code, message):
 	
 func on_signup_failed(error_code, message):
 	print("Signup failed: ", error_code, " - ", message)
-	show_message("Registration Failed: " + message, false)
+	
+	# Provide user-friendly error messages for registration
+	var user_message = ""
+	
+	# Common Firebase registration error codes
+	match error_code:
+		"auth/email-already-in-use":
+			user_message = "This email is already registered. Please try logging in instead."
+		"auth/invalid-email":
+			user_message = "Please enter a valid email address."
+		"auth/weak-password":
+			user_message = "Password is too weak. Please use at least 6 characters."
+		"auth/operation-not-allowed":
+			user_message = "Registration is currently disabled. Please contact support."
+		"auth/too-many-requests":
+			user_message = "Too many registration attempts. Please try again later."
+		_:
+			# Handle specific technical messages that might appear
+			if message.contains("email-already-in-use") or message.contains("EMAIL_EXISTS"):
+				user_message = "This email is already registered. Please try logging in instead."
+			elif message.contains("weak-password") or message.contains("WEAK_PASSWORD"):
+				user_message = "Password is too weak. Please use at least 6 characters."
+			elif message.contains("invalid-email") or message.contains("INVALID_EMAIL"):
+				user_message = "Please enter a valid email address."
+			elif message.contains("network") or message.contains("connection"):
+				user_message = "Connection problem. Please check your internet and try again."
+			elif message.contains("database") or message.contains("firestore"):
+				user_message = "Service temporarily unavailable. Please try again in a moment."
+			else:
+				# Last resort - still make it friendly
+				user_message = "Registration failed. Please check your information and try again."
+	
+	show_message(user_message, false)
 
 # Helper function to get auth headers for requests
 func _get_auth_headers():
@@ -1009,10 +731,14 @@ func logout_user():
 	# Clear Firebase auth
 	Firebase.Auth.logout()
 	
-	# Clear persistent auto-login data for web builds
+	# For web builds, use Firebase's built-in logout
 	if OS.has_feature('web'):
-		# Clear all our custom auth data
-		save_web_data("auto_login_enabled", "false", true)
+		JavaScriptBridge.eval("""
+			// Clear any custom storage we may have used
+			localStorage.removeItem('google_auth_started');
+			sessionStorage.removeItem('processing_signin');
+			sessionStorage.removeItem('google_auth_in_progress');
+		""")
 		JavaScriptBridge.eval("""
 			// Clear all authentication-related localStorage and sessionStorage data
 			localStorage.removeItem('last_successful_auth');
@@ -1079,7 +805,7 @@ func logout_user():
 
 # Add this function to clear web storage if issues are detected
 func clear_web_storage():
-	if is_web_platform():
+	if OS.has_feature('web'):
 		var js_code = """
 		(function() {
 			try {
@@ -1105,7 +831,7 @@ func clear_web_storage():
 # Helper function to clear Google auth data specifically
 func clear_google_auth_data():
 	print("DEBUG: Clearing Google auth data")
-	if is_web_platform():
+	if OS.has_feature('web'):
 		var js_code = """
 		(function() {
 			try {
@@ -1160,7 +886,7 @@ func clear_google_auth_data():
 		})();
 		"""
 		return JavaScriptBridge.eval(js_code)
-	return false# Function to handle Super Admin button press
+	return false # Function to handle Super Admin button press
 func _on_admin_button_pressed():
 	print("DEBUG: Super Admin button pressed")
 	var admin_url = "https://admin-teamlexia.web.app/login"
@@ -1178,7 +904,7 @@ func _wait_for_firebase_auth_restoration() -> bool:
 	
 	# Wait for Firebase to be properly loaded with multiple attempts
 	var firebase_ready = false
-	var max_firebase_wait = 10.0  # Wait up to 10 seconds for Firebase
+	var max_firebase_wait = 10.0 # Wait up to 10 seconds for Firebase
 	var firebase_wait_time = 0.0
 	var firebase_check_interval = 0.5
 	
@@ -1354,8 +1080,8 @@ func _wait_for_firebase_auth_restoration() -> bool:
 	""")
 	
 	# Wait for the JavaScript to resolve with polling
-	var max_wait_time = 8.0  # Maximum 8 seconds total
-	var poll_interval = 0.2   # Check every 200ms (less frequent)
+	var max_wait_time = 8.0 # Maximum 8 seconds total
+	var poll_interval = 0.2 # Check every 200ms (less frequent)
 	var waited_time = 0.0
 	
 	while waited_time < max_wait_time:

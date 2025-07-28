@@ -449,9 +449,9 @@ func _show_dungeon_completion_notification(completed_dungeon_num: int):
 	var message = ""
 	
 	if next_dungeon <= 3:
-		message = "Congratulations! You have unlocked Dungeon " + str(next_dungeon) + "!\nWord challenges will now become " + next_word_length + " words."
+		message = "Congratulations! You have unlocked Dungeon " + str(next_dungeon) + "!\nWord challenges now become " + next_word_length + " words."
 	else:
-		message = "Congratulations! You have completed all dungeons!\nYou are now a master reader!"
+		message = "Congratulations! \nYou have completed all dungeons!\nYou are now a master reader!"
 	
 	# Get notification popup from battle scene (should exist)
 	var notification_popup = battle_scene.get_node_or_null("NotificationPopUp")

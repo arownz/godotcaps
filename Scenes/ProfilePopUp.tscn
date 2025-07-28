@@ -404,7 +404,7 @@ texture_hover = ExtResource("12_82scp")
 stretch_mode = 0
 
 [node name="DefaultPlayerAnimation" parent="ProfileContainer/CharacterContainer" instance=ExtResource("10_ampbo")]
-position = Vector2(107, 186)
+position = Vector2(112, 163)
 scale = Vector2(4.19841, 4.19841)
 
 [node name="DungeonArea" type="Button" parent="ProfileContainer"]
@@ -436,10 +436,10 @@ text = "3: The Mountain"
 
 [node name="DungeonImage" type="TextureRect" parent="ProfileContainer/DungeonArea"]
 layout_mode = 0
-offset_left = 54.0
-offset_top = 57.0
-offset_right = 226.0
-offset_bottom = 303.0
+offset_left = 7.0
+offset_top = 50.0
+offset_right = 277.0
+offset_bottom = 314.0
 scale = Vector2(0.844785, 0.844785)
 texture = ExtResource("13_tilb2")
 expand_mode = 1

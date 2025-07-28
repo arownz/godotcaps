@@ -560,10 +560,10 @@ expand_icon = true
 
 [node name="BackButton" type="TextureButton" parent="."]
 custom_minimum_size = Vector2(1, 1)
-offset_left = 133.233
-offset_top = 621.702
-offset_right = 160.233
-offset_bottom = 648.702
+offset_left = 135.0
+offset_top = 678.0
+offset_right = 162.0
+offset_bottom = 705.0
 scale = Vector2(3.76293, 3.83557)
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("2_oabpg")

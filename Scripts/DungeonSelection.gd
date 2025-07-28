@@ -31,7 +31,7 @@ var notification_popup: CanvasLayer
 func _ready():
     # Preload dungeon textures
     dungeon_textures.unlocked = [
-        preload("res://gui/Update/icons/level selection.png"),
+        preload("res://gui/Update/icons/plainselection.png"),
         preload("res://gui/Update/icons/theforesttransplant.png"),
         preload("res://gui/Update/icons/mountaintransplant.png")
     ]

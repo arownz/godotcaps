@@ -4,8 +4,8 @@
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="2_font_regular"]
 [ext_resource type="Texture2D" uid="uid://c75anq8c0biyi" path="res://gui/Update/UI/ui 7.png" id="2_pp7tk"]
 [ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="4_ch0ic"]
+[ext_resource type="Texture2D" uid="uid://bedyjdu5rblv8" path="res://gui/Update/UI/ui (1).png" id="5_pp7tk"]
 [ext_resource type="Script" uid="uid://w4a7fwksg51x" path="res://Scripts/SettingScene.gd" id="5_script"]
-[ext_resource type="Texture2D" uid="uid://c32gmv4ss8kvw" path="res://gui/Update/UI/ui 5.png" id="5_yhoge"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_header"]
 bg_color = Color(0.933333, 0.764706, 0.603922, 1)
@@ -138,7 +138,7 @@ theme_override_constants/separation = 30
 [node name="SettingsPanel" type="NinePatchRect" parent="MainContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-texture = ExtResource("5_yhoge")
+texture = ExtResource("5_pp7tk")
 patch_margin_left = 20
 patch_margin_top = 20
 patch_margin_right = 20

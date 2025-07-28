@@ -257,7 +257,7 @@ func _create_default_user_document(user_id):
                 "enemies_defeated": 0,
                 "current_dungeon": 1,
             }
-        }, #temporary structures for modules for future update
+        }, # temporary structures for modules for future update
         "modules": {
 			"phonics": {
 				"completed": false,

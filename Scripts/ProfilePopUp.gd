@@ -14,7 +14,7 @@ var dungeon_names = ["The Plain", "The Forest", "The Mountain"]
 
 # Preload dungeon images for better performance
 var dungeon_images = {
-    1: preload("res://gui/Update/icons/level selection.png"),
+    1: preload("res://gui/Update/icons/plainselection.png"),
     2: preload("res://gui/Update/icons/theforesttransplant.png"),
     3: preload("res://gui/Update/icons/mountaintransplant.png")
 }
@@ -434,40 +434,33 @@ func _on_close_button_pressed():
 func _on_logout_button_pressed():
     print("ProfilePopUp: Logout button pressed")
     
-    # Load the authentication scene to access its logout functionality
-    var auth_scene = load("res://Scenes/Authentication.tscn").instantiate()
+    # Use Firebase's built-in logout which properly clears auth persistence
+    Firebase.Auth.logout()
     
-    # Check if it has the logout_user method
-    if auth_scene.has_method("logout_user"):
-        print("ProfilePopUp: Using enhanced logout function")
-        # Add the auth scene temporarily to call its method
-        get_tree().root.add_child(auth_scene)
-        # Call the enhanced logout function which handles all cleanup
-        auth_scene.logout_user()
-        # Remove ourselves since the auth scene will handle navigation
-        queue_free()
-    else:
-        print("ProfilePopUp: Fallback to simple logout")
-        # Fallback to simple logout
-        Firebase.Auth.logout()
-        
-        # Clear web storage data if on web platform
-        if OS.has_feature('web'):
-            if JavaScriptBridge.eval("typeof JavaScriptBridge !== 'undefined'"):
-                JavaScriptBridge.eval("""
-                    // Clear all authentication-related data
-                    localStorage.removeItem('last_successful_auth');
-                    localStorage.removeItem('firebase_user_id');
-                    localStorage.removeItem('firebase_current_user_id');
-                    localStorage.removeItem('google_oauth_user_confirmed');
-                    localStorage.removeItem('firebase_auth_method');
-                    localStorage.setItem('auto_login_enabled', 'false');
-                    sessionStorage.clear();
-                    console.log('Auth data cleared on logout');
-                """)
-        
-        var scene = load("res://Scenes/Authentication.tscn")
-        get_tree().change_scene_to_packed(scene)
+    # For web builds, clean up any remaining web storage (but rely on Firebase for main persistence)
+    if OS.has_feature('web'):
+        if JavaScriptBridge.eval("typeof JavaScriptBridge !== 'undefined'"):
+            JavaScriptBridge.eval("""
+                // Clean up any custom storage we may have used
+                localStorage.removeItem('google_auth_started');
+                sessionStorage.removeItem('processing_signin');
+                sessionStorage.removeItem('google_auth_in_progress');
+                console.log('Custom auth data cleared on logout');
+            """)
+    
+    # Wait a moment to ensure logout is complete
+    await get_tree().create_timer(0.1).timeout
+    
+    print("ProfilePopUp: Logout complete, navigating to authentication")
+    
+    # Close popup first
+    queue_free()
+    
+    # Set logout flag to prevent auto-login and navigate to authentication scene
+    DungeonGlobals.logout_just_occurred = true
+    
+    # Navigate to authentication scene
+    get_tree().change_scene_to_file("res://Scenes/Authentication.tscn")
 
 func _on_profile_picture_button_pressed():
     print("ProfilePopUp: Profile picture button pressed")

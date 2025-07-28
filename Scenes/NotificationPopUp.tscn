@@ -39,7 +39,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="PopupBackground" type="TextureRect" parent="PopupContainer/CenterContainer"]
-custom_minimum_size = Vector2(500, 200)
+custom_minimum_size = Vector2(500, 210)
 layout_mode = 2
 texture = ExtResource("1_8cacn")
 
@@ -51,7 +51,7 @@ anchor_bottom = 1.0
 offset_left = 20.0
 offset_top = 20.0
 offset_right = -20.0
-offset_bottom = -20.0
+offset_bottom = -23.0
 grow_horizontal = 2
 grow_vertical = 2
 alignment = 1
@@ -62,7 +62,7 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 2
 theme_override_fonts/font = ExtResource("3_xijp0")
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 25
 text = "Notification Title"
 horizontal_alignment = 1
 
@@ -70,10 +70,11 @@ horizontal_alignment = 1
 custom_minimum_size = Vector2(1, 1)
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_colors/font_color = Color(1, 0.92549, 0.756863, 1)
+theme_override_colors/font_color = Color(0.985813, 0.955071, 0.530108, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_47wmi")
-theme_override_font_sizes/font_size = 15
-text = "This is the notification message that will be displayed to the user."
+theme_override_font_sizes/font_size = 13
+text = "This is a sample notification message that will be displayed to the user."
 horizontal_alignment = 1
 autowrap_mode = 2
 

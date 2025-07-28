@@ -589,14 +589,14 @@ func _on_word_fetched():
 		print("STT Challenge: Label visible: " + str(random_word_label.visible))
 		print("STT Challenge: Label modulate: " + str(random_word_label.modulate))
 	else:
-		print("ERROR: random_word_label is null!")
+		print("Word display is not responding. Please try again.")
 		# Try to find it again
 		random_word_label = get_node_or_null("ChallengePanel/VBoxContainer/WordContainer/RandomWordLabel")
 		if random_word_label:
 			random_word_label.text = challenge_word
 			print("STT Challenge: Found and updated label on retry")
 		else:
-			print("ERROR: Could not find RandomWordLabel node!")
+			print("Cannot find the word display. Please refresh and try again.")
 			# Print the scene tree to debug
 			print("STT Challenge: Current scene children:")
 			for child in get_children():
@@ -940,31 +940,31 @@ func _process_interim_transcription(text):
 	
 	print("Processing interim text: '" + text + "'")
 	
-	# Debouncing mechanism to prevent getting stuck on similar-sounding words
-	var current_time = Time.get_time_dict_from_system()
-	var time_ms = current_time.hour * 3600000 + current_time.minute * 60000 + current_time.second * 1000 + current_time.get("millisecond", 0)
-	
-	# Check if this is a new/different result
-	if text != last_interim_result:
-		last_interim_result = text
-		interim_change_count += 1
-		last_change_time = time_ms
-	else:
-		# Same result - check if it's been too long without change
-		if time_ms - last_change_time > 1500: # 1.5 seconds of same result
-			# Try to unstick by slightly modifying the display
-			if not text.is_empty():
-				print("Detected potential stuck recognition, trying to unstick...")
-				# Don't return early - continue processing to give feedback
+	# Always update the last interim result to allow infinite tweaking
+	last_interim_result = text
 	
 	# Convert numbers to words first
 	var processed_text = _convert_numbers_to_words(text)
 	
 	# Clean the text to remove non-letter characters except spaces
 	processed_text = _clean_text_for_words(processed_text)
+	
+	# EXTRACT ONLY THE LAST WORD - This fixes the "ore ore" issue
+	var words = processed_text.strip_edges().split(" ")
+	var last_word = ""
+	if words.size() > 0:
+		# Get the last non-empty word
+		for i in range(words.size() - 1, -1, -1):
+			if words[i].strip_edges() != "":
+				last_word = words[i].strip_edges()
+				break
+	
+	# Use only the last word for display and comparison
+	var display_word = last_word.to_lower().strip_edges()
+	print("Extracted last word: '" + display_word + "' from full text: '" + processed_text + "'")
 		
-	# Update live transcription display - normalize to lowercase for consistency
-	current_interim_result = processed_text.to_lower().strip_edges()
+	# Update live transcription display with only the last word
+	current_interim_result = display_word
 	
 	# Ensure we have the live transcription text node
 	if not live_transcription_text:
@@ -974,9 +974,9 @@ func _process_interim_transcription(text):
 			return
 	
 	# Apply phonetic improvement for similar-sounding words
-	var improved_text = _apply_phonetic_improvements(current_interim_result, challenge_word)
+	var improved_text = _apply_phonetic_improvements(display_word, challenge_word)
 	
-	# Display the improved text
+	# Display the improved single word
 	var display_text = improved_text
 	live_transcription_text.text = "| " + display_text
 	live_transcription_text.visible = true
@@ -1046,28 +1046,25 @@ func _apply_phonetic_improvements(recognized_text: String, target_word: String) 
 	var target_lower = target_word.to_lower().strip_edges()
 	var recognized_lower = recognized_text.to_lower().strip_edges()
 	
-	# Handle common phonetic variations for dyslexic learners
+	# Handle common phonetic variations for dyslexic learners - STRICTER FOR EDUCATION
 	var phonetic_substitutions = {
-		# Common sound confusions
-		"bae": "bay",
-		"kay": "gay", "gay": "kay",
-		"dae": "day", "dai": "day",
-		"mae": "may", "mai": "may",
-		"wae": "way", "wei": "way",
-		"sae": "say", "sei": "say",
-		"lae": "lay", "lei": "lay",
-		"pae": "pay", "pai": "pay",
-		"rae": "ray", "rei": "ray",
-		"hae": "hay", "hei": "hay",
-		"jae": "jay", "jei": "jay",
-		"fae": "fay", "fei": "fay",
+		# Only allow very common sound confusions that don't change word meaning
+		"bae": "bay", "bay": "bae",
+		"dae": "day", "day": "dae", "dai": "day",
+		"mae": "may", "may": "mae", "mai": "may",
+		"wae": "way", "way": "wae", "wei": "way",
+		"sae": "say", "say": "sae", "sei": "say",
+		"lae": "lay", "lay": "lae", "lei": "lay",
+		"pae": "pay", "pay": "pae", "pai": "pay",
+		"rae": "ray", "ray": "rae", "rei": "ray",
+		"hae": "hay", "hay": "hae", "hei": "hay",
+		"jae": "jay", "jay": "jae", "jei": "jay",
+		"fae": "fay", "fay": "fae", "fei": "fay",
 		
-		# Reverse mappings
-		"bay": "bae", "day": "dae", "may": "mae", "way": "wae",
-		"say": "sae", "lay": "lae", "pay": "pae", "ray": "rae",
-		"hay": "hae", "jay": "jae", "fay": "fae",
+		# REMOVED problematic pairs that teach wrong pronunciations:
+		# No more "or"/"ore", "to"/"two", etc. - students must learn exact pronunciation
 		
-		# Common letter reversals for dyslexia
+		# Only keep letter reversals for dyslexia (these don't change pronunciation)
 		"bd": "db", "pq": "qp", "mn": "nm",
 		"was": "saw", "no": "on", "net": "ten"
 	}
@@ -1275,6 +1272,21 @@ func _on_speech_recognized(text):
 	
 	# Step 3: Apply phonetic improvements
 	processed_text = _apply_phonetic_improvements(processed_text, challenge_word)
+	
+	# Step 3.5: Extract only the last word (same logic as live transcription)
+	var words = processed_text.strip_edges().split(" ")
+	var last_word = ""
+	if words.size() > 0:
+		# Get the last non-empty word
+		for i in range(words.size() - 1, -1, -1):
+			if words[i].strip_edges() != "":
+				last_word = words[i].strip_edges()
+				break
+	
+	# Use only the last word for final processing
+	if not last_word.is_empty():
+		processed_text = last_word
+		print("Extracted last word for final processing: '" + last_word + "' from full text")
 	
 	# Step 4: Normalize for comparison
 	var recognized_normalized = processed_text.to_lower().strip_edges()

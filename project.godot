@@ -15,9 +15,12 @@ config/description="dyslexia web 2d gamification"
 config/version="1.0"
 run/main_scene="uid://cbpwvuj8kdyod"
 config/features=PackedStringArray("4.4", "GL Compatibility")
+boot_splash/fullsize=false
+boot_splash/use_filter=false
+boot_splash/image="uid://dkkb8nek5d6fs"
 config/icon="uid://dkkb8nek5d6fs"
-x`run/main_scene="uid://cbpwvuj8kdyod"
-run/icon="res://gui/lexiagamelogo.png"
+config/windows_native_icon="uid://dkkb8nek5d6fs"
+boot_splash/minimum_display_time=2
 
 [audio]
 
@@ -39,7 +42,7 @@ features/vulkan/disable=true
 window/size/viewport_width=1460
 window/size/viewport_height=810
 window/subwindows/embed_subwindows=false
-window/stretch/mode="canvas_items"
+window/stretch/mode="viewport"
 window/per_pixel_transparency/allowed=true
 window/handheld/orientation=4
 window/vsync/vsync_mode=false
@@ -69,13 +72,12 @@ folder_colors={
 
 [input_devices]
 
-pointing/emulate_mouse_from_touch=false
-"#Addthislineforcompletetouchsupport[rendering]renderer/rendering_method"="gl_compatibility"
-renderer/rendering_method.mobile="gl_compatibility"
+pointing/emulate_touch_from_mouse=true
 
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+textures/vram_compression/import_etc2_astc=true
 textures/default_filters/use_nearest_mipmap_filter=true

@@ -380,12 +380,12 @@ func process_image_with_javascript(base64_img, width, height):
 						_on_recognition_completed(result_data.result)
 						return
 					else:
-						_on_recognition_error("Empty result received")
+						_on_recognition_error("Could not read your handwriting. Please write more clearly.")
 						return
 				
 				elif result_data.status == "error":
 					print("OCR processing error: " + str(result_data.result))
-					_on_recognition_error(str(result_data.result))
+					_on_recognition_error("Could not process your handwriting: " + str(result_data.result))
 					return
 					
 				# Otherwise continue polling
@@ -430,7 +430,22 @@ func _on_recognition_error(error_msg: String):
 	print("Recognition error: " + error_msg)
 	debug_log("Recognition error: " + error_msg)
 	
-	emit_signal("drawing_submitted", "recognition_error")
+	# Humanize error messages for better user experience
+	var user_friendly_msg = "recognition_error"
+	if "Failed to start recognition" in error_msg:
+		user_friendly_msg = "Could not analyze your handwriting. Please try again."
+	elif "Vision API not available" in error_msg:
+		user_friendly_msg = "Handwriting recognition is temporarily unavailable."
+	elif "Request timed out" in error_msg:
+		user_friendly_msg = "Analysis is taking too long. Please try again."
+	elif "Empty result received" in error_msg:
+		user_friendly_msg = "Could not read your handwriting. Please write more clearly."
+	elif "JavaScript bridge unavailable" in error_msg:
+		user_friendly_msg = "System error. Please refresh the page."
+	else:
+		user_friendly_msg = "Unable to read your handwriting. Please try writing again."
+	
+	emit_signal("drawing_submitted", user_friendly_msg)
 	
 	# Update status display
 	if status_label:

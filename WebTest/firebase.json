@@ -37,15 +37,6 @@
         ]
       },
       {
-        "source": "**/*.@(js|html|wasm)",
-        "headers": [
-          {
-            "key": "Content-Type",
-            "value": "application/javascript"
-          }
-        ]
-      },
-      {
         "source": "**/*.js",
         "headers": [
           {
@@ -73,15 +64,6 @@
           {
             "key": "Cross-Origin-Embedder-Policy",
             "value": "require-corp"
-          }
-        ]
-      },
-      {
-        "source": "**/*.worker.js",
-        "headers": [
-          {
-            "key": "Content-Type",
-            "value": "application/javascript"
           }
         ]
       },

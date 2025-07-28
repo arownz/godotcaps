@@ -2,9 +2,9 @@
 
 [ext_resource type="Script" uid="uid://t3y57n5oleps" path="res://Scripts/DungeonSelection.gd" id="1_bfmdj"]
 [ext_resource type="Texture2D" uid="uid://chfkysvsxt4eg" path="res://gui/Update/Backgrounds/Plains_Level.png" id="2_bu21u"]
-[ext_resource type="Texture2D" uid="uid://bt0tigh26flog" path="res://gui/Update/icons/level selection.png" id="4_bu21u"]
+[ext_resource type="Texture2D" uid="uid://cg83xpu21sqfl" path="res://gui/Update/icons/plainselection.png" id="4_wo2mw"]
 [ext_resource type="Texture2D" uid="uid://buusolffynw3v" path="res://gui/Update/icons/theforesttransplant_lock.png" id="5_bu21u"]
-[ext_resource type="Texture2D" uid="uid://c6tb4tch7hsw3" path="res://gui/Update/icons/level selection_hover.png" id="5_fcnnw"]
+[ext_resource type="Texture2D" uid="uid://b86hj1clvo43b" path="res://gui/Update/icons/plainselection_hover.png" id="5_wo2mw"]
 [ext_resource type="Texture2D" uid="uid://ceqr8401ogp8s" path="res://gui/Update/icons/mountaintransplant_lock.png" id="6_v81g5"]
 [ext_resource type="Texture2D" uid="uid://qmmpx3uab5h7" path="res://gui/Update/UI/next button.png" id="7_bu21u"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="7_vkjng"]
@@ -105,8 +105,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_default_cursor_shape = 2
-texture_normal = ExtResource("4_bu21u")
-texture_hover = ExtResource("5_fcnnw")
+texture_normal = ExtResource("4_wo2mw")
+texture_hover = ExtResource("5_wo2mw")
 ignore_texture_size = true
 stretch_mode = 5
 

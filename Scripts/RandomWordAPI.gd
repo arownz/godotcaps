@@ -14,7 +14,7 @@ var random_word = ""
 var current_api_index = 0
 var current_retry = 0
 var last_error = ""
-var current_word_length = 3  # Default word length for dungeon 1
+var current_word_length = 3 # Default word length for dungeon 1
 
 # Constants
 const MAX_RETRIES = 3
@@ -201,23 +201,23 @@ func _get_fallback_word() -> String:
 	var word_categories_by_length = {
 		3: {
 			"animals": ["cat", "dog", "fox", "owl", "pig", "cow", "bat", "elk", "ape", "ant"],
-			"objects": ["cup", "pan", "box", "key", "pen", "hat", "bag", "car", "bed", "toy"],
-			"nature": ["sun", "mud", "fog", "air", "oil", "gas", "web", "oak", "gem", "ore"],
+			"objects": ["cup", "pot", "box", "key", "pen", "rod", "bag", "car", "bed", "toy"],
+			"nature": ["sun", "mud", "fog", "air", "ice", "gas", "web", "oak", "gem", "sky"],
 			"food": ["pie", "tea", "egg", "jam", "nut", "ham", "gum", "oat", "fig", "yam"],
-			"colors": ["red", "tan", "jet", "ash", "ink", "dye", "hue", "ore", "wax", "tar"],
+			"colors": ["red", "tan", "jet", "ash", "ink", "dye", "hue", "navy", "wax", "tar"],
 			"verbs": ["run", "sit", "eat", "get", "put", "cut", "dig", "fly", "try", "hop"]
 		},
 		4: {
 			"animals": ["wolf", "frog", "bear", "lion", "duck", "bird", "fish", "deer", "goat", "seal"],
 			"objects": ["book", "lamp", "desk", "fork", "door", "bowl", "ring", "coat", "pipe", "disk"],
 			"nature": ["tree", "rock", "fire", "lake", "hill", "moon", "star", "snow", "leaf", "wind"],
-			"food": ["cake", "meat", "rice", "soup", "pear", "plum", "milk", "corn", "beef", "tuna"],
+			"food": ["cake", "bread", "rice", "soup", "pear", "plum", "milk", "corn", "beef", "tuna"],
 			"colors": ["blue", "pink", "teal", "gold", "ruby", "mint", "lime", "rust", "jade", "rose"],
 			"verbs": ["walk", "talk", "make", "read", "swim", "sing", "play", "ride", "push", "pull"]
 		},
 		5: {
 			"animals": ["horse", "shark", "eagle", "tiger", "mouse", "whale", "sheep", "snake", "zebra", "llama"],
-			"objects": ["table", "chair", "phone", "watch", "glass", "knife", "spoon", "plate", "tower", "wheel"],
+			"objects": ["table", "chair", "phone", "watch", "glass", "brush", "spoon", "plate", "tower", "wheel"],
 			"nature": ["ocean", "river", "beach", "field", "grass", "plant", "stone", "cloud", "storm", "light"],
 			"food": ["bread", "apple", "honey", "grape", "lemon", "pasta", "salad", "pizza", "cream", "sugar"],
 			"colors": ["green", "black", "white", "brown", "coral", "peach", "ivory", "amber", "olive", "beige"],

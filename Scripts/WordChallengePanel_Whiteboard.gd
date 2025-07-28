@@ -12,7 +12,7 @@ var api_status_label
 
 # Word challenge properties
 var challenge_word = ""
-var bonus_damage = 5  # This will be calculated dynamically
+var bonus_damage = 5 # This will be calculated dynamically
 var random_word_api = null
 var tts = null
 
@@ -63,7 +63,7 @@ func calculate_bonus_damage() -> int:
 		# Ensure minimum bonus of 3 and reasonable maximum (not overpowered)
 		bonus_amount = max(3, min(bonus_amount, int(player_base_damage * 0.75)))
 		print("Whiteboard Challenge: Base damage: ", player_base_damage, " Bonus: ", bonus_amount, " Total: ", player_base_damage + bonus_amount)
-		return bonus_amount  # Return only the bonus, not base + bonus
+		return bonus_amount # Return only the bonus, not base + bonus
 	else:
 		# Fallback to fixed value if battle scene not accessible
 		return 8
@@ -73,7 +73,7 @@ func _on_drawing_cancelled():
 	print("Drawing cancelled, player will take damage")
 	api_status_label.text = "Challenge cancelled!"
 	await get_tree().create_timer(0.5).timeout
-	emit_signal("challenge_cancelled")  # This will notify battle_manager to apply damage
+	emit_signal("challenge_cancelled") # This will notify battle_manager to apply damage
 	queue_free()
 
 func _on_word_fetched():
@@ -85,7 +85,7 @@ func _on_word_fetched():
 	if random_word_api.last_error == "":
 		api_status_label.text = ""
 	else:
-		api_status_label.text = "API Error: " + random_word_api.last_error
+		api_status_label.text = "Word loading failed. Please try again."
 		
 		# If API fails, use a fallback word
 		if challenge_word.is_empty():
@@ -161,11 +161,11 @@ func _on_drawing_submitted(text_result):
 		# Stricter thresholds based on word length
 		var required_similarity = 0.0
 		if target_word.length() <= 3:
-			required_similarity = 0.85  # 85% for short words (very strict)
+			required_similarity = 0.85 # 85% for short words (very strict)
 		elif target_word.length() == 4:
-			required_similarity = 0.80  # 80% for medium words
+			required_similarity = 0.80 # 80% for medium words
 		else:
-			required_similarity = 0.75  # 75% for longer words
+			required_similarity = 0.75 # 75% for longer words
 		
 		if similarity >= required_similarity:
 			is_success = true
@@ -244,10 +244,10 @@ func calculate_word_similarity(word1, word2):
 	
 	# Common dyslexic letter swaps to be more lenient with
 	var common_swaps = {
-		"b": "d", "d": "b",  # b-d confusion
-		"p": "q", "q": "p",  # p-q confusion
-		"m": "w", "w": "m",  # m-w confusion
-		"n": "u", "u": "n",  # n-u confusion
+		"b": "d", "d": "b", # b-d confusion
+		"p": "q", "q": "p", # p-q confusion
+		"m": "w", "w": "m", # m-w confusion
+		"n": "u", "u": "n", # n-u confusion
 	}
 	
 	# Add phonetic similarity - letters that sound similar
@@ -317,8 +317,8 @@ func _on_tts_speech_ended():
 	if tts.is_connected("speech_error", Callable(self, "_on_tts_speech_error")):
 		tts.disconnect("speech_error", Callable(self, "_on_tts_speech_ended"))
 
-func _on_tts_speech_error(error_msg):
-	api_status_label.text = "TTS Error: " + error_msg
+func _on_tts_speech_error(_error_msg):
+	api_status_label.text = "Speech playback failed. Please try again."
 	
 	# Disconnect the temporary signals
 	if tts.is_connected("speech_ended", Callable(self, "_on_tts_speech_ended")):
@@ -363,10 +363,10 @@ func _get_word_length_for_dungeon() -> int:
 	if battle_scene and battle_scene.has_method("get_current_dungeon"):
 		var current_dungeon = battle_scene.get_current_dungeon()
 		match current_dungeon:
-			1: return 3  # Dungeon 1: 3-letter words
-			2: return 4  # Dungeon 2: 4-letter words  
-			3: return 5  # Dungeon 3: 5-letter words
-			_: return 3  # Default fallback
+			1: return 3 # Dungeon 1: 3-letter words
+			2: return 4 # Dungeon 2: 4-letter words
+			3: return 5 # Dungeon 3: 5-letter words
+			_: return 3 # Default fallback
 	else:
 		print("Warning: Could not get current dungeon, using default 3-letter words")
 		return 3
@@ -400,7 +400,7 @@ func calculate_improved_word_similarity(recognized: String, target: String) -> f
 				var check_pos = i + offset
 				if check_pos >= 0 and check_pos < recognized.length():
 					if recognized[check_pos] == target_char:
-						position_score += 0.7  # Partial credit for transposition
+						position_score += 0.7 # Partial credit for transposition
 						found_match = true
 						break
 			
@@ -408,7 +408,7 @@ func calculate_improved_word_similarity(recognized: String, target: String) -> f
 			if not found_match and i < recognized.length():
 				var recognized_char = recognized[i]
 				if _are_dyslexic_similar(recognized_char, target_char):
-					position_score += 0.8  # Good credit for dyslexic similarities
+					position_score += 0.8 # Good credit for dyslexic similarities
 					found_match = true
 	
 	# Character coverage - ensure most characters from target are present
@@ -425,7 +425,7 @@ func calculate_improved_word_similarity(recognized: String, target: String) -> f
 					found_similar = true
 					break
 			if not found_similar:
-				coverage_score += 0.0  # Penalty for missing characters
+				coverage_score += 0.0 # Penalty for missing characters
 	
 	# Calculate weighted similarity
 	var position_weight = 0.6
@@ -442,8 +442,8 @@ func calculate_improved_word_similarity(recognized: String, target: String) -> f
 		final_similarity = max(0.0, final_similarity - length_penalty)
 	
 	print("Position score: %.2f/%.2f, Coverage: %.2f/%.2f, Final: %.2f" % [
-		position_score, float(target.length()), 
-		coverage_score, float(target.length()), 
+		position_score, float(target.length()),
+		coverage_score, float(target.length()),
 		final_similarity
 	])
 	
@@ -453,7 +453,7 @@ func calculate_improved_word_similarity(recognized: String, target: String) -> f
 func _are_dyslexic_similar(char1: String, char2: String) -> bool:
 	var dyslexic_pairs = {
 		"b": ["d", "p"],
-		"d": ["b", "q"], 
+		"d": ["b", "q"],
 		"p": ["b", "q"],
 		"q": ["p", "d"],
 		"m": ["w", "n"],
