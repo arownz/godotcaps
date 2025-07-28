@@ -8,7 +8,7 @@ signal challenge_cancelled
 var battle_scene
 var challenge_type = ""
 var current_word_challenge = null
-var enemy_defeated_during_challenge = false  # Track if enemy was defeated during challenge
+var enemy_defeated_during_challenge = false # Track if enemy was defeated during challenge
 
 # Preload challenge scenes
 var word_challenge_whiteboard_scene = preload("res://Scenes/WordChallengePanel_Whiteboard.tscn")
@@ -22,7 +22,7 @@ func _ready():
 
 func start_word_challenge(challenge_type_param: String):
 	challenge_type = challenge_type_param
-	enemy_defeated_during_challenge = false  # Reset flag
+	enemy_defeated_during_challenge = false # Reset flag
 	print("ChallengeManager: Starting " + challenge_type + " challenge")
 	
 	# Stop battle and show challenge
@@ -170,8 +170,7 @@ func handle_challenge_completed(bonus_damage):
 			# Move player closer to enemy for counter attack
 			if enemy_manager and enemy_manager.enemy_animation:
 				# Move player to the RIGHT toward enemy (player is on left, enemy on right)
-				# Use same movement distance as regular attack (47 pixels) for consistency
-				var counter_position = Vector2(original_position.x + 47, original_position.y)
+				var counter_position = Vector2(original_position.x + 45, original_position.y)
 				
 				# Create smooth movement tween to enemy
 				var move_tween = battle_scene.create_tween()
@@ -214,7 +213,7 @@ func handle_challenge_completed(bonus_damage):
 	
 	# Check if enemy is defeated
 	if enemy_manager.enemy_health <= 0:
-		enemy_defeated_during_challenge = true  # Set flag
+		enemy_defeated_during_challenge = true # Set flag
 		battle_scene.battle_active = false
 		battle_log_manager.add_message("[color=#006400]You defeated the " + enemy_manager.enemy_name + " with your counter-attack![/color]")
 		# Clean up challenge UI immediately when enemy is defeated

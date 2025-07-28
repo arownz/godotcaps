@@ -507,4 +507,4 @@ animations = [{
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_fdt5l")
 animation = &"idle"
-autoplay = "battle_idle"
+autoplay = "idle"

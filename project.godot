@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Lexia"
-config/description="dyslexia web 2d gamification"
+config/description="2D Dyslexia Gamification Browser Base (Chrome, Edge, Firefox, Brave)"
 config/version="1.0"
 run/main_scene="uid://cbpwvuj8kdyod"
 config/features=PackedStringArray("4.4", "GL Compatibility")
@@ -20,7 +20,7 @@ boot_splash/use_filter=false
 boot_splash/image="uid://dkkb8nek5d6fs"
 config/icon="uid://dkkb8nek5d6fs"
 config/windows_native_icon="uid://dkkb8nek5d6fs"
-boot_splash/minimum_display_time=2
+boot_splash/minimum_display_time=1
 
 [audio]
 
@@ -31,6 +31,10 @@ general/text_to_speech=true
 Firebase="*res://addons/godot-firebase/firebase/firebase.tscn"
 DungeonGlobals="*res://Scripts/DungeonGlobals.gd"
 SettingsManager="*res://Scripts/SettingsManager.gd"
+
+[compression]
+
+formats/description="2D Dyslexia Gamification Browser Base (Chrome, Edge, Firefox, Brave)"
 
 [config]
 

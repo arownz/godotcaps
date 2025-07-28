@@ -405,7 +405,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.8, 0.2, 0.2, 1)
 theme_override_fonts/font = ExtResource("1_font_bold")
 theme_override_font_sizes/font_size = 24
-text = "💾 Data & Privacy"
+text = "Data & Privacy"
 
 [node name="ExportDataButton" type="Button" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/DataSection"]
 custom_minimum_size = Vector2(200, 50)
