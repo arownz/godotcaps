@@ -75,27 +75,21 @@ offset_bottom = -100.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="DungeonCarousel" type="HBoxContainer" parent="DungeonContainer"]
+[node name="DungeonCarousel" type="Control" parent="DungeonContainer"]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -997.0
-offset_top = -271.0
-offset_right = 1003.0
-offset_bottom = 229.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 100
-alignment = 1
 
 [node name="Dungeon1" type="Control" parent="DungeonContainer/DungeonCarousel"]
 custom_minimum_size = Vector2(600, 500)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
+anchors_preset = 0
+offset_left = 438.0
+offset_top = 45.0
+offset_right = 1038.0
+offset_bottom = 545.0
 
 [node name="TextureButton" type="TextureButton" parent="DungeonContainer/DungeonCarousel/Dungeon1"]
 layout_mode = 1
@@ -124,7 +118,7 @@ theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
 theme_override_fonts/font = ExtResource("7_vkjng")
-theme_override_font_sizes/font_size = 36
+theme_override_font_sizes/font_size = 30
 text = "Dungeon 1: The Plain"
 horizontal_alignment = 1
 
@@ -148,9 +142,11 @@ horizontal_alignment = 1
 
 [node name="Dungeon2" type="Control" parent="DungeonContainer/DungeonCarousel"]
 custom_minimum_size = Vector2(600, 500)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
+anchors_preset = 0
+offset_left = 1138.0
+offset_top = 45.0
+offset_right = 1738.0
+offset_bottom = 545.0
 
 [node name="TextureButton" type="TextureButton" parent="DungeonContainer/DungeonCarousel/Dungeon2"]
 layout_mode = 1
@@ -179,7 +175,7 @@ theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
 theme_override_fonts/font = ExtResource("7_vkjng")
-theme_override_font_sizes/font_size = 36
+theme_override_font_sizes/font_size = 30
 text = "Dungeon 2: The Forest"
 horizontal_alignment = 1
 
@@ -203,9 +199,11 @@ horizontal_alignment = 1
 
 [node name="Dungeon3" type="Control" parent="DungeonContainer/DungeonCarousel"]
 custom_minimum_size = Vector2(600, 500)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
+anchors_preset = 0
+offset_left = -262.0
+offset_top = 45.0
+offset_right = 338.0
+offset_bottom = 545.0
 
 [node name="TextureButton" type="TextureButton" parent="DungeonContainer/DungeonCarousel/Dungeon3"]
 layout_mode = 1
@@ -234,7 +232,7 @@ theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
 theme_override_fonts/font = ExtResource("7_vkjng")
-theme_override_font_sizes/font_size = 36
+theme_override_font_sizes/font_size = 30
 text = "Dungeon 3: The Mountain"
 horizontal_alignment = 1
 
@@ -310,6 +308,7 @@ stretch_mode = 5
 flip_h = true
 
 [node name="PreviousLabel" type="Label" parent="PreviousButton"]
+visible = false
 layout_mode = 0
 offset_top = -8.15793
 offset_right = 102.0
