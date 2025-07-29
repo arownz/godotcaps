@@ -48,22 +48,50 @@ func _ready():
 	for i in range(DUNGEON_COUNT):
 		var dungeon_node = dungeon_carousel.get_child(i)
 		
-		# Create selection indicator (golden border outline)
-		var selection_indicator = ColorRect.new()
-		selection_indicator.color = Color(1, 0.8, 0.2, 0.8) # Golden outline
-		selection_indicator.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		selection_indicator.visible = false
+		# Create dyslexia-friendly selection indicator with curved border
+		var selection_container = Control.new()
+		selection_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		selection_container.visible = false
 		
 		# Position the indicator as a border around the texture button
-		dungeon_node.add_child(selection_indicator)
-		selection_indicator.show_behind_parent = true
-		selection_indicator.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		selection_indicator.offset_left = -5
-		selection_indicator.offset_top = -5
-		selection_indicator.offset_right = 5
-		selection_indicator.offset_bottom = 5
+		dungeon_node.add_child(selection_container)
+		selection_container.show_behind_parent = true
+		selection_container.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		selection_container.offset_left = -12
+		selection_container.offset_top = -12
+		selection_container.offset_right = 12
+		selection_container.offset_bottom = 12
 		
-		selection_indicators.append(selection_indicator)
+		# Create black border (outer)
+		var black_border = ColorRect.new()
+		black_border.color = Color.BLACK
+		black_border.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		selection_container.add_child(black_border)
+		black_border.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		
+		# Create golden outline (inner)
+		var golden_outline = ColorRect.new()
+		golden_outline.color = Color(1.0, 0.8, 0.2, 0.9) # Bright golden color
+		golden_outline.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		selection_container.add_child(golden_outline)
+		golden_outline.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		golden_outline.offset_left = 4
+		golden_outline.offset_top = 4
+		golden_outline.offset_right = -4
+		golden_outline.offset_bottom = -4
+		
+		# Create inner transparent area
+		var inner_area = ColorRect.new()
+		inner_area.color = Color.TRANSPARENT
+		inner_area.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		selection_container.add_child(inner_area)
+		inner_area.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		inner_area.offset_left = 8
+		inner_area.offset_top = 8
+		inner_area.offset_right = -8
+		inner_area.offset_bottom = -8
+		
+		selection_indicators.append(selection_container)
 	
 	# Create notification popup
 	notification_popup = load("res://Scenes/NotificationPopUp.tscn").instantiate()
@@ -162,6 +190,22 @@ func _position_all_dungeons_for_selection(selected_index):
 		var offset = (i - selected_index) * DUNGEON_SPACING
 		dungeon_node.position.x = CENTER_POSITION + offset
 
+# Animate selection indicator for better dyslexia visibility
+func _animate_selection_indicator(indicator: Control):
+	# Stop any existing animation
+	var existing_tween = indicator.get_meta("selection_tween", null)
+	if existing_tween and is_instance_valid(existing_tween):
+		existing_tween.kill()
+	
+	# Create pulsing animation
+	var tween = create_tween()
+	tween.set_loops()
+	tween.tween_property(indicator, "modulate:a", 0.7, 0.8)
+	tween.tween_property(indicator, "modulate:a", 1.0, 0.8)
+	
+	# Store tween reference for cleanup
+	indicator.set_meta("selection_tween", tween)
+
 # Update the dungeon display based on current selection and unlock status
 func update_dungeon_display():
 	for i in range(DUNGEON_COUNT):
@@ -172,19 +216,39 @@ func update_dungeon_display():
 		# Check if dungeon is unlocked
 		var is_unlocked = i < unlocked_dungeons
 		
-		# Set the appropriate texture
+		# Set the appropriate texture and hover behavior
 		if is_unlocked:
 			texture_button.texture_normal = dungeon_textures.unlocked[i]
+			texture_button.disabled = false # Enable interaction
+			texture_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+			# Clear any hover texture for unlocked dungeons if needed
 			status_label.text = "Unlocked"
 			status_label.add_theme_color_override("font_color", Color(0.5, 1.0, 0.5)) # Green
 		else:
 			texture_button.texture_normal = dungeon_textures.locked[i]
+			texture_button.disabled = false # Keep clickable for notifications
+			texture_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+			# Disable hover texture by setting it to the same as normal
+			texture_button.texture_hover = dungeon_textures.locked[i]
 			status_label.text = "Locked"
 			status_label.add_theme_color_override("font_color", Color(1.0, 0.4, 0.4)) # Red
 			
 		# Show selection indicator only on the current dungeon
 		if i < selection_indicators.size():
-			selection_indicators[i].visible = (i == current_dungeon)
+			var indicator = selection_indicators[i]
+			var was_visible = indicator.visible
+			indicator.visible = (i == current_dungeon)
+			
+			# Clean up animation for previously selected dungeon
+			if was_visible and i != current_dungeon:
+				var existing_tween = indicator.get_meta("selection_tween", null)
+				if existing_tween and is_instance_valid(existing_tween):
+					existing_tween.kill()
+				indicator.modulate.a = 1.0 # Reset alpha
+			
+			# Add pulsing animation for current selection
+			if i == current_dungeon:
+				_animate_selection_indicator(indicator)
 	
 	# Update button visibility - always show both buttons for circular navigation
 	next_button.visible = true
@@ -206,10 +270,12 @@ func _on_previous_button_pressed():
 
 # Handle dungeon selection with circular behavior
 func _on_dungeon1_pressed():
-	if current_dungeon != 0:
-		current_dungeon = 0
-		_animate_carousel_to_position(current_dungeon)
-		update_dungeon_display()
+	if unlocked_dungeons >= 1: # Dungeon 1 is always unlocked
+		if current_dungeon != 0:
+			current_dungeon = 0
+			_animate_carousel_to_position(current_dungeon)
+			update_dungeon_display()
+	# No else needed since Dungeon 1 is always unlocked
 
 func _on_dungeon2_pressed():
 	if unlocked_dungeons >= 2:
@@ -218,7 +284,7 @@ func _on_dungeon2_pressed():
 			_animate_carousel_to_position(current_dungeon)
 			update_dungeon_display()
 	else:
-		# Use the new notification system instead
+		# Show notification for locked dungeon
 		notification_popup.show_notification("Dungeon Locked!", "Please complete 'The Plain' first to unlock this dungeon.", "OK")
 
 func _on_dungeon3_pressed():
@@ -228,7 +294,7 @@ func _on_dungeon3_pressed():
 			_animate_carousel_to_position(current_dungeon)
 			update_dungeon_display()
 	else:
-		# Use the new notification system instead
+		# Show notification for locked dungeon
 		notification_popup.show_notification("Dungeon Locked!", "Please complete 'The Plain' and 'The Forest' first to unlock this dungeon.", "OK")
 
 # Animation function for smooth carousel movement

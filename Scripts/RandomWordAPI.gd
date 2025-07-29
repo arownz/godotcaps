@@ -198,6 +198,7 @@ func _try_fallback():
 # Improve fallback word selection with categories for different word lengths
 func _get_fallback_word() -> String:
 	# Word categories organized by length - PHONETICALLY DISTINCT for STT accuracy
+	# Words selected to avoid confusing pronunciations (hill/heal, etc.)
 	var word_categories_by_length = {
 		3: {
 			"animals": ["cat", "dog", "fox", "owl", "pig", "cow", "bat", "elk", "ape", "ant"],
@@ -210,7 +211,7 @@ func _get_fallback_word() -> String:
 		4: {
 			"animals": ["wolf", "frog", "bear", "lion", "duck", "bird", "fish", "deer", "goat", "seal"],
 			"objects": ["book", "lamp", "desk", "fork", "door", "bowl", "ring", "coat", "pipe", "disk"],
-			"nature": ["tree", "rock", "fire", "lake", "hill", "moon", "star", "snow", "leaf", "wind"],
+			"nature": ["tree", "rock", "fire", "lake", "moon", "star", "snow", "leaf", "wind", "cave"],
 			"food": ["cake", "bread", "rice", "soup", "pear", "plum", "milk", "corn", "beef", "tuna"],
 			"colors": ["blue", "pink", "teal", "gold", "ruby", "mint", "lime", "rust", "jade", "rose"],
 			"verbs": ["walk", "talk", "make", "read", "swim", "sing", "play", "ride", "push", "pull"]
@@ -236,6 +237,9 @@ func _get_fallback_word() -> String:
 	var words = categories_for_length[category]
 	var selected_word = words[randi() % words.size()]
 	
+	# Capitalize the first letter for better presentation
+	selected_word = selected_word.capitalize()
+	
 	print("RandomWordAPI: Using fallback " + str(current_word_length) + "-letter word: " + selected_word)
 	return selected_word
 
@@ -245,7 +249,9 @@ func get_random_word() -> String:
 	if random_word.is_empty():
 		print("WARNING: Random word is empty, using fallback")
 		return _get_fallback_word()
-	return random_word
+	
+	# Ensure the word is properly capitalized
+	return random_word.capitalize()
 
 # Add child node override
 func _notification(what):

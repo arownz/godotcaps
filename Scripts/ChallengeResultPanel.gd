@@ -1,4 +1,3 @@
-
 extends Control
 
 signal continue_pressed
@@ -74,11 +73,11 @@ func update_ui():
 	# Set input type text
 	input_label.text = "You " + input_type + ":"
 	
-	# Set the recognized text
-	word_label.text = recognized_text if recognized_text != "" else "..."
+	# Set the recognized text with proper capitalization for better readability
+	word_label.text = recognized_text.capitalize() if recognized_text != "" else "..."
 	
-	# Set the target word
-	target_word_label.text = challenge_word if challenge_word != "" else "..."
+	# Set the target word with proper capitalization
+	target_word_label.text = challenge_word.capitalize() if challenge_word != "" else "..."
 	
 	# Update status message and color
 	if is_successful:

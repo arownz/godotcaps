@@ -97,9 +97,9 @@ func _ready():
 	result_being_processed = false
 
 func _process(_delta):
-	# Poll for speech recognition results from JavaScript
+	# Poll for speech recognition results from JavaScript more frequently
 	if live_transcription_enabled and JavaScriptBridge.has_method("eval"):
-		# Check for interim results
+		# Check for interim results with improved polling
 		var interim_js = """
 			(function() {
 				if (window.latestInterimResult) {
@@ -115,12 +115,13 @@ func _process(_delta):
 			print("POLLING: Found interim result: " + str(interim_result))
 			live_transcription_callback(str(interim_result), false)
 		
-		# Check for final results
+		# Check for final results with enhanced handling
 		var final_js = """
 			(function() {
 				if (window.latestFinalResult) {
 					var result = window.latestFinalResult;
 					window.latestFinalResult = null;
+					console.log('Polling found final result:', result);
 					return result;
 				}
 				return null;
@@ -748,9 +749,20 @@ func _start_live_recognition() -> bool:
 				}
 				
 				try {
-					// Request microphone permission first
-					const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-					console.log('Microphone permission granted');
+					// Request microphone permission with enhanced audio constraints
+					const audioConstraints = {
+						audio: {
+							echoCancellation: true,
+							noiseSuppression: true,
+							autoGainControl: true,
+							sampleRate: 44100,
+							sampleSize: 16,
+							channelCount: 1
+						}
+					};
+					
+					const stream = await navigator.mediaDevices.getUserMedia(audioConstraints);
+					console.log('Enhanced microphone permission granted with constraints:', audioConstraints);
 					
 					// Stop the permission stream immediately
 					stream.getTracks().forEach(track => track.stop());
@@ -759,11 +771,17 @@ func _start_live_recognition() -> bool:
 					const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 					window.currentRecognition = new SpeechRecognition();
 					
-					// Configure for live transcription with better accuracy settings
+					// Configure for live transcription with optimal accuracy settings
 					window.currentRecognition.continuous = true;
 					window.currentRecognition.interimResults = true;
 					window.currentRecognition.lang = 'en-US';
-					window.currentRecognition.maxAlternatives = 3;  // Get multiple alternatives for better accuracy
+					window.currentRecognition.maxAlternatives = 5;  // Get more alternatives for better accuracy
+					
+					// Enhanced audio settings for better microphone sensitivity
+					if (window.currentRecognition.serviceURI) {
+						// For Chrome/Chromium - enhance recognition
+						window.currentRecognition.serviceURI = 'wss://www.google.com/speech-api/v2/recognize';
+					}
 					
 					// Add grammar hints to prefer words over numbers
 					if (window.currentRecognition.grammars) {
@@ -784,19 +802,28 @@ func _start_live_recognition() -> bool:
 							// Process multiple alternatives for better accuracy
 							if (result.length > 1) {
 								let bestTranscript = transcript;
-								let bestScore = result[0].confidence;
+								let bestScore = result[0].confidence || 0.5;
+								
+								console.log('Processing', result.length, 'alternatives for better accuracy');
 								
 								for (let j = 1; j < result.length; j++) {
 									const altTranscript = result[j].transcript.trim();
-									const altConfidence = result[j].confidence;
+									const altConfidence = result[j].confidence || 0.5;
 									
-									// Prefer word-like alternatives over numbers
-									if (altConfidence > bestScore * 0.8 && !altTranscript.match(/^[0-9]+$/)) {
+									console.log('Alternative', j, ':', altTranscript, 'Confidence:', altConfidence);
+									
+									// Prefer word-like alternatives over numbers with good confidence
+									const isWordLike = !altTranscript.match(/^[0-9]+$/) && altTranscript.match(/^[a-zA-Z ]+$/);
+									const confidenceThreshold = bestScore * 0.7; // More lenient threshold
+									
+									if (altConfidence > confidenceThreshold && isWordLike) {
+										console.log('Selecting better alternative:', altTranscript);
 										bestTranscript = altTranscript;
 										bestScore = altConfidence;
 									}
 								}
 								transcript = bestTranscript;
+								console.log('Final selected transcript:', transcript, 'Score:', bestScore);
 							}
 							
 							// Clean transcript of non-letter characters (except spaces)
@@ -817,6 +844,20 @@ func _start_live_recognition() -> bool:
 					
 					window.currentRecognition.onerror = function(event) {
 						console.error('Speech recognition error:', event.error, 'Event:', event);
+						
+						// Handle specific errors for better user experience
+						if (event.error === 'no-speech') {
+							console.log('No speech detected - continuing to listen...');
+							// Don't stop for no-speech, just continue
+							return;
+						} else if (event.error === 'audio-capture') {
+							console.error('Audio capture error - microphone issues');
+						} else if (event.error === 'not-allowed') {
+							console.error('Microphone permission denied');
+						} else if (event.error === 'network') {
+							console.log('Network error - will attempt restart');
+						}
+						
 						try {
 							const engine = window.godot?.getEngine?.() || window.engine || window.Module?.engine;
 							if (engine && engine.call) {
@@ -829,16 +870,20 @@ func _start_live_recognition() -> bool:
 					};
 					
 					window.currentRecognition.onend = function() {
-						console.log('Speech recognition ended');
-						try {
-							const engine = window.godot?.getEngine?.() || window.engine || window.Module?.engine;
-							if (engine && engine.call) {
-								console.log('Calling Godot recognition_ended_callback...');
-								engine.call('""" + str(get_path()) + """', 'recognition_ended_callback');
+						console.log('Speech recognition ended - attempting auto-restart for continuous listening');
+						
+						// Add a small delay then auto-restart if still active
+						setTimeout(() => {
+							try {
+								const engine = window.godot?.getEngine?.() || window.engine || window.Module?.engine;
+								if (engine && engine.call) {
+									console.log('Calling Godot recognition_ended_callback...');
+									engine.call('""" + str(get_path()) + """', 'recognition_ended_callback');
+								}
+							} catch (e) {
+								console.error('Error calling Godot on end:', e);
 							}
-						} catch (e) {
-							console.error('Error calling Godot on end:', e);
-						}
+						}, 100);
 					};
 					
 					window.currentRecognition.onstart = function() {
@@ -891,13 +936,21 @@ func _stop_live_recognition():
 
 # Callback when recognition ends (called from JavaScript)
 func recognition_ended_callback():
-	print("Recognition ended callback received")
+	print("Recognition ended callback received, recognition_active: " + str(recognition_active))
 	if recognition_active:
-		recognition_active = false
-		live_transcription_enabled = false
-		speak_button.text = "Start Speaking"
-		speak_button.disabled = false
-		status_label.text = "Recognition stopped. Click Start Speaking to try again."
+		# If the user is still actively trying to speak, automatically restart recognition
+		print("Auto-restarting speech recognition for continuous listening...")
+		await get_tree().create_timer(0.1).timeout # Brief pause
+		
+		# Restart recognition automatically
+		var restart_success = await _start_live_recognition()
+		if not restart_success:
+			# If restart failed, fall back to manual restart
+			recognition_active = false
+			live_transcription_enabled = false
+			speak_button.text = "Start Speaking"
+			speak_button.disabled = false
+			status_label.text = "Recognition stopped. Click Start Speaking to try again."
 
 # Callback function for speech recognition result from JavaScript
 func speech_result_callback(text):
@@ -976,8 +1029,8 @@ func _process_interim_transcription(text):
 	# Apply phonetic improvement for similar-sounding words
 	var improved_text = _apply_phonetic_improvements(display_word, challenge_word)
 	
-	# Display the improved single word
-	var display_text = improved_text
+	# Display the improved single word with capitalization
+	var display_text = improved_text.capitalize()
 	live_transcription_text.text = "| " + display_text
 	live_transcription_text.visible = true
 	print("Updated live transcription text to: '" + live_transcription_text.text + "'")
@@ -992,19 +1045,19 @@ func _process_interim_transcription(text):
 		# Visual feedback for close matches with improved phonetic matching
 		if normalized_interim == normalized_target:
 			live_transcription_text.modulate = Color.GREEN
-			live_transcription_text.text = "✓ " + display_text + " (Perfect!)"
+			live_transcription_text.text = "✓ " + display_text.capitalize() + " (Perfect!)"
 			print("Perfect match detected!")
 		elif _is_phonetic_match(normalized_interim, normalized_target):
 			live_transcription_text.modulate = Color.LIME
-			live_transcription_text.text = "✓ " + display_text + " (Sounds right!)"
+			live_transcription_text.text = "✓ " + display_text.capitalize() + " (Sounds right!)"
 			print("Phonetic match detected!")
 		elif _is_close_match(normalized_interim, normalized_target):
 			live_transcription_text.modulate = Color.YELLOW
-			live_transcription_text.text = "~ " + display_text + " (Close!)"
+			live_transcription_text.text = "~ " + display_text.capitalize() + " (Close!)"
 			print("Close match detected!")
 		else:
 			live_transcription_text.modulate = Color.WHITE
-			live_transcription_text.text = "| " + display_text
+			live_transcription_text.text = "| " + display_text.capitalize()
 
 # Helper function to convert numbers to words in Godot
 func _convert_numbers_to_words(text: String) -> String:
@@ -1205,28 +1258,57 @@ func _is_close_match(word1, word2):
 func speech_error_callback(error):
 	print("Speech recognition error: ", error)
 	
-	# Stop current recognition
-	recognition_active = false
-	live_transcription_enabled = false
-	
-	# Update UI based on error type
+	# Handle different error types with appropriate responses
 	if error == "not-allowed" or error == "permission-denied":
+		# Stop current recognition for permission issues
+		recognition_active = false
+		live_transcription_enabled = false
 		status_label.text = "Microphone permission denied. Click 'Try Again' to retry."
 		speak_button.text = "Try Again"
 		permission_status_label.text = "X Permission denied"
 		permission_status_label.modulate = Color.RED
+		speak_button.disabled = false
 	elif error == "no-speech":
-		status_label.text = "No speech detected. Try speaking louder."
-		speak_button.text = "Start Speaking"
-		permission_status_label.text = "! No speech heard"
-		permission_status_label.modulate = Color.YELLOW
-	else:
-		status_label.text = "Error: " + error + ". Click to try again."
+		# Don't stop for no-speech - just notify user and continue
+		status_label.text = "Continue speaking - I'm listening..."
+		permission_status_label.text = "♪ Listening..."
+		permission_status_label.modulate = Color.CYAN
+		# Don't stop recognition - let it continue listening
+		print("Continuing to listen after no-speech error...")
+	elif error == "network":
+		# For network errors, attempt to restart automatically
+		print("Network error detected - attempting to restart recognition...")
+		call_deferred("_restart_recognition_after_error")
+	elif error == "audio-capture":
+		# Audio capture errors need user intervention
+		recognition_active = false
+		live_transcription_enabled = false
+		status_label.text = "Microphone issue detected. Check your microphone and try again."
 		speak_button.text = "Try Again"
-		permission_status_label.text = "X Recognition error"
+		permission_status_label.text = "X Audio error"
 		permission_status_label.modulate = Color.RED
-	
-	speak_button.disabled = false
+		speak_button.disabled = false
+	else:
+		# For other errors, try to restart automatically first
+		print("Unknown error '" + error + "' - attempting restart...")
+		call_deferred("_restart_recognition_after_error")
+
+# Helper function to restart recognition after recoverable errors
+func _restart_recognition_after_error():
+	if recognition_active:
+		print("Attempting to restart speech recognition after error...")
+		await get_tree().create_timer(1.0).timeout # Wait a moment
+		
+		var restart_success = await _start_live_recognition()
+		if not restart_success:
+			# If restart failed, fall back to manual restart
+			recognition_active = false
+			live_transcription_enabled = false
+			status_label.text = "Error occurred. Click to try again."
+			speak_button.text = "Try Again"
+			permission_status_label.text = "X Recognition error"
+			permission_status_label.modulate = Color.RED
+			speak_button.disabled = false
 
 # Function to calculate bonus damage based on player stats
 func calculate_bonus_damage() -> int:

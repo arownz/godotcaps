@@ -10,8 +10,8 @@ var battle_scene # Reference to the main battle scene
 
 # Add flag to prevent multiple endgame screens
 var endgame_screen_active: bool = false
-var victory_processing: bool = false  # Add flag to prevent duplicate victory processing
-var defeat_processing: bool = false  # Add flag to prevent duplicate defeat processing
+var victory_processing: bool = false # Add flag to prevent duplicate victory processing
+var defeat_processing: bool = false # Add flag to prevent duplicate defeat processing
 
 # External resources
 var word_challenge_whiteboard_scene = preload("res://Scenes/WordChallengePanel_Whiteboard.tscn")
@@ -100,7 +100,7 @@ func handle_victory():
 	var exp_reward = battle_scene.enemy_manager.exp_reward
 	if exp_reward <= 0:
 		# Fallback calculation if exp_reward not set properly
-		exp_reward = battle_scene.enemy_manager.enemy_level * 2  # Reduced from 10 to 2 for balance
+		exp_reward = battle_scene.enemy_manager.enemy_level * 2 # Reduced from 10 to 2 for balance
 	
 	# Award experience to player
 	print("BattleManager: Awarding ", exp_reward, " experience to player")
@@ -172,7 +172,7 @@ func _update_firebase_after_victory(_exp_gained: int, completed_dungeon_num: int
 				dungeon_was_completed = true
 				# When completing a dungeon (boss defeated), unlock the next dungeon
 				var next_dungeon = completed_dungeon_num + 1
-				if next_dungeon <= 3:  # Max 3 dungeons
+				if next_dungeon <= 3: # Max 3 dungeons
 					update_data["dungeons.progress.current_dungeon"] = next_dungeon
 					print("Dungeon " + str(completed_dungeon_num) + " completed! Unlocked dungeon " + str(next_dungeon))
 			print("Updated stages_completed for dungeon " + dungeon_key + " to stage " + str(completed_stage_num))
@@ -266,7 +266,7 @@ func show_endgame_screen(result_type: String, exp_reward: int = 0, completed_dun
 	endgame_screen_active = true
 	
 	var endgame_scene = load("res://Scenes/EndgameScreen.tscn").instantiate()
-	endgame_scene.name = "EndgameScreen"  # Set a consistent name for easy detection
+	endgame_scene.name = "EndgameScreen" # Set a consistent name for easy detection
 	
 	# Position in center of BattleContainer
 	battle_container.add_child(endgame_scene)
@@ -291,8 +291,8 @@ func show_endgame_screen(result_type: String, exp_reward: int = 0, completed_dun
 func _on_restart_battle():
 	# Reset endgame screen flag
 	endgame_screen_active = false
-	victory_processing = false  # Reset victory processing flag
-	defeat_processing = false  # Reset defeat processing flag
+	victory_processing = false # Reset victory processing flag
+	defeat_processing = false # Reset defeat processing flag
 	
 	# Heal player to full health on restart
 	if battle_scene and battle_scene.player_manager:
@@ -308,10 +308,9 @@ func _on_quit_to_menu():
 	# Called when leaving from EndgameScreen - returns to current dungeon map
 	# Note: This is different from _on_battle_quit_requested() in battlescene.gd 
 	# which handles quitting from the battle settings popup
-	
 	# Reset endgame screen flag
 	endgame_screen_active = false
-	victory_processing = false  # Reset victory processing flag
+	victory_processing = false # Reset victory processing flag
 	
 	# Return to current dungeon map based on dungeon_num
 	var dungeon_scene_path = ""
@@ -333,8 +332,8 @@ func _on_quit_to_menu():
 func _on_continue_battle():
 	# Reset endgame screen flag
 	endgame_screen_active = false
-	victory_processing = false  # Reset victory processing flag
-	defeat_processing = false  # Reset defeat processing flag
+	victory_processing = false # Reset victory processing flag
+	defeat_processing = false # Reset defeat processing flag
 	
 	# Heal player to full health on stage progression
 	if battle_scene and battle_scene.player_manager:
@@ -449,7 +448,7 @@ func _show_dungeon_completion_notification(completed_dungeon_num: int):
 	var message = ""
 	
 	if next_dungeon <= 3:
-		message = "Congratulations! You have unlocked Dungeon " + str(next_dungeon) + "!\nWord challenges now become " + next_word_length + " words."
+		message = "Congratulations! You have unlocked Dungeon " + str(next_dungeon) + "!\n\nWord challenges now become " + next_word_length + " words."
 	else:
 		message = "Congratulations! \nYou have completed all dungeons!\nYou are now a master reader!"
 	

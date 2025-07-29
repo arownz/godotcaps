@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://beu8uw5oqkvxd"]
+[gd_scene load_steps=14 format=3 uid="uid://beu8uw5oqkvxd"]
 
 [ext_resource type="Texture2D" uid="uid://chfkysvsxt4eg" path="res://gui/Update/Backgrounds/Plains_Level.png" id="1_nn5pp"]
 [ext_resource type="Script" uid="uid://liwnmmbqa706" path="res://Scripts/change_character_scene.gd" id="1_rnq7s"]
@@ -6,16 +6,22 @@
 [ext_resource type="Texture2D" uid="uid://da6rdtvo1nlwj" path="res://gui/Update/icons/return.png" id="3_oxpqv"]
 [ext_resource type="Texture2D" uid="uid://cghh3806ycwdb" path="res://gui/Update/UI/small button_hovers.png" id="4_c2xce"]
 [ext_resource type="Texture2D" uid="uid://bs34pjd8hpq1v" path="res://gui/Update/UI/Character Select Unlocked.png" id="4_rnq7s"]
+[ext_resource type="Texture2D" uid="uid://btva4ec0bd2wp" path="res://gui/Update/UI/Character_Card_Lock.png" id="5_c2xce"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="5_hnmjh"]
-[ext_resource type="Texture2D" uid="uid://b0mv1qxlsccta" path="res://gui/Update/UI/Character Locked.png" id="6_c2xce"]
 [ext_resource type="Texture2D" uid="uid://qmmpx3uab5h7" path="res://gui/Update/UI/next button.png" id="7_tc6no"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="8_8uolc"]
 [ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="9_ccovg"]
 [ext_resource type="Texture2D" uid="uid://cpt6gmnwq7v0o" path="res://gui/Update/UI/next button_hover.png" id="9_hnmjh"]
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bu21u"]
+
 [node name="ChangeCharacterScene" type="Control"]
 layout_mode = 3
-anchors_preset = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_rnq7s")
 
 [node name="Background" type="TextureRect" parent="."]
@@ -23,23 +29,28 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_right = 1457.0
-offset_bottom = 841.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("1_nn5pp")
 
-[node name="TitleLabel" type="Label" parent="."]
+[node name="TitleContainer" type="Control" parent="."]
 layout_mode = 1
-anchors_preset = 8
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 100.0
+grow_horizontal = 2
+
+[node name="TitleLabel" type="Label" parent="TitleContainer"]
+layout_mode = 1
+anchors_preset = -1
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 448.0
-offset_top = 39.0
-offset_right = 1055.0
-offset_bottom = 127.0
+anchor_bottom = 0.6
+offset_left = -309.0
+offset_top = -32.0
+offset_right = 298.0
+offset_bottom = 46.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -47,43 +58,36 @@ theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 8
 theme_override_fonts/font = ExtResource("5_hnmjh")
 theme_override_font_sizes/font_size = 48
-text = "Change Character"
+text = "Select a Character"
 horizontal_alignment = 1
 
-[node name="DungeonContainer" type="Control" parent="."]
+[node name="CharacterContainer" type="Control" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 687.0
-offset_top = 415.0
-offset_right = 687.0
-offset_bottom = 415.0
+offset_top = 100.0
+offset_bottom = -100.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="DungeonCarousel" type="HBoxContainer" parent="DungeonContainer"]
+[node name="CharacterCarousel" type="Control" parent="CharacterContainer"]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -879.0
-offset_top = -243.0
-offset_right = 929.0
-offset_bottom = 257.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-alignment = 1
 
-[node name="Character1" type="Control" parent="DungeonContainer/DungeonCarousel"]
+[node name="Character1" type="Control" parent="CharacterContainer/CharacterCarousel"]
 custom_minimum_size = Vector2(600, 500)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
+anchors_preset = 0
+offset_left = 430.0
+offset_top = 45.0
+offset_right = 1030.0
+offset_bottom = 545.0
 
-[node name="TextureButton" type="TextureButton" parent="DungeonContainer/DungeonCarousel/Character1"]
+[node name="TextureButton" type="TextureButton" parent="CharacterContainer/CharacterCarousel/Character1"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -95,7 +99,7 @@ texture_normal = ExtResource("4_rnq7s")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="NameLabel" type="Label" parent="DungeonContainer/DungeonCarousel/Character1"]
+[node name="NameLabel" type="Label" parent="CharacterContainer/CharacterCarousel/Character1"]
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
@@ -109,11 +113,11 @@ theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
 theme_override_fonts/font = ExtResource("5_hnmjh")
-theme_override_font_sizes/font_size = 36
+theme_override_font_sizes/font_size = 30
 text = "Lexia"
 horizontal_alignment = 1
 
-[node name="StatusLabel" type="Label" parent="DungeonContainer/DungeonCarousel/Character1"]
+[node name="StatusLabel" type="Label" parent="CharacterContainer/CharacterCarousel/Character1"]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
@@ -131,13 +135,15 @@ theme_override_font_sizes/font_size = 24
 text = "Unlocked"
 horizontal_alignment = 1
 
-[node name="Character2" type="Control" parent="DungeonContainer/DungeonCarousel"]
+[node name="Character2" type="Control" parent="CharacterContainer/CharacterCarousel"]
 custom_minimum_size = Vector2(600, 500)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
+anchors_preset = 0
+offset_left = 1130.0
+offset_top = 45.0
+offset_right = 1730.0
+offset_bottom = 545.0
 
-[node name="TextureButton" type="TextureButton" parent="DungeonContainer/DungeonCarousel/Character2"]
+[node name="TextureButton" type="TextureButton" parent="CharacterContainer/CharacterCarousel/Character2"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -145,11 +151,11 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_default_cursor_shape = 2
-texture_normal = ExtResource("6_c2xce")
+texture_normal = ExtResource("5_c2xce")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="NameLabel" type="Label" parent="DungeonContainer/DungeonCarousel/Character2"]
+[node name="NameLabel" type="Label" parent="CharacterContainer/CharacterCarousel/Character2"]
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
@@ -163,11 +169,11 @@ theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
 theme_override_fonts/font = ExtResource("5_hnmjh")
-theme_override_font_sizes/font_size = 36
+theme_override_font_sizes/font_size = 30
 text = "Magi"
 horizontal_alignment = 1
 
-[node name="StatusLabel" type="Label" parent="DungeonContainer/DungeonCarousel/Character2"]
+[node name="StatusLabel" type="Label" parent="CharacterContainer/CharacterCarousel/Character2"]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
@@ -185,13 +191,15 @@ theme_override_font_sizes/font_size = 24
 text = "Locked"
 horizontal_alignment = 1
 
-[node name="Character3" type="Control" parent="DungeonContainer/DungeonCarousel"]
+[node name="Character3" type="Control" parent="CharacterContainer/CharacterCarousel"]
 custom_minimum_size = Vector2(600, 500)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
+anchors_preset = 0
+offset_left = -270.0
+offset_top = 45.0
+offset_right = 330.0
+offset_bottom = 545.0
 
-[node name="TextureButton" type="TextureButton" parent="DungeonContainer/DungeonCarousel/Character3"]
+[node name="TextureButton" type="TextureButton" parent="CharacterContainer/CharacterCarousel/Character3"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -199,11 +207,11 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_default_cursor_shape = 2
-texture_normal = ExtResource("6_c2xce")
+texture_normal = ExtResource("5_c2xce")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="NameLabel" type="Label" parent="DungeonContainer/DungeonCarousel/Character3"]
+[node name="NameLabel" type="Label" parent="CharacterContainer/CharacterCarousel/Character3"]
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
@@ -217,11 +225,11 @@ theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
 theme_override_fonts/font = ExtResource("5_hnmjh")
-theme_override_font_sizes/font_size = 36
+theme_override_font_sizes/font_size = 30
 text = "Ragnar"
 horizontal_alignment = 1
 
-[node name="StatusLabel" type="Label" parent="DungeonContainer/DungeonCarousel/Character3"]
+[node name="StatusLabel" type="Label" parent="CharacterContainer/CharacterCarousel/Character3"]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
@@ -239,17 +247,17 @@ theme_override_font_sizes/font_size = 24
 text = "Locked"
 horizontal_alignment = 1
 
-[node name="NextButton" type="TextureButton" parent="DungeonContainer"]
+[node name="NextButton" type="TextureButton" parent="."]
 layout_mode = 1
 anchors_preset = 6
 anchor_left = 1.0
 anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
-offset_left = -362.0
-offset_top = -111.0
-offset_right = -262.0
-offset_bottom = 20.0
+offset_left = -358.0
+offset_top = -66.0
+offset_right = -258.0
+offset_bottom = 65.0
 grow_horizontal = 0
 grow_vertical = 2
 scale = Vector2(1.5132, 1.5132)
@@ -258,15 +266,13 @@ texture_normal = ExtResource("7_tc6no")
 texture_hover = ExtResource("9_hnmjh")
 ignore_texture_size = true
 stretch_mode = 5
-flip_h = true
 
-[node name="NextLabel" type="Label" parent="DungeonContainer/NextButton"]
+[node name="NextLabel" type="Label" parent="NextButton"]
 visible = false
 layout_mode = 0
-offset_left = 24.4515
-offset_top = -10.5736
-offset_right = 81.4515
-offset_bottom = 23.4264
+offset_left = 9.25191
+offset_right = 66.2519
+offset_bottom = 34.0
 theme_override_colors/font_color = Color(0.054902, 0.27451, 0.47451, 1)
 theme_override_colors/font_shadow_color = Color(1, 1, 1, 1)
 theme_override_constants/shadow_offset_x = 1
@@ -276,15 +282,15 @@ theme_override_font_sizes/font_size = 18
 text = "Next"
 horizontal_alignment = 1
 
-[node name="PreviousButton" type="TextureButton" parent="DungeonContainer"]
+[node name="PreviousButton" type="TextureButton" parent="."]
 layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
-offset_left = 261.0
-offset_top = -111.0
-offset_right = 361.0
-offset_bottom = 20.0
+offset_left = 220.0
+offset_top = -75.0
+offset_right = 320.0
+offset_bottom = 56.0
 grow_vertical = 2
 scale = Vector2(1.47096, 1.47096)
 mouse_default_cursor_shape = 2
@@ -292,13 +298,14 @@ texture_normal = ExtResource("7_tc6no")
 texture_hover = ExtResource("9_hnmjh")
 ignore_texture_size = true
 stretch_mode = 5
+flip_h = true
 
-[node name="PreviousLabel" type="Label" parent="DungeonContainer/PreviousButton"]
+[node name="PreviousLabel" type="Label" parent="PreviousButton"]
 visible = false
 layout_mode = 0
-offset_left = -11.5571
-offset_right = 90.4429
-offset_bottom = 34.0
+offset_top = -8.15793
+offset_right = 102.0
+offset_bottom = 25.8421
 theme_override_colors/font_color = Color(0.054902, 0.27451, 0.47451, 1)
 theme_override_colors/font_shadow_color = Color(1, 1, 1, 1)
 theme_override_constants/shadow_offset_x = 1
@@ -308,13 +315,33 @@ theme_override_font_sizes/font_size = 18
 text = "Previous"
 horizontal_alignment = 1
 
+[node name="SelectButton" type="Button" parent="."]
+physics_interpolation_mode = 0
+layout_mode = 0
+offset_left = 617.0
+offset_top = 673.0
+offset_right = 817.0
+offset_bottom = 774.0
+scale = Vector2(1.24648, 1.24648)
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("8_8uolc")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_bu21u")
+text = "Select Character"
+icon = ExtResource("9_ccovg")
+flat = true
+icon_alignment = 1
+expand_icon = true
+
 [node name="BackButton" type="TextureButton" parent="."]
 custom_minimum_size = Vector2(1, 1)
 layout_mode = 0
-offset_left = 123.0
-offset_top = 690.0
-offset_right = 150.0
-offset_bottom = 717.0
+offset_left = 135.0
+offset_top = 678.0
+offset_right = 162.0
+offset_bottom = 705.0
 scale = Vector2(3.76293, 3.83557)
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("2_6nemp")
@@ -329,24 +356,27 @@ offset_bottom = 31.0294
 scale = Vector2(0.612926, 0.537912)
 texture = ExtResource("3_oxpqv")
 
-[node name="SelectButton" type="Button" parent="."]
-physics_interpolation_mode = 0
+[node name="BackLabel" type="Label" parent="BackButton"]
+visible = false
 layout_mode = 0
-offset_left = 600.0
-offset_top = 690.0
-offset_right = 800.0
-offset_bottom = 791.0
-scale = Vector2(1.24648, 1.24648)
-mouse_default_cursor_shape = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
-theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("8_8uolc")
-theme_override_font_sizes/font_size = 14
-text = "Select Character"
-icon = ExtResource("9_ccovg")
-flat = true
-icon_alignment = 1
-expand_icon = true
+offset_left = 29.4983
+offset_top = 3.91076
+offset_right = 62.4983
+offset_bottom = 27.9108
+scale = Vector2(0.401947, 0.401947)
+theme_override_colors/font_color = Color(0.054902, 0.27451, 0.47451, 1)
+theme_override_colors/font_shadow_color = Color(1, 1, 1, 1)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_fonts/font = ExtResource("5_hnmjh")
+theme_override_font_sizes/font_size = 24
+text = "Back"
+horizontal_alignment = 1
 
+[connection signal="pressed" from="CharacterContainer/CharacterCarousel/Character1/TextureButton" to="." method="_on_character1_pressed"]
+[connection signal="pressed" from="CharacterContainer/CharacterCarousel/Character2/TextureButton" to="." method="_on_character2_pressed"]
+[connection signal="pressed" from="CharacterContainer/CharacterCarousel/Character3/TextureButton" to="." method="_on_character3_pressed"]
+[connection signal="pressed" from="NextButton" to="." method="_on_next_button_pressed"]
+[connection signal="pressed" from="PreviousButton" to="." method="_on_previous_button_pressed"]
+[connection signal="pressed" from="SelectButton" to="." method="_on_select_button_pressed"]
 [connection signal="pressed" from="BackButton" to="." method="_on_back_button_pressed"]

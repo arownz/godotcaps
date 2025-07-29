@@ -205,7 +205,7 @@ func _create_simple_word_recognize_header() -> Control:
 	header.add_child(stt_container)
 	
 	# Whiteboard Completed (green-blue color)
-	var wb_label = _create_simple_label("WHITEBOARD", 14, Color(0.3, 1, 0.8))
+	var wb_label = _create_simple_label("BOARD", 14, Color(0.3, 1, 0.8))
 	var wb_container = _create_bordered_container(wb_label, Vector2(140, 50), Color(0.15, 0.25, 0.35, 0.8))
 	header.add_child(wb_container)
 	
