@@ -170,7 +170,7 @@ func handle_challenge_completed(bonus_damage):
 			# Move player closer to enemy for counter attack
 			if enemy_manager and enemy_manager.enemy_animation:
 				# Move player to the RIGHT toward enemy (player is on left, enemy on right)
-				var counter_position = Vector2(original_position.x + 45, original_position.y)
+				var counter_position = Vector2(original_position.x + 43, original_position.y)
 				
 				# Create smooth movement tween to enemy
 				var move_tween = battle_scene.create_tween()

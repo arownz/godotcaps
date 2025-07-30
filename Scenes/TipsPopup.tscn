@@ -1,0 +1,105 @@
+[gd_scene load_steps=9 format=3 uid="uid://dwbgcm4h51s55"]
+
+[ext_resource type="Script" uid="uid://bpilknkrukhr5" path="res://Scripts/notification_popup.gd" id="1_sco0o"]
+[ext_resource type="Texture2D" uid="uid://bedyjdu5rblv8" path="res://gui/Update/UI/ui (1).png" id="2_iwvea"]
+[ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="3_uo33e"]
+[ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="4_gqct2"]
+[ext_resource type="VideoStream" uid="uid://bm5ywmi4w6nk8" path="res://video/output.ogv" id="4_iwvea"]
+[ext_resource type="FontFile" uid="uid://bgln2wf0h6j6e" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.woff" id="5_ite0x"]
+[ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="6_3551x"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_issni"]
+
+[node name="NotificationPopUp" type="CanvasLayer"]
+layer = 10
+script = ExtResource("1_sco0o")
+
+[node name="Background" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.6)
+
+[node name="PopupContainer" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="PopupContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PopupBackground" type="TextureRect" parent="PopupContainer/CenterContainer"]
+custom_minimum_size = Vector2(500, 210)
+layout_mode = 2
+texture = ExtResource("2_iwvea")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PopupContainer/CenterContainer/PopupBackground"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -23.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="PopupContainer/CenterContainer/PopupBackground/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 2
+theme_override_fonts/font = ExtResource("3_uo33e")
+theme_override_font_sizes/font_size = 25
+text = "Tips"
+horizontal_alignment = 1
+
+[node name="VideoStreamPlayer" type="VideoStreamPlayer" parent="PopupContainer/CenterContainer/PopupBackground/VBoxContainer"]
+layout_mode = 2
+stream = ExtResource("4_iwvea")
+loop = true
+
+[node name="DescriptionLabel" type="Label" parent="PopupContainer/CenterContainer/PopupBackground/VBoxContainer"]
+custom_minimum_size = Vector2(1, 1)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.985813, 0.955071, 0.530108, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_gqct2")
+theme_override_font_sizes/font_size = 15
+text = "This video tips description"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="CloseButton" type="Button" parent="PopupContainer/CenterContainer/PopupBackground/VBoxContainer"]
+custom_minimum_size = Vector2(120, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 8
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("5_ite0x")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/focus = SubResource("StyleBoxEmpty_issni")
+text = "Ok"
+icon = ExtResource("6_3551x")
+flat = true
+icon_alignment = 1
+expand_icon = true
+
+[connection signal="pressed" from="PopupContainer/CenterContainer/PopupBackground/VBoxContainer/CloseButton" to="." method="_on_close_button_pressed"]
