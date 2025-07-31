@@ -1,10 +1,8 @@
-[gd_scene load_steps=9 format=3 uid="uid://dwbgcm4h51s55"]
+[gd_scene load_steps=7 format=3 uid="uid://dwbgcm4h51s55"]
 
 [ext_resource type="Script" uid="uid://bpilknkrukhr5" path="res://Scripts/notification_popup.gd" id="1_sco0o"]
-[ext_resource type="Texture2D" uid="uid://bedyjdu5rblv8" path="res://gui/Update/UI/ui (1).png" id="2_iwvea"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="3_uo33e"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="4_gqct2"]
-[ext_resource type="VideoStream" uid="uid://bm5ywmi4w6nk8" path="res://video/output.ogv" id="4_iwvea"]
 [ext_resource type="FontFile" uid="uid://bgln2wf0h6j6e" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.woff" id="5_ite0x"]
 [ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="6_3551x"]
 
@@ -39,10 +37,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="PopupBackground" type="TextureRect" parent="PopupContainer/CenterContainer"]
+[node name="PopupBackground" type="Panel" parent="PopupContainer/CenterContainer"]
 custom_minimum_size = Vector2(500, 210)
 layout_mode = 2
-texture = ExtResource("2_iwvea")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="PopupContainer/CenterContainer/PopupBackground"]
 layout_mode = 1
@@ -66,11 +63,6 @@ theme_override_fonts/font = ExtResource("3_uo33e")
 theme_override_font_sizes/font_size = 25
 text = "Tips"
 horizontal_alignment = 1
-
-[node name="VideoStreamPlayer" type="VideoStreamPlayer" parent="PopupContainer/CenterContainer/PopupBackground/VBoxContainer"]
-layout_mode = 2
-stream = ExtResource("4_iwvea")
-loop = true
 
 [node name="DescriptionLabel" type="Label" parent="PopupContainer/CenterContainer/PopupBackground/VBoxContainer"]
 custom_minimum_size = Vector2(1, 1)

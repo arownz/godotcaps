@@ -425,12 +425,12 @@ expand_icon = true
 
 [node name="DungeonValue" type="Label" parent="ProfileContainer/DungeonArea"]
 layout_mode = 0
-offset_left = 26.0
+offset_left = 20.0
 offset_top = 8.0
-offset_right = 227.0
+offset_right = 236.0
 offset_bottom = 44.0
 theme_override_colors/font_color = Color(0.988235, 0.988235, 0, 1)
-theme_override_fonts/font = ExtResource("3_uyv5l")
+theme_override_fonts/font = ExtResource("2_73kok")
 theme_override_font_sizes/font_size = 18
 text = "3: The Mountain"
 
@@ -447,21 +447,21 @@ stretch_mode = 6
 
 [node name="StageLabel" type="Label" parent="ProfileContainer/DungeonArea"]
 layout_mode = 0
-offset_left = 12.0
+offset_left = 4.0
 offset_top = 285.0
-offset_right = 195.0
+offset_right = 205.0
 offset_bottom = 321.0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = ExtResource("3_uyv5l")
+theme_override_fonts/font = ExtResource("2_73kok")
 theme_override_font_sizes/font_size = 18
 text = "Current Stage:"
 
 [node name="StageValue" type="Label" parent="ProfileContainer/DungeonArea"]
 layout_mode = 0
-offset_left = 203.0
-offset_top = 286.0
-offset_right = 247.0
-offset_bottom = 322.0
+offset_left = 204.0
+offset_top = 284.0
+offset_right = 236.0
+offset_bottom = 320.0
 theme_override_colors/font_color = Color(0.988235, 0.988235, 0, 1)
 theme_override_fonts/font = ExtResource("3_uyv5l")
 theme_override_font_sizes/font_size = 18

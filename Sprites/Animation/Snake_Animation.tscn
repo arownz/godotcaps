@@ -122,6 +122,10 @@ region = Rect2(192, 64, 64, 64)
 atlas = ExtResource("1_k055r")
 region = Rect2(256, 64, 64, 64)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_w3jao"]
+atlas = ExtResource("1_k055r")
+region = Rect2(0, 256, 64, 64)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_k055r"]
 atlas = ExtResource("1_k055r")
 region = Rect2(320, 192, 64, 64)
@@ -141,10 +145,6 @@ region = Rect2(128, 192, 64, 64)
 [sub_resource type="AtlasTexture" id="AtlasTexture_fyetg"]
 atlas = ExtResource("1_k055r")
 region = Rect2(64, 192, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_w3jao"]
-atlas = ExtResource("1_k055r")
-region = Rect2(0, 256, 64, 64)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_06me7"]
 animations = [{
@@ -260,6 +260,9 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_w3jao")
+}, {
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_k055r")
 }, {
 "duration": 1.0,
@@ -273,9 +276,6 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_fyetg")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_w3jao")
 }],
 "loop": false,
 "name": &"skill",
@@ -286,6 +286,5 @@ animations = [{
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_06me7")
-animation = &"idle"
+animation = &"skill"
 autoplay = "idle"
-frame_progress = 0.349641

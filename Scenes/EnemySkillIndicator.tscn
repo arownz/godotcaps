@@ -1,0 +1,221 @@
+[gd_scene load_steps=8 format=3 uid="uid://8g8p2x82pya7"]
+
+[ext_resource type="Script" uid="uid://b6jxgla4ajwhw" path="res://Scripts/EnemySkillIndicator.gd" id="1_skillind"]
+[ext_resource type="Texture2D" uid="uid://c32gmv4ss8kvw" path="res://gui/Update/UI/ui 5.png" id="2_skillind"]
+[ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="3_skillind"]
+[ext_resource type="Texture2D" uid="uid://cct70l6wbh13s" path="res://gui/Update/UI/ui 9.png" id="3_vds2j"]
+[ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="4_skillind"]
+
+[sub_resource type="Animation" id="Animation_pulse"]
+resource_name = "pulse"
+length = 2.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1, 2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0.9), Color(1, 1, 1, 1), Color(1, 1, 1, 0.9)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 1, 2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1.02, 1.02), Vector2(1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_1"]
+_data = {
+&"pulse": SubResource("Animation_pulse")
+}
+
+[node name="EnemySkillIndicator" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_skillind")
+
+[node name="DarkOverlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0.75)
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 75.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="IndicatorPanel" type="Control" parent="CenterContainer"]
+modulate = Color(1, 1, 1, 0.9)
+custom_minimum_size = Vector2(700, 350)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="GoldenBorder" type="NinePatchRect" parent="CenterContainer/IndicatorPanel"]
+modulate = Color(1, 0.8, 0.2, 0.7)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -3.0
+offset_top = -117.0
+offset_right = 3.0
+offset_bottom = 81.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_vds2j")
+patch_margin_left = 20
+patch_margin_top = 20
+patch_margin_right = 20
+patch_margin_bottom = 20
+
+[node name="BorderFrame" type="NinePatchRect" parent="CenterContainer/IndicatorPanel"]
+modulate = Color(1, 0.2, 0.2, 0.9)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -75.0
+offset_right = -20.0
+offset_bottom = 81.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_skillind")
+patch_margin_left = 20
+patch_margin_top = 20
+patch_margin_right = 20
+patch_margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/IndicatorPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -32.0
+offset_right = -20.0
+offset_bottom = 52.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 15
+
+[node name="AlertIcon" type="Label" parent="CenterContainer/IndicatorPanel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_colors/font_color = Color(1, 0.2, 0.2, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 4
+theme_override_constants/shadow_offset_y = 4
+theme_override_fonts/font = ExtResource("4_skillind")
+theme_override_font_sizes/font_size = 35
+text = "SPECIAL ATTACK!"
+horizontal_alignment = 1
+
+[node name="EnemyNameLabel" type="Label" parent="CenterContainer/IndicatorPanel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_fonts/font = ExtResource("4_skillind")
+theme_override_font_sizes/font_size = 36
+text = "Enemy Name"
+horizontal_alignment = 1
+
+[node name="SkillNameLabel" type="Label" parent="CenterContainer/IndicatorPanel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_colors/font_color = Color(1, 0.8, 0.2, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_fonts/font = ExtResource("4_skillind")
+theme_override_font_sizes/font_size = 35
+text = "uses Skill Name!"
+horizontal_alignment = 1
+
+[node name="InstructionLabel" type="Label" parent="CenterContainer/IndicatorPanel/VBoxContainer"]
+custom_minimum_size = Vector2(1, 1)
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_colors/font_color = Color(0.7, 1, 0.7, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_fonts/font = ExtResource("3_skillind")
+theme_override_font_sizes/font_size = 22
+text = "Prepare to counter!"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="CountdownContainer" type="HBoxContainer" parent="CenterContainer/IndicatorPanel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+alignment = 1
+
+[node name="CountdownText" type="Label" parent="CenterContainer/IndicatorPanel/VBoxContainer/CountdownContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_fonts/font = ExtResource("3_skillind")
+theme_override_font_sizes/font_size = 28
+text = "Starting in: "
+
+[node name="CountdownLabel" type="Label" parent="CenterContainer/IndicatorPanel/VBoxContainer/CountdownContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_fonts/font = ExtResource("4_skillind")
+theme_override_font_sizes/font_size = 36
+text = "5"
+
+[node name="SkipHint" type="Label" parent="CenterContainer/IndicatorPanel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_colors/font_color = Color(0.830335, 0.830335, 0.830335, 0.8)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_fonts/font = ExtResource("3_skillind")
+theme_override_font_sizes/font_size = 16
+text = "(Click or press Space/Enter to skip)"
+horizontal_alignment = 1
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="CenterContainer/IndicatorPanel"]
+libraries = {
+&"default": SubResource("AnimationLibrary_1")
+}
+autoplay = "pulse"

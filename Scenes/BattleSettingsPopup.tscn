@@ -62,7 +62,7 @@ custom_minimum_size = Vector2(1, 1)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("2_def456")
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 13
 text = "Starting this battle will consume 2 energy.
 Are you ready to engage?"
 horizontal_alignment = 1
