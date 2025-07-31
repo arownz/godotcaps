@@ -6,14 +6,14 @@ signal stage_advanced(dungeon_num, stage_num)
 signal dungeon_advanced(dungeon_num)
 signal dungeon_reset
 
-var battle_scene  # Reference to the main battle scene
+var battle_scene # Reference to the main battle scene
 
 # Dungeon and stage tracking
 var dungeon_num = 1
-var stage_num = 1	
+var stage_num = 1
 var max_dungeons = 3
 var max_stages_per_dungeon = 5
-var previous_dungeon = 1  # Used to track dungeon transitions
+var previous_dungeon = 1 # Used to track dungeon transitions
 
 # Testing mode flag - set to false in production to enable Firebase operations
 var testing_mode = false
@@ -66,7 +66,7 @@ func advance_stage():
 		
 		# Check if we completed all dungeons
 		if dungeon_num > max_dungeons:
-			dungeon_num = 1  # Reset to first dungeon after completing all
+			dungeon_num = 1 # Reset to first dungeon after completing all
 		
 		# Emit signal for dungeon advancement
 		emit_signal("dungeon_advanced", dungeon_num)
@@ -128,7 +128,7 @@ func save_progress_to_firebase():
 			
 			# Add completed stage to array if not already there
 			var previous_stage = stage_num - 1
-			if previous_stage > 0:  # Only track completed stages
+			if previous_stage > 0: # Only track completed stages
 				if !current_data.dungeons.completed[dungeon_key].stages_completed.has(previous_stage):
 					current_data.dungeons.completed[dungeon_key].stages_completed.append(previous_stage)
 			
