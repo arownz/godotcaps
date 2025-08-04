@@ -23,6 +23,16 @@ func _ready():
 	tts_settings_panel = $ChallengePanel/VBoxContainer/TTSSettingsPanel
 	api_status_label = $ChallengePanel/VBoxContainer/APIStatusLabel
 	
+	# Add fade-in animation
+	modulate.a = 0.0
+	scale = Vector2(0.8, 0.8)
+	var fade_tween = create_tween()
+	fade_tween.set_parallel(true)
+	fade_tween.tween_property(self, "modulate:a", 1.0, 0.4).set_ease(Tween.EASE_OUT)
+	fade_tween.tween_property(self, "scale", Vector2(1.0, 1.0), 0.4).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+	
+	# Create TTS instance using our simplified TextToSpeech class
+	
 	# Create TTS instance using our simplified TextToSpeech class
 	tts = TextToSpeech.new()
 	add_child(tts)
@@ -68,13 +78,30 @@ func calculate_bonus_damage() -> int:
 		# Fallback to fixed value if battle scene not accessible
 		return 8
 
+# Helper function to fade out panel before signaling
+func _fade_out_and_signal(signal_name: String, param = null):
+	var tween = create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(self, "modulate:a", 0.0, 0.3).set_ease(Tween.EASE_IN)
+	tween.tween_property(self, "scale", Vector2(0.8, 0.8), 0.3).set_ease(Tween.EASE_IN)
+	await tween.finished
+	
+	match signal_name:
+		"challenge_completed":
+			emit_signal("challenge_completed", param)
+		"challenge_failed":
+			emit_signal("challenge_failed")
+		"challenge_cancelled":
+			emit_signal("challenge_cancelled")
+	
+	queue_free()
+
 # Function to handle cancellation from whiteboard
 func _on_drawing_cancelled():
 	print("Drawing cancelled, player will take damage")
 	api_status_label.text = "Challenge cancelled!"
 	await get_tree().create_timer(0.5).timeout
-	emit_signal("challenge_cancelled") # This will notify battle_manager to apply damage
-	queue_free()
+	_fade_out_and_signal("challenge_cancelled")
 
 func _on_word_fetched():
 	# Update the random word label
@@ -212,20 +239,15 @@ func _on_drawing_submitted(text_result):
 # Handle the continue signal from result panel
 func _on_result_panel_continue_pressed(was_successful: bool):
 	if was_successful:
-		emit_signal("challenge_completed", bonus_damage)
+		_fade_out_and_signal("challenge_completed", bonus_damage)
 	else:
-		emit_signal("challenge_failed")
-	
-	# Now we can free the challenge panel
-	queue_free()
+		_fade_out_and_signal("challenge_failed")
 
 # Simple failure handling function
 func _fail_challenge():
 	api_status_label.text = "You failed to counter the skill"
 	await get_tree().create_timer(1.0).timeout
-	emit_signal("challenge_failed")
-	await get_tree().create_timer(0.5).timeout
-	queue_free()
+	_fade_out_and_signal("challenge_failed")
 
 # Calculate similarity between two words to help with dyslexia recognition
 func calculate_word_similarity(word1, word2):

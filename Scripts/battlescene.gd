@@ -10,7 +10,7 @@ const ChallengeManagerScript = preload("res://Scripts/Manager/challenge_manager.
 const DungeonManagerScript = preload("res://Scripts/Manager/dungeon_manager.gd")
 
 # Managers
-var battle_manager  
+var battle_manager
 var enemy_manager
 var player_manager
 var battle_log_manager
@@ -20,10 +20,10 @@ var dungeon_manager
 
 # Battle state
 var battle_active = false
-var battle_session_started = false  # Tracks if any battle has occurred in this session
+var battle_session_started = false # Tracks if any battle has occurred in this session
 var auto_battle = false
 var auto_battle_timer = null
-var auto_battle_speed = 5.0
+var auto_battle_speed = 4 # Adjusted from 5.0 to 4 for better pace
 var battle_result = ""
 var fresh_start = true
 
@@ -216,9 +216,9 @@ func _on_player_experience_changed(_current_exp, _max_exp):
 
 func _on_player_level_up(new_level):
 	# Get the stat increases from player_manager
-	var health_increase = 20  # Based on get_max_health() calculation
-	var damage_increase = 11  # Based on player_manager level up logic
-	var durability_increase = 8  # Based on player_manager level up logic
+	var health_increase = 20 # Based on get_max_health() calculation
+	var damage_increase = 11 # Based on player_manager level up logic
+	var durability_increase = 8 # Based on player_manager level up logic
 	
 	# Get current stats
 	var new_health = player_manager.player_max_health
@@ -263,8 +263,8 @@ func _on_engage_button_pressed():
 		return
 	
 	# Consume energy before starting battle
-	if !await _consume_battle_energy():
-		return  # Not enough energy, don't start battle
+	if ! await _consume_battle_energy():
+		return # Not enough energy, don't start battle
 	
 	# Start the actual battle
 	_start_battle()
@@ -295,8 +295,8 @@ func _show_battle_settings_popup():
 
 func _on_engage_confirmed():
 	# Consume energy before starting battle
-	if !await _consume_battle_energy():
-		return  # Not enough energy, don't start battle
+	if ! await _consume_battle_energy():
+		return # Not enough energy, don't start battle
 	
 	# Start the actual battle
 	_start_battle()
@@ -329,7 +329,7 @@ func _start_battle():
 		return
 	
 	battle_active = true
-	battle_session_started = true  # Mark that a battle has occurred in this session
+	battle_session_started = true # Mark that a battle has occurred in this session
 	
 	# Get the engage button and make it transparent/disabled looking
 	engage_button.disabled = true
@@ -377,6 +377,12 @@ func _auto_battle_turn():
 	
 	# Player attacks first
 	print("Player attacking with damage: " + str(player_manager.player_damage))
+	
+	# Double-check battle is still active and player is alive before attacking
+	if !battle_active or player_manager.player_health <= 0:
+		print("BattleScene: Skipping player attack - battle not active or player defeated")
+		return
+		
 	battle_manager.player_attack()
 	
 	# Give a brief pause for animation
@@ -504,7 +510,7 @@ func _on_settings_button_hover_exit():
 func _consume_battle_energy() -> bool:
 	# Check if player has enough energy (2 energy required)
 	if !Firebase.Auth.auth:
-		return true  # Allow battle if not authenticated
+		return true # Allow battle if not authenticated
 		
 	var user_id = Firebase.Auth.auth.localid
 	var collection = Firebase.Firestore.collection("dyslexia_users")

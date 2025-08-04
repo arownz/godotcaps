@@ -225,7 +225,7 @@ func handle_challenge_completed(bonus_damage):
 	_resume_battle()
 
 func handle_challenge_failed():
-	# Player failed to counter - enemy deals full skill damage
+	# Player failed to counter - enemy deals full skill damage with animation
 	var enemy_manager = battle_scene.enemy_manager
 	var player_manager = battle_scene.player_manager
 	var battle_log_manager = battle_scene.battle_log_manager
@@ -233,12 +233,53 @@ func handle_challenge_failed():
 	
 	var skill_damage = int(enemy_manager.enemy_damage * enemy_manager.enemy_skill_damage_multiplier)
 	
-	# Deal damage to player
-	player_manager.take_damage(skill_damage)
-	
-	# Add battle log messages
+	print("ChallengeManager: Processing challenge failure - enemy will perform skill attack")
 	battle_log_manager.add_message("[color=#8B0000]You failed to counter the " + enemy_manager.enemy_name + "'s special attack![/color]")
-	battle_log_manager.add_message("[color=#000000]The " + enemy_manager.enemy_name + " dealt " + str(skill_damage) + " critical damage![/color]")
+	
+	# ENEMY SKILL ANIMATION WITH PROPER TIMING
+	if enemy_manager and enemy_manager.enemy_animation:
+		var enemy_node = enemy_manager.enemy_animation
+		var original_position = enemy_node.position
+		
+		# Move enemy LEFT toward player (enemy is on right, player on left)
+		var attack_position = original_position - Vector2(100, 0) # Move closer for skill attack
+		
+		# Create smooth movement tween to player
+		var move_tween = battle_scene.create_tween()
+		move_tween.tween_property(enemy_node, "position", attack_position, 0.4)
+		
+		# Wait for movement to complete
+		await move_tween.finished
+		
+		# Play skill animation and apply damage at the RIGHT moment
+		var enemy_sprite = enemy_node.get_node_or_null("AnimatedSprite2D")
+		if enemy_sprite and enemy_sprite.sprite_frames and enemy_sprite.sprite_frames.has_animation("skill"):
+			enemy_sprite.play("skill")
+			
+			# Wait for animation to progress before applying damage
+			await battle_scene.get_tree().create_timer(0.5).timeout
+			
+			# NOW apply damage at the peak of the skill animation
+			player_manager.take_damage(skill_damage)
+			battle_log_manager.add_message("[color=#000000]The " + enemy_manager.enemy_name + " dealt " + str(skill_damage) + " critical damage![/color]")
+		else:
+			# Fallback: apply damage after pause even without skill animation
+			await battle_scene.get_tree().create_timer(0.5).timeout
+			player_manager.take_damage(skill_damage)
+			battle_log_manager.add_message("[color=#000000]The " + enemy_manager.enemy_name + " dealt " + str(skill_damage) + " critical damage![/color]")
+		
+		# Move enemy back to original position
+		var return_tween = battle_scene.create_tween()
+		return_tween.tween_property(enemy_node, "position", original_position, 0.4)
+		return_tween.tween_callback(func(): if enemy_sprite: enemy_sprite.play("idle"))
+		
+		# Wait for return movement to complete
+		await return_tween.finished
+	else:
+		# Fallback if no enemy animation
+		await battle_scene.get_tree().create_timer(0.5).timeout
+		player_manager.take_damage(skill_damage)
+		battle_log_manager.add_message("[color=#000000]The " + enemy_manager.enemy_name + " dealt " + str(skill_damage) + " critical damage![/color]")
 	
 	# Reset enemy skill meter
 	enemy_manager.enemy_skill_meter = 0
@@ -248,7 +289,7 @@ func handle_challenge_failed():
 	_resume_battle()
 
 func handle_challenge_cancelled():
-	# Player cancelled - take reduced damage
+	# Player cancelled - enemy performs skill attack with animation
 	var enemy_manager = battle_scene.enemy_manager
 	var player_manager = battle_scene.player_manager
 	var battle_log_manager = battle_scene.battle_log_manager
@@ -256,12 +297,53 @@ func handle_challenge_cancelled():
 	
 	var cancellation_damage = int(enemy_manager.enemy_damage * 1.5)
 	
-	# Deal damage to player
-	player_manager.take_damage(cancellation_damage)
-	
-	# Add battle log messages
+	print("ChallengeManager: Processing challenge cancellation - enemy will perform skill attack")
 	battle_log_manager.add_message("[color=#EB5E4B]You cancelled your counter! The " + enemy_manager.enemy_name + " takes advantage![/color]")
-	battle_log_manager.add_message("[color=#000000]The " + enemy_manager.enemy_name + " dealt " + str(cancellation_damage) + " damage![/color]")
+	
+	# ENEMY SKILL ANIMATION WITH PROPER TIMING
+	if enemy_manager and enemy_manager.enemy_animation:
+		var enemy_node = enemy_manager.enemy_animation
+		var original_position = enemy_node.position
+		
+		# Move enemy LEFT toward player (enemy is on right, player on left)
+		var attack_position = original_position - Vector2(100, 0) # Move closer for skill attack
+		
+		# Create smooth movement tween to player
+		var move_tween = battle_scene.create_tween()
+		move_tween.tween_property(enemy_node, "position", attack_position, 0.4)
+		
+		# Wait for movement to complete
+		await move_tween.finished
+		
+		# Play skill animation and apply damage at the RIGHT moment
+		var enemy_sprite = enemy_node.get_node_or_null("AnimatedSprite2D")
+		if enemy_sprite and enemy_sprite.sprite_frames and enemy_sprite.sprite_frames.has_animation("skill"):
+			enemy_sprite.play("skill")
+			
+			# Wait for animation to progress before applying damage
+			await battle_scene.get_tree().create_timer(0.5).timeout
+			
+			# NOW apply damage at the peak of the skill animation
+			player_manager.take_damage(cancellation_damage)
+			battle_log_manager.add_message("[color=#000000]The " + enemy_manager.enemy_name + " dealt " + str(cancellation_damage) + " damage![/color]")
+		else:
+			# Fallback: apply damage after pause even without skill animation
+			await battle_scene.get_tree().create_timer(0.5).timeout
+			player_manager.take_damage(cancellation_damage)
+			battle_log_manager.add_message("[color=#000000]The " + enemy_manager.enemy_name + " dealt " + str(cancellation_damage) + " damage![/color]")
+		
+		# Move enemy back to original position
+		var return_tween = battle_scene.create_tween()
+		return_tween.tween_property(enemy_node, "position", original_position, 0.4)
+		return_tween.tween_callback(func(): if enemy_sprite: enemy_sprite.play("idle"))
+		
+		# Wait for return movement to complete
+		await return_tween.finished
+	else:
+		# Fallback if no enemy animation
+		await battle_scene.get_tree().create_timer(0.5).timeout
+		player_manager.take_damage(cancellation_damage)
+		battle_log_manager.add_message("[color=#000000]The " + enemy_manager.enemy_name + " dealt " + str(cancellation_damage) + " damage![/color]")
 	
 	# Reset enemy skill meter
 	enemy_manager.enemy_skill_meter = 0
@@ -271,6 +353,7 @@ func handle_challenge_cancelled():
 	if player_manager.player_health <= 0:
 		battle_scene.battle_active = false
 		battle_log_manager.add_message("[color=#EB5E4B]You have been defeated by the " + enemy_manager.enemy_name + "![/color]")
+		return
 		
 	# Resume battle
 	_resume_battle()

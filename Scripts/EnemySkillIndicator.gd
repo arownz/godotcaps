@@ -108,7 +108,7 @@ func _on_indicator_finished():
 		return
 	
 	signal_emitted = true
-	print("EnemySkillIndicator: Indicator finished, emitting signal")
+	print("EnemySkillIndicator: Indicator finished, starting fade-out")
 	
 	# Stop all timers to prevent additional calls
 	countdown_timer.stop()
@@ -120,7 +120,16 @@ func _on_indicator_finished():
 	if animation_player:
 		animation_player.stop()
 	
-	# Emit signal to notify that we're done
+	# Add fade-out animation before emitting signal
+	var tween = create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(self, "modulate:a", 0.0, 0.3).set_ease(Tween.EASE_IN)
+	tween.tween_property(self, "scale", Vector2(0.8, 0.8), 0.3).set_ease(Tween.EASE_IN)
+	
+	# Wait for fade-out to complete, then emit signal and cleanup
+	await tween.finished
+	
+	print("EnemySkillIndicator: Fade-out complete, emitting signal")
 	emit_signal("indicator_finished")
 	
 	# Clean up after a short delay to ensure signal processing
@@ -151,5 +160,5 @@ func _skip_indicator():
 		finish_timer.stop()
 		finish_timer.queue_free()
 	
-	# Immediately finish
+	# Immediately finish with fade-out
 	_on_indicator_finished()

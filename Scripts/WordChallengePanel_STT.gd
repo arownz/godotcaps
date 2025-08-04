@@ -51,6 +51,14 @@ func _ready():
 	tts_settings_panel = $ChallengePanel/VBoxContainer/TTSSettingsPanel
 	api_status_label = $ChallengePanel/VBoxContainer/APIStatusLabel
 	
+	# Add fade-in animation
+	modulate.a = 0.0
+	scale = Vector2(0.8, 0.8)
+	var tween = create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(self, "modulate:a", 1.0, 0.4).set_ease(Tween.EASE_OUT)
+	tween.tween_property(self, "scale", Vector2(1.0, 1.0), 0.4).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+	
 	# Create TTS instance and initialize
 	tts = TextToSpeech.new()
 	add_child(tts)
@@ -1453,10 +1461,9 @@ func _on_speech_recognized(text):
 		func():
 			print("RESULT PANEL CONTINUE SIGNAL RECEIVED")
 			if is_success:
-				emit_signal("challenge_completed", bonus_damage)
+				_fade_out_and_signal("challenge_completed", bonus_damage)
 			else:
-				emit_signal("challenge_failed")
-			queue_free() # Free our panel
+				_fade_out_and_signal("challenge_failed")
 	)
 	
 	# Hide our entire panel, not just the VBoxContainer
@@ -1465,39 +1472,71 @@ func _on_speech_recognized(text):
 	# Print confirmation message
 	print("RESULT PANEL SETUP COMPLETE - panel should now be visible")
 	
+# Helper function to fade out panel before signaling
+func _fade_out_and_signal(signal_name: String, param = null):
+	var tween = create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(self, "modulate:a", 0.0, 0.3).set_ease(Tween.EASE_IN)
+	tween.tween_property(self, "scale", Vector2(0.8, 0.8), 0.3).set_ease(Tween.EASE_IN)
+	await tween.finished
+	
+	match signal_name:
+		"challenge_completed":
+			emit_signal("challenge_completed", param)
+		"challenge_failed":
+			emit_signal("challenge_failed")
+		"challenge_cancelled":
+			emit_signal("challenge_cancelled")
+	
+	queue_free()
+
 # Simple failure handling function
 func _fail_challenge():
 	api_status_label.text = "You failed to counter the skill"
 	await get_tree().create_timer(1.0).timeout
-	emit_signal("challenge_failed")
-	await get_tree().create_timer(0.5).timeout
-	queue_free()
+	_fade_out_and_signal("challenge_failed")
 
 # Improved word comparison function to be more forgiving with dyslexic errors
 func _compare_words(spoken_word, target_word):
+	# Normalize both words (lowercase and clean)
+	var normalized_spoken = spoken_word.to_lower().strip_edges()
+	var normalized_target = target_word.to_lower().strip_edges()
+	
 	# Direct match
-	if spoken_word == target_word:
+	if normalized_spoken == normalized_target:
 		return true
 	
 	# Check if any words in the phrase match the target
-	var words = spoken_word.split(" ")
+	var words = normalized_spoken.split(" ")
 	for word in words:
-		if word == target_word:
+		word = word.strip_edges()
+		if word == normalized_target:
+			return true
+		
+		# Enhanced phonetic matching for similar sounding words
+		if _is_phonetic_match(word, normalized_target):
+			print("STT: Phonetic match found: '" + word + "' matches '" + normalized_target + "'")
 			return true
 		
 		# Check for common speech recognition errors with short words
-		if target_word.length() <= 4: # Updated to handle 4-letter words better
-			# For short words like "gate" or "blue", check for near-matches
-			var distance = levenshtein_distance(word, target_word)
+		if normalized_target.length() <= 4:
+			# For short words, be more forgiving
+			var distance = levenshtein_distance(word, normalized_target)
 			if distance <= 1: # Allow 1 character difference for short words
+				print("STT: Close match found for short word: '" + word + "' -> '" + normalized_target + "' (distance: " + str(distance) + ")")
 				return true
 	
-	# Calculate Levenshtein distance for words that are similar lengths
-	if abs(spoken_word.length() - target_word.length()) <= 2:
-		var distance = levenshtein_distance(spoken_word, target_word)
-		# Allow for more errors in longer words, but be more strict with 4-letter words
-		var max_distance = 1 if target_word.length() <= 4 else max(1, target_word.length() / 3)
+	# Enhanced similarity check with phonetic considerations
+	if abs(normalized_spoken.length() - normalized_target.length()) <= 3:
+		var distance = levenshtein_distance(normalized_spoken, normalized_target)
+		var max_distance = 1 if normalized_target.length() <= 4 else max(1, normalized_target.length() / 3)
+		
+		# More forgiving for longer words to account for speech recognition errors
+		if normalized_target.length() > 6:
+			max_distance += 1
+		
 		if distance <= max_distance:
+			print("STT: Similarity match found: '" + normalized_spoken + "' -> '" + normalized_target + "' (distance: " + str(distance) + "/" + str(max_distance) + ")")
 			return true
 	
 	return false
@@ -1600,7 +1639,7 @@ func _on_close_button_pressed():
 
 func _on_cancel_button_pressed():
 	print("Cancel button pressed - cancelling speak challenge")
-	emit_signal("challenge_cancelled")
+	_fade_out_and_signal("challenge_cancelled")
 
 # Make sure to clean up resources when this node is about to be removed
 func _exit_tree():

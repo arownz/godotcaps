@@ -29,6 +29,15 @@ func _ready():
 	pass
 
 func player_attack():
+	# Safety check: Don't attack if battle is not active or player is defeated
+	if !battle_scene.battle_active:
+		print("BattleManager: Skipping player attack - battle not active")
+		return
+		
+	if battle_scene.player_manager.player_health <= 0:
+		print("BattleManager: Skipping player attack - player is defeated")
+		return
+	
 	# Use the player animation from player_manager instead of direct node access
 	if !battle_scene.player_manager.player_animation:
 		print("ERROR: Player animation not found")
@@ -56,6 +65,15 @@ func player_attack():
 	emit_signal("player_attack_performed", battle_scene.player_manager.player_damage)
 
 func enemy_attack():
+	# Safety check: Don't attack if battle is not active or enemy is defeated
+	if !battle_scene.battle_active:
+		print("BattleManager: Skipping enemy attack - battle not active")
+		return
+		
+	if battle_scene.enemy_manager.enemy_health <= 0:
+		print("BattleManager: Skipping enemy attack - enemy is defeated")
+		return
+	
 	# Use the enemy animation from enemy_manager instead of direct node access
 	if !battle_scene.enemy_manager.enemy_animation:
 		print("ERROR: Enemy animation not found")
@@ -409,8 +427,60 @@ func trigger_enemy_skill():
 	# Emit signal
 	emit_signal("enemy_skill_triggered")
 	
-	# Start word challenge - FIXED: Use challenge_manager
+	# Show Enemy Skill Indicator first before challenge
+	_show_enemy_skill_indicator()
+
+func _show_enemy_skill_indicator():
+	print("BattleManager: Showing enemy skill indicator")
+	
+	# Determine challenge type
 	var challenge_type = "whiteboard" if randf() < 0.5 else "stt"
+	
+	# Load and instantiate the enemy skill indicator
+	var indicator_scene = load("res://Scenes/EnemySkillIndicator.tscn")
+	if indicator_scene:
+		var indicator = indicator_scene.instantiate()
+		
+		# Add to the BattleContainer for proper centering
+		var battle_container = battle_scene.get_node_or_null("MainContainer/BattleAreaContainer/BattleContainer")
+		if battle_container:
+			battle_container.add_child(indicator)
+			# Set proper anchoring for center positioning
+			indicator.set_anchors_preset(Control.PRESET_FULL_RECT)
+		else:
+			# Fallback to scene root if BattleContainer not found
+			battle_scene.add_child(indicator)
+		
+		# Add fade-in animation
+		indicator.modulate.a = 0.0
+		indicator.scale = Vector2(0.8, 0.8)
+		var tween = battle_scene.create_tween()
+		tween.set_parallel(true)
+		tween.tween_property(indicator, "modulate:a", 1.0, 0.4).set_ease(Tween.EASE_OUT)
+		tween.tween_property(indicator, "scale", Vector2(1.0, 1.0), 0.4).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+		
+		# Setup the indicator with enemy info
+		var enemy_name = battle_scene.enemy_manager.enemy_name
+		var skill_name = "Ultimate Attack" if battle_scene.enemy_manager.enemy_type == "boss" else "Special Strike"
+		indicator.setup(enemy_name, skill_name, challenge_type)
+		
+		# Connect the finished signal
+		if indicator.has_signal("indicator_finished"):
+			indicator.connect("indicator_finished", _on_skill_indicator_finished.bind(challenge_type))
+		
+		print("BattleManager: Enemy skill indicator shown for " + challenge_type + " challenge")
+	else:
+		print("BattleManager: ERROR - Could not load EnemySkillIndicator scene, starting challenge directly")
+		_start_word_challenge(challenge_type)
+
+func _on_skill_indicator_finished(challenge_type: String):
+	print("BattleManager: Skill indicator finished, starting " + challenge_type + " challenge")
+	_start_word_challenge(challenge_type)
+
+func _start_word_challenge(challenge_type: String):
+	print("BattleManager: Starting " + challenge_type + " challenge")
+	
+	# Add battle log message about the challenge
 	battle_scene.battle_log_manager.add_message("[color=#B8860B]Counter by " + ("writing" if challenge_type == "whiteboard" else "speaking") + " the word![/color]")
 	
 	# Connect challenge manager signals if not already connected

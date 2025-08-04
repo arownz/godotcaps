@@ -30,8 +30,8 @@ var enemy_type = "normal" # Can be "normal", "boss"
 
 # Add missing variable declarations at the top of the script
 var enemy_level = 1
-var enemy_skill_damage_multiplier = 2.0  # Multiplier for skill damage
-var exp_reward = 0  # Experience points awarded for defeating this enemy
+var enemy_skill_damage_multiplier = 2.0 # Multiplier for skill damage
+var exp_reward = 0 # Experience points awarded for defeating this enemy
 
 # Enemy resources - load all enemy types
 var enemy_resources = {
@@ -75,7 +75,7 @@ func setup_enemy_sprite():
         
         # Add new enemy sprite
         enemy_position.add_child(enemy_sprite)
-        enemy_animation = enemy_sprite  # Set the animation reference
+        enemy_animation = enemy_sprite # Set the animation reference
         
         # Set enemy name if the sprite has that property
         if enemy_sprite.has_method("set_enemy_name"):
@@ -109,7 +109,7 @@ func _load_default_enemy_animation():
         
         # Add default enemy sprite
         enemy_position.add_child(enemy_sprite)
-        enemy_animation = enemy_sprite  # Set the animation reference
+        enemy_animation = enemy_sprite # Set the animation reference
         
         # Start the idle animation if available
         if enemy_animation.has_method("play"):
@@ -204,16 +204,16 @@ func setup_enemy():
     # Load and setup enemy sprite
     setup_enemy_sprite()
 
-# Get stage-based multiplier for enemy stats
+# Get stage-based multiplier for enemy stats - BALANCED FOR DYSLEXIC CHILDREN (matching dungeon maps)
 func _get_stage_multiplier() -> float:
     var stage_num = battle_scene.dungeon_manager.stage_num
     var dungeon_num = battle_scene.dungeon_manager.dungeon_num
     
-    # Base multiplier increases with stage progression
-    var stage_multiplier = 1.0 + (stage_num - 1) * 0.25  # 1.0, 1.25, 1.5, 1.75, 2.0
+    # MUCH GENTLER progression for dyslexic children (same as dungeon maps)
+    var stage_multiplier = 1.0 + (stage_num - 1) * 0.15 # 1.0, 1.15, 1.3, 1.45, 1.6
     
-    # Additional multiplier for higher dungeons
-    var dungeon_multiplier = 1.0 + (dungeon_num - 1) * 0.5  # 1.0, 1.5, 2.0
+    # MINIMAL dungeon scaling to keep game accessible (same as dungeon maps)
+    var dungeon_multiplier = 1.0 + (dungeon_num - 1) * 0.25 # 1.0, 1.25, 1.5
     
     return stage_multiplier * dungeon_multiplier
 
@@ -455,7 +455,7 @@ func increase_skill_meter(amount):
     # Emit signal that skill meter changed
     emit_signal("enemy_skill_meter_changed", enemy_skill_meter)
     
-    return enemy_skill_meter >= enemy_skill_threshold  # Return true if skill is ready
+    return enemy_skill_meter >= enemy_skill_threshold # Return true if skill is ready
 
 # Reset skill meter to zero
 func reset_skill_meter():
