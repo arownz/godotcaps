@@ -6,7 +6,7 @@ signal speech_started
 signal speech_finished
 # Add these compatibility signals
 signal speech_ended
-signal speech_error  # Missing signal that needs to be added
+signal speech_error # Missing signal that needs to be added
 
 # Add this compatibility property
 var current_voice = ""
@@ -14,7 +14,7 @@ var current_voice = ""
 var tts_available = false
 var voices = []
 var selected_voice_id = ""
-var speech_rate = 0.8  # Default to a slightly slower rate (Range: 0.1 to 2.0)
+var speech_rate = 0.8 # Default to a slightly slower rate (Range: 0.1 to 2.0)
 var speech_volume = 1.0 # Volume (Range: 0.0 to 1.0)
 var speech_pitch = 1.0 # Pitch (Range: 0.5 to 2.0)
 
@@ -36,7 +36,7 @@ func _initialize_tts():
 	if voices.size() > 0:
 		# Select the first voice by default
 		selected_voice_id = voices[0]["id"]
-		current_voice = selected_voice_id  # Set compatibility property
+		current_voice = selected_voice_id # Set compatibility property
 		print("TTS initialized with voice: ", voices[0]["name"])
 		
 		# Print all available voices for debugging
@@ -50,7 +50,7 @@ func _initialize_tts():
 	var english_voices = DisplayServer.tts_get_voices_for_language("en")
 	if english_voices.size() > 0:
 		selected_voice_id = english_voices[0]
-		current_voice = selected_voice_id  # Set compatibility property
+		current_voice = selected_voice_id # Set compatibility property
 		print("Using English voice: ", selected_voice_id)
 	
 	# Signal that voices are loaded and ready
@@ -81,14 +81,15 @@ func speak(text):
 	print("Speaking text with rate ", speech_rate, ": ", text)
 	speech_started.emit()
 	
-	# Create a simple timer to emit speech_ended after estimated duration
+	# Create a simple timer to emit speech completion after estimated duration
 	var timer = Timer.new()
 	add_child(timer)
-	timer.wait_time = 0.5 + (text.length() * 0.1)  # Simple estimate based on text length
+	timer.wait_time = 0.5 + (text.length() * 0.1) # Simple estimate based on text length
 	timer.one_shot = true
 	timer.timeout.connect(func():
+		# FIXED: Emit signals in logical order and add comment about redundancy
 		speech_finished.emit()
-		speech_ended.emit()  # Also emit the compatibility signal
+		speech_ended.emit() # Compatibility signal - same event as speech_finished
 		timer.queue_free()
 	)
 	timer.start()
@@ -104,7 +105,7 @@ func stop_speaking():
 	DisplayServer.tts_stop()
 	
 	speech_finished.emit()
-	speech_ended.emit()  # Also emit compatibility signal
+	speech_ended.emit() # Also emit compatibility signal
 
 # Add stop method for compatibility
 func stop():
@@ -121,7 +122,7 @@ func get_voice_list():
 func set_voice(voice_id):
 	if voice_id in get_voice_list():
 		selected_voice_id = voice_id
-		current_voice = voice_id  # Set compatibility property
+		current_voice = voice_id # Set compatibility property
 		return true
 	
 	speech_error.emit("Invalid voice ID: " + voice_id)
@@ -132,7 +133,7 @@ func set_voice_by_name(voice_name):
 	for voice in voices:
 		if voice["name"].to_lower().contains(voice_name.to_lower()):
 			selected_voice_id = voice["id"]
-			current_voice = selected_voice_id  # Set compatibility property
+			current_voice = selected_voice_id # Set compatibility property
 			return true
 	return false
 
@@ -155,7 +156,7 @@ func set_volume(volume):
 	return true
 
 # Set speech pitch (0.5 to 2.0)
-func set_speech_pitch(pitch):	
+func set_speech_pitch(pitch):
 	speech_pitch = clamp(pitch, 0.5, 2.0)
 
 # Similar compatibility method for pitch if needed

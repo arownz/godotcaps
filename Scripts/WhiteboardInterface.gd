@@ -54,23 +54,27 @@ func _ready():
 	else:
 		status_label = $StatusLabel
 
-	# Add debug label for development
-	if OS.is_debug_build() and not has_node("DebugLabel"):
-		var debug = Label.new()
-		debug.name = "DebugLabel"
-		debug.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-		debug.vertical_alignment = VERTICAL_ALIGNMENT_TOP
-		debug.add_theme_font_override("font", preload("res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf"))
-		debug.add_theme_font_size_override("font_size", 16)
-		debug.add_theme_color_override("font_color", Color(0, 0, 0, 1.0))
-		debug.anchors_preset = Control.PRESET_TOP_LEFT
-		debug.position = Vector2(10, 10)
-		debug.visible = true
-		debug.text = "Write the random word in this whiteboard!"
-		add_child(debug)
-		debug_label = debug
-	elif has_node("DebugLabel"):
-		debug_label = $DebugLabel
+	# Add debug label for development - FIXED: Prevent duplicate creation
+	if OS.is_debug_build():
+		if not has_node("DebugLabel"):
+			var debug = Label.new()
+			debug.name = "DebugLabel"
+			debug.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+			debug.vertical_alignment = VERTICAL_ALIGNMENT_TOP
+			debug.add_theme_font_override("font", preload("res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf"))
+			debug.add_theme_font_size_override("font_size", 16)
+			debug.add_theme_color_override("font_color", Color(0, 0, 0, 1.0))
+			debug.anchors_preset = Control.PRESET_TOP_LEFT
+			debug.position = Vector2(10, 10)
+			debug.visible = true
+			debug.text = "Write the random word in this whiteboard!"
+			add_child(debug)
+			debug_label = debug
+		else:
+			debug_label = $DebugLabel
+	else:
+		# Not in debug build, ensure debug_label is null
+		debug_label = null
 		
 	# Connect to drawing functions to manage debug label visibility
 	if debug_label:
@@ -380,12 +384,12 @@ func process_image_with_javascript(base64_img, width, height):
 						_on_recognition_completed(result_data.result)
 						return
 					else:
-						_on_recognition_error("Could not read your handwriting. Please write more clearly.")
+						_on_recognition_error("Could not read.")
 						return
 				
 				elif result_data.status == "error":
 					print("OCR processing error: " + str(result_data.result))
-					_on_recognition_error("Could not process your handwriting: " + str(result_data.result))
+					_on_recognition_error("Could not process: " + str(result_data.result))
 					return
 					
 				# Otherwise continue polling
@@ -419,11 +423,6 @@ func _on_recognition_completed(text_result: String):
 	
 	# Emit signal with recognized text
 	emit_signal("drawing_submitted", text_result)
-	
-	# Update status display
-	if status_label:
-		status_label.visible = true
-		status_label.text = "Processing result..."
 
 # Function to handle recognition errors
 func _on_recognition_error(error_msg: String):
@@ -433,24 +432,19 @@ func _on_recognition_error(error_msg: String):
 	# Humanize error messages for better user experience
 	var user_friendly_msg = "recognition_error"
 	if "Failed to start recognition" in error_msg:
-		user_friendly_msg = "Could not analyze your handwriting. Please try again."
+		user_friendly_msg = "Could not analyze."
 	elif "Vision API not available" in error_msg:
-		user_friendly_msg = "Handwriting recognition is temporarily unavailable."
+		user_friendly_msg = "Handwriting recognition unavailable."
 	elif "Request timed out" in error_msg:
-		user_friendly_msg = "Analysis is taking too long. Please try again."
+		user_friendly_msg = "Analysis is taking too long."
 	elif "Empty result received" in error_msg:
-		user_friendly_msg = "Could not read your handwriting. Please write more clearly."
+		user_friendly_msg = "Could not read."
 	elif "JavaScript bridge unavailable" in error_msg:
-		user_friendly_msg = "System error. Please refresh the page."
+		user_friendly_msg = "System error."
 	else:
-		user_friendly_msg = "Unable to read your handwriting. Please try writing again."
-	
+		user_friendly_msg = "Unable to read."
+
 	emit_signal("drawing_submitted", user_friendly_msg)
-	
-	# Update status display
-	if status_label:
-		status_label.visible = true
-		status_label.text = "Processing result..."
 
 # Helper function to hide UI elements
 func hide_ui_elements():
@@ -492,8 +486,8 @@ func debug_log(message):
 
 # Setup drawing system
 func setup_drawing():
-	# Connect drawing area signals
-	if $VBoxContainer/DrawingArea:
+	# Connect drawing area signals only if not already connected
+	if $VBoxContainer/DrawingArea and not $VBoxContainer/DrawingArea.draw.is_connected(_on_drawing_area_draw):
 		$VBoxContainer/DrawingArea.draw.connect(_on_drawing_area_draw)
 	
 	# Initialize drawing variables
