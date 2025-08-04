@@ -203,6 +203,9 @@ func handle_challenge_completed(bonus_damage):
 	# Deal total damage to enemy
 	enemy_manager.take_damage(total_damage)
 	
+	# Show counter damage indicator (different color for counters)
+	battle_scene._show_counter_damage_indicator(total_damage, "enemy", bonus_damage)
+	
 	# Add battle log messages with detailed damage breakdown
 	battle_log_manager.add_message("[color=#006400]You successfully countered the " + enemy_manager.enemy_name + "'s special attack![/color]")
 	battle_log_manager.add_message("[color=#000000]Counter Attack: " + str(player_base_damage) + " base damage + " + str(bonus_damage) + " bonus = " + str(total_damage) + " total damage![/color]")
@@ -241,12 +244,12 @@ func handle_challenge_failed():
 		var enemy_node = enemy_manager.enemy_animation
 		var original_position = enemy_node.position
 		
-		# Move enemy LEFT toward player (enemy is on right, player on left)
-		var attack_position = original_position - Vector2(100, 0) # Move closer for skill attack
+		# Move enemy LEFT toward player - reduced distance to prevent overlap
+		var attack_position = original_position - Vector2(60, 0) # Reduced from 80px to 60px to prevent overlap
 		
 		# Create smooth movement tween to player
 		var move_tween = battle_scene.create_tween()
-		move_tween.tween_property(enemy_node, "position", attack_position, 0.4)
+		move_tween.tween_property(enemy_node, "position", attack_position, 0.3) # Faster movement like auto attack
 		
 		# Wait for movement to complete
 		await move_tween.finished
@@ -262,15 +265,21 @@ func handle_challenge_failed():
 			# NOW apply damage at the peak of the skill animation
 			player_manager.take_damage(skill_damage)
 			battle_log_manager.add_message("[color=#000000]The " + enemy_manager.enemy_name + " dealt " + str(skill_damage) + " critical damage![/color]")
+			
+			# Show skill damage indicator (different color for skill attacks)
+			battle_scene._show_skill_damage_indicator(skill_damage, "player")
 		else:
 			# Fallback: apply damage after pause even without skill animation
 			await battle_scene.get_tree().create_timer(0.5).timeout
 			player_manager.take_damage(skill_damage)
 			battle_log_manager.add_message("[color=#000000]The " + enemy_manager.enemy_name + " dealt " + str(skill_damage) + " critical damage![/color]")
+			
+			# Show skill damage indicator (fallback)
+			battle_scene._show_skill_damage_indicator(skill_damage, "player")
 		
 		# Move enemy back to original position
 		var return_tween = battle_scene.create_tween()
-		return_tween.tween_property(enemy_node, "position", original_position, 0.4)
+		return_tween.tween_property(enemy_node, "position", original_position, 0.2) # Faster return like auto attack
 		return_tween.tween_callback(func(): if enemy_sprite: enemy_sprite.play("idle"))
 		
 		# Wait for return movement to complete
@@ -305,12 +314,12 @@ func handle_challenge_cancelled():
 		var enemy_node = enemy_manager.enemy_animation
 		var original_position = enemy_node.position
 		
-		# Move enemy LEFT toward player (enemy is on right, player on left)
-		var attack_position = original_position - Vector2(100, 0) # Move closer for skill attack
+		# Move enemy LEFT toward player - reduced distance to prevent overlap
+		var attack_position = original_position - Vector2(60, 0) # Reduced from 80px to 60px to prevent overlap
 		
 		# Create smooth movement tween to player
 		var move_tween = battle_scene.create_tween()
-		move_tween.tween_property(enemy_node, "position", attack_position, 0.4)
+		move_tween.tween_property(enemy_node, "position", attack_position, 0.3) # Faster movement like auto attack
 		
 		# Wait for movement to complete
 		await move_tween.finished
@@ -326,15 +335,21 @@ func handle_challenge_cancelled():
 			# NOW apply damage at the peak of the skill animation
 			player_manager.take_damage(cancellation_damage)
 			battle_log_manager.add_message("[color=#000000]The " + enemy_manager.enemy_name + " dealt " + str(cancellation_damage) + " damage![/color]")
+			
+			# Show skill damage indicator for cancellation
+			battle_scene._show_skill_damage_indicator(cancellation_damage, "player")
 		else:
 			# Fallback: apply damage after pause even without skill animation
 			await battle_scene.get_tree().create_timer(0.5).timeout
 			player_manager.take_damage(cancellation_damage)
 			battle_log_manager.add_message("[color=#000000]The " + enemy_manager.enemy_name + " dealt " + str(cancellation_damage) + " damage![/color]")
+			
+			# Show skill damage indicator (fallback)
+			battle_scene._show_skill_damage_indicator(cancellation_damage, "player")
 		
 		# Move enemy back to original position
 		var return_tween = battle_scene.create_tween()
-		return_tween.tween_property(enemy_node, "position", original_position, 0.4)
+		return_tween.tween_property(enemy_node, "position", original_position, 0.2) # Faster return like auto attack
 		return_tween.tween_callback(func(): if enemy_sprite: enemy_sprite.play("idle"))
 		
 		# Wait for return movement to complete

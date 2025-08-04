@@ -166,7 +166,7 @@ theme_override_colors/font_color = Color(0.933333, 0.788235, 0.0352941, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("13_uaqt0")
 theme_override_font_sizes/font_size = 32
-text = "20/20"
+text = "Loading."
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -476,7 +476,7 @@ clip_text = true
 [node name="LevelContainer" type="HBoxContainer" parent="InfoContainer"]
 layout_mode = 2
 mouse_filter = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 15
 
 [node name="LevelPrefixLabel" type="Label" parent="InfoContainer/LevelContainer"]
 layout_mode = 2

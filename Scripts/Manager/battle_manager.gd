@@ -84,7 +84,7 @@ func enemy_attack():
 	var original_position = enemy_node.position
 	
 	var enemy_attack_tween = create_tween()
-	enemy_attack_tween.tween_property(enemy_node, "position", original_position - Vector2(80, 0), 0.3) # Move left
+	enemy_attack_tween.tween_property(enemy_node, "position", original_position - Vector2(60, 0), 0.3) # Move left - reduced to prevent overlap
 	enemy_attack_tween.tween_property(enemy_node, "position", original_position, 0.2) # Return to original position
 	
 	# Play attack animation
@@ -427,8 +427,11 @@ func trigger_enemy_skill():
 	# Emit signal
 	emit_signal("enemy_skill_triggered")
 	
-	# Show Enemy Skill Indicator first before challenge
+	# Show Enemy Skill Indicator first - enemy stays in original position
 	_show_enemy_skill_indicator()
+
+# Remove the enemy movement animation for skills - enemy should stay put during indicator/challenge
+# Enemy will only move if player fails the challenge (handled in challenge_manager.gd)
 
 func _show_enemy_skill_indicator():
 	print("BattleManager: Showing enemy skill indicator")
@@ -496,12 +499,15 @@ func _start_word_challenge(challenge_type: String):
 
 func _on_challenge_completed(bonus_damage):
 	battle_scene.challenge_manager.handle_challenge_completed(bonus_damage)
+	# No need to return enemy to position - enemy never moved during successful challenge
 
 func _on_challenge_failed():
 	battle_scene.challenge_manager.handle_challenge_failed()
+	# Enemy movement and return is handled in challenge_manager
 
 func _on_challenge_cancelled():
 	battle_scene.challenge_manager.handle_challenge_cancelled()
+	# Enemy movement and return is handled in challenge_manager
 
 # Show notification when a dungeon is completed
 func _show_dungeon_completion_notification(completed_dungeon_num: int):

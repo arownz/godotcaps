@@ -616,6 +616,11 @@ func _create_user_document(collection, user_id: String, auth):
 				"completed": false,
 				"progress": 0
 			}
+		},
+		"stage_times": {
+			"dungeon_1": {},
+			"dungeon_2": {},
+			"dungeon_3": {}
 		}
 	}
 	

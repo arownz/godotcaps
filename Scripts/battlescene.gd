@@ -27,6 +27,10 @@ var auto_battle_speed = 4 # Adjusted from 5.0 to 4 for better pace
 var battle_result = ""
 var fresh_start = true
 
+# Stage timer tracking
+var stage_start_time: float = 0.0
+var stage_timer_active: bool = false
+
 # Challenge
 var challenge_active = false
 
@@ -35,6 +39,7 @@ var challenge_active = false
 @onready var settings_button = $MainContainer/BattleAreaContainer/SettingButton
 @onready var fight_label = $MainContainer/BattleAreaContainer/FightLabel
 @onready var stage_info_label = $MainContainer/BattleAreaContainer/StageInfoLabel
+@onready var timer_label = $MainContainer/BattleAreaContainer/StageTimer
 
 # Add these missing variables at the top of the script
 var document = null
@@ -59,6 +64,21 @@ func _ready():
 	
 	# Set up the battle
 	_setup_battle()
+	
+	# Don't start timer here - start it when battle actually begins
+
+# Clean up timer when scene exits
+func _notification(what):
+	if what == NOTIFICATION_WM_CLOSE_REQUEST or what == NOTIFICATION_PREDELETE:
+		_cleanup_stage_timer()
+
+func _cleanup_stage_timer():
+	# Stop and clean up stage timer
+	stage_timer_active = false
+	var live_timer = get_node_or_null("StageTimer")
+	if live_timer:
+		live_timer.stop()
+		live_timer.queue_free()
 
 func _initialize_managers():
 	print("Initializing battle scene managers")
@@ -190,10 +210,14 @@ func _connect_manager_signals():
 # Signal callbacks
 func _on_player_attack_performed(damage):
 	enemy_manager.take_damage(damage)
+	# Show damage indicator on enemy
+	_show_damage_indicator(damage, "enemy")
 
 func _on_enemy_attack_performed(damage):
 	player_manager.take_damage(damage)
 	enemy_manager.increase_skill_meter(25)
+	# Show damage indicator on player
+	_show_damage_indicator(damage, "player")
 
 func _on_enemy_health_changed(_current_health, _max_health):
 	ui_manager.update_enemy_health()
@@ -203,11 +227,15 @@ func _on_player_health_changed(_current_health, _max_health):
 
 func _on_enemy_defeated(_exp_reward):
 	battle_active = false
+	# Stop the stage timer when enemy is defeated
+	await _stop_stage_timer()
 	# Call battle_manager to handle victory
 	battle_manager.handle_victory()
 
 func _on_player_defeated():
 	battle_active = false
+	# Stop the stage timer when player is defeated (no time saving on defeat)
+	stage_timer_active = false
 	# Let battle_manager handle defeat
 	battle_manager.handle_defeat()
 
@@ -330,6 +358,9 @@ func _start_battle():
 	
 	battle_active = true
 	battle_session_started = true # Mark that a battle has occurred in this session
+	
+	# Start the stage timer when battle actually begins
+	_start_stage_timer()
 	
 	# Get the engage button and make it transparent/disabled looking
 	engage_button.disabled = true
@@ -547,3 +578,352 @@ func _consume_battle_energy() -> bool:
 	else:
 		print("Failed to get user document")
 		return false
+
+# ===== Stage Timer Functions (Live Timer System) =====
+func _start_stage_timer():
+	print("BattleScene: Starting stage timer for Dungeon ", dungeon_manager.dungeon_num, " Stage ", dungeon_manager.stage_num)
+	
+	# Ensure timer_label reference is valid
+	if !timer_label:
+		timer_label = $MainContainer/BattleAreaContainer/StageTimer
+		if !timer_label:
+			print("ERROR: Timer label not found!")
+			return
+	
+	# Initialize timer variables
+	stage_start_time = Time.get_unix_time_from_system()
+	stage_timer_active = true
+	timer_label.text = "00:00"
+	timer_label.visible = true
+	
+	# Create and start the live timer (similar to energy recovery system)
+	if has_node("StageTimer"):
+		get_node("StageTimer").queue_free()
+	
+	var live_timer = Timer.new()
+	live_timer.name = "StageTimer"
+	live_timer.wait_time = 1.0 # Update every second
+	live_timer.timeout.connect(_update_stage_timer_display)
+	live_timer.autostart = false
+	add_child(live_timer)
+	live_timer.start()
+	
+	print("BattleScene: Live stage timer started at unix time: ", stage_start_time)
+
+# Live timer update function (similar to energy recovery display)
+func _update_stage_timer_display():
+	if !stage_timer_active or !timer_label:
+		return
+	
+	var current_time = Time.get_unix_time_from_system()
+	var elapsed_time = current_time - stage_start_time
+	var time_text = _format_time(elapsed_time)
+	timer_label.text = time_text
+
+func _stop_stage_timer():
+	if !stage_timer_active:
+		return
+		
+	stage_timer_active = false
+	
+	# Stop the live timer
+	var live_timer = get_node_or_null("StageTimer")
+	if live_timer:
+		live_timer.stop()
+		live_timer.queue_free()
+	
+	# Calculate final elapsed time
+	var current_time = Time.get_unix_time_from_system()
+	var elapsed_time = current_time - stage_start_time
+	print("BattleScene: Stage completed in ", elapsed_time, " seconds")
+	
+	# Save the best time to Firebase (only if it's better than existing)
+	await _save_stage_time_to_firebase(elapsed_time)
+	
+	return elapsed_time
+
+# Helper function to format time and avoid integer division warnings
+func _format_time(time_seconds: float) -> String:
+	var total_seconds = int(time_seconds)
+	var minutes = int(total_seconds / 60.0)
+	var seconds = total_seconds % 60
+	return "%02d:%02d" % [minutes, seconds]
+
+# Save stage completion time to Firebase (only if it's a new best time)
+func _save_stage_time_to_firebase(completion_time: float):
+	if !Firebase.Auth.auth:
+		return
+		
+	var user_id = Firebase.Auth.auth.localid
+	var collection = Firebase.Firestore.collection("dyslexia_users")
+	
+	# Get current document
+	var user_doc = await collection.get_doc(user_id)
+	if user_doc and !("error" in user_doc.keys() and user_doc.get_value("error")):
+		print("BattleScene: Document retrieved successfully for stage time update")
+		
+		# Get or create stage_times structure
+		var stage_times = user_doc.get_value("stage_times")
+		if stage_times == null or typeof(stage_times) != TYPE_DICTIONARY:
+			stage_times = {}
+		
+		# Create dungeon structure if it doesn't exist
+		var dungeon_key = "dungeon_" + str(dungeon_manager.dungeon_num)
+		if !stage_times.has(dungeon_key):
+			stage_times[dungeon_key] = {}
+		
+		# Check if this is a new best time for this stage
+		var stage_key = "stage_" + str(dungeon_manager.stage_num)
+		var current_best_time = stage_times[dungeon_key].get(stage_key, null)
+		
+		# Only save if it's a new best time (lower is better) or first completion
+		if current_best_time == null or completion_time < current_best_time:
+			stage_times[dungeon_key][stage_key] = completion_time
+			
+			# Update the document field
+			user_doc.add_or_update_field("stage_times", stage_times)
+			
+			# Save to Firebase
+			var updated_doc = await collection.update(user_doc)
+			if updated_doc:
+				var time_text = _format_time(completion_time)
+				print("BattleScene: New best time saved for ", dungeon_key, " ", stage_key, ": ", time_text)
+				
+				# Show improvement message in battle log
+				if current_best_time != null:
+					var old_time_text = _format_time(current_best_time)
+					battle_log_manager.add_message("[color=#00FF00]New best time! Previous: " + old_time_text + " → Now: " + time_text + "[/color]")
+				else:
+					battle_log_manager.add_message("[color=#00FF00]Stage completed in " + time_text + "![/color]")
+			else:
+				print("BattleScene: Failed to save stage time to Firebase")
+		else:
+			var current_time_text = _format_time(completion_time)
+			var best_time_text = _format_time(current_best_time)
+			print("BattleScene: Time ", current_time_text, " not better than current best ", best_time_text)
+			battle_log_manager.add_message("[color=#FFD700]Stage completed in " + current_time_text + " (Best: " + best_time_text + ")[/color]")
+	else:
+		print("BattleScene: Failed to get user document for stage time update")
+
+# ===== Damage Indicator System =====
+func _show_damage_indicator(damage_amount: int, target: String):
+	var target_position: Vector2
+	var target_node: Node2D
+	
+	# Get the target position based on whether it's player or enemy
+	if target == "player":
+		if player_manager.player_animation:
+			target_node = player_manager.player_animation
+			target_position = target_node.global_position
+		else:
+			target_position = $MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer/PlayerPosition.global_position
+	elif target == "enemy":
+		if enemy_manager.enemy_animation:
+			target_node = enemy_manager.enemy_animation
+			target_position = target_node.global_position
+		else:
+			target_position = $MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer/EnemyPosition.global_position
+	else:
+		print("Invalid damage indicator target: ", target)
+		return
+	
+	# Create damage label
+	var damage_label = Label.new()
+	damage_label.text = "-" + str(damage_amount)
+	damage_label.add_theme_font_size_override("font_size", 24)
+	damage_label.add_theme_color_override("font_color", Color.RED)
+	damage_label.add_theme_color_override("font_shadow_color", Color.BLACK)
+	damage_label.add_theme_constant_override("shadow_offset_x", 2)
+	damage_label.add_theme_constant_override("shadow_offset_y", 2)
+
+	# Add dyslexic-friendly font
+	var dyslexic_font = load("res://Fonts/dyslexiafont/OpenDyslexic-Italic.otf")
+	if dyslexic_font:
+		damage_label.add_theme_font_override("font", dyslexic_font)
+	
+	# Add to battle container for proper layering
+	var battle_container = $MainContainer/BattleAreaContainer/BattleContainer
+	battle_container.add_child(damage_label)
+	
+	# Position near target with random offset to avoid overlap
+	var random_offset = Vector2(
+		randf_range(-30, 30), # Random horizontal offset
+		randf_range(-40, -10) # Random upward offset
+	)
+	damage_label.position = target_position + random_offset
+	
+	# Ensure label doesn't go off screen
+	var viewport_size = get_viewport_rect().size
+	damage_label.position.x = clamp(damage_label.position.x, 0, viewport_size.x - 50)
+	damage_label.position.y = clamp(damage_label.position.y, 50, viewport_size.y - 50)
+	
+	# Animate the damage indicator
+	_animate_damage_indicator(damage_label)
+
+func _animate_damage_indicator(label: Label):
+	# Initial setup for animation
+	label.modulate.a = 1.0
+	label.scale = Vector2(1.2, 1.2)
+	
+	# Create animation tween
+	var tween = create_tween()
+	tween.set_parallel(true)
+	
+	# Scale animation: grow then shrink
+	tween.tween_property(label, "scale", Vector2(1.0, 1.0), 0.2).set_ease(Tween.EASE_OUT)
+	
+	# Position animation: float upward
+	tween.tween_property(label, "position", label.position + Vector2(0, -50), 1.5).set_ease(Tween.EASE_OUT)
+	
+	# Fade animation: visible for a moment, then fade out
+	tween.tween_property(label, "modulate:a", 1.0, 0.3)
+	tween.tween_property(label, "modulate:a", 0.0, 0.8).set_delay(0.7).set_ease(Tween.EASE_IN)
+	
+	# Clean up after animation
+	tween.tween_callback(label.queue_free).set_delay(1.5)
+
+# Show counter damage indicator with special styling
+func _show_counter_damage_indicator(damage_amount: int, target: String, _bonus_damage: int):
+	var target_position: Vector2
+	var target_node: Node2D
+	
+	# Get the target position
+	if target == "enemy":
+		if enemy_manager.enemy_animation:
+			target_node = enemy_manager.enemy_animation
+			target_position = target_node.global_position
+		else:
+			target_position = $MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer/EnemyPosition.global_position
+	else:
+		return
+	
+	# Create counter damage label with special styling
+	var damage_label = Label.new()
+	damage_label.text = "-" + str(damage_amount) + " COUNTER!"
+	damage_label.add_theme_font_size_override("font_size", 28)
+	damage_label.add_theme_color_override("font_color", Color.GOLD)
+	damage_label.add_theme_color_override("font_shadow_color", Color.BLACK)
+	damage_label.add_theme_constant_override("shadow_offset_x", 3)
+	damage_label.add_theme_constant_override("shadow_offset_y", 3)
+
+	# Add dyslexic-friendly font
+	var dyslexic_font = load("res://Fonts/dyslexiafont/OpenDyslexic-Bold-Italic.otf")
+	if dyslexic_font:
+		damage_label.add_theme_font_override("font", dyslexic_font)
+	
+	# Add to battle container
+	var battle_container = $MainContainer/BattleAreaContainer/BattleContainer
+	battle_container.add_child(damage_label)
+	
+	# Position with larger offset for counter attacks
+	var random_offset = Vector2(
+		randf_range(-40, 40),
+		randf_range(-60, -20)
+	)
+	damage_label.position = target_position + random_offset
+	
+	# Animate with more dramatic effect for counters
+	_animate_counter_damage_indicator(damage_label)
+
+# Show skill damage indicator with special styling
+func _show_skill_damage_indicator(damage_amount: int, target: String):
+	var target_position: Vector2
+	var target_node: Node2D
+	
+	# Get the target position
+	if target == "player":
+		if player_manager.player_animation:
+			target_node = player_manager.player_animation
+			target_position = target_node.global_position
+		else:
+			target_position = $MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer/PlayerPosition.global_position
+	else:
+		return
+	
+	# Create skill damage label with special styling
+	var damage_label = Label.new()
+	damage_label.text = "-" + str(damage_amount) + " CRITICAL!"
+	damage_label.add_theme_font_size_override("font_size", 26)
+	damage_label.add_theme_color_override("font_color", Color.ORANGE_RED)
+	damage_label.add_theme_color_override("font_shadow_color", Color.BLACK)
+	damage_label.add_theme_constant_override("shadow_offset_x", 3)
+	damage_label.add_theme_constant_override("shadow_offset_y", 3)
+
+	# Add dyslexic-friendly font
+	var dyslexic_font = load("res://Fonts/dyslexiafont/OpenDyslexic-Bold-Italic.otf")
+	if dyslexic_font:
+		damage_label.add_theme_font_override("font", dyslexic_font)
+	
+	# Add to battle container
+	var battle_container = $MainContainer/BattleAreaContainer/BattleContainer
+	battle_container.add_child(damage_label)
+	
+	# Position with offset
+	var random_offset = Vector2(
+		randf_range(-35, 35),
+		randf_range(-50, -15)
+	)
+	damage_label.position = target_position + random_offset
+	
+	# Animate with special effect for skill damage
+	_animate_skill_damage_indicator(damage_label)
+
+func _animate_counter_damage_indicator(label: Label):
+	# Initial setup for dramatic counter animation
+	label.modulate.a = 1.0
+	label.scale = Vector2(1.5, 1.5)
+	
+	# Create animation tween
+	var tween = create_tween()
+	tween.set_parallel(true)
+	
+	# Dramatic scale animation
+	tween.tween_property(label, "scale", Vector2(1.1, 1.1), 0.3).set_ease(Tween.EASE_OUT)
+	tween.tween_property(label, "scale", Vector2(0.9, 0.9), 0.3).set_delay(0.3).set_ease(Tween.EASE_IN)
+	
+	# Float upward
+	tween.tween_property(label, "position", label.position + Vector2(0, -70), 2.0).set_ease(Tween.EASE_OUT)
+	
+	# Fade animation
+	tween.tween_property(label, "modulate:a", 1.0, 0.4)
+	tween.tween_property(label, "modulate:a", 0.0, 1.0).set_delay(1.0).set_ease(Tween.EASE_IN)
+	
+	# Clean up
+	tween.tween_callback(label.queue_free).set_delay(2.0)
+
+func _animate_skill_damage_indicator(label: Label):
+	# Initial setup for skill damage animation
+	label.modulate.a = 1.0
+	label.scale = Vector2(1.3, 1.3)
+	
+	# Create animation tween
+	var tween = create_tween()
+	tween.set_parallel(true)
+	
+	# Shake effect
+	var original_pos = label.position
+	tween.tween_method(_shake_label.bind(label, original_pos), 0.0, 1.0, 0.5)
+	
+	# Scale animation
+	tween.tween_property(label, "scale", Vector2(1.0, 1.0), 0.2).set_ease(Tween.EASE_OUT)
+	
+	# Float upward
+	tween.tween_property(label, "position", original_pos + Vector2(0, -60), 1.8).set_ease(Tween.EASE_OUT).set_delay(0.5)
+	
+	# Fade animation
+	tween.tween_property(label, "modulate:a", 1.0, 0.3)
+	tween.tween_property(label, "modulate:a", 0.0, 0.9).set_delay(0.9).set_ease(Tween.EASE_IN)
+	
+	# Clean up
+	tween.tween_callback(label.queue_free).set_delay(1.8)
+
+# Helper function for shake effect
+func _shake_label(label: Label, original_pos: Vector2, progress: float):
+	if progress < 0.5:
+		var shake_intensity = 5.0 * (0.5 - progress) * 2.0
+		label.position = original_pos + Vector2(
+			randf_range(-shake_intensity, shake_intensity),
+			randf_range(-shake_intensity, shake_intensity)
+		)
+	else:
+		label.position = original_pos
