@@ -19,8 +19,7 @@ boot_splash/fullsize=false
 boot_splash/use_filter=false
 boot_splash/image="uid://dkkb8nek5d6fs"
 config/icon="uid://dkkb8nek5d6fs"
-config/windows_native_icon="uid://dkkb8nek5d6fs"
-boot_splash/minimum_display_time=1
+boot_splash/minimum_display_time=2
 
 [audio]
 
@@ -36,23 +35,19 @@ SettingsManager="*res://Scripts/SettingsManager.gd"
 
 formats/description="2D Dyslexia Gamification Browser Base (Chrome, Edge, Firefox, Brave)"
 
-[config]
-
-features/web/optimize_for_web=true
-features/vulkan/disable=true
-
 [display]
 
 window/size/viewport_width=1460
 window/size/viewport_height=810
 window/subwindows/embed_subwindows=false
 window/stretch/mode="viewport"
+window/stretch/scale_mode="integer"
 window/per_pixel_transparency/allowed=true
 window/handheld/orientation=4
 window/vsync/vsync_mode=false
 window/canvas_textures/default_texture_filter=0
 window/size/size_use_custom=true
-window/size/size_use_aspect=false
+window/size/size_use_aspect=true
 
 [editor]
 
@@ -74,6 +69,11 @@ folder_colors={
 "res://gui/": "teal"
 }
 
+[gui]
+
+theme/default_font_subpixel_positioning=3
+theme/default_font_multichannel_signed_distance_field=true
+
 [input_devices]
 
 pointing/emulate_touch_from_mouse=true
@@ -84,4 +84,7 @@ textures/canvas_textures/default_texture_filter=0
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
 textures/vram_compression/import_etc2_astc=true
+textures/lossless_compression/force_png=true
+textures/webp_compression/lossless_compression_factor=50.0
 textures/default_filters/use_nearest_mipmap_filter=true
+2d/snap/snap_2d_vertices_to_pixel=true

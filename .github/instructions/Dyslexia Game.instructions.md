@@ -1,4 +1,3 @@
-
 # iCopilot Instructions for Godot Dyslexia Learning Game
 
 ## Project Overview
@@ -110,7 +109,7 @@ Reset sprites to "idle" after animations, use `await animation_finished` for tim
 - `/Scenes/`: All game scenes (.tscn files)
 - `/gui/`: UI assets and backgrounds
 
-## Testing & Debugging
+## Testing & Debugging (You dont need to test it through cmd command since i will personally test it through godot platform itself)
 
 - Use `print()` statements liberally for async operations
 - Check Firebase responses with `("error" in document.keys())` pattern
