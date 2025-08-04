@@ -1,10 +1,8 @@
-[gd_scene load_steps=23 format=3 uid="uid://cfead7bcuslp4"]
+[gd_scene load_steps=21 format=3 uid="uid://cfead7bcuslp4"]
 
 [ext_resource type="Texture2D" uid="uid://cxqd6wyqy8g22" path="res://gui/Update/Backgrounds/battlescene background.png" id="2_ixjr5"]
-[ext_resource type="PackedScene" uid="uid://e6bec84rrthm" path="res://Sprites/Animation/DefaultPlayer_Animation.tscn" id="3_kwfy1"]
 [ext_resource type="Script" uid="uid://cnnycoui3l3ef" path="res://Scripts/battlescene.gd" id="3_vhj2j"]
 [ext_resource type="Texture2D" uid="uid://bb3yuiy6n0i2" path="res://gui/Update/icons/small settings_hover.png" id="5_47u5s"]
-[ext_resource type="PackedScene" uid="uid://d4gnmb7y5laks" path="res://Sprites/Animation/Treant_Animation.tscn" id="5_ixjr5"]
 [ext_resource type="Texture2D" uid="uid://c6clhmrkbmg0u" path="res://gui/UI/ui 4.png" id="6_2tp6q"]
 [ext_resource type="Texture2D" uid="uid://bmjd8nkagj08e" path="res://gui/Update/UI/long uncolored button.png" id="7_2tp6q"]
 [ext_resource type="Texture2D" uid="uid://c3jmmbnxol7mb" path="res://gui/Update/UI/active skill bar icon.png" id="7_cja1x"]
@@ -106,7 +104,7 @@ texture = ExtResource("2_ixjr5")
 centered = false
 
 [node name="MainContainer" type="HBoxContainer" parent="."]
-offset_right = 1440.0
+offset_right = 1460.0
 offset_bottom = 810.0
 
 [node name="BattleAreaContainer" type="Control" parent="MainContainer"]
@@ -119,25 +117,25 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_right = -30.0
 grow_horizontal = 2
 grow_vertical = 2
 
 [node name="PlayerContainer" type="Control" parent="MainContainer/BattleAreaContainer/BattleContainer"]
 layout_mode = 1
-anchors_preset = 4
-anchor_top = 0.5
-anchor_bottom = 0.5
-offset_left = 313.0
-offset_top = 264.0
-offset_right = 313.0
-offset_bottom = 264.0
+anchor_left = 0.314
+anchor_top = 0.599
+anchor_right = 0.314
+anchor_bottom = 0.599
+offset_left = 46.414
+offset_top = 183.81
+offset_right = 46.414
+offset_bottom = 183.81
 grow_vertical = 2
 
 [node name="PlayerPosition" type="Node2D" parent="MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer"]
 position = Vector2(-47, -184)
 scale = Vector2(4.57468, 4.51523)
-
-[node name="DefaultPlayerAnimation" parent="MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer/PlayerPosition" instance=ExtResource("3_kwfy1")]
 
 [node name="PlayerHealthBar" type="ProgressBar" parent="MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer"]
 custom_minimum_size = Vector2(180, 15)
@@ -178,7 +176,7 @@ theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 2
 theme_override_fonts/font = ExtResource("8_2tp6q")
 theme_override_font_sizes/font_size = 150
-text = "100/100"
+text = "loading.."
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -193,7 +191,7 @@ theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 5
 theme_override_fonts/font = ExtResource("8_2tp6q")
 theme_override_font_sizes/font_size = 18
-text = "Player Name"
+text = "loading.."
 horizontal_alignment = 1
 vertical_alignment = 2
 
@@ -222,28 +220,25 @@ theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 5
 theme_override_fonts/font = ExtResource("8_2tp6q")
 theme_override_font_sizes/font_size = 18
-text = "100"
+text = "loading.."
 horizontal_alignment = 1
 
 [node name="EnemyContainer" type="Control" parent="MainContainer/BattleAreaContainer/BattleContainer"]
 layout_mode = 1
-anchors_preset = 6
-anchor_left = 1.0
-anchor_top = 0.5
-anchor_right = 1.0
-anchor_bottom = 0.5
-offset_left = -293.0
-offset_top = 217.0
-offset_right = -293.0
-offset_bottom = 217.0
+anchor_left = 0.711
+anchor_top = 0.599
+anchor_right = 0.711
+anchor_bottom = 0.599
+offset_left = -47.639
+offset_top = 136.81
+offset_right = -47.639
+offset_bottom = 136.81
 grow_horizontal = 0
 grow_vertical = 2
 
 [node name="EnemyPosition" type="Node2D" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer"]
 position = Vector2(48, -137)
 scale = Vector2(3.52051, 3.76243)
-
-[node name="TreantAnimation" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer/EnemyPosition" instance=ExtResource("5_ixjr5")]
 
 [node name="EnemyHealthBar" type="ProgressBar" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer"]
 custom_minimum_size = Vector2(180, 15)
@@ -286,7 +281,7 @@ theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 2
 theme_override_fonts/font = ExtResource("8_2tp6q")
 theme_override_font_sizes/font_size = 150
-text = "100/100"
+text = "loading.."
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -299,7 +294,6 @@ offset_right = 140.0
 offset_bottom = -2.0
 theme_override_styles/background = SubResource("StyleBoxFlat_e13ox")
 theme_override_styles/fill = SubResource("StyleBoxFlat_skill_fill")
-value = 50.0
 fill_mode = 1
 show_percentage = false
 
@@ -347,7 +341,7 @@ theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 5
 theme_override_fonts/font = ExtResource("8_2tp6q")
 theme_override_font_sizes/font_size = 18
-text = "Enemy Name"
+text = "loading.."
 horizontal_alignment = 1
 vertical_alignment = 2
 
@@ -376,7 +370,7 @@ theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 5
 theme_override_fonts/font = ExtResource("8_2tp6q")
 theme_override_font_sizes/font_size = 18
-text = "5"
+text = "loading.."
 horizontal_alignment = 1
 
 [node name="FightLabel" type="Label" parent="MainContainer/BattleAreaContainer"]
@@ -416,7 +410,7 @@ theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 5
 theme_override_fonts/font = ExtResource("8_2tp6q")
 theme_override_font_sizes/font_size = 25
-text = "Dungeon 3 - Stage 5"
+text = "loading.."
 horizontal_alignment = 1
 
 [node name="Timer" type="Label" parent="MainContainer/BattleAreaContainer"]
@@ -424,9 +418,9 @@ layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -7.5
+offset_left = -36.0
 offset_top = 74.0
-offset_right = 47.5
+offset_right = 76.0
 offset_bottom = 120.0
 grow_horizontal = 2
 theme_override_colors/font_color = Color(0.976, 0.793107, 1.15514e-06, 1)
@@ -434,7 +428,7 @@ theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 5
 theme_override_fonts/font = ExtResource("8_2tp6q")
 theme_override_font_sizes/font_size = 20
-text = "0:01"
+text = "loading.."
 horizontal_alignment = 1
 
 [node name="SettingButton" type="TextureButton" parent="MainContainer/BattleAreaContainer"]
@@ -474,10 +468,12 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -25.0
-offset_right = 25.0
+offset_left = -34.0
+offset_right = 57.3889
+offset_bottom = 65.0
 grow_horizontal = 2
 grow_vertical = 2
+scale = Vector2(0.927268, 0.929547)
 texture = ExtResource("6_2tp6q")
 expand_mode = 3
 stretch_mode = 6
@@ -487,10 +483,13 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -13.0
-offset_right = 16.0
+offset_left = -3.30554
+offset_top = 4.0
+offset_right = 37.6945
+offset_bottom = 47.0
 grow_horizontal = 2
 grow_vertical = 2
+scale = Vector2(0.927268, 0.929547)
 theme_override_constants/margin_left = 20
 theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 20
@@ -553,7 +552,7 @@ theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 2
 theme_override_fonts/font = ExtResource("8_2tp6q")
 theme_override_font_sizes/font_size = 150
-text = "100/100"
+text = "loading.."
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -609,7 +608,7 @@ theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 2
 theme_override_fonts/font = ExtResource("8_2tp6q")
 theme_override_font_sizes/font_size = 150
-text = "100/100"
+text = "loading.."
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -662,7 +661,7 @@ theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 2
 theme_override_fonts/font = ExtResource("8_2tp6q")
 theme_override_font_sizes/font_size = 150
-text = "1000"
+text = "loading.."
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -714,7 +713,7 @@ theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 2
 theme_override_fonts/font = ExtResource("8_2tp6q")
 theme_override_font_sizes/font_size = 150
-text = "1000"
+text = "loading.."
 horizontal_alignment = 1
 vertical_alignment = 1
 

@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=3 uid="uid://d4gnmb7y5laks"]
+[gd_scene load_steps=39 format=3 uid="uid://d4gnmb7y5laks"]
 
 [ext_resource type="Texture2D" uid="uid://by0xvtv0v0usp" path="res://Sprites/Frame Sprites/Treant.png" id="1_ekcs8"]
 
@@ -90,10 +90,6 @@ region = Rect2(224, 224, 112, 112)
 atlas = ExtResource("1_ekcs8")
 region = Rect2(336, 224, 112, 112)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_vokco"]
-atlas = ExtResource("1_ekcs8")
-region = Rect2(0, 0, 112, 112)
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_imx80"]
 atlas = ExtResource("1_ekcs8")
 region = Rect2(112, 0, 112, 112)
@@ -110,6 +106,10 @@ region = Rect2(336, 0, 112, 112)
 atlas = ExtResource("1_ekcs8")
 region = Rect2(448, 0, 112, 112)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_vokco"]
+atlas = ExtResource("1_ekcs8")
+region = Rect2(0, 0, 112, 112)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_uh5t7"]
 atlas = ExtResource("1_ekcs8")
 region = Rect2(560, 0, 112, 112)
@@ -121,10 +121,6 @@ region = Rect2(672, 0, 112, 112)
 [sub_resource type="AtlasTexture" id="AtlasTexture_mnbin"]
 atlas = ExtResource("1_ekcs8")
 region = Rect2(784, 0, 112, 112)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_qhv2p"]
-atlas = ExtResource("1_ekcs8")
-region = Rect2(0, 224, 112, 112)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ekcs8"]
 atlas = ExtResource("1_ekcs8")
@@ -228,6 +224,18 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_gk5xt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_imx80")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5mbse")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wcm1f")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fkvtj")
 }],
 "loop": false,
 "name": &"hurt",
@@ -264,9 +272,6 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_qhv2p")
-}, {
-"duration": 1.0,
 "texture": SubResource("AtlasTexture_ekcs8")
 }, {
 "duration": 1.0,
@@ -283,6 +288,9 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_e2d4x")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hc7j1")
 }],
 "loop": false,
 "name": &"skill",

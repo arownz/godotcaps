@@ -1,4 +1,4 @@
-[gd_scene load_steps=37 format=3 uid="uid://d1i117ieiarnh"]
+[gd_scene load_steps=36 format=3 uid="uid://d1i117ieiarnh"]
 
 [ext_resource type="Texture2D" uid="uid://cmgrkntjwnvvr" path="res://Sprites/Frame Sprites/Slime.png" id="1_ykal7"]
 
@@ -109,10 +109,6 @@ region = Rect2(256, 0, 64, 64)
 [sub_resource type="AtlasTexture" id="AtlasTexture_wwr8b"]
 atlas = ExtResource("1_ykal7")
 region = Rect2(320, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_l60ye"]
-atlas = ExtResource("1_ykal7")
-region = Rect2(0, 128, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ykal7"]
 atlas = ExtResource("1_ykal7")
@@ -243,9 +239,6 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_l60ye")
-}, {
-"duration": 1.0,
 "texture": SubResource("AtlasTexture_ykal7")
 }, {
 "duration": 1.0,
@@ -262,6 +255,9 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_vbqwn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_trsto")
 }],
 "loop": false,
 "name": &"skill",
@@ -272,5 +268,5 @@ animations = [{
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_ovbb4")
-animation = &"skill"
+animation = &"hurt"
 autoplay = "idle"

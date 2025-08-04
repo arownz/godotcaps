@@ -1,4 +1,4 @@
-[gd_scene load_steps=39 format=3 uid="uid://detxp7ylydvcd"]
+[gd_scene load_steps=38 format=3 uid="uid://detxp7ylydvcd"]
 
 [ext_resource type="Texture2D" uid="uid://ckfq2sv5fswsg" path="res://Sprites/Frame Sprites/Snake.png" id="1_k055r"]
 
@@ -121,10 +121,6 @@ region = Rect2(192, 64, 64, 64)
 [sub_resource type="AtlasTexture" id="AtlasTexture_e35rf"]
 atlas = ExtResource("1_k055r")
 region = Rect2(256, 64, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_w3jao"]
-atlas = ExtResource("1_k055r")
-region = Rect2(0, 256, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_k055r"]
 atlas = ExtResource("1_k055r")
@@ -260,9 +256,6 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_w3jao")
-}, {
-"duration": 1.0,
 "texture": SubResource("AtlasTexture_k055r")
 }, {
 "duration": 1.0,
@@ -276,6 +269,18 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_fyetg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_52mxp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7888v")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5m26x")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_oltpx")
 }],
 "loop": false,
 "name": &"skill",

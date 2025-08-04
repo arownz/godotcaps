@@ -23,29 +23,28 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -362.0
-offset_top = -142.0
-offset_right = 377.0
-offset_bottom = 148.0
+offset_right = 22.0
+offset_bottom = -24.0
 grow_horizontal = 2
 grow_vertical = 2
+scale = Vector2(0.985009, 1.03088)
 color = Color(0, 0, 0, 0.6)
 
 [node name="ResultPanel" type="TextureRect" parent="."]
 custom_minimum_size = Vector2(500, 350)
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -301.0
-offset_top = -281.0
-offset_right = 408.0
-offset_bottom = 426.0
+anchors_preset = -1
+anchor_left = 0.511
+anchor_top = 0.567
+anchor_right = 0.511
+anchor_bottom = 0.567
+offset_left = -248.06
+offset_top = -328.27
+offset_right = 444.94
+offset_bottom = 392.73
 grow_horizontal = 2
 grow_vertical = 2
-scale = Vector2(0.892741, 0.892741)
+scale = Vector2(0.807802, 0.807802)
 texture = ExtResource("2_frm3f")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="ResultPanel"]
@@ -53,13 +52,13 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 185.0
-offset_top = 230.0
-offset_right = -190.0
-offset_bottom = -191.0
+offset_left = 144.499
+offset_top = 254.273
+offset_right = -148.501
+offset_bottom = -166.727
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 20
+theme_override_constants/separation = 15
 alignment = 1
 
 [node name="ResultLabel" type="Label" parent="ResultPanel/VBoxContainer"]
@@ -79,9 +78,6 @@ theme_override_font_sizes/font_size = 15
 text = "You defeated the enemy!"
 horizontal_alignment = 1
 autowrap_mode = 2
-
-[node name="HSeparator" type="HSeparator" parent="ResultPanel/VBoxContainer"]
-layout_mode = 2
 
 [node name="ButtonContainer" type="VBoxContainer" parent="ResultPanel/VBoxContainer"]
 layout_mode = 2
