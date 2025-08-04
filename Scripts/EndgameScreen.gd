@@ -5,23 +5,19 @@ signal quit_to_menu
 signal continue_battle
 
 func _ready():
-	# Ensure Background fills the entire screen
-	$Background.anchors_preset = Control.PRESET_FULL_RECT
-	$Background.offset_left = 0
-	$Background.offset_top = 0
-	$Background.offset_right = 0
-	$Background.offset_bottom = 0
+	$ResultPanel.modulate = Color(1, 1, 1, 0)
 	
-	# Animate the ResultPanel appearing
-	$ResultPanel.scale = Vector2(0.5, 0.5)
 	var tween = create_tween()
-	tween.tween_property($ResultPanel, "scale", Vector2(1, 1), 0.3).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+	tween.set_parallel(true)
+	tween.tween_property($ResultPanel, "modulate", Color(1, 1, 1, 1), 0.4).set_ease(Tween.EASE_OUT)
 	
 	# Hide continue button by default
 	$ResultPanel/VBoxContainer/ButtonContainer/ContinueButton.visible = false
 
 func set_result(result, _dungeon_num: int = 1, _stage_num: int = 1, exp_reward: int = 0, enemy_name: String = ""):
+	# Load appropriate UI texture based on result
 	if result == "Victory":
+		$ResultPanel.texture = load("res://gui/Update/UI/victory UI.png")
 		$ResultPanel/VBoxContainer/ResultLabel.text = "Victory!"
 		var message = ""
 		if enemy_name != "":
@@ -34,6 +30,7 @@ func set_result(result, _dungeon_num: int = 1, _stage_num: int = 1, exp_reward: 
 		$ResultPanel/VBoxContainer/MessageLabel.text = message
 		$ResultPanel/VBoxContainer/ResultLabel.add_theme_color_override("font_color", Color(0.2, 0.8, 0.2))
 	else:
+		$ResultPanel.texture = load("res://gui/Update/UI/defeat UI.png")
 		$ResultPanel/VBoxContainer/ResultLabel.text = "Defeat"
 		var message = ""
 		if enemy_name != "":
@@ -46,6 +43,7 @@ func set_result(result, _dungeon_num: int = 1, _stage_num: int = 1, exp_reward: 
 # Missing function that was causing the crash - now implemented
 func setup_endgame(result_type: String, dungeon_num: int = 1, stage_num: int = 1, exp_reward: int = 0, enemy_name: String = ""):
 	print("EndgameScreen: Setting up endgame with result: " + result_type)
+	
 	set_result(result_type, dungeon_num, stage_num, exp_reward, enemy_name)
 	
 	# For victory, enable continue button if there are more stages
@@ -66,25 +64,28 @@ func set_continue_enabled(enabled):
 		$ResultPanel/VBoxContainer/MessageLabel.text = current_text + " Continue to the next stage?"
 
 func _on_restart_button_pressed():
+	# Enhanced fade-out animation
 	var tween = create_tween()
-	tween.tween_property($ResultPanel, "scale", Vector2(0.5, 0.5), 0.2)
-	tween.tween_property($ResultPanel, "modulate", Color(1, 1, 1, 0), 0.1)
+	tween.set_parallel(true)
+	tween.tween_property($ResultPanel, "modulate", Color(1, 1, 1, 0), 0.3).set_ease(Tween.EASE_IN)
 	await tween.finished
 	restart_battle.emit()
 	queue_free()
 
 func _on_quit_button_pressed():
+	# Enhanced fade-out animation
 	var tween = create_tween()
-	tween.tween_property($ResultPanel, "scale", Vector2(0.5, 0.5), 0.2)
-	tween.tween_property($ResultPanel, "modulate", Color(1, 1, 1, 0), 0.1)
+	tween.set_parallel(true)
+	tween.tween_property($ResultPanel, "modulate", Color(1, 1, 1, 0), 0.3).set_ease(Tween.EASE_IN)
 	await tween.finished
 	quit_to_menu.emit()
 	queue_free()
 
 func _on_continue_button_pressed():
+	# Enhanced fade-out animation
 	var tween = create_tween()
-	tween.tween_property($ResultPanel, "scale", Vector2(0.5, 0.5), 0.2)
-	tween.tween_property($ResultPanel, "modulate", Color(1, 1, 1, 0), 0.1)
+	tween.set_parallel(true)
+	tween.tween_property($ResultPanel, "modulate", Color(1, 1, 1, 0), 0.3).set_ease(Tween.EASE_IN)
 	await tween.finished
 	continue_battle.emit()
 	queue_free()

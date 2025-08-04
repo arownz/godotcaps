@@ -14,13 +14,18 @@ func _ready():
 	# Connect background click to quit
 	$Background.gui_input.connect(_on_background_input)
 	
-	# Animate popup appearance
-	$PopupPanel.scale = Vector2(0.5, 0.5)
+	# Enhanced fade-in animation with smooth scaling
+	$Background.modulate.a = 0.0
+	$PopupPanel.scale = Vector2(0.8, 0.8)
 	$PopupPanel.modulate.a = 0.0
 	
 	var tween = create_tween()
-	tween.parallel().tween_property($PopupPanel, "scale", Vector2(1, 1), 0.3).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
-	tween.parallel().tween_property($PopupPanel, "modulate:a", 1.0, 0.3)
+	tween.set_parallel(true)
+	# Background fade
+	tween.tween_property($Background, "modulate:a", 0.6, 0.3).set_ease(Tween.EASE_OUT)
+	# Panel scale and fade
+	tween.tween_property($PopupPanel, "scale", Vector2(1, 1), 0.4).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+	tween.tween_property($PopupPanel, "modulate:a", 1.0, 0.3).set_ease(Tween.EASE_OUT)
 
 func set_energy_cost(cost: int):
 	energy_cost = cost
@@ -37,12 +42,12 @@ func set_battle_session_state(has_battle_occurred: bool, battle_currently_active
 		$PopupPanel/VBoxContainer/ButtonContainer/EngageButton.disabled = true
 		
 		if battle_currently_active:
-			# Battle is ongoing
-			$PopupPanel/VBoxContainer/MessageLabel.text = "Battle is currently active.\nUse the Quit button to leave the battle."
+			# Battle, challenge, or endgame screen is active
+			$PopupPanel/VBoxContainer/MessageLabel.text = "Battle session is currently active.\nUse the quit button to leave the battle."
 			$PopupPanel/VBoxContainer/Title.text = "Battle Menu"
 		else:
-			# Battle has ended, showing endgame screen
-			$PopupPanel/VBoxContainer/MessageLabel.text = "Battle has ended."
+			# Battle session has completely ended
+			$PopupPanel/VBoxContainer/MessageLabel.text = "Battle session has ended."
 			$PopupPanel/VBoxContainer/Title.text = "Battle Menu"
 
 func _on_engage_button_pressed():
@@ -69,9 +74,13 @@ func _on_background_input(event):
 		_close_popup()
 
 func _close_popup():
+	# Enhanced fade-out animation
 	var tween = create_tween()
-	tween.parallel().tween_property($PopupPanel, "scale", Vector2(0.5, 0.5), 0.2)
-	tween.parallel().tween_property($PopupPanel, "modulate:a", 0.0, 0.2)
-	tween.parallel().tween_property($Background, "modulate:a", 0.0, 0.2)
+	tween.set_parallel(true)
+	# Background fade
+	tween.tween_property($Background, "modulate:a", 0.0, 0.25).set_ease(Tween.EASE_IN)
+	# Panel scale and fade
+	tween.tween_property($PopupPanel, "scale", Vector2(0.8, 0.8), 0.25).set_ease(Tween.EASE_IN)
+	tween.tween_property($PopupPanel, "modulate:a", 0.0, 0.25).set_ease(Tween.EASE_IN)
 	await tween.finished
 	queue_free()

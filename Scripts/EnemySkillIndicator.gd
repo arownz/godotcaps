@@ -70,8 +70,9 @@ func _start_countdown():
 	# Start the countdown timer
 	countdown_timer.start()
 	
-	# Set up a final timer to finish the indicator
+	# Create only ONE finish timer with unique name to prevent conflicts
 	var finish_timer = Timer.new()
+	finish_timer.name = "FinishTimer" # Give it a unique name
 	finish_timer.wait_time = display_duration
 	finish_timer.one_shot = true
 	finish_timer.timeout.connect(_on_indicator_finished)
@@ -101,21 +102,29 @@ func _on_countdown_tick():
 				countdown_text.modulate = Color(1, 0.6, 0.3, 1)
 
 func _on_indicator_finished():
-	# Prevent duplicate signal emission
+	# IMPROVED: Prevent duplicate signal emission with better safety
 	if signal_emitted:
 		print("EnemySkillIndicator: Duplicate signal emission prevented")
 		return
 	
 	signal_emitted = true
+	print("EnemySkillIndicator: Indicator finished, emitting signal")
+	
+	# Stop all timers to prevent additional calls
+	countdown_timer.stop()
+	var finish_timer = get_node_or_null("FinishTimer")
+	if finish_timer:
+		finish_timer.stop()
 	
 	# Stop animations
-	animation_player.stop()
+	if animation_player:
+		animation_player.stop()
 	
 	# Emit signal to notify that we're done
 	emit_signal("indicator_finished")
 	
-	# Clean up
-	queue_free()
+	# Clean up after a short delay to ensure signal processing
+	get_tree().create_timer(0.1).timeout.connect(queue_free)
 
 # Handle early dismissal (if user wants to skip)
 func _input(event):
@@ -126,14 +135,21 @@ func _input(event):
 		_skip_indicator()
 
 func _skip_indicator():
-	# Allow users to skip the indicator by clicking or pressing space/enter
-	# IMPORTANT: Stop the timer to prevent duplicate signals
+	# IMPROVED: More robust early dismissal handling
+	if signal_emitted:
+		print("EnemySkillIndicator: Already finished, ignoring skip")
+		return
+	
+	print("EnemySkillIndicator: User skipped indicator")
+	
+	# Stop countdown timer
 	countdown_timer.stop()
 	
-	# Find and stop the finish timer to prevent duplicate execution
-	for child in get_children():
-		if child is Timer and child != countdown_timer:
-			child.stop()
-			child.queue_free()
+	# Stop finish timer specifically by name
+	var finish_timer = get_node_or_null("FinishTimer")
+	if finish_timer:
+		finish_timer.stop()
+		finish_timer.queue_free()
 	
+	# Immediately finish
 	_on_indicator_finished()

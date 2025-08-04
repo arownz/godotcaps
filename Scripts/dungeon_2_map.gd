@@ -429,13 +429,13 @@ func _load_enemy_resources():
 		else:
 			print("Failed to load enemy resource: ", resource_path)
 
-# Get stage-based multiplier for enemy stats
+# Get stage-based multiplier for enemy stats - BALANCED FOR DYSLEXIC CHILDREN
 func _get_stage_multiplier(stage_num: int) -> float:
-	# Base multiplier increases with stage progression - more aggressive scaling
-	var stage_multiplier = 1.0 + (stage_num - 1) * 0.5 # 1.0, 1.5, 2.0, 2.5, 3.0
+	# MUCH GENTLER progression for dyslexic children (slow, steady growth)
+	var stage_multiplier = 1.0 + (stage_num - 1) * 0.15 # 1.0, 1.15, 1.3, 1.45, 1.6
 	
-	# Additional multiplier for higher dungeons - higher scaling
-	var dungeon_multiplier = 1.0 + (dungeon_num - 1) * 1.0 # 1.0, 2.0, 3.0
+	# MINIMAL dungeon scaling to keep game accessible 
+	var dungeon_multiplier = 1.0 + (dungeon_num - 1) * 0.25 # 1.0, 1.25, 1.5
 	
 	return stage_multiplier * dungeon_multiplier
 

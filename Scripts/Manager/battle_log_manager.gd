@@ -1,9 +1,9 @@
 class_name BattleLogManager
 extends Node
 
-var battle_scene  # Reference to the main battle scene
-var battle_log_container  # Reference to the log container
-var user_scrolled = false  # Track if user has manually scrolled
+var battle_scene # Reference to the main battle scene
+var battle_log_container # Reference to the log container
+var user_scrolled = false # Track if user has manually scrolled
 
 # Introduction messages for different dungeons with high contrast colors
 var introduction_messages = {
@@ -26,21 +26,21 @@ var max_entries: int = 10
 var entries: Array = []
 
 # Reference to the log UI elements
-@onready var battle_log: Control = null 
+@onready var battle_log: Control = null
 @onready var log_entries_container: VBoxContainer = null
 
 # Convert colors to high contrast versions for dyslexia accessibility
 func _convert_to_high_contrast_colors(text: String) -> String:
 	var high_contrast_colors = {
-		"#FFD700": "#B8860B",  # Gold -> Dark goldenrod (high contrast)
-		"#4CAF50": "#006400",  # Light green -> Dark green (high contrast)
-		"#FF6B6B": "#DC143C",  # Light red -> Crimson (high contrast)
-		"#42A5F5": "#000080",  # Light blue -> Navy blue (high contrast)
-		"#EB5E4B": "#8B0000",  # Orange-red -> Dark red (high contrast)
-		"#F09C2D": "#B8860B",  # Orange -> Dark goldenrod (high contrast)
-		"#FF0000": "#be0f0fff",  # Red -> Dark red (high contrast)
-		"#FFA500": "#FF8C00",  # Orange -> Dark orange (high contrast)
-		"#000000": "#000000"   # Black stays black (already high contrast)
+		"#FFD700": "#B8860B", # Gold -> Dark goldenrod (high contrast)
+		"#4CAF50": "#006400", # Light green -> Dark green (high contrast)
+		"#FF6B6B": "#DC143C", # Light red -> Crimson (high contrast)
+		"#42A5F5": "#000080", # Light blue -> Navy blue (high contrast)
+		"#EB5E4B": "#8B0000", # Orange-red -> Dark red (high contrast)
+		"#F09C2D": "#B8860B", # Orange -> Dark goldenrod (high contrast)
+		"#FF0000": "#be0f0fff", # Red -> Dark red (high contrast)
+		"#FFA500": "#FF8C00", # Orange -> Dark orange (high contrast)
+		"#000000": "#000000" # Black stays black (already high contrast)
 	}
 	
 	var result = text
@@ -72,7 +72,7 @@ func display_introduction_messages():
 	# Dungeon names for display
 	var dungeon_names = {
 		1: "The Plains",
-		2: "The Forest", 
+		2: "The Forest",
 		3: "The Mountain"
 	}
 	
@@ -181,25 +181,38 @@ func add_log_entry(text: String, type: String = "default") -> void:
 	regex.compile("\\[/?[^\\]]*\\]")
 	clean_message_text = regex.sub(clean_message_text, "", true).strip_edges()
 	
-	# Check if the same message content was added recently (within last 5 entries)
-	var recent_entries_to_check = min(5, entries.size())
-	for i in range(recent_entries_to_check):
-		var recent_entry = entries[entries.size() - 1 - i]
-		var recent_clean_text = recent_entry.get("original", recent_entry.text)
-		var recent_clean_regex = RegEx.new()
-		recent_clean_regex.compile("\\[/?[^\\]]*\\]")
-		recent_clean_text = recent_clean_regex.sub(recent_clean_text, "", true).strip_edges()
-		
-		# Also remove timestamp pattern like "[12:34] " from the stored text for comparison
-		var timestamp_regex = RegEx.new()
-		timestamp_regex.compile("^\\[\\d{2}:\\d{2}\\] ")
-		if recent_entry.has("text"):
-			var text_without_timestamp = timestamp_regex.sub(recent_entry.text, "", 1)
-			recent_clean_text = recent_clean_regex.sub(text_without_timestamp, "", true).strip_edges()
-		
-		if clean_message_text == recent_clean_text:
-			print("Battle Log: Duplicate content prevented - " + clean_message_text)
-			return
+	# Special handling for "Counter by" messages - prevent any duplication within 10 entries
+	var is_counter_message = "counter by" in clean_message_text.to_lower()
+	var is_success_message = "counter attack success" in clean_message_text.to_lower() or "successfully countered" in clean_message_text.to_lower()
+	var entries_to_check = 10 if is_counter_message else 5
+	
+	# Never filter out success messages - they should always appear
+	if is_success_message:
+		print("Battle Log: Success message always allowed - " + clean_message_text)
+	else:
+		# Check if the same message content was added recently
+		var recent_entries_to_check = min(entries_to_check, entries.size())
+		for i in range(recent_entries_to_check):
+			var recent_entry = entries[entries.size() - 1 - i]
+			var recent_clean_text = recent_entry.get("original", recent_entry.text)
+			var recent_clean_regex = RegEx.new()
+			recent_clean_regex.compile("\\[/?[^\\]]*\\]")
+			recent_clean_text = recent_clean_regex.sub(recent_clean_text, "", true).strip_edges()
+			
+			# Also remove timestamp pattern like "[12:34] " from the stored text for comparison
+			var timestamp_regex = RegEx.new()
+			timestamp_regex.compile("^\\[\\d{2}:\\d{2}\\] ")
+			if recent_entry.has("text"):
+				var text_without_timestamp = timestamp_regex.sub(recent_entry.text, "", 1)
+				recent_clean_text = recent_clean_regex.sub(text_without_timestamp, "", true).strip_edges()
+			
+			# For counter messages, be extra strict about duplicates
+			if is_counter_message and "counter by" in recent_clean_text.to_lower():
+				print("Battle Log: Duplicate counter message prevented - " + clean_message_text)
+				return
+			elif clean_message_text == recent_clean_text:
+				print("Battle Log: Duplicate content prevented - " + clean_message_text)
+				return
 	
 	# Add timestamp with black color
 	var current_time = Time.get_time_dict_from_system()
@@ -263,13 +276,12 @@ func update_ui() -> void:
 		if entry.has("original"):
 			label.text = timestamp_part + message_part
 		else:
-			label.text = entry.text
-		
+			label.text += entry.text
+
 		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		
 		# Apply dyslexia-friendly font - using preload to ensure it's loaded
-		var dyslexia_font = preload("res://Fonts/dyslexiafont/OpenDyslexic-Bold-Italic.otf")
-		print("BattleLogManager: Applying font: ", dyslexia_font != null)
+		var dyslexia_font = preload("res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf")
 		label.add_theme_font_override("font", dyslexia_font)
 		label.add_theme_font_override("normal_font", dyslexia_font)
 		label.add_theme_font_override("bold_font", dyslexia_font)
@@ -281,8 +293,6 @@ func update_ui() -> void:
 		
 		# Set default font color to black for any text without explicit color tags
 		label.add_theme_color_override("default_color", Color.BLACK)
-		
-		print("BattleLogManager: Font applied to label: ", label.get_theme_font("font") != null)
 		
 		# Add the label to the panel
 		log_entry_panel.add_child(label)

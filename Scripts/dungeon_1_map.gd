@@ -70,13 +70,13 @@ func _load_enemy_resources():
 		else:
 			print("Failed to load enemy resource: ", resource_path)
 
-# Get stage-based multiplier for enemy stats
+# Get stage-based multiplier for enemy stats - BALANCED FOR DYSLEXIC CHILDREN
 func _get_stage_multiplier(stage_num: int) -> float:
-	# Base multiplier increases with stage progression - more aggressive scaling
-	var stage_multiplier = 1.0 + (stage_num - 1) * 0.5  # 1.0, 1.5, 2.0, 2.5, 3.0
+	# MUCH GENTLER progression for dyslexic children (slow, steady growth)
+	var stage_multiplier = 1.0 + (stage_num - 1) * 0.15 # 1.0, 1.15, 1.3, 1.45, 1.6
 	
-	# Additional multiplier for higher dungeons - higher scaling
-	var dungeon_multiplier = 1.0 + (dungeon_num - 1) * 1.0  # 1.0, 2.0, 3.0
+	# MINIMAL dungeon scaling to keep game accessible 
+	var dungeon_multiplier = 1.0 + (dungeon_num - 1) * 0.25 # 1.0, 1.25, 1.5
 	
 	return stage_multiplier * dungeon_multiplier
 
@@ -126,7 +126,7 @@ func _unhandled_input(event):
 			
 			if not rect.has_point(click_pos):
 				$StageDetails.visible = false
-				$SelectLevel.visible = true  # Show SelectLevel when StageDetails is closed
+				$SelectLevel.visible = true # Show SelectLevel when StageDetails is closed
 				get_viewport().set_input_as_handled()
 
 func _on_close_button_pressed():
@@ -198,7 +198,7 @@ func _update_stage_buttons():
 		
 		# Handle the different indicator node names for regular stages vs boss stage
 		var indicator_node_name = "MobIndicator"
-		if stage_num == max_stage:  # Stage 5 is boss stage
+		if stage_num == max_stage: # Stage 5 is boss stage
 			indicator_node_name = "BossIndicator"
 
 		var indicator_node = button.get_node_or_null(indicator_node_name)
@@ -240,13 +240,13 @@ func _initialize_mob_buttons():
 func _connect_signals():
 	# Connect stage button signals
 	for i in range(stage_buttons.size()):
-		stage_buttons[i].pressed.connect(_on_stage_button_pressed.bind(i+1))
+		stage_buttons[i].pressed.connect(_on_stage_button_pressed.bind(i + 1))
 	
 	# Connect mob button signals
 	for i in range(mob_buttons.size()):
-		if i < 3:  # Regular mobs - pass stage info instead of "normal"
+		if i < 3: # Regular mobs - pass stage info instead of "normal"
 			mob_buttons[i].pressed.connect(_on_mob_button_pressed.bind("stage_" + str(i + 1), i))
-		else:  # Boss
+		else: # Boss
 			mob_buttons[i].pressed.connect(_on_mob_button_pressed.bind("boss", 0))
 	
 	# Connect back button
@@ -340,14 +340,14 @@ func _update_stage_details(stage_num):
 	
 	# Update mob button visibility - show only one button per stage
 	for i in range(mob_buttons.size()):
-		mob_buttons[i].visible = false  # Hide all buttons first
+		mob_buttons[i].visible = false # Hide all buttons first
 	
 	if stage_num == 5:
 		# Show only boss button for stage 5
-		mob_buttons[3].visible = true  # Boss1Button (index 3)
+		mob_buttons[3].visible = true # Boss1Button (index 3)
 	else:
 		# Show only first mob button for stages 1-4
-		mob_buttons[0].visible = true  # Mob1Button (index 0)
+		mob_buttons[0].visible = true # Mob1Button (index 0)
 
 func _on_mob_button_pressed(type, index):
 	print("Selected enemy type: " + type + " index: " + str(index))

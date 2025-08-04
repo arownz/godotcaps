@@ -14,7 +14,7 @@ var hover_buttons = []
 
 # Add energy recovery system variables
 var max_energy = 20
-var energy_recovery_rate = 300 # 5 minutes in seconds
+var energy_recovery_rate = 240 # 4 minutes in seconds
 var energy_recovery_amount = 4 # Amount of energy recovered per interval
 var last_energy_update_time = 0
 var energy_recovery_timer = null
