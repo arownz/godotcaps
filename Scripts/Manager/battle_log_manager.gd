@@ -294,6 +294,12 @@ func update_ui() -> void:
 		# Set default font color to black for any text without explicit color tags
 		label.add_theme_color_override("default_color", Color.BLACK)
 		
+		# Add font shadow for better readability and accessibility
+		label.add_theme_color_override("font_shadow_color", Color(0.3, 0.3, 0.3, 0.8)) # Dark gray shadow
+		# label.add_theme_constant_override("shadow_offset_x", 2)
+		# label.add_theme_constant_override("shadow_offset_y", 2)
+		label.add_theme_constant_override("shadow_outline_size", 4)
+		
 		# Add the label to the panel
 		log_entry_panel.add_child(label)
 		

@@ -16,6 +16,14 @@ var notification_popup
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	# Add fade-in animation
+	modulate.a = 0.0
+	scale = Vector2(0.8, 0.8)
+	var tween = create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(self, "modulate:a", 1.0, 0.4).set_ease(Tween.EASE_OUT)
+	tween.tween_property(self, "scale", Vector2(1.0, 1.0), 0.4).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+	
 	# Load and setup notification popup
 	var notification_scene = preload("res://Scenes/NotificationPopUp.tscn")
 	notification_popup = notification_scene.instantiate()
@@ -97,7 +105,7 @@ func check_existing_auth():
 			print("DEBUG: Valid auth loaded, user already logged in")
 			show_message("You are already logged in", true)
 			await get_tree().create_timer(0.5).timeout
-			get_tree().change_scene_to_file("res://Scenes/MainMenu.tscn")
+			_fade_out_and_change_scene("res://Scenes/MainMenu.tscn")
 			return
 		else:
 			print("DEBUG: Auth file exists but no valid auth object, proceeding with login screen")
@@ -483,15 +491,24 @@ func navigate_to_main_menu(is_google_auth := false):
 				}
 			""")
 		# Use a CallDeferred approach to avoid scene tree issues during transition
-		call_deferred("_safe_change_scene", "res://Scenes/MainMenu.tscn")
+		call_deferred("_fade_out_and_change_scene", "res://Scenes/MainMenu.tscn")
 	else:
 		# For regular login, add a slight delay for UX
 		await get_tree().create_timer(0.5).timeout
 		# Check if still in tree before changing scene
 		if is_inside_tree():
-			get_tree().change_scene_to_file("res://Scenes/MainMenu.tscn")
+			_fade_out_and_change_scene("res://Scenes/MainMenu.tscn")
 		else:
-			call_deferred("_safe_change_scene", "res://Scenes/MainMenu.tscn")
+			call_deferred("_fade_out_and_change_scene", "res://Scenes/MainMenu.tscn")
+
+# Helper function to fade out before changing scenes
+func _fade_out_and_change_scene(scene_path: String):
+	var tween = create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(self, "modulate:a", 0.0, 0.3).set_ease(Tween.EASE_IN)
+	tween.tween_property(self, "scale", Vector2(0.8, 0.8), 0.3).set_ease(Tween.EASE_IN)
+	await tween.finished
+	get_tree().change_scene_to_file(scene_path)
 
 # Add a helper function to safely change scenes, even if node is being freed
 func _safe_change_scene(target_scene):
@@ -525,7 +542,7 @@ func on_signup_succeeded(auth):
 	
 	# Change scene after a short delay
 	await get_tree().create_timer(0.5).timeout
-	get_tree().change_scene_to_file("res://Scenes/MainMenu.tscn")
+	_fade_out_and_change_scene("res://Scenes/MainMenu.tscn")
 
 # Create user document in Firestore for new users
 func _create_user_document(collection, user_id: String, auth):
@@ -806,7 +823,7 @@ func logout_user():
 	await get_tree().create_timer(0.5).timeout
 	
 	# Return to authentication scene
-	get_tree().change_scene_to_file("res://Scenes/Authentication.tscn")
+	_fade_out_and_change_scene("res://Scenes/Authentication.tscn")
 
 # Add this function to clear web storage if issues are detected
 func clear_web_storage():

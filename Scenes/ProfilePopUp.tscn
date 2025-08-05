@@ -85,12 +85,13 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = 371.0
-offset_top = 66.0
-offset_right = 1121.0
-offset_bottom = 747.0
+offset_left = 411.0
+offset_top = 89.0
+offset_right = 1161.0
+offset_bottom = 770.0
 grow_horizontal = 2
 grow_vertical = 2
+scale = Vector2(0.912511, 0.912511)
 
 [node name="BackgroundTexture" type="TextureRect" parent="ProfileContainer"]
 layout_mode = 1

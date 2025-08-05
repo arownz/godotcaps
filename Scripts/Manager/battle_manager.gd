@@ -47,20 +47,20 @@ func player_attack():
 	var player_node = battle_scene.player_manager.player_animation
 	var original_position = player_node.position
 	
+	# Move player toward enemy
 	var player_attack_tween = create_tween()
 	player_attack_tween.tween_property(player_node, "position", original_position + Vector2(50, 0), 0.3) # Move right
-	player_attack_tween.tween_property(player_node, "position", original_position, 0.2) # Return to original position
 	
-	# Play attack animation
-	var sprite = player_node.get_node_or_null("AnimatedSprite2D")
-	if sprite:
-		sprite.play("auto_attack")
+	# Start attack animation and sound effect using player_manager
+	battle_scene.player_manager.perform_auto_attack()
 	
+	# Wait for movement to finish, then return to position
 	await player_attack_tween.finished
 	
-	# Reset to idle animation after attack
-	if sprite:
-		sprite.play("battle_idle")
+	# Return to original position
+	var return_tween = create_tween()
+	return_tween.tween_property(player_node, "position", original_position, 0.2)
+	await return_tween.finished
 		
 	emit_signal("player_attack_performed", battle_scene.player_manager.player_damage)
 

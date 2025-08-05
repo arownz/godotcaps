@@ -175,6 +175,21 @@ text = "MODULE LEARNING"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="Label" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer/TitleLabel"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.409
+anchor_top = 1.243
+anchor_right = 0.409
+anchor_bottom = 1.243
+offset_left = -31.405
+offset_top = -16.1533
+offset_right = 228.595
+offset_bottom = 13.18
+theme_override_colors/font_color = Color(0.137255, 0.160784, 0.211765, 1)
+theme_override_fonts/font = ExtResource("4_bold_font")
+text = "Still in development..."
+
 [node name="MenuButton" type="Button" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer"]
 custom_minimum_size = Vector2(140, 50)
 layout_mode = 2

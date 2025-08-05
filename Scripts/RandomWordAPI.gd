@@ -198,15 +198,18 @@ func _try_fallback():
 # Improve fallback word selection with categories for different word lengths
 func _get_fallback_word() -> String:
 	# Word categories organized by length - PHONETICALLY DISTINCT for STT accuracy
-	# Words selected to avoid confusing pronunciations (hill/heal, etc.)
+	# Words selected to avoid confusing pronunciations and homophones
+	# REMOVED: mud/mad, heal/hill, too/two/to, there/their, see/sea, etc.
 	var word_categories_by_length = {
 		3: {
 			"animals": ["cat", "dog", "fox", "owl", "pig", "cow", "bat", "elk", "ape", "ant"],
 			"objects": ["cup", "pot", "box", "key", "pen", "rod", "bag", "car", "bed", "toy"],
-			"nature": ["sun", "mud", "fog", "air", "ice", "gas", "web", "oak", "gem", "sky"],
+			"nature": ["fog", "air", "ice", "gas", "web", "oak", "gem", "sky"],
 			"food": ["pie", "tea", "egg", "jam", "nut", "ham", "gum", "oat", "fig", "yam"],
-			"colors": ["red", "tan", "jet", "ash", "ink", "dye", "hue", "navy", "wax", "tar"],
-			"verbs": ["run", "sit", "eat", "get", "put", "cut", "dig", "fly", "try", "hop"]
+			"colors": ["red", "tan", "jet", "ash", "ink", "dye", "navy", "wax", "tar"],
+			"verbs": ["run", "sit", "eat", "get", "put", "cut", "dig", "fly", "try", "hop"],
+			"body": ["arm", "leg", "eye", "ear", "jaw", "lip", "hip", "rib", "toe", "gut"],
+			"things": ["map", "zip", "cap", "tap", "gap", "lap", "nap", "sap", "rap", "zap"]
 		},
 		4: {
 			"animals": ["wolf", "frog", "bear", "lion", "duck", "bird", "fish", "deer", "goat", "seal"],
@@ -214,7 +217,9 @@ func _get_fallback_word() -> String:
 			"nature": ["tree", "rock", "fire", "lake", "moon", "star", "snow", "leaf", "wind", "cave"],
 			"food": ["cake", "bread", "rice", "soup", "pear", "plum", "milk", "corn", "beef", "tuna"],
 			"colors": ["blue", "pink", "teal", "gold", "ruby", "mint", "lime", "rust", "jade", "rose"],
-			"verbs": ["walk", "talk", "make", "read", "swim", "sing", "play", "ride", "push", "pull"]
+			"verbs": ["walk", "talk", "make", "read", "swim", "sing", "play", "ride", "push", "pull"],
+			"tools": ["nail", "tool", "gear", "bolt", "wire", "rope", "tape", "glue", "clamp", "drill"], # Added tools
+			"home": ["room", "wall", "roof", "yard", "gate", "path", "step", "deck", "porch", "fence"] # Added home items
 		},
 		5: {
 			"animals": ["horse", "shark", "eagle", "tiger", "mouse", "whale", "sheep", "snake", "zebra", "llama"],
@@ -222,7 +227,9 @@ func _get_fallback_word() -> String:
 			"nature": ["ocean", "river", "beach", "field", "grass", "plant", "stone", "cloud", "storm", "light"],
 			"food": ["bread", "apple", "honey", "grape", "lemon", "pasta", "salad", "pizza", "cream", "sugar"],
 			"colors": ["green", "black", "white", "brown", "coral", "peach", "ivory", "amber", "olive", "beige"],
-			"verbs": ["dance", "smile", "laugh", "write", "think", "learn", "teach", "build", "climb", "throw"]
+			"verbs": ["dance", "smile", "laugh", "write", "think", "learn", "teach", "build", "climb", "throw"],
+			"places": ["store", "house", "park", "beach", "woods", "city", "town", "farm", "ranch", "cabin"], # Added places
+			"things": ["music", "story", "movie", "game", "sport", "hobby", "craft", "magic", "party", "gift"] # Added activities
 		}
 	}
 	

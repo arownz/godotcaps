@@ -27,6 +27,13 @@ extends Control
 
 func _ready():
 	print("SettingScene: Initializing settings screen")
+	# Add fade-in animation
+	modulate.a = 0.0
+	scale = Vector2(0.8, 0.8)
+	var tween = create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(self, "modulate:a", 1.0, 0.4).set_ease(Tween.EASE_OUT)
+	tween.tween_property(self, "scale", Vector2(1.0, 1.0), 0.4).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
 	
 	# Connect button signals
 	back_button.pressed.connect(_on_back_button_pressed)
@@ -77,7 +84,16 @@ func update_ui_from_settings():
 func _on_back_button_pressed():
 	"""Return to main menu"""
 	print("SettingScene: Back button pressed")
-	get_tree().change_scene_to_file("res://Scenes/MainMenu.tscn")
+	_fade_out_and_change_scene("res://Scenes/MainMenu.tscn")
+
+	# Helper function to fade out before changing scenes
+func _fade_out_and_change_scene(scene_path: String):
+	var tween = create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(self, "modulate:a", 0.0, 0.3).set_ease(Tween.EASE_IN)
+	tween.tween_property(self, "scale", Vector2(0.8, 0.8), 0.3).set_ease(Tween.EASE_IN)
+	await tween.finished
+	get_tree().change_scene_to_file(scene_path)
 
 # === Accessibility Settings ===
 

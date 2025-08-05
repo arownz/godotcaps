@@ -32,6 +32,14 @@ var selection_indicators = []
 var notification_popup: CanvasLayer
 
 func _ready():
+	# Add fade-in animation
+	modulate.a = 0.0
+	scale = Vector2(0.8, 0.8)
+	var tween = create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(self, "modulate:a", 1.0, 0.4).set_ease(Tween.EASE_OUT)
+	tween.tween_property(self, "scale", Vector2(1.0, 1.0), 0.4).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+	
 	# Preload character textures
 	character_textures.unlocked = [
 		preload("res://gui/Update/UI/Character Select Unlocked.png"),
@@ -140,6 +148,30 @@ func _load_user_data():
 		print("No auth: Only Lexia available")
 	
 	# Set initial carousel position and update display
+	await get_tree().process_frame # Wait one frame to ensure scene is fully loaded
+	
+	# Test circular arrangement for characters
+	print("=== CIRCULAR CHARACTER LAYOUT TEST ===")
+	print("Testing circular arrangement for all scenarios:")
+	print()
+	
+	# Test what each scenario should look like
+	for test_center in range(CHARACTER_COUNT):
+		print("SCENARIO: Character ", test_center + 1, " (", character_names[test_center], ") is centered")
+		for i in range(CHARACTER_COUNT):
+			var relative_pos = (i - test_center + CHARACTER_COUNT) % CHARACTER_COUNT
+			var desc = ""
+			match relative_pos:
+				0: desc = "CENTER"
+				1: desc = "RIGHT"
+				2: desc = "LEFT"
+			print("  Character ", i + 1, " (", character_names[i], ") would be: ", desc, " (relative_pos: ", relative_pos, ")")
+		print()
+	
+	print("Current setup: Character ", current_character + 1, " (", character_names[current_character], ") should be centered")
+	print("=== CHARACTER TEST COMPLETE ===")
+	print()
+	
 	_center_carousel_on_current_character()
 	update_character_display()
 
@@ -148,12 +180,45 @@ func _center_carousel_on_current_character():
 	# Position all characters relative to the center position
 	_position_all_characters_for_selection(current_character)
 
-# Position all characters based on which one should be centered
+# Position all characters based on which one should be centered (CIRCULAR LAYOUT)
 func _position_all_characters_for_selection(selected_index):
+	print("=== CIRCULAR CHARACTER POSITIONING ===")
+	print("Centering character index: ", selected_index, " (Character ", selected_index + 1, ")")
+	print("CENTER_POSITION: ", CENTER_POSITION)
+	print("CHARACTER_SPACING: ", CHARACTER_SPACING)
+	
+	# Circular positions: LEFT ← CENTER → RIGHT
+	# We arrange characters in a circle around the selected one
 	for i in range(CHARACTER_COUNT):
 		var character_node = character_carousel.get_child(i)
-		var offset = (i - selected_index) * CHARACTER_SPACING
-		character_node.position.x = CENTER_POSITION + offset
+		print("Node ", i, " name: ", character_node.name)
+		print("Before - Character ", i + 1, " at x: ", character_node.position.x)
+		
+		# Calculate circular offset from selected character
+		var relative_position = (i - selected_index + CHARACTER_COUNT) % CHARACTER_COUNT
+		
+		var new_x: float
+		var position_desc: String
+		
+		# Position based on circular arrangement
+		match relative_position:
+			0: # This is the selected character - CENTER
+				new_x = CENTER_POSITION
+				position_desc = "CENTER"
+			1: # Next character in sequence - RIGHT
+				new_x = CENTER_POSITION + CHARACTER_SPACING
+				position_desc = "RIGHT"
+			2: # Previous character in sequence - LEFT
+				new_x = CENTER_POSITION - CHARACTER_SPACING
+				position_desc = "LEFT"
+		
+		# Apply the position
+		character_node.position.x = new_x
+		
+		print("After - Character ", i + 1, " at x: ", new_x, " (", position_desc, ", relative_pos: ", relative_position, ")")
+	
+	print("=== CIRCULAR CHARACTER POSITIONING COMPLETE ===")
+	print()
 
 # Animate selection indicator for better dyslexia visibility
 func _animate_selection_indicator(indicator: Control):
@@ -234,7 +299,7 @@ func _on_character2_pressed():
 			update_character_display()
 	else:
 		# Show notification for locked character
-		notification_popup.show_notification("Character Locked!", "Please complete more challenges to unlock Magi.", "OK")
+		notification_popup.show_notification("Character Locked!", "Coming Soon.", "OK")
 
 func _on_character3_pressed():
 	if unlocked_characters >= 3:
@@ -244,19 +309,29 @@ func _on_character3_pressed():
 			update_character_display()
 	else:
 		# Show notification for locked character
-		notification_popup.show_notification("Character Locked!", "Please complete more challenges to unlock Ragnar.", "OK")
+		notification_popup.show_notification("Character Locked!", "Coming Soon.", "OK")
 
-# Animation function for smooth carousel movement
+# Animation function for smooth circular carousel movement
 func _animate_carousel_to_position(character_index):
 	var tween = create_tween()
 	tween.set_ease(ANIMATION_EASE)
 	tween.set_trans(Tween.TRANS_CUBIC)
 	
-	# Animate all characters to their new positions
+	# Animate all characters to their new circular positions
 	for i in range(CHARACTER_COUNT):
 		var character_node = character_carousel.get_child(i)
-		var offset = (i - character_index) * CHARACTER_SPACING
-		var target_x = CENTER_POSITION + offset
+		
+		# Calculate circular position (same logic as positioning function)
+		var relative_position = (i - character_index + CHARACTER_COUNT) % CHARACTER_COUNT
+		
+		var target_x: float
+		match relative_position:
+			0: # Center
+				target_x = CENTER_POSITION
+			1: # Right
+				target_x = CENTER_POSITION + CHARACTER_SPACING
+			2: # Left
+				target_x = CENTER_POSITION - CHARACTER_SPACING
 		
 		tween.parallel().tween_property(character_node, "position:x", target_x, ANIMATION_DURATION)
 
@@ -298,7 +373,16 @@ func _on_previous_button_hover_exited():
 
 # Handle navigation and select buttons
 func _on_back_button_pressed():
-	get_tree().change_scene_to_file("res://Scenes/MainMenu.tscn")
+	_fade_out_and_change_scene("res://Scenes/MainMenu.tscn")
+
+# Helper function to fade out before changing scenes
+func _fade_out_and_change_scene(scene_path: String):
+	var tween = create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(self, "modulate:a", 0.0, 0.3).set_ease(Tween.EASE_IN)
+	tween.tween_property(self, "scale", Vector2(0.8, 0.8), 0.3).set_ease(Tween.EASE_IN)
+	await tween.finished
+	get_tree().change_scene_to_file(scene_path)
 
 func _on_select_button_pressed():
 	if current_character >= unlocked_characters:
@@ -326,4 +410,4 @@ func _on_select_button_pressed():
 	
 	# For now, just print and go back to main menu
 	print("Selected character: " + character_names[current_character])
-	get_tree().change_scene_to_file("res://Scenes/MainMenu.tscn")
+	_fade_out_and_change_scene("res://Scenes/MainMenu.tscn")

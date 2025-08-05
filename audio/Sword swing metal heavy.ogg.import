@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://cd2rjq6g5gd7h"
+path="res://.godot/imported/Sword swing metal heavy.ogg-f2a63a568edb65daedea0ae54c286dbc.oggvorbisstr"
+
+[deps]
+
+source_file="res://audio/Sword swing metal heavy.ogg"
+dest_files=["res://.godot/imported/Sword swing metal heavy.ogg-f2a63a568edb65daedea0ae54c286dbc.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

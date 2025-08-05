@@ -32,6 +32,14 @@ var selection_indicators = []
 var notification_popup: CanvasLayer
 
 func _ready():
+	# Add fade-in animation
+	modulate.a = 0.0
+	scale = Vector2(0.8, 0.8)
+	var tween = create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(self, "modulate:a", 1.0, 0.4).set_ease(Tween.EASE_OUT)
+	tween.tween_property(self, "scale", Vector2(1.0, 1.0), 0.4).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+	
 	# Preload dungeon textures
 	dungeon_textures.unlocked = [
 		preload("res://gui/Update/icons/plainselection.png"),
@@ -146,49 +154,107 @@ func _load_user_data():
 							if dungeon2_data.get("completed", false) or dungeon2_data.get("stages_completed", 0) >= 5:
 								unlocked_dungeons = 3
 				
-				# Get current dungeon from progress, defaulting to highest unlocked
-				var progress = dungeons.get("progress", {})
-				if progress.has("current_dungeon"):
-					current_dungeon = int(progress.current_dungeon) - 1 # Convert to 0-based index
-				else:
-					# If no current dungeon is set, default to the highest unlocked dungeon
-					current_dungeon = unlocked_dungeons - 1
+				# Set current dungeon to the latest (highest) unlocked dungeon
+				current_dungeon = unlocked_dungeons - 1
 				
-				# Ensure current_dungeon doesn't exceed unlocked dungeons
-				current_dungeon = min(current_dungeon, unlocked_dungeons - 1)
 				# Ensure it's not negative
 				current_dungeon = max(current_dungeon, 0)
 				
 				print("Dungeons unlocked: ", unlocked_dungeons)
-				print("Current dungeon: ", current_dungeon + 1)
-				print("Centering carousel on dungeon: ", current_dungeon + 1)
+				print("Latest unlocked dungeon: ", unlocked_dungeons)
+				print("Current dungeon (centered): ", current_dungeon + 1)
+				print("Centering carousel on latest unlocked dungeon: ", current_dungeon + 1)
 		else:
 			print("Error loading user data or document not found")
-			# Demo mode - center on dungeon 1
+			# Demo mode - center on the latest unlocked (dungeon 1)
 			unlocked_dungeons = 1
 			current_dungeon = 0
-			print("Demo mode: Centering on dungeon 1")
+			print("Demo mode: Latest unlocked is dungeon ", unlocked_dungeons, ", centering on it")
 	else:
-		# Demo mode - center on dungeon 1 
+		# Demo mode - center on the latest unlocked (dungeon 1)
 		unlocked_dungeons = 1
 		current_dungeon = 0
-		print("No auth: Centering on dungeon 1")
+		print("No auth: Latest unlocked is dungeon ", unlocked_dungeons, ", centering on it")
 	
 	# Set initial carousel position and update display
+	await get_tree().process_frame # Wait one frame to ensure scene is fully loaded
+	
+	# SIMPLE TEST: Just force Dungeon 1 to center position
+	print("=== CIRCULAR LAYOUT TEST ===")
+	print("Testing circular arrangement for all scenarios:")
+	print()
+	
+	# Test what each scenario should look like
+	for test_center in range(DUNGEON_COUNT):
+		print("SCENARIO: Dungeon ", test_center + 1, " is centered (latest unlocked)")
+		for i in range(DUNGEON_COUNT):
+			var relative_pos = (i - test_center + DUNGEON_COUNT) % DUNGEON_COUNT
+			var desc = ""
+			match relative_pos:
+				0: desc = "CENTER"
+				1: desc = "RIGHT"
+				2: desc = "LEFT"
+			print("  Dungeon ", i + 1, " would be: ", desc, " (relative_pos: ", relative_pos, ")")
+		print()
+	
+	print("Current setup: Dungeon ", current_dungeon + 1, " should be centered")
+	print("=== TEST COMPLETE ===")
+	print()
+	
 	_center_carousel_on_current_dungeon()
 	update_dungeon_display()
 
 # Center the carousel on the current dungeon (for initial positioning)
 func _center_carousel_on_current_dungeon():
-	# Position all dungeons relative to the center position
+	print("=== INITIAL CENTERING ===")
+	print("Will center on dungeon: ", current_dungeon + 1, " (index: ", current_dungeon, ")")
+	print("Unlocked dungeons: ", unlocked_dungeons)
+	
+	# Force set positions immediately 
 	_position_all_dungeons_for_selection(current_dungeon)
+	
+	print("=== CENTERING COMPLETE ===")
+	print()
 
-# Position all dungeons based on which one should be centered
+# Position all dungeons based on which one should be centered (CIRCULAR LAYOUT)
 func _position_all_dungeons_for_selection(selected_index):
+	print("=== CIRCULAR CAROUSEL POSITIONING ===")
+	print("Centering dungeon index: ", selected_index, " (Dungeon ", selected_index + 1, ")")
+	print("CENTER_POSITION: ", CENTER_POSITION)
+	print("DUNGEON_SPACING: ", DUNGEON_SPACING)
+	
+	# Circular positions: LEFT ← CENTER → RIGHT
+	# We arrange dungeons in a circle around the selected one
 	for i in range(DUNGEON_COUNT):
 		var dungeon_node = dungeon_carousel.get_child(i)
-		var offset = (i - selected_index) * DUNGEON_SPACING
-		dungeon_node.position.x = CENTER_POSITION + offset
+		print("Node ", i, " name: ", dungeon_node.name)
+		print("Before - Dungeon ", i + 1, " at x: ", dungeon_node.position.x)
+		
+		# Calculate circular offset from selected dungeon
+		var relative_position = (i - selected_index + DUNGEON_COUNT) % DUNGEON_COUNT
+		
+		var new_x: float
+		var position_desc: String
+		
+		# Position based on circular arrangement
+		match relative_position:
+			0: # This is the selected dungeon - CENTER
+				new_x = CENTER_POSITION
+				position_desc = "CENTER"
+			1: # Next dungeon in sequence - RIGHT
+				new_x = CENTER_POSITION + DUNGEON_SPACING
+				position_desc = "RIGHT"
+			2: # Previous dungeon in sequence - LEFT
+				new_x = CENTER_POSITION - DUNGEON_SPACING
+				position_desc = "LEFT"
+		
+		# Apply the position
+		dungeon_node.position.x = new_x
+		
+		print("After - Dungeon ", i + 1, " at x: ", new_x, " (", position_desc, ", relative_pos: ", relative_position, ")")
+	
+	print("=== CIRCULAR POSITIONING COMPLETE ===")
+	print()
 
 # Animate selection indicator for better dyslexia visibility
 func _animate_selection_indicator(indicator: Control):
@@ -298,17 +364,27 @@ func _on_dungeon3_pressed():
 		# Show notification for locked dungeon
 		notification_popup.show_notification("Dungeon Locked!", "Please complete 'The Plain' and 'The Forest' first to unlock this dungeon.", "OK")
 
-# Animation function for smooth carousel movement
+# Animation function for smooth circular carousel movement
 func _animate_carousel_to_position(dungeon_index):
 	var tween = create_tween()
 	tween.set_ease(ANIMATION_EASE)
 	tween.set_trans(Tween.TRANS_CUBIC)
 	
-	# Animate all dungeons to their new positions
+	# Animate all dungeons to their new circular positions
 	for i in range(DUNGEON_COUNT):
 		var dungeon_node = dungeon_carousel.get_child(i)
-		var offset = (i - dungeon_index) * DUNGEON_SPACING
-		var target_x = CENTER_POSITION + offset
+		
+		# Calculate circular position (same logic as positioning function)
+		var relative_position = (i - dungeon_index + DUNGEON_COUNT) % DUNGEON_COUNT
+		
+		var target_x: float
+		match relative_position:
+			0: # Center
+				target_x = CENTER_POSITION
+			1: # Right
+				target_x = CENTER_POSITION + DUNGEON_SPACING
+			2: # Left
+				target_x = CENTER_POSITION - DUNGEON_SPACING
 		
 		tween.parallel().tween_property(dungeon_node, "position:x", target_x, ANIMATION_DURATION)
 
@@ -350,7 +426,16 @@ func _on_previous_button_hover_exited():
 
 # Handle navigation and play buttons
 func _on_back_button_pressed():
-	get_tree().change_scene_to_file("res://Scenes/MainMenu.tscn")
+	_fade_out_and_change_scene("res://Scenes/MainMenu.tscn")
+
+# Helper function to fade out before changing scenes
+func _fade_out_and_change_scene(scene_path: String):
+	var tween = create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(self, "modulate:a", 0.0, 0.3).set_ease(Tween.EASE_IN)
+	tween.tween_property(self, "scale", Vector2(0.8, 0.8), 0.3).set_ease(Tween.EASE_IN)
+	await tween.finished
+	get_tree().change_scene_to_file(scene_path)
 
 func _on_play_button_pressed():
 	if current_dungeon >= unlocked_dungeons:
@@ -390,4 +475,4 @@ func _on_play_button_pressed():
 		2: dungeon_map_scene = "res://Scenes/Dungeon3Map.tscn"
 	
 	# Change to the selected dungeon map scene
-	get_tree().change_scene_to_file(dungeon_map_scene)
+	_fade_out_and_change_scene(dungeon_map_scene)

@@ -4,7 +4,7 @@ class_name PlayerManager
 # Signals
 signal player_health_changed(current_health, max_health)
 signal player_defeated
-signal player_experience_changed(current_exp, max_exp)  
+signal player_experience_changed(current_exp, max_exp)
 signal player_level_up(new_level)
 signal player_skin_changed(skin_name)
 
@@ -15,10 +15,10 @@ var player_animation
 # Player properties
 var player_name = "Player"
 var player_health = 100
-var player_max_health = 100  # Max health is calculated based on level
+var player_max_health = 100 # Max health is calculated based on level
 var player_damage = 10
 var player_exp = 0
-var player_max_exp = 100  # Max exp needed for leveling up
+var player_max_exp = 100 # Max exp needed for leveling up
 var player_level = 1
 var player_durability = 5
 var player_energy = 20
@@ -26,7 +26,7 @@ var player_skin = "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
 var player_animation_scene = "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
 
 # Available player skins
-var available_skins = ["default", "magi", "ragnar"] 
+var available_skins = ["default", "magi", "ragnar"]
 var current_skin = "default"
 
 # Player data loaded from Firebase
@@ -71,7 +71,7 @@ func load_player_data_from_firebase():
         if profile_data and profile_data.has("username"):
             player_name = profile_data["username"]
         else:
-            player_name = "Player"  # Default fallback
+            player_name = "Player" # Default fallback
         
         if stats_data and stats_data.has("player"):
             var player_data = stats_data["player"]
@@ -209,7 +209,7 @@ func _load_default_animation():
             child.queue_free()
         
         player_position.add_child(player_sprite)
-        player_animation = player_sprite  # Set the animation reference
+        player_animation = player_sprite # Set the animation reference
         
         # Start idle animation
         var sprite = player_animation.get_node_or_null("AnimatedSprite2D")
@@ -254,7 +254,58 @@ func take_damage(damage_amount):
     
     return reduced_damage
 
-# Add experience and handle leveling up
+# Play auto attack animation and sound effect
+func perform_auto_attack():
+    print("PlayerManager: Performing auto attack")
+    
+    # Play auto attack animation
+    if player_animation and player_animation.get_node("AnimatedSprite2D"):
+        var sprite = player_animation.get_node("AnimatedSprite2D")
+        sprite.play("auto_attack")
+        
+        # Play sword slash sound effect for auto attack
+        _play_attack_sound("sfx_autoattack_swordslash")
+        
+        # Wait for animation to finish, then return to idle
+        await sprite.animation_finished
+        sprite.play("battle_idle")
+
+# Play counter attack animation and sound effect - with damage timing callback
+func perform_counter_attack(damage_callback = null):
+    print("PlayerManager: Performing counter attack")
+    
+    # Play counter attack animation
+    if player_animation and player_animation.get_node("AnimatedSprite2D"):
+        var sprite = player_animation.get_node("AnimatedSprite2D")
+        sprite.play("counter")
+        
+        var delay_timer = Timer.new()
+        add_child(delay_timer)
+        delay_timer.wait_time = 0.9
+        delay_timer.one_shot = true
+        delay_timer.start()
+        
+        # Wait for the strike moment, then play sound and trigger damage
+        await delay_timer.timeout
+        _play_attack_sound("sfx_counter_swordslash")
+        
+        # Call damage callback at the exact moment of impact
+        if damage_callback:
+            damage_callback.call()
+        
+        delay_timer.queue_free()
+        
+        # Wait for animation to finish, then return to idle
+        await sprite.animation_finished
+        sprite.play("battle_idle") # Helper function to play attack sound effects
+func _play_attack_sound(sound_node_name: String):
+    if player_animation:
+        var sound_player = player_animation.get_node_or_null(sound_node_name)
+        if sound_player and sound_player.has_method("play"):
+            sound_player.play()
+            print("PlayerManager: Playing sound effect: " + sound_node_name)
+        else:
+            print("PlayerManager: Sound node not found: " + sound_node_name) # Add experience and handle leveling up
 func add_experience(exp_amount):
     print("PlayerManager: add_experience called with ", exp_amount, " exp")
     print("PlayerManager: Current stats before exp gain - Level: ", player_level, ", Exp: ", player_exp, "/", get_max_exp())
@@ -276,7 +327,7 @@ func add_experience(exp_amount):
         
         # Update stats on level up
         player_max_health = get_max_health()
-        player_health = player_max_health  # Fully heal on level up
+        player_health = player_max_health # Fully heal on level up
         player_damage += 11
         player_durability += 8
         
@@ -295,11 +346,11 @@ func add_experience(exp_amount):
         
         # Update all UI elements that depend on level up
         if battle_scene and battle_scene.ui_manager:
-            battle_scene.ui_manager.update_player_health()  # Update health bar with new max health
-            battle_scene.ui_manager.update_player_exp()     # Update exp bar with new values
-            battle_scene.ui_manager.update_power_bar(player_damage)    # Update power bar
-            battle_scene.ui_manager.update_durability_bar(player_durability)  # Update durability bar
-            battle_scene.ui_manager.update_player_info()    # Update player level display
+            battle_scene.ui_manager.update_player_health() # Update health bar with new max health
+            battle_scene.ui_manager.update_player_exp() # Update exp bar with new values
+            battle_scene.ui_manager.update_power_bar(player_damage) # Update power bar
+            battle_scene.ui_manager.update_durability_bar(player_durability) # Update durability bar
+            battle_scene.ui_manager.update_player_info() # Update player level display
         
         # Update Firebase stats - using same pattern as _update_player_stats_in_firebase method
         print("PlayerManager: ✓ Updating Firebase after level up...")
@@ -360,7 +411,7 @@ func _update_player_stats_in_firebase(leveled_up: bool = false):
             # Update player stats using exact same pattern as energy update
             player_stats["level"] = player_level
             player_stats["exp"] = player_exp
-            player_stats["health"] = player_max_health  # Store max health as health field
+            player_stats["health"] = player_max_health # Store max health as health field
             player_stats["damage"] = player_damage
             player_stats["durability"] = player_durability
             # Preserve existing energy and last_energy_update fields
@@ -491,7 +542,7 @@ func test_battle_exp_gain():
     print("Before battle: Level " + str(player_level) + ", Exp " + str(player_exp) + ", Health " + str(player_max_health) + ", Damage " + str(player_damage) + ", Durability " + str(player_durability))
     
     # Simulate gaining exp from defeating an enemy (like in battle_manager.gd)
-    var exp_reward = 50  # Typical reward amount
+    var exp_reward = 50 # Typical reward amount
     print("Simulating exp gain of " + str(exp_reward) + " exp from defeating enemy...")
     
     # Call add_experience just like battle_manager does
@@ -518,10 +569,10 @@ func _verify_firebase_update():
         var stats = document.get_value("stats")
         if stats and stats.has("player"):
             var firebase_player_stats = stats["player"]
-            print("Firebase verification - Level: " + str(firebase_player_stats.get("level", "ERROR")) + 
-                  ", Exp: " + str(firebase_player_stats.get("exp", "ERROR")) + 
-                  ", Health: " + str(firebase_player_stats.get("health", "ERROR")) + 
-                  ", Damage: " + str(firebase_player_stats.get("damage", "ERROR")) + 
+            print("Firebase verification - Level: " + str(firebase_player_stats.get("level", "ERROR")) +
+                  ", Exp: " + str(firebase_player_stats.get("exp", "ERROR")) +
+                  ", Health: " + str(firebase_player_stats.get("health", "ERROR")) +
+                  ", Damage: " + str(firebase_player_stats.get("damage", "ERROR")) +
                   ", Durability: " + str(firebase_player_stats.get("durability", "ERROR")))
             
             # Compare with local values

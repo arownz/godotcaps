@@ -34,6 +34,14 @@ const POPUP_TEXT_COLOR = Color(1, 0.92549, 0.756863, 1)
 var notification_popup: CanvasLayer
 
 func _ready():
+	# Add fade-in animation
+	modulate.a = 0.0
+	scale = Vector2(0.8, 0.8)
+	var tween = create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(self, "modulate:a", 1.0, 0.4).set_ease(Tween.EASE_OUT)
+	tween.tween_property(self, "scale", Vector2(1.0, 1.0), 0.4).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+	
 	# Initialize Firebase if available
 	_initialize_firebase()
 	
@@ -349,7 +357,16 @@ func _on_back_button_pressed():
 		$StageDetails.visible = false
 	else:
 		# Return to dungeon selection
-		get_tree().change_scene_to_file("res://Scenes/DungeonSelection.tscn")
+		_fade_out_and_change_scene("res://Scenes/DungeonSelection.tscn")
+
+# Helper function to fade out before changing scenes
+func _fade_out_and_change_scene(scene_path: String):
+	var tween = create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(self, "modulate:a", 0.0, 0.3).set_ease(Tween.EASE_IN)
+	tween.tween_property(self, "scale", Vector2(0.8, 0.8), 0.3).set_ease(Tween.EASE_IN)
+	await tween.finished
+	get_tree().change_scene_to_file(scene_path)
 
 func _on_fight_button_pressed():
 	print("Starting battle in Dungeon 3, Stage " + str(current_selected_stage))
@@ -361,7 +378,7 @@ func _on_fight_button_pressed():
 	await _save_current_dungeon_stage()
 
 	# Load the battle scene
-	get_tree().change_scene_to_file("res://Scenes/BattleScene.tscn")
+	_fade_out_and_change_scene("res://Scenes/BattleScene.tscn")
 
 func _save_current_dungeon_stage():
 	# Only proceed if authenticated

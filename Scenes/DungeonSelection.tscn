@@ -86,9 +86,9 @@ grow_vertical = 2
 [node name="Dungeon1" type="Control" parent="DungeonContainer/DungeonCarousel"]
 custom_minimum_size = Vector2(600, 500)
 anchors_preset = 0
-offset_left = 438.0
+offset_left = 430.0
 offset_top = 45.0
-offset_right = 1038.0
+offset_right = 1030.0
 offset_bottom = 545.0
 
 [node name="TextureButton" type="TextureButton" parent="DungeonContainer/DungeonCarousel/Dungeon1"]
@@ -143,9 +143,9 @@ horizontal_alignment = 1
 [node name="Dungeon2" type="Control" parent="DungeonContainer/DungeonCarousel"]
 custom_minimum_size = Vector2(600, 500)
 anchors_preset = 0
-offset_left = 1138.0
+offset_left = 1130.0
 offset_top = 45.0
-offset_right = 1738.0
+offset_right = 1730.0
 offset_bottom = 545.0
 
 [node name="TextureButton" type="TextureButton" parent="DungeonContainer/DungeonCarousel/Dungeon2"]
@@ -200,9 +200,9 @@ horizontal_alignment = 1
 [node name="Dungeon3" type="Control" parent="DungeonContainer/DungeonCarousel"]
 custom_minimum_size = Vector2(600, 500)
 anchors_preset = 0
-offset_left = -262.0
+offset_left = -270.0
 offset_top = 45.0
-offset_right = 338.0
+offset_right = 330.0
 offset_bottom = 545.0
 
 [node name="TextureButton" type="TextureButton" parent="DungeonContainer/DungeonCarousel/Dungeon3"]

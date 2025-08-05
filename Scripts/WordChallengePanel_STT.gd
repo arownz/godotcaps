@@ -948,17 +948,42 @@ func recognition_ended_callback():
 	if recognition_active:
 		# If the user is still actively trying to speak, automatically restart recognition
 		print("Auto-restarting speech recognition for continuous listening...")
-		await get_tree().create_timer(0.1).timeout # Brief pause
+		await get_tree().create_timer(0.2).timeout # Brief pause to avoid rapid loops
 		
-		# Restart recognition automatically
-		var restart_success = await _start_live_recognition()
-		if not restart_success:
-			# If restart failed, fall back to manual restart
-			recognition_active = false
-			live_transcription_enabled = false
-			speak_button.text = "Start Speaking"
-			speak_button.disabled = false
-			status_label.text = "Recognition stopped. Click Start Speaking to try again."
+		# Check if we're still supposed to be active before restarting
+		if recognition_active and not result_being_processed:
+			print("Attempting to restart speech recognition...")
+			var restart_success = await _start_live_recognition()
+			
+			if restart_success:
+				print("Speech recognition restarted successfully")
+				status_label.text = "Listening... (reconnected)"
+			else:
+				print("Failed to restart speech recognition - will try again")
+				# Try one more time after a longer delay for microphone conflicts
+				await get_tree().create_timer(1.0).timeout
+				if recognition_active and not result_being_processed:
+					var second_restart = await _start_live_recognition()
+					if second_restart:
+						print("Speech recognition restarted on second attempt")
+						status_label.text = "Listening... (microphone recovered)"
+					else:
+						print("Failed to restart speech recognition - stopping")
+						_stop_recognition_completely()
+		else:
+			print("Not restarting - recognition no longer active or result being processed")
+	else:
+		print("Recognition ended but not active - not restarting")
+
+# Helper function to completely stop recognition
+func _stop_recognition_completely():
+	recognition_active = false
+	live_transcription_enabled = false
+	speak_button.text = "Start Speaking"
+	speak_button.disabled = false
+	status_label.text = "Recognition stopped. Click Start Speaking to try again."
+	permission_status_label.text = "Click Start Speaking to begin"
+	permission_status_label.modulate = Color.WHITE
 
 # Callback function for speech recognition result from JavaScript
 func speech_result_callback(text):
@@ -1278,45 +1303,64 @@ func speech_error_callback(error):
 		speak_button.disabled = false
 	elif error == "no-speech":
 		# Don't stop for no-speech - just notify user and continue
-		status_label.text = "Continue speaking - I'm listening..."
-		permission_status_label.text = "♪ Listening..."
+		status_label.text = "Continue speaking - I'm listening... (enhanced sensitivity)"
+		permission_status_label.text = "♪ Listening (waiting for speech)..."
 		permission_status_label.modulate = Color.CYAN
 		# Don't stop recognition - let it continue listening
-		print("Continuing to listen after no-speech error...")
+		print("Continuing to listen after no-speech error with enhanced sensitivity...")
 	elif error == "network":
-		# For network errors, attempt to restart automatically
-		print("Network error detected - attempting to restart recognition...")
+		# For network errors, attempt multiple restarts
+		print("Network error detected - attempting enhanced restart...")
 		call_deferred("_restart_recognition_after_error")
 	elif error == "audio-capture":
-		# Audio capture errors need user intervention
-		recognition_active = false
-		live_transcription_enabled = false
-		status_label.text = "Microphone issue detected. Check your microphone and try again."
-		speak_button.text = "Try Again"
-		permission_status_label.text = "X Audio error"
-		permission_status_label.modulate = Color.RED
-		speak_button.disabled = false
+		# Audio capture errors - try to restart first before giving up
+		print("Audio capture error - attempting to recover microphone...")
+		status_label.text = "Microphone conflict detected - attempting recovery..."
+		permission_status_label.text = "⚠ Recovering microphone..."
+		permission_status_label.modulate = Color.YELLOW
+		call_deferred("_restart_recognition_after_error")
+	elif error == "aborted":
+		# Aborted errors often happen with microphone conflicts - try to restart
+		print("Recognition aborted - likely microphone conflict - attempting restart...")
+		status_label.text = "Recognition interrupted - restarting..."
+		call_deferred("_restart_recognition_after_error")
 	else:
-		# For other errors, try to restart automatically first
-		print("Unknown error '" + error + "' - attempting restart...")
+		# For other errors, try to restart automatically with enhanced recovery
+		print("Unknown error '" + error + "' - attempting enhanced restart...")
 		call_deferred("_restart_recognition_after_error")
 
-# Helper function to restart recognition after recoverable errors
+# Enhanced helper function to restart recognition after recoverable errors
 func _restart_recognition_after_error():
 	if recognition_active:
-		print("Attempting to restart speech recognition after error...")
-		await get_tree().create_timer(1.0).timeout # Wait a moment
+		print("Attempting enhanced restart of speech recognition after error...")
+		status_label.text = "Recovering microphone... please wait"
 		
-		var restart_success = await _start_live_recognition()
-		if not restart_success:
-			# If restart failed, fall back to manual restart
-			recognition_active = false
-			live_transcription_enabled = false
-			status_label.text = "Error occurred. Click to try again."
-			speak_button.text = "Try Again"
-			permission_status_label.text = "X Recognition error"
-			permission_status_label.modulate = Color.RED
-			speak_button.disabled = false
+		# Multiple restart attempts with increasing delays for microphone conflicts
+		for attempt in range(3):
+			var delay = 1.0 + (attempt * 0.5) # 1.0s, 1.5s, 2.0s delays
+			await get_tree().create_timer(delay).timeout
+			
+			print("Restart attempt " + str(attempt + 1) + " of 3")
+			status_label.text = "Recovery attempt " + str(attempt + 1) + "/3..."
+			
+			var restart_success = await _start_live_recognition()
+			if restart_success:
+				print("Speech recognition successfully restarted on attempt " + str(attempt + 1))
+				status_label.text = "Listening... (recovered from error)"
+				permission_status_label.text = "✓ Microphone recovered"
+				permission_status_label.modulate = Color.GREEN
+				return # Success, exit early
+			else:
+				print("Restart attempt " + str(attempt + 1) + " failed")
+		
+		# If all attempts failed, fall back to manual restart
+		print("All restart attempts failed - requiring manual restart")
+		_stop_recognition_completely()
+		status_label.text = "Microphone recovery failed. Click 'Start Speaking' to try again."
+		speak_button.text = "Try Again"
+		permission_status_label.text = "X Recognition error"
+		permission_status_label.modulate = Color.RED
+		speak_button.disabled = false
 
 # Function to calculate bonus damage based on player stats
 func calculate_bonus_damage() -> int:

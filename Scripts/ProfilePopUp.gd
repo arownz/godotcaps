@@ -20,6 +20,14 @@ var dungeon_images = {
 }
 
 func _ready():
+    # Add fade-in animation
+    modulate.a = 0.0
+    scale = Vector2(0.8, 0.8)
+    var tween = create_tween()
+    tween.set_parallel(true)
+    tween.tween_property(self, "modulate:a", 1.0, 0.4).set_ease(Tween.EASE_OUT)
+    tween.tween_property(self, "scale", Vector2(1.0, 1.0), 0.4).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+    
     # Check signal connections
     if !$ProfileContainer/CloseButton.is_connected("pressed", Callable(self, "_on_close_button_pressed")):
         $ProfileContainer/CloseButton.connect("pressed", Callable(self, "_on_close_button_pressed"))
@@ -428,6 +436,15 @@ func _on_dungeon_area_pressed():
 
 # Button handlers - keeping just what we need
 func _on_close_button_pressed():
+    _fade_out_and_close()
+
+# Helper function to fade out before closing
+func _fade_out_and_close():
+    var tween = create_tween()
+    tween.set_parallel(true)
+    tween.tween_property(self, "modulate:a", 0.0, 0.3).set_ease(Tween.EASE_IN)
+    tween.tween_property(self, "scale", Vector2(0.8, 0.8), 0.3).set_ease(Tween.EASE_IN)
+    await tween.finished
     emit_signal("closed")
     queue_free()
 

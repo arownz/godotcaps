@@ -118,7 +118,7 @@ func update_ui():
 		status_label.text = "CHALLENGE FAILED!"
 		status_label.add_theme_color_override("font_color", failure_color)
 		bonus_damage_label.visible = true
-		bonus_damage_label.text = "Taking time..."
+		bonus_damage_label.text = "Failed Counter..."
 
 # Log the result to the battle log system
 func log_result():

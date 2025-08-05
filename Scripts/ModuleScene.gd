@@ -37,7 +37,7 @@ var module_data = {
 		"total_lessons": 20,
 		"progress_percent": 10.0,
 		"scene_path": "res://Scenes/ChunkedReadingModule.tscn"
-	},	"syllable_building": {
+	}, "syllable_building": {
 		"name": "Syllable Building",
 		"icon": "BUILD",
 		"description": "Drag syllables to build words",
@@ -75,6 +75,14 @@ var dyslexia_font: FontFile
 
 func _ready():
 	print("ModuleScene: Initializing module selection interface")
+	
+	# Add fade-in animation
+	modulate.a = 0.0
+	scale = Vector2(0.8, 0.8)
+	var tween = create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(self, "modulate:a", 1.0, 0.4).set_ease(Tween.EASE_OUT)
+	tween.tween_property(self, "scale", Vector2(1.0, 1.0), 0.4).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
 	
 	# Load dyslexia-friendly font
 	_load_dyslexia_font()
@@ -262,12 +270,12 @@ func _style_module_cards():
 			style_box.corner_radius_top_right = 15
 			style_box.corner_radius_bottom_left = 15
 			style_box.corner_radius_bottom_right = 15
-			style_box.bg_color = Color(1.0, 1.0, 1.0, 0.9)  # White with slight transparency
+			style_box.bg_color = Color(1.0, 1.0, 1.0, 0.9) # White with slight transparency
 			style_box.border_width_left = 3
 			style_box.border_width_right = 3
 			style_box.border_width_top = 3
 			style_box.border_width_bottom = 3
-			style_box.border_color = Color(0.2, 0.4, 0.8, 0.6)  # Light blue border
+			style_box.border_color = Color(0.2, 0.4, 0.8, 0.6) # Light blue border
 			
 			child.add_theme_stylebox_override("panel", style_box)
 
@@ -277,7 +285,7 @@ func _load_dyslexia_font():
 	if not dyslexia_font:
 		print("Warning: Could not load OpenDyslexic font, falling back to default")
 
-func _apply_dyslexia_font_to_node(node: Node):	
+func _apply_dyslexia_font_to_node(node: Node):
 	if node is Label:
 		if dyslexia_font:
 			node.add_theme_font_override("font", dyslexia_font)
@@ -295,7 +303,16 @@ func _apply_dyslexia_font_to_node(node: Node):
 # Module button event handlers
 func _on_menu_button_pressed():
 	print("ModuleScene: Going back to Main Menu")
-	get_tree().change_scene_to_file("res://Scenes/MainMenu.tscn")
+	_fade_out_and_change_scene("res://Scenes/MainMenu.tscn")
+
+# Helper function to fade out before changing scenes
+func _fade_out_and_change_scene(scene_path: String):
+	var tween = create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(self, "modulate:a", 0.0, 0.3).set_ease(Tween.EASE_IN)
+	tween.tween_property(self, "scale", Vector2(0.8, 0.8), 0.3).set_ease(Tween.EASE_IN)
+	await tween.finished
+	get_tree().change_scene_to_file(scene_path)
 
 func _on_phonics_button_pressed():
 	print("ModuleScene: Starting Phonics Interactive module")
@@ -319,20 +336,18 @@ func _on_syllable_building_button_pressed():
 
 func _launch_module(module_key: String):
 	# Store current module for returning later
-
-	
-	# Navigate to appropriate module scene
+	# Navigate to appropriate module scene with fade animation
 	match module_key:
 		"phonics":
-			get_tree().change_scene_to_file("res://Scenes/PhonicsModule.tscn")
+			_fade_out_and_change_scene("res://Scenes/PhonicsModule.tscn")
 		"flip_quiz":
-			get_tree().change_scene_to_file("res://Scenes/FlipQuizModule.tscn")
+			_fade_out_and_change_scene("res://Scenes/FlipQuizModule.tscn")
 		"read_aloud":
-			get_tree().change_scene_to_file("res://Scenes/ReadAloudModule.tscn")
+			_fade_out_and_change_scene("res://Scenes/ReadAloudModule.tscn")
 		"chunked_reading":
-			get_tree().change_scene_to_file("res://Scenes/ChunkedReadingModule.tscn")
+			_fade_out_and_change_scene("res://Scenes/ChunkedReadingModule.tscn")
 		"syllable_building":
-			get_tree().change_scene_to_file("res://Scenes/SyllableBuildingModule.tscn")
+			_fade_out_and_change_scene("res://Scenes/SyllableBuildingModule.tscn")
 
 func _show_coming_soon_notification(module_name: String, icon: String):
 	# Create a simple notification popup

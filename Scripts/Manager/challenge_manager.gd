@@ -160,6 +160,36 @@ func handle_challenge_completed(bonus_damage):
 	var battle_log_manager = battle_scene.battle_log_manager
 	var ui_manager = battle_scene.ui_manager
 	
+	# Create damage callback that will be called at the exact moment of impact
+	var apply_counter_damage = func():
+		# Calculate total damage (base + bonus)
+		var player_base_damage = player_manager.player_damage
+		var total_damage = player_base_damage + bonus_damage
+		
+		# Deal total damage to enemy at the moment of impact
+		enemy_manager.take_damage(total_damage)
+		
+		# Show counter damage indicator (different color for counters)
+		battle_scene._show_counter_damage_indicator(total_damage, "enemy", bonus_damage)
+		
+		# Add battle log messages with detailed damage breakdown
+		battle_log_manager.add_message("[color=#006400]You successfully countered the " + enemy_manager.enemy_name + "'s special attack![/color]")
+		battle_log_manager.add_message("[color=#000000]Counter Attack: " + str(player_base_damage) + " base damage + " + str(bonus_damage) + " bonus = " + str(total_damage) + " total damage![/color]")
+		
+		# Reset enemy skill meter
+		enemy_manager.enemy_skill_meter = 0
+		ui_manager.update_enemy_skill_meter()
+		
+		# Check if enemy is defeated
+		if enemy_manager.enemy_health <= 0:
+			enemy_defeated_during_challenge = true # Set flag
+			battle_scene.battle_active = false
+			battle_log_manager.add_message("[color=#006400]You defeated the " + enemy_manager.enemy_name + " with your counter-attack![/color]")
+			# Clean up challenge UI immediately when enemy is defeated
+			_cleanup_challenge()
+			# Don't call handle_victory here - let the normal enemy_defeated signal handle it
+			return
+	
 	# Play counter animation for player
 	if player_manager.player_animation:
 		var player_sprite = player_manager.player_animation.get_node_or_null("AnimatedSprite2D")
@@ -175,7 +205,7 @@ func handle_challenge_completed(bonus_damage):
 				# Create smooth movement tween to enemy
 				var move_tween = battle_scene.create_tween()
 				move_tween.tween_property(player_manager.player_animation, "position", counter_position, 0.3)
-				move_tween.tween_callback(func(): player_sprite.play("counter"))
+				move_tween.tween_callback(func(): player_manager.perform_counter_attack(apply_counter_damage))
 				
 				# Wait for movement to complete, then play counter animation
 				await move_tween.finished
@@ -192,37 +222,9 @@ func handle_challenge_completed(bonus_damage):
 				await return_tween.finished
 			else:
 				# Fallback: just play animation in place if enemy not found
-				player_sprite.play("counter")
+				player_manager.perform_counter_attack(apply_counter_damage)
 				await player_sprite.animation_finished
 				player_sprite.play("battle_idle")
-	
-	# Calculate total damage (base + bonus)
-	var player_base_damage = player_manager.player_damage
-	var total_damage = player_base_damage + bonus_damage
-	
-	# Deal total damage to enemy
-	enemy_manager.take_damage(total_damage)
-	
-	# Show counter damage indicator (different color for counters)
-	battle_scene._show_counter_damage_indicator(total_damage, "enemy", bonus_damage)
-	
-	# Add battle log messages with detailed damage breakdown
-	battle_log_manager.add_message("[color=#006400]You successfully countered the " + enemy_manager.enemy_name + "'s special attack![/color]")
-	battle_log_manager.add_message("[color=#000000]Counter Attack: " + str(player_base_damage) + " base damage + " + str(bonus_damage) + " bonus = " + str(total_damage) + " total damage![/color]")
-	
-	# Reset enemy skill meter
-	enemy_manager.enemy_skill_meter = 0
-	ui_manager.update_enemy_skill_meter()
-	
-	# Check if enemy is defeated
-	if enemy_manager.enemy_health <= 0:
-		enemy_defeated_during_challenge = true # Set flag
-		battle_scene.battle_active = false
-		battle_log_manager.add_message("[color=#006400]You defeated the " + enemy_manager.enemy_name + " with your counter-attack![/color]")
-		# Clean up challenge UI immediately when enemy is defeated
-		_cleanup_challenge()
-		# Don't call handle_victory here - let the normal enemy_defeated signal handle it
-		return
 	
 	# Resume battle
 	_resume_battle()

@@ -9,6 +9,14 @@ var current_equipped_id = ""
 var checkmark_icons = {}
 
 func _ready():
+	# Add fade-in animation
+	modulate.a = 0.0
+	scale = Vector2(0.8, 0.8)
+	var tween = create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(self, "modulate:a", 1.0, 0.4).set_ease(Tween.EASE_OUT)
+	tween.tween_property(self, "scale", Vector2(1.0, 1.0), 0.4).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+	
 	# Initialize UI
 	$PictureContainer/ConfirmButton.disabled = true
 	
@@ -31,7 +39,7 @@ func _ready():
 			checkmark.position = Vector2((child.size.x - 30) / 2, (child.size.y - 30) / 2)
 			checkmark.visible = false
 			checkmark.custom_minimum_size = Vector2(30, 30)
-			checkmark.z_index = 10  # Ensure it appears above the button
+			checkmark.z_index = 10 # Ensure it appears above the button
 			child.add_child(checkmark)
 			
 			# Store reference to the checkmark
@@ -186,6 +194,15 @@ func _update_profile_picture_in_firebase(picture_id):
 
 func _on_close_button_pressed():
 	print("ProfilePicturesPopup: Closing without selection")
+	_fade_out_and_close()
+
+# Helper function to fade out before closing
+func _fade_out_and_close():
+	var tween = create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(self, "modulate:a", 0.0, 0.3).set_ease(Tween.EASE_IN)
+	tween.tween_property(self, "scale", Vector2(0.8, 0.8), 0.3).set_ease(Tween.EASE_IN)
+	await tween.finished
 	
 	# Emit cancelled signal
 	emit_signal("cancelled")
