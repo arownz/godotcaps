@@ -1,9 +1,11 @@
-[gd_scene load_steps=5 format=3 uid="uid://bm8j5k6f3bar2"]
+[gd_scene load_steps=7 format=3 uid="uid://bm8j5k6f3bar2"]
 
 [ext_resource type="Script" uid="uid://bcbs2h67y83do" path="res://Scripts/ChunkedReadingModule.gd" id="1_3n1kb"]
 [ext_resource type="Texture2D" uid="uid://cp6h0easasnmc" path="res://gui/Update/UI/ui 6.png" id="2_i1p1d"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="3_regular_font"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="4_bold_font"]
+[ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="5_atdoy"]
+[ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="6_l8gkm"]
 
 [node name="ChunkedReadingModule" type="Control"]
 layout_mode = 3
@@ -52,7 +54,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold_font")
-text = "🔎 Chunked Reading"
+text = "Chunked Reading"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -83,6 +85,7 @@ text = "Welcome to Chunked Reading!"
 horizontal_alignment = 1
 
 [node name="Description" type="Label" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer"]
+custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3_regular_font")
 text = "Break down reading material into small, manageable sections with guided questions and comprehension support."
@@ -133,6 +136,7 @@ layout_mode = 2
 text = "Lesson 1: Short Sentences"
 
 [node name="LessonDescription" type="Label" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/ScrollContainer/LessonsContainer/Lesson1/Lesson1Container/LessonInfo"]
+custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 text = "Practice reading simple 3-5 word sentences with comprehension questions"
 autowrap_mode = 2
@@ -174,6 +178,7 @@ layout_mode = 2
 text = "Lesson 2: Paragraph Chunks"
 
 [node name="LessonDescription" type="Label" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/ScrollContainer/LessonsContainer/Lesson2/Lesson2Container/LessonInfo"]
+custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 text = "Break down paragraphs into 2-3 sentence chunks with guided questions"
 autowrap_mode = 2
@@ -215,6 +220,7 @@ layout_mode = 2
 text = "Lesson 3: Story Sections"
 
 [node name="LessonDescription" type="Label" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/ScrollContainer/LessonsContainer/Lesson3/Lesson3Container/LessonInfo"]
+custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 text = "Read short story sections with sequence and comprehension activities"
 autowrap_mode = 2
@@ -229,5 +235,11 @@ vertical_alignment = 1
 [node name="BackButtonBottom" type="Button" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer"]
 layout_mode = 2
 text = "Back to Modules"
+
+[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_atdoy")
+
+[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_l8gkm")
 
 [connection signal="pressed" from="MainContainer/HeaderContainer/BackButton" to="." method="_on_back_button_pressed"]

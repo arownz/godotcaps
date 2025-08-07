@@ -45,8 +45,23 @@ func _ready():
     # Connect background click to close popup
     $Background.gui_input.connect(_on_background_clicked)
     
+    # Connect button hover events
+    if $ProfileContainer/CloseButton:
+        $ProfileContainer/CloseButton.mouse_entered.connect(_on_button_hover)
+    if $ProfileContainer/LogoutButton:
+        $ProfileContainer/LogoutButton.mouse_entered.connect(_on_button_hover)
+    if $ProfileContainer/UserInfoArea/EditNameButton:
+        $ProfileContainer/UserInfoArea/EditNameButton.mouse_entered.connect(_on_button_hover)
+    if $ProfileContainer/UserInfoArea/CopyUIDButton:
+        $ProfileContainer/UserInfoArea/CopyUIDButton.mouse_entered.connect(_on_button_hover)
+    if $ProfileContainer/DungeonArea:
+        $ProfileContainer/DungeonArea.mouse_entered.connect(_on_button_hover)
+    
     # Load user data from Firestore
     await load_user_data()
+
+func _on_button_hover():
+    $ButtonHover.play()
 
 func load_user_data():
     print("ProfilePopUp: Loading user data")
@@ -408,6 +423,7 @@ func _update_dungeon_image(current_dungeon: int):
 
 # Handle dungeon area button press for navigation
 func _on_dungeon_area_pressed():
+    $ButtonClick.play()
     print("ProfilePopUp: Dungeon area pressed, navigating to current dungeon")
     
     var current_dungeon = user_data.get("current_dungeon", 1)
@@ -436,6 +452,7 @@ func _on_dungeon_area_pressed():
 
 # Button handlers - keeping just what we need
 func _on_close_button_pressed():
+    $ButtonClick.play()
     _fade_out_and_close()
 
 # Helper function to fade out before closing
@@ -449,6 +466,7 @@ func _fade_out_and_close():
     queue_free()
 
 func _on_logout_button_pressed():
+    $ButtonClick.play()
     print("ProfilePopUp: Logout button pressed")
     
     # Use Firebase's built-in logout which properly clears auth persistence
@@ -480,6 +498,7 @@ func _on_logout_button_pressed():
     get_tree().change_scene_to_file("res://Scenes/Authentication.tscn")
 
 func _on_profile_picture_button_pressed():
+    $ButtonClick.play()
     print("ProfilePopUp: Profile picture button pressed")
     var profile_pics_popup = load("res://Scenes/ProfilePicturesPopup.tscn").instantiate()
     
@@ -599,6 +618,7 @@ func _update_username(new_username):
             print("Failed to get document for updating username")
 
 func _on_edit_name_button_pressed():
+    $ButtonClick.play()
     print("Edit name button pressed")
     
     # Show the edit username panel
@@ -620,12 +640,14 @@ func _on_edit_name_button_pressed():
     username_input.select_all()
 
 func _on_edit_username_cancel_pressed():
+    $ButtonClick.play()
     print("Edit username cancelled")
     
     # Hide the edit panel
     $EditUsernamePanel.visible = false
 
 func _on_edit_username_confirm_pressed():
+    $ButtonClick.play()
     print("Edit username confirm pressed")
     
     var username_input = $EditUsernamePanel/EditContainer/ContentContainer/VBoxContainer/InputContainer/UsernameLineEdit
@@ -657,6 +679,7 @@ func _on_username_text_submitted(new_text):
         await _update_username(new_username)
 
 func _on_copy_uid_button_pressed():
+    $ButtonClick.play()
     if Firebase.Auth.auth and Firebase.Auth.auth.has("localid"):
         var uid = Firebase.Auth.auth.localid
         

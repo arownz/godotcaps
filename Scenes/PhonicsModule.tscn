@@ -1,9 +1,11 @@
-[gd_scene load_steps=5 format=3 uid="uid://bh3v5d8f2hak1"]
+[gd_scene load_steps=7 format=3 uid="uid://bh3v5d8f2hak1"]
 
 [ext_resource type="Texture2D" uid="uid://cp6h0easasnmc" path="res://gui/Update/UI/ui 6.png" id="2_e2csw"]
 [ext_resource type="Script" uid="uid://c8qtq6lp3uc26" path="res://Scripts/PhonicsModule.gd" id="2_script"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="3_regular_font"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="4_bold_font"]
+[ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="5_avwbn"]
+[ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="6_1aqah"]
 
 [node name="PhonicsModule" type="Control"]
 layout_mode = 3
@@ -52,7 +54,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold_font")
-text = "✏️ Phonics Interactive"
+text = "Phonics Interactive"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -83,6 +85,7 @@ text = "Welcome to Phonics Interactive!"
 horizontal_alignment = 1
 
 [node name="Description" type="Label" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer"]
+custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3_regular_font")
 text = "Trace letters while hearing their sounds. This module will help you learn letter recognition and phonetic awareness."
@@ -90,10 +93,11 @@ horizontal_alignment = 1
 autowrap_mode = 2
 
 [node name="ComingSoonLabel" type="Label" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer"]
+custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_fonts/font = ExtResource("3_regular_font")
-text = "🚧 This module is under development 🚧
+text = "This module is under development
 
 For now, you can practice with the whiteboard interface!"
 horizontal_alignment = 1
@@ -110,11 +114,11 @@ layout_mode = 2
 theme_override_fonts/font = ExtResource("4_bold_font")
 text = "Open Whiteboard"
 
-[node name="BackButton2" type="Button" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/ButtonContainer"]
-layout_mode = 2
-theme_override_fonts/font = ExtResource("3_regular_font")
-text = "Back to Modules"
+[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_avwbn")
+
+[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_1aqah")
 
 [connection signal="pressed" from="MainContainer/HeaderContainer/BackButton" to="." method="_on_back_button_pressed"]
 [connection signal="pressed" from="MainContainer/CenterContainer/ContentPanel/ContentContainer/ButtonContainer/WhiteboardButton" to="." method="_on_whiteboard_button_pressed"]
-[connection signal="pressed" from="MainContainer/CenterContainer/ContentPanel/ContentContainer/ButtonContainer/BackButton2" to="." method="_on_back_button_pressed"]

@@ -1,4 +1,4 @@
-[gd_scene load_steps=71 format=3 uid="uid://e6bec84rrthm"]
+[gd_scene load_steps=67 format=3 uid="uid://e6bec84rrthm"]
 
 [ext_resource type="Texture2D" uid="uid://bs7axy8rkm4ei" path="res://Sprites/Frame Sprites/Lexia.png" id="1_0riqc"]
 [ext_resource type="AudioStream" uid="uid://dmsn7fibj384u" path="res://audio/sword slash.ogg" id="2_81ctd"]
@@ -188,10 +188,6 @@ region = Rect2(246, 492, 82, 82)
 atlas = ExtResource("1_0riqc")
 region = Rect2(328, 492, 82, 82)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_tfrlm"]
-atlas = ExtResource("1_0riqc")
-region = Rect2(410, 492, 82, 82)
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_jgrr3"]
 atlas = ExtResource("1_0riqc")
 region = Rect2(492, 492, 82, 82)
@@ -199,18 +195,6 @@ region = Rect2(492, 492, 82, 82)
 [sub_resource type="AtlasTexture" id="AtlasTexture_7imf8"]
 atlas = ExtResource("1_0riqc")
 region = Rect2(574, 492, 82, 82)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_qj6ke"]
-atlas = ExtResource("1_0riqc")
-region = Rect2(492, 410, 82, 82)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_u4squ"]
-atlas = ExtResource("1_0riqc")
-region = Rect2(574, 410, 82, 82)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_bvcky"]
-atlas = ExtResource("1_0riqc")
-region = Rect2(656, 410, 82, 82)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_70jch"]
 atlas = ExtResource("1_0riqc")
@@ -430,22 +414,19 @@ animations = [{
 "texture": SubResource("AtlasTexture_2kxht")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_tfrlm")
-}, {
-"duration": 1.0,
 "texture": SubResource("AtlasTexture_jgrr3")
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_7imf8")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_qj6ke")
+"texture": SubResource("AtlasTexture_sj52a")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_u4squ")
+"texture": SubResource("AtlasTexture_cxxxf")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_bvcky")
+"texture": SubResource("AtlasTexture_2im5v")
 }],
 "loop": false,
 "name": &"hurt",
@@ -508,10 +489,8 @@ animations = [{
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_fdt5l")
-animation = &"counter"
+animation = &"hurt"
 autoplay = "idle"
-frame = 18
-frame_progress = 1.0
 
 [node name="sfx_autoattack_swordslash" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_0var5")

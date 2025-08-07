@@ -64,6 +64,7 @@ func set_continue_enabled(enabled):
 		$ResultPanel/VBoxContainer/MessageLabel.text = current_text + " Continue to the next stage?"
 
 func _on_restart_button_pressed():
+	$ButtonClick.play()
 	# Enhanced fade-out animation
 	var tween = create_tween()
 	tween.set_parallel(true)
@@ -73,6 +74,7 @@ func _on_restart_button_pressed():
 	queue_free()
 
 func _on_quit_button_pressed():
+	$ButtonClick.play()
 	# Enhanced fade-out animation
 	var tween = create_tween()
 	tween.set_parallel(true)
@@ -82,6 +84,7 @@ func _on_quit_button_pressed():
 	queue_free()
 
 func _on_continue_button_pressed():
+	$ButtonClick.play()
 	# Enhanced fade-out animation
 	var tween = create_tween()
 	tween.set_parallel(true)
@@ -89,3 +92,15 @@ func _on_continue_button_pressed():
 	await tween.finished
 	continue_battle.emit()
 	queue_free()
+
+
+func _on_continue_button_mouse_entered() -> void:
+	$ButtonHover.play()
+
+
+func _on_restart_button_mouse_entered() -> void:
+	$ButtonHover.play()
+
+
+func _on_quit_button_mouse_entered() -> void:
+	$ButtonHover.play()

@@ -174,6 +174,7 @@ func _draw_stroke(stroke):
 
 # Undo last stroke
 func _on_undo_button_pressed():
+	$ButtonClick.play()
 	if strokes.size() > 0:
 		var last_stroke = strokes.pop_back()
 		undo_history.append(last_stroke)
@@ -183,6 +184,7 @@ func _on_undo_button_pressed():
 
 # Redo last undone stroke
 func _on_redo_button_pressed():
+	$ButtonClick.play()
 	if undo_history.size() > 0:
 		var stroke = undo_history.pop_back()
 		strokes.append(stroke)
@@ -192,27 +194,56 @@ func _on_redo_button_pressed():
 
 # Clear drawing
 func _on_clear_button_pressed():
+	$ButtonClick.play()
 	strokes = []
 	undo_history = []
 	$VBoxContainer/ButtonsContainer/UndoButton.disabled = true
 	$VBoxContainer/ButtonsContainer/RedoButton.disabled = true
 	$VBoxContainer/DrawingArea.queue_redraw()
+	
+	# Show debug label again when cleared
+	if debug_label:
+		debug_label.visible = true
+		debug_label.text = "Write the random word in this whiteboard!"
+
+# Re-enable buttons (helper function for when user starts drawing again)
+func _re_enable_buttons():
+	$VBoxContainer/ButtonsContainer/DoneButton.disabled = false
+	$VBoxContainer/ButtonsContainer/CancelButton.disabled = false
+	$VBoxContainer/ButtonsContainer/ClearButton.disabled = false
+	# Undo/Redo buttons are handled by their respective logic
 
 # Cancel drawing
 func _on_cancel_button_pressed():
+	$ButtonClick.play()
 	print("Cancel button pressed - cancelling whiteboard challenge")
 	emit_signal("drawing_cancelled")
 
 # Submit drawing for recognition
 func _on_done_button_pressed():
-	print("Done button pressed, starting recognition process")
+	$ButtonClick.play()
+	print("Done button pressed, checking if anything is drawn")
 	
-	# Check if there's anything drawn
+	# Check if there's anything drawn - improved detection
 	if strokes.size() == 0:
-		_show_status_message("Please write something first", Color(1, 0.3, 0.3, 1))
-		await get_tree().create_timer(2.0).timeout
+		print("No strokes detected - whiteboard is empty")
+		
+		# Show user-friendly message and bring back debug label
+		_show_status_message("Please write the word first!", Color(1, 0.3, 0.3, 1))
+		
+		# Show debug label again to guide user
+		if debug_label:
+			debug_label.visible = true
+			debug_label.text = "You haven't written anything yet..."
+		
+		# Hide status message after some time but don't proceed with challenge
+		await get_tree().create_timer(3.0).timeout
 		_hide_status_message()
+		
+		# Do NOT emit any signal or proceed with challenge - just return
 		return
+	
+	print("Strokes detected: " + str(strokes.size()) + " - starting recognition process")
 	
 	# Disable buttons during recognition
 	$VBoxContainer/ButtonsContainer/DoneButton.disabled = true
@@ -421,6 +452,9 @@ func _on_recognition_completed(text_result: String):
 	print("Recognition completed: ", text_result)
 	debug_log("Recognition result: " + text_result)
 	
+	# Reset recognition state
+	recognition_in_progress = false
+	
 	# Emit signal with recognized text
 	emit_signal("drawing_submitted", text_result)
 
@@ -429,21 +463,38 @@ func _on_recognition_error(error_msg: String):
 	print("Recognition error: " + error_msg)
 	debug_log("Recognition error: " + error_msg)
 	
+	# Reset recognition state
+	recognition_in_progress = false
+	
+	# Re-enable buttons so user can try again
+	_re_enable_buttons()
+	
 	# Humanize error messages for better user experience
 	var user_friendly_msg = "recognition_error"
 	if "Failed to start recognition" in error_msg:
 		user_friendly_msg = "Could not analyze."
+		_show_status_message("Could not analyze your writing. Please try again.", Color(1, 0.3, 0.3, 1))
 	elif "Vision API not available" in error_msg:
 		user_friendly_msg = "Handwriting recognition unavailable."
+		_show_status_message("Recognition service unavailable. Please try again later.", Color(1, 0.3, 0.3, 1))
 	elif "Request timed out" in error_msg:
 		user_friendly_msg = "Analysis is taking too long."
+		_show_status_message("Analysis timed out. Please try again.", Color(1, 0.3, 0.3, 1))
 	elif "Empty result received" in error_msg:
 		user_friendly_msg = "Could not read."
+		_show_status_message("Could not read your writing. Please try writing more clearly.", Color(1, 0.3, 0.3, 1))
 	elif "JavaScript bridge unavailable" in error_msg:
 		user_friendly_msg = "System error."
+		_show_status_message("System error. Please try again.", Color(1, 0.3, 0.3, 1))
 	else:
 		user_friendly_msg = "Unable to read."
+		_show_status_message("Unable to read your writing. Please try again.", Color(1, 0.3, 0.3, 1))
 
+	# Hide status message after some time
+	await get_tree().create_timer(3.0).timeout
+	_hide_status_message()
+	
+	# Emit the error signal (this will be handled by the challenge system)
 	emit_signal("drawing_submitted", user_friendly_msg)
 
 # Helper function to hide UI elements
@@ -515,3 +566,23 @@ func _show_status_message(text, color = Color(1, 1, 1, 1)):
 func _hide_status_message():
 	var tween = create_tween()
 	tween.tween_property(status_label, "modulate:a", 0.0, 0.3)
+
+
+func _on_undo_button_mouse_entered() -> void:
+	$ButtonHover.play()
+
+
+func _on_redo_button_mouse_entered() -> void:
+	$ButtonHover.play()
+
+
+func _on_clear_button_mouse_entered() -> void:
+	$ButtonHover.play()
+
+
+func _on_cancel_button_mouse_entered() -> void:
+	$ButtonHover.play()
+
+
+func _on_done_button_mouse_entered() -> void:
+	$ButtonHover.play()

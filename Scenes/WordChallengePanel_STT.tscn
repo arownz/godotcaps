@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://dhb04kp6rp2xh"]
+[gd_scene load_steps=16 format=3 uid="uid://dhb04kp6rp2xh"]
 
 [ext_resource type="Script" uid="uid://5556075jac2c" path="res://Scripts/WordChallengePanel_STT.gd" id="1_4yifo"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="2_8hfec"]
@@ -8,6 +8,8 @@
 [ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="6_y470y"]
 [ext_resource type="Texture2D" uid="uid://drwre8l5sq5ql" path="res://gui/Update/UI/hover long button.png" id="7_th1nk"]
 [ext_resource type="Texture2D" uid="uid://bmjd8nkagj08e" path="res://gui/Update/UI/long uncolored button.png" id="8_00oi0"]
+[ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="9_y2iqy"]
+[ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="10_y470y"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_y2iqy"]
 
@@ -365,6 +367,12 @@ theme_override_font_sizes/font_size = 16
 text = "Connecting to random word API..."
 horizontal_alignment = 1
 
+[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("9_y2iqy")
+
+[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("10_y470y")
+
 [connection signal="pressed" from="ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer/TTSButton" to="." method="_on_tts_button_pressed"]
 [connection signal="pressed" from="ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer/TTSSettingsButton" to="." method="_on_tts_settings_button_pressed"]
 [connection signal="item_selected" from="ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer/VoiceContainer/VoiceOptionButton" to="." method="_on_voice_option_button_item_selected"]
@@ -372,4 +380,5 @@ horizontal_alignment = 1
 [connection signal="pressed" from="ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer/ButtonsContainer/TestButton" to="." method="_on_test_button_pressed"]
 [connection signal="pressed" from="ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer/ButtonsContainer/CloseButton" to="." method="_on_close_button_pressed"]
 [connection signal="pressed" from="ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer/SpeakButton" to="." method="_on_speak_button_pressed"]
+[connection signal="mouse_entered" from="ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer/CancelButton" to="." method="_on_cancel_button_mouse_entered"]
 [connection signal="pressed" from="ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer/CancelButton" to="." method="_on_cancel_button_pressed"]

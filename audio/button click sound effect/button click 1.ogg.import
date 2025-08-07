@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://cwl6m0wxwmbsv"
+path="res://.godot/imported/button click 1.ogg-507e1f06e47e2440e4f553e723adba68.oggvorbisstr"
+
+[deps]
+
+source_file="res://audio/button click sound effect/button click 1.ogg"
+dest_files=["res://.godot/imported/button click 1.ogg-507e1f06e47e2440e4f553e723adba68.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

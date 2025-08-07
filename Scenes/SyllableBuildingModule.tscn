@@ -1,9 +1,11 @@
-[gd_scene load_steps=5 format=3 uid="uid://coam7h4k8b2q1"]
+[gd_scene load_steps=7 format=3 uid="uid://coam7h4k8b2q1"]
 
 [ext_resource type="Script" uid="uid://bpm4fs4clb2en" path="res://Scripts/SyllableBuildingModule.gd" id="1_18jxr"]
 [ext_resource type="Texture2D" uid="uid://cp6h0easasnmc" path="res://gui/Update/UI/ui 6.png" id="2_wljjf"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="3_regular_font"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="4_bold_font"]
+[ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="5_8adme"]
+[ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="6_7sx5d"]
 
 [node name="SyllableBuildingModule" type="Control"]
 layout_mode = 3
@@ -52,7 +54,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold_font")
-text = "🌈 Syllable Building"
+text = "Syllable Building"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -83,6 +85,7 @@ text = "Welcome to Syllable Building!"
 horizontal_alignment = 1
 
 [node name="Description" type="Label" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer"]
+custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3_regular_font")
 text = "Drag and drop syllables to build complete words. Learn phonemic awareness and word structure!"
@@ -133,6 +136,7 @@ layout_mode = 2
 text = "Activity 1: Two-Syllable Words"
 
 [node name="ActivityDescription" type="Label" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/ScrollContainer/ActivitiesContainer/Activity1/Activity1Container/ActivityInfo"]
+custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 text = "Build simple two-syllable words like 'ba-by', 'hap-py', 'run-ning'"
 autowrap_mode = 2
@@ -174,6 +178,7 @@ layout_mode = 2
 text = "Activity 2: Three-Syllable Words"
 
 [node name="ActivityDescription" type="Label" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/ScrollContainer/ActivitiesContainer/Activity2/Activity2Container/ActivityInfo"]
+custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 text = "Combine three syllables to form words like 'el-e-phant', 'com-pu-ter'"
 autowrap_mode = 2
@@ -215,6 +220,7 @@ layout_mode = 2
 text = "Activity 3: Complex Words"
 
 [node name="ActivityDescription" type="Label" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/ScrollContainer/ActivitiesContainer/Activity3/Activity3Container/ActivityInfo"]
+custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 text = "Master challenging multi-syllable words with prefixes and suffixes"
 autowrap_mode = 2
@@ -257,10 +263,11 @@ text = "fly"
 layout_mode = 2
 text = "Build Word: butterfly"
 
-[node name="BackButtonBottom" type="Button" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer"]
-layout_mode = 2
-text = "Back to Modules"
+[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_8adme")
+
+[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_7sx5d")
 
 [connection signal="pressed" from="MainContainer/HeaderContainer/BackButton" to="." method="_on_back_button_pressed"]
 [connection signal="pressed" from="MainContainer/CenterContainer/ContentPanel/ContentContainer/DemoSection/BuildWordButton" to="." method="_on_build_word_pressed"]
-[connection signal="pressed" from="MainContainer/CenterContainer/ContentPanel/ContentContainer/BackButtonBottom" to="." method="_on_back_button_pressed"]

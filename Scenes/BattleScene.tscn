@@ -1,8 +1,9 @@
-[gd_scene load_steps=21 format=3 uid="uid://cfead7bcuslp4"]
+[gd_scene load_steps=24 format=3 uid="uid://cfead7bcuslp4"]
 
 [ext_resource type="Texture2D" uid="uid://cxqd6wyqy8g22" path="res://gui/Update/Backgrounds/battlescene background.png" id="2_ixjr5"]
 [ext_resource type="Script" uid="uid://cnnycoui3l3ef" path="res://Scripts/battlescene.gd" id="3_vhj2j"]
 [ext_resource type="Texture2D" uid="uid://bb3yuiy6n0i2" path="res://gui/Update/icons/small settings_hover.png" id="5_47u5s"]
+[ext_resource type="FontFile" uid="uid://cclslwx1ktfhx" path="res://Fonts/dyslexiafont/OpenDyslexic-Italic.otf" id="6_0avxp"]
 [ext_resource type="Texture2D" uid="uid://c6clhmrkbmg0u" path="res://gui/UI/ui 4.png" id="6_2tp6q"]
 [ext_resource type="Texture2D" uid="uid://bmjd8nkagj08e" path="res://gui/Update/UI/long uncolored button.png" id="7_2tp6q"]
 [ext_resource type="Texture2D" uid="uid://c3jmmbnxol7mb" path="res://gui/Update/UI/active skill bar icon.png" id="7_cja1x"]
@@ -12,6 +13,8 @@
 [ext_resource type="Texture2D" uid="uid://bmjpxe8wculxv" path="res://gui/Update/UI/exp4.png" id="10_1yevk"]
 [ext_resource type="Texture2D" uid="uid://dybs8ls3yk7e1" path="res://gui/Update/UI/swordicon.png" id="11_x5p3t"]
 [ext_resource type="Texture2D" uid="uid://cgo0fsh46bqj3" path="res://gui/Update/UI/defense bar icon.png" id="12_cja1x"]
+[ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="14_cja1x"]
+[ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="15_aip7a"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_e13ox"]
 bg_color = Color(0.86, 0.252267, 0.172, 0.901961)
@@ -388,9 +391,9 @@ offset_bottom = 25.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(0.905882, 0.47451, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 5
-theme_override_fonts/font = ExtResource("8_2tp6q")
+theme_override_fonts/font = ExtResource("6_0avxp")
 theme_override_font_sizes/font_size = 80
 text = "FIGHT!"
 horizontal_alignment = 1
@@ -776,4 +779,11 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
+[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("14_cja1x")
+
+[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("15_aip7a")
+
+[connection signal="mouse_entered" from="MainContainer/RightContainer/MarginContainer/VBoxContainer/ButtonContainer/EngageButton" to="." method="_on_engage_button_mouse_entered"]
 [connection signal="pressed" from="MainContainer/RightContainer/MarginContainer/VBoxContainer/ButtonContainer/EngageButton" to="." method="_on_engage_button_pressed"]

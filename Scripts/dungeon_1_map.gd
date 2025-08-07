@@ -138,6 +138,7 @@ func _unhandled_input(event):
 				get_viewport().set_input_as_handled()
 
 func _on_close_button_pressed():
+	$ButtonClick.play()
 	# Close the StageDetails panel
 	$StageDetails.visible = false
 	
@@ -249,6 +250,7 @@ func _connect_signals():
 	# Connect stage button signals
 	for i in range(stage_buttons.size()):
 		stage_buttons[i].pressed.connect(_on_stage_button_pressed.bind(i + 1))
+		stage_buttons[i].mouse_entered.connect(_on_button_hover)
 	
 	# Connect mob button signals
 	for i in range(mob_buttons.size()):
@@ -256,6 +258,7 @@ func _connect_signals():
 			mob_buttons[i].pressed.connect(_on_mob_button_pressed.bind("stage_" + str(i + 1), i))
 		else: # Boss
 			mob_buttons[i].pressed.connect(_on_mob_button_pressed.bind("boss", 0))
+		mob_buttons[i].mouse_entered.connect(_on_button_hover)
 	
 	# Connect back button
 	$BackButton.pressed.connect(_on_back_button_pressed)
@@ -264,10 +267,13 @@ func _connect_signals():
 
 	# Connect fight button
 	$StageDetails/FightButton.pressed.connect(_on_fight_button_pressed)
+	$StageDetails/FightButton.mouse_entered.connect(_on_button_hover)
 
 	$StageDetails/CloseButton.pressed.connect(_on_close_button_pressed)
+	$StageDetails/CloseButton.mouse_entered.connect(_on_button_hover)
 
 func _on_stage_button_pressed(stage_num):
+	$ButtonClick.play()
 	$SelectLevel.visible = false
 	print("Stage " + str(stage_num) + " selected")
 	
@@ -358,6 +364,7 @@ func _update_stage_details(stage_num):
 		mob_buttons[0].visible = true # Mob1Button (index 0)
 
 func _on_mob_button_pressed(type, index):
+	$ButtonClick.play()
 	print("Selected enemy type: " + type + " index: " + str(index))
 	
 	# Update enemy display based on selected type
@@ -386,6 +393,7 @@ func _on_mob_button_pressed(type, index):
 	$StageDetails/RightContainer/SkillName.text = enemy_data["skill"]
 
 func _on_back_button_pressed():
+	$ButtonClick.play()
 	if $StageDetails.visible:
 		# If details panel is open, close it first
 		$StageDetails.visible = false
@@ -403,6 +411,7 @@ func _fade_out_and_change_scene(scene_path: String):
 	get_tree().change_scene_to_file(scene_path)
 
 func _on_fight_button_pressed():
+	$ButtonClick.play()
 	print("Starting battle in Dungeon 1, Stage " + str(current_selected_stage))
 	
 	# Set battle progress in DungeonGlobals for immediate transfer to battle scene
@@ -445,7 +454,11 @@ func _save_current_dungeon_stage():
 			print("Saved current dungeon/stage to Firebase")
 
 # Button hover handlers
+func _on_button_hover():
+	$ButtonHover.play()
+
 func _on_back_button_hover_entered():
+	$ButtonHover.play()
 	var back_label = $BackButton/BackLabel
 	if back_label:
 		back_label.visible = true
@@ -466,3 +479,6 @@ func _refresh_progression_from_firebase():
 		await _load_player_progress()
 	else:
 		print("User not authenticated, skipping progression refresh")
+
+func _on_close_button_mouse_entered() -> void:
+	$ButtonHover.play()

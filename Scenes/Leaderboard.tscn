@@ -1,9 +1,11 @@
-[gd_scene load_steps=10 format=3 uid="uid://bhsb4od5anjae"]
+[gd_scene load_steps=13 format=3 uid="uid://bhsb4od5anjae"]
 
 [ext_resource type="Script" uid="uid://cpyo81gkxoads" path="res://Scripts/Leaderboard.gd" id="1_8k3l4"]
 [ext_resource type="Texture2D" uid="uid://c75anq8c0biyi" path="res://gui/Update/UI/ui 7.png" id="2_ldouh"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="3_font"]
 [ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="4_ldouh"]
+[ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="5_67k4m"]
+[ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="6_r3gmb"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_header"]
 bg_color = Color(0.933333, 0.764706, 0.603922, 1)
@@ -41,6 +43,8 @@ corner_radius_bottom_left = 25
 shadow_color = Color(0, 0, 0, 0.2)
 shadow_size = 4
 shadow_offset = Vector2(0, 2)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_67k4m"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tab_container"]
 bg_color = Color(0.95, 0.95, 0.95, 1)
@@ -151,6 +155,7 @@ layout_mode = 2
 size_flags_vertical = 3
 theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 18
+theme_override_styles/tab_focus = SubResource("StyleBoxEmpty_67k4m")
 theme_override_styles/panel = SubResource("StyleBoxFlat_tab_container")
 current_tab = 0
 
@@ -224,3 +229,11 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 8
+
+[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_67k4m")
+
+[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_r3gmb")
+
+[connection signal="pressed" from="MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton" to="." method="_on_back_button_pressed"]

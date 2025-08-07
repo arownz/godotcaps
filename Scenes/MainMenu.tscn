@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://d36ytiqg31edd"]
+[gd_scene load_steps=21 format=3 uid="uid://d36ytiqg31edd"]
 
 [ext_resource type="Script" uid="uid://datbxxer3mwvc" path="res://Scripts/mainmenu.gd" id="1_tt5f1"]
 [ext_resource type="Texture2D" uid="uid://ckkds573c15wj" path="res://gui/Backgrounds/Main_menu_Background.png" id="2_kpa4r"]
@@ -18,6 +18,8 @@
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="13_uaqt0"]
 [ext_resource type="Texture2D" uid="uid://drwre8l5sq5ql" path="res://gui/Update/UI/hover long button.png" id="14_yxkem"]
 [ext_resource type="Script" uid="uid://brblauco221pt" path="res://Scripts/title_animation.gd" id="18_title_anim"]
+[ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="19_pjscj"]
+[ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="20_m7n2d"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -495,3 +497,22 @@ theme_override_fonts/font = ExtResource("11_qm2o7")
 theme_override_font_sizes/font_size = 25
 text = "Loading..."
 vertical_alignment = 1
+
+[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("19_pjscj")
+
+[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("20_m7n2d")
+
+[connection signal="mouse_entered" from="ProfileButton" to="." method="_on_profile_button_mouse_entered"]
+[connection signal="pressed" from="ProfileButton" to="." method="_on_profile_button_pressed"]
+[connection signal="mouse_entered" from="BottomButtonsContainer/ModulesButton" to="." method="_on_modules_button_mouse_entered"]
+[connection signal="pressed" from="BottomButtonsContainer/ModulesButton" to="." method="_on_modules_button_pressed"]
+[connection signal="mouse_entered" from="BottomButtonsContainer/CharacterButton" to="." method="_on_character_button_mouse_entered"]
+[connection signal="pressed" from="BottomButtonsContainer/CharacterButton" to="." method="_on_character_button_pressed"]
+[connection signal="mouse_entered" from="BottomButtonsContainer/JourneyButton" to="." method="_on_journey_button_mouse_entered"]
+[connection signal="pressed" from="BottomButtonsContainer/JourneyButton" to="." method="_on_journey_mode_button_pressed"]
+[connection signal="mouse_entered" from="BottomButtonsContainer/LeaderboardButton" to="." method="_on_leaderboard_button_mouse_entered"]
+[connection signal="pressed" from="BottomButtonsContainer/LeaderboardButton" to="." method="_on_leaderboard_button_pressed"]
+[connection signal="mouse_entered" from="BottomButtonsContainer/SettingsButton" to="." method="_on_settings_button_mouse_entered"]
+[connection signal="pressed" from="BottomButtonsContainer/SettingsButton" to="." method="_on_settings_button_pressed"]

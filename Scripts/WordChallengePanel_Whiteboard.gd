@@ -56,6 +56,12 @@ func _ready():
 	
 	# Update status to show we're using Google Cloud Vision
 	api_status_label.text = "Using Google Cloud Vision for recognition"
+	
+	# Connect button hover events (add any buttons that exist in this panel)
+	# Note: This panel may have fewer buttons than STT version
+
+func _on_button_hover():
+	$ButtonHover.play()
 
 # Function to provide the challenge word to the WhiteboardInterface
 func get_challenge_word():
@@ -309,6 +315,7 @@ func calculate_word_similarity(word1, word2):
 
 # Handle TTS button press
 func _on_tts_button_pressed():
+	$ButtonClick.play()
 	# Speak the challenge word with improved feedback
 	api_status_label.text = "Reading word..."
 	
@@ -350,6 +357,7 @@ func _on_tts_speech_error(_error_msg):
 		tts.disconnect("speech_error", Callable(self, "_on_tts_speech_ended"))
 
 func _on_tts_settings_button_pressed():
+	$ButtonClick.play()
 	# Load and show the TTS settings popup
 	var tts_popup = load("res://Scenes/TTSSettingsPopup.tscn").instantiate()
 	add_child(tts_popup)
@@ -371,10 +379,12 @@ func _on_tts_settings_closed():
 	pass
 
 func _on_test_button_pressed():
+	$ButtonClick.play()
 	# This is handled by the popup now
 	pass
 
 func _on_close_button_pressed():
+	$ButtonClick.play()
 	# This is handled by the popup now
 	tts_settings_panel.visible = false
 
@@ -496,3 +506,11 @@ func _are_dyslexic_similar(char1: String, char2: String) -> bool:
 		return char2 in dyslexic_pairs[char1]
 	
 	return false
+
+
+func _on_tts_button_mouse_entered() -> void:
+	$ButtonHover.play()
+
+
+func _on_tts_settings_button_mouse_entered() -> void:
+	$ButtonHover.play()

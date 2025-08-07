@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://bp4hw87kmq0gw"
+path="res://.godot/imported/button select 4.ogg-c8b2d7dbf5b3b6560fbe47714fc76a60.oggvorbisstr"
+
+[deps]
+
+source_file="res://audio/buttons select sound effect/button select 4.ogg"
+dest_files=["res://.godot/imported/button select 4.ogg-c8b2d7dbf5b3b6560fbe47714fc76a60.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

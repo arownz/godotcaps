@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://d1cb4djmat1dj"]
+[gd_scene load_steps=25 format=3 uid="uid://d1cb4djmat1dj"]
 
 [ext_resource type="Script" uid="uid://4gerx64y471n" path="res://Scripts/dungeon_1_map.gd" id="1_ocdpx"]
 [ext_resource type="Texture2D" uid="uid://chfkysvsxt4eg" path="res://gui/Update/Backgrounds/Plains_Level.png" id="1_shrlp"]
@@ -20,6 +20,8 @@
 [ext_resource type="Texture2D" uid="uid://ct2kkb4phx2kr" path="res://gui/Update/icons/treant.png" id="16_lqaqn"]
 [ext_resource type="Texture2D" uid="uid://clbfvil7saw1l" path="res://gui/Update/UI/Fight Button (Default).png" id="19_0ho0y"]
 [ext_resource type="Texture2D" uid="uid://djvsvmhtt816b" path="res://gui/Update/UI/ui 10_hover.png" id="19_t6djc"]
+[ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="21_ocdpx"]
+[ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="22_sq72c"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_o52iv"]
 
@@ -594,3 +596,12 @@ theme_override_fonts/font = ExtResource("8_oyrip")
 theme_override_font_sizes/font_size = 24
 text = "Back"
 horizontal_alignment = 1
+
+[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("21_ocdpx")
+
+[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("22_sq72c")
+
+[connection signal="mouse_entered" from="StageDetails/CloseButton" to="." method="_on_close_button_mouse_entered"]
+[connection signal="pressed" from="StageDetails/CloseButton" to="." method="_on_close_button_pressed"]

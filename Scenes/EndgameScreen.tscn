@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://3mxcrytk1kud"]
+[gd_scene load_steps=10 format=3 uid="uid://3mxcrytk1kud"]
 
 [ext_resource type="Script" uid="uid://dc6lqw6dmfe1y" path="res://Scripts/EndgameScreen.gd" id="1_mgr3d"]
 [ext_resource type="Texture2D" uid="uid://rgl03eh75egv" path="res://gui/Update/UI/victory UI.png" id="2_frm3f"]
@@ -6,6 +6,8 @@
 [ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="4_hehfl"]
 [ext_resource type="Texture2D" uid="uid://bwchhxhbrsql8" path="res://gui/Update/UI/hover white button.png" id="5_3xqox"]
 [ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="7_3xqox"]
+[ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="7_gworm"]
+[ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="8_7m5p6"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hehfl"]
 
@@ -138,6 +140,15 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
+[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("7_gworm")
+
+[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("8_7m5p6")
+
+[connection signal="mouse_entered" from="ResultPanel/VBoxContainer/ButtonContainer/ContinueButton" to="." method="_on_continue_button_mouse_entered"]
 [connection signal="pressed" from="ResultPanel/VBoxContainer/ButtonContainer/ContinueButton" to="." method="_on_continue_button_pressed"]
+[connection signal="mouse_entered" from="ResultPanel/VBoxContainer/ButtonsContainer/RestartButton" to="." method="_on_restart_button_mouse_entered"]
 [connection signal="pressed" from="ResultPanel/VBoxContainer/ButtonsContainer/RestartButton" to="." method="_on_restart_button_pressed"]
+[connection signal="mouse_entered" from="ResultPanel/VBoxContainer/ButtonsContainer/QuitButton" to="." method="_on_quit_button_mouse_entered"]
 [connection signal="pressed" from="ResultPanel/VBoxContainer/ButtonsContainer/QuitButton" to="." method="_on_quit_button_pressed"]

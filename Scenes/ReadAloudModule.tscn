@@ -1,9 +1,11 @@
-[gd_scene load_steps=5 format=3 uid="uid://ck7j4eam2h6n8"]
+[gd_scene load_steps=7 format=3 uid="uid://ck7j4eam2h6n8"]
 
 [ext_resource type="Texture2D" uid="uid://cp6h0easasnmc" path="res://gui/Update/UI/ui 6.png" id="2_j3jpk"]
 [ext_resource type="Script" uid="uid://0gkfgjdix8tw" path="res://Scripts/ReadAloudModule.gd" id="2_script"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="3_regular_font"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="4_bold_font"]
+[ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="5_lkfnu"]
+[ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="6_c3ufk"]
 
 [node name="ReadAloudModule" type="Control"]
 layout_mode = 3
@@ -52,7 +54,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold_font")
-text = "📖 Interactive Read-Aloud"
+text = "Interactive Read-Aloud"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -83,6 +85,7 @@ text = "Welcome to Interactive Read-Aloud!"
 horizontal_alignment = 1
 
 [node name="Description" type="Label" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer"]
+custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3_regular_font")
 text = "Follow along with highlighted text and audio narration. Practice your reading comprehension and fluency skills."
@@ -90,10 +93,11 @@ horizontal_alignment = 1
 autowrap_mode = 2
 
 [node name="ComingSoonLabel" type="Label" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer"]
+custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_fonts/font = ExtResource("3_regular_font")
-text = "🚧 This module is under development 🚧
+text = "This module is under development
 
 For now, you can practice with the Word Challenge interface!"
 horizontal_alignment = 1
@@ -110,11 +114,11 @@ layout_mode = 2
 theme_override_fonts/font = ExtResource("4_bold_font")
 text = "Word Challenge (STT)"
 
-[node name="BackButton2" type="Button" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/ButtonContainer"]
-layout_mode = 2
-theme_override_fonts/font = ExtResource("3_regular_font")
-text = "Back to Modules"
+[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_lkfnu")
+
+[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_c3ufk")
 
 [connection signal="pressed" from="MainContainer/HeaderContainer/BackButton" to="." method="_on_back_button_pressed"]
 [connection signal="pressed" from="MainContainer/CenterContainer/ContentPanel/ContentContainer/ButtonContainer/STTButton" to="." method="_on_stt_button_pressed"]
-[connection signal="pressed" from="MainContainer/CenterContainer/ContentPanel/ContentContainer/ButtonContainer/BackButton2" to="." method="_on_back_button_pressed"]

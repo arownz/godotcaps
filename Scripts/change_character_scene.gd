@@ -273,11 +273,13 @@ func update_character_display():
 
 # Handle navigation buttons with circular behavior
 func _on_next_button_pressed():
+	$ButtonClick.play()
 	current_character = (current_character + 1) % CHARACTER_COUNT # Wrap around: 0→1→2→0
 	_animate_carousel_to_position(current_character)
 	update_character_display()
 
 func _on_previous_button_pressed():
+	$ButtonClick.play()
 	current_character = (current_character - 1 + CHARACTER_COUNT) % CHARACTER_COUNT # Wrap around: 2→1→0→2
 	_animate_carousel_to_position(current_character)
 	update_character_display()
@@ -342,6 +344,7 @@ func _on_notification_closed():
 
 # Button hover handlers
 func _on_back_button_hover_entered():
+	$ButtonHover.play()
 	var back_label = $BackButton/BackLabel
 	if back_label:
 		back_label.visible = true
@@ -352,6 +355,7 @@ func _on_back_button_hover_exited():
 		back_label.visible = false
 
 func _on_next_button_hover_entered():
+	$ButtonHover.play()
 	var next_label = $NextButton/NextLabel
 	if next_label:
 		next_label.visible = true
@@ -362,6 +366,7 @@ func _on_next_button_hover_exited():
 		next_label.visible = false
 
 func _on_previous_button_hover_entered():
+	$ButtonHover.play()
 	var previous_label = $PreviousButton/PreviousLabel
 	if previous_label:
 		previous_label.visible = true
@@ -373,6 +378,7 @@ func _on_previous_button_hover_exited():
 
 # Handle navigation and select buttons
 func _on_back_button_pressed():
+	$ButtonClick.play()
 	_fade_out_and_change_scene("res://Scenes/MainMenu.tscn")
 
 # Helper function to fade out before changing scenes
@@ -385,6 +391,7 @@ func _fade_out_and_change_scene(scene_path: String):
 	get_tree().change_scene_to_file(scene_path)
 
 func _on_select_button_pressed():
+	$ButtonClick.play()
 	if current_character >= unlocked_characters:
 		return # Don't allow selecting locked characters
 	

@@ -151,27 +151,27 @@ func _create_simple_power_header() -> Control:
 	header.add_child(name_container)
 	
 	# Level
-	var level_label = _create_simple_label("LEVEL", 16, Color(1, 1, 0.3))
+	var level_label = _create_simple_label("LVL", 16, Color(1, 1, 0.3))
 	var level_container = _create_bordered_container(level_label, Vector2(80, 50), Color(0.15, 0.25, 0.35, 0.8))
 	header.add_child(level_container)
 	
 	# Health (green color)
-	var health_label = _create_simple_label("HEALTH", 16, Color(0.3, 1, 0.3))
+	var health_label = _create_simple_label("HP", 16, Color(0.3, 1, 0.3))
 	var health_container = _create_bordered_container(health_label, Vector2(100, 50), Color(0.15, 0.25, 0.35, 0.8))
 	header.add_child(health_container)
 	
 	# Attack (red color)
-	var attack_label = _create_simple_label("ATTACK", 16, Color(1, 0.3, 0.3))
+	var attack_label = _create_simple_label("DMG", 16, Color(1, 0.3, 0.3))
 	var attack_container = _create_bordered_container(attack_label, Vector2(100, 50), Color(0.15, 0.25, 0.35, 0.8))
 	header.add_child(attack_container)
 	
 	# Durability (blue color)
-	var durability_label = _create_simple_label("DEFENSE", 16, Color(0.3, 0.7, 1))
+	var durability_label = _create_simple_label("DEF", 16, Color(0.3, 0.7, 1))
 	var durability_container = _create_bordered_container(durability_label, Vector2(110, 50), Color(0.15, 0.25, 0.35, 0.8))
 	header.add_child(durability_container)
 	
 	# Power Scale (yellow color)
-	var power_label = _create_simple_label("POWER", 16, Color(1, 0.8, 0.2))
+	var power_label = _create_simple_label("SCALE", 16, Color(1, 0.8, 0.2))
 	var power_container = _create_bordered_container(power_label, Vector2(100, 50), Color(0.15, 0.25, 0.35, 0.8))
 	header.add_child(power_container)
 	
@@ -970,6 +970,7 @@ func _populate_word_recognize_rankings():
 
 # Back button handler
 func _on_back_button_pressed():
+	$ButtonClick.play()
 	_fade_out_and_change_scene("res://Scenes/MainMenu.tscn")
 
 # Helper function to fade out before changing scenes

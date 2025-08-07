@@ -1,10 +1,12 @@
-[gd_scene load_steps=7 format=3 uid="uid://dwbgcm4h51s55"]
+[gd_scene load_steps=9 format=3 uid="uid://dwbgcm4h51s55"]
 
 [ext_resource type="Script" uid="uid://bpilknkrukhr5" path="res://Scripts/notification_popup.gd" id="1_sco0o"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="3_uo33e"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="4_gqct2"]
 [ext_resource type="FontFile" uid="uid://bgln2wf0h6j6e" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.woff" id="5_ite0x"]
 [ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="6_3551x"]
+[ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="6_iwvea"]
+[ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="7_uo33e"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_issni"]
 
@@ -93,5 +95,11 @@ icon = ExtResource("6_3551x")
 flat = true
 icon_alignment = 1
 expand_icon = true
+
+[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_iwvea")
+
+[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("7_uo33e")
 
 [connection signal="pressed" from="PopupContainer/CenterContainer/PopupBackground/VBoxContainer/CloseButton" to="." method="_on_close_button_pressed"]

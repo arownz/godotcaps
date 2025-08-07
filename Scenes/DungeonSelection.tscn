@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://sdyk7ldijega"]
+[gd_scene load_steps=20 format=3 uid="uid://sdyk7ldijega"]
 
 [ext_resource type="Script" uid="uid://t3y57n5oleps" path="res://Scripts/DungeonSelection.gd" id="1_bfmdj"]
 [ext_resource type="Texture2D" uid="uid://chfkysvsxt4eg" path="res://gui/Update/Backgrounds/Plains_Level.png" id="2_bu21u"]
@@ -16,6 +16,8 @@
 [ext_resource type="Texture2D" uid="uid://cghh3806ycwdb" path="res://gui/Update/UI/small button_hovers.png" id="11_cwhbx"]
 [ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="11_v81g5"]
 [ext_resource type="Texture2D" uid="uid://cpt6gmnwq7v0o" path="res://gui/Update/UI/next button_hover.png" id="11_wo2mw"]
+[ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="17_8punp"]
+[ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="18_2cjru"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bu21u"]
 
@@ -379,6 +381,12 @@ theme_override_fonts/font = ExtResource("7_vkjng")
 theme_override_font_sizes/font_size = 24
 text = "Back"
 horizontal_alignment = 1
+
+[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("17_8punp")
+
+[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("18_2cjru")
 
 [connection signal="pressed" from="DungeonContainer/DungeonCarousel/Dungeon1/TextureButton" to="." method="_on_dungeon1_pressed"]
 [connection signal="pressed" from="DungeonContainer/DungeonCarousel/Dungeon2/TextureButton" to="." method="_on_dungeon2_pressed"]

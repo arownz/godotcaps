@@ -11,12 +11,21 @@ func _ready():
 		$MainContainer/CenterContainer/ContentPanel/ContentContainer/DemoSection/DemoContainer/SyllableBox2,
 		$MainContainer/CenterContainer/ContentPanel/ContentContainer/DemoSection/DemoContainer/SyllableBox3
 	]
+	
+	# Connect button hover events
+	if $BackButton:
+		$BackButton.mouse_entered.connect(_on_button_hover)
+
+func _on_button_hover():
+	$ButtonHover.play()
 
 func _on_back_button_pressed():
+	$ButtonClick.play()
 	print("SyllableBuildingModule: Returning to module selection")
 	get_tree().change_scene_to_file("res://Scenes/ModuleScene.tscn")
 
 func _on_start_activity_pressed(activity_number: int):
+	$ButtonClick.play()
 	print("SyllableBuildingModule: Starting activity ", activity_number)
 	
 	# For now, show a placeholder message
@@ -30,22 +39,24 @@ func _on_start_activity_pressed(activity_number: int):
 	dialog.queue_free()
 
 func _on_syllable_clicked(syllable: String):
+	$ButtonClick.play()
 	print("SyllableBuildingModule: Syllable clicked: ", syllable)
 	
 	# Find the button that was clicked and highlight it
 	for button in syllable_buttons:
 		if button.text == syllable:
 			if button.modulate == Color.WHITE:
-				button.modulate = Color.YELLOW  # Highlight selected
+				button.modulate = Color.YELLOW # Highlight selected
 				selected_syllables.append(syllable)
 			else:
-				button.modulate = Color.WHITE   # Deselect
+				button.modulate = Color.WHITE # Deselect
 				selected_syllables.erase(syllable)
 			break
 	
 	print("Selected syllables: ", selected_syllables)
 
 func _on_build_word_pressed():
+	$ButtonClick.play()
 	print("SyllableBuildingModule: Build word pressed")
 	
 	# Check if the correct syllables are selected in order

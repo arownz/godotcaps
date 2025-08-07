@@ -33,6 +33,9 @@ var enemy_level = 1
 var enemy_skill_damage_multiplier = 2.0 # Multiplier for skill damage
 var exp_reward = 0 # Experience points awarded for defeating this enemy
 
+# Battle state tracking - CRITICAL for preventing post-game skill activations
+var is_battle_active = true # Track if battle is still ongoing
+
 # Enemy resources - load all enemy types
 var enemy_resources = {
 	"dungeon1_normal": preload("res://Resources/Enemies/dungeon1_normal.tres"),
@@ -188,9 +191,10 @@ func setup_enemy():
     # Set current health to max health
     enemy_health = enemy_max_health
     
-    # Reset skill meter
+    # Reset skill meter and battle state
     enemy_skill_meter = 0
     enemy_skill_threshold = 100
+    is_battle_active = true # Reset battle state for new battle
     
     print("Enemy setup complete:")
     print("- Name: ", enemy_name)
@@ -431,15 +435,19 @@ func take_damage(damage_amount):
     
     # Check if enemy is defeated
     if enemy_health <= 0:
+        is_battle_active = false # CRITICAL: Stop battle state immediately when defeated
         emit_signal("enemy_defeated", exp_reward)
         
         # Play death animation
         if enemy_animation and enemy_animation.get_node("AnimatedSprite2D"):
             enemy_animation.get_node("AnimatedSprite2D").play("dead")
     else:
-        # Increase skill meter when taking damage (if not defeated)
-        enemy_skill_meter = min(enemy_skill_threshold, enemy_skill_meter + reduced_damage)
-        emit_signal("enemy_skill_meter_changed", enemy_skill_meter)
+        # CRITICAL FIX: Only increase skill meter if battle is still active
+        if is_battle_active:
+            enemy_skill_meter = min(enemy_skill_threshold, enemy_skill_meter + reduced_damage)
+            emit_signal("enemy_skill_meter_changed", enemy_skill_meter)
+        else:
+            print("EnemyManager: Skill meter increase blocked - battle ended")
         
         # Play hurt animation
         if enemy_animation and enemy_animation.get_node("AnimatedSprite2D"):
@@ -449,6 +457,11 @@ func take_damage(damage_amount):
 
 # This method will be called when enemy uses abilities
 func increase_skill_meter(amount):
+    # CRITICAL FIX: Prevent skill meter increases after battle ends
+    if not is_battle_active:
+        print("EnemyManager: Skill meter increase blocked - battle has ended")
+        return false
+    
     enemy_skill_meter += amount
     enemy_skill_meter = min(enemy_skill_meter, enemy_skill_threshold)
     
@@ -462,8 +475,25 @@ func reset_skill_meter():
     enemy_skill_meter = 0
     emit_signal("enemy_skill_meter_changed", enemy_skill_meter)
 
+# CRITICAL: End battle state to prevent further skill activations
+func end_battle():
+    print("EnemyManager: Battle ended - disabling all skill meter activities")
+    is_battle_active = false
+    # Reset skill meter to prevent any pending skill activations
+    enemy_skill_meter = 0
+    emit_signal("enemy_skill_meter_changed", enemy_skill_meter)
+
+# Check if battle is still active (for external verification)
+func is_battle_still_active() -> bool:
+    return is_battle_active
+
 # Perform enemy attack on player
 func attack(player_manager):
+    # CRITICAL: Prevent attacks after battle ends
+    if not is_battle_active:
+        print("EnemyManager: Attack blocked - battle has ended")
+        return 0
+    
     # Check for special skill trigger
     if enemy_skill_meter >= enemy_skill_threshold:
         return use_special_skill(player_manager)
@@ -482,6 +512,10 @@ func attack(player_manager):
 
 # Use enemy's special skill
 func use_special_skill(player_manager):
+    # CRITICAL: Prevent special skills after battle ends
+    if not is_battle_active:
+        print("EnemyManager: Special skill blocked - battle has ended")
+        return 0
     # Play skill animation
     if enemy_animation and enemy_animation.get_node("AnimatedSprite2D"):
         enemy_animation.get_node("AnimatedSprite2D").play("skill")

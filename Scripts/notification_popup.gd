@@ -148,6 +148,7 @@ func _calculate_popup_size(message: String) -> Vector2:
 	return Vector2(calculated_width, calculated_height)
 
 func _on_close_button_pressed():
+	$ButtonClick.play()
 	var popup_container = $PopupContainer
 	if popup_container:
 		var tween = create_tween()
@@ -159,3 +160,7 @@ func _on_close_button_pressed():
 	
 	hide()
 	emit_signal("closed")
+
+
+func _on_close_button_mouse_entered() -> void:
+	$ButtonHover.play()

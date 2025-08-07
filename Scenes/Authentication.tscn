@@ -1,13 +1,17 @@
-[gd_scene load_steps=11 format=3 uid="uid://cbpwvuj8kdyod"]
+[gd_scene load_steps=14 format=3 uid="uid://cbpwvuj8kdyod"]
 
 [ext_resource type="Script" uid="uid://t5tc36uuxhcf" path="res://Scripts/authentication.gd" id="1_6ea5n"]
 [ext_resource type="Texture2D" uid="uid://cxqd6wyqy8g22" path="res://gui/Update/Backgrounds/battlescene background.png" id="2_6oq4l"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="2_edc1m"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="3_4bnr5"]
-[ext_resource type="Texture2D" uid="uid://byhddv6cyomeu" path="res://gui/Update/logos/logo_character.png" id="3_6oq4l"]
+[ext_resource type="Texture2D" uid="uid://kmsov1f4i7wq" path="res://gui/Update/logos/LEXIA Logo (with text) transparent.png" id="3_c45f6"]
 [ext_resource type="Texture2D" uid="uid://dkfy0a7ea1sd1" path="res://gui/Update/UI/ui 4.png" id="5_6oq4l"]
 [ext_resource type="Texture2D" uid="uid://decyo17hpkcp6" path="res://gui/googleicon.png" id="5_qlk3g"]
 [ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="8_6oq4l"]
+[ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="9_c45f6"]
+[ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="10_c45f6"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_c45f6"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6oq4l"]
 
@@ -82,7 +86,7 @@ custom_minimum_size = Vector2(200, 180)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_stretch_ratio = 0.0
-texture = ExtResource("3_6oq4l")
+texture = ExtResource("3_c45f6")
 expand_mode = 1
 stretch_mode = 5
 
@@ -92,7 +96,7 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 23
-text = "Lexia
+text = "Dyslexia
 Gamification
 Version 1.0"
 horizontal_alignment = 1
@@ -144,6 +148,7 @@ alignment = 1
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 20
+theme_override_styles/tab_focus = SubResource("StyleBoxEmpty_c45f6")
 current_tab = 0
 
 [node name="Login" type="VBoxContainer" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer"]
@@ -574,15 +579,38 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
+[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("9_c45f6")
+
+[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("10_c45f6")
+
+[connection signal="tab_clicked" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer" to="." method="_on_tab_container_tab_clicked"]
+[connection signal="tab_hovered" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer" to="." method="_on_tab_container_tab_hovered"]
 [connection signal="text_changed" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/EmailLineEdit" to="." method="_on_login_email_text_changed"]
 [connection signal="text_changed" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/PasswordContainer/PasswordLineEdit" to="." method="_on_login_password_text_changed"]
+[connection signal="mouse_entered" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/PasswordContainer/ShowPasswordButton" to="." method="_on_show_password_button_mouse_entered"]
 [connection signal="pressed" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/PasswordContainer/ShowPasswordButton" to="." method="_on_show_password_button_pressed"]
+[connection signal="mouse_entered" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/ForgotPasswordButton" to="." method="_on_forgot_password_button_mouse_entered"]
 [connection signal="pressed" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/ForgotPasswordButton" to="." method="_on_forgot_password_button_pressed"]
+[connection signal="mouse_entered" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/LoginButton" to="." method="_on_login_button_mouse_entered"]
 [connection signal="pressed" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/LoginButton" to="." method="_on_login_button_pressed"]
+[connection signal="mouse_entered" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/SignInGoogleButton" to="." method="_on_sign_in_google_button_mouse_entered"]
 [connection signal="pressed" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/SignInGoogleButton" to="." method="_on_sign_in_google_button_pressed"]
+[connection signal="mouse_entered" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/BirthDateContainer/DayOptionButton" to="." method="_on_day_option_button_mouse_entered"]
+[connection signal="pressed" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/BirthDateContainer/DayOptionButton" to="." method="_on_day_option_button_pressed"]
+[connection signal="mouse_entered" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/BirthDateContainer/MonthOptionButton" to="." method="_on_month_option_button_mouse_entered"]
+[connection signal="pressed" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/BirthDateContainer/MonthOptionButton" to="." method="_on_month_option_button_pressed"]
+[connection signal="mouse_entered" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/BirthDateContainer/YearOptionButton" to="." method="_on_year_option_button_mouse_entered"]
+[connection signal="pressed" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/BirthDateContainer/YearOptionButton" to="." method="_on_year_option_button_pressed"]
+[connection signal="mouse_entered" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegPasswordContainer/ShowRegPasswordButton" to="." method="_on_show_reg_password_button_mouse_entered"]
 [connection signal="pressed" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegPasswordContainer/ShowRegPasswordButton" to="." method="_on_show_reg_password_button_pressed"]
+[connection signal="mouse_entered" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/ConfirmPasswordContainer/ShowConfirmPasswordButton" to="." method="_on_show_confirm_password_button_mouse_entered"]
 [connection signal="pressed" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/ConfirmPasswordContainer/ShowConfirmPasswordButton" to="." method="_on_show_confirm_password_button_pressed"]
+[connection signal="mouse_entered" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegisterButton" to="." method="_on_register_button_mouse_entered"]
 [connection signal="pressed" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegisterButton" to="." method="_on_register_button_pressed"]
+[connection signal="mouse_entered" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword/BackToLoginButton" to="." method="_on_back_to_login_button_mouse_entered"]
 [connection signal="pressed" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword/BackToLoginButton" to="." method="_on_back_to_login_button_pressed"]
 [connection signal="pressed" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword/ResetButton" to="." method="_on_reset_password_button_pressed"]
+[connection signal="mouse_entered" from="AdminButton" to="." method="_on_admin_button_mouse_entered"]
 [connection signal="pressed" from="AdminButton" to="." method="_on_admin_button_pressed"]

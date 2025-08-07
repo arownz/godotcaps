@@ -25,6 +25,15 @@ func _ready():
 	
 	# Show loading indicator
 	$Panel/VBoxContainer/StatusLabel.text = "Loading voices..."
+	
+	# Connect button hover events
+	if $Panel/VBoxContainer/TestButton:
+		$Panel/VBoxContainer/TestButton.mouse_entered.connect(_on_button_hover)
+	if $Panel/VBoxContainer/CloseButton:
+		$Panel/VBoxContainer/CloseButton.mouse_entered.connect(_on_button_hover)
+
+func _on_button_hover():
+	$ButtonHover.play()
 
 func _input(event):
 	# Close popup on escape key
@@ -112,6 +121,7 @@ func _on_voices_loaded():
 	_initialize_voice_options()
 
 func _on_voice_option_button_item_selected(index):
+	$ButtonClick.play()
 	# Update current voice
 	if index >= 0 and index < voice_options.size():
 		current_voice_id = voice_options[index].id
@@ -142,6 +152,7 @@ func _update_rate_label(value):
 	rate_label.text = rate_text
 
 func _on_test_button_pressed():
+	$ButtonClick.play()
 	# Test the current voice and rate with improved feedback
 	if tts:
 		$Panel/VBoxContainer/StatusLabel.text = "Testing voice with: " + test_word + "..."
@@ -200,7 +211,20 @@ func _on_test_speech_error(error_msg):
 		tts.disconnect("speech_error", Callable(self, "_on_test_speech_error"))
 
 func _on_close_button_pressed():
+	$ButtonClick.play()
 	# Save settings and close
 	emit_signal("settings_saved", current_voice_id, current_rate)
 	emit_signal("settings_closed")
 	queue_free()
+
+
+func _on_test_button_mouse_entered() -> void:
+	$ButtonHover.play()
+
+
+func _on_close_button_mouse_entered() -> void:
+	$ButtonHover.play()
+
+
+func _on_voice_option_button_mouse_entered() -> void:
+	$ButtonHover.play()

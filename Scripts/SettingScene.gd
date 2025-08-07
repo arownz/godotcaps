@@ -82,6 +82,7 @@ func update_ui_from_settings():
 # ===== Signal Handlers =====
 
 func _on_back_button_pressed():
+	$ButtonClick.play()
 	"""Return to main menu"""
 	print("SettingScene: Back button pressed")
 	_fade_out_and_change_scene("res://Scenes/MainMenu.tscn")
@@ -144,6 +145,7 @@ func _on_tutorials_toggled(pressed: bool):
 # === Data Management ===
 	
 func _on_export_data_button_pressed():
+	$ButtonClick.play()
 	"""Handle export data button"""
 	print("SettingScene: Export data button pressed")
 	
@@ -158,3 +160,10 @@ func _on_export_data_button_pressed():
 	dialog.queue_free()
 	
 	# TODO: Implement actual data export when needed
+
+
+func _on_back_button_mouse_entered() -> void:
+	$ButtonHover.play()
+
+func _on_export_data_button_mouse_entered() -> void:
+	$ButtonHover.play()

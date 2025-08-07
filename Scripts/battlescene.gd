@@ -235,6 +235,8 @@ func _on_player_health_changed(_current_health, _max_health):
 
 func _on_enemy_defeated(_exp_reward):
 	battle_active = false
+	# CRITICAL: Stop enemy manager activities immediately
+	enemy_manager.end_battle()
 	# Stop the stage timer when enemy is defeated
 	await _stop_stage_timer()
 	# Call battle_manager to handle victory
@@ -242,6 +244,8 @@ func _on_enemy_defeated(_exp_reward):
 
 func _on_player_defeated():
 	battle_active = false
+	# CRITICAL: Stop enemy manager activities immediately to prevent skill activations
+	enemy_manager.end_battle()
 	# Stop the stage timer when player is defeated (no time saving on defeat)
 	stage_timer_active = false
 	# Let battle_manager handle defeat
@@ -295,12 +299,17 @@ func _setup_auto_battle_timer():
 
 # Engage button pressed - directly start auto battle and consume energy
 func _on_engage_button_pressed():
+	$ButtonClick.play()
 	if battle_active:
 		return
 	
+	# Check energy first and show notification if insufficient
+	if ! await _check_energy_and_show_notification():
+		return # Not enough energy, notification shown
+	
 	# Consume energy before starting battle
 	if ! await _consume_battle_energy():
-		return # Not enough energy, don't start battle
+		return # Energy consumption failed
 	
 	# Start the actual battle
 	_start_battle()
@@ -330,9 +339,13 @@ func _show_battle_settings_popup():
 	get_tree().current_scene.add_child(popup)
 
 func _on_engage_confirmed():
+	# Check energy first and show notification if insufficient
+	if ! await _check_energy_and_show_notification():
+		return # Not enough energy, notification shown
+	
 	# Consume energy before starting battle
 	if ! await _consume_battle_energy():
-		return # Not enough energy, don't start battle
+		return # Energy consumption failed
 	
 	# Start the actual battle
 	_start_battle()
@@ -449,10 +462,15 @@ func _auto_battle_turn():
 	# Give a brief pause for animation
 	await get_tree().create_timer(0.8).timeout
 	
-	# Check if enemy skill is ready
-	if enemy_manager.enemy_skill_meter >= enemy_manager.enemy_skill_threshold:
+	# Check if enemy skill is ready and battle is still active
+	if battle_active and enemy_manager.enemy_skill_meter >= enemy_manager.enemy_skill_threshold:
 		await get_tree().create_timer(0.5).timeout
-		battle_manager.trigger_enemy_skill()
+		# Double-check battle is still active before triggering skill
+		if battle_active:
+			battle_manager.trigger_enemy_skill()
+		return
+	elif not battle_active:
+		print("BattleScene: Skipping enemy skill - battle has ended")
 		return
 	
 	# Continue battle after delay - make it a shorter delay for faster battles
@@ -542,10 +560,12 @@ func get_current_stage() -> int:
 	return dungeon_manager.stage_num
 
 func _on_settings_button_pressed():
+	$ButtonClick.play()
 	print("Settings button pressed - showing battle settings popup")
 	_show_battle_settings_popup()
 
 func _on_settings_button_hover_enter():
+	$ButtonHover.play()
 	var setting_label = $MainContainer/BattleAreaContainer/SettingButton/SettingLabel
 	if setting_label:
 		setting_label.visible = true
@@ -573,7 +593,7 @@ func _consume_battle_energy() -> bool:
 			
 			# Check if player has enough energy
 			if current_energy < 2:
-				print("Not enough energy: " + str(current_energy) + "/2 required")
+				_show_energy_notification(current_energy, 20)
 				return false
 			
 			# Consume 2 energy
@@ -590,13 +610,120 @@ func _consume_battle_energy() -> bool:
 				print("Failed to update energy in Firebase")
 				return false
 		else:
-			print("No player stats found in Firebase")
+			_show_energy_notification(0, 20)
 			return false
 	else:
-		print("Failed to get user document")
+		_show_energy_notification(0, 20)
 		return false
 
-# ===== Stage Timer Functions (Live Timer System) =====
+# NEW: Check energy and show notification if insufficient 
+func _check_energy_and_show_notification() -> bool:
+	print("BattleScene: Checking energy for battle engagement...")
+	
+	# Get current energy without consuming it
+	if !Firebase.Auth.auth:
+		print("BattleScene: Not authenticated, showing energy notification")
+		_show_energy_notification(0, 20)
+		return false
+	
+	var user_id = Firebase.Auth.auth.localid
+	var collection = Firebase.Firestore.collection("dyslexia_users")
+	
+	# Get user document
+	var user_doc = await collection.get_doc(user_id)
+	if user_doc and !("error" in user_doc.keys() and user_doc.get_value("error")):
+		var stats_data = user_doc.get_value("stats")
+		if stats_data != null and "player" in stats_data:
+			var player_data = stats_data["player"]
+			var current_energy = player_data.get("energy", 0)
+			var max_energy = 20
+			
+			print("BattleScene: Current energy: " + str(current_energy) + "/" + str(max_energy))
+			
+			# Check if player has enough energy
+			if current_energy < 2:
+				print("BattleScene: Insufficient energy, showing notification")
+				_show_energy_notification(current_energy, max_energy)
+				return false
+			
+			print("BattleScene: Energy check passed")
+			return true
+		else:
+			print("BattleScene: No player stats data found")
+			_show_energy_notification(0, 20)
+			return false
+	else:
+		print("BattleScene: Failed to get user document")
+		_show_energy_notification(0, 20)
+		return false
+
+# NEW: Show energy notification popup
+func _show_energy_notification(current_energy: int, max_energy: int):
+	print("Showing energy notification: " + str(current_energy) + "/" + str(max_energy))
+	
+	# Get the notification popup that was created in _initialize_managers()
+	var notification_popup = get_node_or_null("NotificationPopUp")
+	if notification_popup:
+		var title = "Not Enough Energy"
+		var message = ""
+		
+		# Calculate energy recovery time information
+		var energy_recovery_info = await _get_energy_recovery_info()
+		var recovery_text = ""
+		if energy_recovery_info.has("next_energy_time"):
+			recovery_text = "\n\nNext energy in: " + energy_recovery_info["next_energy_time"]
+		else:
+			recovery_text = "\n\nEnergy recovers every 4 minutes."
+		
+		if current_energy == 0:
+			message = "You have no energy remaining (" + str(current_energy) + "/" + str(max_energy) + ").\n\nEnergy is required to engage in battles. Wait for energy to recover over time." + recovery_text
+		else:
+			message = "You need 2 energy to start a battle, but you only have " + str(current_energy) + " energy remaining.\n\nWait for battle energy to recover over time." + recovery_text
+		
+		var button_text = "OK"
+		
+		# Show the notification
+		notification_popup.show_notification(title, message, button_text)
+	else:
+		print("Error: NotificationPopUp not found in scene tree")
+
+# NEW: Get energy recovery time information
+func _get_energy_recovery_info() -> Dictionary:
+	var result = {}
+	
+	if !Firebase.Auth.auth:
+		return result
+	
+	var user_id = Firebase.Auth.auth.localid
+	var collection = Firebase.Firestore.collection("dyslexia_users")
+	
+	# Get user document (don't use await here to avoid blocking)
+	var user_doc = await collection.get_doc(user_id)
+	if user_doc and !("error" in user_doc.keys() and user_doc.get_value("error")):
+		var stats_data = user_doc.get_value("stats")
+		if stats_data != null and "player" in stats_data:
+			var player_data = stats_data["player"]
+			var current_energy = player_data.get("energy", 0)
+			var max_energy = 20
+			var energy_recovery_rate = 240 # 4 minutes in seconds
+			
+			# If at max energy, no recovery needed
+			if current_energy >= max_energy:
+				return result
+			
+			var current_time = Time.get_unix_time_from_system()
+			var last_update = player_data.get("last_energy_update", current_time)
+			var time_since_last_recovery = current_time - last_update
+			var time_until_next_energy = energy_recovery_rate - fmod(time_since_last_recovery, energy_recovery_rate)
+			
+			var minutes = int(time_until_next_energy / 60)
+			var seconds = int(time_until_next_energy) % 60
+			
+			result["next_energy_time"] = "%d:%02d" % [minutes, seconds]
+			result["current_energy"] = current_energy
+			result["max_energy"] = max_energy
+	
+	return result # ===== Stage Timer Functions (Live Timer System) =====
 func _start_stage_timer():
 	print("BattleScene: Starting stage timer for Dungeon ", dungeon_manager.dungeon_num, " Stage ", dungeon_manager.stage_num)
 	
@@ -944,3 +1071,11 @@ func _shake_label(label: Label, original_pos: Vector2, progress: float):
 		)
 	else:
 		label.position = original_pos
+
+
+func _on_engage_button_mouse_entered() -> void:
+	$ButtonHover.play()
+
+
+func _on_setting_button_pressed() -> void:
+	pass # Replace with function body.

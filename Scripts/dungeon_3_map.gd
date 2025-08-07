@@ -93,6 +93,7 @@ func _unhandled_input(event):
 				get_viewport().set_input_as_handled()
 
 func _on_close_button_pressed():
+	$ButtonClick.play()
 	# Close the StageDetails panel
 	$StageDetails.visible = false
 
@@ -238,6 +239,7 @@ func _connect_signals():
 	$StageDetails/CloseButton.pressed.connect(_on_close_button_pressed)
 
 func _on_stage_button_pressed(stage_num):
+	$ButtonClick.play()
 	$SelectLevel.visible = false
 	print("Stage " + str(stage_num) + " selected")
 	
@@ -324,6 +326,7 @@ func _update_stage_details(stage_num):
 		mob_buttons[0].visible = true # Mob1Button (index 0)
 
 func _on_mob_button_pressed(type, index):
+	$ButtonClick.play()
 	print("Selected enemy type: " + type + " index: " + str(index))
 	
 	# Update enemy display based on selected type

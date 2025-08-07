@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://c2yw4dvkfybh8"]
+[gd_scene load_steps=14 format=3 uid="uid://c2yw4dvkfybh8"]
 
 [ext_resource type="Script" uid="uid://brg3pmp2qoagy" path="res://Scripts/WordChallengePanel_Whiteboard.gd" id="1_k1qm8"]
 [ext_resource type="Texture2D" uid="uid://dlusv4b6bm07h" path="res://gui/Update/UI/ui 10.png" id="2_86dfl"]
@@ -7,6 +7,12 @@
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="4_ft8xs"]
 [ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="5_r0eu7"]
 [ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="6_e34gq"]
+[ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="8_e34gq"]
+[ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="9_ialbf"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_e34gq"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ialbf"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tts_panel"]
 bg_color = Color(0.862745, 0.901961, 0.929412, 1)
@@ -133,6 +139,7 @@ mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_ft8xs")
 theme_override_font_sizes/font_size = 16
+theme_override_styles/focus = SubResource("StyleBoxEmpty_e34gq")
 text = "Read Word"
 icon = ExtResource("5_r0eu7")
 flat = true
@@ -146,6 +153,7 @@ mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_ft8xs")
 theme_override_font_sizes/font_size = 14
+theme_override_styles/focus = SubResource("StyleBoxEmpty_ialbf")
 text = "TTS Setting"
 icon = ExtResource("6_e34gq")
 flat = true
@@ -268,7 +276,15 @@ theme_override_font_sizes/font_size = 16
 text = "Connecting to random word API..."
 horizontal_alignment = 1
 
+[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("8_e34gq")
+
+[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("9_ialbf")
+
+[connection signal="mouse_entered" from="ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer/TTSButton" to="." method="_on_tts_button_mouse_entered"]
 [connection signal="pressed" from="ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer/TTSButton" to="." method="_on_tts_button_pressed"]
+[connection signal="mouse_entered" from="ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer/TTSSettingsButton" to="." method="_on_tts_settings_button_mouse_entered"]
 [connection signal="pressed" from="ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer/TTSSettingsButton" to="." method="_on_tts_settings_button_pressed"]
 [connection signal="item_selected" from="ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer/VoiceContainer/VoiceOptionButton" to="." method="_on_voice_option_button_item_selected"]
 [connection signal="value_changed" from="ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer/RateContainer/RateSlider" to="." method="_on_rate_slider_value_changed"]

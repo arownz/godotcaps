@@ -85,6 +85,7 @@ func _unhandled_input(event):
 				get_viewport().set_input_as_handled()
 
 func _on_close_button_pressed():
+	$ButtonClick.play()
 	# Close the StageDetails panel
 	$StageDetails.visible = false
 	
@@ -244,6 +245,7 @@ func _connect_signals():
 	$StageDetails/CloseButton.pressed.connect(_on_close_button_pressed)
 
 func _on_stage_button_pressed(stage_num):
+	$ButtonClick.play()
 	$SelectLevel.visible = false
 	print("Stage " + str(stage_num) + " selected")
 	
@@ -334,6 +336,7 @@ func _update_stage_details(stage_num):
 		mob_buttons[0].visible = true # Mob1Button (index 0)
 
 func _on_mob_button_pressed(type, index):
+	$ButtonClick.play()
 	print("Selected enemy type: " + type + " index: " + str(index))
 	
 	# Update enemy display based on selected type
@@ -362,6 +365,7 @@ func _on_mob_button_pressed(type, index):
 	$StageDetails/RightContainer/SkillName.text = enemy_data["skill"]
 
 func _on_back_button_pressed():
+	$ButtonClick.play()
 	if $StageDetails.visible:
 		# If details panel is open, close it first
 		$StageDetails.visible = false
@@ -379,6 +383,7 @@ func _fade_out_and_change_scene(scene_path: String):
 	get_tree().change_scene_to_file(scene_path)
 
 func _on_fight_button_pressed():
+	$ButtonClick.play()
 	print("Starting battle in Dungeon 2, Stage " + str(current_selected_stage))
 	
 	# Set battle progress in DungeonGlobals for immediate transfer to battle scene

@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://7wtij707stht"]
+[gd_scene load_steps=11 format=3 uid="uid://7wtij707stht"]
 
 [ext_resource type="Script" uid="uid://di3xy4fn8ivv" path="res://Scripts/TTSSettingsPopup.gd" id="1_y2dfs"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="2_m3f5r"]
@@ -6,6 +6,8 @@
 [ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="4_7wrw6"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="5_jb0wy"]
 [ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="6_e2f2d"]
+[ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="7_e2f2d"]
+[ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="8_2s7nq"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_jb0wy"]
 
@@ -167,7 +169,16 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
+[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("7_e2f2d")
+
+[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("8_2s7nq")
+
 [connection signal="item_selected" from="Panel/VBoxContainer/VoiceContainer/VoiceOptionButton" to="." method="_on_voice_option_button_item_selected"]
+[connection signal="mouse_entered" from="Panel/VBoxContainer/VoiceContainer/VoiceOptionButton" to="." method="_on_voice_option_button_mouse_entered"]
 [connection signal="value_changed" from="Panel/VBoxContainer/RateContainer/RateSlider" to="." method="_on_rate_slider_value_changed"]
+[connection signal="mouse_entered" from="Panel/TestButton" to="." method="_on_test_button_mouse_entered"]
 [connection signal="pressed" from="Panel/TestButton" to="." method="_on_test_button_pressed"]
+[connection signal="mouse_entered" from="Panel/CloseButton" to="." method="_on_close_button_mouse_entered"]
 [connection signal="pressed" from="Panel/CloseButton" to="." method="_on_close_button_pressed"]

@@ -14,10 +14,13 @@ var hover_buttons = []
 
 # Add energy recovery system variables
 var max_energy = 20
-var energy_recovery_rate = 240 # 4 minutes in seconds
+var energy_recovery_rate = 240 # 4 minutes = 240 seconds
 var energy_recovery_amount = 4 # Amount of energy recovered per interval
 var last_energy_update_time = 0
 var energy_recovery_timer = null
+
+# Add real-time listener for Firestore document changes
+var firestore_listener = null
 
 # Add usage time tracking system variables
 var usage_time_start = 0.0
@@ -38,9 +41,9 @@ func _ready():
     energy_recovery_timer.autostart = true
     add_child(energy_recovery_timer)
     
-    # Add energy processing timer (check every 30 seconds for recovery)
+    # Add energy processing timer (check every 10 seconds for recovery)
     var energy_process_timer = Timer.new()
-    energy_process_timer.wait_time = 30.0 # Check every 30 seconds
+    energy_process_timer.wait_time = 10.0 # Check every 10 seconds for better responsiveness
     energy_process_timer.timeout.connect(_process_energy_recovery)
     energy_process_timer.autostart = true
     add_child(energy_process_timer)
@@ -57,6 +60,9 @@ func _ready():
     
     # Load user data - with await
     await load_user_data()
+    
+    # Setup real-time listener for user document changes
+    _setup_firestore_listener()
 
 # Setup hover buttons for improved UI interaction
 func _setup_hover_buttons():
@@ -300,6 +306,8 @@ func _process_energy_recovery():
     var current_time = Time.get_unix_time_from_system()
     var last_update = user_data.get("last_energy_update", current_time)
     
+    print("Processing energy recovery - Current: " + str(current_energy) + ", Last update: " + str(last_update))
+    
     # If last_energy_update is 0 or invalid, set it to current time
     if last_update == 0:
         last_update = current_time
@@ -315,6 +323,8 @@ func _process_energy_recovery():
     var time_passed = current_time - last_update
     var recovery_intervals = int(time_passed / energy_recovery_rate)
     
+    print("Time passed: " + str(time_passed) + " seconds, Recovery intervals: " + str(recovery_intervals))
+    
     if recovery_intervals > 0:
         var energy_to_recover = recovery_intervals * energy_recovery_amount
         var new_energy = min(current_energy + energy_to_recover, max_energy)
@@ -325,13 +335,31 @@ func _process_energy_recovery():
             new_last_update = current_time
         
         if new_energy != current_energy:
+            print("Recovering energy: " + str(current_energy) + " -> " + str(new_energy))
             # Update energy in Firebase
             _update_energy_in_firebase(new_energy, new_last_update)
             user_data["energy"] = new_energy
             user_data["last_energy_update"] = new_last_update
+            
+            # Update UI immediately
+            energy_label.text = str(new_energy) + "/" + str(max_energy)
+            _update_energy_recovery_display()
+            
             print("Energy recovered: " + str(current_energy) + " -> " + str(new_energy))
 
-# Handle session and usage_time tracking for returning users
+# Setup polling-based Firestore listener for user document changes
+func _setup_firestore_listener():
+    # Note: This godot-firebase extension doesn't support real-time listeners
+    # Instead, we'll rely on the energy processing timer to check for updates
+    print("Firestore polling-based updates enabled via energy processing timer")
+    
+    # The energy processing timer will check for updates every 10 seconds
+    # which should be sufficient for energy recovery updates
+
+# Clean up when leaving scene
+func _cleanup_firestore_listener():
+    # No real-time listener to clean up, just a placeholder for consistency
+    print("Energy polling system will stop when scene changes") # Handle session and usage_time tracking for returning users
 func _update_session_tracking():
     var user_id = Firebase.Auth.auth.localid
     if not user_id:
@@ -441,6 +469,12 @@ func _update_energy_recovery_display():
     var time_since_last_recovery = current_time - last_update
     var time_until_next_energy = energy_recovery_rate - fmod(time_since_last_recovery, energy_recovery_rate)
     
+    # Check if energy should be recovered (every second check)
+    if time_since_last_recovery >= energy_recovery_rate:
+        print("Energy recovery triggered by display update")
+        _process_energy_recovery()
+        return # Return early to let the next call show updated values
+    
     var minutes = int(time_until_next_energy / 60)
     var seconds = int(time_until_next_energy) % 60
     
@@ -504,26 +538,37 @@ func update_profile_picture(profile_id):
 
 # Button handlers
 func _on_journey_mode_button_pressed():
+    $ButtonClick.play()
     print("MainMenu: Navigating to journey mode scene")
+    _cleanup_firestore_listener()
     get_tree().change_scene_to_file("res://Scenes/DungeonSelection.tscn")
 
 func _on_modules_button_pressed():
+    $ButtonClick.play()
     print("MainMenu: Navigating to modules scene")
+    _cleanup_firestore_listener()
     get_tree().change_scene_to_file("res://Scenes/ModuleScene.tscn")
 
 func _on_character_button_pressed():
+    $ButtonClick.play()
     print("MainMenu: Navigating to character selection screen")
+    _cleanup_firestore_listener()
     get_tree().change_scene_to_file("res://Scenes/ChangeCharacterScene.tscn")
 
 func _on_leaderboard_button_pressed():
+    $ButtonClick.play()
     print("MainMenu: Navigating to leaderboard screen")
+    _cleanup_firestore_listener()
     get_tree().change_scene_to_file("res://Scenes/Leaderboard.tscn")
 
 func _on_settings_button_pressed():
+    $ButtonClick.play()
     print("MainMenu: Navigating to settings screen")
+    _cleanup_firestore_listener()
     get_tree().change_scene_to_file("res://Scenes/SettingScene.tscn")
 
 func _on_profile_button_pressed():
+    $ButtonClick.play()
     print("MainMenu: Navigating to profile popup")
     # Show profile popup
     var profile_popup_scene = load("res://Scenes/ProfilePopUp.tscn")
@@ -535,6 +580,25 @@ func _on_profile_button_pressed():
         # Connect the closed signal
         if profile_popup.has_signal("closed"):
             profile_popup.connect("closed", Callable(self, "_on_profile_popup_closed"))
+
+func _on_profile_button_mouse_entered():
+    $ButtonHover.play()
+
+func _on_settings_button_mouse_entered():
+    $ButtonHover.play()
+
+func _on_leaderboard_button_mouse_entered():
+    $ButtonHover.play()
+
+func _on_character_button_mouse_entered():
+    $ButtonHover.play()
+
+func _on_modules_button_mouse_entered():
+    $ButtonHover.play()
+
+func _on_journey_button_mouse_entered():
+    $ButtonHover.play()
+    
 
 # Make sure we properly force reload user data after profile popup closes
 func _on_profile_popup_closed():
@@ -554,6 +618,8 @@ func _on_logout_button_pressed():
     print("Logging out")
     # Stop usage time tracking before logout
     _stop_usage_time_tracking()
+    # Clean up Firestore listener
+    _cleanup_firestore_listener()
     Firebase.Auth.logout()
     # Add a short delay before changing scenes
     await get_tree().create_timer(0.2).timeout
@@ -630,3 +696,9 @@ func _update_usage_time_in_firebase():
 func _notification(what):
     if what == NOTIFICATION_WM_CLOSE_REQUEST or what == NOTIFICATION_PREDELETE:
         _stop_usage_time_tracking()
+        _cleanup_firestore_listener()
+
+# Override _exit_tree to ensure cleanup
+func _exit_tree():
+    _cleanup_firestore_listener()
+    _stop_usage_time_tracking()

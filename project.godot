@@ -16,10 +16,8 @@ config/version="1.0"
 run/main_scene="uid://cbpwvuj8kdyod"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 boot_splash/fullsize=false
-boot_splash/use_filter=false
 boot_splash/image="uid://dkkb8nek5d6fs"
 config/icon="uid://dkkb8nek5d6fs"
-boot_splash/minimum_display_time=2
 
 [audio]
 
@@ -43,7 +41,6 @@ window/size/initial_position_type=4
 window/subwindows/embed_subwindows=false
 window/stretch/mode="canvas_items"
 window/per_pixel_transparency/allowed=true
-window/handheld/orientation=4
 window/vsync/vsync_mode=false
 
 [editor]

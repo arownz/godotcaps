@@ -1,10 +1,11 @@
-[gd_scene load_steps=8 format=3 uid="uid://8g8p2x82pya7"]
+[gd_scene load_steps=9 format=3 uid="uid://8g8p2x82pya7"]
 
 [ext_resource type="Script" uid="uid://b6jxgla4ajwhw" path="res://Scripts/EnemySkillIndicator.gd" id="1_skillind"]
 [ext_resource type="Texture2D" uid="uid://c32gmv4ss8kvw" path="res://gui/Update/UI/ui 5.png" id="2_skillind"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="3_skillind"]
 [ext_resource type="Texture2D" uid="uid://cct70l6wbh13s" path="res://gui/Update/UI/ui 9.png" id="3_vds2j"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="4_skillind"]
+[ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="6_762ag"]
 
 [sub_resource type="Animation" id="Animation_pulse"]
 resource_name = "pulse"
@@ -219,3 +220,6 @@ libraries = {
 &"default": SubResource("AnimationLibrary_1")
 }
 autoplay = "pulse"
+
+[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_762ag")

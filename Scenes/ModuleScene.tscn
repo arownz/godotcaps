@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://cpuv0hhhcq6sv"]
+[gd_scene load_steps=24 format=3 uid="uid://cpuv0hhhcq6sv"]
 
 [ext_resource type="Texture2D" uid="uid://c75anq8c0biyi" path="res://gui/Update/UI/ui 7.png" id="2_178ft"]
 [ext_resource type="Script" uid="uid://dgboy6v1hc540" path="res://Scripts/ModuleScene.gd" id="2_module_script"]
@@ -11,6 +11,8 @@
 [ext_resource type="Texture2D" uid="uid://blijwx5trtlcr" path="res://gui/Update/icons/readaloudicon.png" id="9_bmnuq"]
 [ext_resource type="Texture2D" uid="uid://wjhcl5yb28ii" path="res://gui/Update/icons/chuckedicon.png" id="10_eollr"]
 [ext_resource type="Texture2D" uid="uid://cqx6x07u267ym" path="res://gui/Update/icons/syllableicon.png" id="11_d4mch"]
+[ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="12_n8sgv"]
+[ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="13_bh0w4"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_header"]
 bg_color = Color(0.933333, 0.764706, 0.603922, 1)
@@ -757,3 +759,9 @@ icon = ExtResource("6_wwwj0")
 flat = true
 icon_alignment = 1
 expand_icon = true
+
+[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("12_n8sgv")
+
+[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("13_bh0w4")

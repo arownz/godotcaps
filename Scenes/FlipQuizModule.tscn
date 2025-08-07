@@ -1,9 +1,11 @@
-[gd_scene load_steps=5 format=3 uid="uid://bnaj2f5n3k8l6"]
+[gd_scene load_steps=7 format=3 uid="uid://bnaj2f5n3k8l6"]
 
 [ext_resource type="Texture2D" uid="uid://cp6h0easasnmc" path="res://gui/Update/UI/ui 6.png" id="2_hjhsi"]
 [ext_resource type="Script" uid="uid://dgl0bug32bd8w" path="res://Scripts/FlipQuizModule.gd" id="2_script"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="3_regular_font"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="4_bold_font"]
+[ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="5_3t05n"]
+[ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="6_i6n66"]
 
 [node name="FlipQuizModule" type="Control"]
 layout_mode = 3
@@ -79,10 +81,11 @@ grow_vertical = 2
 [node name="ModuleTitle" type="Label" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("4_bold_font")
-text = "🎯 Flip Quiz - Memory Matching Game"
+text = "Flip Quiz - Memory Matching Game"
 horizontal_alignment = 1
 
 [node name="Description" type="Label" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer"]
+custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3_regular_font")
 text = "Match emojis with words! Flip cards to find pairs and learn vocabulary through visual association."
@@ -120,6 +123,7 @@ layout_mode = 2
 theme_override_fonts/font = ExtResource("3_regular_font")
 
 [node name="InstructionsLabel" type="Label" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/MenuPanel/MenuContainer"]
+custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3_regular_font")
 text = "Instructions:
@@ -177,14 +181,10 @@ layout_mode = 2
 size_flags_vertical = 3
 columns = 5
 
-[node name="BackToMenuButton" type="Button" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/GamePanel"]
-layout_mode = 2
-theme_override_fonts/font = ExtResource("3_regular_font")
-text = "Back to Menu"
+[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_3t05n")
 
-[node name="BackButtonBottom" type="Button" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer"]
-layout_mode = 2
-theme_override_fonts/font = ExtResource("3_regular_font")
-text = "Back to Modules"
+[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_i6n66")
 
 [connection signal="pressed" from="MainContainer/HeaderContainer/BackButton" to="." method="_on_back_button_pressed"]

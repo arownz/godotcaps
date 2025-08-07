@@ -211,6 +211,7 @@ func show_message(text: String, is_success: bool = true):
 
 # ===== Password Visibility Functions =====
 func _on_show_password_button_pressed():
+	$ButtonClick.play()
 	login_password_visible = !login_password_visible
 	var password_field = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/PasswordContainer/PasswordLineEdit
 	var button = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/PasswordContainer/ShowPasswordButton
@@ -219,6 +220,7 @@ func _on_show_password_button_pressed():
 	button.text = "Hide" if login_password_visible else "Show"
 
 func _on_show_reg_password_button_pressed():
+	$ButtonClick.play()
 	reg_password_visible = !reg_password_visible
 	var password_field = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegPasswordContainer/RegPasswordLineEdit
 	var button = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegPasswordContainer/ShowRegPasswordButton
@@ -227,6 +229,7 @@ func _on_show_reg_password_button_pressed():
 	button.text = "Hide" if reg_password_visible else "Show"
 
 func _on_show_confirm_password_button_pressed():
+	$ButtonClick.play()
 	confirm_password_visible = !confirm_password_visible
 	var password_field = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/ConfirmPasswordContainer/ConfirmPasswordLineEdit
 	var button = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/ConfirmPasswordContainer/ShowConfirmPasswordButton
@@ -260,6 +263,7 @@ func clear_all_error_labels():
 
 # ===== Login Functions =====
 func _on_login_button_pressed():
+	$ButtonClick.play()
 	# Don't clear storage for regular login - we want persistence
 	# Only clear storage if there are authentication conflicts
 	var email = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/EmailLineEdit.text
@@ -285,6 +289,7 @@ func _on_login_button_pressed():
 
 # ===== Registration Functions =====
 func _on_register_button_pressed():
+	$ButtonClick.play()
 	var username = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/UsernameLineEdit.text
 	var email = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegEmailLineEdit.text
 	var password = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegPasswordContainer/RegPasswordLineEdit.text
@@ -347,6 +352,7 @@ func _on_register_button_pressed():
 
 # ===== Google Sign-In =====
 func _on_sign_in_google_button_pressed():
+	$ButtonClick.play()
 	var provider = Firebase.Auth.get_GoogleProvider()
 	
 	show_message("Redirecting to Google...", true)
@@ -399,6 +405,7 @@ func get_web_redirect_uri():
 
 # ===== Forgot Password Functions =====
 func _on_forgot_password_button_pressed():
+	$ButtonClick.play()
 	# Switch to the forgot password tab
 	$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer.current_tab = 2
 	$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword/ResetEmailLineEdit.grab_focus()
@@ -409,6 +416,7 @@ func _on_forgot_password_button_pressed():
 		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword/ResetEmailLineEdit.text = login_email
 
 func _on_back_to_login_button_pressed():
+	$ButtonClick.play()
 	# Switch back to login tab
 	$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer.current_tab = 0
 
@@ -910,6 +918,7 @@ func clear_google_auth_data():
 		return JavaScriptBridge.eval(js_code)
 	return false # Function to handle Super Admin button press
 func _on_admin_button_pressed():
+	$ButtonClick.play()
 	print("DEBUG: Super Admin button pressed")
 	var admin_url = "https://admin-teamlexia.web.app/login"
 	
@@ -1131,3 +1140,65 @@ func _wait_for_firebase_auth_restoration() -> bool:
 	# Clean up in case of timeout
 	JavaScriptBridge.eval("delete window.authRestorationResult;")
 	return false
+
+func _on_tab_container_tab_clicked(tab: int) -> void:
+	$ButtonClick.play()
+
+
+func _on_tab_container_tab_hovered(tab: int) -> void:
+	$ButtonHover.play()
+
+
+func _on_show_password_button_mouse_entered() -> void:
+	$ButtonHover.play()
+
+func _on_show_reg_password_button_mouse_entered() -> void:
+	$ButtonHover.play()
+
+
+func _on_forgot_password_button_mouse_entered() -> void:
+	$ButtonHover.play()
+
+
+func _on_sign_in_google_button_mouse_entered() -> void:
+	$ButtonHover.play()
+
+
+func _on_admin_button_mouse_entered() -> void:
+	$ButtonHover.play()
+
+func _on_day_option_button_pressed() -> void:
+	$ButtonClick.play()
+
+
+func _on_day_option_button_mouse_entered() -> void:
+	$ButtonHover.play()
+
+func _on_month_option_button_pressed() -> void:
+	$ButtonClick.play()
+
+func _on_month_option_button_mouse_entered() -> void:
+	$ButtonHover.play()
+
+
+func _on_year_option_button_pressed() -> void:
+	$ButtonClick.play()
+
+
+func _on_year_option_button_mouse_entered() -> void:
+	$ButtonHover.play()
+
+func _on_show_confirm_password_button_mouse_entered() -> void:
+	$ButtonHover.play()
+
+
+func _on_back_to_login_button_mouse_entered() -> void:
+	$ButtonHover.play()
+
+
+func _on_register_button_mouse_entered() -> void:
+	$ButtonHover.play()
+
+
+func _on_login_button_mouse_entered() -> void:
+	$ButtonHover.play()

@@ -1,11 +1,13 @@
-[gd_scene load_steps=11 format=3 uid="uid://cjrrrf0p4lr7q"]
+[gd_scene load_steps=13 format=3 uid="uid://cjrrrf0p4lr7q"]
 
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="1_font_bold"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="2_font_regular"]
 [ext_resource type="Texture2D" uid="uid://c75anq8c0biyi" path="res://gui/Update/UI/ui 7.png" id="2_pp7tk"]
 [ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="4_ch0ic"]
-[ext_resource type="Texture2D" uid="uid://bedyjdu5rblv8" path="res://gui/Update/UI/ui (1).png" id="5_pp7tk"]
 [ext_resource type="Script" uid="uid://w4a7fwksg51x" path="res://Scripts/SettingScene.gd" id="5_script"]
+[ext_resource type="Texture2D" uid="uid://dkfy0a7ea1sd1" path="res://gui/Update/UI/ui 4.png" id="5_yhoge"]
+[ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="7_yhoge"]
+[ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="8_66loe"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_header"]
 bg_color = Color(0.933333, 0.764706, 0.603922, 1)
@@ -153,7 +155,7 @@ theme_override_constants/separation = 30
 [node name="SettingsPanel" type="NinePatchRect" parent="MainContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-texture = ExtResource("5_pp7tk")
+texture = ExtResource("5_yhoge")
 patch_margin_left = 20
 patch_margin_top = 20
 patch_margin_right = 20
@@ -164,6 +166,8 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = 30.0
+offset_bottom = -10.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/margin_left = 40
@@ -207,10 +211,11 @@ vertical_alignment = 1
 [node name="FontSizeSlider" type="HSlider" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/FontSizeContainer"]
 custom_minimum_size = Vector2(200, 40)
 layout_mode = 2
-min_value = 14.0
+min_value = 18.0
 max_value = 28.0
 step = 2.0
-value = 18.0
+value = 20.0
+editable = false
 
 [node name="FontSizeValue" type="Label" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/FontSizeContainer"]
 custom_minimum_size = Vector2(50, 0)
@@ -238,10 +243,11 @@ vertical_alignment = 1
 [node name="ReadingSpeedSlider" type="HSlider" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/ReadingSpeedContainer"]
 custom_minimum_size = Vector2(200, 40)
 layout_mode = 2
-min_value = 0.5
-max_value = 2.0
+min_value = 1.0
+max_value = 18.0
 step = 0.1
-value = 1.0
+value = 2.0
+editable = false
 
 [node name="ReadingSpeedValue" type="Label" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/ReadingSpeedContainer"]
 custom_minimum_size = Vector2(50, 0)
@@ -270,6 +276,7 @@ vertical_alignment = 1
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_font_regular")
 theme_override_font_sizes/font_size = 16
+disabled = true
 
 [node name="Separator1" type="HSeparator" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox"]
 layout_mode = 2
@@ -405,6 +412,7 @@ vertical_alignment = 1
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_font_regular")
 theme_override_font_sizes/font_size = 16
+disabled = true
 button_pressed = true
 
 [node name="Separator3" type="HSeparator" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox"]
@@ -428,8 +436,20 @@ layout_mode = 2
 size_flags_horizontal = 0
 theme_override_fonts/font = ExtResource("2_font_regular")
 theme_override_font_sizes/font_size = 16
+disabled = true
 text = "Export My Data"
 
 [node name="BottomSpacer" type="Control" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox"]
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
+
+[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("7_yhoge")
+
+[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("8_66loe")
+
+[connection signal="mouse_entered" from="MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton" to="." method="_on_back_button_mouse_entered"]
+[connection signal="pressed" from="MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton" to="." method="_on_back_button_pressed"]
+[connection signal="mouse_entered" from="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/DataSection/ExportDataButton" to="." method="_on_export_data_button_mouse_entered"]
+[connection signal="pressed" from="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/DataSection/ExportDataButton" to="." method="_on_export_data_button_pressed"]

@@ -125,6 +125,7 @@ func _get_node_references():
 	# Connect navigation buttons
 	if menu_button:
 		menu_button.pressed.connect(_on_menu_button_pressed)
+		menu_button.mouse_entered.connect(_on_button_hover)
 
 	if adaptive_button:
 		adaptive_button.pressed.connect(_show_coming_soon_notification.bind("Adaptive Learning", "AI"))
@@ -147,14 +148,19 @@ func _connect_signals():
 	# Connect module buttons
 	if phonics_button:
 		phonics_button.pressed.connect(_on_phonics_button_pressed)
+		phonics_button.mouse_entered.connect(_on_button_hover)
 	if flip_quiz_button:
 		flip_quiz_button.pressed.connect(_on_flip_quiz_button_pressed)
+		flip_quiz_button.mouse_entered.connect(_on_button_hover)
 	if read_aloud_button:
 		read_aloud_button.pressed.connect(_on_read_aloud_button_pressed)
+		read_aloud_button.mouse_entered.connect(_on_button_hover)
 	if chunked_reading_button:
 		chunked_reading_button.pressed.connect(_on_chunked_reading_button_pressed)
+		chunked_reading_button.mouse_entered.connect(_on_button_hover)
 	if syllable_building_button:
 		syllable_building_button.pressed.connect(_on_syllable_building_button_pressed)
+		syllable_building_button.mouse_entered.connect(_on_button_hover)
 
 func _load_user_progress():
 	# Load progress from user save file
@@ -300,8 +306,13 @@ func _apply_dyslexia_font_to_node(node: Node):
 	for child in node.get_children():
 		_apply_dyslexia_font_to_node(child)
 
+# Button sound event handlers
+func _on_button_hover():
+	$ButtonHover.play()
+
 # Module button event handlers
 func _on_menu_button_pressed():
+	$ButtonClick.play()
 	print("ModuleScene: Going back to Main Menu")
 	_fade_out_and_change_scene("res://Scenes/MainMenu.tscn")
 
@@ -315,22 +326,27 @@ func _fade_out_and_change_scene(scene_path: String):
 	get_tree().change_scene_to_file(scene_path)
 
 func _on_phonics_button_pressed():
+	$ButtonClick.play()
 	print("ModuleScene: Starting Phonics Interactive module")
 	_launch_module("phonics")
 
 func _on_flip_quiz_button_pressed():
+	$ButtonClick.play()
 	print("ModuleScene: Starting Flip Quiz module")
 	_launch_module("flip_quiz")
 
 func _on_read_aloud_button_pressed():
+	$ButtonClick.play()
 	print("ModuleScene: Starting Interactive Read-Aloud module")
 	_launch_module("read_aloud")
 
 func _on_chunked_reading_button_pressed():
+	$ButtonClick.play()
 	print("ModuleScene: Starting Chunked Reading module")
 	_launch_module("chunked_reading")
 
 func _on_syllable_building_button_pressed():
+	$ButtonClick.play()
 	print("ModuleScene: Starting Syllable Building module")
 	_launch_module("syllable_building")
 

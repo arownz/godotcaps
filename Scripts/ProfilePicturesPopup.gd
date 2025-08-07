@@ -102,6 +102,7 @@ func update_checkmarks():
 			icon.visible = true
 
 func _on_portrait_button_pressed(picture_id):
+	$ButtonClick.play()
 	print("ProfilePicturesPopup: Portrait " + picture_id + " selected")
 	
 	# Find the button that was pressed

@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://cotie2n1uaq7k"]
+[gd_scene load_steps=25 format=3 uid="uid://cotie2n1uaq7k"]
 
 [ext_resource type="Script" uid="uid://dw8lmitmopbq7" path="res://Scripts/dungeon_2_map.gd" id="1_qpxt0"]
 [ext_resource type="Texture2D" uid="uid://n08ji1i2co16" path="res://gui/Update/UI/small button.png" id="2_feumf"]
@@ -20,6 +20,8 @@
 [ext_resource type="Texture2D" uid="uid://cmvfv5h4u7j6e" path="res://gui/Update/icons/close icon.png" id="18_0olnv"]
 [ext_resource type="Texture2D" uid="uid://c5cpf575pv2ee" path="res://gui/Update/icons/close icon_hover.png" id="18_8wno4"]
 [ext_resource type="Texture2D" uid="uid://clbfvil7saw1l" path="res://gui/Update/UI/Fight Button (Default).png" id="20_2uab6"]
+[ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="21_qpxt0"]
+[ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="22_6jspw"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_v6wxw"]
 
@@ -594,3 +596,9 @@ theme_override_fonts/font = ExtResource("8_qpxt0")
 theme_override_font_sizes/font_size = 24
 text = "Back"
 horizontal_alignment = 1
+
+[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("21_qpxt0")
+
+[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("22_6jspw")

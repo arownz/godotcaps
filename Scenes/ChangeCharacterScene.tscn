@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://beu8uw5oqkvxd"]
+[gd_scene load_steps=16 format=3 uid="uid://beu8uw5oqkvxd"]
 
 [ext_resource type="Texture2D" uid="uid://chfkysvsxt4eg" path="res://gui/Update/Backgrounds/Plains_Level.png" id="1_nn5pp"]
 [ext_resource type="Script" uid="uid://liwnmmbqa706" path="res://Scripts/change_character_scene.gd" id="1_rnq7s"]
@@ -12,6 +12,8 @@
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="8_8uolc"]
 [ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="9_ccovg"]
 [ext_resource type="Texture2D" uid="uid://cpt6gmnwq7v0o" path="res://gui/Update/UI/next button_hover.png" id="9_hnmjh"]
+[ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="13_8uolc"]
+[ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="14_ccovg"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bu21u"]
 
@@ -121,10 +123,10 @@ horizontal_alignment = 1
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
-offset_left = 241.0
-offset_top = 366.0
-offset_right = -217.0
-offset_bottom = 411.0
+offset_left = 230.0
+offset_top = 361.0
+offset_right = -227.0
+offset_bottom = 406.0
 grow_horizontal = 2
 theme_override_colors/font_color = Color(0.501961, 0.988235, 0.501961, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -372,6 +374,12 @@ theme_override_fonts/font = ExtResource("5_hnmjh")
 theme_override_font_sizes/font_size = 24
 text = "Back"
 horizontal_alignment = 1
+
+[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("13_8uolc")
+
+[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("14_ccovg")
 
 [connection signal="pressed" from="CharacterContainer/CharacterCarousel/Character1/TextureButton" to="." method="_on_character1_pressed"]
 [connection signal="pressed" from="CharacterContainer/CharacterCarousel/Character2/TextureButton" to="." method="_on_character2_pressed"]

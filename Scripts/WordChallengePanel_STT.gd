@@ -103,6 +103,13 @@ func _ready():
 	
 	# Reset result processing flag at start
 	result_being_processed = false
+	
+	# Connect button hover events
+	if speak_button:
+		speak_button.mouse_entered.connect(_on_button_hover)
+
+func _on_button_hover():
+	$ButtonHover.play()
 
 func _process(_delta):
 	# Poll for speech recognition results from JavaScript more frequently
@@ -624,6 +631,7 @@ func _fetch_word_deferred(word_length: int):
 	
 # Handle button press to start/stop speech recognition
 func _on_speak_button_pressed():
+	$ButtonClick.play()
 	print("Speak button pressed. Current state - recognition_active: " + str(recognition_active))
 	
 	if recognition_active:
@@ -1614,6 +1622,7 @@ func levenshtein_distance(s1, s2):
 	return d[m][n]
 
 func _on_tts_button_pressed():
+	$ButtonClick.play()
 	# Speak the challenge word with improved feedback
 	api_status_label.text = "Reading word..."
 	
@@ -1655,6 +1664,7 @@ func _on_tts_speech_error(error_msg):
 		tts.disconnect("speech_error", Callable(self, "_on_tts_speech_ended"))
 
 func _on_tts_settings_button_pressed():
+	$ButtonClick.play()
 	# Load and show the TTS settings popup
 	var tts_popup = load("res://Scenes/TTSSettingsPopup.tscn").instantiate()
 	add_child(tts_popup)
@@ -1676,12 +1686,15 @@ func _on_tts_settings_closed():
 	pass
 
 func _on_test_button_pressed():
+	$ButtonClick.play()
 	pass
 
 func _on_close_button_pressed():
+	$ButtonClick.play()
 	pass
 
 func _on_cancel_button_pressed():
+	$ButtonClick.play()
 	print("Cancel button pressed - cancelling speak challenge")
 	_fade_out_and_signal("challenge_cancelled")
 
@@ -1731,3 +1744,6 @@ func _get_word_length_for_dungeon() -> int:
 	else:
 		print("Warning: Could not get current dungeon, using default 3-letter words")
 		return 3
+
+func _on_cancel_button_mouse_entered() -> void:
+	$ButtonHover.play()

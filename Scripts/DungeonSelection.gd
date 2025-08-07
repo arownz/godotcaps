@@ -326,17 +326,20 @@ func update_dungeon_display():
 
 # Handle navigation buttons with circular behavior
 func _on_next_button_pressed():
+	$ButtonClick.play()
 	current_dungeon = (current_dungeon + 1) % DUNGEON_COUNT # Wrap around: 0→1→2→0
 	_animate_carousel_to_position(current_dungeon)
 	update_dungeon_display()
 
 func _on_previous_button_pressed():
+	$ButtonClick.play()
 	current_dungeon = (current_dungeon - 1 + DUNGEON_COUNT) % DUNGEON_COUNT # Wrap around: 2→1→0→2
 	_animate_carousel_to_position(current_dungeon)
 	update_dungeon_display()
 
 # Handle dungeon selection with circular behavior
 func _on_dungeon1_pressed():
+	$ButtonClick.play()
 	if unlocked_dungeons >= 1: # Dungeon 1 is always unlocked
 		if current_dungeon != 0:
 			current_dungeon = 0
@@ -345,6 +348,7 @@ func _on_dungeon1_pressed():
 	# No else needed since Dungeon 1 is always unlocked
 
 func _on_dungeon2_pressed():
+	$ButtonClick.play()
 	if unlocked_dungeons >= 2:
 		if current_dungeon != 1:
 			current_dungeon = 1
@@ -355,6 +359,7 @@ func _on_dungeon2_pressed():
 		notification_popup.show_notification("Dungeon Locked!", "Please complete 'The Plain' first to unlock this dungeon.", "OK")
 
 func _on_dungeon3_pressed():
+	$ButtonClick.play()
 	if unlocked_dungeons >= 3:
 		if current_dungeon != 2:
 			current_dungeon = 2
@@ -395,6 +400,7 @@ func _on_notification_closed():
 
 # Button hover handlers
 func _on_back_button_hover_entered():
+	$ButtonHover.play()
 	var back_label = $BackButton/BackLabel
 	if back_label:
 		back_label.visible = true
@@ -405,6 +411,7 @@ func _on_back_button_hover_exited():
 		back_label.visible = false
 
 func _on_next_button_hover_entered():
+	$ButtonHover.play()
 	var next_label = $NextButton/NextLabel
 	if next_label:
 		next_label.visible = true
@@ -415,6 +422,7 @@ func _on_next_button_hover_exited():
 		next_label.visible = false
 
 func _on_previous_button_hover_entered():
+	$ButtonHover.play()
 	var previous_label = $PreviousButton/PreviousLabel
 	if previous_label:
 		previous_label.visible = true
@@ -426,6 +434,7 @@ func _on_previous_button_hover_exited():
 
 # Handle navigation and play buttons
 func _on_back_button_pressed():
+	$ButtonClick.play()
 	_fade_out_and_change_scene("res://Scenes/MainMenu.tscn")
 
 # Helper function to fade out before changing scenes
@@ -438,6 +447,7 @@ func _fade_out_and_change_scene(scene_path: String):
 	get_tree().change_scene_to_file(scene_path)
 
 func _on_play_button_pressed():
+	$ButtonClick.play()
 	if current_dungeon >= unlocked_dungeons:
 		return # Don't allow playing locked dungeons
 	
