@@ -217,15 +217,15 @@ func _connect_manager_signals():
 
 # Signal callbacks
 func _on_player_attack_performed(damage):
-	enemy_manager.take_damage(damage)
-	# Show damage indicator on enemy
-	_show_damage_indicator(damage, "enemy")
+	var reduced_damage = enemy_manager.take_damage(damage)
+	# Show damage indicator with the ACTUAL reduced damage dealt
+	_show_damage_indicator(reduced_damage, "enemy")
 
 func _on_enemy_attack_performed(damage):
-	player_manager.take_damage(damage)
+	var reduced_damage = player_manager.take_damage(damage)
 	enemy_manager.increase_skill_meter(25)
-	# Show damage indicator on player
-	_show_damage_indicator(damage, "player")
+	# Show damage indicator with the ACTUAL reduced damage dealt
+	_show_damage_indicator(reduced_damage, "player")
 
 func _on_enemy_health_changed(_current_health, _max_health):
 	ui_manager.update_enemy_health()
@@ -285,6 +285,7 @@ func _on_stage_advanced(_dungeon_num, _stage_num):
 
 func _on_dungeon_advanced(dungeon_num):
 	ui_manager.update_background(dungeon_num)
+	ui_manager.update_stage_info()
 	battle_log_manager.add_message("[color=#006400]You've entered a new dungeon! Prepare for stronger enemies.[/color]")
 
 func _on_enemy_set_up(_enemy_name, _enemy_type):
@@ -315,27 +316,27 @@ func _on_engage_button_pressed():
 	_start_battle()
 
 func _show_battle_settings_popup():
-	# Load the popup scene dynamically
-	var battle_settings_popup_scene = load("res://Scenes/BattleSettingsPopup.tscn")
-	if battle_settings_popup_scene == null:
-		print("Failed to load BattleSettingsPopup scene, starting battle directly")
+	# Load settings popup as the new battle popup
+	var settings_popup_scene = load("res://Scenes/SettingScene.tscn")
+	if settings_popup_scene == null:
+		print("Failed to load SettingScene popup, starting battle directly")
 		await _consume_battle_energy()
 		_start_battle()
 		return
-		
-	var popup = battle_settings_popup_scene.instantiate()
-	
-	# Set energy cost (2 energy per battle)
-	popup.set_energy_cost(2)
-	
-	# Set the battle session state - hide engage button if any battle has occurred
-	popup.set_battle_session_state(battle_session_started, battle_active)
-	
-	# Connect signals
-	popup.engage_confirmed.connect(_on_engage_confirmed)
-	popup.quit_requested.connect(_on_battle_quit_requested)
-	
-	# Add to scene tree
+	var popup = settings_popup_scene.instantiate()
+	# Configure as battle context and session state
+	if popup.has_method("set_energy_cost"):
+		popup.set_energy_cost(2)
+	if popup.has_method("set_context"):
+		popup.set_context(true, battle_session_started, battle_active)
+	elif popup.has_method("set_battle_session_state"):
+		popup.set_battle_session_state(battle_session_started, battle_active)
+	# Connect signals if available
+	if popup.has_signal("engage_confirmed"):
+		popup.engage_confirmed.connect(_on_engage_confirmed)
+	if popup.has_signal("quit_requested"):
+		popup.quit_requested.connect(_on_battle_quit_requested)
+	# Add to scene tree (CanvasLayer will center itself)
 	get_tree().current_scene.add_child(popup)
 
 func _on_engage_confirmed():
@@ -375,10 +376,11 @@ func _on_battle_quit_requested():
 
 # Helper function to fade out before changing scenes
 func _fade_out_and_change_scene(scene_path: String):
+	# Enhanced fade-out animation matching SettingScene style
 	var tween = create_tween()
 	tween.set_parallel(true)
-	tween.tween_property(self, "modulate:a", 0.0, 0.3).set_ease(Tween.EASE_IN)
-	tween.tween_property(self, "scale", Vector2(0.8, 0.8), 0.3).set_ease(Tween.EASE_IN)
+	tween.tween_property(self, "modulate:a", 0.0, 0.25).set_ease(Tween.EASE_IN)
+	tween.tween_property(self, "scale", Vector2(0.8, 0.8), 0.25).set_ease(Tween.EASE_IN)
 	await tween.finished
 	get_tree().change_scene_to_file(scene_path)
 

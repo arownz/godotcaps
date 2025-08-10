@@ -82,6 +82,7 @@ offset_top = 32.0
 offset_right = 253.0
 offset_bottom = 78.0
 grow_horizontal = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_popup_font")
 theme_override_font_sizes/font_size = 25
 text = "Choose Profile Picture"

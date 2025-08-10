@@ -120,6 +120,7 @@ alignment = 1
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.138866, 0.162532, 0.209941, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 40
 text = "LEADERBOARD"

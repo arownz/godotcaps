@@ -15,7 +15,7 @@
 [ext_resource type="Texture2D" uid="uid://dtseuaxep3eve" path="res://gui/Update/icons/bourr enemeh.png" id="8_3555f"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="9_3555f"]
 [ext_resource type="Texture2D" uid="uid://dlusv4b6bm07h" path="res://gui/Update/UI/ui 10.png" id="14_8ojmt"]
-[ext_resource type="Texture2D" uid="uid://ct2kkb4phx2kr" path="res://gui/Update/icons/treant.png" id="16_oabpg"]
+[ext_resource type="Texture2D" uid="uid://ct2kkb4phx2kr" path="res://gui/Update/icons/treant enemeh.png" id="16_oabpg"]
 [ext_resource type="Texture2D" uid="uid://djvsvmhtt816b" path="res://gui/Update/UI/ui 10_hover.png" id="17_xeiu1"]
 [ext_resource type="Texture2D" uid="uid://cmvfv5h4u7j6e" path="res://gui/Update/icons/close icon.png" id="18_07erb"]
 [ext_resource type="Texture2D" uid="uid://c5cpf575pv2ee" path="res://gui/Update/icons/close icon_hover.png" id="18_62ino"]
@@ -188,13 +188,13 @@ offset_left = 34.0
 offset_top = 6.0
 offset_right = 459.0
 offset_bottom = 89.0
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("8_1icim")
 theme_override_font_sizes/font_size = 45
 text = "DUNGEON 3"
 uppercase = true
 
 [node name="StageDetails" type="TextureRect" parent="."]
-visible = false
 offset_left = 834.0
 offset_top = 45.0
 offset_right = 1483.0
@@ -346,6 +346,7 @@ offset_left = 41.0
 offset_top = 342.0
 offset_right = 102.0
 offset_bottom = 379.0
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("9_3555f")
 theme_override_font_sizes/font_size = 20
 text = "100"
@@ -358,6 +359,7 @@ offset_left = 147.0
 offset_top = 342.0
 offset_right = 209.0
 offset_bottom = 379.0
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("9_3555f")
 theme_override_font_sizes/font_size = 20
 text = "100"
@@ -370,6 +372,7 @@ offset_left = 256.0
 offset_top = 342.0
 offset_right = 312.0
 offset_bottom = 379.0
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("9_3555f")
 theme_override_font_sizes/font_size = 20
 text = "100"
@@ -459,6 +462,7 @@ offset_top = 20.0
 offset_right = 374.0
 offset_bottom = 81.0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("9_3555f")
 theme_override_font_sizes/font_size = 33
 text = "STAGE"
@@ -469,6 +473,7 @@ offset_left = 389.0
 offset_top = 19.0
 offset_right = 486.0
 offset_bottom = 80.0
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("9_3555f")
 theme_override_font_sizes/font_size = 33
 text = "5"
@@ -552,7 +557,7 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
 theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("9_3555f")
-theme_override_font_sizes/font_size = 50
+theme_override_font_sizes/font_size = 35
 theme_override_styles/focus = SubResource("StyleBoxEmpty_xeiu1")
 text = "FIGHT"
 icon = ExtResource("20_mqaq1")

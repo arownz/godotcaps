@@ -198,38 +198,38 @@ func _try_fallback():
 # Improve fallback word selection with categories for different word lengths
 func _get_fallback_word() -> String:
 	# Word categories organized by length - PHONETICALLY DISTINCT for STT accuracy
-	# Words selected to avoid confusing pronunciations and homophones
-	# REMOVED: mud/mad, heal/hill, too/two/to, there/their, see/sea, etc.
+	# Words carefully selected to avoid confusing pronunciations and homophones
+	# REMOVED problematic pairs: mud/mad, heal/hill, too/two/to, there/their, see/sea, cat/bat, etc.
 	var word_categories_by_length = {
 		3: {
-			"animals": ["cat", "dog", "fox", "owl", "pig", "cow", "bat", "elk", "ape", "ant"],
+			"animals": ["dog", "fox", "owl", "pig", "cow", "elk", "ape", "ant"], # Removed cat/bat confusion
 			"objects": ["cup", "pot", "box", "key", "pen", "rod", "bag", "car", "bed", "toy"],
 			"nature": ["fog", "air", "ice", "gas", "web", "oak", "gem", "sky"],
-			"food": ["pie", "tea", "egg", "jam", "nut", "ham", "gum", "oat", "fig", "yam"],
-			"colors": ["red", "tan", "jet", "ash", "ink", "dye", "navy", "wax", "tar"],
+			"food": ["pie", "egg", "jam", "ham", "gum", "oat", "fig", "yam"], # Removed tea (sounds like "T")
+			"colors": ["red", "tan", "jet", "ash", "ink", "wax", "tar"], # Removed dye/die, navy (too long sound)
 			"verbs": ["run", "sit", "eat", "get", "put", "cut", "dig", "fly", "try", "hop"],
-			"body": ["arm", "leg", "eye", "ear", "jaw", "lip", "hip", "rib", "toe", "gut"],
+			"body": ["arm", "leg", "eye", "ear", "jaw", "lip", "hip", "rib", "gut"], # Removed toe (sounds like "tow")
 			"things": ["map", "zip", "cap", "tap", "gap", "lap", "nap", "sap", "rap", "zap"]
 		},
 		4: {
-			"animals": ["wolf", "frog", "bear", "lion", "duck", "bird", "fish", "deer", "goat", "seal"],
+			"animals": ["wolf", "frog", "lion", "duck", "bird", "fish", "deer", "goat", "seal"], # Removed bear/beer confusion
 			"objects": ["book", "lamp", "desk", "fork", "door", "bowl", "ring", "coat", "pipe", "disk"],
 			"nature": ["tree", "rock", "fire", "lake", "moon", "star", "snow", "leaf", "wind", "cave"],
-			"food": ["cake", "bread", "rice", "soup", "pear", "plum", "milk", "corn", "beef", "tuna"],
+			"food": ["cake", "rice", "soup", "pear", "plum", "milk", "corn", "beef", "tuna"], # Removed bread (sounds like "bred")
 			"colors": ["blue", "pink", "teal", "gold", "ruby", "mint", "lime", "rust", "jade", "rose"],
-			"verbs": ["walk", "talk", "make", "read", "swim", "sing", "play", "ride", "push", "pull"],
-			"tools": ["nail", "tool", "gear", "bolt", "wire", "rope", "tape", "glue", "clamp", "drill"], # Added tools
-			"home": ["room", "wall", "roof", "yard", "gate", "path", "step", "deck", "porch", "fence"] # Added home items
+			"verbs": ["walk", "talk", "make", "swim", "sing", "play", "ride", "push", "pull"], # Removed read/red confusion
+			"tools": ["nail", "gear", "bolt", "wire", "rope", "tape", "glue", "drill"], # Removed tool/two confusion, clamp
+			"home": ["room", "wall", "roof", "yard", "gate", "path", "step", "deck", "porch", "fence"]
 		},
 		5: {
 			"animals": ["horse", "shark", "eagle", "tiger", "mouse", "whale", "sheep", "snake", "zebra", "llama"],
-			"objects": ["table", "chair", "phone", "watch", "glass", "brush", "spoon", "plate", "tower", "wheel"],
+			"objects": ["chair", "phone", "watch", "glass", "brush", "spoon", "plate", "tower", "wheel"], # Removed table/stable
 			"nature": ["ocean", "river", "beach", "field", "grass", "plant", "stone", "cloud", "storm", "light"],
-			"food": ["bread", "apple", "honey", "grape", "lemon", "pasta", "salad", "pizza", "cream", "sugar"],
+			"food": ["apple", "honey", "grape", "lemon", "pasta", "salad", "pizza", "cream", "sugar"], # Removed bread
 			"colors": ["green", "black", "white", "brown", "coral", "peach", "ivory", "amber", "olive", "beige"],
-			"verbs": ["dance", "smile", "laugh", "write", "think", "learn", "teach", "build", "climb", "throw"],
-			"places": ["store", "house", "park", "beach", "woods", "city", "town", "farm", "ranch", "cabin"], # Added places
-			"things": ["music", "story", "movie", "game", "sport", "hobby", "craft", "magic", "party", "gift"] # Added activities
+			"verbs": ["dance", "smile", "laugh", "think", "learn", "teach", "build", "climb", "throw"], # Removed write/right
+			"places": ["store", "house", "beach", "woods", "city", "farm", "ranch", "cabin"], # Removed park/bark, town/down
+			"things": ["music", "story", "movie", "sport", "hobby", "craft", "magic", "party", "gift"] # Removed game/gam
 		}
 	}
 	

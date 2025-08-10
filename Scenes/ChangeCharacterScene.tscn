@@ -1,12 +1,12 @@
 [gd_scene load_steps=16 format=3 uid="uid://beu8uw5oqkvxd"]
 
-[ext_resource type="Texture2D" uid="uid://chfkysvsxt4eg" path="res://gui/Update/Backgrounds/Plains_Level.png" id="1_nn5pp"]
 [ext_resource type="Script" uid="uid://liwnmmbqa706" path="res://Scripts/change_character_scene.gd" id="1_rnq7s"]
 [ext_resource type="Texture2D" uid="uid://n08ji1i2co16" path="res://gui/Update/UI/small button.png" id="2_6nemp"]
 [ext_resource type="Texture2D" uid="uid://da6rdtvo1nlwj" path="res://gui/Update/icons/return.png" id="3_oxpqv"]
+[ext_resource type="Texture2D" uid="uid://cin60mos646xe" path="res://gui/Update/UI/Character Select Unlocked_hover.png" id="4_8uolc"]
 [ext_resource type="Texture2D" uid="uid://cghh3806ycwdb" path="res://gui/Update/UI/small button_hovers.png" id="4_c2xce"]
 [ext_resource type="Texture2D" uid="uid://bs34pjd8hpq1v" path="res://gui/Update/UI/Character Select Unlocked.png" id="4_rnq7s"]
-[ext_resource type="Texture2D" uid="uid://btva4ec0bd2wp" path="res://gui/Update/UI/Character_Card_Lock.png" id="5_c2xce"]
+[ext_resource type="Texture2D" uid="uid://b0mv1qxlsccta" path="res://gui/Update/UI/Character Locked.png" id="4_tc6no"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="5_hnmjh"]
 [ext_resource type="Texture2D" uid="uid://qmmpx3uab5h7" path="res://gui/Update/UI/next button.png" id="7_tc6no"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="8_8uolc"]
@@ -26,14 +26,14 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_rnq7s")
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="Background" type="ColorRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("1_nn5pp")
+color = Color(0.137255, 0.137255, 0.137255, 1)
 
 [node name="TitleContainer" type="Control" parent="."]
 layout_mode = 1
@@ -49,10 +49,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.6
-offset_left = -309.0
-offset_top = -32.0
-offset_right = 298.0
-offset_bottom = 46.0
+offset_left = -323.0
+offset_top = -20.0
+offset_right = 321.0
+offset_bottom = 58.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -98,6 +98,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("4_rnq7s")
+texture_hover = ExtResource("4_8uolc")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -114,7 +115,7 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
-theme_override_fonts/font = ExtResource("5_hnmjh")
+theme_override_fonts/font = ExtResource("8_8uolc")
 theme_override_font_sizes/font_size = 30
 text = "Lexia"
 horizontal_alignment = 1
@@ -132,7 +133,7 @@ theme_override_colors/font_color = Color(0.501961, 0.988235, 0.501961, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
-theme_override_fonts/font = ExtResource("5_hnmjh")
+theme_override_fonts/font = ExtResource("8_8uolc")
 theme_override_font_sizes/font_size = 24
 text = "Unlocked"
 horizontal_alignment = 1
@@ -153,7 +154,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_default_cursor_shape = 2
-texture_normal = ExtResource("5_c2xce")
+texture_normal = ExtResource("4_tc6no")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -170,7 +171,7 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
-theme_override_fonts/font = ExtResource("5_hnmjh")
+theme_override_fonts/font = ExtResource("8_8uolc")
 theme_override_font_sizes/font_size = 30
 text = "Magi"
 horizontal_alignment = 1
@@ -188,7 +189,7 @@ theme_override_colors/font_color = Color(1, 0.4, 0.4, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
-theme_override_fonts/font = ExtResource("5_hnmjh")
+theme_override_fonts/font = ExtResource("8_8uolc")
 theme_override_font_sizes/font_size = 24
 text = "Locked"
 horizontal_alignment = 1
@@ -209,7 +210,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_default_cursor_shape = 2
-texture_normal = ExtResource("5_c2xce")
+texture_normal = ExtResource("4_tc6no")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -226,7 +227,7 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
-theme_override_fonts/font = ExtResource("5_hnmjh")
+theme_override_fonts/font = ExtResource("8_8uolc")
 theme_override_font_sizes/font_size = 30
 text = "Ragnar"
 horizontal_alignment = 1
@@ -244,7 +245,7 @@ theme_override_colors/font_color = Color(1, 0.4, 0.4, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
-theme_override_fonts/font = ExtResource("5_hnmjh")
+theme_override_fonts/font = ExtResource("8_8uolc")
 theme_override_font_sizes/font_size = 24
 text = "Locked"
 horizontal_alignment = 1
@@ -320,16 +321,17 @@ horizontal_alignment = 1
 [node name="SelectButton" type="Button" parent="."]
 physics_interpolation_mode = 0
 layout_mode = 0
-offset_left = 617.0
-offset_top = 673.0
-offset_right = 817.0
-offset_bottom = 774.0
+offset_left = 603.0
+offset_top = 669.0
+offset_right = 810.0
+offset_bottom = 766.0
 scale = Vector2(1.24648, 1.24648)
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
 theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("8_8uolc")
+theme_override_font_sizes/font_size = 15
 theme_override_styles/focus = SubResource("StyleBoxEmpty_bu21u")
 text = "Select Character"
 icon = ExtResource("9_ccovg")

@@ -1,7 +1,11 @@
 class_name UIManager
 extends Node
 
-var battle_scene  # Reference to the main battle scene
+var battle_scene # Reference to the main battle scene
+
+# Cache the PlayerIcon's default position to restore on stage 1
+var _player_icon_initial_pos: Vector2
+var _player_icon_pos_captured := false
 
 # Preloaded background textures for faster switching
 var background_textures = {
@@ -12,9 +16,9 @@ var background_textures = {
 
 # Background scales for different dungeons
 var background_scales = {
-	1: Vector2(4.57812, 4.5),  # Original scale for 320x180
-	2: Vector2(4.57812, 4.5),     # Reduced scale for larger image (1536x1024)
-	3: Vector2(4.57812, 4.5)      # Reduced scale for larger image (1536x1024)
+	1: Vector2(4.57812, 4.5), # Original scale for 320x180
+	2: Vector2(4.57812, 4.5), # Reduced scale for larger image (1536x1024)
+	3: Vector2(4.57812, 4.5) # Reduced scale for larger image (1536x1024)
 }
 
 func _init(scene):
@@ -101,7 +105,7 @@ func update_player_exp():
 	var exp_label = exp_bar.get_node("EXPValue")
 	
 	var player_exp = battle_scene.player_manager.player_exp
-	var player_max_exp = battle_scene.player_manager.get_max_exp()  # Use the calculated max exp
+	var player_max_exp = battle_scene.player_manager.get_max_exp() # Use the calculated max exp
 	
 	# Calculate current level progress (0-100 within current level)
 	var percentage = (float(player_exp) / float(player_max_exp)) * 100.0
@@ -126,7 +130,7 @@ func update_player_info():
 	if enemy_level_label:
 		enemy_level_label.text = str(battle_scene.enemy_manager.enemy_level)
 
-func update_power_bar(power_value, max_power=1000):
+func update_power_bar(power_value, max_power = 1000):
 	var power_bar = battle_scene.get_node("MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/PowerContainer/PowerBar")
 	var power_label = power_bar.get_node("PowerValue")
 	
@@ -137,7 +141,7 @@ func update_power_bar(power_value, max_power=1000):
 	# Update power label without max value - only show current power
 	power_label.text = str(int(power_value))
 
-func update_durability_bar(durability_value, max_durability=1000):
+func update_durability_bar(durability_value, max_durability = 1000):
 	var durability_bar = battle_scene.get_node("MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/DurabilityContainer/DurabilityBar")
 	var durability_label = durability_bar.get_node("DurabilityValue")
 	
@@ -175,6 +179,98 @@ func update_stage_info():
 		# Use the actual stage number (1-5) for each dungeon
 		stage_info_label.text = "Dungeon " + str(dungeon_num) + " - " + stage_type + " " + str(stage_num)
 		print("UIManager: Updated stage info to: ", stage_info_label.text)
+    
+	_update_stage_progress()
+
+func _update_stage_progress():
+	var progress_root = battle_scene.get_node_or_null("MainContainer/BattleAreaContainer/StageProgress")
+	if progress_root == null:
+		return
+	# Ensure StageProgress sits globally behind overlay panels (Whiteboard/STT)
+	(progress_root as Control).z_as_relative = false
+	(progress_root as Control).z_index = -100
+	var slots = progress_root.get_node_or_null("StageSlots")
+	var player_icon := progress_root.get_node_or_null("PlayerIcon") as TextureRect
+	var bar_bg = progress_root.get_node_or_null("BarBg")
+	var bar_fill = progress_root.get_node_or_null("BarFill")
+	if slots == null or player_icon == null:
+		return
+
+	# Capture the PlayerIcon's original position once
+	if !_player_icon_pos_captured:
+		_player_icon_initial_pos = (player_icon as Control).position
+		_player_icon_pos_captured = true
+    
+	var dungeon_num = battle_scene.dungeon_manager.dungeon_num
+	var stage_num = battle_scene.dungeon_manager.stage_num # 1..5
+    
+	# Set enemy icons per dungeon: 1-4 dungeon-specific, 5 is treant boss
+	var enemy_tex: Texture2D = null
+	match dungeon_num:
+		1:
+			enemy_tex = load("res://gui/Update/icons/slaym enemeh.png")
+		2:
+			enemy_tex = load("res://gui/Update/icons/snek enemeh.png")
+		3:
+			enemy_tex = load("res://gui/Update/icons/bourr enemeh.png")
+		_:
+			enemy_tex = load("res://gui/Update/icons/slaym enemeh.png")
+	var boss_tex: Texture2D = load("res://gui/Update/icons/treant enemeh.png")
+	var lock_tex: Texture2D = load("res://gui/Update/icons/lock icon.png")
+    
+	var slot_count = min(5, slots.get_child_count())
+	var covered_index := -1
+	if stage_num >= 2:
+		covered_index = clamp(stage_num - 2, 0, slot_count - 1)
+	for i in range(slot_count):
+		var slot = slots.get_child(i)
+		var icon = slot.get_node_or_null("EnemyIcon") as TextureRect
+		if icon:
+			var is_boss = (i == 4)
+			var is_unlocked = (i < stage_num)
+			# Assign icon: unlocked -> enemy/boss; locked -> lock icon
+			icon.texture = (boss_tex if is_boss else enemy_tex) if is_unlocked else lock_tex
+			icon.modulate = Color(1, 1, 1, 1)
+			# Hide the icon currently covered by the player's head (previous stage)
+			icon.visible = (i != covered_index)
+
+	# Position PlayerIcon:
+	# - Stage 1: keep original position (designer placement)
+	# - Stage >= 2: move to cover the previous stage's enemy icon (Slot[stage-2])
+	if stage_num <= 1:
+		(player_icon as Control).position = _player_icon_initial_pos
+	else:
+		var target_index = clamp(stage_num - 2, 0, slot_count - 1)
+		var target_slot = slots.get_child(target_index) as Control
+		if target_slot:
+			var root_rect = (progress_root as Control).get_global_rect()
+			var enemy_icon_node = target_slot.get_node_or_null("EnemyIcon") as Control
+			if enemy_icon_node:
+				var icon_rect = enemy_icon_node.get_global_rect()
+				# Match size to ensure perfect coverage, then align top-left exactly
+				(player_icon as Control).size = (enemy_icon_node as Control).size
+				(player_icon as Control).position = icon_rect.position - root_rect.position
+			else:
+				# Fallback to slot center if icon missing
+				var slot_rect = target_slot.get_global_rect()
+				var slot_center = slot_rect.position + slot_rect.size / 2.0
+				var size = (player_icon as Control).size
+				(player_icon as Control).position = slot_center - root_rect.position - size / 2.0
+			# Draw PlayerIcon above bar/icons within StageProgress but globally below overlays
+			(player_icon as Control).z_as_relative = false
+			(player_icon as Control).z_index = -99
+
+	# Update bar fill to reflect progress across 5 stages
+	if bar_bg and bar_fill:
+		var bg_rect = (bar_bg as Control).get_rect()
+		# Percentage: 0 at stage 1 start, 1.0 at stage 5 start
+		var stage_num_f = float(stage_num - 1) / 4.0
+		var fill_width = max(0.0, bg_rect.size.x * stage_num_f)
+		# Maintain left and vertical offsets, adjust right to left + width
+		(bar_fill as Control).offset_left = (bar_bg as Control).offset_left
+		(bar_fill as Control).offset_top = (bar_bg as Control).offset_top
+		(bar_fill as Control).offset_bottom = (bar_bg as Control).offset_bottom
+		(bar_fill as Control).offset_right = (bar_bg as Control).offset_left + fill_width
 
 func update_background(dungeon_num: int):
 	# Update background based on dungeon number

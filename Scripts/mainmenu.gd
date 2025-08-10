@@ -101,12 +101,24 @@ func _setup_hover_buttons():
 
 # Connect button signals to their respective handler functions
 func _connect_button_signals():
-    $BottomButtonsContainer/JourneyButton.pressed.connect(_on_journey_mode_button_pressed)
-    $BottomButtonsContainer/ModulesButton.pressed.connect(_on_modules_button_pressed)
-    $BottomButtonsContainer/CharacterButton.pressed.connect(_on_character_button_pressed)
-    $BottomButtonsContainer/LeaderboardButton.pressed.connect(_on_leaderboard_button_pressed)
-    $BottomButtonsContainer/SettingsButton.pressed.connect(_on_settings_button_pressed)
-    $ProfileButton.pressed.connect(_on_profile_button_pressed)
+    var journey_btn = $BottomButtonsContainer/JourneyButton
+    if journey_btn and !journey_btn.is_connected("pressed", _on_journey_mode_button_pressed):
+        journey_btn.pressed.connect(_on_journey_mode_button_pressed)
+    var modules_btn = $BottomButtonsContainer/ModulesButton
+    if modules_btn and !modules_btn.is_connected("pressed", _on_modules_button_pressed):
+        modules_btn.pressed.connect(_on_modules_button_pressed)
+    var character_btn = $BottomButtonsContainer/CharacterButton
+    if character_btn and !character_btn.is_connected("pressed", _on_character_button_pressed):
+        character_btn.pressed.connect(_on_character_button_pressed)
+    var leaderboard_btn = $BottomButtonsContainer/LeaderboardButton
+    if leaderboard_btn and !leaderboard_btn.is_connected("pressed", _on_leaderboard_button_pressed):
+        leaderboard_btn.pressed.connect(_on_leaderboard_button_pressed)
+    var settings_btn = $BottomButtonsContainer/SettingsButton
+    if settings_btn and !settings_btn.is_connected("pressed", _on_settings_button_pressed):
+        settings_btn.pressed.connect(_on_settings_button_pressed)
+    var profile_btn = $ProfileButton
+    if profile_btn and !profile_btn.is_connected("pressed", _on_profile_button_pressed):
+        profile_btn.pressed.connect(_on_profile_button_pressed)
 
 # Button hover handlers
 func _on_button_mouse_entered(label):
@@ -563,9 +575,14 @@ func _on_leaderboard_button_pressed():
 
 func _on_settings_button_pressed():
     $ButtonClick.play()
-    print("MainMenu: Navigating to settings screen")
+    print("MainMenu: Opening settings popup")
     _cleanup_firestore_listener()
-    get_tree().change_scene_to_file("res://Scenes/SettingScene.tscn")
+    var settings_popup_scene = load("res://Scenes/SettingScene.tscn")
+    if settings_popup_scene:
+        var popup = settings_popup_scene.instantiate()
+        add_child(popup)
+        if popup.has_method("set_context"):
+            popup.set_context(false) # normal settings; hide battle buttons
 
 func _on_profile_button_pressed():
     $ButtonClick.play()

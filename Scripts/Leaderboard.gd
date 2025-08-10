@@ -248,9 +248,10 @@ func _ready():
 	_setup_tab_styling()
 	_load_leaderboard_data()
 	
-	# Connect back button
+	# Connect back button (guard against duplicate connection)
 	if back_button:
-		back_button.pressed.connect(_on_back_button_pressed)
+		if not back_button.pressed.is_connected(_on_back_button_pressed):
+			back_button.pressed.connect(_on_back_button_pressed)
 
 # Setup enhanced tab styling for modern appearance
 func _setup_tab_styling():

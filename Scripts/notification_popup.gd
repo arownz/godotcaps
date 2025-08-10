@@ -1,6 +1,7 @@
 extends CanvasLayer
 
 signal closed
+signal button_pressed # New signal for when the main button is actually clicked
 
 # Default properties
 var default_title = "Notification"
@@ -23,10 +24,49 @@ func _ready():
 		popup_background.pivot_offset = popup_background.size / 2
 	else:
 		print("Warning: PopupBackground not found in notification popup")
+	
+	# Connect background click for closing
+	var background = $Background
+	if background:
+		print("NotificationPopup: Connecting background click to: ", background.name)
+		background.gui_input.connect(_on_background_clicked)
+	else:
+		print("NotificationPopup: Background node not found!")
+	
+	# Override the X button connection to use the non-engaging close
+	var close_x_button = $PopupContainer/CenterContainer/PopupBackground/CloseXButton
+	if close_x_button:
+		# Disconnect the existing connection and connect to our specific function
+		if close_x_button.pressed.is_connected(_on_close_button_pressed):
+			close_x_button.pressed.disconnect(_on_close_button_pressed)
+		close_x_button.pressed.connect(_on_close_x_button_pressed)
+
+func _on_background_clicked(event):
+	print("NotificationPopup: Background input received: ", event)
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		print("NotificationPopup: Background clicked, closing popup without engaging")
+		# Background click should not trigger engagement - just close
+		close_notification()
+
+func close_notification():
+	"""Close notification with animation"""
+	$ButtonClick.play()
+	var popup_container = $PopupContainer
+	if popup_container:
+		# Enhanced fade-out animation matching SettingScene style
+		var tween = create_tween()
+		tween.set_parallel(true)
+		tween.tween_property(popup_container, "modulate", Color(1, 1, 1, 0), 0.25).set_ease(Tween.EASE_IN)
+		tween.tween_property(popup_container, "scale", Vector2(0.8, 0.8), 0.25).set_ease(Tween.EASE_IN)
+		
+		await tween.finished
+	
+	hide()
+	emit_signal("closed")
 
 func show_notification(title = default_title, message = default_message, button_text = default_button_text):
 	# Add null checks before setting text
-	var title_label = $PopupContainer/CenterContainer/PopupBackground/VBoxContainer/TitleLabel
+	var title_label = $PopupContainer/CenterContainer/PopupBackground/VBoxContainer/TopContainer/TitleLabel
 	var message_label = $PopupContainer/CenterContainer/PopupBackground/VBoxContainer/MessageLabel
 	var button_label = $PopupContainer/CenterContainer/PopupBackground/VBoxContainer/CloseButton
 	var popup_background = $PopupContainer/CenterContainer/PopupBackground
@@ -62,13 +102,15 @@ func show_notification(title = default_title, message = default_message, button_
 	# Show the popup
 	show()
 	
-	# Animate the popup with null check
+	# Enhanced fade-in animation matching SettingScene style
 	var popup_container = $PopupContainer
 	if popup_container:
+		popup_container.modulate = Color(1, 1, 1, 0)
+		popup_container.scale = Vector2(0.8, 0.8)
 		var tween = create_tween()
 		tween.set_parallel(true)
-		tween.tween_property(popup_container, "modulate", Color(1, 1, 1, 1), 0.3)
-		tween.tween_property(popup_container, "scale", Vector2(1, 1), 0.3).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+		tween.tween_property(popup_container, "modulate", Color(1, 1, 1, 1), 0.35).set_ease(Tween.EASE_OUT)
+		tween.tween_property(popup_container, "scale", Vector2(1, 1), 0.35).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
 	else:
 		print("Warning: PopupContainer not found in notification popup")
 
@@ -148,18 +190,14 @@ func _calculate_popup_size(message: String) -> Vector2:
 	return Vector2(calculated_width, calculated_height)
 
 func _on_close_button_pressed():
-	$ButtonClick.play()
-	var popup_container = $PopupContainer
-	if popup_container:
-		var tween = create_tween()
-		tween.set_parallel(true)
-		tween.tween_property(popup_container, "modulate", Color(1, 1, 1, 0), 0.2)
-		tween.tween_property(popup_container, "scale", Vector2(0.8, 0.8), 0.2)
-		
-		await tween.finished
-	
-	hide()
-	emit_signal("closed")
+	# This is the main button (like "Engage"), emit button_pressed signal
+	emit_signal("button_pressed")
+	close_notification()
+
+func _on_close_x_button_pressed():
+	# This is the X button - just close without emitting button_pressed
+	print("NotificationPopup: X button clicked, closing popup")
+	close_notification()
 
 
 func _on_close_button_mouse_entered() -> void:

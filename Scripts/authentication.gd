@@ -511,10 +511,11 @@ func navigate_to_main_menu(is_google_auth := false):
 
 # Helper function to fade out before changing scenes
 func _fade_out_and_change_scene(scene_path: String):
+	# Enhanced fade-out animation matching SettingScene style
 	var tween = create_tween()
 	tween.set_parallel(true)
-	tween.tween_property(self, "modulate:a", 0.0, 0.3).set_ease(Tween.EASE_IN)
-	tween.tween_property(self, "scale", Vector2(0.8, 0.8), 0.3).set_ease(Tween.EASE_IN)
+	tween.tween_property(self, "modulate:a", 0.0, 0.25).set_ease(Tween.EASE_IN)
+	tween.tween_property(self, "scale", Vector2(0.8, 0.8), 0.25).set_ease(Tween.EASE_IN)
 	await tween.finished
 	get_tree().change_scene_to_file(scene_path)
 

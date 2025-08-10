@@ -1,0 +1,14 @@
+[debug] [2025-08-09T04:13:31.271Z] ----------------------------------------------------------------------
+[debug] [2025-08-09T04:13:31.275Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\pasio\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy
+[debug] [2025-08-09T04:13:31.278Z] CLI Version:   14.12.0
+[debug] [2025-08-09T04:13:31.278Z] Platform:      win32
+[debug] [2025-08-09T04:13:31.278Z] Node Version:  v22.14.0
+[debug] [2025-08-09T04:13:31.278Z] Time:          Sat Aug 09 2025 12:13:31 GMT+0800 (Philippine Standard Time)
+[debug] [2025-08-09T04:13:31.279Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-08-09T04:13:36.346Z] Error: Timed out.
+    at Timeout._onTimeout (C:\Users\pasio\AppData\Roaming\npm\node_modules\firebase-tools\lib\utils.js:272:49)
+    at listOnTimeout (node:internal/timers:594:17)
+    at process.processTimers (node:internal/timers:529:7)
+[error] 
+[error] Error: An unexpected error has occurred.

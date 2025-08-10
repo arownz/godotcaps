@@ -1,8 +1,8 @@
 [gd_scene load_steps=67 format=3 uid="uid://e6bec84rrthm"]
 
 [ext_resource type="Texture2D" uid="uid://bs7axy8rkm4ei" path="res://Sprites/Frame Sprites/Lexia.png" id="1_0riqc"]
-[ext_resource type="AudioStream" uid="uid://dmsn7fibj384u" path="res://audio/sword slash.ogg" id="2_81ctd"]
-[ext_resource type="AudioStream" uid="uid://cd2rjq6g5gd7h" path="res://audio/Sword swing metal heavy.ogg" id="3_0var5"]
+[ext_resource type="AudioStream" uid="uid://dmsn7fibj384u" path="res://audio/player/sword slash.ogg" id="2_81ctd"]
+[ext_resource type="AudioStream" uid="uid://cd2rjq6g5gd7h" path="res://audio/player/Sword swing metal heavy.ogg" id="3_0var5"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_vfynn"]
 atlas = ExtResource("1_0riqc")
@@ -423,6 +423,9 @@ animations = [{
 "texture": SubResource("AtlasTexture_sj52a")
 }, {
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_wtlso")
+}, {
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_cxxxf")
 }, {
 "duration": 1.0,
@@ -491,6 +494,8 @@ animations = [{
 sprite_frames = SubResource("SpriteFrames_fdt5l")
 animation = &"hurt"
 autoplay = "idle"
+frame = 10
+frame_progress = 1.0
 
 [node name="sfx_autoattack_swordslash" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_0var5")

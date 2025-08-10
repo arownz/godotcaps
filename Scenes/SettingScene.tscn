@@ -1,215 +1,222 @@
-[gd_scene load_steps=13 format=3 uid="uid://cjrrrf0p4lr7q"]
+[gd_scene load_steps=15 format=3 uid="uid://cjrrrf0p4lr7q"]
 
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="1_font_bold"]
+[ext_resource type="Texture2D" uid="uid://0con8ixqofpr" path="res://gui/Update/UI/ui 8.png" id="2_ch0ic"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="2_font_regular"]
-[ext_resource type="Texture2D" uid="uid://c75anq8c0biyi" path="res://gui/Update/UI/ui 7.png" id="2_pp7tk"]
-[ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="4_ch0ic"]
-[ext_resource type="Script" uid="uid://w4a7fwksg51x" path="res://Scripts/SettingScene.gd" id="5_script"]
-[ext_resource type="Texture2D" uid="uid://dkfy0a7ea1sd1" path="res://gui/Update/UI/ui 4.png" id="5_yhoge"]
-[ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="7_yhoge"]
-[ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="8_66loe"]
+[ext_resource type="Script" uid="uid://w4a7fwksg51x" path="res://Scripts/SettingScene.gd" id="3_script"]
+[ext_resource type="Texture2D" uid="uid://cmvfv5h4u7j6e" path="res://gui/Update/icons/close icon.png" id="5_close"]
+[ext_resource type="Texture2D" uid="uid://d28jiygjyukyx" path="res://gui/Update/icons/settings.png" id="6_66loe"]
+[ext_resource type="Texture2D" uid="uid://c5cpf575pv2ee" path="res://gui/Update/icons/close icon_hover.png" id="6_close_hover"]
+[ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="7_button_click"]
+[ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="7_l5u2n"]
+[ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="8_green_button"]
+[ext_resource type="Texture2D" uid="uid://bmjd8nkagj08e" path="res://gui/Update/UI/long uncolored button.png" id="10_o7c00"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_header"]
-bg_color = Color(0.933333, 0.764706, 0.603922, 1)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.8, 0.85, 0.9, 1)
-corner_radius_top_left = 15
-corner_radius_top_right = 15
-corner_radius_bottom_right = 15
-corner_radius_bottom_left = 15
-shadow_color = Color(0, 0, 0, 0.1)
-shadow_size = 8
-shadow_offset = Vector2(0, 4)
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_l5u2n"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_button"]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_o7c00"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nav_btn_hover"]
-bg_color = Color(0.35, 0.4, 0.84, 1)
-corner_radius_top_left = 25
-corner_radius_top_right = 25
-corner_radius_bottom_right = 25
-corner_radius_bottom_left = 25
-shadow_color = Color(0, 0, 0, 0.3)
-shadow_size = 6
-shadow_offset = Vector2(0, 4)
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_wwc4u"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nav_btn"]
-bg_color = Color(0.4, 0.49, 0.92, 1)
-corner_radius_top_left = 25
-corner_radius_top_right = 25
-corner_radius_bottom_right = 25
-corner_radius_bottom_left = 25
-shadow_color = Color(0, 0, 0, 0.2)
-shadow_size = 4
-shadow_offset = Vector2(0, 2)
+[node name="Setting" type="CanvasLayer"]
+script = ExtResource("3_script")
 
-[node name="Setting" type="Control"]
+[node name="Background" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.6)
+
+[node name="SettingsContainer" type="Control" parent="."]
+custom_minimum_size = Vector2(580, 420)
 layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("5_script")
-
-[node name="Background" type="TextureRect" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("2_pp7tk")
-
-[node name="MainContainer" type="VBoxContainer" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 57.0
-offset_top = 41.0
-offset_right = -58.0
-offset_bottom = -35.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/separation = 50
-
-[node name="HeaderPanel" type="Panel" parent="MainContainer"]
-custom_minimum_size = Vector2(0, 150)
-layout_mode = 2
-size_flags_vertical = 0
-theme_override_styles/panel = SubResource("StyleBoxFlat_header")
-
-[node name="HeaderContainer" type="VBoxContainer" parent="MainContainer/HeaderPanel"]
-layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -558.5
-offset_top = -36.0
-offset_right = 558.5
-offset_bottom = 37.0
+offset_left = -290.0
+offset_top = -210.0
+offset_right = 290.0
+offset_bottom = 210.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 20
 
-[node name="TitleContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer"]
-layout_mode = 2
-size_flags_vertical = 0
-alignment = 1
-
-[node name="TitleLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.138866, 0.162532, 0.209941, 1)
-theme_override_fonts/font = ExtResource("1_font_bold")
-theme_override_font_sizes/font_size = 40
-text = "SETTING"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Label" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer/TitleLabel"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.409
-anchor_top = 1.243
-anchor_right = 0.409
-anchor_bottom = 1.243
-offset_left = -31.405
-offset_top = -16.1533
-offset_right = 228.595
-offset_bottom = 13.18
-theme_override_colors/font_color = Color(0.137255, 0.160784, 0.211765, 1)
-theme_override_fonts/font = ExtResource("1_font_bold")
-text = "Still in development..."
-
-[node name="BackButton" type="Button" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer"]
-custom_minimum_size = Vector2(140, 50)
-layout_mode = 2
-size_flags_horizontal = 0
-mouse_default_cursor_shape = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
-theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("1_font_bold")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_button")
-theme_override_styles/hover = SubResource("StyleBoxFlat_nav_btn_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_nav_btn_hover")
-theme_override_styles/normal = SubResource("StyleBoxFlat_nav_btn")
-text = "Back"
-icon = ExtResource("4_ch0ic")
-flat = true
-icon_alignment = 1
-expand_icon = true
-
-[node name="VBoxContainer" type="VBoxContainer" parent="MainContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_constants/separation = 30
-
-[node name="SettingsPanel" type="NinePatchRect" parent="MainContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-texture = ExtResource("5_yhoge")
-patch_margin_left = 20
-patch_margin_top = 20
-patch_margin_right = 20
-patch_margin_bottom = 20
-
-[node name="SettingsContent" type="MarginContainer" parent="MainContainer/VBoxContainer/SettingsPanel"]
+[node name="BackgroundTexture" type="NinePatchRect" parent="SettingsContainer"]
+texture_filter = 1
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = 30.0
-offset_bottom = -10.0
+offset_top = -6.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 40
-theme_override_constants/margin_top = 30
-theme_override_constants/margin_right = 40
-theme_override_constants/margin_bottom = 30
+texture = ExtResource("2_ch0ic")
+region_rect = Rect2(0, 0, 130, 118)
 
-[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent"]
+[node name="CloseButton" type="TextureButton" parent="SettingsContainer"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.983
+anchor_top = 0.021
+anchor_right = 0.983
+anchor_bottom = 0.021
+offset_left = -29.14
+offset_top = -22.82
+offset_right = 18.86
+offset_bottom = 27.18
+grow_horizontal = 0
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("5_close")
+texture_hover = ExtResource("6_close_hover")
+stretch_mode = 5
+
+[node name="TitleContainer" type="HBoxContainer" parent="SettingsContainer"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 142.0
+offset_top = -399.0
+offset_right = 423.0
+offset_bottom = -348.0
+grow_vertical = 0
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="SettingsContainer/TitleContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("1_font_bold")
+theme_override_font_sizes/font_size = 20
+text = "SETTING"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="SettingsContainer/TitleContainer/TitleLabel"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -0.151
+anchor_top = 0.5
+anchor_right = -0.151
+anchor_bottom = 0.5
+offset_left = -24.011
+offset_top = -21.3333
+offset_right = 15.989
+offset_bottom = 18.6667
+texture = ExtResource("6_66loe")
+
+[node name="SettingsContent" type="MarginContainer" parent="SettingsContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 32.0
+offset_top = 99.0
+offset_right = -23.0
+offset_bottom = -19.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="SettingsContainer/SettingsContent"]
 layout_mode = 2
 horizontal_scroll_mode = 0
 
-[node name="SettingsVBox" type="VBoxContainer" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer"]
+[node name="SettingsVBox" type="VBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 25
+theme_override_constants/separation = 15
 
-[node name="AccessibilitySection" type="VBoxContainer" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox"]
+[node name="BackgroundRect" type="ColorRect" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox"]
+z_index = -1
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+color = Color(0.05, 0.05, 0.15, 0.8)
+
+[node name="BattleSection" type="VBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="BattleHeader" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/BattleSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("1_font_bold")
+theme_override_font_sizes/font_size = 18
+text = "Battle Actions"
+horizontal_alignment = 1
+
+[node name="BattleButtonContainer" type="HBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/BattleSection"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+theme_override_constants/separation = 15
+alignment = 1
+
+[node name="EngageButton" type="Button" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/BattleSection/BattleButtonContainer"]
+custom_minimum_size = Vector2(130, 32)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("1_font_bold")
+theme_override_font_sizes/font_size = 12
+theme_override_styles/focus = SubResource("StyleBoxEmpty_l5u2n")
+text = "Engage"
+icon = ExtResource("7_l5u2n")
+flat = true
+icon_alignment = 1
+expand_icon = true
+
+[node name="LeaveButton" type="Button" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/BattleSection/BattleButtonContainer"]
+custom_minimum_size = Vector2(110, 32)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("1_font_bold")
+theme_override_font_sizes/font_size = 14
+theme_override_styles/focus = SubResource("StyleBoxEmpty_o7c00")
+text = "Leave"
+icon = ExtResource("8_green_button")
+flat = true
+icon_alignment = 1
+expand_icon = true
+
+[node name="BattleSeparator" type="HSeparator" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="AccessibilitySection" type="VBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="AccessibilityHeader" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.234221, 0.972639, 0.237151, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("1_font_bold")
+theme_override_font_sizes/font_size = 18
+text = "Accessibility"
+
+[node name="FontSizeContainer" type="HBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection"]
 layout_mode = 2
 theme_override_constants/separation = 15
 
-[node name="AccessibilityHeader" type="Label" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.2, 0.8, 0.2, 1)
-theme_override_fonts/font = ExtResource("1_font_bold")
-theme_override_font_sizes/font_size = 24
-text = "Accessibility"
-
-[node name="FontSizeContainer" type="HBoxContainer" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection"]
-layout_mode = 2
-theme_override_constants/separation = 20
-
-[node name="FontSizeLabel" type="Label" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/FontSizeContainer"]
-custom_minimum_size = Vector2(200, 0)
+[node name="FontSizeLabel" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/FontSizeContainer"]
+custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_font_regular")
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 14
 text = "Font Size:"
 vertical_alignment = 1
 
-[node name="FontSizeSlider" type="HSlider" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/FontSizeContainer"]
-custom_minimum_size = Vector2(200, 40)
+[node name="FontSizeSlider" type="HSlider" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/FontSizeContainer"]
+custom_minimum_size = Vector2(150, 30)
 layout_mode = 2
 min_value = 18.0
 max_value = 28.0
@@ -217,31 +224,33 @@ step = 2.0
 value = 20.0
 editable = false
 
-[node name="FontSizeValue" type="Label" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/FontSizeContainer"]
-custom_minimum_size = Vector2(50, 0)
+[node name="FontSizeValue" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/FontSizeContainer"]
+custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_font_regular")
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 14
 text = "18"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ReadingSpeedContainer" type="HBoxContainer" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection"]
+[node name="ReadingSpeedContainer" type="HBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection"]
 layout_mode = 2
-theme_override_constants/separation = 20
+theme_override_constants/separation = 15
 
-[node name="ReadingSpeedLabel" type="Label" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/ReadingSpeedContainer"]
-custom_minimum_size = Vector2(200, 0)
+[node name="ReadingSpeedLabel" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/ReadingSpeedContainer"]
+custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_font_regular")
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 14
 text = "Reading Speed:"
 vertical_alignment = 1
 
-[node name="ReadingSpeedSlider" type="HSlider" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/ReadingSpeedContainer"]
-custom_minimum_size = Vector2(200, 40)
+[node name="ReadingSpeedSlider" type="HSlider" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/ReadingSpeedContainer"]
+custom_minimum_size = Vector2(150, 30)
 layout_mode = 2
 min_value = 1.0
 max_value = 18.0
@@ -249,207 +258,229 @@ step = 0.1
 value = 2.0
 editable = false
 
-[node name="ReadingSpeedValue" type="Label" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/ReadingSpeedContainer"]
-custom_minimum_size = Vector2(50, 0)
+[node name="ReadingSpeedValue" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/ReadingSpeedContainer"]
+custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_font_regular")
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 14
 text = "1.0x"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="HighContrastContainer" type="HBoxContainer" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection"]
-layout_mode = 2
-theme_override_constants/separation = 20
-
-[node name="HighContrastLabel" type="Label" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/HighContrastContainer"]
-custom_minimum_size = Vector2(250, 0)
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = ExtResource("2_font_regular")
-theme_override_font_sizes/font_size = 18
-text = "High Contrast Mode:"
-vertical_alignment = 1
-
-[node name="HighContrastToggle" type="CheckBox" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/HighContrastContainer"]
-layout_mode = 2
-theme_override_fonts/font = ExtResource("2_font_regular")
-theme_override_font_sizes/font_size = 16
-disabled = true
-
-[node name="Separator1" type="HSeparator" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox"]
-layout_mode = 2
-theme_override_constants/separation = 3
-
-[node name="AudioSection" type="VBoxContainer" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox"]
+[node name="HighContrastContainer" type="HBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection"]
 layout_mode = 2
 theme_override_constants/separation = 15
 
-[node name="AudioHeader" type="Label" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/AudioSection"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.2, 0.8, 0.8, 1)
-theme_override_fonts/font = ExtResource("1_font_bold")
-theme_override_font_sizes/font_size = 24
-text = "Audio"
-
-[node name="MasterVolumeContainer" type="HBoxContainer" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/AudioSection"]
-layout_mode = 2
-theme_override_constants/separation = 20
-
-[node name="MasterVolumeLabel" type="Label" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MasterVolumeContainer"]
+[node name="HighContrastLabel" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/HighContrastContainer"]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_font_regular")
+theme_override_font_sizes/font_size = 14
+text = "High Contrast Mode:"
+vertical_alignment = 1
+
+[node name="HighContrastToggle" type="CheckBox" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/HighContrastContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_font_regular")
+theme_override_font_sizes/font_size = 14
+disabled = true
+
+[node name="Separator1" type="HSeparator" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="AudioSection" type="VBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="AudioHeader" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.219261, 0.834255, 0.834176, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("1_font_bold")
 theme_override_font_sizes/font_size = 18
+text = "Audio"
+
+[node name="MasterVolumeContainer" type="HBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="MasterVolumeLabel" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MasterVolumeContainer"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_font_regular")
+theme_override_font_sizes/font_size = 14
 text = "Master Volume:"
 vertical_alignment = 1
 
-[node name="MasterVolumeSlider" type="HSlider" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MasterVolumeContainer"]
-custom_minimum_size = Vector2(200, 40)
+[node name="MasterVolumeSlider" type="HSlider" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MasterVolumeContainer"]
+custom_minimum_size = Vector2(130, 30)
 layout_mode = 2
 value = 75.0
 editable = false
 
-[node name="MasterVolumeValue" type="Label" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MasterVolumeContainer"]
-custom_minimum_size = Vector2(50, 0)
+[node name="MasterVolumeValue" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MasterVolumeContainer"]
+custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_font_regular")
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 14
 text = "75%"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="SFXVolumeContainer" type="HBoxContainer" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/AudioSection"]
+[node name="SFXVolumeContainer" type="HBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection"]
 layout_mode = 2
-theme_override_constants/separation = 20
+theme_override_constants/separation = 15
 
-[node name="SFXVolumeLabel" type="Label" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/SFXVolumeContainer"]
-custom_minimum_size = Vector2(200, 0)
+[node name="SFXVolumeLabel" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/SFXVolumeContainer"]
+custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_font_regular")
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 14
 text = "Sound Effects:"
 vertical_alignment = 1
 
-[node name="SFXVolumeSlider" type="HSlider" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/SFXVolumeContainer"]
-custom_minimum_size = Vector2(200, 40)
+[node name="SFXVolumeSlider" type="HSlider" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/SFXVolumeContainer"]
+custom_minimum_size = Vector2(130, 30)
 layout_mode = 2
 value = 80.0
 editable = false
 
-[node name="SFXVolumeValue" type="Label" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/SFXVolumeContainer"]
-custom_minimum_size = Vector2(50, 0)
+[node name="SFXVolumeValue" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/SFXVolumeContainer"]
+custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_font_regular")
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 14
 text = "80%"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="MusicVolumeContainer" type="HBoxContainer" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/AudioSection"]
+[node name="MusicVolumeContainer" type="HBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection"]
 layout_mode = 2
-theme_override_constants/separation = 20
+theme_override_constants/separation = 15
 
-[node name="MusicVolumeLabel" type="Label" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MusicVolumeContainer"]
-custom_minimum_size = Vector2(200, 0)
+[node name="MusicVolumeLabel" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MusicVolumeContainer"]
+custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_font_regular")
-theme_override_font_sizes/font_size = 18
-text = "Background Music:"
+theme_override_font_sizes/font_size = 14
+text = "Music:"
 vertical_alignment = 1
 
-[node name="MusicVolumeSlider" type="HSlider" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MusicVolumeContainer"]
-custom_minimum_size = Vector2(200, 40)
+[node name="MusicVolumeSlider" type="HSlider" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MusicVolumeContainer"]
+custom_minimum_size = Vector2(130, 30)
 layout_mode = 2
 value = 60.0
 editable = false
 
-[node name="MusicVolumeValue" type="Label" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MusicVolumeContainer"]
-custom_minimum_size = Vector2(50, 0)
+[node name="MusicVolumeValue" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MusicVolumeContainer"]
+custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_font_regular")
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 14
 text = "60%"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Separator2" type="HSeparator" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox"]
+[node name="Separator2" type="HSeparator" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox"]
 layout_mode = 2
-theme_override_constants/separation = 3
+theme_override_constants/separation = 2
 
-[node name="GameplaySection" type="VBoxContainer" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox"]
+[node name="GameplaySection" type="VBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="GameplayHeader" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/GameplaySection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.875676, 0.600796, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("1_font_bold")
+theme_override_font_sizes/font_size = 18
+text = "Gameplay"
+
+[node name="TutorialsContainer" type="HBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/GameplaySection"]
 layout_mode = 2
 theme_override_constants/separation = 15
 
-[node name="GameplayHeader" type="Label" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/GameplaySection"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.8, 0.6, 0.2, 1)
-theme_override_fonts/font = ExtResource("1_font_bold")
-theme_override_font_sizes/font_size = 24
-text = "Gameplay"
-
-[node name="TutorialsContainer" type="HBoxContainer" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/GameplaySection"]
-layout_mode = 2
-theme_override_constants/separation = 20
-
-[node name="TutorialsLabel" type="Label" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/GameplaySection/TutorialsContainer"]
-custom_minimum_size = Vector2(250, 0)
+[node name="TutorialsLabel" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/GameplaySection/TutorialsContainer"]
+custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_font_regular")
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 14
 text = "Show Tutorial Tips:"
 vertical_alignment = 1
 
-[node name="TutorialsToggle" type="CheckBox" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/GameplaySection/TutorialsContainer"]
+[node name="TutorialsToggle" type="CheckBox" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/GameplaySection/TutorialsContainer"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_font_regular")
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 14
 disabled = true
 button_pressed = true
 
-[node name="Separator3" type="HSeparator" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox"]
+[node name="Separator3" type="HSeparator" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox"]
 layout_mode = 2
-theme_override_constants/separation = 3
+theme_override_constants/separation = 2
 
-[node name="DataSection" type="VBoxContainer" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox"]
+[node name="DataSection" type="VBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox"]
 layout_mode = 2
-theme_override_constants/separation = 15
+theme_override_constants/separation = 8
 
-[node name="DataHeader" type="Label" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/DataSection"]
+[node name="DataHeader" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/DataSection"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.8, 0.2, 0.2, 1)
+theme_override_colors/font_color = Color(1, 0.9625, 0.25, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("1_font_bold")
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 18
 text = "Data & Privacy"
 
-[node name="ExportDataButton" type="Button" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/DataSection"]
-custom_minimum_size = Vector2(200, 50)
+[node name="ExportDataButton" type="Button" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/DataSection"]
+custom_minimum_size = Vector2(150, 35)
 layout_mode = 2
 size_flags_horizontal = 0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_font_regular")
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 14
+theme_override_styles/focus = SubResource("StyleBoxEmpty_wwc4u")
 disabled = true
-text = "Export My Data"
+text = "Export Data"
+icon = ExtResource("10_o7c00")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
-[node name="BottomSpacer" type="Control" parent="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox"]
-custom_minimum_size = Vector2(0, 20)
+[node name="BottomSpacer" type="Control" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox"]
+custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
 
 [node name="ButtonClick" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("7_yhoge")
+stream = ExtResource("7_button_click")
 
 [node name="ButtonHover" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("8_66loe")
+stream = ExtResource("7_button_click")
 
-[connection signal="mouse_entered" from="MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton" to="." method="_on_back_button_mouse_entered"]
-[connection signal="pressed" from="MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton" to="." method="_on_back_button_pressed"]
-[connection signal="mouse_entered" from="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/DataSection/ExportDataButton" to="." method="_on_export_data_button_mouse_entered"]
-[connection signal="pressed" from="MainContainer/VBoxContainer/SettingsPanel/SettingsContent/ScrollContainer/SettingsVBox/DataSection/ExportDataButton" to="." method="_on_export_data_button_pressed"]
+[connection signal="mouse_entered" from="SettingsContainer/CloseButton" to="." method="_on_close_button_mouse_entered"]
+[connection signal="pressed" from="SettingsContainer/CloseButton" to="." method="_on_close_button_pressed"]
+[connection signal="mouse_entered" from="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/BattleSection/BattleButtonContainer/EngageButton" to="." method="_on_engage_button_mouse_entered"]
+[connection signal="pressed" from="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/BattleSection/BattleButtonContainer/EngageButton" to="." method="_on_engage_button_pressed"]
+[connection signal="mouse_entered" from="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/BattleSection/BattleButtonContainer/LeaveButton" to="." method="_on_quit_button_mouse_entered"]
+[connection signal="pressed" from="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/BattleSection/BattleButtonContainer/LeaveButton" to="." method="_on_quit_button_pressed"]
+[connection signal="mouse_entered" from="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/DataSection/ExportDataButton" to="." method="_on_export_data_button_mouse_entered"]
+[connection signal="pressed" from="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/DataSection/ExportDataButton" to="." method="_on_export_data_button_pressed"]

@@ -1,6 +1,10 @@
-[gd_scene load_steps=35 format=3 uid="uid://cg0ip3wgfljwh"]
+[gd_scene load_steps=39 format=3 uid="uid://cg0ip3wgfljwh"]
 
 [ext_resource type="Texture2D" uid="uid://dr71hrxs7djx0" path="res://Sprites/Frame Sprites/Boar.png" id="1_4bljo"]
+[ext_resource type="AudioStream" uid="uid://brkydtpy4lhuk" path="res://audio/boar/boar_autoattack.ogg" id="2_guge8"]
+[ext_resource type="AudioStream" uid="uid://ddqstquvd0glm" path="res://audio/boar/boar_hurt.ogg" id="3_guge8"]
+[ext_resource type="AudioStream" uid="uid://b3qvrcodhllme" path="res://audio/boar/boar_skill.ogg" id="3_p8cbs"]
+[ext_resource type="AudioStream" uid="uid://dc6nx6ve1ufyt" path="res://audio/boar/boar_dead.ogg" id="4_p8cbs"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_r4w46"]
 atlas = ExtResource("1_4bljo")
@@ -263,3 +267,15 @@ animations = [{
 sprite_frames = SubResource("SpriteFrames_3qtp5")
 animation = &"idle"
 autoplay = "idle"
+
+[node name="boar_autoattack" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_guge8")
+
+[node name="boar_skill" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_p8cbs")
+
+[node name="boar_hurt" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_guge8")
+
+[node name="boar_dead" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_p8cbs")

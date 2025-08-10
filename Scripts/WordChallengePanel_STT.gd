@@ -40,30 +40,62 @@ var result_panel_active = false
 # Flag to track if result is being processed
 var result_being_processed = false
 
+# Flag to prevent double signal emissions
+var challenge_result_sent = false
+
 func _ready():
-	# Get node references
-	random_word_label = $ChallengePanel/VBoxContainer/WordContainer/RandomWordLabel
-	live_transcription_label = $ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer/LiveTranscriptionContainer/LiveTranscriptionLabel
-	live_transcription_text = $ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer/LiveTranscriptionContainer/LiveTranscriptionText
-	permission_status_label = $ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer/PermissionStatusLabel
-	speak_button = $ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer/SpeakButton
-	status_label = $ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer/StatusLabel
-	tts_settings_panel = $ChallengePanel/VBoxContainer/TTSSettingsPanel
-	api_status_label = $ChallengePanel/VBoxContainer/APIStatusLabel
+	# Get node references with validation
+	random_word_label = get_node_or_null("ChallengePanel/VBoxContainer/WordContainer/RandomWordLabel")
+	live_transcription_label = get_node_or_null("ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer/LiveTranscriptionContainer/LiveTranscriptionLabel")
+	live_transcription_text = get_node_or_null("ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer/LiveTranscriptionContainer/LiveTranscriptionText")
+	permission_status_label = get_node_or_null("ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer/PermissionStatusLabel")
+	speak_button = get_node_or_null("ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer/SpeakButton")
+	status_label = get_node_or_null("ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer/StatusLabel")
+	tts_settings_panel = get_node_or_null("ChallengePanel/VBoxContainer/TTSSettingsPanel")
+	api_status_label = get_node_or_null("ChallengePanel/VBoxContainer/APIStatusLabel")
 	
-	# Add fade-in animation
+	# Validate critical nodes
+	if not random_word_label:
+		print("ERROR: Could not find RandomWordLabel node")
+		return
+	if not speak_button:
+		print("ERROR: Could not find SpeakButton node")
+		return
+	if not api_status_label:
+		print("ERROR: Could not find APIStatusLabel node")
+		return
+	
+	# Note: BonusDamageCalculator is now a static class, no instance needed
+	
+	# Enhanced fade-in animation matching SettingScene style
 	modulate.a = 0.0
 	scale = Vector2(0.8, 0.8)
 	var tween = create_tween()
 	tween.set_parallel(true)
-	tween.tween_property(self, "modulate:a", 1.0, 0.4).set_ease(Tween.EASE_OUT)
-	tween.tween_property(self, "scale", Vector2(1.0, 1.0), 0.4).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+	tween.tween_property(self, "modulate:a", 1.0, 0.35).set_ease(Tween.EASE_OUT)
+	tween.tween_property(self, "scale", Vector2(1.0, 1.0), 0.35).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
 	
 	# Create TTS instance and initialize
 	tts = TextToSpeech.new()
+	if tts == null:
+		print("ERROR: Failed to create TextToSpeech instance")
+		api_status_label.text = "TTS initialization failed"
+		return
+	
 	add_child(tts)
-	tts.speech_ended.connect(_on_tts_speech_ended)
-	tts.speech_error.connect(_on_tts_speech_error)
+	
+	# Wait a frame for TTS to initialize before connecting signals
+	await get_tree().process_frame
+	
+	# Check if TTS is valid before connecting signals
+	if tts and is_instance_valid(tts):
+		if not tts.is_connected("speech_ended", Callable(self, "_on_tts_speech_ended")):
+			tts.speech_ended.connect(_on_tts_speech_ended)
+		if not tts.is_connected("speech_error", Callable(self, "_on_tts_speech_error")):
+			tts.speech_error.connect(_on_tts_speech_error)
+	else:
+		print("ERROR: TTS instance is invalid after creation")
+		api_status_label.text = "TTS instance invalid"
 	
 	# Create debounce timer for live transcription
 	debounce_timer = Timer.new()
@@ -505,92 +537,6 @@ func _initialize_web_audio_environment():
 		var result = JavaScriptBridge.eval(js_code)
 		print("Web audio environment initialized: ", result)
 
-# Set up JavaScript callbacks for web platform
-func _setup_web_audio_callbacks():
-	if JavaScriptBridge.has_method("eval"):
-		var js_code = """
-			(function() {
-				// Make sure we have our speech object
-				if (!window.godot_speech) return false;
-				
-				// Store the godot object path for sending messages back
-				window.godot_speech._godotObjectPath = '""" + str(get_path()) + """';
-				
-				// Process audio data after recording
-				window.godot_speech.processAudio = function(audioBlob) {
-					this.debugLog("Processing recorded audio");
-					
-					// Convert audio blob to base64
-					var reader = new FileReader();
-					reader.readAsDataURL(audioBlob); 
-					reader.onloadend = () => {
-						try {
-							var base64data = reader.result.split(',')[1];
-							this.debugLog("Audio converted to base64");
-							
-							// Send the audio data to the Google Speech API
-							this.debugLog("Sending request to Google Speech API");
-							
-							// Request parameters
-							var request = {
-								config: {
-									encoding: "WEBM_OPUS",
-									sampleRateHertz: 48000,
-									languageCode: "en-US",
-									model: "command_and_search",
-									speechContexts: [{
-										phrases: ["spelling", "letters", "dictation"]
-									}]
-								},
-								audio: {
-									content: base64data
-								}
-							};
-							
-							fetch('https://speech.googleapis.com/v1/speech:recognize?key=' + window.GOOGLE_CLOUD_API_KEY, {
-								method: 'POST',
-								headers: {
-									'Content-Type': 'application/json'
-								},
-								body: JSON.stringify(request)
-							})
-							.then(response => response.json())
-							.then(data => {
-								this.debugLog("Speech API response received");
-								console.log("Speech API response:", data);
-								
-								if (data.results && data.results.length > 0 && 
-									data.results[0].alternatives && 
-									data.results[0].alternatives.length > 0) {
-									var text = data.results[0].alternatives[0].transcript;
-									// Make sure to use function properly
-									this.onResult(text);
-								} else {
-									// Make sure to use function properly
-									this.onError("No recognition result");
-								}
-							})
-							.catch(error => {
-								console.error("Error with Speech API:", error);
-								// Make sure to use function properly
-								this.onError(error);
-							});
-						} catch (e) {
-							// Make sure to use function properly
-							this.onError("Audio processing error: " + e.message);
-						}
-					};
-				};
-				
-				return true;
-			})();
-		"""
-		
-		var result = JavaScriptBridge.eval(js_code)
-		print("Web audio callbacks set up: ", result)
-
-# Process function - removed since we don't need desktop functionality
-
 func _on_word_fetched():
 	# Get word from the API
 	challenge_word = random_word_api.get_random_word()
@@ -765,15 +711,21 @@ func _start_live_recognition() -> bool:
 				}
 				
 				try {
-					// Request microphone permission with enhanced audio constraints
+					// Request microphone permission with ENHANCED SENSITIVITY audio constraints
 					const audioConstraints = {
 						audio: {
-							echoCancellation: true,
-							noiseSuppression: true,
-							autoGainControl: true,
-							sampleRate: 44100,
+							echoCancellation: false,     // Disable echo cancellation to preserve all audio
+							noiseSuppression: false,     // Disable noise suppression for better sensitivity
+							autoGainControl: true,       // Enable auto gain for volume boost
+							sampleRate: 48000,           // High sample rate for better quality
 							sampleSize: 16,
-							channelCount: 1
+							channelCount: 1,
+							// Additional sensitivity settings
+							googEchoCancellation: false,
+							googAutoGainControl: true,
+							googNoiseSuppression: false,
+							googHighpassFilter: false,
+							googAudioMirroring: false
 						}
 					};
 					
@@ -787,16 +739,27 @@ func _start_live_recognition() -> bool:
 					const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 					window.currentRecognition = new SpeechRecognition();
 					
-					// Configure for live transcription with optimal accuracy settings
+					// Configure for live transcription with ENHANCED SENSITIVITY settings
 					window.currentRecognition.continuous = true;
 					window.currentRecognition.interimResults = true;
 					window.currentRecognition.lang = 'en-US';
-					window.currentRecognition.maxAlternatives = 5;  // Get more alternatives for better accuracy
+					window.currentRecognition.maxAlternatives = 8;  // More alternatives for better accuracy
 					
-					// Enhanced audio settings for better microphone sensitivity
+					// ENHANCED SENSITIVITY SETTINGS for better recognition
 					if (window.currentRecognition.serviceURI) {
-						// For Chrome/Chromium - enhance recognition
+						// For Chrome/Chromium - enhance recognition with alternative endpoints
 						window.currentRecognition.serviceURI = 'wss://www.google.com/speech-api/v2/recognize';
+					}
+					
+					// Enhanced audio constraints for maximum sensitivity
+					if (window.currentRecognition.audioConstraints) {
+						window.currentRecognition.audioConstraints = {
+							echoCancellation: false,  // Disable to preserve all audio
+							noiseSuppression: false,  // Disable to catch quieter speech
+							autoGainControl: true,    // Enable for volume boost
+							sampleRate: 48000,        // High sample rate
+							channelCount: 1
+						};
 					}
 					
 					// Add grammar hints to prefer words over numbers
@@ -814,26 +777,32 @@ func _start_live_recognition() -> bool:
 							const result = event.results[i];
 							let transcript = result[0].transcript.trim();
 							const isFinal = result.isFinal;
+							const confidence = result[0].confidence || 0.5;
 							
-							// Process multiple alternatives for better accuracy
+							console.log('Raw transcript:', transcript, 'Confidence:', confidence, 'Final:', isFinal);
+							
+							// ENHANCED SENSITIVITY: Accept lower confidence for quieter speech
+							let minConfidence = 0.3; // Lowered from 0.5 to 0.3 for better sensitivity
+							
+							// Process multiple alternatives for better accuracy (especially for quiet speech)
 							if (result.length > 1) {
 								let bestTranscript = transcript;
-								let bestScore = result[0].confidence || 0.5;
+								let bestScore = confidence;
 								
-								console.log('Processing', result.length, 'alternatives for better accuracy');
+								console.log('Processing', result.length, 'alternatives for enhanced sensitivity');
 								
 								for (let j = 1; j < result.length; j++) {
 									const altTranscript = result[j].transcript.trim();
-									const altConfidence = result[j].confidence || 0.5;
+									const altConfidence = result[j].confidence || 0.3;
 									
 									console.log('Alternative', j, ':', altTranscript, 'Confidence:', altConfidence);
 									
-									// Prefer word-like alternatives over numbers with good confidence
+									// Prefer word-like alternatives with reasonable confidence
 									const isWordLike = !altTranscript.match(/^[0-9]+$/) && altTranscript.match(/^[a-zA-Z ]+$/);
-									const confidenceThreshold = bestScore * 0.7; // More lenient threshold
+									const confidenceThreshold = bestScore * 0.6; // More lenient threshold for quiet speech
 									
 									if (altConfidence > confidenceThreshold && isWordLike) {
-										console.log('Selecting better alternative:', altTranscript);
+										console.log('Selecting better alternative for quiet speech:', altTranscript);
 										bestTranscript = altTranscript;
 										bestScore = altConfidence;
 									}
@@ -842,10 +811,16 @@ func _start_live_recognition() -> bool:
 								console.log('Final selected transcript:', transcript, 'Score:', bestScore);
 							}
 							
+							// Accept even lower confidence transcripts if they look like valid words
+							if (confidence < minConfidence && transcript.match(/^[a-zA-Z]+$/)) {
+								console.log('Accepting low-confidence word for enhanced sensitivity:', transcript, 'Confidence:', confidence);
+								// Continue processing even with low confidence for single-word responses
+							}
+							
 							// Clean transcript of non-letter characters (except spaces)
 							transcript = cleanTranscriptForWords(transcript);
 							
-							console.log('Speech result:', transcript, 'Final:', isFinal, 'Confidence:', result[0].confidence);
+							console.log('Speech result (enhanced):', transcript, 'Final:', isFinal, 'Confidence:', confidence);
 							
 							// Store the result globally for Godot to poll
 							if (isFinal) {
@@ -861,17 +836,19 @@ func _start_live_recognition() -> bool:
 					window.currentRecognition.onerror = function(event) {
 						console.error('Speech recognition error:', event.error, 'Event:', event);
 						
-						// Handle specific errors for better user experience
+						// Handle specific errors for enhanced sensitivity
 						if (event.error === 'no-speech') {
-							console.log('No speech detected - continuing to listen...');
-							// Don't stop for no-speech, just continue
+							console.log('No speech detected - continuing to listen with enhanced sensitivity...');
+							// Don't stop for no-speech, just continue with enhanced sensitivity
 							return;
 						} else if (event.error === 'audio-capture') {
-							console.error('Audio capture error - microphone issues');
+							console.error('Audio capture error - trying enhanced microphone access');
 						} else if (event.error === 'not-allowed') {
 							console.error('Microphone permission denied');
 						} else if (event.error === 'network') {
-							console.log('Network error - will attempt restart');
+							console.log('Network error - will attempt restart with enhanced settings');
+						} else if (event.error === 'aborted') {
+							console.log('Recognition aborted - attempting enhanced restart');
 						}
 						
 						try {
@@ -1140,48 +1117,44 @@ func _apply_phonetic_improvements(recognized_text: String, target_word: String) 
 	var target_lower = target_word.to_lower().strip_edges()
 	var recognized_lower = recognized_text.to_lower().strip_edges()
 	
-	# Handle common phonetic variations for dyslexic learners - STRICTER FOR EDUCATION
+	# Enhanced phonetic substitutions for better STT accuracy - EXPANDED LIST
 	var phonetic_substitutions = {
-		# Only allow very common sound confusions that don't change word meaning
-		"bae": "bay", "bay": "bae",
-		"dae": "day", "day": "dae", "dai": "day",
-		"mae": "may", "may": "mae", "mai": "may",
-		"wae": "way", "way": "wae", "wei": "way",
-		"sae": "say", "say": "sae", "sei": "say",
-		"lae": "lay", "lay": "lae", "lei": "lay",
-		"pae": "pay", "pay": "pae", "pai": "pay",
-		"rae": "ray", "ray": "rae", "rei": "ray",
-		"hae": "hay", "hay": "hae", "hei": "hay",
-		"jae": "jay", "jay": "jae", "jei": "jay",
-		"fae": "fay", "fay": "fae", "fei": "fay",
+		# Common vowel sound confusions
+		"ae": "ay", "ay": "ae", "ai": "ay", "ei": "ay",
+		"ee": "ea", "ea": "ee", "ie": "ee", "ey": "ee",
+		"oo": "ou", "ou": "oo", "ew": "oo", "ue": "oo",
 		
-		# REMOVED problematic pairs that teach wrong pronunciations:
-		# No more "or"/"ore", "to"/"two", etc. - students must learn exact pronunciation
+		# Common consonant confusions for clear speech
+		"ph": "f", "gh": "g", "ck": "k", "ch": "k",
+		"th": "t", "sh": "s", "wh": "w",
 		
-		# Only keep letter reversals for dyslexia (these don't change pronunciation)
-		"bd": "db", "pq": "qp", "mn": "nm",
-		"was": "saw", "no": "on", "net": "ten"
+		# Single letter common mix-ups (careful selection)
+		"c": "k", "k": "c", "s": "z", "z": "s",
+		"f": "v", "v": "f", "b": "p", "p": "b",
+		
+		# Word-level phonetic corrections (VERY selective)
+		"bae": "bay", "bay": "bae", "mai": "may", "wei": "way",
+		"sae": "say", "kae": "kay", "jae": "jay", "hae": "hay",
+		
+		# Remove problematic same-pronunciation pairs that teach wrong words
+		# NO MORE: "or"/"ore", "to"/"two", "there"/"their", etc.
 	}
 	
-	# Check if recognized text with phonetic correction matches target
-	for wrong_sound in phonetic_substitutions.keys():
-		var correct_sound = phonetic_substitutions[wrong_sound]
-		if recognized_lower == wrong_sound and target_lower == correct_sound:
-			print("Applied phonetic correction: " + wrong_sound + " -> " + correct_sound)
-			return correct_sound
-		elif recognized_lower == correct_sound and target_lower == wrong_sound:
-			print("Applied reverse phonetic correction: " + correct_sound + " -> " + wrong_sound)
-			return wrong_sound
+	# Direct substitution check
+	if recognized_lower in phonetic_substitutions:
+		var corrected = phonetic_substitutions[recognized_lower]
+		if corrected == target_lower:
+			print("Applied direct phonetic correction: " + recognized_lower + " -> " + corrected)
+			return corrected
 	
-	# Check for partial word phonetic matching
-	var words = recognized_lower.split(" ")
-	for i in range(words.size()):
-		if words[i] in phonetic_substitutions:
-			var corrected = phonetic_substitutions[words[i]]
-			if _is_close_match(corrected, target_lower):
-				words[i] = corrected
-				print("Applied word-level phonetic correction: " + recognized_lower + " -> " + " ".join(words))
-				return " ".join(words)
+	# Partial word phonetic matching for longer words
+	for wrong_pattern in phonetic_substitutions.keys():
+		var correct_pattern = phonetic_substitutions[wrong_pattern]
+		if wrong_pattern in recognized_lower and correct_pattern in target_lower:
+			var corrected = recognized_lower.replace(wrong_pattern, correct_pattern)
+			if _calculate_word_similarity(corrected, target_lower) > 0.8:
+				print("Applied pattern phonetic correction: " + recognized_lower + " -> " + corrected)
+				return corrected
 	
 	return recognized_text
 
@@ -1271,7 +1244,7 @@ func _calculate_word_similarity(word1, word2):
 	
 	return 1.0 - (float(distance) / max_length)
 
-# Enhanced close match function for dyslexic-friendly recognition
+# Enhanced close match function for dyslexic-friendly recognition and quiet speech
 func _is_close_match(word1, word2):
 	# First check phonetic matching
 	if _is_phonetic_match(word1, word2):
@@ -1279,19 +1252,26 @@ func _is_close_match(word1, word2):
 	
 	var similarity = _calculate_word_similarity(word1, word2)
 	
-	# More lenient thresholds based on word length for dyslexic learners
-	var threshold = 0.6 # Base threshold of 60%
+	# More lenient thresholds for dyslexic learners and quiet speech recognition
+	var threshold = 0.55 # Base threshold reduced from 0.6 to 0.55 for better sensitivity
 	
 	if word2.length() <= 3:
-		threshold = 0.7 # 70% for short words (need to be more accurate)
+		threshold = 0.65 # Reduced from 0.7 to 0.65 for short words
 	elif word2.length() <= 5:
-		threshold = 0.65 # 65% for medium words
+		threshold = 0.60 # Reduced from 0.65 to 0.60 for medium words
 	else:
-		threshold = 0.6 # 60% for longer words
+		threshold = 0.55 # Reduced from 0.6 to 0.55 for longer words
 	
-	# Special case for very similar lengths (likely just pronunciation differences)
+	# Special case for very similar lengths (likely just pronunciation/recognition differences)
 	if abs(word1.length() - word2.length()) <= 1:
-		threshold -= 0.1 # More lenient by 10%
+		threshold -= 0.15 # More lenient by 15% for similar length words
+	
+	# Additional leniency for single-character differences in short words
+	if word2.length() <= 4 and abs(word1.length() - word2.length()) <= 1:
+		var char_diff = levenshtein_distance(word1, word2)
+		if char_diff <= 1:
+			print("Enhanced sensitivity: Accepting single-character difference for short word")
+			return true
 	
 	return similarity > threshold
 
@@ -1371,22 +1351,6 @@ func _restart_recognition_after_error():
 		speak_button.disabled = false
 
 # Function to calculate bonus damage based on player stats
-func calculate_bonus_damage() -> int:
-	# Get player's current damage from battle scene
-	var battle_scene = get_node("/root/BattleScene")
-	if battle_scene and battle_scene.has_method("get") and battle_scene.player_manager:
-		var player_base_damage = battle_scene.player_manager.player_damage
-		# Random bonus between 30% to 60% of base damage (reasonable range)
-		var bonus_percent = randf_range(0.30, 0.60)
-		var bonus_amount = int(player_base_damage * bonus_percent)
-		# Ensure minimum bonus of 3 and reasonable maximum (not overpowered)
-		bonus_amount = max(3, min(bonus_amount, int(player_base_damage * 0.75)))
-		print("STT Challenge: Base damage: ", player_base_damage, " Bonus: ", bonus_amount, " Total: ", player_base_damage + bonus_amount)
-		return bonus_amount # Return only the bonus, not base + bonus
-	else:
-		# Fallback to fixed value if battle scene not accessible
-		return 8
-
 # Function to process recognized speech - ENHANCED FOR ACCURACY
 func _on_speech_recognized(text):
 	print("PROCESSING RECOGNITION: Recognized text = '" + text + "', challenge word = '" + challenge_word + "'")
@@ -1448,16 +1412,19 @@ func _on_speech_recognized(text):
 	# Enhanced success condition checks
 	var is_success = false
 	var match_type = ""
+	var match_quality = "close" # Default to close for non-exact matches
 	
 	# 1. Exact match check
 	if recognized_normalized == target_normalized:
 		is_success = true
 		match_type = "exact"
+		match_quality = "perfect"
 	
 	# 2. Phonetic match check
 	elif _is_phonetic_match(recognized_normalized, target_normalized):
 		is_success = true
 		match_type = "phonetic"
+		match_quality = "close"
 	
 	# 3. Extract best word match from phrase
 	elif " " in processed_text:
@@ -1465,6 +1432,7 @@ func _on_speech_recognized(text):
 		if _is_phonetic_match(best_word.to_lower(), target_normalized) or best_word.to_lower() == target_normalized:
 			is_success = true
 			match_type = "word_extraction"
+			match_quality = "perfect" if best_word.to_lower() == target_normalized else "close"
 			recognized_normalized = best_word.to_lower()
 	
 	# 4. Fuzzy matching for longer words (more lenient for dyslexic learners)
@@ -1474,15 +1442,17 @@ func _on_speech_recognized(text):
 		if similarity >= 0.75:
 			is_success = true
 			match_type = "fuzzy"
+			match_quality = "close"
 	
 	# 5. Partial match for very close attempts
 	elif _is_close_match(recognized_normalized, target_normalized):
 		is_success = true
 		match_type = "close"
+		match_quality = "close"
 	
-	# Calculate bonus damage only if successful
+	# Calculate bonus damage using centralized calculator
 	if is_success:
-		bonus_damage = calculate_bonus_damage()
+		bonus_damage = BonusDamageCalculator.calculate_bonus_damage("stt", match_quality)
 	else:
 		bonus_damage = 0
 	
@@ -1505,8 +1475,9 @@ func _on_speech_recognized(text):
 	result_panel.set_anchors_preset(Control.PRESET_FULL_RECT)
 	result_panel.call_deferred("set_size", get_viewport_rect().size)
 	
-	# Set the result data - use "said" for the STT
-	result_panel.set_result(text, challenge_word, is_success, bonus_damage, "said")
+	# Set the result data - use "said" for the STT and pass match_quality for display
+	var display_match_type = match_quality if is_success else ""
+	result_panel.set_result(text, challenge_word, is_success, bonus_damage, "said", display_match_type)
 	
 	# Connect the continue signal with an anonymous function
 	result_panel.continue_pressed.connect(
@@ -1526,10 +1497,19 @@ func _on_speech_recognized(text):
 	
 # Helper function to fade out panel before signaling
 func _fade_out_and_signal(signal_name: String, param = null):
+	# Prevent double signaling
+	if challenge_result_sent:
+		print("Challenge result already sent, ignoring duplicate signal: " + signal_name)
+		return
+	
+	challenge_result_sent = true
+	print("Sending challenge result signal: " + signal_name)
+	
+	# Enhanced fade-out animation matching SettingScene style
 	var tween = create_tween()
 	tween.set_parallel(true)
-	tween.tween_property(self, "modulate:a", 0.0, 0.3).set_ease(Tween.EASE_IN)
-	tween.tween_property(self, "scale", Vector2(0.8, 0.8), 0.3).set_ease(Tween.EASE_IN)
+	tween.tween_property(self, "modulate:a", 0.0, 0.25).set_ease(Tween.EASE_IN)
+	tween.tween_property(self, "scale", Vector2(0.8, 0.8), 0.25).set_ease(Tween.EASE_IN)
 	await tween.finished
 	
 	match signal_name:
@@ -1623,15 +1603,25 @@ func levenshtein_distance(s1, s2):
 
 func _on_tts_button_pressed():
 	$ButtonClick.play()
+	
+	# Validate TTS instance first
+	if not tts or not is_instance_valid(tts):
+		print("ERROR: TTS instance is null or invalid")
+		if api_status_label:
+			api_status_label.text = "TTS not available"
+		return
+	
 	# Speak the challenge word with improved feedback
-	api_status_label.text = "Reading word..."
+	if api_status_label:
+		api_status_label.text = "Reading word..."
 	
 	print("TTS button pressed, trying to speak: ", challenge_word)
 	
 	var result = tts.speak(challenge_word)
 	
 	if !result:
-		api_status_label.text = "Failed to read word"
+		if api_status_label:
+			api_status_label.text = "Failed to read word"
 		print("TTS speak returned false")
 		return
 

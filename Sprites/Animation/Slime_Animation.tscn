@@ -1,7 +1,7 @@
 [gd_scene load_steps=37 format=3 uid="uid://d1i117ieiarnh"]
 
 [ext_resource type="Texture2D" uid="uid://cmgrkntjwnvvr" path="res://Sprites/Frame Sprites/Slime.png" id="1_ykal7"]
-[ext_resource type="AudioStream" uid="uid://flxi1a124b07" path="res://audio/slime hit & attack sound effect/slime hit sound effect.ogg" id="2_r1exb"]
+[ext_resource type="AudioStream" uid="uid://flxi1a124b07" path="res://audio/slime/slime hit sound effect.ogg" id="2_r1exb"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_r1exb"]
 atlas = ExtResource("1_ykal7")
@@ -269,7 +269,7 @@ animations = [{
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_ovbb4")
-animation = &"skill"
+animation = &"hurt"
 autoplay = "idle"
 
 [node name="slime_autoattack" type="AudioStreamPlayer" parent="."]

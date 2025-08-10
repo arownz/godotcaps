@@ -59,18 +59,18 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -161.0
-offset_top = -59.0
-offset_right = 252.0
-offset_bottom = 87.0
+offset_left = -243.0
+offset_top = -47.0
+offset_right = 4573.0
+offset_bottom = 1786.33
 grow_horizontal = 2
 grow_vertical = 2
-scale = Vector2(1.05947, 1.05947)
+scale = Vector2(0.120607, 0.120607)
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 8
 theme_override_fonts/font = ExtResource("13_uaqt0")
-theme_override_font_sizes/font_size = 80
+theme_override_font_sizes/font_size = 1000
 text = "LEXIA"
 horizontal_alignment = 1
 
@@ -482,7 +482,7 @@ theme_override_constants/separation = 15
 
 [node name="LevelPrefixLabel" type="Label" parent="InfoContainer/LevelContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.933333, 0.788235, 0.0352941, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("13_uaqt0")
 theme_override_font_sizes/font_size = 25
@@ -491,7 +491,7 @@ vertical_alignment = 1
 
 [node name="LevelLabel" type="Label" parent="InfoContainer/LevelContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.858387, 0.71906, 0.0203955, 1)
+theme_override_colors/font_color = Color(0.933333, 0.788235, 0.0352941, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("11_qm2o7")
 theme_override_font_sizes/font_size = 25

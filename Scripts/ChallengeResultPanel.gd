@@ -8,6 +8,7 @@ var challenge_word: String = ""
 var is_successful: bool = false
 var bonus_damage: int = 0
 var input_type: String = "" # "wrote" or "said" based on input method
+var match_quality: String = "" # "perfect" or "close" for dyslexia-friendly feedback
 var display_time: float = 2.0 # Default display time, will be auto-adjusted based on success/failure
 
 # Dyslexia-friendly features
@@ -47,11 +48,11 @@ func _ready():
 	# Ensure display timer uses our preferred wait time
 	display_timer.wait_time = display_time
 	
-	# Enhanced entrance animation
+	# Enhanced entrance animation matching SettingScene style
 	var tween = create_tween()
 	tween.set_parallel(true)
-	tween.tween_property(self, "modulate:a", 1.0, 0.4).set_ease(Tween.EASE_OUT)
-	tween.tween_property($ResultPanel, "scale", Vector2(1, 1), 0.4).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+	tween.tween_property(self, "modulate:a", 1.0, 0.35).set_ease(Tween.EASE_OUT)
+	tween.tween_property($ResultPanel, "scale", Vector2(1, 1), 0.35).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
 	
 	# Start timer for auto-close (only if display_time > 0)
 	if display_time > 0:
@@ -66,12 +67,13 @@ func _ready():
 	print("ChallengeResultPanel initialized with display time: " + str(display_time) + " seconds")
 
 # Set the challenge result data and update UI
-func set_result(recognized: String, target: String, success: bool, damage: int = 0, type: String = "", custom_display_time: float = 0.0):
+func set_result(recognized: String, target: String, success: bool, damage: int = 0, type: String = "", match_type: String = "", custom_display_time: float = 0.0):
 	recognized_text = recognized
 	challenge_word = target
 	is_successful = success
 	bonus_damage = damage
 	input_type = type
+	match_quality = match_type
 	
 	# Auto-adjust display time based on success/failure if no custom time specified
 	if custom_display_time > 0:
@@ -98,8 +100,34 @@ func update_ui():
 	# Set input type text
 	input_label.text = "You " + input_type + ":"
 	
-	# Set the recognized text with proper capitalization for better readability
-	word_label.text = recognized_text.capitalize() if recognized_text != "" else "..."
+	# Format the word display with Perfect/Close feedback for dyslexic children
+	if is_successful and match_quality != "":
+		# Simplified format: "Hat = Perfect" or "Hat = Close"
+		var quality_text = ""
+		match match_quality:
+			"perfect":
+				quality_text = " = Perfect"
+			"close":
+				quality_text = " = Close"
+			_:
+				quality_text = " = Good"
+		
+		# Show simple format with recognized word and quality
+		word_label.text = recognized_text.capitalize() + quality_text
+		
+		# Color coding for quality feedback
+		match match_quality:
+			"perfect":
+				word_label.add_theme_color_override("font_color", Color.GREEN)
+			"close":
+				word_label.add_theme_color_override("font_color", Color.YELLOW)
+			_:
+				word_label.add_theme_color_override("font_color", Color.LIME)
+	else:
+		# Failed challenge - show format like "H = Failed"
+		var display_text = recognized_text.capitalize() if recognized_text != "" else "..."
+		word_label.text = display_text + " = Failed"
+		word_label.add_theme_color_override("font_color", Color.RED)
 	
 	# Set the target word with proper capitalization
 	target_word_label.text = challenge_word.capitalize() if challenge_word != "" else "..."
@@ -109,9 +137,14 @@ func update_ui():
 		status_label.text = "COUNTER SUCCESSFUL!"
 		status_label.add_theme_color_override("font_color", success_color)
 		bonus_damage_label.visible = true
-		# Enhanced bonus damage display
+		# Enhanced bonus damage display with quality feedback
 		if bonus_damage > 0:
-			bonus_damage_label.text = "Bonus Damage: +" + str(bonus_damage)
+			var bonus_text = "Bonus Damage: +" + str(bonus_damage)
+			if match_quality == "perfect":
+				bonus_text += " (Perfect!)"
+			elif match_quality == "close":
+				bonus_text += " (Close!)"
+			bonus_damage_label.text = bonus_text
 		else:
 			bonus_damage_label.text = "Perfect Counter!"
 	else:
@@ -137,11 +170,11 @@ func log_result():
 
 # Timer handler for auto-closing the panel
 func _on_display_timer_timeout():
-	# Enhanced fade-out animation
+	# Enhanced fade-out animation matching SettingScene style
 	var tween = create_tween()
 	tween.set_parallel(true)
-	tween.tween_property(self, "modulate:a", 0.0, 0.3).set_ease(Tween.EASE_IN)
-	tween.tween_property($ResultPanel, "scale", Vector2(0.8, 0.8), 0.3).set_ease(Tween.EASE_IN)
+	tween.tween_property(self, "modulate:a", 0.0, 0.25).set_ease(Tween.EASE_IN)
+	tween.tween_property($ResultPanel, "scale", Vector2(0.8, 0.8), 0.25).set_ease(Tween.EASE_IN)
 	
 	# Wait for animation to complete, then emit signal and free
 	await tween.finished

@@ -17,7 +17,7 @@
 [ext_resource type="Texture2D" uid="uid://cmvfv5h4u7j6e" path="res://gui/Update/icons/close icon.png" id="13_1g3o1"]
 [ext_resource type="Texture2D" uid="uid://caaebspp4lxk4" path="res://gui/Update/icons/slaym enemeh.png" id="13_xrlqr"]
 [ext_resource type="Texture2D" uid="uid://c5cpf575pv2ee" path="res://gui/Update/icons/close icon_hover.png" id="16_0ho0y"]
-[ext_resource type="Texture2D" uid="uid://ct2kkb4phx2kr" path="res://gui/Update/icons/treant.png" id="16_lqaqn"]
+[ext_resource type="Texture2D" uid="uid://ct2kkb4phx2kr" path="res://gui/Update/icons/treant enemeh.png" id="16_lqaqn"]
 [ext_resource type="Texture2D" uid="uid://clbfvil7saw1l" path="res://gui/Update/UI/Fight Button (Default).png" id="19_0ho0y"]
 [ext_resource type="Texture2D" uid="uid://djvsvmhtt816b" path="res://gui/Update/UI/ui 10_hover.png" id="19_t6djc"]
 [ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="21_ocdpx"]
@@ -194,7 +194,6 @@ text = "DUNGEON 1"
 uppercase = true
 
 [node name="StageDetails" type="TextureRect" parent="."]
-visible = false
 offset_left = 834.0
 offset_top = 45.0
 offset_right = 1483.0
@@ -552,7 +551,7 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
 theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("9_o4t43")
-theme_override_font_sizes/font_size = 50
+theme_override_font_sizes/font_size = 35
 theme_override_styles/focus = SubResource("StyleBoxEmpty_1g3o1")
 text = "FIGHT"
 icon = ExtResource("19_0ho0y")

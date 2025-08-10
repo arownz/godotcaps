@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://cw2l1lpy5fnbi"
+path="res://.godot/imported/Robot Screams Processed Boar Squeals 1 (SFX).ogg-5ea2ab939500895b53769538f33e43e1.oggvorbisstr"
+
+[deps]
+
+source_file="res://audio/boar/Robot Screams Processed Boar Squeals 1 (SFX).ogg"
+dest_files=["res://.godot/imported/Robot Screams Processed Boar Squeals 1 (SFX).ogg-5ea2ab939500895b53769538f33e43e1.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

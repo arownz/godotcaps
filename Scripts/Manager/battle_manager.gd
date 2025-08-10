@@ -126,29 +126,24 @@ func handle_victory():
 	await battle_scene.player_manager.add_experience(exp_reward)
 	print("BattleManager: Player stats after exp gain - Level: ", battle_scene.player_manager.player_level, ", Exp: ", battle_scene.player_manager.player_exp, "/", battle_scene.player_manager.get_max_exp())
 	
-	# Add victory message
-	battle_scene.battle_log_manager.add_message("[color=#006400]Victory! You defeated the enemy and gained " + str(exp_reward) + " experience.[/color]")
-	
-	# Update Firebase with victory data using COMPLETED stage info
-	# Note: Player stats (exp, level, health, damage, durability) are updated by player_manager.gd
-	# We only update progression and enemy count here
-	var dungeon_completed = await _update_firebase_after_victory(exp_reward, completed_dungeon, completed_stage)
-	
-	# DO NOT advance stage here - leave that for continue button
-	# Stage info should still show the completed stage at this point
-	
-	# Wait a moment for the message to be seen
-	await battle_scene.get_tree().create_timer(1.0).timeout
-	
 	# Get enemy name for endgame screen
 	var enemy_name = battle_scene.enemy_manager.enemy_name
 	
-	# Show notification if dungeon was completed (boss defeated)
-	if dungeon_completed and completed_stage >= 5:
-		_show_dungeon_completion_notification(completed_dungeon)
+	# Add victory message
+	battle_scene.battle_log_manager.add_message("[color=#006400]Victory! You defeated the enemy and gained " + str(exp_reward) + " experience.[/color]")
 	
-	# Show victory screen - pass completed stage info and enemy name
+	# Show victory screen immediately - don't wait for Firebase
 	show_endgame_screen("Victory", exp_reward, completed_dungeon, completed_stage, enemy_name)
+	
+	# Update Firebase with victory data in the background (non-blocking)
+	# Note: Player stats (exp, level, health, damage, durability) are updated by player_manager.gd
+	# We only update progression and enemy count here
+	_update_firebase_after_victory_async(exp_reward, completed_dungeon, completed_stage)
+	
+	# Show notification if dungeon was completed (boss defeated) - check later
+	await get_tree().create_timer(0.5).timeout
+	if completed_stage >= 5:
+		_show_dungeon_completion_notification(completed_dungeon)
 
 # Direct Firebase update after victory - only updates progression, not player stats
 # Returns true if a dungeon was completed (boss defeated)
@@ -245,6 +240,16 @@ func _update_firebase_after_victory(_exp_gained: int, completed_dungeon_num: int
 	else:
 		print("Failed to load user document or document error")
 		return false
+
+# Async version that doesn't block the UI
+func _update_firebase_after_victory_async(exp_gained: int, completed_dungeon_num: int, completed_stage_num: int):
+	# Run Firebase update in background without blocking UI
+	var firebase_task = func():
+		await _update_firebase_after_victory(exp_gained, completed_dungeon_num, completed_stage_num)
+		print("BattleManager: Background Firebase update completed")
+	
+	# Start the task but don't await it
+	firebase_task.call()
 
 func handle_defeat():
 	# Prevent multiple defeat processing

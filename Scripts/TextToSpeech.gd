@@ -6,7 +6,7 @@ signal speech_started
 signal speech_finished
 # Add these compatibility signals
 signal speech_ended
-signal speech_error # Missing signal that needs to be added
+signal speech_error # Fixed: Properly declared signal
 
 # Add this compatibility property
 var current_voice = ""

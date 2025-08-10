@@ -325,11 +325,19 @@ func add_experience(exp_amount):
         player_exp -= max_exp
         player_level += 1
         
-        # Update stats on level up
-        player_max_health = get_max_health()
+        # More balanced stats on level up for dyslexic children
+        # Smaller, more gradual increases
+        var health_increase = randi_range(8, 15) # Random 8-15 health per level
+        var damage_increase = randi_range(3, 6) # Random 3-6 damage per level
+        var durability_increase = randi_range(2, 4) # Random 2-4 durability per level
+        
+        # Apply stat increases
+        player_max_health += health_increase
         player_health = player_max_health # Fully heal on level up
-        player_damage += 11
-        player_durability += 8
+        player_damage += damage_increase
+        player_durability += durability_increase
+        
+        print("PlayerManager: Level up stat increases - Health: +", health_increase, ", Damage: +", damage_increase, ", Durability: +", durability_increase)
         
         # Recalculate max_exp for next level
         max_exp = get_max_exp()

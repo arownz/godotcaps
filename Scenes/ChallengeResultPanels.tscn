@@ -140,7 +140,7 @@ theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
 theme_override_fonts/font = ExtResource("3_idjw4")
 theme_override_font_sizes/font_size = 30
-text = "apple"
+text = "Hat = Close! "
 horizontal_alignment = 1
 
 [node name="ExpectedLabel" type="Label" parent="ResultPanel/ContentContainer/ResultContainer"]
@@ -168,7 +168,7 @@ theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
 theme_override_fonts/font = ExtResource("3_idjw4")
 theme_override_font_sizes/font_size = 30
-text = "apple"
+text = "Hot"
 horizontal_alignment = 1
 
 [node name="StatusContainer" type="VBoxContainer" parent="ResultPanel/ContentContainer"]

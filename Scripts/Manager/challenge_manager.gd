@@ -9,6 +9,8 @@ var battle_scene
 var challenge_type = ""
 var current_word_challenge = null
 var enemy_defeated_during_challenge = false # Track if enemy was defeated during challenge
+var challenge_processing = false # NEW: Flag to prevent double skill attacks
+var successful_counter_completed = false # NEW: Track if counter was successful
 
 # Preload challenge scenes
 var word_challenge_whiteboard_scene = preload("res://Scenes/WordChallengePanel_Whiteboard.tscn")
@@ -160,6 +162,8 @@ func handle_challenge_completed(bonus_damage):
 	var battle_log_manager = battle_scene.battle_log_manager
 	var ui_manager = battle_scene.ui_manager
 	
+	print("ChallengeManager: Processing successful challenge completion")
+	
 	# Create damage callback that will be called at the exact moment of impact
 	var apply_counter_damage = func():
 		# Calculate total damage (base + bonus)
@@ -226,10 +230,60 @@ func handle_challenge_completed(bonus_damage):
 				await player_sprite.animation_finished
 				player_sprite.play("battle_idle")
 	
-	# Resume battle
-	_resume_battle()
+	# CRITICAL: Mark this as a successful counter before resuming
+	# Set a flag to indicate this was a successful counter (not a failed challenge)
+	# This will be used in _resume_battle() to determine turn order
+	print("ChallengeManager: Counter attack completed, resuming battle with enemy turn next")
+	
+	# Resume battle - but enemy should attack next since player just countered
+	_resume_battle_after_successful_counter()
+
+# Resume battle specifically after successful counter (enemy should attack next)
+func _resume_battle_after_successful_counter():
+	print("ChallengeManager: Resuming battle after successful counter - enemy attacks next")
+    
+	# If the enemy was defeated during the counter, do not resume
+	if enemy_defeated_during_challenge or (battle_scene.enemy_manager and battle_scene.enemy_manager.enemy_health <= 0):
+		print("ChallengeManager: Enemy defeated during counter - skipping resume")
+		return
+	
+	# Set battle active
+	battle_scene.battle_active = true
+	
+	# IMPORTANT: Don't reuse the shared auto_battle_timer here, it already has a handler
+	# wired to BattleScene._on_auto_battle_timer_timeout (player turn). Using it would
+	# cause both the enemy and player turns to fire in sync. Instead, stop any pending
+	# auto-battle timer and use a dedicated one-shot timer for the enemy response.
+	if battle_scene.auto_battle_timer:
+		battle_scene.auto_battle_timer.stop()
+    
+	# Use a one-shot timer to schedule the enemy's immediate response
+	await battle_scene.get_tree().create_timer(1.2).timeout
+	await _trigger_enemy_attack_after_counter()
+
+# Helper function to trigger enemy attack after successful counter
+func _trigger_enemy_attack_after_counter():
+	print("ChallengeManager: Triggering enemy attack after successful counter")
+	
+	if battle_scene.battle_active and battle_scene.enemy_manager.enemy_health > 0:
+		# Enemy attacks in response to the counter
+		battle_scene.battle_manager.enemy_attack()
+		
+		# After enemy attack, wait and continue normal battle flow
+		await battle_scene.get_tree().create_timer(1.0).timeout
+		
+		if battle_scene.battle_active:
+			# Continue normal auto battle sequence (player attacks next)
+			battle_scene.auto_battle_timer.wait_time = 1.0
+			battle_scene.auto_battle_timer.start()
 
 func handle_challenge_failed():
+	# Prevent double processing
+	if challenge_processing:
+		print("ChallengeManager: Challenge failure already being processed, ignoring duplicate")
+		return
+	challenge_processing = true
+	
 	# Player failed to counter - enemy deals full skill damage with animation
 	var enemy_manager = battle_scene.enemy_manager
 	var player_manager = battle_scene.player_manager
@@ -296,62 +350,74 @@ func handle_challenge_failed():
 	enemy_manager.enemy_skill_meter = 0
 	ui_manager.update_enemy_skill_meter()
 	
+	# Reset challenge processing flag
+	challenge_processing = false
+	
 	# Resume battle
 	_resume_battle()
 
 func handle_challenge_cancelled():
-	# Player cancelled - enemy performs skill attack with animation
+	# Prevent double processing
+	if challenge_processing:
+		print("ChallengeManager: Challenge cancellation already being processed, ignoring duplicate")
+		return
+	challenge_processing = true
+	
+	# Player cancelled the challenge - enemy deals reduced damage as skill
 	var enemy_manager = battle_scene.enemy_manager
 	var player_manager = battle_scene.player_manager
 	var battle_log_manager = battle_scene.battle_log_manager
 	var ui_manager = battle_scene.ui_manager
 	
-	var cancellation_damage = int(enemy_manager.enemy_damage * 1.5)
+	# Reduced damage for cancellation (less than full skill damage)
+	var cancellation_damage = int(enemy_manager.enemy_damage * 1.5) # 50% more than normal attack
 	
 	print("ChallengeManager: Processing challenge cancellation - enemy will perform skill attack")
-	battle_log_manager.add_message("[color=#EB5E4B]You cancelled your counter! The " + enemy_manager.enemy_name + " takes advantage![/color]")
 	
-	# ENEMY SKILL ANIMATION WITH PROPER TIMING
+	# Add cancellation message to battle log
+	battle_log_manager.add_message("[color=#FFA500]You chose to cancel countering the enemy skill.[/color]")
+	
+	# ENEMY SKILL ATTACK WITH ANIMATION
 	if enemy_manager and enemy_manager.enemy_animation:
 		var enemy_node = enemy_manager.enemy_animation
 		var original_position = enemy_node.position
 		
-		# Move enemy LEFT toward player - reduced distance to prevent overlap
-		var attack_position = original_position - Vector2(60, 0) # Reduced from 80px to 60px to prevent overlap
+		# Move enemy LEFT toward player for skill attack
+		var attack_position = original_position - Vector2(60, 0) # Same distance as skill attack
 		
 		# Create smooth movement tween to player
 		var move_tween = battle_scene.create_tween()
-		move_tween.tween_property(enemy_node, "position", attack_position, 0.3) # Faster movement like auto attack
+		move_tween.tween_property(enemy_node, "position", attack_position, 0.3)
 		
 		# Wait for movement to complete
 		await move_tween.finished
 		
-		# Play skill animation and apply damage at the RIGHT moment
+		# Play attack animation and apply damage
 		var enemy_sprite = enemy_node.get_node_or_null("AnimatedSprite2D")
-		if enemy_sprite and enemy_sprite.sprite_frames and enemy_sprite.sprite_frames.has_animation("skill"):
-			enemy_sprite.play("skill")
+		if enemy_sprite and enemy_sprite.sprite_frames and enemy_sprite.sprite_frames.has_animation("auto_attack"):
+			enemy_sprite.play("auto_attack")
 			
 			# Wait for animation to progress before applying damage
-			await battle_scene.get_tree().create_timer(0.5).timeout
+			await battle_scene.get_tree().create_timer(0.4).timeout
 			
-			# NOW apply damage at the peak of the skill animation
+			# Apply skill damage
 			player_manager.take_damage(cancellation_damage)
-			battle_log_manager.add_message("[color=#000000]The " + enemy_manager.enemy_name + " dealt " + str(cancellation_damage) + " damage![/color]")
+			battle_log_manager.add_message("[color=#000000]The " + enemy_manager.enemy_name + " dealt " + str(cancellation_damage) + " skill damage![/color]")
 			
-			# Show skill damage indicator for cancellation
-			battle_scene._show_skill_damage_indicator(cancellation_damage, "player")
+			# Show damage indicator
+			battle_scene._show_damage_indicator(cancellation_damage, "player")
 		else:
-			# Fallback: apply damage after pause even without skill animation
-			await battle_scene.get_tree().create_timer(0.5).timeout
+			# Fallback: apply damage without animation
+			await battle_scene.get_tree().create_timer(0.4).timeout
 			player_manager.take_damage(cancellation_damage)
-			battle_log_manager.add_message("[color=#000000]The " + enemy_manager.enemy_name + " dealt " + str(cancellation_damage) + " damage![/color]")
+			battle_log_manager.add_message("[color=#000000]The " + enemy_manager.enemy_name + " dealt " + str(cancellation_damage) + " skill damage![/color]")
 			
-			# Show skill damage indicator (fallback)
-			battle_scene._show_skill_damage_indicator(cancellation_damage, "player")
+			# Show damage indicator
+			battle_scene._show_damage_indicator(cancellation_damage, "player")
 		
 		# Move enemy back to original position
 		var return_tween = battle_scene.create_tween()
-		return_tween.tween_property(enemy_node, "position", original_position, 0.2) # Faster return like auto attack
+		return_tween.tween_property(enemy_node, "position", original_position, 0.2)
 		return_tween.tween_callback(func(): if enemy_sprite: enemy_sprite.play("idle"))
 		
 		# Wait for return movement to complete
@@ -360,18 +426,18 @@ func handle_challenge_cancelled():
 		# Fallback if no enemy animation
 		await battle_scene.get_tree().create_timer(0.5).timeout
 		player_manager.take_damage(cancellation_damage)
-		battle_log_manager.add_message("[color=#000000]The " + enemy_manager.enemy_name + " dealt " + str(cancellation_damage) + " damage![/color]")
-	
-	# Reset enemy skill meter
+		battle_log_manager.add_message("[color=#000000]The " + enemy_manager.enemy_name + " dealt " + str(cancellation_damage) + " skill damage![/color]")
+
+		# Show damage indicator
+		battle_scene._show_damage_indicator(cancellation_damage, "player")
+
+	# Reset enemy skill meter after skill attack
 	enemy_manager.enemy_skill_meter = 0
 	ui_manager.update_enemy_skill_meter()
 	
-	# Check if player is defeated
-	if player_manager.player_health <= 0:
-		battle_scene.battle_active = false
-		battle_log_manager.add_message("[color=#EB5E4B]You have been defeated by the " + enemy_manager.enemy_name + "![/color]")
-		return
-		
+	# Reset challenge processing flag
+	challenge_processing = false
+	
 	# Resume battle
 	_resume_battle()
 
@@ -396,11 +462,22 @@ func _cleanup_challenge():
 				child.queue_free()
 
 func _resume_battle():
-	# Show engage button again
-	print("ChallengeManager: Resuming battle")
+	print("ChallengeManager: Resuming battle after challenge")
 	
-	# Resume auto battle - IMPORTANT: Set battle_active to true first!
+	# After failed/cancelled challenge: Continue normal turn sequence
+	print("ChallengeManager: Resuming normal battle flow after failed/cancelled challenge")
+	
+	# Set battle active first
 	battle_scene.battle_active = true
-	battle_scene.auto_battle_timer.start()
 	
-	print("ChallengeManager: Battle resumed - battle_active set to true and timer started")
+	# After enemy skill attack due to failed/cancelled challenge,
+	# the enemy has already had their "turn". Resume the normal auto-battle cycle
+	# without manually forcing a player attack to avoid double-attacks.
+	battle_scene.auto_battle_timer.wait_time = 1.5
+	battle_scene.auto_battle_timer.start()
+    
+	print("ChallengeManager: Battle resumed - auto battle will handle turn order")
+
+## Removed _trigger_player_turn_after_failed_challenge to avoid manual player attack
+## The auto-battle timer will invoke the standard _auto_battle_turn(), ensuring
+## exactly one player attack followed by one enemy attack in the next cycle.

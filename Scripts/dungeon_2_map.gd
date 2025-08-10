@@ -38,13 +38,13 @@ var popup_message_label
 var notification_popup: CanvasLayer
 
 func _ready():
-	# Add fade-in animation
+	# Enhanced fade-in animation matching SettingScene style
 	modulate.a = 0.0
 	scale = Vector2(0.8, 0.8)
 	var tween = create_tween()
 	tween.set_parallel(true)
-	tween.tween_property(self, "modulate:a", 1.0, 0.4).set_ease(Tween.EASE_OUT)
-	tween.tween_property(self, "scale", Vector2(1.0, 1.0), 0.4).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+	tween.tween_property(self, "modulate:a", 1.0, 0.35).set_ease(Tween.EASE_OUT)
+	tween.tween_property(self, "scale", Vector2(1.0, 1.0), 0.35).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
 	
 	# Initialize Firebase if available
 	_initialize_firebase()
@@ -225,7 +225,9 @@ func _initialize_mob_buttons():
 func _connect_signals():
 	# Connect stage button signals
 	for i in range(stage_buttons.size()):
-		stage_buttons[i].pressed.connect(_on_stage_button_pressed.bind(i + 1))
+		var btn = stage_buttons[i]
+		if btn and !btn.is_connected("pressed", _on_stage_button_pressed):
+			btn.pressed.connect(_on_stage_button_pressed.bind(i + 1))
 	
 	# Connect mob button signals
 	for i in range(mob_buttons.size()):
@@ -235,14 +237,18 @@ func _connect_signals():
 			mob_buttons[i].pressed.connect(_on_mob_button_pressed.bind("boss", 0))
 	
 	# Connect back button
-	$BackButton.pressed.connect(_on_back_button_pressed)
-	$BackButton.mouse_entered.connect(_on_back_button_hover_entered)
-	$BackButton.mouse_exited.connect(_on_back_button_hover_exited)
+	if $BackButton and !$BackButton.is_connected("pressed", _on_back_button_pressed):
+		$BackButton.pressed.connect(_on_back_button_pressed)
+	if $BackButton and !$BackButton.is_connected("mouse_entered", _on_back_button_hover_entered):
+		$BackButton.mouse_entered.connect(_on_back_button_hover_entered)
+	if $BackButton and !$BackButton.is_connected("mouse_exitedS", _on_back_button_hover_exited):
+		$BackButton.mouse_exited.connect(_on_back_button_hover_exited)
 
 	# Connect fight button
-	$StageDetails/FightButton.pressed.connect(_on_fight_button_pressed)
-
-	$StageDetails/CloseButton.pressed.connect(_on_close_button_pressed)
+	if $StageDetails/FightButton and !$StageDetails/FightButton.is_connected("pressed", _on_fight_button_pressed):
+		$StageDetails/FightButton.pressed.connect(_on_fight_button_pressed)
+	if $StageDetails/CloseButton and !$StageDetails/CloseButton.is_connected("pressed", _on_close_button_pressed):
+		$StageDetails/CloseButton.pressed.connect(_on_close_button_pressed)
 
 func _on_stage_button_pressed(stage_num):
 	$ButtonClick.play()
@@ -375,10 +381,11 @@ func _on_back_button_pressed():
 
 # Helper function to fade out before changing scenes
 func _fade_out_and_change_scene(scene_path: String):
+	# Enhanced fade-out animation matching SettingScene style
 	var tween = create_tween()
 	tween.set_parallel(true)
-	tween.tween_property(self, "modulate:a", 0.0, 0.3).set_ease(Tween.EASE_IN)
-	tween.tween_property(self, "scale", Vector2(0.8, 0.8), 0.3).set_ease(Tween.EASE_IN)
+	tween.tween_property(self, "modulate:a", 0.0, 0.25).set_ease(Tween.EASE_IN)
+	tween.tween_property(self, "scale", Vector2(0.8, 0.8), 0.25).set_ease(Tween.EASE_IN)
 	await tween.finished
 	get_tree().change_scene_to_file(scene_path)
 

@@ -1,7 +1,8 @@
-[gd_scene load_steps=39 format=3 uid="uid://detxp7ylydvcd"]
+[gd_scene load_steps=40 format=3 uid="uid://detxp7ylydvcd"]
 
 [ext_resource type="Texture2D" uid="uid://ckfq2sv5fswsg" path="res://Sprites/Frame Sprites/Snake.png" id="1_k055r"]
-[ext_resource type="AudioStream" uid="uid://0yvhtmq3evk5" path="res://audio/snake attack sound effect/snake attack sound effect 2.ogg" id="2_cdj5w"]
+[ext_resource type="AudioStream" uid="uid://0yvhtmq3evk5" path="res://audio/snake/skill.ogg" id="2_cdj5w"]
+[ext_resource type="AudioStream" uid="uid://bg4j6plebiome" path="res://audio/snake/auto_attacksnake.ogg" id="2_v2rwu"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_cdj5w"]
 atlas = ExtResource("1_k055r")
@@ -296,7 +297,7 @@ animation = &"skill"
 autoplay = "idle"
 
 [node name="snake_skill" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("2_cdj5w")
+stream = ExtResource("2_v2rwu")
 
 [node name="snake_autoattack" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("2_cdj5w")

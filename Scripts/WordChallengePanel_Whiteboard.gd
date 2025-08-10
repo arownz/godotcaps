@@ -16,6 +16,9 @@ var bonus_damage = 5 # This will be calculated dynamically
 var random_word_api = null
 var tts = null
 
+# Flag to prevent double signal emissions
+var challenge_result_sent = false
+
 func _ready():
 	# Get node references
 	random_word_label = $ChallengePanel/VBoxContainer/WordContainer/RandomWordLabel
@@ -23,13 +26,13 @@ func _ready():
 	tts_settings_panel = $ChallengePanel/VBoxContainer/TTSSettingsPanel
 	api_status_label = $ChallengePanel/VBoxContainer/APIStatusLabel
 	
-	# Add fade-in animation
+	# Enhanced fade-in animation matching SettingScene style
 	modulate.a = 0.0
 	scale = Vector2(0.8, 0.8)
 	var fade_tween = create_tween()
 	fade_tween.set_parallel(true)
-	fade_tween.tween_property(self, "modulate:a", 1.0, 0.4).set_ease(Tween.EASE_OUT)
-	fade_tween.tween_property(self, "scale", Vector2(1.0, 1.0), 0.4).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+	fade_tween.tween_property(self, "modulate:a", 1.0, 0.35).set_ease(Tween.EASE_OUT)
+	fade_tween.tween_property(self, "scale", Vector2(1.0, 1.0), 0.35).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
 	
 	# Create TTS instance using our simplified TextToSpeech class
 	
@@ -67,29 +70,21 @@ func _on_button_hover():
 func get_challenge_word():
 	return challenge_word
 
-# Function to calculate bonus damage based on player stats
-func calculate_bonus_damage() -> int:
-	# Get player's current damage from battle scene
-	var battle_scene = get_node("/root/BattleScene")
-	if battle_scene and battle_scene.has_method("get") and battle_scene.player_manager:
-		var player_base_damage = battle_scene.player_manager.player_damage
-		# Random bonus between 30% to 60% of base damage (same as STT for consistency)
-		var bonus_percent = randf_range(0.30, 0.60)
-		var bonus_amount = int(player_base_damage * bonus_percent)
-		# Ensure minimum bonus of 3 and reasonable maximum (not overpowered)
-		bonus_amount = max(3, min(bonus_amount, int(player_base_damage * 0.75)))
-		print("Whiteboard Challenge: Base damage: ", player_base_damage, " Bonus: ", bonus_amount, " Total: ", player_base_damage + bonus_amount)
-		return bonus_amount # Return only the bonus, not base + bonus
-	else:
-		# Fallback to fixed value if battle scene not accessible
-		return 8
-
 # Helper function to fade out panel before signaling
 func _fade_out_and_signal(signal_name: String, param = null):
+	# Prevent double signaling
+	if challenge_result_sent:
+		print("Challenge result already sent, ignoring duplicate signal: " + signal_name)
+		return
+	
+	challenge_result_sent = true
+	print("Sending challenge result signal: " + signal_name)
+	
+	# Enhanced fade-out animation matching SettingScene style
 	var tween = create_tween()
 	tween.set_parallel(true)
-	tween.tween_property(self, "modulate:a", 0.0, 0.3).set_ease(Tween.EASE_IN)
-	tween.tween_property(self, "scale", Vector2(0.8, 0.8), 0.3).set_ease(Tween.EASE_IN)
+	tween.tween_property(self, "modulate:a", 0.0, 0.25).set_ease(Tween.EASE_IN)
+	tween.tween_property(self, "scale", Vector2(0.8, 0.8), 0.25).set_ease(Tween.EASE_IN)
 	await tween.finished
 	
 	match signal_name:
@@ -169,13 +164,15 @@ func _on_drawing_submitted(text_result):
 	print("Recognized text (normalized): " + recognized_text)
 	print("Target word (normalized): " + target_word)
 	
-	# NEW IMPROVED VALIDATION LOGIC
+	# NEW IMPROVED VALIDATION LOGIC WITH UNIFIED MATCH QUALITY
 	var is_success = false
+	var match_quality = "close" # Default to close for non-exact matches
 	
-	# 1. Exact match - always accept
+	# 1. Exact match - always accept as perfect
 	if recognized_text == target_word:
 		is_success = true
-		print("Validation: Exact match")
+		match_quality = "perfect"
+		print("Validation: Exact match (Perfect)")
 	
 	# 2. Length-based validation - prevent accepting words that are too short
 	elif recognized_text.length() < max(2, target_word.length() - 2):
@@ -202,14 +199,15 @@ func _on_drawing_submitted(text_result):
 		
 		if similarity >= required_similarity:
 			is_success = true
-			print("Validation: Similarity match - %.2f >= %.2f" % [similarity, required_similarity])
+			match_quality = "close" # Similarity matches are close but not perfect
+			print("Validation: Similarity match - %.2f >= %.2f (Close)" % [similarity, required_similarity])
 		else:
 			is_success = false
 			print("Validation: Similarity too low - %.2f < %.2f" % [similarity, required_similarity])
 	
-	# Calculate bonus damage only if successful
+	# UNIFIED: Use centralized bonus damage calculator with match quality
 	if is_success:
-		bonus_damage = calculate_bonus_damage()
+		bonus_damage = BonusDamageCalculator.calculate_bonus_damage("whiteboard", match_quality)
 	else:
 		bonus_damage = 0
 	
@@ -233,8 +231,9 @@ func _on_drawing_submitted(text_result):
 	result_panel.set_anchors_preset(Control.PRESET_FULL_RECT)
 	result_panel.call_deferred("set_size", get_viewport_rect().size)
 
-	# Set the result data - "wrote" for the whiteboard
-	result_panel.set_result(text_result, challenge_word, is_success, bonus_damage, "wrote")
+	# Set the result data - "wrote" for the whiteboard, with match quality for display
+	var display_match_type = match_quality if is_success else ""
+	result_panel.set_result(text_result, challenge_word, is_success, bonus_damage, "wrote", display_match_type)
 
 	# Connect the continue signal
 	result_panel.continue_pressed.connect(_on_result_panel_continue_pressed.bind(is_success))
