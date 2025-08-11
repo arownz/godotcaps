@@ -1,8 +1,9 @@
-[gd_scene load_steps=40 format=3 uid="uid://detxp7ylydvcd"]
+[gd_scene load_steps=41 format=3 uid="uid://detxp7ylydvcd"]
 
 [ext_resource type="Texture2D" uid="uid://ckfq2sv5fswsg" path="res://Sprites/Frame Sprites/Snake.png" id="1_k055r"]
 [ext_resource type="AudioStream" uid="uid://0yvhtmq3evk5" path="res://audio/snake/skill.ogg" id="2_cdj5w"]
 [ext_resource type="AudioStream" uid="uid://bg4j6plebiome" path="res://audio/snake/auto_attacksnake.ogg" id="2_v2rwu"]
+[ext_resource type="AudioStream" uid="uid://dgwibf4axwtmh" path="res://audio/snake/Snake Choke 9 (SFX) - Creator Store.ogg" id="4_syvy7"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_cdj5w"]
 atlas = ExtResource("1_k055r")
@@ -283,8 +284,11 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_oltpx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_oltpx")
 }],
-"loop": false,
+"loop": true,
 "name": &"skill",
 "speed": 10.0
 }]
@@ -294,10 +298,13 @@ animations = [{
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_06me7")
 animation = &"skill"
-autoplay = "idle"
+autoplay = "skill"
 
 [node name="snake_skill" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("2_v2rwu")
 
 [node name="snake_autoattack" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("2_cdj5w")
+
+[node name="snake_hurt" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_syvy7")

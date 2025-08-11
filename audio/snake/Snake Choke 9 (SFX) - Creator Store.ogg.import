@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://dgwibf4axwtmh"
+path="res://.godot/imported/Snake Choke 9 (SFX) - Creator Store.ogg-5b3eda10f3a114f14bfd7854f6853ac8.oggvorbisstr"
+
+[deps]
+
+source_file="res://audio/snake/Snake Choke 9 (SFX) - Creator Store.ogg"
+dest_files=["res://.godot/imported/Snake Choke 9 (SFX) - Creator Store.ogg-5b3eda10f3a114f14bfd7854f6853ac8.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

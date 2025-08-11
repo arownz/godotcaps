@@ -243,6 +243,8 @@ func take_damage(damage_amount):
     # Play hit animation
     if player_animation and player_animation.get_node("AnimatedSprite2D"):
         player_animation.get_node("AnimatedSprite2D").play("hurt")
+        # Play player hurt sound effect if available
+        _play_attack_sound("player_hurt")
     
     # Check if player is defeated
     if player_health <= 0:

@@ -139,7 +139,7 @@ theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.501961)
 theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
 theme_override_fonts/font = ExtResource("3_idjw4")
-theme_override_font_sizes/font_size = 30
+theme_override_font_sizes/font_size = 25
 text = "Hat = Close! "
 horizontal_alignment = 1
 

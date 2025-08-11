@@ -91,6 +91,13 @@ func enemy_attack():
 	var sprite = enemy_node.get_node_or_null("AnimatedSprite2D")
 	if sprite:
 		sprite.play("auto_attack")
+		# Play enemy auto-attack SFX using EnemyManager's flexible lookup (supports *_autoattack)
+		if battle_scene.enemy_manager and battle_scene.enemy_manager.has_method("play_enemy_sfx"):
+			battle_scene.enemy_manager.play_enemy_sfx("auto_attack")
+	else:
+		# Even if no sprite is found, still try to play the auto-attack SFX
+		if battle_scene.enemy_manager and battle_scene.enemy_manager.has_method("play_enemy_sfx"):
+			battle_scene.enemy_manager.play_enemy_sfx("auto_attack")
 	
 	await enemy_attack_tween.finished
 	
@@ -529,9 +536,9 @@ func _show_dungeon_completion_notification(completed_dungeon_num: int):
 	var message = ""
 	
 	if next_dungeon <= 3:
-		message = "Congratulations! You have unlocked Dungeon " + str(next_dungeon) + "!\n\nWord challenges now become " + next_word_length + " words."
+		message = "Congratulations! You have unlocked Dungeon " + str(next_dungeon) + "! Word challenges now become " + next_word_length + " words."
 	else:
-		message = "Congratulations! \nYou have completed all dungeons!\nYou are now a master reader!"
+		message = "Congratulations! You have completed all dungeons! You are now a master reader!"
 	
 	# Get notification popup from battle scene (should exist)
 	var notification_popup = battle_scene.get_node_or_null("NotificationPopUp")

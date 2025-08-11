@@ -472,22 +472,22 @@ func _on_recognition_error(error_msg: String):
 	# Humanize error messages for better user experience
 	var user_friendly_msg = "recognition_error"
 	if "Failed to start recognition" in error_msg:
-		user_friendly_msg = "Could not analyze."
+		user_friendly_msg = "Not Recognized"
 		_show_status_message("Could not analyze your writing. Please try again.", Color(1, 0.3, 0.3, 1))
 	elif "Vision API not available" in error_msg:
-		user_friendly_msg = "Handwriting recognition unavailable."
+		user_friendly_msg = "Unavailable"
 		_show_status_message("Recognition service unavailable. Please try again later.", Color(1, 0.3, 0.3, 1))
 	elif "Request timed out" in error_msg:
-		user_friendly_msg = "Analysis is taking too long."
+		user_friendly_msg = "Too long"
 		_show_status_message("Analysis timed out. Please try again.", Color(1, 0.3, 0.3, 1))
 	elif "Empty result received" in error_msg:
-		user_friendly_msg = "Could not read."
+		user_friendly_msg = "Couldn't read"
 		_show_status_message("Could not read your writing. Please try writing more clearly.", Color(1, 0.3, 0.3, 1))
 	elif "JavaScript bridge unavailable" in error_msg:
-		user_friendly_msg = "System error."
+		user_friendly_msg = "System error"
 		_show_status_message("System error. Please try again.", Color(1, 0.3, 0.3, 1))
 	else:
-		user_friendly_msg = "Unable to read."
+		user_friendly_msg = "Unable"
 		_show_status_message("Unable to read your writing. Please try again.", Color(1, 0.3, 0.3, 1))
 
 	# Hide status message after some time

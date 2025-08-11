@@ -1,9 +1,9 @@
 [gd_scene load_steps=42 format=3 uid="uid://d4gnmb7y5laks"]
 
 [ext_resource type="Texture2D" uid="uid://by0xvtv0v0usp" path="res://Sprites/Frame Sprites/Treant.png" id="1_ekcs8"]
-[ext_resource type="AudioStream" uid="uid://4qa0wgp6xavv" path="res://audio/treant/hurt.ogg" id="2_oe6dc"]
-[ext_resource type="AudioStream" uid="uid://bugoa4ohw6nl3" path="res://audio/treant/skill.ogg" id="3_swkoj"]
-[ext_resource type="AudioStream" uid="uid://cqgci6402oj3b" path="res://audio/treant/auto_attack.ogg" id="4_ludm2"]
+[ext_resource type="AudioStream" uid="uid://dkr6sxeeo5ck4" path="res://audio/treant/treantskillz.ogg" id="3_ludm2"]
+[ext_resource type="AudioStream" uid="uid://gwmw8vig53ej" path="res://audio/treant/traeanthurt.ogg" id="3_oe6dc"]
+[ext_resource type="AudioStream" uid="uid://t1gvinhiaje7" path="res://audio/treant/autoattack.ogg" id="4_oe6dc"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_hk3a7"]
 atlas = ExtResource("1_ekcs8")
@@ -294,8 +294,11 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_hc7j1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hc7j1")
 }],
-"loop": false,
+"loop": true,
 "name": &"skill",
 "speed": 7.0
 }]
@@ -306,13 +309,13 @@ position = Vector2(-2, -23)
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_j63xv")
 animation = &"skill"
-autoplay = "idle"
+autoplay = "skill"
 
 [node name="treant_hurt" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("2_oe6dc")
+stream = ExtResource("3_oe6dc")
 
 [node name="treant_skill" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("3_swkoj")
+stream = ExtResource("3_ludm2")
 
 [node name="treant_autoattack" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("4_ludm2")
+stream = ExtResource("4_oe6dc")

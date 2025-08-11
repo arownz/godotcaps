@@ -247,8 +247,8 @@ func _on_export_data_button_pressed():
 	
 	await dialog.confirmed
 	dialog.queue_free()
-	
-	# TODO: Implement actual data export when needed
+
+	# TODO: Implement actual data export when needed but for future updates
 
 
 func _on_back_button_mouse_entered() -> void:
@@ -338,7 +338,7 @@ func _show_energy_confirmation_notification():
 		notification_popup.layer = 200 # Higher than settings popup layer (100)
 
 		var title = "Engage Battle"
-		var message = "Starting this battle will consume " + str(energy_cost) + " energy.\nAre you ready to engage?"
+		var message = "Starting this battle will consume " + str(energy_cost) + " energy. Are you ready to engage?"
 		var button_text = "Engage"
 		
 		# Show the confirmation notification

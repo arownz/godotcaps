@@ -62,6 +62,74 @@ func initialize(scene = null):
 # ADD MISSING VARIABLES AND FUNCTIONS
 var enemy_animation_scene = null
 
+# Helper: find the AnimatedSprite2D anywhere under the enemy animation root
+func _find_animated_sprite(root: Node) -> AnimatedSprite2D:
+    if root == null:
+        return null
+    var direct := root.get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
+    if direct:
+        return direct
+    # Search immediate children first
+    for child in root.get_children():
+        var aspr := child as AnimatedSprite2D
+        if aspr:
+            return aspr
+    # Recursive search as fallback
+    for child in root.get_children():
+        var found := _find_animated_sprite(child)
+        if found:
+            return found
+    return null
+
+# Helper: play animation name using AnimatedSprite2D if available, else AnimationPlayer
+func _play_enemy_anim(anim_name: String) -> void:
+    if enemy_animation == null:
+        return
+    var spr := _find_animated_sprite(enemy_animation)
+    if spr and spr.sprite_frames and spr.sprite_frames.has_animation(anim_name):
+        spr.play(anim_name)
+        return
+    var ap := enemy_animation.get_node_or_null("AnimationPlayer") as AnimationPlayer
+    if ap and ap.has_animation(anim_name):
+        ap.play(anim_name)
+        return
+    print("EnemyManager: animation not found -> ", anim_name)
+
+# Helper: find an AudioStreamPlayer whose name matches the action (e.g., slime_autoattack, snake_skill, boar_hurt)
+func _find_audio_player_for_action(action: String) -> AudioStreamPlayer:
+    if enemy_animation == null:
+        return null
+    var action_l := action.to_lower()
+    var action_compact := action_l.replace("_", "") # handle auto_attack vs autoattack
+    # breadth-first search for AudioStreamPlayer nodes
+    var queue: Array = [enemy_animation]
+    var candidates: Array[AudioStreamPlayer] = []
+    while queue.size() > 0:
+        var node: Node = queue.pop_front()
+        for child in node.get_children():
+            queue.push_back(child)
+            var asp := child as AudioStreamPlayer
+            if asp:
+                var nm := asp.name.to_lower()
+                # Prefer exact suffix match: *_<action> or *<action_compact>
+                if nm.ends_with("_" + action_l) or nm.ends_with(action_compact) or nm == action_l:
+                    return asp
+                # keep loose candidates containing the action
+                if nm.find(action_compact) != -1 or nm.find(action_l) != -1:
+                    candidates.append(asp)
+    if candidates.size() > 0:
+        return candidates[0]
+    return null
+
+# Helper: play enemy SFX for a given action if an AudioStreamPlayer exists under the animation tree
+func _play_enemy_sfx(action: String) -> void:
+    var player := _find_audio_player_for_action(action)
+    if player and player.has_method("play"):
+        player.play()
+        print("EnemyManager: playing sfx -> ", player.name)
+    else:
+        print("EnemyManager: sfx not found -> ", action)
+
 func setup_enemy_sprite():
     print("EnemyManager: Setting up enemy sprite")
     
@@ -83,14 +151,9 @@ func setup_enemy_sprite():
         # Set enemy name if the sprite has that property
         if enemy_sprite.has_method("set_enemy_name"):
             enemy_sprite.set_enemy_name(enemy_name)
-        
-        # Start the idle animation if available
-        if enemy_animation.has_method("play"):
-            enemy_animation.play("battle_idle")
-        elif enemy_animation.has_node("AnimationPlayer"):
-            var anim_player = enemy_animation.get_node("AnimationPlayer")
-            if anim_player.has_animation("battle_idle"):
-                anim_player.play("battle_idle")
+		
+        # Start the idle animation (use generic helper)
+        _play_enemy_anim("idle")
         
         print("EnemyManager: Enemy sprite loaded successfully: ", enemy_animation_scene.resource_path)
     else:
@@ -114,13 +177,8 @@ func _load_default_enemy_animation():
         enemy_position.add_child(enemy_sprite)
         enemy_animation = enemy_sprite # Set the animation reference
         
-        # Start the idle animation if available
-        if enemy_animation.has_method("play"):
-            enemy_animation.play("battle_idle")
-        elif enemy_animation.has_node("AnimationPlayer"):
-            var anim_player = enemy_animation.get_node("AnimationPlayer")
-            if anim_player.has_animation("battle_idle"):
-                anim_player.play("battle_idle")
+        # Start the idle animation
+        _play_enemy_anim("idle")
         
         print("EnemyManager: Default enemy animation loaded")
     else:
@@ -363,13 +421,9 @@ func load_enemy_animation():
             enemy_animation = scene.instantiate()
             enemy_position.add_child(enemy_animation)
             
-            # Make sure the enemy's AnimatedSprite2D plays "idle" animation
-            var sprite = enemy_animation.get_node_or_null("AnimatedSprite2D")
-            if sprite:
-                sprite.play("idle")
-                print("Loaded enemy animation: " + enemy_animation_path)
-            else:
-                print("AnimatedSprite2D not found in enemy animation")
+            # Ensure the enemy plays idle on load
+            _play_enemy_anim("idle")
+            print("Loaded enemy animation: " + enemy_animation_path)
         else:
             print("ERROR: Failed to load scene: " + enemy_animation_path)
     else:
@@ -439,8 +493,10 @@ func take_damage(damage_amount):
         emit_signal("enemy_defeated", exp_reward)
         
         # Play death animation
-        if enemy_animation and enemy_animation.get_node("AnimatedSprite2D"):
-            enemy_animation.get_node("AnimatedSprite2D").play("dead")
+        _play_enemy_anim("dead")
+        # Also play hurt SFX on lethal hit (requested), then dead SFX if present
+        _play_enemy_sfx("hurt")
+        _play_enemy_sfx("dead")
     else:
         # CRITICAL FIX: Only increase skill meter if battle is still active
         if is_battle_active:
@@ -450,8 +506,8 @@ func take_damage(damage_amount):
             print("EnemyManager: Skill meter increase blocked - battle ended")
         
         # Play hurt animation
-        if enemy_animation and enemy_animation.get_node("AnimatedSprite2D"):
-            enemy_animation.get_node("AnimatedSprite2D").play("hurt")
+        _play_enemy_anim("hurt")
+        _play_enemy_sfx("hurt")
     
     return reduced_damage
 
@@ -499,8 +555,8 @@ func attack(player_manager):
         return use_special_skill(player_manager)
     
     # Play attack animation
-    if enemy_animation and enemy_animation.get_node("AnimatedSprite2D"):
-        enemy_animation.get_node("AnimatedSprite2D").play("auto_attack")
+    _play_enemy_anim("auto_attack")
+    _play_enemy_sfx("auto_attack")
     
     print("Enemy " + enemy_name + " attacking with damage: " + str(enemy_damage))
     
@@ -517,8 +573,8 @@ func use_special_skill(player_manager):
         print("EnemyManager: Special skill blocked - battle has ended")
         return 0
     # Play skill animation
-    if enemy_animation and enemy_animation.get_node("AnimatedSprite2D"):
-        enemy_animation.get_node("AnimatedSprite2D").play("skill")
+    _play_enemy_anim("skill")
+    _play_enemy_sfx("skill")
     
     # Reset skill meter
     enemy_skill_meter = 0
@@ -533,8 +589,11 @@ func use_special_skill(player_manager):
 
 # Reset animation to idle
 func reset_animation():
-    if enemy_animation and enemy_animation.get_node("AnimatedSprite2D"):
-        enemy_animation.get_node("AnimatedSprite2D").play("idle")
+    _play_enemy_anim("idle")
+
+# Public wrapper so other managers can trigger SFX without relying on a private helper name
+func play_enemy_sfx(action: String) -> void:
+    _play_enemy_sfx(action)
 
 # Get reward data
 func get_rewards():

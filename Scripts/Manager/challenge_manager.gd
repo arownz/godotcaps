@@ -392,26 +392,30 @@ func handle_challenge_cancelled():
 		# Wait for movement to complete
 		await move_tween.finished
 		
-		# Play attack animation and apply damage
+		# Play SKILL animation and apply damage (align with failed challenge visuals)
 		var enemy_sprite = enemy_node.get_node_or_null("AnimatedSprite2D")
-		if enemy_sprite and enemy_sprite.sprite_frames and enemy_sprite.sprite_frames.has_animation("auto_attack"):
-			enemy_sprite.play("auto_attack")
-			
-			# Wait for animation to progress before applying damage
-			await battle_scene.get_tree().create_timer(0.4).timeout
-			
+		if enemy_sprite and enemy_sprite.sprite_frames and enemy_sprite.sprite_frames.has_animation("skill"):
+			enemy_sprite.play("skill")
+			# Wait slightly longer to align with skill impact
+			await battle_scene.get_tree().create_timer(0.5).timeout
 			# Apply skill damage
 			player_manager.take_damage(cancellation_damage)
-			battle_log_manager.add_message("[color=#000000]The " + enemy_manager.enemy_name + " dealt " + str(cancellation_damage) + " skill damage![/color]")
-			
-			# Show damage indicator
+			battle_log_manager.add_message("[color=#000000]The " + enemy_manager.enemy_name + " dealt " + str(cancellation_damage) + " critical damage![/color]")
+			# Show skill damage indicator for consistency
+			battle_scene._show_skill_damage_indicator(cancellation_damage, "player")
+		elif enemy_sprite and enemy_sprite.sprite_frames and enemy_sprite.sprite_frames.has_animation("auto_attack"):
+			# Fallback: if no 'skill' animation, try auto_attack
+			enemy_sprite.play("auto_attack")
+			await battle_scene.get_tree().create_timer(0.4).timeout
+			player_manager.take_damage(cancellation_damage)
+			battle_log_manager.add_message("[color=#000000]The " + enemy_manager.enemy_name + " dealt " + str(cancellation_damage) + " critical damage![/color]")
+			# Use standard indicator as fallback
 			battle_scene._show_damage_indicator(cancellation_damage, "player")
 		else:
 			# Fallback: apply damage without animation
 			await battle_scene.get_tree().create_timer(0.4).timeout
 			player_manager.take_damage(cancellation_damage)
-			battle_log_manager.add_message("[color=#000000]The " + enemy_manager.enemy_name + " dealt " + str(cancellation_damage) + " skill damage![/color]")
-			
+			battle_log_manager.add_message("[color=#000000]The " + enemy_manager.enemy_name + " dealt " + str(cancellation_damage) + " critical damage![/color]")
 			# Show damage indicator
 			battle_scene._show_damage_indicator(cancellation_damage, "player")
 		
@@ -426,7 +430,7 @@ func handle_challenge_cancelled():
 		# Fallback if no enemy animation
 		await battle_scene.get_tree().create_timer(0.5).timeout
 		player_manager.take_damage(cancellation_damage)
-		battle_log_manager.add_message("[color=#000000]The " + enemy_manager.enemy_name + " dealt " + str(cancellation_damage) + " skill damage![/color]")
+		battle_log_manager.add_message("[color=#000000]The " + enemy_manager.enemy_name + " dealt " + str(cancellation_damage) + " critical damage![/color]")
 
 		# Show damage indicator
 		battle_scene._show_damage_indicator(cancellation_damage, "player")

@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://ctrvy2j4qx003"
+path="res://.godot/imported/Slime attack.ogg-8986d511eaaa6941f9f5e4f9c3b11545.oggvorbisstr"
+
+[deps]
+
+source_file="res://audio/slime/Slime attack.ogg"
+dest_files=["res://.godot/imported/Slime attack.ogg-8986d511eaaa6941f9f5e4f9c3b11545.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

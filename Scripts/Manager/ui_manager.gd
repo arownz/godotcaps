@@ -204,7 +204,7 @@ func _update_stage_progress():
 	var dungeon_num = battle_scene.dungeon_manager.dungeon_num
 	var stage_num = battle_scene.dungeon_manager.stage_num # 1..5
     
-	# Set enemy icons per dungeon: 1-4 dungeon-specific, 5 is treant boss
+	# Set enemy head icons per dungeon: 1-4 dungeon-specific, 5 is treant boss
 	var enemy_tex: Texture2D = null
 	match dungeon_num:
 		1:
@@ -230,7 +230,13 @@ func _update_stage_progress():
 			var is_unlocked = (i < stage_num)
 			# Assign icon: unlocked -> enemy/boss; locked -> lock icon
 			icon.texture = (boss_tex if is_boss else enemy_tex) if is_unlocked else lock_tex
-			icon.modulate = Color(1, 1, 1, 1)
+			# Make already-completed stages semi-transparent for clarity
+			# Completed stages are strictly before the current stage index (stage_num - 1)
+			# Example: at Stage 3 (stage_num=3), indices 0..1 are completed; index 1 is hidden by PlayerIcon
+			var alpha := 1.0
+			if i < (stage_num - 1):
+				alpha = 0.35
+			icon.modulate = Color(1, 1, 1, alpha)
 			# Hide the icon currently covered by the player's head (previous stage)
 			icon.visible = (i != covered_index)
 
