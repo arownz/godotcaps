@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3 uid="uid://2fpacds3hu8n"]
 
 [ext_resource type="Script" uid="uid://c8ypkl4nixsox" path="res://Scripts/ChallengeResultPanel.gd" id="1_8sm0m"]
-[ext_resource type="Texture2D" uid="uid://cct70l6wbh13s" path="res://gui/Update/UI/ui 9.png" id="2_uofyk"]
+[ext_resource type="Texture2D" uid="uid://0con8ixqofpr" path="res://gui/Update/UI/ui 8.png" id="2_uofyk"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="3_idjw4"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="4_kf8r5"]
 

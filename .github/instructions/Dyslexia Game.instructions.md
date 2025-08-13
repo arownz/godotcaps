@@ -6,9 +6,9 @@ This is a Godot 4.4.1 2D web-based educational gamification designed for dyslexi
 
 ## Architecture Principles
 
-### Manager-Based Battle System
+### Journey Manager-Based Battle System
 
-The core battle system uses a decoupled manager pattern in `Scripts/Manager/`:
+The core battle system uses a decoupled manager pattern in `Scripts/JourneyManager/`:
 
 - **BattleManager**: Victory/defeat flow, Firebase progression, endgame routing
 - **BonusDamageCalculator**: Centralize bonus damage of player counter to enemy through whiteboard or speect to text

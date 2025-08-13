@@ -14,7 +14,6 @@ var current_settings = {
 		"font_size": 18,
 		"reading_speed": 1.0,
 		"high_contrast": false,
-		"reduce_animations": false
 	},
 	"audio": {
 		"master_volume": 75,
@@ -22,8 +21,6 @@ var current_settings = {
 		"music_volume": 60
 	},
 	"gameplay": {
-		"difficulty": "Normal",
-		"auto_save": true,
 		"show_tutorials": true
 	}
 }

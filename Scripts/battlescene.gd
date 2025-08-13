@@ -1,13 +1,13 @@
 extends Node2D
 
 # Preload all manager scripts to ensure they're defined before use
-const BattleManagerScript = preload("res://Scripts/Manager/battle_manager.gd")
-const EnemyManagerScript = preload("res://Scripts/Manager/enemy_manager.gd")
-const PlayerManagerScript = preload("res://Scripts/Manager/player_manager.gd")
-const BattleLogManagerScript = preload("res://Scripts/Manager/battle_log_manager.gd")
-const UIManagerScript = preload("res://Scripts/Manager/ui_manager.gd")
-const ChallengeManagerScript = preload("res://Scripts/Manager/challenge_manager.gd")
-const DungeonManagerScript = preload("res://Scripts/Manager/dungeon_manager.gd")
+const BattleManagerScript = preload("res://Scripts/JourneyManager/battle_manager.gd")
+const EnemyManagerScript = preload("res://Scripts/JourneyManager/enemy_manager.gd")
+const PlayerManagerScript = preload("res://Scripts/JourneyManager/player_manager.gd")
+const BattleLogManagerScript = preload("res://Scripts/JourneyManager/battle_log_manager.gd")
+const UIManagerScript = preload("res://Scripts/JourneyManager/ui_manager.gd")
+const ChallengeManagerScript = preload("res://Scripts/JourneyManager/challenge_manager.gd")
+const DungeonManagerScript = preload("res://Scripts/JourneyManager/dungeon_manager.gd")
 
 # Managers
 var battle_manager

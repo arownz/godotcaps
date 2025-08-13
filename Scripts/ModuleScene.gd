@@ -1,58 +1,40 @@
 extends Control
 
-# Module data structure to track progress
+# Module config (presentation + totals). Progress is fetched from Firestore.
 var module_data = {
 	"phonics": {
 		"name": "Phonics Interactive",
-		"icon": "ABC",
-		"description": "Trace letters while hearing sounds",
-		"current_lesson": 7,
+		"description": "Trace while hearing sounds",
 		"total_lessons": 20,
-		"progress_percent": 35.0,
 		"scene_path": "res://Scenes/PhonicsModule.tscn"
 	},
 	"flip_quiz": {
 		"name": "Flip Quiz",
-		"icon": "QUIZ",
 		"description": "Flashcard game with symbols",
-		"current_lesson": 12,
 		"total_lessons": 20,
-		"progress_percent": 60.0,
 		"scene_path": "res://Scenes/FlipQuizModule.tscn"
 	},
 	"read_aloud": {
 		"name": "Interactive Read-Aloud",
-		"icon": "READ",
 		"description": "Follow highlighted text with audio",
-		"current_lesson": 5,
 		"total_lessons": 20,
-		"progress_percent": 25.0,
 		"scene_path": "res://Scenes/ReadAloudModule.tscn"
 	},
 	"chunked_reading": {
 		"name": "Chunked Reading",
-		"icon": "SCAN",
 		"description": "Small sections with guided questions",
-		"current_lesson": 2,
 		"total_lessons": 20,
-		"progress_percent": 10.0,
 		"scene_path": "res://Scenes/ChunkedReadingModule.tscn"
 	}, "syllable_building": {
 		"name": "Syllable Building",
-		"icon": "BUILD",
 		"description": "Drag syllables to build words",
-		"current_lesson": 9,
 		"total_lessons": 20,
-		"progress_percent": 45.0,
 		"scene_path": "res://Scenes/SyllableBuildingModule.tscn"
 	},
 	"speech": {
 		"name": "Speech Recognition",
-		"icon": "SPEAK",
 		"description": "Practice pronunciation with AI feedback",
-		"current_lesson": 1,
 		"total_lessons": 20,
-		"progress_percent": 0.0,
 		"scene_path": "res://Scenes/WordChallengePanel_STT.tscn"
 	}
 }
@@ -69,6 +51,10 @@ var syllable_building_button
 
 # Progress tracking
 var user_progress_data = {}
+
+# Firebase modules progress (Firestore)
+var firebase_modules: Dictionary = {}
+var module_progress = null
 
 # Load dyslexia-friendly font
 var dyslexia_font: FontFile
@@ -93,8 +79,11 @@ func _ready():
 	# Connect button signals
 	_connect_signals()
 	
-	# Load user progress from save file
+	# Load user progress from save file (offline fallback)
 	_load_user_progress()
+
+	# Load Firestore-backed module progress
+	await _load_firestore_modules()
 	
 	# Update UI with current progress
 	_update_progress_displays()
@@ -107,6 +96,18 @@ func _ready():
 	
 	# Load dyslexia font
 	_load_dyslexia_font()
+
+func _load_firestore_modules():
+	# Create and fetch Firestore-backed module progress
+	if Engine.has_singleton("Firebase"):
+		module_progress = ModuleProgress.new()
+		add_child(module_progress)
+		firebase_modules = await module_progress.fetch_modules()
+		if firebase_modules.size() > 0:
+			print("ModuleScene: Loaded Firestore module progress: ", firebase_modules)
+			_update_progress_displays()
+	else:
+		print("ModuleScene: Firebase not available or not initialized")
 
 func _get_node_references():
 	# Main navigation - now using the new navigation bar
@@ -221,32 +222,41 @@ func _update_card_progress(module_key: String, card_name: String):
 	if not card_node:
 		print("Warning: Card node not found: " + card_name)
 		return
-	
-	if user_progress_data.has(module_key) and module_data.has(module_key):
+
+	# Prefer Firestore progress if available, else fallback to local file percent
+	var progress_percent := 0.0
+	var completed := false
+	if firebase_modules.has(module_key):
+		var fm = firebase_modules[module_key]
+		if typeof(fm) == TYPE_DICTIONARY:
+			progress_percent = float(fm.get("progress", 0))
+			completed = bool(fm.get("completed", false))
+	elif user_progress_data.has(module_key) and module_data.has(module_key):
 		var progress = user_progress_data[module_key]
 		var completed_count = progress.completed_lessons.size()
-		var total_lessons = module_data[module_key].total_lessons
-		var progress_percent = (float(completed_count) / float(total_lessons)) * 100.0
-		
-		# Update progress bar
-		var progress_bar = card_node.get_node_or_null("CardContent/ProgressContainer/ProgressBar")
-		if progress_bar:
-			progress_bar.value = progress_percent
-		
-		# Update progress label
-		var progress_label = card_node.get_node_or_null("CardContent/ProgressContainer/ProgressLabel")
-		if progress_label:
-			progress_label.text = str(int(progress_percent)) + "% Complete"
-		
-		# Update action button text
-		var action_button = card_node.get_node_or_null("CardContent/ActionButton")
-		if action_button:
-			if completed_count == 0:
-				action_button.text = "Start Learning"
-			elif completed_count == total_lessons:
-				action_button.text = "COMPLETED"
-			else:
-				action_button.text = "Continue Learning"
+		var total_lessons = int(module_data[module_key]["total_lessons"]) if module_data.has(module_key) and module_data[module_key].has("total_lessons") else 20
+		progress_percent = (float(completed_count) / float(total_lessons)) * 100.0
+		completed = completed_count == total_lessons
+
+	# Update progress bar
+	var progress_bar = card_node.get_node_or_null("CardContent/ProgressContainer/ProgressBar")
+	if progress_bar:
+		progress_bar.value = progress_percent
+
+	# Update progress label
+	var progress_label = card_node.get_node_or_null("CardContent/ProgressContainer/ProgressLabel")
+	if progress_label:
+		progress_label.text = str(int(progress_percent)) + "% Complete"
+
+	# Update action button text
+	var action_button = card_node.get_node_or_null("CardContent/ActionButton")
+	if action_button:
+		if int(progress_percent) == 0:
+			action_button.text = "Start Learning"
+		elif completed or int(progress_percent) >= 100:
+			action_button.text = "COMPLETED"
+		else:
+			action_button.text = "Continue Learning"
 
 func _apply_dyslexia_friendly_styling():
 	# Apply consistent styling for better readability
@@ -395,7 +405,7 @@ func get_overall_progress() -> Dictionary:
 	var completed_lessons = 0
 	
 	for module_key in user_progress_data.keys():
-		total_lessons += module_data[module_key].total_lessons
+		total_lessons += int(module_data[module_key]["total_lessons"]) if module_data.has(module_key) and module_data[module_key].has("total_lessons") else 20
 		completed_lessons += user_progress_data[module_key].completed_lessons.size()
 	
 	var overall_percent = (float(completed_lessons) / float(total_lessons)) * 100.0

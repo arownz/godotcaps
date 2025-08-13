@@ -1,7 +1,8 @@
-[gd_scene load_steps=16 format=3 uid="uid://beu8uw5oqkvxd"]
+[gd_scene load_steps=17 format=3 uid="uid://beu8uw5oqkvxd"]
 
 [ext_resource type="Script" uid="uid://liwnmmbqa706" path="res://Scripts/change_character_scene.gd" id="1_rnq7s"]
 [ext_resource type="Texture2D" uid="uid://n08ji1i2co16" path="res://gui/Update/UI/small button.png" id="2_6nemp"]
+[ext_resource type="Texture2D" uid="uid://djjuy3y73ahpe" path="res://gui/Update/Backgrounds/battlescene background3.png" id="2_ccovg"]
 [ext_resource type="Texture2D" uid="uid://da6rdtvo1nlwj" path="res://gui/Update/icons/return.png" id="3_oxpqv"]
 [ext_resource type="Texture2D" uid="uid://cin60mos646xe" path="res://gui/Update/UI/Character Select Unlocked_hover.png" id="4_8uolc"]
 [ext_resource type="Texture2D" uid="uid://cghh3806ycwdb" path="res://gui/Update/UI/small button_hovers.png" id="4_c2xce"]
@@ -26,14 +27,18 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_rnq7s")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="TextureRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = -38.0
+offset_top = -107.0
+offset_right = 38.0
+offset_bottom = 107.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.137255, 0.137255, 0.137255, 1)
+texture = ExtResource("2_ccovg")
 
 [node name="TitleContainer" type="Control" parent="."]
 layout_mode = 1

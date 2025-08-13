@@ -1,0 +1,213 @@
+[gd_scene load_steps=9 format=3 uid="uid://0qstx7wmx0vr"]
+
+[ext_resource type="Script" uid="uid://b026p1dub2ejv" path="res://Scripts/PhonicsSightWords.gd" id="2_script"]
+[ext_resource type="Texture2D" uid="uid://ciaa4qe2o2juf" path="res://gui/Update/UI/ui 3.png" id="2_vpakk"]
+[ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="3_regular"]
+[ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="4_bold"]
+[ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="5_yellow"]
+[ext_resource type="PackedScene" uid="uid://cvv1bpkfdvqjw" path="res://Scenes/WhiteboardInterface.tscn" id="6_whiteboard"]
+[ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="7_click"]
+[ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="8_hover"]
+
+[node name="PhonicsSightWords" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_script")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_vpakk")
+
+[node name="MainContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 57.0
+offset_top = 41.0
+offset_right = -58.0
+offset_bottom = -35.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 30
+
+[node name="HeaderPanel" type="Panel" parent="MainContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="HeaderContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 30.0
+offset_top = 20.0
+offset_right = -30.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+
+[node name="BackButton" type="Button" parent="MainContainer/HeaderPanel/HeaderContainer"]
+custom_minimum_size = Vector2(120, 60)
+layout_mode = 2
+size_flags_horizontal = 0
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 18
+text = "Back"
+icon = ExtResource("5_yellow")
+flat = true
+icon_alignment = 1
+expand_icon = true
+
+[node name="TitleLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 32
+text = "Sight Words Practice"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ProgressContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+alignment = 2
+
+[node name="ProgressLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_regular")
+theme_override_font_sizes/font_size = 16
+text = "0% Complete"
+
+[node name="ProgressBar" type="ProgressBar" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer"]
+custom_minimum_size = Vector2(200, 20)
+layout_mode = 2
+
+[node name="ContentContainer" type="VBoxContainer" parent="MainContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 20
+
+[node name="InstructionPanel" type="Panel" parent="MainContainer/ContentContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="InstructionContainer" type="VBoxContainer" parent="MainContainer/ContentContainer/InstructionPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 114.0
+offset_right = 74.0
+offset_bottom = 16.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.81848, 0.81848)
+theme_override_constants/separation = 10
+
+[node name="TargetLabel" type="Label" parent="MainContainer/ContentContainer/InstructionPanel/InstructionContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.101961, 0.101961, 0.101961, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 36
+text = "Trace: the"
+horizontal_alignment = 1
+
+[node name="ControlsContainer" type="HBoxContainer" parent="MainContainer/ContentContainer/InstructionPanel/InstructionContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+alignment = 1
+
+[node name="HearButton" type="Button" parent="MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer"]
+custom_minimum_size = Vector2(150, 40)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 16
+text = "🔊 Hear Word"
+
+[node name="NextTargetButton" type="Button" parent="MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer"]
+custom_minimum_size = Vector2(150, 40)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 16
+text = "Next Word"
+
+[node name="WhiteboardPanel" type="Panel" parent="MainContainer/ContentContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="WhiteboardContainer" type="Control" parent="MainContainer/ContentContainer/WhiteboardPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="WhiteboardInterface" parent="MainContainer/ContentContainer/WhiteboardPanel/WhiteboardContainer" instance=ExtResource("6_whiteboard")]
+layout_mode = 1
+anchors_preset = 15
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+
+[node name="TraceOverlay" type="Label" parent="MainContainer/ContentContainer/WhiteboardPanel/WhiteboardContainer"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = -40.0
+offset_right = 100.0
+offset_bottom = 40.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.2, 0.6, 0.4, 0.35)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 64
+text = "the"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("7_click")
+
+[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("8_hover")
+
+[connection signal="mouse_entered" from="MainContainer/HeaderPanel/HeaderContainer/BackButton" to="." method="_on_button_hover"]
+[connection signal="pressed" from="MainContainer/HeaderPanel/HeaderContainer/BackButton" to="." method="_on_back_button_pressed"]
+[connection signal="mouse_entered" from="MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/HearButton" to="." method="_on_button_hover"]
+[connection signal="pressed" from="MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/HearButton" to="." method="_on_HearButton_pressed"]
+[connection signal="mouse_entered" from="MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/NextTargetButton" to="." method="_on_button_hover"]
+[connection signal="pressed" from="MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/NextTargetButton" to="." method="_on_NextTargetButton_pressed"]

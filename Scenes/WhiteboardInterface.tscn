@@ -1,10 +1,11 @@
-[gd_scene load_steps=8 format=3 uid="uid://cvv1bpkfdvqjw"]
+[gd_scene load_steps=9 format=3 uid="uid://cvv1bpkfdvqjw"]
 
 [ext_resource type="Script" uid="uid://tupwtis13uye" path="res://Scripts/WhiteboardInterface.gd" id="1_e3gsa"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="2_vuw0y"]
 [ext_resource type="Texture2D" uid="uid://b71mx2j075d48" path="res://gui/Update/UI/hover gray short button.png" id="3_vuw0y"]
 [ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="4_jliia"]
 [ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="5_46aw1"]
+[ext_resource type="AudioStream" uid="uid://c17a47pkswdvw" path="res://audio/whiteboard sound effect/whiteboard_swiping.ogg" id="6_46aw1"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7wk35"]
 bg_color = Color(1, 1, 1, 1)
@@ -139,6 +140,9 @@ stream = ExtResource("4_jliia")
 
 [node name="ButtonHover" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("5_46aw1")
+
+[node name="WhiteboardSwiping" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_46aw1")
 
 [connection signal="draw" from="VBoxContainer/DrawingArea" to="." method="_on_drawing_area_draw"]
 [connection signal="gui_input" from="VBoxContainer/DrawingArea" to="." method="_on_drawing_area_gui_input"]
