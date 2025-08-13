@@ -1,11 +1,71 @@
-[gd_scene load_steps=7 format=3 uid="uid://bm8j5k6f3bar2"]
+[gd_scene load_steps=11 format=3 uid="uid://bm8j5k6f3bar2"]
 
 [ext_resource type="Script" uid="uid://bcbs2h67y83do" path="res://Scripts/ChunkedReadingModule.gd" id="1_3n1kb"]
-[ext_resource type="Texture2D" uid="uid://cp6h0easasnmc" path="res://gui/Update/UI/ui 6.png" id="2_i1p1d"]
+[ext_resource type="Texture2D" uid="uid://0con8ixqofpr" path="res://gui/Update/UI/ui 8.png" id="2_atdoy"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="3_regular_font"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="4_bold_font"]
 [ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="5_atdoy"]
 [ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="6_l8gkm"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_chunked_panel"]
+bg_color = Color(0.94, 0.89, 0.98, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.7, 0.4, 0.9, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0, 0, 0, 0.2)
+shadow_size = 8
+shadow_offset = Vector2(0, 4)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lesson_panel"]
+bg_color = Color(0.92, 0.85, 0.96, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.6, 0.3, 0.8, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+shadow_color = Color(0, 0, 0, 0.15)
+shadow_size = 6
+shadow_offset = Vector2(0, 3)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_chunked_button_hover"]
+bg_color = Color(0.6, 0.3, 0.8, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+shadow_color = Color(0, 0, 0, 0.4)
+shadow_size = 8
+shadow_offset = Vector2(0, 4)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_chunked_button"]
+bg_color = Color(0.7, 0.4, 0.9, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+shadow_color = Color(0, 0, 0, 0.3)
+shadow_size = 6
+shadow_offset = Vector2(0, 3)
 
 [node name="ChunkedReadingModule" type="Control"]
 layout_mode = 3
@@ -25,7 +85,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_i1p1d")
+texture = ExtResource("2_atdoy")
 
 [node name="MainContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -67,6 +127,7 @@ size_flags_vertical = 3
 [node name="ContentPanel" type="Panel" parent="MainContainer/CenterContainer"]
 custom_minimum_size = Vector2(700, 500)
 layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_chunked_panel")
 
 [node name="ContentContainer" type="VBoxContainer" parent="MainContainer/CenterContainer/ContentPanel"]
 layout_mode = 1
@@ -109,6 +170,7 @@ theme_override_constants/separation = 10
 [node name="Lesson1" type="Panel" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/ScrollContainer/LessonsContainer"]
 custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_lesson_panel")
 
 [node name="Lesson1Container" type="HBoxContainer" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/ScrollContainer/LessonsContainer/Lesson1"]
 layout_mode = 1
@@ -146,11 +208,17 @@ autowrap_mode = 2
 [node name="StartButton1" type="Button" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/ScrollContainer/LessonsContainer/Lesson1/Lesson1Container"]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("4_bold_font")
+theme_override_styles/hover = SubResource("StyleBoxFlat_chunked_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_chunked_button_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_chunked_button")
 text = "Start"
 
 [node name="Lesson2" type="Panel" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/ScrollContainer/LessonsContainer"]
 custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_lesson_panel")
 
 [node name="Lesson2Container" type="HBoxContainer" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/ScrollContainer/LessonsContainer/Lesson2"]
 layout_mode = 1
@@ -188,11 +256,17 @@ autowrap_mode = 2
 [node name="StartButton2" type="Button" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/ScrollContainer/LessonsContainer/Lesson2/Lesson2Container"]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("4_bold_font")
+theme_override_styles/hover = SubResource("StyleBoxFlat_chunked_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_chunked_button_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_chunked_button")
 text = "Start"
 
 [node name="Lesson3" type="Panel" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/ScrollContainer/LessonsContainer"]
 custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_lesson_panel")
 
 [node name="Lesson3Container" type="HBoxContainer" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/ScrollContainer/LessonsContainer/Lesson3"]
 layout_mode = 1

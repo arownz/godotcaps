@@ -37,7 +37,7 @@ func _ready():
 	# Connect hover events
 	_connect_hover_events()
 	
-	# Style cards with rounded corners
+	# Style cards with rounded corners and IconContainer backgrounds
 	_style_category_cards()
 	
 	# Load progress from Firestore
@@ -64,7 +64,7 @@ func _connect_hover_events():
 		back_btn.mouse_entered.connect(_on_button_hover)
 
 func _style_category_cards():
-	# Apply rounded corner styling to category cards
+	# Apply rounded corner styling to category cards - force same style as HeaderPanel
 	var cards = [
 		$MainContainer/ScrollContainer/CategoriesGrid/LettersCard,
 		$MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard
@@ -72,18 +72,43 @@ func _style_category_cards():
 	
 	for card in cards:
 		if card:
+			# Force the card to use the same style as HeaderPanel
 			var style_box = StyleBoxFlat.new()
 			style_box.corner_radius_top_left = 15
 			style_box.corner_radius_top_right = 15
 			style_box.corner_radius_bottom_left = 15
 			style_box.corner_radius_bottom_right = 15
-			style_box.bg_color = Color(1.0, 1.0, 1.0, 0.95)
-			style_box.border_width_left = 3
-			style_box.border_width_right = 3
-			style_box.border_width_top = 3
-			style_box.border_width_bottom = 3
-			style_box.border_color = Color(0.2, 0.4, 0.8, 0.7)
+			style_box.bg_color = Color(0.2, 0.6, 0.9, 1) # 3399E6 color
+			style_box.border_width_left = 5
+			style_box.border_width_right = 5
+			style_box.border_width_top = 5
+			style_box.border_width_bottom = 5
+			style_box.border_color = Color(0, 0, 0, 1) # Black border
+			style_box.shadow_color = Color(0, 0, 0, 0.1)
+			style_box.shadow_size = 8
+			style_box.shadow_offset = Vector2(0, 4)
 			card.add_theme_stylebox_override("panel", style_box)
+	
+	# Style icon containers with #FEB79A background and black borders
+	var icon_containers = [
+		$MainContainer/ScrollContainer/CategoriesGrid/LettersCard/LettersContent/IconContainer,
+		$MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard/SightWordsContent/IconContainer
+	]
+	
+	for icon_container in icon_containers:
+		if icon_container:
+			var icon_style = StyleBoxFlat.new()
+			icon_style.corner_radius_top_left = 10
+			icon_style.corner_radius_top_right = 10
+			icon_style.corner_radius_bottom_left = 10
+			icon_style.corner_radius_bottom_right = 10
+			icon_style.bg_color = Color(1, 1, 1, 1) # white color
+			icon_style.border_width_left = 2
+			icon_style.border_width_right = 2
+			icon_style.border_width_top = 2
+			icon_style.border_width_bottom = 2
+			icon_style.border_color = Color(0, 0, 0, 1) # Black border outline
+			icon_container.add_theme_stylebox_override("panel", icon_style)
 
 func _load_category_progress():
 	if not module_progress:

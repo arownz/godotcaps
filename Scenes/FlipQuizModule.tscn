@@ -1,11 +1,71 @@
-[gd_scene load_steps=7 format=3 uid="uid://bnaj2f5n3k8l6"]
+[gd_scene load_steps=11 format=3 uid="uid://bnaj2f5n3k8l6"]
 
-[ext_resource type="Texture2D" uid="uid://cp6h0easasnmc" path="res://gui/Update/UI/ui 6.png" id="2_hjhsi"]
+[ext_resource type="Texture2D" uid="uid://0con8ixqofpr" path="res://gui/Update/UI/ui 8.png" id="2_3t05n"]
 [ext_resource type="Script" uid="uid://dgl0bug32bd8w" path="res://Scripts/FlipQuizModule.gd" id="2_script"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="3_regular_font"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="4_bold_font"]
 [ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="5_3t05n"]
 [ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="6_i6n66"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_quiz_panel"]
+bg_color = Color(0.98, 0.87, 0.87, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.9, 0.3, 0.3, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0, 0, 0, 0.2)
+shadow_size = 8
+shadow_offset = Vector2(0, 4)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_quiz_card_panel"]
+bg_color = Color(0.95, 0.75, 0.75, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.7, 0.2, 0.2, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+shadow_color = Color(0, 0, 0, 0.15)
+shadow_size = 6
+shadow_offset = Vector2(0, 3)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_quiz_button_hover"]
+bg_color = Color(0.8, 0.2, 0.2, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+shadow_color = Color(0, 0, 0, 0.4)
+shadow_size = 8
+shadow_offset = Vector2(0, 4)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_quiz_button"]
+bg_color = Color(0.9, 0.3, 0.3, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+shadow_color = Color(0, 0, 0, 0.3)
+shadow_size = 6
+shadow_offset = Vector2(0, 3)
 
 [node name="FlipQuizModule" type="Control"]
 layout_mode = 3
@@ -27,7 +87,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_hjhsi")
+texture = ExtResource("2_3t05n")
 
 [node name="MainContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -69,6 +129,7 @@ size_flags_vertical = 3
 [node name="ContentPanel" type="Panel" parent="MainContainer/CenterContainer"]
 custom_minimum_size = Vector2(600, 400)
 layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_quiz_panel")
 
 [node name="ContentContainer" type="VBoxContainer" parent="MainContainer/CenterContainer/ContentPanel"]
 layout_mode = 1
@@ -102,6 +163,7 @@ layout_mode = 2
 [node name="MenuPanel" type="Panel" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_quiz_card_panel")
 
 [node name="MenuContainer" type="VBoxContainer" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/MenuPanel"]
 layout_mode = 1
@@ -140,7 +202,11 @@ autowrap_mode = 2
 
 [node name="StartButton" type="Button" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/MenuPanel/MenuContainer"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("4_bold_font")
+theme_override_styles/hover = SubResource("StyleBoxFlat_quiz_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_quiz_button_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_quiz_button")
 text = "Start Game"
 
 [node name="GamePanel" type="Panel" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer"]

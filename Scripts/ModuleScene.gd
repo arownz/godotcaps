@@ -69,9 +69,7 @@ func _ready():
 	tween.set_parallel(true)
 	tween.tween_property(self, "modulate:a", 1.0, 0.35).set_ease(Tween.EASE_OUT)
 	tween.tween_property(self, "scale", Vector2(1.0, 1.0), 0.35).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
-	
-	# Load dyslexia-friendly font
-	_load_dyslexia_font()
+
 	
 	# Get node references
 	_get_node_references()
@@ -88,14 +86,6 @@ func _ready():
 	# Update UI with current progress
 	_update_progress_displays()
 	
-	# Apply dyslexia-friendly styling
-	_apply_dyslexia_friendly_styling()
-	
-	# Apply dyslexia font to all text elements
-	_apply_dyslexia_font_to_node(self)
-	
-	# Load dyslexia font
-	_load_dyslexia_font()
 
 func _load_firestore_modules():
 	# Create and fetch Firestore-backed module progress
@@ -251,22 +241,20 @@ func _update_card_progress(module_key: String, card_name: String):
 	# Update action button text
 	var action_button = card_node.get_node_or_null("CardContent/ActionButton")
 	if action_button:
-		if int(progress_percent) == 0:
-			action_button.text = "Start Learning"
-		elif completed or int(progress_percent) >= 100:
+		if completed or int(progress_percent) >= 100:
 			action_button.text = "COMPLETED"
+		elif progress_percent > 0:
+			# Get module name from module_data
+			var module_name = ""
+			if module_data.has(module_key):
+				module_name = module_data[module_key]["name"].split(" ")[0] # Get first word
+			action_button.text = "Continue " + module_name
 		else:
-			action_button.text = "Continue Learning"
-
-func _apply_dyslexia_friendly_styling():
-	# Apply consistent styling for better readability
-	var title_font_size = 32
-	var _card_font_size = 16
-	var _button_font_size = 18
-	
-	# Style title
-	if title_label:
-		title_label.add_theme_font_size_override("font_size", title_font_size)
+			# Get module name from module_data for new modules
+			var module_name = ""
+			if module_data.has(module_key):
+				module_name = module_data[module_key]["name"].split(" ")[0] # Get first word
+			action_button.text = "Enter " + module_name
 	
 	# Style cards with rounded corners and better spacing
 	_style_module_cards()
@@ -295,26 +283,6 @@ func _style_module_cards():
 			
 			child.add_theme_stylebox_override("panel", style_box)
 
-# Load dyslexia-friendly font
-func _load_dyslexia_font():
-	dyslexia_font = load("res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf")
-	if not dyslexia_font:
-		print("Warning: Could not load OpenDyslexic font, falling back to default")
-
-func _apply_dyslexia_font_to_node(node: Node):
-	if node is Label:
-		if dyslexia_font:
-			node.add_theme_font_override("font", dyslexia_font)
-	elif node is Button:
-		if dyslexia_font:
-			node.add_theme_font_override("font", dyslexia_font)
-	elif node is RichTextLabel:
-		if dyslexia_font:
-			node.add_theme_font_override("normal_font", dyslexia_font)
-	
-	# Recursively apply to all children
-	for child in node.get_children():
-		_apply_dyslexia_font_to_node(child)
 
 # Button sound event handlers
 func _on_button_hover():

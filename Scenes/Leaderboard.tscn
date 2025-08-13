@@ -1,8 +1,9 @@
-[gd_scene load_steps=13 format=3 uid="uid://bhsb4od5anjae"]
+[gd_scene load_steps=14 format=3 uid="uid://bhsb4od5anjae"]
 
 [ext_resource type="Script" uid="uid://cpyo81gkxoads" path="res://Scripts/Leaderboard.gd" id="1_8k3l4"]
 [ext_resource type="Texture2D" uid="uid://c75anq8c0biyi" path="res://gui/Update/UI/ui 7.png" id="2_ldouh"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="3_font"]
+[ext_resource type="Texture2D" uid="uid://b5i6ss4apnujp" path="res://gui/Update/icons/leaderboards.png" id="3_r3gmb"]
 [ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="4_ldouh"]
 [ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="5_67k4m"]
 [ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="6_r3gmb"]
@@ -96,17 +97,25 @@ layout_mode = 2
 size_flags_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_header")
 
+[node name="TextureRect" type="TextureRect" parent="MainContainer/HeaderPanel"]
+layout_mode = 2
+offset_left = 364.0
+offset_top = 29.0
+offset_right = 555.0
+offset_bottom = 234.0
+scale = Vector2(0.350827, 0.350827)
+texture = ExtResource("3_r3gmb")
+
 [node name="HeaderContainer" type="VBoxContainer" parent="MainContainer/HeaderPanel"]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -558.5
-offset_top = -36.0
-offset_right = 558.5
-offset_bottom = 37.0
+anchors_preset = -1
+anchor_left = 0.405
+anchor_top = 0.26
+anchor_right = 0.81
+anchor_bottom = 0.747
+offset_left = -297.535
+offset_right = 140.93
+offset_bottom = -0.0500031
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 20
@@ -118,7 +127,7 @@ alignment = 1
 
 [node name="TitleLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer"]
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_horizontal = 6
 theme_override_colors/font_color = Color(0.138866, 0.162532, 0.209941, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_font")

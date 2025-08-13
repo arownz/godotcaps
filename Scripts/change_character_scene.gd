@@ -223,9 +223,11 @@ func _position_all_characters_for_selection(selected_index):
 # Animate selection indicator for better dyslexia visibility
 func _animate_selection_indicator(indicator: Control):
 	# Stop any existing animation
-	var existing_tween = indicator.get_meta("selection_tween", null)
-	if existing_tween and is_instance_valid(existing_tween):
-		existing_tween.kill()
+	var existing_tween = null
+	if indicator.has_meta("selection_tween"):
+		existing_tween = indicator.get_meta("selection_tween")
+		if existing_tween and is_instance_valid(existing_tween):
+			existing_tween.kill()
 	
 	# Create pulsing animation
 	var tween = create_tween()

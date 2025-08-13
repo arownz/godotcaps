@@ -7,6 +7,9 @@ const GoogleCloudVision = preload("res://Scripts/GoogleCloudVision.gd")
 signal drawing_submitted(text_result)
 signal drawing_cancelled
 
+# Module mode property to hide cancel button in module learning
+@export var module_mode: bool = false
+
 # Drawing variables
 var drawing = false
 var points = []
@@ -35,6 +38,10 @@ var debug_label: Label = null
 func _ready():
 	$VBoxContainer/ButtonsContainer/UndoButton.disabled = true
 	$VBoxContainer/ButtonsContainer/RedoButton.disabled = true
+	
+	# Hide cancel button in module mode (not journey/battle mode)
+	if module_mode:
+		$VBoxContainer/ButtonsContainer/CancelButton.visible = false
 	
 	# Add status label if it doesn't exist
 	if not has_node("StatusLabel"):
@@ -67,7 +74,7 @@ func _ready():
 			debug.anchors_preset = Control.PRESET_TOP_LEFT
 			debug.position = Vector2(10, 10)
 			debug.visible = true
-			debug.text = "Write the random word in this whiteboard!"
+			debug.text = "Write in this whiteboard!"
 			add_child(debug)
 			debug_label = debug
 		else:
@@ -204,7 +211,7 @@ func _on_clear_button_pressed():
 	# Show debug label again when cleared
 	if debug_label:
 		debug_label.visible = true
-		debug_label.text = "Write the random word in this whiteboard!"
+		debug_label.text = "Write in this whiteboard!"
 
 # Re-enable buttons (helper function for when user starts drawing again)
 func _re_enable_buttons():

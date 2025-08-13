@@ -1142,11 +1142,11 @@ func _wait_for_firebase_auth_restoration() -> bool:
 	JavaScriptBridge.eval("delete window.authRestorationResult;")
 	return false
 
-func _on_tab_container_tab_clicked(tab: int) -> void:
+func _on_tab_container_tab_clicked(_tab: int) -> void:
 	$ButtonClick.play()
 
 
-func _on_tab_container_tab_hovered(tab: int) -> void:
+func _on_tab_container_tab_hovered(_tab: int) -> void:
 	$ButtonHover.play()
 
 

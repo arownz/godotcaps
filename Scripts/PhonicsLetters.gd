@@ -54,29 +54,29 @@ func _init_module_progress():
 
 func _connect_hover_events():
 	var back_btn = $MainContainer/HeaderPanel/HeaderContainer/BackButton
-	if back_btn:
+	if back_btn and not back_btn.mouse_entered.is_connected(_on_button_hover):
 		back_btn.mouse_entered.connect(_on_button_hover)
 
 func _style_panels():
-	# Style main content panel
-	var content_panel = $MainContainer/CenterContainer/ContentPanel
-	if content_panel:
+	# Style main instruction panel
+	var instruction_panel = $MainContainer/ContentContainer/InstructionPanel
+	if instruction_panel:
 		var style_box = StyleBoxFlat.new()
 		style_box.corner_radius_top_left = 15
 		style_box.corner_radius_top_right = 15
 		style_box.corner_radius_bottom_left = 15
 		style_box.corner_radius_bottom_right = 15
-		style_box.bg_color = Color(1.0, 1.0, 1.0, 0.95)
+		style_box.bg_color = Color(1, 0.814317, 0.74054, 1) # ffd0bd dyslexic color
 		style_box.border_width_left = 3
 		style_box.border_width_right = 3
 		style_box.border_width_top = 3
 		style_box.border_width_bottom = 3
 		style_box.border_color = Color(0.2, 0.4, 0.8, 0.7)
-		content_panel.add_theme_stylebox_override("panel", style_box)
+		instruction_panel.add_theme_stylebox_override("panel", style_box)
 	
-	# Style whiteboard container
-	var wb_container = $MainContainer/CenterContainer/ContentPanel/ContentContainer/WhiteboardHolder
-	if wb_container:
+	# Style whiteboard panel
+	var whiteboard_panel = $MainContainer/ContentContainer/WhiteboardPanel
+	if whiteboard_panel:
 		var wb_style = StyleBoxFlat.new()
 		wb_style.corner_radius_top_left = 10
 		wb_style.corner_radius_top_right = 10
@@ -88,7 +88,7 @@ func _style_panels():
 		wb_style.border_width_top = 2
 		wb_style.border_width_bottom = 2
 		wb_style.border_color = Color(0.5, 0.7, 0.9, 1.0)
-		wb_container.add_theme_stylebox_override("panel", wb_style)
+		whiteboard_panel.add_theme_stylebox_override("panel", wb_style)
 
 func _update_target_display():
 	var target_label = $MainContainer/ContentContainer/InstructionPanel/InstructionContainer/TargetLabel

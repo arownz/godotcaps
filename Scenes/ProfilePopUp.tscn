@@ -141,10 +141,10 @@ horizontal_alignment = 1
 
 [node name="TextureRect" type="TextureRect" parent="ProfileContainer/TitleLabel"]
 layout_mode = 0
-offset_left = -45.838
-offset_top = 10.4928
-offset_right = -5.83796
-offset_bottom = 50.4928
+offset_left = -54.6049
+offset_top = -0.465966
+offset_right = 1.39505
+offset_bottom = 55.534
 texture = ExtResource("6_q75ak")
 
 [node name="ProfilePictureButton" type="TextureButton" parent="ProfileContainer"]

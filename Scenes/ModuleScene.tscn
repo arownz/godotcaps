@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://cpuv0hhhcq6sv"]
+[gd_scene load_steps=32 format=3 uid="uid://cpuv0hhhcq6sv"]
 
 [ext_resource type="Texture2D" uid="uid://c75anq8c0biyi" path="res://gui/Update/UI/ui 7.png" id="2_178ft"]
 [ext_resource type="Script" uid="uid://dgboy6v1hc540" path="res://Scripts/ModuleScene.gd" id="2_module_script"]
@@ -51,18 +51,18 @@ shadow_color = Color(0, 0, 0, 0.2)
 shadow_size = 4
 shadow_offset = Vector2(0, 2)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_card"]
-bg_color = Color(0.948876, 0.811609, 0.68239, 1)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0, 0, 0, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_phonics_card"]
+bg_color = Color(0.85, 0.92, 0.98, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.2, 0.6, 0.9, 1)
 corner_radius_top_left = 20
 corner_radius_top_right = 20
 corner_radius_bottom_right = 20
 corner_radius_bottom_left = 20
-shadow_color = Color(0.0253638, 0.0253638, 0.0253638, 0.1)
+shadow_color = Color(0, 0, 0, 0.2)
 shadow_size = 8
 shadow_offset = Vector2(0, 4)
 
@@ -78,17 +78,33 @@ shadow_offset = Vector2(0, 3)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_progress_bg"]
 bg_color = Color(0.88, 0.91, 0.94, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
+shadow_color = Color(0, 0, 0, 0.3)
+shadow_size = 4
+shadow_offset = Vector2(0, 2)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_progress_fill"]
-bg_color = Color(0.28, 0.73, 0.47, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_phonics_progress"]
+bg_color = Color(0.2, 0.6, 0.9, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
+shadow_color = Color(0, 0, 0, 0.3)
+shadow_size = 4
+shadow_offset = Vector2(0, 2)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_action_btn_hover"]
 bg_color = Color(0.22, 0.66, 0.41, 1)
@@ -107,6 +123,126 @@ corner_radius_top_right = 25
 corner_radius_bottom_right = 25
 corner_radius_bottom_left = 25
 shadow_color = Color(0, 0, 0, 0.2)
+shadow_size = 4
+shadow_offset = Vector2(0, 2)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_quiz_card"]
+bg_color = Color(0.98, 0.87, 0.87, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.9, 0.3, 0.3, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0, 0, 0, 0.2)
+shadow_size = 8
+shadow_offset = Vector2(0, 4)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_quiz_progress"]
+bg_color = Color(0.9, 0.3, 0.3, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+shadow_color = Color(0, 0, 0, 0.3)
+shadow_size = 4
+shadow_offset = Vector2(0, 2)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_reading_card"]
+bg_color = Color(0.87, 0.98, 0.9, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.2, 0.8, 0.4, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0, 0, 0, 0.2)
+shadow_size = 8
+shadow_offset = Vector2(0, 4)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_reading_progress"]
+bg_color = Color(0.2, 0.8, 0.4, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+shadow_color = Color(0, 0, 0, 0.3)
+shadow_size = 4
+shadow_offset = Vector2(0, 2)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_chunked_card"]
+bg_color = Color(0.94, 0.89, 0.98, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.7, 0.4, 0.9, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0, 0, 0, 0.2)
+shadow_size = 8
+shadow_offset = Vector2(0, 4)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_chunked_progress"]
+bg_color = Color(0.7, 0.4, 0.9, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+shadow_color = Color(0, 0, 0, 0.3)
+shadow_size = 4
+shadow_offset = Vector2(0, 2)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_syllable_card"]
+bg_color = Color(0.98, 0.94, 0.85, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.9, 0.6, 0.2, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0, 0, 0, 0.2)
+shadow_size = 8
+shadow_offset = Vector2(0, 4)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_syllable_progress"]
+bg_color = Color(0.9, 0.6, 0.2, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+shadow_color = Color(0, 0, 0, 0.3)
 shadow_size = 4
 shadow_offset = Vector2(0, 2)
 
@@ -136,7 +272,7 @@ anchor_bottom = 1.0
 offset_left = 57.0
 offset_top = 41.0
 offset_right = -58.0
-offset_bottom = -35.0
+offset_bottom = -46.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 50
@@ -191,7 +327,7 @@ offset_right = 228.595
 offset_bottom = 13.18
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("4_bold_font")
+theme_override_fonts/font = ExtResource("3_regular_font")
 text = "Still in development..."
 
 [node name="MenuButton" type="Button" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer"]
@@ -236,7 +372,7 @@ columns = 2
 custom_minimum_size = Vector2(350, 360)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+theme_override_styles/panel = SubResource("StyleBoxFlat_phonics_card")
 
 [node name="CardContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/PhonicsCard"]
 layout_mode = 1
@@ -279,7 +415,7 @@ texture = ExtResource("5_o7nev")
 [node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/PhonicsCard/CardContent/Header"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.18, 0.22, 0.28, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold_font")
 theme_override_font_sizes/font_size = 24
@@ -290,7 +426,7 @@ vertical_alignment = 1
 custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 size_flags_vertical = 0
-theme_override_colors/font_color = Color(0.290196, 0.329412, 0.411765, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular_font")
 theme_override_font_sizes/font_size = 16
@@ -306,13 +442,13 @@ theme_override_constants/separation = 8
 custom_minimum_size = Vector2(0, 12)
 layout_mode = 2
 theme_override_styles/background = SubResource("StyleBoxFlat_progress_bg")
-theme_override_styles/fill = SubResource("StyleBoxFlat_progress_fill")
+theme_override_styles/fill = SubResource("StyleBoxFlat_phonics_progress")
 value = 65.0
 show_percentage = false
 
 [node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/PhonicsCard/CardContent/ProgressContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.45, 0.51, 0.59, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular_font")
 theme_override_font_sizes/font_size = 14
@@ -343,7 +479,7 @@ expand_icon = true
 custom_minimum_size = Vector2(350, 360)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+theme_override_styles/panel = SubResource("StyleBoxFlat_quiz_card")
 
 [node name="CardContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard"]
 layout_mode = 1
@@ -386,7 +522,7 @@ texture = ExtResource("8_jsrwg")
 [node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent/Header"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.18, 0.22, 0.28, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold_font")
 theme_override_font_sizes/font_size = 24
@@ -397,7 +533,7 @@ vertical_alignment = 1
 custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 size_flags_vertical = 0
-theme_override_colors/font_color = Color(0.29, 0.33, 0.41, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular_font")
 theme_override_font_sizes/font_size = 16
@@ -413,13 +549,13 @@ theme_override_constants/separation = 8
 custom_minimum_size = Vector2(0, 12)
 layout_mode = 2
 theme_override_styles/background = SubResource("StyleBoxFlat_progress_bg")
-theme_override_styles/fill = SubResource("StyleBoxFlat_progress_fill")
+theme_override_styles/fill = SubResource("StyleBoxFlat_quiz_progress")
 value = 40.0
 show_percentage = false
 
 [node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent/ProgressContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.45, 0.51, 0.59, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular_font")
 theme_override_font_sizes/font_size = 14
@@ -440,7 +576,7 @@ theme_override_styles/focus = SubResource("StyleBoxEmpty_wwwj0")
 theme_override_styles/hover = SubResource("StyleBoxFlat_action_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_action_btn_hover")
 theme_override_styles/normal = SubResource("StyleBoxFlat_action_btn")
-text = "Start Quiz"
+text = "Enter Quiz"
 icon = ExtResource("6_wwwj0")
 flat = true
 icon_alignment = 1
@@ -450,7 +586,7 @@ expand_icon = true
 custom_minimum_size = Vector2(350, 360)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+theme_override_styles/panel = SubResource("StyleBoxFlat_reading_card")
 
 [node name="CardContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard"]
 layout_mode = 1
@@ -493,7 +629,7 @@ texture = ExtResource("9_bmnuq")
 [node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent/Header"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.18, 0.22, 0.28, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold_font")
 theme_override_font_sizes/font_size = 24
@@ -504,7 +640,7 @@ vertical_alignment = 1
 custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 size_flags_vertical = 0
-theme_override_colors/font_color = Color(0.29, 0.33, 0.41, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular_font")
 theme_override_font_sizes/font_size = 16
@@ -520,13 +656,13 @@ theme_override_constants/separation = 8
 custom_minimum_size = Vector2(0, 12)
 layout_mode = 2
 theme_override_styles/background = SubResource("StyleBoxFlat_progress_bg")
-theme_override_styles/fill = SubResource("StyleBoxFlat_progress_fill")
+theme_override_styles/fill = SubResource("StyleBoxFlat_reading_progress")
 value = 55.0
 show_percentage = false
 
 [node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent/ProgressContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.45, 0.51, 0.59, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular_font")
 theme_override_font_sizes/font_size = 14
@@ -547,7 +683,7 @@ theme_override_styles/focus = SubResource("StyleBoxEmpty_wwwj0")
 theme_override_styles/hover = SubResource("StyleBoxFlat_action_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_action_btn_hover")
 theme_override_styles/normal = SubResource("StyleBoxFlat_action_btn")
-text = "Start Reading"
+text = "Enter Interactive"
 icon = ExtResource("6_wwwj0")
 flat = true
 icon_alignment = 1
@@ -557,7 +693,7 @@ expand_icon = true
 custom_minimum_size = Vector2(350, 360)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+theme_override_styles/panel = SubResource("StyleBoxFlat_chunked_card")
 
 [node name="CardContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ChunkedReadingCard"]
 layout_mode = 1
@@ -600,7 +736,7 @@ texture = ExtResource("10_eollr")
 [node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ChunkedReadingCard/CardContent/Header"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.18, 0.22, 0.28, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold_font")
 theme_override_font_sizes/font_size = 24
@@ -611,7 +747,7 @@ vertical_alignment = 1
 custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 size_flags_vertical = 0
-theme_override_colors/font_color = Color(0.29, 0.33, 0.41, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular_font")
 theme_override_font_sizes/font_size = 16
@@ -627,13 +763,13 @@ theme_override_constants/separation = 8
 custom_minimum_size = Vector2(0, 12)
 layout_mode = 2
 theme_override_styles/background = SubResource("StyleBoxFlat_progress_bg")
-theme_override_styles/fill = SubResource("StyleBoxFlat_progress_fill")
+theme_override_styles/fill = SubResource("StyleBoxFlat_chunked_progress")
 value = 25.0
 show_percentage = false
 
 [node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ChunkedReadingCard/CardContent/ProgressContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.45, 0.51, 0.59, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular_font")
 theme_override_font_sizes/font_size = 14
@@ -664,7 +800,7 @@ expand_icon = true
 custom_minimum_size = Vector2(350, 360)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+theme_override_styles/panel = SubResource("StyleBoxFlat_syllable_card")
 
 [node name="CardContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/SyllableBuildingCard"]
 layout_mode = 1
@@ -707,7 +843,7 @@ texture = ExtResource("11_d4mch")
 [node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/SyllableBuildingCard/CardContent/Header"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.18, 0.22, 0.28, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold_font")
 theme_override_font_sizes/font_size = 24
@@ -718,7 +854,7 @@ vertical_alignment = 1
 custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 size_flags_vertical = 0
-theme_override_colors/font_color = Color(0.29, 0.33, 0.41, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular_font")
 theme_override_font_sizes/font_size = 16
@@ -734,13 +870,13 @@ theme_override_constants/separation = 8
 custom_minimum_size = Vector2(0, 12)
 layout_mode = 2
 theme_override_styles/background = SubResource("StyleBoxFlat_progress_bg")
-theme_override_styles/fill = SubResource("StyleBoxFlat_progress_fill")
+theme_override_styles/fill = SubResource("StyleBoxFlat_syllable_progress")
 value = 70.0
 show_percentage = false
 
 [node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/SyllableBuildingCard/CardContent/ProgressContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.45, 0.51, 0.59, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular_font")
 theme_override_font_sizes/font_size = 14
@@ -761,7 +897,7 @@ theme_override_styles/focus = SubResource("StyleBoxEmpty_wwwj0")
 theme_override_styles/hover = SubResource("StyleBoxFlat_action_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_action_btn_hover")
 theme_override_styles/normal = SubResource("StyleBoxFlat_action_btn")
-text = "Start Building"
+text = "Enter Syllable"
 icon = ExtResource("6_wwwj0")
 flat = true
 icon_alignment = 1
