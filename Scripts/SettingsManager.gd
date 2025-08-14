@@ -14,6 +14,9 @@ var current_settings = {
 		"font_size": 18,
 		"reading_speed": 1.0,
 		"high_contrast": false,
+		# Added TTS related defaults so retrieval never returns null
+		"tts_voice_id": "default",
+		"tts_rate": 1.0,
 	},
 	"audio": {
 		"master_volume": 75,
@@ -44,7 +47,8 @@ func load_settings():
 			current_settings.accessibility.font_size = config.get_value("accessibility", "font_size", 18)
 			current_settings.accessibility.reading_speed = config.get_value("accessibility", "reading_speed", 1.0)
 			current_settings.accessibility.high_contrast = config.get_value("accessibility", "high_contrast", false)
-			current_settings.accessibility.reduce_animations = config.get_value("accessibility", "reduce_animations", false)
+			current_settings.accessibility.tts_voice_id = config.get_value("accessibility", "tts_voice_id", "default")
+			current_settings.accessibility.tts_rate = config.get_value("accessibility", "tts_rate", 1.0)
 		
 		# Load audio settings
 		if config.has_section("audio"):
@@ -54,8 +58,6 @@ func load_settings():
 		
 		# Load gameplay settings
 		if config.has_section("gameplay"):
-			current_settings.gameplay.difficulty = config.get_value("gameplay", "difficulty", "Normal")
-			current_settings.gameplay.auto_save = config.get_value("gameplay", "auto_save", true)
 			current_settings.gameplay.show_tutorials = config.get_value("gameplay", "show_tutorials", true)
 		
 		print("SettingsManager: Settings loaded successfully")
@@ -73,7 +75,8 @@ func save_settings():
 	config.set_value("accessibility", "font_size", current_settings.accessibility.font_size)
 	config.set_value("accessibility", "reading_speed", current_settings.accessibility.reading_speed)
 	config.set_value("accessibility", "high_contrast", current_settings.accessibility.high_contrast)
-	config.set_value("accessibility", "reduce_animations", current_settings.accessibility.reduce_animations)
+	config.set_value("accessibility", "tts_voice_id", current_settings.accessibility.tts_voice_id)
+	config.set_value("accessibility", "tts_rate", current_settings.accessibility.tts_rate)
 	
 	# Save audio settings
 	config.set_value("audio", "master_volume", current_settings.audio.master_volume)
@@ -81,8 +84,6 @@ func save_settings():
 	config.set_value("audio", "music_volume", current_settings.audio.music_volume)
 	
 	# Save gameplay settings
-	config.set_value("gameplay", "difficulty", current_settings.gameplay.difficulty)
-	config.set_value("gameplay", "auto_save", current_settings.gameplay.auto_save)
 	config.set_value("gameplay", "show_tutorials", current_settings.gameplay.show_tutorials)
 	
 	# Save to file
@@ -125,8 +126,6 @@ func apply_setting(category: String, setting: String, value):
 					apply_reading_speed_globally(value)
 				"high_contrast":
 					apply_high_contrast_globally(value)
-				"reduce_animations":
-					apply_animation_reduction_globally(value)
 		"audio":
 			match setting:
 				"master_volume":
@@ -144,7 +143,6 @@ func apply_accessibility_settings():
 	apply_font_size_globally(current_settings.accessibility.font_size)
 	apply_reading_speed_globally(current_settings.accessibility.reading_speed)
 	apply_high_contrast_globally(current_settings.accessibility.high_contrast)
-	apply_animation_reduction_globally(current_settings.accessibility.reduce_animations)
 
 func apply_font_size_globally(font_size: int):
 	"""Apply font size setting to current scene"""
@@ -187,20 +185,23 @@ func apply_music_volume(volume: int):
 func is_high_contrast_enabled() -> bool:
 	return current_settings.accessibility.high_contrast
 
-func is_animation_reduction_enabled() -> bool:
-	return current_settings.accessibility.reduce_animations
-
 func get_reading_speed() -> float:
 	return current_settings.accessibility.reading_speed
+
+func get_tts_voice_id() -> String:
+	return current_settings.accessibility.tts_voice_id
+
+func get_tts_rate() -> float:
+	return current_settings.accessibility.tts_rate
+
+func set_tts_voice_id(voice_id: String):
+	set_setting("accessibility", "tts_voice_id", voice_id)
+
+func set_tts_rate(rate: float):
+	set_setting("accessibility", "tts_rate", rate)
 
 func get_font_size() -> int:
 	return current_settings.accessibility.font_size
 
 func should_show_tutorials() -> bool:
 	return current_settings.gameplay.show_tutorials
-
-func is_auto_save_enabled() -> bool:
-	return current_settings.gameplay.auto_save
-
-func get_difficulty() -> String:
-	return current_settings.gameplay.difficulty

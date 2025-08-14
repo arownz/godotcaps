@@ -19,6 +19,11 @@ var categories = {
 	}
 }
 
+func _speak_text_simple(text: String):
+	"""Simple TTS without captions"""
+	if tts:
+		tts.speak(text)
+
 func _ready():
 	print("PhonicsModule: Initializing phonics categories interface")
 	
@@ -46,9 +51,7 @@ func _ready():
 func _init_tts():
 	tts = TextToSpeech.new()
 	add_child(tts)
-	# Welcome message
-	var intro = "Welcome to Phonics! Choose Letters to trace A-Z, or Sight Words to practice common words."
-	var _ok = tts.speak(intro)
+	# Don't auto-play welcome message - only when guide button is pressed
 
 func _init_module_progress():
 	if Engine.has_singleton("Firebase"):
@@ -60,35 +63,26 @@ func _init_module_progress():
 func _connect_hover_events():
 	# Connect back button hover
 	var back_btn = $MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton
-	if back_btn:
+	if back_btn and not back_btn.mouse_entered.is_connected(_on_button_hover):
 		back_btn.mouse_entered.connect(_on_button_hover)
+	
+	# Connect guide button
+	var guide_btn = $MainContainer/HeaderPanel/GuideButton
+	if guide_btn:
+		if not guide_btn.mouse_entered.is_connected(_on_button_hover):
+			guide_btn.mouse_entered.connect(_on_button_hover)
+		if not guide_btn.pressed.is_connected(_on_guide_button_pressed):
+			guide_btn.pressed.connect(_on_guide_button_pressed)
+	
+	# Connect TTS settings button
+	var tts_btn = $MainContainer/HeaderPanel/TTSSettingButton
+	if tts_btn:
+		if not tts_btn.mouse_entered.is_connected(_on_button_hover):
+			tts_btn.mouse_entered.connect(_on_button_hover)
+		if not tts_btn.pressed.is_connected(_on_tts_setting_button_pressed):
+			tts_btn.pressed.connect(_on_tts_setting_button_pressed)
 
 func _style_category_cards():
-	# Apply rounded corner styling to category cards - force same style as HeaderPanel
-	var cards = [
-		$MainContainer/ScrollContainer/CategoriesGrid/LettersCard,
-		$MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard
-	]
-	
-	for card in cards:
-		if card:
-			# Force the card to use the same style as HeaderPanel
-			var style_box = StyleBoxFlat.new()
-			style_box.corner_radius_top_left = 15
-			style_box.corner_radius_top_right = 15
-			style_box.corner_radius_bottom_left = 15
-			style_box.corner_radius_bottom_right = 15
-			style_box.bg_color = Color(0.2, 0.6, 0.9, 1) # 3399E6 color
-			style_box.border_width_left = 5
-			style_box.border_width_right = 5
-			style_box.border_width_top = 5
-			style_box.border_width_bottom = 5
-			style_box.border_color = Color(0, 0, 0, 1) # Black border
-			style_box.shadow_color = Color(0, 0, 0, 0.1)
-			style_box.shadow_size = 8
-			style_box.shadow_offset = Vector2(0, 4)
-			card.add_theme_stylebox_override("panel", style_box)
-	
 	# Style icon containers with #FEB79A background and black borders
 	var icon_containers = [
 		$MainContainer/ScrollContainer/CategoriesGrid/LettersCard/LettersContent/IconContainer,
@@ -157,18 +151,98 @@ func _update_progress_displays(firebase_modules: Dictionary):
 func _on_button_hover():
 	$ButtonHover.play()
 
+func _on_guide_button_pressed():
+	$ButtonClick.play()
+	if tts:
+		var guide_text = "Welcome to Phonics Learning! Here you can practice two important skills. Choose 'Letters' to trace the alphabet from A to Z and learn letter sounds. Choose 'Sight Words' to practice common words like 'the', 'and', and 'to' that appear frequently in reading. Both activities will help improve your reading and writing skills!"
+		
+		# Simplified: just TTS without captions
+		_speak_text_simple(guide_text)
+
+func _on_tts_setting_button_pressed():
+	$ButtonClick.play()
+	print("PhonicsModule: Looking for TTSSettingsPopup (robust lookup)...")
+	var tts_popup = get_node_or_null("TTSSettingsPopup")
+	if not tts_popup:
+		tts_popup = find_child("TTSSettingsPopup", true, false)
+	if not tts_popup:
+		print("PhonicsModule: TTSSettingsPopup not found - instantiating dynamically")
+		var popup_scene: PackedScene = load("res://Scenes/TTSSettingsPopup.tscn")
+		if popup_scene:
+			tts_popup = popup_scene.instantiate()
+			tts_popup.name = "TTSSettingsPopup"
+			add_child(tts_popup)
+	print("PhonicsModule: TTSSettingsPopup final status:", tts_popup != null)
+	if tts_popup:
+		# Pass current TTS instance to popup for voice testing
+		if tts_popup.has_method("set_tts_instance"):
+			tts_popup.set_tts_instance(tts)
+		
+		# Setup popup with current settings
+		var current_voice = SettingsManager.get_setting("accessibility", "tts_voice_id")
+		var current_rate = SettingsManager.get_setting("accessibility", "tts_rate")
+		
+		# Provide safe defaults
+		if current_voice == null or current_voice == "":
+			current_voice = "default"
+		if current_rate == null:
+			current_rate = 1.0
+		
+		if tts_popup.has_method("setup"):
+			tts_popup.setup(tts, current_voice, current_rate, "Testing Text to Speech")
+		
+		# Connect to save signal
+		if not tts_popup.settings_saved.is_connected(_on_tts_settings_saved):
+			tts_popup.settings_saved.connect(_on_tts_settings_saved)
+		
+		tts_popup.visible = true
+		print("PhonicsModule: TTS Settings popup opened")
+	else:
+		print("PhonicsModule: Warning - TTSSettingsPopup still not found after dynamic attempt")
+		print("PhonicsModule: Available children:")
+		for child in get_children():
+			print("  - ", child.name, " (", child.get_class(), ")")
+
+func _on_tts_settings_saved(voice_id: String, rate: float):
+	"""Handle TTS settings save to update local TTS instance"""
+	print("PhonicsModule: Saving TTS preferences - Voice: ", voice_id, " Rate: ", rate)
+	
+	# Update current TTS instance
+	if tts:
+		if voice_id != null and voice_id != "":
+			tts.set_voice(voice_id)
+		if rate != null:
+			tts.set_rate(rate)
+	
+	# Store in SettingsManager for persistence
+	SettingsManager.set_setting("accessibility", "tts_voice_id", voice_id)
+	SettingsManager.set_setting("accessibility", "tts_rate", rate)
+
 func _on_back_button_pressed():
 	$ButtonClick.play()
 	print("PhonicsModule: Returning to module selection")
 	_fade_out_and_change_scene("res://Scenes/ModuleScene.tscn")
 
 func _fade_out_and_change_scene(scene_path: String):
+	# Stop any playing TTS before changing scenes
+	_stop_tts()
+	
 	var tween = create_tween()
 	tween.set_parallel(true)
 	tween.tween_property(self, "modulate:a", 0.0, 0.25).set_ease(Tween.EASE_IN)
 	tween.tween_property(self, "scale", Vector2(0.8, 0.8), 0.25).set_ease(Tween.EASE_IN)
 	await tween.finished
 	get_tree().change_scene_to_file(scene_path)
+
+# Clean up TTS when leaving scene
+func _stop_tts():
+	if tts and tts.has_method("stop"):
+		tts.stop()
+		print("PhonicsModule: TTS stopped before scene change")
+
+# Ensure TTS cleanup on scene exit
+func _exit_tree():
+	_stop_tts()
 
 func _on_letters_button_pressed():
 	$ButtonClick.play()

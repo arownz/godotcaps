@@ -16,7 +16,7 @@ var points = []
 var strokes = []
 var undo_history = []
 var stroke_color = Color(0, 0, 0)
-var stroke_width = 2.0
+var stroke_width = 5.0 # Default for battle mode
 var current_stroke = null
 
 # For Google Cloud Vision Integration
@@ -92,6 +92,13 @@ func _ready():
 	setup_drawing()
 	debug_log("WhiteboardInterface ready")
 	
+	# Add mouse exit handler to drawing area for better state management
+	if $VBoxContainer/DrawingArea.has_signal("mouse_exited"):
+		$VBoxContainer/DrawingArea.mouse_exited.connect(_on_drawing_area_mouse_exited)
+	
+	# Set adaptive stroke width based on module mode
+	_setup_stroke_width()
+	
 	# Create the Google Cloud Vision instance
 	google_cloud_vision = GoogleCloudVision.new()
 	add_child(google_cloud_vision)
@@ -119,13 +126,21 @@ func _input(event):
 					_start_stroke(event.position - $VBoxContainer/DrawingArea.global_position)
 				else:
 					_end_stroke()
+			else:
+				# If mouse is released outside drawing area, end stroke to prevent corruption
+				if not event.pressed and drawing:
+					_end_stroke()
 	
-	elif event is InputEventMouseMotion and drawing:
-		var draw_area_rect = $VBoxContainer/DrawingArea.get_global_rect()
-		
-		if draw_area_rect.has_point(event.position):
-			_add_point_to_stroke(event.position - $VBoxContainer/DrawingArea.global_position)
-			$VBoxContainer/DrawingArea.queue_redraw()
+	elif event is InputEventMouseMotion:
+		if drawing:
+			var draw_area_rect = $VBoxContainer/DrawingArea.get_global_rect()
+			
+			if draw_area_rect.has_point(event.position):
+				_add_point_to_stroke(event.position - $VBoxContainer/DrawingArea.global_position)
+				$VBoxContainer/DrawingArea.queue_redraw()
+			else:
+				# If mouse leaves drawing area while drawing, end stroke to prevent corruption
+				_end_stroke()
 
 # Start a new stroke
 func _start_stroke(pposition):
@@ -136,14 +151,38 @@ func _start_stroke(pposition):
 		"width": stroke_width
 	}
 	
+	# Play a short clip of whiteboard swiping sound (0.5 seconds from the 2-minute file)
+	var swiping_audio = $WhiteboardSwiping
+	if swiping_audio and swiping_audio.stream:
+		# Stop any currently playing audio
+		swiping_audio.stop()
+		# Play for a short duration - will be stopped after 0.5 seconds
+		swiping_audio.play()
+		# Create a timer to stop the audio after 0.5 seconds for a short swiping effect
+		get_tree().create_timer(0.5).timeout.connect(func():
+			if swiping_audio.playing:
+				swiping_audio.stop()
+		)
+	
 	# Hide debug label when drawing starts
 	if debug_label:
 		debug_label.visible = false
 
-# Add point to current stroke
+# Add point to current stroke with smoothing
 func _add_point_to_stroke(pposition):
 	if current_stroke:
-		current_stroke.points.append(pposition)
+		# Add distance-based filtering to reduce noise and improve performance
+		var stroke_points = current_stroke.points
+		if stroke_points.size() == 0:
+			stroke_points.append(pposition)
+		else:
+			var last_point = stroke_points[stroke_points.size() - 1]
+			var distance = last_point.distance_to(pposition)
+			
+			# Only add point if it's far enough from the last point (reduces jitter)
+			var min_distance = 3.0 if module_mode else 2.0 # Slightly more filtering for tracing
+			if distance >= min_distance:
+				stroke_points.append(pposition)
 
 # End current stroke
 func _end_stroke():
@@ -155,6 +194,12 @@ func _end_stroke():
 		$VBoxContainer/ButtonsContainer/RedoButton.disabled = true
 		current_stroke = null
 
+# Handle mouse exiting drawing area to prevent drawing state corruption
+func _on_drawing_area_mouse_exited():
+	if drawing:
+		debug_log("Mouse exited drawing area while drawing - ending stroke to prevent corruption")
+		_end_stroke()
+
 # Draw the strokes
 func _on_drawing_area_draw():
 	# Draw all completed strokes
@@ -165,7 +210,7 @@ func _on_drawing_area_draw():
 	if current_stroke:
 		_draw_stroke(current_stroke)
 
-# Helper function to draw a stroke
+# Helper function to draw a stroke with improved smoothness
 func _draw_stroke(stroke):
 	if stroke.points.size() < 2:
 		return
@@ -174,10 +219,19 @@ func _draw_stroke(stroke):
 	for point in stroke.points:
 		points_array.append(point)
 	
+	# Draw with rounded caps and smooth joints for better appearance
 	for i in range(1, points_array.size()):
 		var from = points_array[i - 1]
 		var to = points_array[i]
-		$VBoxContainer/DrawingArea.draw_line(from, to, stroke.color, stroke.width)
+		
+		# Use the stroke width with rounded caps for smoother appearance
+		$VBoxContainer/DrawingArea.draw_line(from, to, stroke.color, stroke.width, true)
+		
+		# Add rounded caps at the endpoints for professional look
+		if i == 1: # First point
+			$VBoxContainer/DrawingArea.draw_circle(from, stroke.width / 2.0, stroke.color)
+		if i == points_array.size() - 1: # Last point
+			$VBoxContainer/DrawingArea.draw_circle(to, stroke.width / 2.0, stroke.color)
 
 # Undo last stroke
 func _on_undo_button_pressed():
@@ -543,6 +597,7 @@ func debug_log(message):
 		""")
 
 # Setup drawing system
+# Setup drawing system
 func setup_drawing():
 	# Connect drawing area signals only if not already connected
 	if $VBoxContainer/DrawingArea and not $VBoxContainer/DrawingArea.draw.is_connected(_on_drawing_area_draw):
@@ -560,6 +615,17 @@ func setup_drawing():
 	current_stroke = null
 	
 	debug_log("Drawing system initialized")
+
+# Setup adaptive stroke width based on module mode
+func _setup_stroke_width():
+	if module_mode:
+		# In module mode (letter/word tracing), use thicker stroke for better visibility
+		stroke_width = 8.0
+		debug_log("Module mode: Using thick stroke width for tracing practice")
+	else:
+		# In battle mode, use moderate stroke width for general word writing
+		stroke_width = 5.0
+		debug_log("Battle mode: Using standard stroke width for word challenges")
 
 # UI status messages
 func _show_status_message(text, color = Color(1, 1, 1, 1)):

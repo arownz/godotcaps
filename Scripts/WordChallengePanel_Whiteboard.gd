@@ -41,6 +41,20 @@ func _ready():
 	add_child(tts)
 	print("Created TextToSpeech instance")
 	
+	# Apply saved TTS settings from SettingsManager
+	var saved_voice = SettingsManager.get_setting("accessibility", "tts_voice_id")
+	var saved_rate = SettingsManager.get_setting("accessibility", "tts_rate")
+	
+	if saved_voice != null and saved_voice != "" and saved_voice != "default":
+		if tts.has_method("set_voice"):
+			tts.set_voice(saved_voice)
+			print("WordChallengePanel_Whiteboard: Applied saved voice: ", saved_voice)
+	
+	if saved_rate != null:
+		if tts.has_method("set_rate"):
+			tts.set_rate(saved_rate)
+			print("WordChallengePanel_Whiteboard: Applied saved rate: ", saved_rate)
+	
 	# Hide the built-in TTS panel (will use popup instead)
 	tts_settings_panel.visible = false
 	

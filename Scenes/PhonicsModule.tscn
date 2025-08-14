@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://c3eucvdnmnw54"]
+[gd_scene load_steps=16 format=3 uid="uid://c3eucvdnmnw54"]
 
 [ext_resource type="Script" uid="uid://c8qtq6lp3uc26" path="res://Scripts/PhonicsModule.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://0con8ixqofpr" path="res://gui/Update/UI/ui 8.png" id="2_edgla"]
@@ -6,8 +6,10 @@
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="4_bold"]
 [ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="5_yellow"]
 [ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="6_click"]
+[ext_resource type="Texture2D" uid="uid://qmmpx3uab5h7" path="res://gui/Update/UI/next button.png" id="6_nm4xh"]
 [ext_resource type="Texture2D" uid="uid://bmjd8nkagj08e" path="res://gui/Update/UI/long uncolored button.png" id="6_ydvs0"]
 [ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="7_hover"]
+[ext_resource type="PackedScene" uid="uid://7wtij707stht" path="res://Scenes/TTSSettingsPopup.tscn" id="11_tts_popup"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ydvs0"]
 bg_color = Color(0.2, 0.6, 0.9, 1)
@@ -16,13 +18,15 @@ border_width_top = 5
 border_width_right = 5
 border_width_bottom = 5
 border_color = Color(0, 0, 0, 1)
-corner_radius_top_left = 15
-corner_radius_top_right = 15
-corner_radius_bottom_right = 15
-corner_radius_bottom_left = 15
+corner_radius_top_left = 25
+corner_radius_top_right = 25
+corner_radius_bottom_right = 25
+corner_radius_bottom_left = 25
 shadow_color = Color(0, 0, 0, 0.3)
 shadow_size = 10
 shadow_offset = Vector2(0, 6)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ydvs0"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_progress_bg"]
 bg_color = Color(0.88, 0.91, 0.94, 1)
@@ -53,6 +57,8 @@ corner_radius_bottom_left = 8
 shadow_color = Color(0, 0, 0, 0.3)
 shadow_size = 4
 shadow_offset = Vector2(0, 2)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_nm4xh"]
 
 [node name="PhonicsModule" type="Control"]
 layout_mode = 3
@@ -128,8 +134,11 @@ layout_mode = 2
 size_flags_horizontal = 8
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold")
 theme_override_font_sizes/font_size = 16
+theme_override_styles/focus = SubResource("StyleBoxEmpty_ydvs0")
 text = "Back"
 icon = ExtResource("5_yellow")
 flat = true
@@ -157,6 +166,41 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold")
 theme_override_styles/background = SubResource("StyleBoxFlat_progress_bg")
 theme_override_styles/fill = SubResource("StyleBoxFlat_letters_progress")
+
+[node name="GuideButton" type="Button" parent="MainContainer/HeaderPanel"]
+layout_mode = 0
+offset_left = 30.0
+offset_right = 129.0
+offset_bottom = 81.0
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_nm4xh")
+text = "Guide"
+icon = ExtResource("6_nm4xh")
+flat = true
+icon_alignment = 1
+expand_icon = true
+
+[node name="TTSSettingButton" type="Button" parent="MainContainer/HeaderPanel"]
+layout_mode = 0
+offset_left = 30.0
+offset_top = 81.0
+offset_right = 129.0
+offset_bottom = 119.0
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_nm4xh")
+text = "TTS"
+icon = ExtResource("5_yellow")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [node name="ScrollContainer" type="ScrollContainer" parent="MainContainer"]
 layout_mode = 2
@@ -237,8 +281,11 @@ horizontal_alignment = 1
 layout_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold")
 theme_override_font_sizes/font_size = 16
+theme_override_styles/focus = SubResource("StyleBoxEmpty_ydvs0")
 text = "Trace Letter"
 icon = ExtResource("6_ydvs0")
 flat = true
@@ -276,7 +323,7 @@ grow_vertical = 2
 
 [node name="IconLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard/SightWordsContent/IconContainer/CenterContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.985857, 0.175984, 1)
+theme_override_colors/font_color = Color(0.2, 0.6, 0.901961, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold")
 theme_override_font_sizes/font_size = 35
@@ -314,8 +361,11 @@ horizontal_alignment = 1
 layout_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold")
 theme_override_font_sizes/font_size = 16
+theme_override_styles/focus = SubResource("StyleBoxEmpty_ydvs0")
 text = "Trace Word"
 icon = ExtResource("6_ydvs0")
 flat = true
@@ -328,7 +378,13 @@ stream = ExtResource("6_click")
 [node name="ButtonHover" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("7_hover")
 
+[node name="TTSSettingsPopup" parent="." instance=ExtResource("11_tts_popup")]
+visible = false
+layout_mode = 1
+
 [connection signal="pressed" from="MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton" to="." method="_on_back_button_pressed"]
+[connection signal="pressed" from="MainContainer/HeaderPanel/GuideButton" to="." method="_on_guide_button_pressed"]
+[connection signal="pressed" from="MainContainer/HeaderPanel/TTSSettingButton" to="." method="_on_tts_setting_button_pressed"]
 [connection signal="mouse_entered" from="MainContainer/ScrollContainer/CategoriesGrid/LettersCard/LettersContent/EnterButton" to="." method="_on_button_hover"]
 [connection signal="pressed" from="MainContainer/ScrollContainer/CategoriesGrid/LettersCard/LettersContent/EnterButton" to="." method="_on_letters_button_pressed"]
 [connection signal="mouse_entered" from="MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard/SightWordsContent/EnterButton" to="." method="_on_button_hover"]

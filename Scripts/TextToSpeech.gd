@@ -81,10 +81,30 @@ func speak(text):
 	print("Speaking text with rate ", speech_rate, ": ", text)
 	speech_started.emit()
 	
-	# Create a simple timer to emit speech completion after estimated duration
+	# Create a more accurate timer based on speech rate and text complexity
 	var timer = Timer.new()
 	add_child(timer)
-	timer.wait_time = 0.5 + (text.length() * 0.1) # Simple estimate based on text length
+	
+	# Improved duration calculation
+	var word_count = text.split(" ").size()
+	var base_duration = word_count * 0.6 # Base: 0.6 seconds per word
+	var rate_adjusted_duration = base_duration / speech_rate # Adjust for speech rate
+	
+	# Add extra time for punctuation pauses
+	var punctuation_count = 0
+	for character in text:
+		if character in [".", "!", "?"]:
+			punctuation_count += 1
+		elif character in [",", ";"]:
+			punctuation_count += 0.5
+	
+	var total_duration = rate_adjusted_duration + (punctuation_count * 0.3)
+	
+	# Ensure minimum and maximum bounds
+	timer.wait_time = clamp(total_duration, 1.0, 15.0)
+	
+	print("TTS estimated duration: ", timer.wait_time, " seconds for ", word_count, " words")
+	
 	timer.one_shot = true
 	timer.timeout.connect(func():
 		# FIXED: Emit signals in logical order and add comment about redundancy
@@ -120,12 +140,16 @@ func get_voice_list():
 
 # Set the voice by ID
 func set_voice(voice_id):
+	if voice_id == null or voice_id == "":
+		print("TextToSpeech: Warning - null or empty voice_id provided")
+		return false
+		
 	if voice_id in get_voice_list():
 		selected_voice_id = voice_id
 		current_voice = voice_id # Set compatibility property
 		return true
 	
-	speech_error.emit("Invalid voice ID: " + voice_id)
+	speech_error.emit("Invalid voice ID: " + str(voice_id))
 	return false
 
 # Set the voice by name or partial name match

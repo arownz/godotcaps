@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://ck7j4eam2h6n8"]
+[gd_scene load_steps=12 format=3 uid="uid://ck7j4eam2h6n8"]
 
 [ext_resource type="Texture2D" uid="uid://0con8ixqofpr" path="res://gui/Update/UI/ui 8.png" id="2_lkfnu"]
 [ext_resource type="Script" uid="uid://0gkfgjdix8tw" path="res://Scripts/ReadAloudModule.gd" id="2_script"]
@@ -22,6 +22,21 @@ shadow_color = Color(0, 0, 0, 0.2)
 shadow_size = 8
 shadow_offset = Vector2(0, 4)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_reading_button"]
+bg_color = Color(0.2, 0.8, 0.4, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+shadow_color = Color(0, 0, 0, 0.3)
+shadow_size = 6
+shadow_offset = Vector2(0, 3)
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_reading_button_hover"]
 bg_color = Color(0.15, 0.7, 0.3, 1)
 border_width_left = 2
@@ -37,18 +52,18 @@ shadow_color = Color(0, 0, 0, 0.4)
 shadow_size = 8
 shadow_offset = Vector2(0, 4)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_reading_button"]
-bg_color = Color(0.2, 0.8, 0.4, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0, 0, 0, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_reading_content_panel"]
+bg_color = Color(0.93, 0.97, 0.95, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.15, 0.6, 0.3, 1)
 corner_radius_top_left = 15
 corner_radius_top_right = 15
 corner_radius_bottom_right = 15
 corner_radius_bottom_left = 15
-shadow_color = Color(0, 0, 0, 0.3)
+shadow_color = Color(0, 0, 0, 0.15)
 shadow_size = 6
 shadow_offset = Vector2(0, 3)
 
@@ -163,9 +178,9 @@ alignment = 1
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("4_bold_font")
+theme_override_styles/normal = SubResource("StyleBoxFlat_reading_button")
 theme_override_styles/hover = SubResource("StyleBoxFlat_reading_button_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_reading_button_hover")
-theme_override_styles/normal = SubResource("StyleBoxFlat_reading_button")
 text = "Word Challenge (STT)"
 
 [node name="ButtonClick" type="AudioStreamPlayer" parent="."]

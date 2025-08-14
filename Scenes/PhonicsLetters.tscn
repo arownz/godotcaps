@@ -1,13 +1,99 @@
-[gd_scene load_steps=9 format=3 uid="uid://bh3v5d8f2hak1"]
+[gd_scene load_steps=21 format=3 uid="uid://bh3v5d8f2hak1"]
 
 [ext_resource type="Script" uid="uid://d3ur7xe5xtndc" path="res://Scripts/PhonicsLetters.gd" id="1_letters"]
 [ext_resource type="Texture2D" uid="uid://ciaa4qe2o2juf" path="res://gui/Update/UI/ui 3.png" id="2_7whx7"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="4_bold"]
 [ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="5_7whx7"]
 [ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="5_yellow"]
+[ext_resource type="Texture2D" uid="uid://qmmpx3uab5h7" path="res://gui/Update/UI/next button.png" id="6_elyoq"]
 [ext_resource type="PackedScene" uid="uid://cvv1bpkfdvqjw" path="res://Scenes/WhiteboardInterface.tscn" id="6_whiteboard"]
-[ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="7_click"]
-[ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="8_hover"]
+[ext_resource type="PackedScene" uid="uid://blge5vt1gmc8o" path="res://Scenes/NotificationPopUp.tscn" id="7_notification"]
+[ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="8_click"]
+[ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="9_hover"]
+[ext_resource type="PackedScene" uid="uid://7wtij707stht" path="res://Scenes/TTSSettingsPopup.tscn" id="11_tts_popup"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_header_panel"]
+bg_color = Color(0.251576, 0.530877, 0.741689, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0, 0, 0, 0.2)
+shadow_size = 8
+shadow_offset = Vector2(0, 4)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_r6udp"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_progress_bg"]
+bg_color = Color(0.88, 0.91, 0.94, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.2)
+shadow_size = 4
+shadow_offset = Vector2(0, 2)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_progress_fill"]
+bg_color = Color(0.2, 0.6, 0.9, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.3)
+shadow_size = 4
+shadow_offset = Vector2(0, 2)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_instruction_panel"]
+bg_color = Color(0.25098, 0.529412, 0.741176, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+shadow_color = Color(0, 0, 0, 0.15)
+shadow_size = 6
+shadow_offset = Vector2(0, 3)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_elyoq"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_2aiuh"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_l2k5h"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_whiteboard_panel"]
+bg_color = Color(0.25098, 0.529412, 0.741176, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+shadow_color = Color(0, 0, 0, 0.15)
+shadow_size = 6
+shadow_offset = Vector2(0, 3)
 
 [node name="PhonicsLetters" type="Control"]
 layout_mode = 3
@@ -44,6 +130,7 @@ theme_override_constants/separation = 30
 custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 size_flags_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_header_panel")
 
 [node name="HeaderContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel"]
 layout_mode = 1
@@ -64,8 +151,11 @@ layout_mode = 2
 size_flags_horizontal = 0
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold")
 theme_override_font_sizes/font_size = 18
+theme_override_styles/focus = SubResource("StyleBoxEmpty_r6udp")
 text = "Back"
 icon = ExtResource("5_yellow")
 flat = true
@@ -99,7 +189,10 @@ text = "0% Complete"
 [node name="ProgressBar" type="ProgressBar" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer"]
 custom_minimum_size = Vector2(200, 20)
 layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold")
+theme_override_styles/background = SubResource("StyleBoxFlat_progress_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_progress_fill")
 
 [node name="ContentContainer" type="VBoxContainer" parent="MainContainer"]
 layout_mode = 2
@@ -110,6 +203,7 @@ theme_override_constants/separation = 20
 custom_minimum_size = Vector2(0, 120)
 layout_mode = 2
 size_flags_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_instruction_panel")
 
 [node name="InstructionContainer" type="VBoxContainer" parent="MainContainer/ContentContainer/InstructionPanel"]
 layout_mode = 1
@@ -136,6 +230,7 @@ horizontal_alignment = 1
 [node name="ControlsContainer" type="HBoxContainer" parent="MainContainer/ContentContainer/InstructionPanel/InstructionContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_constants/separation = 0
 alignment = 1
 
 [node name="HearButton" type="Button" parent="MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer"]
@@ -143,8 +238,11 @@ custom_minimum_size = Vector2(150, 40)
 layout_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold")
 theme_override_font_sizes/font_size = 16
+theme_override_styles/focus = SubResource("StyleBoxEmpty_elyoq")
 text = "Hear Letter"
 icon = ExtResource("5_7whx7")
 flat = true
@@ -156,9 +254,47 @@ custom_minimum_size = Vector2(150, 40)
 layout_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold")
 theme_override_font_sizes/font_size = 16
+theme_override_styles/focus = SubResource("StyleBoxEmpty_elyoq")
 text = "Next Letter"
+icon = ExtResource("5_yellow")
+flat = true
+icon_alignment = 1
+expand_icon = true
+
+[node name="GuideButton" type="Button" parent="MainContainer/ContentContainer/InstructionPanel"]
+layout_mode = 0
+offset_left = 30.0
+offset_right = 129.0
+offset_bottom = 81.0
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_2aiuh")
+text = "Guide"
+icon = ExtResource("6_elyoq")
+flat = true
+icon_alignment = 1
+expand_icon = true
+
+[node name="TTSSettingButton" type="Button" parent="MainContainer/ContentContainer/InstructionPanel"]
+layout_mode = 0
+offset_left = 30.0
+offset_top = 81.0
+offset_right = 129.0
+offset_bottom = 119.0
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_l2k5h")
+text = "TTS"
 icon = ExtResource("5_yellow")
 flat = true
 icon_alignment = 1
@@ -167,6 +303,7 @@ expand_icon = true
 [node name="WhiteboardPanel" type="Panel" parent="MainContainer/ContentContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_whiteboard_panel")
 
 [node name="WhiteboardContainer" type="Control" parent="MainContainer/ContentContainer/WhiteboardPanel"]
 layout_mode = 1
@@ -206,7 +343,7 @@ offset_right = 100.0
 offset_bottom = 60.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(0.2, 0.4, 0.8, 0.35)
+theme_override_colors/font_color = Color(0.2, 0.6, 0.902, 0.525)
 theme_override_fonts/font = ExtResource("4_bold")
 theme_override_font_sizes/font_size = 120
 text = "A"
@@ -214,10 +351,16 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="ButtonClick" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("7_click")
+stream = ExtResource("8_click")
 
 [node name="ButtonHover" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("8_hover")
+stream = ExtResource("9_hover")
+
+[node name="NotificationPopup" parent="." instance=ExtResource("7_notification")]
+
+[node name="TTSSettingsPopup" parent="." instance=ExtResource("11_tts_popup")]
+visible = false
+layout_mode = 1
 
 [connection signal="mouse_entered" from="MainContainer/HeaderPanel/HeaderContainer/BackButton" to="." method="_on_button_hover"]
 [connection signal="pressed" from="MainContainer/HeaderPanel/HeaderContainer/BackButton" to="." method="_on_back_button_pressed"]
@@ -225,3 +368,6 @@ stream = ExtResource("8_hover")
 [connection signal="pressed" from="MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/HearButton" to="." method="_on_HearButton_pressed"]
 [connection signal="mouse_entered" from="MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/NextButton" to="." method="_on_button_hover"]
 [connection signal="pressed" from="MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/NextButton" to="." method="_on_NextTargetButton_pressed"]
+[connection signal="pressed" from="MainContainer/ContentContainer/InstructionPanel/GuideButton" to="." method="_on_guide_button_pressed"]
+[connection signal="mouse_entered" from="MainContainer/ContentContainer/InstructionPanel/TTSSettingButton" to="." method="_on_button_hover"]
+[connection signal="pressed" from="MainContainer/ContentContainer/InstructionPanel/TTSSettingButton" to="." method="_on_tts_setting_button_pressed"]

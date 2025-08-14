@@ -17,6 +17,7 @@ var _context_initialized: bool = false
 @onready var reading_speed_slider = $SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/ReadingSpeedContainer/ReadingSpeedSlider
 @onready var reading_speed_value = $SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/ReadingSpeedContainer/ReadingSpeedValue
 @onready var high_contrast_toggle = $SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/HighContrastContainer/HighContrastToggle
+@onready var tts_settings_button = $SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/TTSContainer/TTSSettingsButton
 
 # Audio Settings (disabled for now)
 @onready var master_volume_slider = $SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MasterVolumeContainer/MasterVolumeSlider
@@ -70,6 +71,8 @@ func _ready():
 		reading_speed_slider.value_changed.connect(_on_reading_speed_changed)
 	if high_contrast_toggle and not high_contrast_toggle.toggled.is_connected(_on_high_contrast_toggled):
 		high_contrast_toggle.toggled.connect(_on_high_contrast_toggled)
+	if tts_settings_button and not tts_settings_button.pressed.is_connected(_on_tts_settings_button_pressed):
+		tts_settings_button.pressed.connect(_on_tts_settings_button_pressed)
     
 	# Connect audio settings (future use)
 	if master_volume_slider and not master_volume_slider.value_changed.is_connected(_on_master_volume_changed):
@@ -143,7 +146,10 @@ func _detect_and_apply_context():
 	_context_initialized = true
 
 func update_ui_from_settings():
-	"""Update UI elements to reflect current settings from SettingsManager"""
+	"""Update UI elements to reflect current settings from SettingsManager and Firebase"""
+	# Load TTS settings from Firebase/Firestore if authenticated
+	await _load_tts_settings_from_firebase()
+	
 	# Accessibility settings
 	font_size_slider.value = SettingsManager.get_setting("accessibility", "font_size")
 	font_size_value.text = str(int(SettingsManager.get_setting("accessibility", "font_size")))
@@ -194,15 +200,151 @@ func _on_font_size_changed(value: float):
 	print("SettingScene: Font size changed to: ", int(value))
 
 func _on_reading_speed_changed(value: float):
-	"""Handle reading speed slider change"""
+	"""Handle reading speed slider change - affects both reading and TTS speed globally"""
 	SettingsManager.set_setting("accessibility", "reading_speed", value)
+	# Also update TTS rate setting for consistency
+	SettingsManager.set_setting("accessibility", "tts_rate", value)
 	reading_speed_value.text = str(value) + "x"
-	print("SettingScene: Reading speed changed to: ", value)
+	print("SettingScene: Reading speed changed to: ", value, " (also updated TTS rate)")
 
 func _on_high_contrast_toggled(pressed: bool):
 	"""Handle high contrast mode toggle"""
 	SettingsManager.set_setting("accessibility", "high_contrast", pressed)
 	print("SettingScene: High contrast mode: ", pressed)
+
+func _on_tts_settings_button_pressed():
+	"""Open TTS Settings popup for voice customization"""
+	print("SettingScene: Opening TTS Settings for global voice preferences (robust lookup)...")
+	var tts_popup = get_node_or_null("TTSSettingsPopup")
+	if not tts_popup:
+		tts_popup = find_child("TTSSettingsPopup", true, false)
+	if not tts_popup:
+		print("SettingScene: TTSSettingsPopup not found - instantiating dynamically")
+		var popup_scene: PackedScene = load("res://Scenes/TTSSettingsPopup.tscn")
+		if popup_scene:
+			tts_popup = popup_scene.instantiate()
+			tts_popup.name = "TTSSettingsPopup"
+			add_child(tts_popup)
+	print("SettingScene: TTSSettingsPopup final status:", tts_popup != null)
+	if tts_popup:
+		# Create a temporary TTS instance for voice testing in settings
+		var temp_tts = TextToSpeech.new()
+		add_child(temp_tts)
+		
+		# Wait a frame for TTS to initialize
+		await get_tree().process_frame
+		
+		# Pass TTS instance to popup for voice testing
+		if tts_popup.has_method("set_tts_instance"):
+			tts_popup.set_tts_instance(temp_tts)
+		
+		# Setup popup with current settings
+		var current_voice = SettingsManager.get_setting("accessibility", "tts_voice_id")
+		var current_rate = SettingsManager.get_setting("accessibility", "tts_rate")
+		
+		# Provide safe defaults
+		if current_voice == null or current_voice == "":
+			current_voice = "default"
+		if current_rate == null:
+			current_rate = 1.0
+		
+		if tts_popup.has_method("setup"):
+			tts_popup.setup(temp_tts, current_voice, current_rate, "Hello, this is a test.")
+		
+		# Connect to save signal to handle voice preference storage
+		if not tts_popup.settings_saved.is_connected(_on_tts_settings_saved):
+			tts_popup.settings_saved.connect(_on_tts_settings_saved)
+		
+		tts_popup.visible = true
+		print("SettingScene: TTS Settings popup opened successfully")
+	else:
+		print("SettingScene: Warning - TTSSettingsPopup still not found after dynamic attempt")
+
+func _on_tts_settings_saved(voice_id: String, rate: float):
+	"""Handle TTS settings save to store in Firebase/Firestore"""
+	print("SettingScene: Saving TTS preferences - Voice: ", voice_id, " Rate: ", rate)
+	
+	# Store in SettingsManager for immediate use
+	SettingsManager.set_setting("accessibility", "tts_voice_id", voice_id)
+	SettingsManager.set_setting("accessibility", "tts_rate", rate)
+	
+	# Store in Firebase/Firestore for persistence across devices
+	if Engine.has_singleton("Firebase"):
+		# Check if user is authenticated
+		if Firebase.Auth.auth and Firebase.Auth.auth.localid:
+			var user_id = Firebase.Auth.auth.localid
+			var collection = Firebase.Firestore.collection("dyslexia_users")
+			
+			# Get current user document
+			var user_doc = await collection.get_doc(user_id)
+			if user_doc and not ("error" in user_doc.keys() and user_doc.get_value("error")):
+				# Update the settings.accessibility section
+				var current_settings = user_doc.get_value("settings")
+				if not current_settings or typeof(current_settings) != TYPE_DICTIONARY:
+					current_settings = {"accessibility": {}}
+				
+				var accessibility = current_settings.get("accessibility", {})
+				if typeof(accessibility) != TYPE_DICTIONARY:
+					accessibility = {}
+				
+				# Update TTS settings
+				accessibility["tts_voice_id"] = voice_id
+				accessibility["tts_rate"] = rate
+				accessibility["tts_enabled"] = true
+				
+				current_settings["accessibility"] = accessibility
+				
+				# Update the document
+				user_doc.add_or_update_field("settings", current_settings)
+				var updated = await collection.update(user_doc)
+				
+				if updated:
+					print("SettingScene: TTS preferences saved to Firestore")
+				else:
+					print("SettingScene: Failed to save TTS preferences to Firestore")
+			else:
+				print("SettingScene: Could not load user document for TTS settings update")
+		else:
+			print("SettingScene: No authenticated user for Firestore storage")
+	else:
+		print("SettingScene: Firebase not available, TTS preferences saved locally only")
+
+func _load_tts_settings_from_firebase():
+	"""Load TTS settings from Firebase/Firestore and update SettingsManager"""
+	if not Engine.has_singleton("Firebase"):
+		print("SettingScene: Firebase not available, using local TTS settings")
+		return
+	
+	# Check if user is authenticated
+	if not Firebase.Auth.auth or not Firebase.Auth.auth.localid:
+		print("SettingScene: No authenticated user, using default TTS settings")
+		return
+	
+	var user_id = Firebase.Auth.auth.localid
+	var collection = Firebase.Firestore.collection("dyslexia_users")
+	
+	var user_doc = await collection.get_doc(user_id)
+	if user_doc and not ("error" in user_doc.keys() and user_doc.get_value("error")):
+		var settings = user_doc.get_value("settings")
+		if settings and typeof(settings) == TYPE_DICTIONARY:
+			var accessibility = settings.get("accessibility", {})
+			if typeof(accessibility) == TYPE_DICTIONARY:
+				# Update SettingsManager with Firebase values
+				var tts_voice_id = accessibility.get("tts_voice_id", "default")
+				var tts_rate = accessibility.get("tts_rate", 1.0)
+				var tts_enabled = accessibility.get("tts_enabled", true)
+				
+				SettingsManager.set_setting("accessibility", "tts_voice_id", tts_voice_id)
+				SettingsManager.set_setting("accessibility", "tts_rate", tts_rate)
+				SettingsManager.set_setting("accessibility", "tts_enabled", tts_enabled)
+				
+				print("SettingScene: Loaded TTS settings from Firebase - Voice: ", tts_voice_id, " Rate: ", tts_rate)
+			else:
+				print("SettingScene: No accessibility settings found in Firebase, using defaults")
+		else:
+			print("SettingScene: No settings found in Firebase user document")
+	else:
+		print("SettingScene: Failed to load user document from Firebase")
 
 # === Audio Settings (for future implementation) ===
 

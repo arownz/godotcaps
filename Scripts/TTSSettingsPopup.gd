@@ -19,7 +19,6 @@ func _ready():
 	rate_slider.value = current_rate
 	_update_rate_label(current_rate)
 	
-	# Set TTS instance from parent (should be passed during setup)
 	# Make popup modal
 	set_process_input(true)
 	
@@ -27,13 +26,57 @@ func _ready():
 	$Panel/VBoxContainer/StatusLabel.text = "Loading voices..."
 	
 	# Connect button hover events
-	if $Panel/VBoxContainer/TestButton:
-		$Panel/VBoxContainer/TestButton.mouse_entered.connect(_on_button_hover)
-	if $Panel/VBoxContainer/CloseButton:
-		$Panel/VBoxContainer/CloseButton.mouse_entered.connect(_on_button_hover)
+	if $Panel/TestButton:
+		$Panel/TestButton.mouse_entered.connect(_on_button_hover)
+	if $Panel/CloseButton:
+		$Panel/CloseButton.mouse_entered.connect(_on_button_hover)
+	
+	# Initialize TTS if not already set
+	if not tts:
+		_initialize_tts()
 
 func _on_button_hover():
 	$ButtonHover.play()
+
+func _initialize_tts():
+	"""Initialize TTS instance if not provided"""
+	if not tts:
+		print("TTSSettingsPopup: Creating new TTS instance")
+		tts = TextToSpeech.new()
+		add_child(tts)
+		
+		# Connect to voices_loaded signal
+		if tts.has_signal("voices_loaded"):
+			if not tts.voices_loaded.is_connected(_on_voices_loaded):
+				tts.voices_loaded.connect(_on_voices_loaded)
+		
+		# Wait a frame for TTS to initialize
+		await get_tree().process_frame
+		
+		# Check if voices are already available
+		_initialize_voice_options()
+	else:
+		print("TTSSettingsPopup: Using provided TTS instance")
+		# Connect to existing TTS signals
+		if tts.has_signal("voices_loaded"):
+			if not tts.voices_loaded.is_connected(_on_voices_loaded):
+				tts.voices_loaded.connect(_on_voices_loaded)
+		
+		# Initialize voice options immediately
+		_initialize_voice_options()
+
+func set_tts_instance(tts_instance):
+	"""Set the TTS instance from external source"""
+	tts = tts_instance
+	print("TTSSettingsPopup: TTS instance set externally")
+	
+	# Connect signals if needed
+	if tts and tts.has_signal("voices_loaded"):
+		if not tts.voices_loaded.is_connected(_on_voices_loaded):
+			tts.voices_loaded.connect(_on_voices_loaded)
+	
+	# Initialize voice options
+	_initialize_voice_options()
 
 func _input(event):
 	# Close popup on escape key
@@ -51,9 +94,9 @@ func _input(event):
 # Set the popup with initial values
 func setup(tts_instance, voice_id, rate, word_sample):
 	tts = tts_instance
-	current_voice_id = voice_id
-	current_rate = rate
-	test_word = word_sample
+	current_voice_id = voice_id if voice_id != null else "default"
+	current_rate = rate if rate != null else 1.0
+	test_word = word_sample if word_sample != null else "Testing"
 	
 	# Connect signals
 	if tts:
@@ -61,14 +104,16 @@ func setup(tts_instance, voice_id, rate, word_sample):
 			tts.disconnect("voices_loaded", Callable(self, "_on_voices_loaded"))
 		tts.connect("voices_loaded", Callable(self, "_on_voices_loaded"))
 		
-		# Apply settings
-		tts.set_voice(voice_id)
-		tts.set_rate(rate)
+		# Apply settings safely
+		if current_voice_id != null and current_voice_id != "":
+			tts.set_voice(current_voice_id)
+		if current_rate != null:
+			tts.set_rate(current_rate)
 		
 		# Update UI
 		var rate_slider = $Panel/VBoxContainer/RateContainer/RateSlider
-		rate_slider.value = rate
-		_update_rate_label(rate)
+		rate_slider.value = current_rate
+		_update_rate_label(current_rate)
 		
 		# Initialize voice options
 		_initialize_voice_options()
@@ -79,12 +124,23 @@ func _initialize_voice_options():
 	var voice_select = $Panel/VBoxContainer/VoiceContainer/VoiceOptionButton
 	voice_select.clear()
 	
+	if not tts:
+		$Panel/VBoxContainer/StatusLabel.text = "No TTS instance available"
+		return
+	
 	# Get available voices
 	voice_options = []
 	var voice_dict = tts.get_voice_list()
 	
-	if voice_dict.size() <= 1:
-		# Voices might still be loading, wait for the callback
+	print("TTSSettingsPopup: Available voices count: ", voice_dict.size())
+	for voice_id in voice_dict:
+		print("TTSSettingsPopup: Voice - ID: ", voice_id, " Name: ", voice_dict[voice_id])
+	
+	if voice_dict.size() == 0:
+		# No voices available yet, show message and try again after delay
+		$Panel/VBoxContainer/StatusLabel.text = "Waiting for voices to load..."
+		await get_tree().create_timer(1.0).timeout
+		_initialize_voice_options()
 		return
 	
 	# Convert to option array

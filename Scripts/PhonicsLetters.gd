@@ -3,10 +3,16 @@ extends Control
 var tts: TextToSpeech = null
 var module_progress: ModuleProgress = null
 var whiteboard_instance: Control = null
+var notification_popup: CanvasLayer = null
 
 var current_target: String = "A"
 var letter_set := ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
 var letter_index := 0
+
+func _speak_text_simple(text: String):
+	"""Simple TTS without captions"""
+	if tts:
+		tts.speak(text)
 
 func _ready():
 	print("PhonicsLetters: Letters practice loaded")
@@ -26,9 +32,6 @@ func _ready():
 	# Connect hover events
 	_connect_hover_events()
 	
-	# Style panels
-	_style_panels()
-	
 	# Update initial display
 	_update_target_display()
 	
@@ -37,13 +40,21 @@ func _ready():
 	
 	# Load progress
 	call_deferred("_load_progress")
+	
+	# Initialize notification popup
+	_init_notification_popup()
+
+func _init_notification_popup():
+	notification_popup = $NotificationPopup
+	if notification_popup:
+		print("PhonicsLetters: Notification popup initialized")
+	else:
+		print("PhonicsLetters: Warning - NotificationPopup not found")
 
 func _init_tts():
 	tts = TextToSpeech.new()
 	add_child(tts)
-	# Welcome message for letters
-	var intro = "Let's practice letters! Listen to each letter and trace it on the whiteboard."
-	var _ok = tts.speak(intro)
+	print("PhonicsLetters: TTS initialized")
 
 func _init_module_progress():
 	if Engine.has_singleton("Firebase"):
@@ -56,39 +67,22 @@ func _connect_hover_events():
 	var back_btn = $MainContainer/HeaderPanel/HeaderContainer/BackButton
 	if back_btn and not back_btn.mouse_entered.is_connected(_on_button_hover):
 		back_btn.mouse_entered.connect(_on_button_hover)
-
-func _style_panels():
-	# Style main instruction panel
-	var instruction_panel = $MainContainer/ContentContainer/InstructionPanel
-	if instruction_panel:
-		var style_box = StyleBoxFlat.new()
-		style_box.corner_radius_top_left = 15
-		style_box.corner_radius_top_right = 15
-		style_box.corner_radius_bottom_left = 15
-		style_box.corner_radius_bottom_right = 15
-		style_box.bg_color = Color(1, 0.814317, 0.74054, 1) # ffd0bd dyslexic color
-		style_box.border_width_left = 3
-		style_box.border_width_right = 3
-		style_box.border_width_top = 3
-		style_box.border_width_bottom = 3
-		style_box.border_color = Color(0.2, 0.4, 0.8, 0.7)
-		instruction_panel.add_theme_stylebox_override("panel", style_box)
 	
-	# Style whiteboard panel
-	var whiteboard_panel = $MainContainer/ContentContainer/WhiteboardPanel
-	if whiteboard_panel:
-		var wb_style = StyleBoxFlat.new()
-		wb_style.corner_radius_top_left = 10
-		wb_style.corner_radius_top_right = 10
-		wb_style.corner_radius_bottom_left = 10
-		wb_style.corner_radius_bottom_right = 10
-		wb_style.bg_color = Color(0.9, 0.95, 1.0, 1.0)
-		wb_style.border_width_left = 2
-		wb_style.border_width_right = 2
-		wb_style.border_width_top = 2
-		wb_style.border_width_bottom = 2
-		wb_style.border_color = Color(0.5, 0.7, 0.9, 1.0)
-		whiteboard_panel.add_theme_stylebox_override("panel", wb_style)
+	# Connect guide button
+	var guide_btn = $MainContainer/ContentContainer/InstructionPanel/GuideButton
+	if guide_btn:
+		if not guide_btn.mouse_entered.is_connected(_on_button_hover):
+			guide_btn.mouse_entered.connect(_on_button_hover)
+		if not guide_btn.pressed.is_connected(_on_guide_button_pressed):
+			guide_btn.pressed.connect(_on_guide_button_pressed)
+	
+	# Connect TTS settings button
+	var tts_btn = $MainContainer/ContentContainer/InstructionPanel/TTSSettingButton
+	if tts_btn:
+		if not tts_btn.mouse_entered.is_connected(_on_button_hover):
+			tts_btn.mouse_entered.connect(_on_button_hover)
+		if not tts_btn.pressed.is_connected(_on_tts_setting_button_pressed):
+			tts_btn.pressed.connect(_on_tts_setting_button_pressed)
 
 func _update_target_display():
 	var target_label = $MainContainer/ContentContainer/InstructionPanel/InstructionContainer/TargetLabel
@@ -142,6 +136,9 @@ func _on_back_button_pressed():
 	_fade_out_and_change_scene("res://Scenes/PhonicsModule.tscn")
 
 func _fade_out_and_change_scene(scene_path: String):
+	# Stop any playing TTS before changing scenes
+	_stop_tts()
+	
 	var tween = create_tween()
 	tween.set_parallel(true)
 	tween.tween_property(self, "modulate:a", 0.0, 0.25).set_ease(Tween.EASE_IN)
@@ -149,10 +146,80 @@ func _fade_out_and_change_scene(scene_path: String):
 	await tween.finished
 	get_tree().change_scene_to_file(scene_path)
 
+# Clean up TTS when leaving scene
+func _stop_tts():
+	if tts and tts.has_method("stop"):
+		tts.stop()
+		print("PhonicsLetters: TTS stopped before scene change")
+
+# Ensure TTS cleanup on scene exit
+func _exit_tree():
+	_stop_tts()
+
 func _on_HearButton_pressed():
 	$ButtonClick.play()
 	if tts:
-		var _ok = tts.speak("Letter " + current_target)
+		# Enhanced TTS guide with instructions
+		var guide_text = "Listen carefully: Letter " + current_target + ". Now trace this letter on the whiteboard. " + current_target + " sounds like " + _get_letter_sound(current_target) + "."
+		_speak_text_simple(guide_text)
+
+func _on_guide_button_pressed():
+	$ButtonClick.play()
+	if tts:
+		var guide_text = "Welcome to Letters Practice! Here you will learn to trace letters from A to Z. Look at the letter shown above, then use your finger or mouse to trace it carefully on the whiteboard below. Listen to the letter sound by pressing 'Hear Letter', and when you're ready to move on, press 'Next Letter'. Take your time and practice until you feel confident with each letter!"
+		_speak_text_simple(guide_text)
+
+func _on_tts_setting_button_pressed():
+	$ButtonClick.play()
+	print("PhonicsLetters: Looking for TTSSettingsPopup (robust lookup)...")
+	var tts_popup = get_node_or_null("TTSSettingsPopup")
+	if not tts_popup:
+		tts_popup = find_child("TTSSettingsPopup", true, false)
+	if not tts_popup:
+		print("PhonicsLetters: TTSSettingsPopup not found - instantiating dynamically")
+		var popup_scene: PackedScene = load("res://Scenes/TTSSettingsPopup.tscn")
+		if popup_scene:
+			tts_popup = popup_scene.instantiate()
+			tts_popup.name = "TTSSettingsPopup"
+			add_child(tts_popup)
+	print("PhonicsLetters: TTSSettingsPopup final status:", tts_popup != null)
+	if tts_popup:
+		# Setup popup with current settings
+		var current_voice = SettingsManager.get_setting("accessibility", "tts_voice_id")
+		var current_rate = SettingsManager.get_setting("accessibility", "tts_rate")
+		
+		# Provide safe defaults
+		if current_voice == null or current_voice == "":
+			current_voice = "default"
+		if current_rate == null:
+			current_rate = 1.0
+		
+		# Pass current TTS instance to popup for voice testing
+		if tts_popup.has_method("set_tts_instance"):
+			tts_popup.set_tts_instance(tts)
+		
+		if tts_popup.has_method("setup"):
+			tts_popup.setup(tts, current_voice, current_rate, "Testing Text to Speech")
+		
+		# Connect to save signal if not already connected
+		if not tts_popup.settings_saved.is_connected(_on_tts_settings_saved):
+			tts_popup.settings_saved.connect(_on_tts_settings_saved)
+		
+		tts_popup.visible = true
+		print("PhonicsLetters: TTS Settings popup opened")
+	else:
+		print("PhonicsLetters: Warning - TTSSettingsPopup still not found after dynamic attempt")
+
+# Helper function to provide letter sound guidance
+func _get_letter_sound(letter: String) -> String:
+	var sounds = {
+		"A": "ah", "B": "buh", "C": "kuh", "D": "duh", "E": "eh",
+		"F": "fuh", "G": "guh", "H": "huh", "I": "ih", "J": "juh",
+		"K": "kuh", "L": "luh", "M": "muh", "N": "nuh", "O": "oh",
+		"P": "puh", "Q": "kwuh", "R": "ruh", "S": "sss", "T": "tuh",
+		"U": "uh", "V": "vuh", "W": "wuh", "X": "ks", "Y": "yuh", "Z": "zzz"
+	}
+	return sounds.get(letter, letter.to_lower())
 
 func _on_NextTargetButton_pressed():
 	$ButtonClick.play()
@@ -174,29 +241,22 @@ func _on_whiteboard_result(text_result: String):
 	var success = text_result.strip_edges() != "" and not text_result.begins_with("recognition_error")
 	
 	if success and module_progress:
-		# Award 4% progress per letter (26 letters = ~100%)
-		var delta = 4
-		var updated = await module_progress.increment_module_progress("phonics_letters", delta)
-		print("PhonicsLetters: Progress updated -> ", updated)
-		
-		if typeof(updated) == TYPE_DICTIONARY:
-			var new_percent = float(updated.get("progress", 0))
-			_update_progress_ui(new_percent)
-		
-		# Success feedback
-		var status_label = $MainContainer/CenterContainer/ContentPanel/ContentContainer/ModuleTitle
-		if status_label:
-			var original_text = status_label.text
-			status_label.text = "Great job! +" + str(delta) + "% progress!"
-			status_label.modulate = Color.GREEN
-			
-			# Reset after delay
-			await get_tree().create_timer(2.0).timeout
-			status_label.text = original_text
-			status_label.modulate = Color.BLACK
-		
-		# Auto-advance to next target
-		_advance_target()
+		module_progress.increment_progress("phonics_letters", 3)
 
 func _on_whiteboard_cancelled():
 	print("PhonicsLetters: Whiteboard cancelled")
+
+func _on_tts_settings_saved(voice_id: String, rate: float):
+	"""Handle TTS settings save to update local TTS instance"""
+	print("PhonicsLetters: Saving TTS preferences - Voice: ", voice_id, " Rate: ", rate)
+	
+	# Update current TTS instance
+	if tts:
+		if voice_id != null and voice_id != "":
+			tts.set_voice(voice_id)
+		if rate != null:
+			tts.set_rate(rate)
+	
+	# Store in SettingsManager for persistence
+	SettingsManager.set_setting("accessibility", "tts_voice_id", voice_id)
+	SettingsManager.set_setting("accessibility", "tts_rate", rate)

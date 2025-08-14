@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://cjrrrf0p4lr7q"]
+[gd_scene load_steps=16 format=3 uid="uid://cjrrrf0p4lr7q"]
 
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="1_font_bold"]
 [ext_resource type="Texture2D" uid="uid://0con8ixqofpr" path="res://gui/Update/UI/ui 8.png" id="2_ch0ic"]
@@ -11,6 +11,7 @@
 [ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="7_l5u2n"]
 [ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="8_green_button"]
 [ext_resource type="Texture2D" uid="uid://bmjd8nkagj08e" path="res://gui/Update/UI/long uncolored button.png" id="10_o7c00"]
+[ext_resource type="PackedScene" uid="uid://7wtij707stht" path="res://Scenes/TTSSettingsPopup.tscn" id="11_tts_popup"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_l5u2n"]
 
@@ -228,37 +229,14 @@ text = "18"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ReadingSpeedContainer" type="HBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection"]
-layout_mode = 2
-theme_override_constants/separation = 15
-
-[node name="ReadingSpeedLabel" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/ReadingSpeedContainer"]
-custom_minimum_size = Vector2(140, 0)
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("2_font_regular")
-theme_override_font_sizes/font_size = 14
-text = "Reading Speed:"
-vertical_alignment = 1
-
-[node name="ReadingSpeedSlider" type="HSlider" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/ReadingSpeedContainer"]
-custom_minimum_size = Vector2(150, 30)
-layout_mode = 2
-min_value = 1.0
-max_value = 18.0
-step = 0.1
-value = 2.0
-editable = false
-
-[node name="ReadingSpeedValue" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/ReadingSpeedContainer"]
+[node name="NotYetDone" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/FontSizeContainer"]
 custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(1, 1, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_font_regular")
 theme_override_font_sizes/font_size = 14
-text = "1.0x"
+text = "Maintenance"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -281,6 +259,78 @@ layout_mode = 2
 theme_override_fonts/font = ExtResource("2_font_regular")
 theme_override_font_sizes/font_size = 14
 disabled = true
+
+[node name="NotYetDone" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/HighContrastContainer"]
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_font_regular")
+theme_override_font_sizes/font_size = 14
+text = "Maintenance"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ReadingSpeedContainer" type="HBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="ReadingSpeedLabel" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/ReadingSpeedContainer"]
+custom_minimum_size = Vector2(140, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_font_regular")
+theme_override_font_sizes/font_size = 14
+text = "Reading Speed:"
+vertical_alignment = 1
+
+[node name="ReadingSpeedSlider" type="HSlider" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/ReadingSpeedContainer"]
+custom_minimum_size = Vector2(150, 30)
+layout_mode = 2
+min_value = 1.0
+max_value = 18.0
+step = 0.1
+value = 1.0
+
+[node name="ReadingSpeedValue" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/ReadingSpeedContainer"]
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_font_regular")
+theme_override_font_sizes/font_size = 14
+text = "1.0x"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TTSContainer" type="HBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="TTSLabel" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/TTSContainer"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_font_regular")
+theme_override_font_sizes/font_size = 14
+text = "Text-to-Speech Settings:"
+vertical_alignment = 1
+
+[node name="TTSSettingsButton" type="Button" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/TTSContainer"]
+custom_minimum_size = Vector2(120, 32)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("1_font_bold")
+theme_override_font_sizes/font_size = 12
+theme_override_styles/focus = SubResource("StyleBoxEmpty_wwc4u")
+text = "TTS"
+icon = ExtResource("7_l5u2n")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [node name="Separator1" type="HSeparator" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox"]
 layout_mode = 2
@@ -329,6 +379,17 @@ text = "75%"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="NotYetDone" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MasterVolumeContainer"]
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_font_regular")
+theme_override_font_sizes/font_size = 14
+text = "Maintenance"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="SFXVolumeContainer" type="HBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection"]
 layout_mode = 2
 theme_override_constants/separation = 15
@@ -360,6 +421,17 @@ text = "80%"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="NotYetDone" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/SFXVolumeContainer"]
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_font_regular")
+theme_override_font_sizes/font_size = 14
+text = "Maintenance"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="MusicVolumeContainer" type="HBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection"]
 layout_mode = 2
 theme_override_constants/separation = 15
@@ -388,6 +460,17 @@ theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_font_regular")
 theme_override_font_sizes/font_size = 14
 text = "60%"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="NotYetDone" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MusicVolumeContainer"]
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_font_regular")
+theme_override_font_sizes/font_size = 14
+text = "Maintenance"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -428,6 +511,17 @@ theme_override_font_sizes/font_size = 14
 disabled = true
 button_pressed = true
 
+[node name="NotYetDone" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/GameplaySection/TutorialsContainer"]
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_font_regular")
+theme_override_font_sizes/font_size = 14
+text = "Maintenance"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="Separator3" type="HSeparator" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox"]
 layout_mode = 2
 theme_override_constants/separation = 2
@@ -443,6 +537,17 @@ theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("1_font_bold")
 theme_override_font_sizes/font_size = 18
 text = "Data & Privacy"
+
+[node name="NotYetDone" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/DataSection"]
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_font_regular")
+theme_override_font_sizes/font_size = 14
+text = "Maintance"
+horizontal_alignment = 3
+vertical_alignment = 3
 
 [node name="ExportDataButton" type="Button" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/DataSection"]
 custom_minimum_size = Vector2(150, 35)
@@ -463,6 +568,9 @@ expand_icon = true
 custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
 
+[node name="TTSSettingsPopup" parent="." instance=ExtResource("11_tts_popup")]
+visible = false
+
 [node name="ButtonClick" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("7_button_click")
 
@@ -475,5 +583,6 @@ stream = ExtResource("7_button_click")
 [connection signal="pressed" from="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/BattleSection/BattleButtonContainer/EngageButton" to="." method="_on_engage_button_pressed"]
 [connection signal="mouse_entered" from="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/BattleSection/BattleButtonContainer/LeaveButton" to="." method="_on_quit_button_mouse_entered"]
 [connection signal="pressed" from="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/BattleSection/BattleButtonContainer/LeaveButton" to="." method="_on_quit_button_pressed"]
+[connection signal="pressed" from="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/TTSContainer/TTSSettingsButton" to="." method="_on_tts_settings_button_pressed"]
 [connection signal="mouse_entered" from="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/DataSection/ExportDataButton" to="." method="_on_export_data_button_mouse_entered"]
 [connection signal="pressed" from="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/DataSection/ExportDataButton" to="." method="_on_export_data_button_pressed"]
