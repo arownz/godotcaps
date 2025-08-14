@@ -1,8 +1,10 @@
-[gd_scene load_steps=29 format=3 uid="uid://cfead7bcuslp4"]
+[gd_scene load_steps=31 format=3 uid="uid://cfead7bcuslp4"]
 
 [ext_resource type="Texture2D" uid="uid://cxqd6wyqy8g22" path="res://gui/Update/Backgrounds/battlescene background.png" id="2_ixjr5"]
+[ext_resource type="Texture2D" uid="uid://2jgthsch6pn" path="res://gui/Update/Backgrounds/forestbig.png" id="3_hueq0"]
 [ext_resource type="PackedScene" uid="uid://e6bec84rrthm" path="res://Sprites/Animation/DefaultPlayer_Animation.tscn" id="3_i7srl"]
 [ext_resource type="Script" uid="uid://cnnycoui3l3ef" path="res://Scripts/battlescene.gd" id="3_vhj2j"]
+[ext_resource type="Texture2D" uid="uid://da0r1iefmbl55" path="res://gui/Update/Backgrounds/mountainbig.png" id="4_pwb48"]
 [ext_resource type="Texture2D" uid="uid://bb3yuiy6n0i2" path="res://gui/Update/icons/small settings_hover.png" id="5_47u5s"]
 [ext_resource type="Texture2D" uid="uid://c6clhmrkbmg0u" path="res://gui/UI/ui 4.png" id="6_2tp6q"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="6_cja1x"]
@@ -111,6 +113,22 @@ scale = Vector2(4.5625, 4.5)
 texture = ExtResource("2_ixjr5")
 centered = false
 
+[node name="Sprite2D2" type="Sprite2D" parent="Background/ParallaxLayer"]
+visible = false
+texture_filter = 1
+position = Vector2(-3.8147e-06, -3.8147e-06)
+scale = Vector2(0.953776, 0.791016)
+texture = ExtResource("3_hueq0")
+centered = false
+
+[node name="Sprite2D3" type="Sprite2D" parent="Background/ParallaxLayer"]
+visible = false
+texture_filter = 1
+position = Vector2(-3.8147e-06, -3.8147e-06)
+scale = Vector2(0.950521, 0.791016)
+texture = ExtResource("4_pwb48")
+centered = false
+
 [node name="MainContainer" type="HBoxContainer" parent="."]
 offset_right = 1460.0
 offset_bottom = 810.0
@@ -135,10 +153,10 @@ anchor_left = 0.314
 anchor_top = 0.599
 anchor_right = 0.314
 anchor_bottom = 0.599
-offset_left = 46.414
-offset_top = 183.81
-offset_right = 46.414
-offset_bottom = 183.81
+offset_left = 45.076
+offset_top = 231.81
+offset_right = 45.076
+offset_bottom = 231.81
 grow_vertical = 2
 
 [node name="PlayerPosition" type="Node2D" parent="MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer"]
@@ -239,10 +257,10 @@ anchor_left = 0.711
 anchor_top = 0.599
 anchor_right = 0.711
 anchor_bottom = 0.599
-offset_left = -47.639
-offset_top = 136.81
-offset_right = -47.639
-offset_bottom = 136.81
+offset_left = -48.977
+offset_top = 184.81
+offset_right = -48.977
+offset_bottom = 184.81
 grow_horizontal = 0
 grow_vertical = 2
 

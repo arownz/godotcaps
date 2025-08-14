@@ -241,7 +241,7 @@ func _connect_signals():
 		$BackButton.pressed.connect(_on_back_button_pressed)
 	if $BackButton and !$BackButton.is_connected("mouse_entered", _on_back_button_hover_entered):
 		$BackButton.mouse_entered.connect(_on_back_button_hover_entered)
-	if $BackButton and !$BackButton.is_connected("mouse_exitedS", _on_back_button_hover_exited):
+	if $BackButton and !$BackButton.is_connected("mouse_exited", _on_back_button_hover_exited):
 		$BackButton.mouse_exited.connect(_on_back_button_hover_exited)
 
 	# Connect fight button

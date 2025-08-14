@@ -7,20 +7,6 @@ var battle_scene # Reference to the main battle scene
 var _player_icon_initial_pos: Vector2
 var _player_icon_pos_captured := false
 
-# Preloaded background textures for faster switching
-var background_textures = {
-	1: preload("res://gui/Update/Backgrounds/battlescene background.png"),
-	2: preload("res://gui/Update/Backgrounds/battlescene background.png"),
-	3: preload("res://gui/Update/Backgrounds/battlescene background.png")
-}
-
-# Background scales for different dungeons
-var background_scales = {
-	1: Vector2(4.57812, 4.5), # Original scale for 320x180
-	2: Vector2(4.57812, 4.5), # Reduced scale for larger image (1536x1024)
-	3: Vector2(4.57812, 4.5) # Reduced scale for larger image (1536x1024)
-}
-
 func _init(scene):
 	battle_scene = scene
 
@@ -279,24 +265,40 @@ func _update_stage_progress():
 		(bar_fill as Control).offset_right = (bar_bg as Control).offset_left + fill_width
 
 func update_background(dungeon_num: int):
-	# Update background based on dungeon number
-	print("UIManager: Attempting to update background for dungeon ", dungeon_num)
+	# Update background based on dungeon number using separate sprite nodes
+	print("UIManager: Switching to background for dungeon ", dungeon_num)
 	
-	var background_sprite = battle_scene.get_node_or_null("Background/ParallaxLayer/Sprite2D")
-	if !background_sprite:
-		print("UIManager: Background sprite not found at path: Background/ParallaxLayer/Sprite2D")
+	# Get all background sprites
+	var bg_sprite1 = battle_scene.get_node_or_null("Background/ParallaxLayer/Sprite2D") # Dungeon 1 (default)
+	var bg_sprite2 = battle_scene.get_node_or_null("Background/ParallaxLayer/Sprite2D2") # Dungeon 2 (forest)
+	var bg_sprite3 = battle_scene.get_node_or_null("Background/ParallaxLayer/Sprite2D3") # Dungeon 3 (mountain)
+	
+	if !bg_sprite1 or !bg_sprite2 or !bg_sprite3:
+		print("UIManager: Warning - One or more background sprites not found")
+		print("  Sprite2D (dungeon 1): ", bg_sprite1 != null)
+		print("  Sprite2D2 (dungeon 2): ", bg_sprite2 != null)
+		print("  Sprite2D3 (dungeon 3): ", bg_sprite3 != null)
 		return
 	
-	print("UIManager: Background sprite found successfully")
+	# Hide all backgrounds first
+	bg_sprite1.visible = false
+	bg_sprite2.visible = false
+	bg_sprite3.visible = false
 	
-	# Get preloaded texture and scale
-	var texture = background_textures.get(dungeon_num, background_textures[1])
-	var target_scale = background_scales.get(dungeon_num, background_scales[1])
+	# Show the appropriate background for the current dungeon
+	match dungeon_num:
+		1:
+			bg_sprite1.visible = true
+			print("UIManager: Showing dungeon 1 background (default)")
+		2:
+			bg_sprite2.visible = true
+			print("UIManager: Showing dungeon 2 background (forest)")
+		3:
+			bg_sprite3.visible = true
+			print("UIManager: Showing dungeon 3 background (mountain)")
+		_:
+			# Default to dungeon 1 background for unknown dungeon numbers
+			bg_sprite1.visible = true
+			print("UIManager: Unknown dungeon ", dungeon_num, ", defaulting to dungeon 1 background")
 	
-	print("UIManager: Setting background for dungeon ", dungeon_num, " with scale: ", target_scale)
-	
-	# Set the new background texture and scale immediately (no loading delay)
-	background_sprite.texture = texture
-	background_sprite.scale = target_scale
-	
-	print("UIManager: Background updated successfully to dungeon ", dungeon_num)
+	print("UIManager: Background switch completed for dungeon ", dungeon_num)

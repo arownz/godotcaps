@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bgxspl2eihkbn"
-path="res://.godot/imported/bg.png-a4b206037c7d9876898e21af1a18d760.ctex"
+uid="uid://b1m0mvx72jreu"
+path="res://.godot/imported/mountainzback.png-3c9dd1817bfd88acd1940ae24f4ffbe0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://gui/Backgrounds/bg.png"
-dest_files=["res://.godot/imported/bg.png-a4b206037c7d9876898e21af1a18d760.ctex"]
+source_file="res://gui/Update/Backgrounds/mountainzback.png"
+dest_files=["res://.godot/imported/mountainzback.png-3c9dd1817bfd88acd1940ae24f4ffbe0.ctex"]
 
 [params]
 

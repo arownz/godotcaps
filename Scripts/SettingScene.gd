@@ -7,6 +7,7 @@ signal quit_requested
 var is_battle_context: bool = false
 var energy_cost: int = 2
 var _context_initialized: bool = false
+var engage_permanently_hidden: bool = false # Once true, engage button stays hidden for session
 
 # UI References
 @onready var close_button = $SettingsContainer/CloseButton
@@ -43,6 +44,9 @@ func _ready():
 	print("SettingScene: Initializing settings popup")
 	# Ensure overlay
 	layer = 100
+	
+	# Add to settings popups group for battle scene communication
+	add_to_group("settings_popups")
 
 	# Background click closes popup
 	var bg = get_node_or_null("Background")
@@ -102,6 +106,21 @@ func _ready():
 
 	# Make layout responsive to window size
 	_update_layout()
+
+	# Apply global engage hide flag if a battle already happened (or ended)
+	_apply_global_engage_hidden()
+
+func _apply_global_engage_hidden():
+	# If the global flag from DungeonGlobals indicates we already started a battle, permanently hide engage
+	if typeof(DungeonGlobals) != TYPE_NIL:
+		# Access directly (variable exists in autoload script)
+		if "engage_button_hidden_session" in DungeonGlobals:
+			# Fallback if earlier checks used string membership; direct access preferred
+			pass
+		# Direct property access
+		if DungeonGlobals.engage_button_hidden_session:
+			# Use hard removal to prevent any later visibility toggles from reviving the button
+			_hard_remove_engage_button()
 
 func _notification(what):
 	if what == NOTIFICATION_WM_SIZE_CHANGED:
@@ -443,14 +462,20 @@ func _set_battle_buttons_visible(visible_in_battle: bool) -> void:
 func set_battle_session_state(has_battle_occurred: bool, _battle_currently_active: bool = false) -> void:
 	if not engage_button or not leave_button:
 		return
-	if has_battle_occurred:
-		engage_button.visible = false
-		engage_button.disabled = true
+	# If battle occurred OR permanently hidden flag set, keep engage hidden
+	var global_hidden := false
+	if typeof(DungeonGlobals) != TYPE_NIL:
+		global_hidden = DungeonGlobals.engage_button_hidden_session
+	if has_battle_occurred or engage_permanently_hidden or global_hidden:
+		# Ensure button is physically removed so future instantiations can't show it
+		_hard_remove_engage_button()
 		leave_button.visible = true
 		leave_button.disabled = false
 	else:
-		engage_button.visible = true
-		engage_button.disabled = false
+		# Only show if not permanently hidden
+		if not engage_permanently_hidden and not global_hidden:
+			engage_button.visible = true
+			engage_button.disabled = false
 		leave_button.visible = true
 		leave_button.disabled = false
 
@@ -603,3 +628,59 @@ func _get_energy_recovery_info() -> Dictionary:
 			var seconds = int(time_until_next_energy) % 60
 			result["next_energy_time"] = "%d:%02d" % [minutes, seconds]
 	return result
+
+# New function to control engage button visibility from battle scene
+func set_engage_button_visibility(button_visible: bool):
+	if engage_button:
+		# Smooth transition for better UX
+		var tween = create_tween()
+		if button_visible and not engage_permanently_hidden:
+			# Show button (only if not permanently hidden)
+			engage_button.visible = true
+			engage_button.disabled = false
+			tween.tween_property(engage_button, "modulate", Color(1, 1, 1, 1.0), 0.3)
+		else:
+			# Hide button
+			# If already marked permanent, hard remove
+			if engage_permanently_hidden or (typeof(DungeonGlobals) != TYPE_NIL and DungeonGlobals.engage_button_hidden_session):
+				_hard_remove_engage_button()
+			else:
+				_engage_hide_internal(tween)
+		print("SettingScene: Engage button visibility set to: ", button_visible)
+
+# Permanently hide engage button for the session (called from BattleScene at first auto battle start)
+func permanently_hide_engage_button():
+	if engage_permanently_hidden:
+		return # Already applied
+	engage_permanently_hidden = true
+	print("SettingScene: Permanently hiding engage button for this session")
+	# Immediately hard remove instead of just hiding (prevents re-show from any visibility toggles)
+	_hard_remove_engage_button()
+	set_engage_button_visibility(false)
+
+# Internal helper to hide engage without duplicating code
+func _engage_hide_internal(existing_tween: Tween = null):
+	if not engage_button:
+		return
+	var tween = existing_tween if existing_tween else create_tween()
+	engage_button.disabled = true
+	tween.tween_property(engage_button, "modulate", Color(1, 1, 1, 0.3), 0.25)
+	tween.tween_callback(func():
+		if engage_button:
+			engage_button.visible = false
+	)
+
+# Hard removal to ensure engage button cannot be revived in current session
+func _hard_remove_engage_button():
+	if engage_button and is_instance_valid(engage_button):
+		print("SettingScene: Hard removing engage button node for session permanence")
+		# Optional: replace with a spacer to maintain layout if needed
+		var parent = engage_button.get_parent()
+		engage_button.queue_free()
+		engage_button = null
+		# Avoid future show attempts
+		engage_permanently_hidden = true
+		if parent and parent.get_child_count() == 1:
+			# If only leave button remains, ensure its size flags fill space
+			leave_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			leave_button.visible = true

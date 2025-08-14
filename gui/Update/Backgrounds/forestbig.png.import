@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ckkds573c15wj"
-path="res://.godot/imported/Main_menu_Background.png-c7a29db37702f9a3566fdfeedc50858b.ctex"
+uid="uid://2jgthsch6pn"
+path="res://.godot/imported/forestbig.png-edbf90c72bcb927c871d0c8221e24bb7.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://gui/Backgrounds/Main_menu_Background.png"
-dest_files=["res://.godot/imported/Main_menu_Background.png-c7a29db37702f9a3566fdfeedc50858b.ctex"]
+source_file="res://gui/Update/Backgrounds/forestbig.png"
+dest_files=["res://.godot/imported/forestbig.png-edbf90c72bcb927c871d0c8221e24bb7.ctex"]
 
 [params]
 

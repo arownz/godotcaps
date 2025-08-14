@@ -239,6 +239,8 @@ func _on_enemy_defeated(_exp_reward):
 	enemy_manager.end_battle()
 	# Stop the stage timer when enemy is defeated
 	await _stop_stage_timer()
+	# Engage button remains hidden per session design (no re-enable broadcast)
+	print("BattleScene: Enemy defeated - engage button stays hidden (design)")
 	# Call battle_manager to handle victory
 	battle_manager.handle_victory()
 
@@ -336,6 +338,10 @@ func _show_battle_settings_popup():
 		popup.engage_confirmed.connect(_on_engage_confirmed)
 	if popup.has_signal("quit_requested"):
 		popup.quit_requested.connect(_on_battle_quit_requested)
+	# If global flag indicates engage hidden (battle started previously), enforce it
+	if typeof(DungeonGlobals) != TYPE_NIL and DungeonGlobals.engage_button_hidden_session:
+		if popup.has_method("permanently_hide_engage_button"):
+			popup.permanently_hide_engage_button()
 	# Add to scene tree (CanvasLayer will center itself)
 	get_tree().current_scene.add_child(popup)
 
@@ -390,6 +396,14 @@ func _start_battle():
 	
 	battle_active = true
 	battle_session_started = true # Mark that a battle has occurred in this session
+
+	# Permanently hide engage button in any open settings popup for this session
+	for popup in get_tree().get_nodes_in_group("settings_popups"):
+		if popup and popup.has_method("permanently_hide_engage_button"):
+			popup.permanently_hide_engage_button()
+	# Set global flag so future settings popups auto-hide engage
+	if typeof(DungeonGlobals) != TYPE_NIL:
+		DungeonGlobals.engage_button_hidden_session = true
 	
 	# Start the stage timer when battle actually begins
 	_start_stage_timer()

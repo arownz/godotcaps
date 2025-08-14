@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://t6kiuer8gcj5"
-path="res://.godot/imported/dungeon 2 lock.png-d52ca011f9430ce9b2bf53913f2c75c3.ctex"
+uid="uid://da0r1iefmbl55"
+path="res://.godot/imported/mountainbig.png-f65a71d0b3ea3fdf497e0f20741a9c9a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://gui/Backgrounds/dungeon 2 lock.png"
-dest_files=["res://.godot/imported/dungeon 2 lock.png-d52ca011f9430ce9b2bf53913f2c75c3.ctex"]
+source_file="res://gui/Update/Backgrounds/mountainbig.png"
+dest_files=["res://.godot/imported/mountainbig.png-f65a71d0b3ea3fdf497e0f20741a9c9a.ctex"]
 
 [params]
 

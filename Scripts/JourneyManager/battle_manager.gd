@@ -544,6 +544,6 @@ func _show_dungeon_completion_notification(completed_dungeon_num: int):
 	var notification_popup = battle_scene.get_node_or_null("NotificationPopUp")
 	if notification_popup:
 		print("BattleManager: Showing dungeon completion notification")
-		notification_popup.show_notification(title, message, "Continue")
+		notification_popup.show_notification(title, message, "Ok")
 	else:
 		print("BattleManager: Warning - notification popup not found")
