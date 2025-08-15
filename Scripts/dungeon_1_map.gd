@@ -62,7 +62,7 @@ func _ready():
 	# Create notification popup
 	notification_popup = load("res://Scenes/NotificationPopUp.tscn").instantiate()
 	add_child(notification_popup)
-	notification_popup.closed.connect(_on_notification_closed)	
+	notification_popup.closed.connect(_on_notification_closed)
 	
 	# Refresh progression when scene loads (important for when returning from battle)
 	await _refresh_progression_from_firebase()
@@ -361,9 +361,9 @@ func _update_stage_details(stage_num):
 		var animation_instance = enemy_resource.animation_scene.instantiate()
 		animated_sprite.add_child(animation_instance)
 		
-		# Play idle animation if available
+		# Play auto_attack animation if available
 		if animation_instance.has_method("play"):
-			animation_instance.play("idle")
+			animation_instance.play("auto_attack")
 	
 	# Update mob button visibility - show only one button per stage
 	for i in range(mob_buttons.size()):
@@ -395,8 +395,8 @@ func _on_mob_button_pressed(type, index):
 	var animated_sprite = $StageDetails/LeftContainer/AnimatedSprite2D
 	if animated_sprite.get_child_count() > 0:
 		var animation_instance = animated_sprite.get_child(0)
-		if animation_instance.has_method("play") and animation_instance.sprite_frames and animation_instance.sprite_frames.has_animation("idle"):
-			animation_instance.play("idle")
+		if animation_instance.has_method("play") and animation_instance.sprite_frames and animation_instance.sprite_frames.has_animation("auto_attack"):
+			animation_instance.play("auto_attack")
 	
 	$StageDetails/LeftContainer/MonsterName.text = enemy_data["name"].to_upper()
 	$StageDetails/RightContainer/Info.text = enemy_data["description"]

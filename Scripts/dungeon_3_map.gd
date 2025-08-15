@@ -222,6 +222,8 @@ func _connect_signals():
 		var btn = stage_buttons[i]
 		if btn and !btn.is_connected("pressed", _on_stage_button_pressed):
 			btn.pressed.connect(_on_stage_button_pressed.bind(i + 1))
+		if btn and !btn.is_connected("mouse_entered", _on_button_hover):
+			btn.mouse_entered.connect(_on_button_hover)
 	
 	# Connect mob button signals
 	for i in range(mob_buttons.size()):
@@ -231,6 +233,8 @@ func _connect_signals():
 		else: # Boss
 			if mob_buttons[i] and !mob_buttons[i].is_connected("pressed", _on_mob_button_pressed):
 				mob_buttons[i].pressed.connect(_on_mob_button_pressed.bind("boss", 0))
+		if mob_buttons[i] and !mob_buttons[i].is_connected("mouse_entered", _on_button_hover):
+			mob_buttons[i].mouse_entered.connect(_on_button_hover)
 	
 	# Connect back button
 	if $BackButton and !$BackButton.is_connected("pressed", _on_back_button_pressed):
@@ -243,8 +247,12 @@ func _connect_signals():
 	# Connect fight button
 	if $StageDetails/FightButton and !$StageDetails/FightButton.is_connected("pressed", _on_fight_button_pressed):
 		$StageDetails/FightButton.pressed.connect(_on_fight_button_pressed)
+	if $StageDetails/FightButton and !$StageDetails/FightButton.is_connected("mouse_entered", _on_button_hover):
+		$StageDetails/FightButton.mouse_entered.connect(_on_button_hover)
 	if $StageDetails/CloseButton and !$StageDetails/CloseButton.is_connected("pressed", _on_close_button_pressed):
 		$StageDetails/CloseButton.pressed.connect(_on_close_button_pressed)
+	if $StageDetails/CloseButton and !$StageDetails/CloseButton.is_connected("mouse_entered", _on_button_hover):
+		$StageDetails/CloseButton.mouse_entered.connect(_on_button_hover)
 
 func _on_stage_button_pressed(stage_num):
 	$ButtonClick.play()
@@ -318,9 +326,9 @@ func _update_stage_details(stage_num):
 		var animation_instance = enemy_resource.animation_scene.instantiate()
 		animated_sprite.add_child(animation_instance)
 		
-		# Play idle animation if available
+		# Play auto_attack animation if available
 		if animation_instance.has_method("play"):
-			animation_instance.play("idle")
+			animation_instance.play("auto_attack")
 	
 	# Update mob button visibility - show only one button per stage
 	for i in range(mob_buttons.size()):
@@ -352,9 +360,9 @@ func _on_mob_button_pressed(type, index):
 	var animated_sprite = $StageDetails/LeftContainer/AnimatedSprite2D
 	if animated_sprite.get_child_count() > 0:
 		var animation_instance = animated_sprite.get_child(0)
-		if animation_instance.has_method("play") and animation_instance.sprite_frames and animation_instance.sprite_frames.has_animation("idle"):
-			animation_instance.play("idle")
-	
+		if animation_instance.has_method("play") and animation_instance.sprite_frames and animation_instance.sprite_frames.has_animation("auto_attack"):
+			animation_instance.play("auto_attack")
+
 	$StageDetails/LeftContainer/MonsterName.text = enemy_data["name"].to_upper()
 	$StageDetails/RightContainer/Info.text = enemy_data["description"]
 	$StageDetails/RightContainer/Health.text = str(enemy_data["health"])
@@ -424,6 +432,7 @@ func _save_current_dungeon_stage():
 
 # Button hover handlers
 func _on_back_button_hover_entered():
+	$ButtonHover.play()
 	var back_label = $BackButton/BackLabel
 	if back_label:
 		back_label.visible = true
@@ -432,6 +441,9 @@ func _on_back_button_hover_exited():
 	var back_label = $BackButton/BackLabel
 	if back_label:
 		back_label.visible = false
+
+func _on_button_hover():
+	$ButtonHover.play()
 
 func _on_notification_closed():
 	# Handle notification close if needed

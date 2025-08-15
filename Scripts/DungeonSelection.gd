@@ -126,6 +126,16 @@ func _setup_hover_functionality():
 	$PreviousButton.mouse_entered.connect(_on_previous_button_hover_entered)
 	$PreviousButton.mouse_exited.connect(_on_previous_button_hover_exited)
 
+	# Connect hover sounds for each dungeon texture button
+	for i in range(DUNGEON_COUNT):
+		var dungeon_node = dungeon_carousel.get_child(i)
+		var texture_button = dungeon_node.get_node("TextureButton")
+		if texture_button and !texture_button.is_connected("mouse_entered", _on_dungeon_texture_hover):
+			texture_button.mouse_entered.connect(_on_dungeon_texture_hover)
+		# (Optional) play sound on focus via keyboard navigation
+		if texture_button and !texture_button.is_connected("focus_entered", _on_dungeon_texture_hover):
+			texture_button.focus_entered.connect(_on_dungeon_texture_hover)
+
 # Load user data from Firebase
 func _load_user_data():
 	if Firebase.Auth.auth:
@@ -431,6 +441,9 @@ func _on_previous_button_hover_exited():
 	var previous_label = $PreviousButton/PreviousLabel
 	if previous_label:
 		previous_label.visible = false
+
+func _on_dungeon_texture_hover():
+	$ButtonHover.play()
 
 # Handle navigation and play buttons
 func _on_back_button_pressed():
