@@ -662,7 +662,7 @@ func permanently_hide_engage_button():
 func _engage_hide_internal(existing_tween: Tween = null):
 	if not engage_button:
 		return
-	var tween = existing_tween if existing_tween else create_tween()
+	var tween = existing_tween if existing_tween else create_tween()	
 	engage_button.disabled = true
 	tween.tween_property(engage_button, "modulate", Color(1, 1, 1, 0.3), 0.25)
 	tween.tween_callback(func():
