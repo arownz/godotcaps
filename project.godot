@@ -17,7 +17,7 @@ run/main_scene="uid://cbpwvuj8kdyod"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 boot_splash/fullsize=false
 boot_splash/image="uid://dkkb8nek5d6fs"
-config/icon="uid://dkkb8nek5d6fs"
+config/icon="uid://byhddv6cyomeu"
 
 [audio]
 

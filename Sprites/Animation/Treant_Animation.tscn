@@ -170,9 +170,9 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_lmaaj")
 }],
-"loop": false,
+"loop": true,
 "name": &"auto_attack",
-"speed": 10.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -308,8 +308,8 @@ position = Vector2(-2, -23)
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_j63xv")
-animation = &"skill"
-autoplay = "skill"
+animation = &"auto_attack"
+autoplay = "auto_attack"
 
 [node name="treant_hurt" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_oe6dc")

@@ -493,7 +493,7 @@ animations = [{
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_fdt5l")
-animation = &"hurt"
+animation = &"idle"
 autoplay = "idle"
 
 [node name="sfx_autoattack_swordslash" type="AudioStreamPlayer" parent="."]

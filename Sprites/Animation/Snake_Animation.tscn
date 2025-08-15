@@ -166,7 +166,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_5m26x")
 }],
-"loop": false,
+"loop": true,
 "name": &"auto_attack",
 "speed": 10.0
 }, {
@@ -297,8 +297,8 @@ animations = [{
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_06me7")
-animation = &"skill"
-autoplay = "skill"
+animation = &"auto_attack"
+autoplay = "auto_attack"
 
 [node name="snake_skill" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("2_v2rwu")
