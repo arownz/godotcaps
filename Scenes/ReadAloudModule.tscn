@@ -1,71 +1,63 @@
-[gd_scene load_steps=12 format=3 uid="uid://ck7j4eam2h6n8"]
+[gd_scene load_steps=15 format=3 uid="uid://bh58ks8y1mr5l"]
 
-[ext_resource type="Texture2D" uid="uid://0con8ixqofpr" path="res://gui/Update/UI/ui 8.png" id="2_lkfnu"]
-[ext_resource type="Script" uid="uid://0gkfgjdix8tw" path="res://Scripts/ReadAloudModule.gd" id="2_script"]
-[ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="3_regular_font"]
-[ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="4_bold_font"]
-[ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="5_lkfnu"]
-[ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="6_c3ufk"]
+[ext_resource type="Script" uid="uid://0gkfgjdix8tw" path="res://Scripts/ReadAloudModule.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://0con8ixqofpr" path="res://gui/Update/UI/ui 8.png" id="2_bg"]
+[ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="3_regular"]
+[ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="4_bold"]
+[ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="5_yellow"]
+[ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="7_click"]
+[ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="8_hover"]
+[ext_resource type="Texture2D" uid="uid://qmmpx3uab5h7" path="res://gui/Update/UI/next button.png" id="9_a4okv"]
+[ext_resource type="Texture2D" uid="uid://bmjd8nkagj08e" path="res://gui/Update/UI/long uncolored button.png" id="10_0kgie"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_reading_panel"]
-bg_color = Color(0.87, 0.98, 0.9, 1)
-border_width_left = 4
-border_width_top = 4
-border_width_right = 4
-border_width_bottom = 4
-border_color = Color(0.2, 0.8, 0.4, 1)
-corner_radius_top_left = 20
-corner_radius_top_right = 20
-corner_radius_bottom_right = 20
-corner_radius_bottom_left = 20
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dt2ji"]
+bg_color = Color(0.2, 0.8, 0.4, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 25
+corner_radius_top_right = 25
+corner_radius_bottom_right = 25
+corner_radius_bottom_left = 25
+shadow_color = Color(0, 0, 0, 0.3)
+shadow_size = 10
+shadow_offset = Vector2(0, 6)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_o85yv"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h7rfw"]
+bg_color = Color(0.88, 0.91, 0.94, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 shadow_color = Color(0, 0, 0, 0.2)
-shadow_size = 8
-shadow_offset = Vector2(0, 4)
+shadow_size = 4
+shadow_offset = Vector2(0, 2)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_reading_button"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bfapu"]
 bg_color = Color(0.2, 0.8, 0.4, 1)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0, 0, 0, 1)
-corner_radius_top_left = 15
-corner_radius_top_right = 15
-corner_radius_bottom_right = 15
-corner_radius_bottom_left = 15
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 shadow_color = Color(0, 0, 0, 0.3)
-shadow_size = 6
-shadow_offset = Vector2(0, 3)
+shadow_size = 4
+shadow_offset = Vector2(0, 2)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_reading_button_hover"]
-bg_color = Color(0.15, 0.7, 0.3, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0, 0, 0, 1)
-corner_radius_top_left = 15
-corner_radius_top_right = 15
-corner_radius_bottom_right = 15
-corner_radius_bottom_left = 15
-shadow_color = Color(0, 0, 0, 0.4)
-shadow_size = 8
-shadow_offset = Vector2(0, 4)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_reading_content_panel"]
-bg_color = Color(0.93, 0.97, 0.95, 1)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.15, 0.6, 0.3, 1)
-corner_radius_top_left = 15
-corner_radius_top_right = 15
-corner_radius_bottom_right = 15
-corner_radius_bottom_left = 15
-shadow_color = Color(0, 0, 0, 0.15)
-shadow_size = 6
-shadow_offset = Vector2(0, 3)
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_tbhtg"]
 
 [node name="ReadAloudModule" type="Control"]
 layout_mode = 3
@@ -74,120 +66,315 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("2_script")
+script = ExtResource("1_script")
 
 [node name="Background" type="TextureRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -1.0
-offset_top = -1.0
-offset_right = -1.0
-offset_bottom = 23.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_lkfnu")
+texture = ExtResource("2_bg")
 
 [node name="MainContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 50.0
-offset_top = 50.0
-offset_right = -50.0
-offset_bottom = -50.0
+offset_left = 57.0
+offset_top = 33.0
+offset_right = -58.0
+offset_bottom = -35.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/separation = 50
 
-[node name="HeaderContainer" type="HBoxContainer" parent="MainContainer"]
+[node name="HeaderPanel" type="Panel" parent="MainContainer"]
+custom_minimum_size = Vector2(0, 123)
 layout_mode = 2
 size_flags_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_dt2ji")
 
-[node name="BackButton" type="Button" parent="MainContainer/HeaderContainer"]
-layout_mode = 2
-size_flags_horizontal = 0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_regular_font")
-text = "← Back to Modules"
-flat = true
-
-[node name="TitleLabel" type="Label" parent="MainContainer/HeaderContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("4_bold_font")
-text = "Interactive Read-Aloud"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="CenterContainer" type="CenterContainer" parent="MainContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="ContentPanel" type="Panel" parent="MainContainer/CenterContainer"]
-custom_minimum_size = Vector2(600, 400)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_reading_panel")
-
-[node name="ContentContainer" type="VBoxContainer" parent="MainContainer/CenterContainer/ContentPanel"]
+[node name="HeaderContainer" type="VBoxContainer" parent="MainContainer/HeaderPanel"]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 20.0
-offset_top = 20.0
-offset_right = -20.0
-offset_bottom = -20.0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -632.5
+offset_top = -57.0
+offset_right = 695.5
+offset_bottom = 58.0
 grow_horizontal = 2
 grow_vertical = 2
+scale = Vector2(0.95167, 0.95167)
+theme_override_constants/separation = 15
 
-[node name="ModuleTitle" type="Label" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer"]
-layout_mode = 2
-theme_override_fonts/font = ExtResource("4_bold_font")
-text = "Welcome to Interactive Read-Aloud!"
-horizontal_alignment = 1
-
-[node name="Description" type="Label" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer"]
-custom_minimum_size = Vector2(1, 0)
-layout_mode = 2
-theme_override_fonts/font = ExtResource("3_regular_font")
-text = "Follow along with highlighted text and audio narration. Practice your reading comprehension and fluency skills."
-horizontal_alignment = 1
-autowrap_mode = 2
-
-[node name="ComingSoonLabel" type="Label" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer"]
-custom_minimum_size = Vector2(1, 0)
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_fonts/font = ExtResource("3_regular_font")
-text = "This module is under development
-
-For now, you can practice with the Word Challenge interface!"
-horizontal_alignment = 1
-vertical_alignment = 1
-autowrap_mode = 2
-
-[node name="ButtonContainer" type="HBoxContainer" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer"]
+[node name="TitleContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer"]
 layout_mode = 2
 size_flags_vertical = 0
 alignment = 1
 
-[node name="STTButton" type="Button" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/ButtonContainer"]
+[node name="TitleLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = ExtResource("4_bold_font")
-theme_override_styles/normal = SubResource("StyleBoxFlat_reading_button")
-theme_override_styles/hover = SubResource("StyleBoxFlat_reading_button_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_reading_button_hover")
-text = "Word Challenge (STT)"
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 36
+text = "Interactive Read-Aloud"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BackButton" type="Button" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer"]
+custom_minimum_size = Vector2(120, 45)
+layout_mode = 2
+size_flags_horizontal = 8
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 16
+theme_override_styles/focus = SubResource("StyleBoxEmpty_o85yv")
+text = "Back"
+icon = ExtResource("5_yellow")
+flat = true
+icon_alignment = 1
+expand_icon = true
+
+[node name="ProgressContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_constants/separation = 25
+alignment = 1
+
+[node name="ProgressLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_regular")
+theme_override_font_sizes/font_size = 16
+text = "Overall Progress: 0%"
+
+[node name="ProgressBar" type="ProgressBar" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer"]
+custom_minimum_size = Vector2(300, 20)
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_styles/background = SubResource("StyleBoxFlat_h7rfw")
+theme_override_styles/fill = SubResource("StyleBoxFlat_bfapu")
+
+[node name="GuideButton" type="Button" parent="MainContainer/HeaderPanel"]
+layout_mode = 0
+offset_left = 30.0
+offset_right = 129.0
+offset_bottom = 81.0
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_tbhtg")
+text = "Guide"
+icon = ExtResource("9_a4okv")
+flat = true
+icon_alignment = 1
+expand_icon = true
+
+[node name="TTSSettingButton" type="Button" parent="MainContainer/HeaderPanel"]
+layout_mode = 0
+offset_left = 30.0
+offset_top = 81.0
+offset_right = 129.0
+offset_bottom = 119.0
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_tbhtg")
+text = "TTS"
+icon = ExtResource("5_yellow")
+flat = true
+icon_alignment = 1
+expand_icon = true
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="CategoriesGrid" type="GridContainer" parent="MainContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/h_separation = 25
+columns = 3
+
+[node name="LettersCard" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid"]
+custom_minimum_size = Vector2(430, 300)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_dt2ji")
+
+[node name="LettersContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/LettersCard"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 15.0
+offset_top = 15.0
+offset_right = -15.0
+offset_bottom = -15.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="IconContainer" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid/LettersCard/LettersContent"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="CenterContainer" type="CenterContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/LettersCard/LettersContent/IconContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="IconLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/LettersCard/LettersContent/IconContainer/CenterContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.6, 0.901961, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 48
+text = "ABC"
+horizontal_alignment = 1
+
+[node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/LettersCard/LettersContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 20
+text = "Letters"
+horizontal_alignment = 1
+
+[node name="DescLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/LettersCard/LettersContent"]
+custom_minimum_size = Vector2(1, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_regular")
+theme_override_font_sizes/font_size = 14
+text = "Trace A-Z and hear sounds"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/LettersCard/LettersContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_regular")
+theme_override_font_sizes/font_size = 12
+text = "0% Complete"
+horizontal_alignment = 1
+
+[node name="EnterButton" type="Button" parent="MainContainer/ScrollContainer/CategoriesGrid/LettersCard/LettersContent"]
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 16
+theme_override_styles/focus = SubResource("StyleBoxEmpty_o85yv")
+text = "Trace Letter"
+icon = ExtResource("10_0kgie")
+flat = true
+icon_alignment = 1
+expand_icon = true
+
+[node name="SightWordsCard" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid"]
+custom_minimum_size = Vector2(430, 300)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_dt2ji")
+
+[node name="SightWordsContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 15.0
+offset_top = 15.0
+offset_right = -15.0
+offset_bottom = -15.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="IconContainer" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard/SightWordsContent"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="CenterContainer" type="CenterContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard/SightWordsContent/IconContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="IconLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard/SightWordsContent/IconContainer/CenterContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.6, 0.901961, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 35
+text = "the
+cat"
+horizontal_alignment = 1
+
+[node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard/SightWordsContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 20
+text = "Sight Words"
+horizontal_alignment = 1
+
+[node name="DescLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard/SightWordsContent"]
+custom_minimum_size = Vector2(1, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_regular")
+theme_override_font_sizes/font_size = 14
+text = "Common words like 'the', 'and'"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard/SightWordsContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_regular")
+theme_override_font_sizes/font_size = 12
+text = "0% Complete"
+horizontal_alignment = 1
+
+[node name="EnterButton" type="Button" parent="MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard/SightWordsContent"]
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 16
+theme_override_styles/focus = SubResource("StyleBoxEmpty_o85yv")
+text = "Trace Word"
+icon = ExtResource("10_0kgie")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [node name="ButtonClick" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("5_lkfnu")
+stream = ExtResource("7_click")
 
 [node name="ButtonHover" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("6_c3ufk")
-
-[connection signal="pressed" from="MainContainer/HeaderContainer/BackButton" to="." method="_on_back_button_pressed"]
-[connection signal="pressed" from="MainContainer/CenterContainer/ContentPanel/ContentContainer/ButtonContainer/STTButton" to="." method="_on_stt_button_pressed"]
+stream = ExtResource("8_hover")

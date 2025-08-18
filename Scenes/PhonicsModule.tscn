@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://c3eucvdnmnw54"]
+[gd_scene load_steps=15 format=3 uid="uid://c3eucvdnmnw54"]
 
 [ext_resource type="Script" uid="uid://c8qtq6lp3uc26" path="res://Scripts/PhonicsModule.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://0con8ixqofpr" path="res://gui/Update/UI/ui 8.png" id="2_edgla"]
@@ -9,7 +9,6 @@
 [ext_resource type="Texture2D" uid="uid://qmmpx3uab5h7" path="res://gui/Update/UI/next button.png" id="6_nm4xh"]
 [ext_resource type="Texture2D" uid="uid://bmjd8nkagj08e" path="res://gui/Update/UI/long uncolored button.png" id="6_ydvs0"]
 [ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="7_hover"]
-[ext_resource type="PackedScene" uid="uid://7wtij707stht" path="res://Scenes/TTSSettingsPopup.tscn" id="11_tts_popup"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ydvs0"]
 bg_color = Color(0.2, 0.6, 0.9, 1)
@@ -121,6 +120,7 @@ alignment = 1
 [node name="TitleLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold")
 theme_override_font_sizes/font_size = 36
@@ -153,8 +153,7 @@ alignment = 1
 
 [node name="ProgressLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular")
 theme_override_font_sizes/font_size = 16
 text = "Overall Progress: 0%"
@@ -253,6 +252,7 @@ horizontal_alignment = 1
 
 [node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/LettersCard/LettersContent"]
 layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold")
 theme_override_font_sizes/font_size = 20
@@ -262,7 +262,7 @@ horizontal_alignment = 1
 [node name="DescLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/LettersCard/LettersContent"]
 custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular")
 theme_override_font_sizes/font_size = 14
 text = "Trace A-Z and hear sounds"
@@ -271,7 +271,7 @@ autowrap_mode = 2
 
 [node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/LettersCard/LettersContent"]
 layout_mode = 2
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular")
 theme_override_font_sizes/font_size = 12
 text = "0% Complete"
@@ -333,6 +333,7 @@ horizontal_alignment = 1
 
 [node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard/SightWordsContent"]
 layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold")
 theme_override_font_sizes/font_size = 20
@@ -342,7 +343,7 @@ horizontal_alignment = 1
 [node name="DescLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard/SightWordsContent"]
 custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular")
 theme_override_font_sizes/font_size = 14
 text = "Common words like 'the', 'and'"
@@ -351,7 +352,7 @@ autowrap_mode = 2
 
 [node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard/SightWordsContent"]
 layout_mode = 2
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular")
 theme_override_font_sizes/font_size = 12
 text = "0% Complete"
@@ -377,10 +378,6 @@ stream = ExtResource("6_click")
 
 [node name="ButtonHover" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("7_hover")
-
-[node name="TTSSettingsPopup" parent="." instance=ExtResource("11_tts_popup")]
-visible = false
-layout_mode = 1
 
 [connection signal="pressed" from="MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton" to="." method="_on_back_button_pressed"]
 [connection signal="pressed" from="MainContainer/HeaderPanel/GuideButton" to="." method="_on_guide_button_pressed"]

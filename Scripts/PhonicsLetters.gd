@@ -4,6 +4,7 @@ var tts: TextToSpeech = null
 var module_progress: ModuleProgress = null
 var whiteboard_instance: Control = null
 var notification_popup: CanvasLayer = null
+var completion_celebration: CanvasLayer = null
 
 var current_target: String = "A"
 var letter_set := ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
@@ -237,14 +238,105 @@ func _advance_target():
 func _on_whiteboard_result(text_result: String):
 	print("PhonicsLetters: Whiteboard result -> ", text_result)
 	
-	# Simple success heuristic 
-	var success = text_result.strip_edges() != "" and not text_result.begins_with("recognition_error")
+	# Enhanced recognition with dyslexia-friendly matching
+	var recognized_text = text_result.strip_edges().to_upper()
+	var target_letter = current_target.to_upper()
 	
-	if success and module_progress:
+	# Check if recognition matches current target letter
+	var is_correct = false
+	if recognized_text == target_letter:
+		is_correct = true
+	# Also accept close matches (dyslexia-friendly fuzzy matching)
+	elif recognized_text.length() == 1 and target_letter.length() == 1:
+		# Allow common letter confusions for dyslexic users
+		var letter_confusions = {
+			"B": ["D", "P"],
+			"D": ["B", "P"],
+			"P": ["B", "D"],
+			"Q": ["G", "O"],
+			"G": ["Q", "O"],
+			"O": ["Q", "G"],
+			"M": ["W", "N"],
+			"W": ["M", "N"],
+			"N": ["M", "W"]
+		}
+		
+		if letter_confusions.has(target_letter) and letter_confusions[target_letter].has(recognized_text):
+			is_correct = true # Accept common reversals/confusions
+	
+	if is_correct and module_progress:
+		print("PhonicsLetters: Correct letter recognized - ", target_letter)
+		
+		# Update Firebase progress
+		var success = await module_progress.set_phonics_letter_completed(target_letter)
+		
+		if success:
+			# Get updated progress data
+			var phonics_progress = await module_progress.get_phonics_progress()
+			
+			# Show completion celebration
+			_show_completion_celebration(target_letter, phonics_progress)
+		else:
+			print("PhonicsLetters: Failed to update progress in Firebase")
+	elif not text_result.begins_with("recognition_error"):
+		print("PhonicsLetters: Letter not recognized correctly. Expected: ", target_letter, ", Got: ", recognized_text)
+		_show_encouragement_message(recognized_text, target_letter)
 		module_progress.increment_progress("phonics_letters", 3)
 
 func _on_whiteboard_cancelled():
 	print("PhonicsLetters: Whiteboard cancelled")
+
+func _show_completion_celebration(letter: String, progress_data: Dictionary):
+	"""Show completion celebration popup for dyslexic users"""
+	print("PhonicsLetters: Showing completion celebration for letter: ", letter)
+	
+	# Load and instantiate completion celebration if not already done
+	if not completion_celebration:
+		var celebration_scene = load("res://Scenes/CompletionCelebration.tscn")
+		if celebration_scene:
+			completion_celebration = celebration_scene.instantiate()
+			add_child(completion_celebration)
+			
+			# Connect signals
+			if completion_celebration.has_signal("try_again_pressed"):
+				completion_celebration.connect("try_again_pressed", Callable(self, "_on_celebration_try_again"))
+			if completion_celebration.has_signal("next_item_pressed"):
+				completion_celebration.connect("next_item_pressed", Callable(self, "_on_celebration_next"))
+			if completion_celebration.has_signal("closed"):
+				completion_celebration.connect("closed", Callable(self, "_on_celebration_closed"))
+		else:
+			print("PhonicsLetters: Failed to load CompletionCelebration scene")
+			return
+	
+	# Show celebration with letter completion type
+	if completion_celebration and completion_celebration.has_method("show_completion"):
+		completion_celebration.show_completion(0, letter, progress_data, "phonics") # 0 = CompletionType.LETTER, "phonics" = module_key
+
+func _show_encouragement_message(recognized: String, expected: String):
+	"""Show encouraging message when letter isn't quite right"""
+	if not notification_popup:
+		var popup_scene = load("res://Scenes/NotificationPopUp.tscn")
+		if popup_scene:
+			notification_popup = popup_scene.instantiate()
+			add_child(notification_popup)
+	
+	if notification_popup and notification_popup.has_method("show_notification"):
+		var message = "Great try! I see you wrote '" + recognized + "'.\n\nLet's practice the letter '" + expected + "' again.\nTake your time and trace it carefully."
+		notification_popup.show_notification("Keep Practicing!", message, "Try Again")
+
+func _on_celebration_try_again():
+	"""Handle try again button from celebration popup"""
+	print("PhonicsLetters: User chose to try again")
+	# Stay on current letter for more practice
+
+func _on_celebration_next():
+	"""Handle next button from celebration popup"""
+	print("PhonicsLetters: User chose to move to next letter")
+	_advance_target()
+
+func _on_celebration_closed():
+	"""Handle celebration popup closed"""
+	print("PhonicsLetters: Celebration popup closed")
 
 func _on_tts_settings_saved(voice_id: String, rate: float):
 	"""Handle TTS settings save to update local TTS instance"""

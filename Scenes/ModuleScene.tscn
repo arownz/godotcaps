@@ -326,7 +326,6 @@ offset_top = -16.1533
 offset_right = 228.595
 offset_bottom = 13.18
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular_font")
 text = "Still in development..."
 

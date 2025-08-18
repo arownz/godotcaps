@@ -1,84 +1,73 @@
-[gd_scene load_steps=11 format=3 uid="uid://bnaj2f5n3k8l6"]
+[gd_scene load_steps=16 format=3 uid="uid://bnaj2f5n3k8l6"]
 
-[ext_resource type="Texture2D" uid="uid://0con8ixqofpr" path="res://gui/Update/UI/ui 8.png" id="2_3t05n"]
-[ext_resource type="Script" uid="uid://dgl0bug32bd8w" path="res://Scripts/FlipQuizModule.gd" id="2_script"]
-[ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="3_regular_font"]
-[ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="4_bold_font"]
-[ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="5_3t05n"]
-[ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="6_i6n66"]
+[ext_resource type="Script" uid="uid://dgl0bug32bd8w" path="res://Scripts/FlipQuizModule.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://0con8ixqofpr" path="res://gui/Update/UI/ui 8.png" id="2_bg"]
+[ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="3_regular"]
+[ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="4_bold"]
+[ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="5_yellow"]
+[ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="7_click"]
+[ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="8_hover"]
+[ext_resource type="Texture2D" uid="uid://qmmpx3uab5h7" path="res://gui/Update/UI/next button.png" id="9_a4okv"]
+[ext_resource type="Texture2D" uid="uid://bmjd8nkagj08e" path="res://gui/Update/UI/long uncolored button.png" id="10_0kgie"]
+[ext_resource type="Texture2D" uid="uid://ck6giv4cmjaph" path="res://gui/animalsquiz/animalbackground.png" id="10_qjflv"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_quiz_panel"]
-bg_color = Color(0.98, 0.87, 0.87, 1)
-border_width_left = 4
-border_width_top = 4
-border_width_right = 4
-border_width_bottom = 4
-border_color = Color(0.9, 0.3, 0.3, 1)
-corner_radius_top_left = 20
-corner_radius_top_right = 20
-corner_radius_bottom_right = 20
-corner_radius_bottom_left = 20
-shadow_color = Color(0, 0, 0, 0.2)
-shadow_size = 8
-shadow_offset = Vector2(0, 4)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_quiz_card_panel"]
-bg_color = Color(0.95, 0.75, 0.75, 1)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.7, 0.2, 0.2, 1)
-corner_radius_top_left = 15
-corner_radius_top_right = 15
-corner_radius_bottom_right = 15
-corner_radius_bottom_left = 15
-shadow_color = Color(0, 0, 0, 0.15)
-shadow_size = 6
-shadow_offset = Vector2(0, 3)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_quiz_button_hover"]
-bg_color = Color(0.8, 0.2, 0.2, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dt2ji"]
+bg_color = Color(0.901961, 0.301961, 0.301961, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
 border_color = Color(0, 0, 0, 1)
-corner_radius_top_left = 15
-corner_radius_top_right = 15
-corner_radius_bottom_right = 15
-corner_radius_bottom_left = 15
-shadow_color = Color(0, 0, 0, 0.4)
-shadow_size = 8
-shadow_offset = Vector2(0, 4)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_quiz_button"]
-bg_color = Color(0.9, 0.3, 0.3, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0, 0, 0, 1)
-corner_radius_top_left = 15
-corner_radius_top_right = 15
-corner_radius_bottom_right = 15
-corner_radius_bottom_left = 15
+corner_radius_top_left = 25
+corner_radius_top_right = 25
+corner_radius_bottom_right = 25
+corner_radius_bottom_left = 25
 shadow_color = Color(0, 0, 0, 0.3)
-shadow_size = 6
-shadow_offset = Vector2(0, 3)
+shadow_size = 10
+shadow_offset = Vector2(0, 6)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_o85yv"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h7rfw"]
+bg_color = Color(0.88, 0.91, 0.94, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.2)
+shadow_size = 4
+shadow_offset = Vector2(0, 2)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bfapu"]
+bg_color = Color(0.901961, 0.301961, 0.301961, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.3)
+shadow_size = 4
+shadow_offset = Vector2(0, 2)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_tbhtg"]
 
 [node name="FlipQuizModule" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 2.0
-offset_top = 12.0
-offset_right = 2.0
-offset_bottom = 12.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("2_script")
+script = ExtResource("1_script")
 
 [node name="Background" type="TextureRect" parent="."]
 layout_mode = 1
@@ -87,174 +76,301 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_3t05n")
+texture = ExtResource("2_bg")
 
 [node name="MainContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 50.0
-offset_top = 50.0
-offset_right = -50.0
-offset_bottom = -50.0
+offset_left = 57.0
+offset_top = 33.0
+offset_right = -58.0
+offset_bottom = -35.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/separation = 50
 
-[node name="HeaderContainer" type="HBoxContainer" parent="MainContainer"]
+[node name="HeaderPanel" type="Panel" parent="MainContainer"]
+custom_minimum_size = Vector2(0, 123)
 layout_mode = 2
 size_flags_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_dt2ji")
 
-[node name="BackButton" type="Button" parent="MainContainer/HeaderContainer"]
+[node name="HeaderContainer" type="VBoxContainer" parent="MainContainer/HeaderPanel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -632.5
+offset_top = -57.0
+offset_right = 695.5
+offset_bottom = 58.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.95167, 0.95167)
+theme_override_constants/separation = 15
+
+[node name="TitleContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer"]
 layout_mode = 2
-size_flags_horizontal = 0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_regular_font")
-text = "← Back to Modules"
-flat = true
+size_flags_vertical = 0
+alignment = 1
 
-[node name="TitleLabel" type="Label" parent="MainContainer/HeaderContainer"]
+[node name="TitleLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("4_bold_font")
-text = "🎯 Flip Quiz"
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 36
+text = "FLIP QUIZ"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="CenterContainer" type="CenterContainer" parent="MainContainer"]
+[node name="BackButton" type="Button" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer"]
+custom_minimum_size = Vector2(120, 45)
 layout_mode = 2
-size_flags_vertical = 3
+size_flags_horizontal = 8
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 16
+theme_override_styles/focus = SubResource("StyleBoxEmpty_o85yv")
+text = "Back"
+icon = ExtResource("5_yellow")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
-[node name="ContentPanel" type="Panel" parent="MainContainer/CenterContainer"]
-custom_minimum_size = Vector2(600, 400)
+[node name="ProgressContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer"]
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_quiz_panel")
-
-[node name="ContentContainer" type="VBoxContainer" parent="MainContainer/CenterContainer/ContentPanel"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 20.0
-offset_top = 20.0
-offset_right = -20.0
-offset_bottom = -20.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="ModuleTitle" type="Label" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer"]
-layout_mode = 2
-theme_override_fonts/font = ExtResource("4_bold_font")
-text = "Flip Quiz - Memory Matching Game"
-horizontal_alignment = 1
-
-[node name="Description" type="Label" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer"]
-custom_minimum_size = Vector2(1, 0)
-layout_mode = 2
-theme_override_fonts/font = ExtResource("3_regular_font")
-text = "Match emojis with words! Flip cards to find pairs and learn vocabulary through visual association."
-horizontal_alignment = 1
-autowrap_mode = 2
-
-[node name="HSeparator" type="HSeparator" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer"]
-layout_mode = 2
-
-[node name="MenuPanel" type="Panel" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_quiz_card_panel")
-
-[node name="MenuContainer" type="VBoxContainer" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/MenuPanel"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 20.0
-offset_top = 20.0
-offset_right = -20.0
-offset_bottom = -20.0
-grow_horizontal = 2
-grow_vertical = 2
+size_flags_vertical = 0
+theme_override_constants/separation = 25
 alignment = 1
 
-[node name="SelectSetLabel" type="Label" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/MenuPanel/MenuContainer"]
+[node name="ProgressLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer"]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("4_bold_font")
-text = "Choose a Quiz Set:"
-horizontal_alignment = 1
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_regular")
+theme_override_font_sizes/font_size = 16
+text = "Overall Progress: 0%"
 
-[node name="SetSelection" type="OptionButton" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/MenuPanel/MenuContainer"]
+[node name="ProgressBar" type="ProgressBar" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer"]
+custom_minimum_size = Vector2(300, 20)
 layout_mode = 2
-theme_override_fonts/font = ExtResource("3_regular_font")
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_styles/background = SubResource("StyleBoxFlat_h7rfw")
+theme_override_styles/fill = SubResource("StyleBoxFlat_bfapu")
 
-[node name="InstructionsLabel" type="Label" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/MenuPanel/MenuContainer"]
-custom_minimum_size = Vector2(1, 0)
-layout_mode = 2
-theme_override_fonts/font = ExtResource("3_regular_font")
-text = "Instructions:
-• Click cards to flip them
-• Find matching emoji-word pairs  
-• You have 3 lives
-• Earn points for each match!"
-horizontal_alignment = 1
-autowrap_mode = 2
+[node name="GuideButton" type="Button" parent="MainContainer/HeaderPanel"]
+layout_mode = 0
+offset_left = 30.0
+offset_right = 129.0
+offset_bottom = 81.0
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_tbhtg")
+text = "Guide"
+icon = ExtResource("9_a4okv")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
-[node name="StartButton" type="Button" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/MenuPanel/MenuContainer"]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = ExtResource("4_bold_font")
-theme_override_styles/hover = SubResource("StyleBoxFlat_quiz_button_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_quiz_button_hover")
-theme_override_styles/normal = SubResource("StyleBoxFlat_quiz_button")
-text = "Start Game"
+[node name="TTSSettingButton" type="Button" parent="MainContainer/HeaderPanel"]
+layout_mode = 0
+offset_left = 30.0
+offset_top = 81.0
+offset_right = 129.0
+offset_bottom = 119.0
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_tbhtg")
+text = "TTS"
+icon = ExtResource("5_yellow")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
-[node name="GamePanel" type="Panel" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer"]
-visible = false
+[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="GameContainer" type="VBoxContainer" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/GamePanel"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 20.0
-offset_top = 20.0
-offset_right = -20.0
-offset_bottom = -20.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="ScoreContainer" type="HBoxContainer" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/GamePanel"]
-layout_mode = 2
-alignment = 1
-
-[node name="ScoreLabel" type="Label" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/GamePanel/ScoreContainer"]
-layout_mode = 2
-theme_override_fonts/font = ExtResource("4_bold_font")
-text = "Score: 0"
-horizontal_alignment = 1
-
-[node name="Spacer" type="Control" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/GamePanel/ScoreContainer"]
+[node name="CategoriesGrid" type="GridContainer" parent="MainContainer/ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/h_separation = 25
+columns = 3
 
-[node name="LivesLabel" type="Label" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/GamePanel/ScoreContainer"]
+[node name="AnimalsCard" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid"]
+custom_minimum_size = Vector2(430, 300)
 layout_mode = 2
-theme_override_fonts/font = ExtResource("4_bold_font")
-text = "Lives: 3"
-horizontal_alignment = 1
+theme_override_styles/panel = SubResource("StyleBoxFlat_dt2ji")
 
-[node name="QuizContainer" type="GridContainer" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/GamePanel"]
+[node name="AnimalsContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/AnimalsCard"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 15.0
+offset_top = 15.0
+offset_right = -15.0
+offset_bottom = -15.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="IconContainer" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid/AnimalsCard/AnimalsContent"]
 layout_mode = 2
 size_flags_vertical = 3
-columns = 5
+
+[node name="CenterContainer" type="CenterContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/AnimalsCard/AnimalsContent/IconContainer"]
+clip_contents = true
+layout_mode = 0
+offset_left = 118.0
+offset_top = 1.0
+offset_right = 598.0
+offset_bottom = 464.0
+scale = Vector2(0.342659, 0.282807)
+
+[node name="IconLabel" type="TextureRect" parent="MainContainer/ScrollContainer/CategoriesGrid/AnimalsCard/AnimalsContent/IconContainer/CenterContainer"]
+layout_mode = 2
+texture = ExtResource("10_qjflv")
+
+[node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/AnimalsCard/AnimalsContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 20
+text = "Animals"
+horizontal_alignment = 1
+
+[node name="DescLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/AnimalsCard/AnimalsContent"]
+custom_minimum_size = Vector2(1, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_regular")
+theme_override_font_sizes/font_size = 14
+text = "Match animals"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/AnimalsCard/AnimalsContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_regular")
+theme_override_font_sizes/font_size = 12
+text = "0% Complete"
+horizontal_alignment = 1
+
+[node name="EnterButton" type="Button" parent="MainContainer/ScrollContainer/CategoriesGrid/AnimalsCard/AnimalsContent"]
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 16
+theme_override_styles/focus = SubResource("StyleBoxEmpty_o85yv")
+text = "Animal Flip"
+icon = ExtResource("10_0kgie")
+flat = true
+icon_alignment = 1
+expand_icon = true
+
+[node name="FoodCard" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid"]
+custom_minimum_size = Vector2(430, 300)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_dt2ji")
+
+[node name="FoodContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/FoodCard"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 15.0
+offset_top = 15.0
+offset_right = -15.0
+offset_bottom = -15.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="IconContainer" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid/FoodCard/FoodContent"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="CenterContainer" type="CenterContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/FoodCard/FoodContent/IconContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="IconLabel" type="TextureRect" parent="MainContainer/ScrollContainer/CategoriesGrid/FoodCard/FoodContent/IconContainer/CenterContainer"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/FoodCard/FoodContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 20
+text = "?"
+horizontal_alignment = 1
+
+[node name="DescLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/FoodCard/FoodContent"]
+custom_minimum_size = Vector2(1, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_regular")
+theme_override_font_sizes/font_size = 14
+text = "?"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/FoodCard/FoodContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_regular")
+theme_override_font_sizes/font_size = 12
+text = "0% Complete"
+horizontal_alignment = 1
+
+[node name="EnterButton" type="Button" parent="MainContainer/ScrollContainer/CategoriesGrid/FoodCard/FoodContent"]
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 16
+theme_override_styles/focus = SubResource("StyleBoxEmpty_o85yv")
+text = "?"
+icon = ExtResource("10_0kgie")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [node name="ButtonClick" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("5_3t05n")
+stream = ExtResource("7_click")
 
 [node name="ButtonHover" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("6_i6n66")
+stream = ExtResource("8_hover")
 
-[connection signal="pressed" from="MainContainer/HeaderContainer/BackButton" to="." method="_on_back_button_pressed"]
+[connection signal="pressed" from="MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton" to="." method="_on_back_button_pressed"]
+[connection signal="pressed" from="MainContainer/HeaderPanel/GuideButton" to="." method="_on_guide_button_pressed"]
+[connection signal="pressed" from="MainContainer/HeaderPanel/TTSSettingButton" to="." method="_on_tts_setting_button_pressed"]
+[connection signal="pressed" from="MainContainer/ScrollContainer/CategoriesGrid/AnimalsCard/AnimalsContent/EnterButton" to="." method="_on_animals_button_pressed"]
+[connection signal="pressed" from="MainContainer/ScrollContainer/CategoriesGrid/FoodCard/FoodContent/EnterButton" to="." method="_on_food_button_pressed"]

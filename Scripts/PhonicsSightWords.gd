@@ -4,6 +4,7 @@ var tts: TextToSpeech = null
 var module_progress: ModuleProgress = null
 var whiteboard_instance: Control = null
 var notification_popup: CanvasLayer = null
+var completion_celebration: CanvasLayer = null
 
 var current_target: String = "the"
 var sight_words := ["the", "and", "to", "a", "of", "in", "is", "you", "that", "it", "he", "was", "for", "on", "are", "as", "with", "his", "they", "I"]
@@ -250,11 +251,125 @@ func _advance_target():
 func _on_whiteboard_result(text_result: String):
 	print("PhonicsSightWords: Whiteboard result -> ", text_result)
 	
-	# Simple success heuristic 
-	var success = text_result.strip_edges() != "" and not text_result.begins_with("recognition_error")
+	# Enhanced recognition with dyslexia-friendly matching
+	var recognized_text = text_result.strip_edges().to_lower()
+	var target_word = current_target.to_lower()
 	
-	if success and module_progress:
+	# Check if recognition matches current target word
+	var is_correct = false
+	if recognized_text == target_word:
+		is_correct = true
+	# Also accept close matches (dyslexia-friendly fuzzy matching)
+	elif _calculate_word_similarity(recognized_text, target_word) >= 0.7:
+		is_correct = true # Accept close matches for dyslexic users
+	
+	if is_correct and module_progress:
+		print("PhonicsSightWords: Correct sight word recognized - ", target_word)
+		
+		# Update Firebase progress
+		var success = await module_progress.set_phonics_sight_word_completed(target_word)
+		
+		if success:
+			# Get updated progress data
+			var phonics_progress = await module_progress.get_phonics_progress()
+			
+			# Show completion celebration
+			_show_completion_celebration(target_word, phonics_progress)
+		else:
+			print("PhonicsSightWords: Failed to update progress in Firebase")
+	elif not text_result.begins_with("recognition_error"):
+		print("PhonicsSightWords: Sight word not recognized correctly. Expected: ", target_word, ", Got: ", recognized_text)
+		_show_encouragement_message(recognized_text, target_word)
 		module_progress.increment_progress("phonics_sight_words", 5)
 
 func _on_whiteboard_cancelled():
 	print("PhonicsSightWords: Whiteboard cancelled")
+
+func _calculate_word_similarity(word1: String, word2: String) -> float:
+	"""Calculate similarity between two words using edit distance for dyslexia-friendly matching"""
+	if word1 == word2:
+		return 1.0
+	
+	var len1 = word1.length()
+	var len2 = word2.length()
+	
+	if len1 == 0 or len2 == 0:
+		return 0.0
+	
+	# Simple similarity based on common characters and length difference
+	var common_chars = 0
+	var word1_chars = {}
+	var word2_chars = {}
+	
+	# Count character frequencies
+	for i in range(len1):
+		var character = word1[i]
+		word1_chars[character] = word1_chars.get(character, 0) + 1
+	
+	for i in range(len2):
+		var character = word2[i]
+		word2_chars[character] = word2_chars.get(character, 0) + 1
+	
+	# Calculate common characters
+	for character in word1_chars.keys():
+		if word2_chars.has(character):
+			common_chars += min(word1_chars[character], word2_chars[character])
+	
+	# Similarity score based on common characters and length penalty
+	var max_len = max(len1, len2)
+	var length_penalty = 1.0 - (abs(len1 - len2) / float(max_len))
+	var char_similarity = float(common_chars) / float(max_len)
+	
+	return char_similarity * length_penalty
+
+func _show_completion_celebration(word: String, progress_data: Dictionary):
+	"""Show completion celebration popup for dyslexic users"""
+	print("PhonicsSightWords: Showing completion celebration for sight word: ", word)
+	
+	# Load and instantiate completion celebration if not already done
+	if not completion_celebration:
+		var celebration_scene = load("res://Scenes/CompletionCelebration.tscn")
+		if celebration_scene:
+			completion_celebration = celebration_scene.instantiate()
+			add_child(completion_celebration)
+			
+			# Connect signals
+			if completion_celebration.has_signal("try_again_pressed"):
+				completion_celebration.connect("try_again_pressed", Callable(self, "_on_celebration_try_again"))
+			if completion_celebration.has_signal("next_item_pressed"):
+				completion_celebration.connect("next_item_pressed", Callable(self, "_on_celebration_next"))
+			if completion_celebration.has_signal("closed"):
+				completion_celebration.connect("closed", Callable(self, "_on_celebration_closed"))
+		else:
+			print("PhonicsSightWords: Failed to load CompletionCelebration scene")
+			return
+	
+	# Show celebration with sight word completion type
+	if completion_celebration and completion_celebration.has_method("show_completion"):
+		completion_celebration.show_completion(1, word, progress_data, "phonics") # 1 = CompletionType.SIGHT_WORD, "phonics" = module_key
+
+func _show_encouragement_message(recognized: String, expected: String):
+	"""Show encouraging message when sight word isn't quite right"""
+	if not notification_popup:
+		var popup_scene = load("res://Scenes/NotificationPopUp.tscn")
+		if popup_scene:
+			notification_popup = popup_scene.instantiate()
+			add_child(notification_popup)
+	
+	if notification_popup and notification_popup.has_method("show_notification"):
+		var message = "Good effort! I see you wrote '" + recognized + "'.\n\nLet's practice the sight word '" + expected + "' again.\nRemember, sight words are special words we see often in reading."
+		notification_popup.show_notification("Keep Trying!", message, "Practice Again")
+
+func _on_celebration_try_again():
+	"""Handle try again button from celebration popup"""
+	print("PhonicsSightWords: User chose to try again")
+	# Stay on current word for more practice
+
+func _on_celebration_next():
+	"""Handle next button from celebration popup"""
+	print("PhonicsSightWords: User chose to move to next word")
+	_advance_target()
+
+func _on_celebration_closed():
+	"""Handle celebration popup closed"""
+	print("PhonicsSightWords: Celebration popup closed")

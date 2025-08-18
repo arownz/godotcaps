@@ -48,6 +48,16 @@ func _ready():
 	# Load progress from Firestore
 	await _load_category_progress()
 
+func _notification(what):
+	if what == NOTIFICATION_WM_WINDOW_FOCUS_IN:
+		# Refresh progress when window regains focus (user returns from practice)
+		call_deferred("_refresh_progress")
+
+func _refresh_progress():
+	"""Refresh progress display when user returns to phonics module"""
+	if module_progress:
+		await _load_category_progress()
+
 func _init_tts():
 	tts = TextToSpeech.new()
 	add_child(tts)
@@ -120,13 +130,24 @@ func _update_progress_displays(firebase_modules: Dictionary):
 		var firestore_key = categories[category_key]["firestore_key"]
 		var progress_percent = 0.0
 		
-		if firebase_modules.has(firestore_key):
+		# Get phonics data and calculate specific category progress
+		if firebase_modules.has("phonics"):
+			var phonics = firebase_modules["phonics"]
+			if typeof(phonics) == TYPE_DICTIONARY:
+				# Calculate category-specific progress from detailed phonics data
+				if category_key == "letters":
+					var letters_completed = phonics.get("letters_completed", []).size()
+					progress_percent = (float(letters_completed) / 26.0) * 100.0
+				elif category_key == "sight_words":
+					var words_completed = phonics.get("sight_words_completed", []).size()
+					progress_percent = (float(words_completed) / 20.0) * 100.0
+		elif firebase_modules.has(firestore_key):
 			var fm = firebase_modules[firestore_key]
 			if typeof(fm) == TYPE_DICTIONARY:
 				progress_percent = float(fm.get("progress", 0))
 		
-		# Update card progress label
-		var card_path = "MainContainer/ScrollContainer/ContentContainer/CategoriesGrid/" + category_key.capitalize() + "Card"
+		# Update card progress label - fix the correct path
+		var card_path = "MainContainer/ScrollContainer/CategoriesGrid/" + category_key.capitalize() + "Card"
 		var progress_label = get_node_or_null(card_path + "/" + category_key.capitalize() + "Content/ProgressContainer/ProgressLabel")
 		var progress_bar = get_node_or_null(card_path + "/" + category_key.capitalize() + "Content/ProgressContainer/ProgressBar")
 		

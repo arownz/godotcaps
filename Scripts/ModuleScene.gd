@@ -5,7 +5,7 @@ var module_data = {
 	"phonics": {
 		"name": "Phonics Interactive",
 		"description": "Trace while hearing sounds",
-		"total_lessons": 20,
+		"total_lessons": 46, # 26 letters + 20 sight words
 		"scene_path": "res://Scenes/PhonicsModule.tscn"
 	},
 	"flip_quiz": {
@@ -17,26 +17,20 @@ var module_data = {
 	"read_aloud": {
 		"name": "Interactive Read-Aloud",
 		"description": "Follow highlighted text with audio",
-		"total_lessons": 20,
+		"total_lessons": 15, # More realistic for reading passages
 		"scene_path": "res://Scenes/ReadAloudModule.tscn"
 	},
 	"chunked_reading": {
 		"name": "Chunked Reading",
 		"description": "Small sections with guided questions",
-		"total_lessons": 20,
+		"total_lessons": 12, # More realistic for reading comprehension
 		"scene_path": "res://Scenes/ChunkedReadingModule.tscn"
 	}, "syllable_building": {
 		"name": "Syllable Building",
 		"description": "Drag syllables to build words",
-		"total_lessons": 20,
+		"total_lessons": 25, # Variety of syllable patterns
 		"scene_path": "res://Scenes/SyllableBuildingModule.tscn"
 	},
-	"speech": {
-		"name": "Speech Recognition",
-		"description": "Practice pronunciation with AI feedback",
-		"total_lessons": 20,
-		"scene_path": "res://Scenes/WordChallengePanel_STT.tscn"
-	}
 }
 
 # Node references
@@ -76,9 +70,6 @@ func _ready():
 	
 	# Connect button signals
 	_connect_signals()
-	
-	# Load user progress from save file (offline fallback)
-	_load_user_progress()
 
 	# Load Firestore-backed module progress
 	await _load_firestore_modules()
@@ -153,24 +144,6 @@ func _connect_signals():
 		syllable_building_button.pressed.connect(_on_syllable_building_button_pressed)
 		syllable_building_button.mouse_entered.connect(_on_button_hover)
 
-func _load_user_progress():
-	# Load progress from user save file
-	var save_file_path = "user://module_progress.save"
-	
-	if FileAccess.file_exists(save_file_path):
-		var file = FileAccess.open(save_file_path, FileAccess.READ)
-		if file:
-			var json_string = file.get_as_text()
-			file.close()
-			
-			var json = JSON.new()
-			var parse_result = json.parse(json_string)
-			
-			if parse_result == OK:
-				user_progress_data = json.data
-				print("ModuleScene: Loaded user progress data")
-			else:
-				print("ModuleScene: Error parsing progress save file")
 	else:
 		# Initialize default progress
 		user_progress_data = {
@@ -179,7 +152,6 @@ func _load_user_progress():
 			"read_aloud": {"current_lesson": 1, "completed_lessons": []},
 			"chunked_reading": {"current_lesson": 1, "completed_lessons": []},
 			"syllable_building": {"current_lesson": 1, "completed_lessons": []},
-			"speech": {"current_lesson": 1, "completed_lessons": []}
 		}
 		_save_user_progress()
 
@@ -200,7 +172,6 @@ func _update_progress_displays():
 	_update_card_progress("read_aloud", "ReadAloudCard")
 	_update_card_progress("chunked_reading", "ChunkedReadingCard")
 	_update_card_progress("syllable_building", "SyllableBuildingCard")
-	_update_card_progress("speech", "SpeechCard")
 
 func _update_card_progress(module_key: String, card_name: String):
 	var modules_grid = get_node_or_null("MainContainer/ScrollContainer/ContentContainer/ModulesGrid")
@@ -221,6 +192,12 @@ func _update_card_progress(module_key: String, card_name: String):
 		if typeof(fm) == TYPE_DICTIONARY:
 			progress_percent = float(fm.get("progress", 0))
 			completed = bool(fm.get("completed", false))
+	elif module_key == "phonics" and firebase_modules.has("phonics"):
+		# Handle phonics module with detailed tracking
+		var phonics = firebase_modules["phonics"]
+		if typeof(phonics) == TYPE_DICTIONARY:
+			progress_percent = float(phonics.get("progress", 0))
+			completed = bool(phonics.get("completed", false))
 	elif user_progress_data.has(module_key) and module_data.has(module_key):
 		var progress = user_progress_data[module_key]
 		var completed_count = progress.completed_lessons.size()
@@ -255,34 +232,6 @@ func _update_card_progress(module_key: String, card_name: String):
 			if module_data.has(module_key):
 				module_name = module_data[module_key]["name"].split(" ")[0] # Get first word
 			action_button.text = "Enter " + module_name
-	
-	# Style cards with rounded corners and better spacing
-	_style_module_cards()
-
-func _style_module_cards():
-	var modules_grid = get_node_or_null("MainContainer/MarginContainer/ScrollContainer/ModulesContainer/ModulesGrid")
-	if not modules_grid:
-		print("Warning: ModulesGrid not found for styling")
-		return
-	
-	# Apply consistent styling to all module cards
-	for child in modules_grid.get_children():
-		if child is Panel:
-			# Create a StyleBoxFlat for rounded corners
-			var style_box = StyleBoxFlat.new()
-			style_box.corner_radius_top_left = 15
-			style_box.corner_radius_top_right = 15
-			style_box.corner_radius_bottom_left = 15
-			style_box.corner_radius_bottom_right = 15
-			style_box.bg_color = Color(1.0, 1.0, 1.0, 0.9) # White with slight transparency
-			style_box.border_width_left = 3
-			style_box.border_width_right = 3
-			style_box.border_width_top = 3
-			style_box.border_width_bottom = 3
-			style_box.border_color = Color(0.2, 0.4, 0.8, 0.6) # Light blue border
-			
-			child.add_theme_stylebox_override("panel", style_box)
-
 
 # Button sound event handlers
 func _on_button_hover():

@@ -1,94 +1,72 @@
-[gd_scene load_steps=12 format=3 uid="uid://coam7h4k8b2q1"]
+[gd_scene load_steps=15 format=3 uid="uid://coam7h4k8b2q1"]
 
-[ext_resource type="Script" uid="uid://bpm4fs4clb2en" path="res://Scripts/SyllableBuildingModule.gd" id="1_18jxr"]
-[ext_resource type="Texture2D" uid="uid://0con8ixqofpr" path="res://gui/Update/UI/ui 8.png" id="2_8adme"]
-[ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="3_regular_font"]
-[ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="4_bold_font"]
-[ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="5_8adme"]
-[ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="6_7sx5d"]
+[ext_resource type="Script" uid="uid://bpm4fs4clb2en" path="res://Scripts/SyllableBuildingModule.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://0con8ixqofpr" path="res://gui/Update/UI/ui 8.png" id="2_bg"]
+[ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="3_regular"]
+[ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="4_bold"]
+[ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="5_yellow"]
+[ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="7_click"]
+[ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="8_hover"]
+[ext_resource type="Texture2D" uid="uid://qmmpx3uab5h7" path="res://gui/Update/UI/next button.png" id="9_wmgo1"]
+[ext_resource type="Texture2D" uid="uid://bmjd8nkagj08e" path="res://gui/Update/UI/long uncolored button.png" id="10_x1qbc"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_main_panel"]
-bg_color = Color(0.98, 0.94, 0.85, 1)
-border_width_left = 4
-border_width_top = 4
-border_width_right = 4
-border_width_bottom = 4
-border_color = Color(0.9, 0.6, 0.2, 1)
-corner_radius_top_left = 20
-corner_radius_top_right = 20
-corner_radius_bottom_right = 20
-corner_radius_bottom_left = 20
-shadow_color = Color(0, 0, 0, 0.2)
-shadow_size = 8
-shadow_offset = Vector2(0, 4)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_syllable_button"]
-bg_color = Color(0.9, 0.6, 0.2, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_g2rdu"]
+bg_color = Color(0.901961, 0.6, 0.2, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
 border_color = Color(0, 0, 0, 1)
-corner_radius_top_left = 15
-corner_radius_top_right = 15
-corner_radius_bottom_right = 15
-corner_radius_bottom_left = 15
+corner_radius_top_left = 25
+corner_radius_top_right = 25
+corner_radius_bottom_right = 25
+corner_radius_bottom_left = 25
 shadow_color = Color(0, 0, 0, 0.3)
-shadow_size = 6
-shadow_offset = Vector2(0, 3)
+shadow_size = 10
+shadow_offset = Vector2(0, 6)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_syllable_button_hover"]
-bg_color = Color(0.8, 0.5, 0.1, 1)
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_wdsl1"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rin75"]
+bg_color = Color(0.88, 0.91, 0.94, 1)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0, 0, 0, 1)
-corner_radius_top_left = 15
-corner_radius_top_right = 15
-corner_radius_bottom_right = 15
-corner_radius_bottom_left = 15
-shadow_color = Color(0, 0, 0, 0.4)
-shadow_size = 8
-shadow_offset = Vector2(0, 4)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.2)
+shadow_size = 4
+shadow_offset = Vector2(0, 2)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_activity_panel"]
-bg_color = Color(0.96, 0.88, 0.77, 1)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.8, 0.5, 0.1, 1)
-corner_radius_top_left = 15
-corner_radius_top_right = 15
-corner_radius_bottom_right = 15
-corner_radius_bottom_left = 15
-shadow_color = Color(0, 0, 0, 0.15)
-shadow_size = 6
-shadow_offset = Vector2(0, 3)
-
-[node name="SyllableBuildingModule" type="Control"]
-bg_color = Color(0.9, 0.6, 0.2, 0.8)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qdkbg"]
+bg_color = Color(0.901961, 0.6, 0.2, 1)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0, 0, 0, 1)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.3)
+shadow_size = 4
+shadow_offset = Vector2(0, 2)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_qbuvf"]
 
 [node name="SyllableBuildingModule" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = 13.0
-offset_bottom = 13.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_18jxr")
+script = ExtResource("1_script")
 
 [node name="Background" type="TextureRect" parent="."]
 layout_mode = 1
@@ -97,258 +75,306 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_8adme")
+texture = ExtResource("2_bg")
 
 [node name="MainContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 50.0
-offset_top = 50.0
-offset_right = -50.0
-offset_bottom = -50.0
+offset_left = 57.0
+offset_top = 33.0
+offset_right = -58.0
+offset_bottom = -35.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/separation = 50
 
-[node name="HeaderContainer" type="HBoxContainer" parent="MainContainer"]
+[node name="HeaderPanel" type="Panel" parent="MainContainer"]
+custom_minimum_size = Vector2(0, 123)
 layout_mode = 2
 size_flags_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_g2rdu")
 
-[node name="BackButton" type="Button" parent="MainContainer/HeaderContainer"]
+[node name="HeaderContainer" type="VBoxContainer" parent="MainContainer/HeaderPanel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -632.5
+offset_top = -57.0
+offset_right = 695.5
+offset_bottom = 58.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.95167, 0.95167)
+theme_override_constants/separation = 15
+
+[node name="TitleContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer"]
 layout_mode = 2
-size_flags_horizontal = 0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_regular_font")
-text = "← Back to Modules"
-flat = true
+size_flags_vertical = 0
+alignment = 1
 
-[node name="TitleLabel" type="Label" parent="MainContainer/HeaderContainer"]
+[node name="TitleLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("4_bold_font")
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 36
 text = "Syllable Building"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="CenterContainer" type="CenterContainer" parent="MainContainer"]
+[node name="BackButton" type="Button" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer"]
+custom_minimum_size = Vector2(120, 45)
 layout_mode = 2
-size_flags_vertical = 3
-
-[node name="ContentPanel" type="Panel" parent="MainContainer/CenterContainer"]
-custom_minimum_size = Vector2(700, 500)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_main_panel")
-
-[node name="ContentContainer" type="VBoxContainer" parent="MainContainer/CenterContainer/ContentPanel"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 20.0
-offset_top = 20.0
-offset_right = -20.0
-offset_bottom = -20.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="ModuleTitle" type="Label" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer"]
-layout_mode = 2
+size_flags_horizontal = 8
+mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("4_bold_font")
-text = "Welcome to Syllable Building!"
-horizontal_alignment = 1
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 16
+theme_override_styles/focus = SubResource("StyleBoxEmpty_wdsl1")
+text = "Back"
+icon = ExtResource("5_yellow")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
-[node name="Description" type="Label" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer"]
-custom_minimum_size = Vector2(1, 0)
+[node name="ProgressContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_regular_font")
-text = "Drag and drop syllables to build complete words. Learn phonemic awareness and word structure!"
-horizontal_alignment = 1
-autowrap_mode = 2
-
-[node name="HSeparator" type="HSeparator" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer"]
-layout_mode = 2
-
-[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="ActivitiesContainer" type="VBoxContainer" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/ScrollContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/separation = 10
-
-[node name="Activity1" type="Panel" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/ScrollContainer/ActivitiesContainer"]
-custom_minimum_size = Vector2(0, 80)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_activity_panel")
-
-[node name="Activity1Container" type="HBoxContainer" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/ScrollContainer/ActivitiesContainer/Activity1"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 15.0
-offset_top = 15.0
-offset_right = -15.0
-offset_bottom = -15.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="ActivityIcon" type="Label" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/ScrollContainer/ActivitiesContainer/Activity1/Activity1Container"]
-custom_minimum_size = Vector2(50, 0)
-layout_mode = 2
-text = "🧩"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="ActivityInfo" type="VBoxContainer" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/ScrollContainer/ActivitiesContainer/Activity1/Activity1Container"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="ActivityTitle" type="Label" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/ScrollContainer/ActivitiesContainer/Activity1/Activity1Container/ActivityInfo"]
-layout_mode = 2
-text = "Activity 1: Two-Syllable Words"
-
-[node name="ActivityDescription" type="Label" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/ScrollContainer/ActivitiesContainer/Activity1/Activity1Container/ActivityInfo"]
-custom_minimum_size = Vector2(1, 0)
-layout_mode = 2
-text = "Build simple two-syllable words like 'ba-by', 'hap-py', 'run-ning'"
-autowrap_mode = 2
-
-[node name="StartButton1" type="Button" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/ScrollContainer/ActivitiesContainer/Activity1/Activity1Container"]
-custom_minimum_size = Vector2(100, 0)
-layout_mode = 2
-text = "Start"
-
-[node name="Activity2" type="Panel" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/ScrollContainer/ActivitiesContainer"]
-custom_minimum_size = Vector2(0, 80)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_activity_panel")
-
-[node name="Activity2Container" type="HBoxContainer" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/ScrollContainer/ActivitiesContainer/Activity2"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 15.0
-offset_top = 15.0
-offset_right = -15.0
-offset_bottom = -15.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="ActivityIcon" type="Label" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/ScrollContainer/ActivitiesContainer/Activity2/Activity2Container"]
-custom_minimum_size = Vector2(50, 0)
-layout_mode = 2
-text = "🎯"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="ActivityInfo" type="VBoxContainer" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/ScrollContainer/ActivitiesContainer/Activity2/Activity2Container"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="ActivityTitle" type="Label" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/ScrollContainer/ActivitiesContainer/Activity2/Activity2Container/ActivityInfo"]
-layout_mode = 2
-text = "Activity 2: Three-Syllable Words"
-
-[node name="ActivityDescription" type="Label" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/ScrollContainer/ActivitiesContainer/Activity2/Activity2Container/ActivityInfo"]
-custom_minimum_size = Vector2(1, 0)
-layout_mode = 2
-text = "Combine three syllables to form words like 'el-e-phant', 'com-pu-ter'"
-autowrap_mode = 2
-
-[node name="StartButton2" type="Button" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/ScrollContainer/ActivitiesContainer/Activity2/Activity2Container"]
-custom_minimum_size = Vector2(100, 0)
-layout_mode = 2
-text = "Start"
-
-[node name="Activity3" type="Panel" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/ScrollContainer/ActivitiesContainer"]
-custom_minimum_size = Vector2(0, 80)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_activity_panel")
-
-[node name="Activity3Container" type="HBoxContainer" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/ScrollContainer/ActivitiesContainer/Activity3"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 15.0
-offset_top = 15.0
-offset_right = -15.0
-offset_bottom = -15.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="ActivityIcon" type="Label" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/ScrollContainer/ActivitiesContainer/Activity3/Activity3Container"]
-custom_minimum_size = Vector2(50, 0)
-layout_mode = 2
-text = "Act"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="ActivityInfo" type="VBoxContainer" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/ScrollContainer/ActivitiesContainer/Activity3/Activity3Container"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="ActivityTitle" type="Label" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/ScrollContainer/ActivitiesContainer/Activity3/Activity3Container/ActivityInfo"]
-layout_mode = 2
-text = "Activity 3: Complex Words"
-
-[node name="ActivityDescription" type="Label" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/ScrollContainer/ActivitiesContainer/Activity3/Activity3Container/ActivityInfo"]
-custom_minimum_size = Vector2(1, 0)
-layout_mode = 2
-text = "Master challenging multi-syllable words with prefixes and suffixes"
-autowrap_mode = 2
-
-[node name="ComingSoonLabel" type="Label" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/ScrollContainer/ActivitiesContainer/Activity3/Activity3Container"]
-custom_minimum_size = Vector2(100, 0)
-layout_mode = 2
-text = "Coming Soon"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="DemoSection" type="VBoxContainer" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer"]
-layout_mode = 2
-
-[node name="DemoTitle" type="Label" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/DemoSection"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-text = "Try a Quick Demo:"
-horizontal_alignment = 1
-
-[node name="DemoContainer" type="HBoxContainer" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/DemoSection"]
-layout_mode = 2
+size_flags_vertical = 0
+theme_override_constants/separation = 25
 alignment = 1
 
-[node name="SyllableBox1" type="Button" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/DemoSection/DemoContainer"]
-custom_minimum_size = Vector2(80, 50)
+[node name="ProgressLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer"]
 layout_mode = 2
-text = "but"
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_regular")
+theme_override_font_sizes/font_size = 16
+text = "Overall Progress: 0%"
 
-[node name="SyllableBox2" type="Button" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/DemoSection/DemoContainer"]
-custom_minimum_size = Vector2(80, 50)
+[node name="ProgressBar" type="ProgressBar" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer"]
+custom_minimum_size = Vector2(300, 20)
 layout_mode = 2
-text = "ter"
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_styles/background = SubResource("StyleBoxFlat_rin75")
+theme_override_styles/fill = SubResource("StyleBoxFlat_qdkbg")
 
-[node name="SyllableBox3" type="Button" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/DemoSection/DemoContainer"]
-custom_minimum_size = Vector2(80, 50)
-layout_mode = 2
-text = "fly"
+[node name="GuideButton" type="Button" parent="MainContainer/HeaderPanel"]
+layout_mode = 0
+offset_left = 30.0
+offset_right = 129.0
+offset_bottom = 81.0
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_qbuvf")
+text = "Guide"
+icon = ExtResource("9_wmgo1")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
-[node name="BuildWordButton" type="Button" parent="MainContainer/CenterContainer/ContentPanel/ContentContainer/DemoSection"]
+[node name="TTSSettingButton" type="Button" parent="MainContainer/HeaderPanel"]
+layout_mode = 0
+offset_left = 30.0
+offset_top = 81.0
+offset_right = 129.0
+offset_bottom = 119.0
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_qbuvf")
+text = "TTS"
+icon = ExtResource("5_yellow")
+flat = true
+icon_alignment = 1
+expand_icon = true
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer"]
 layout_mode = 2
-text = "Build Word: butterfly"
+size_flags_vertical = 3
+
+[node name="CategoriesGrid" type="GridContainer" parent="MainContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/h_separation = 25
+columns = 3
+
+[node name="LettersCard" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid"]
+custom_minimum_size = Vector2(430, 300)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_g2rdu")
+
+[node name="LettersContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/LettersCard"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 15.0
+offset_top = 15.0
+offset_right = -15.0
+offset_bottom = -15.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="IconContainer" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid/LettersCard/LettersContent"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="CenterContainer" type="CenterContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/LettersCard/LettersContent/IconContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="IconLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/LettersCard/LettersContent/IconContainer/CenterContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.6, 0.901961, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 48
+text = "ABC"
+horizontal_alignment = 1
+
+[node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/LettersCard/LettersContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 20
+text = "Letters"
+horizontal_alignment = 1
+
+[node name="DescLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/LettersCard/LettersContent"]
+custom_minimum_size = Vector2(1, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_regular")
+theme_override_font_sizes/font_size = 14
+text = "Trace A-Z and hear sounds"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/LettersCard/LettersContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_regular")
+theme_override_font_sizes/font_size = 12
+text = "0% Complete"
+horizontal_alignment = 1
+
+[node name="EnterButton" type="Button" parent="MainContainer/ScrollContainer/CategoriesGrid/LettersCard/LettersContent"]
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 16
+theme_override_styles/focus = SubResource("StyleBoxEmpty_wdsl1")
+text = "Trace Letter"
+icon = ExtResource("10_x1qbc")
+flat = true
+icon_alignment = 1
+expand_icon = true
+
+[node name="SightWordsCard" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid"]
+custom_minimum_size = Vector2(430, 300)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_g2rdu")
+
+[node name="SightWordsContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 15.0
+offset_top = 15.0
+offset_right = -15.0
+offset_bottom = -15.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="IconContainer" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard/SightWordsContent"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="CenterContainer" type="CenterContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard/SightWordsContent/IconContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="IconLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard/SightWordsContent/IconContainer/CenterContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.6, 0.901961, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 35
+text = "the
+cat"
+horizontal_alignment = 1
+
+[node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard/SightWordsContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 20
+text = "Sight Words"
+horizontal_alignment = 1
+
+[node name="DescLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard/SightWordsContent"]
+custom_minimum_size = Vector2(1, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_regular")
+theme_override_font_sizes/font_size = 14
+text = "Common words like 'the', 'and'"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard/SightWordsContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_regular")
+theme_override_font_sizes/font_size = 12
+text = "0% Complete"
+horizontal_alignment = 1
+
+[node name="EnterButton" type="Button" parent="MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard/SightWordsContent"]
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 16
+theme_override_styles/focus = SubResource("StyleBoxEmpty_wdsl1")
+text = "Trace Word"
+icon = ExtResource("10_x1qbc")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [node name="ButtonClick" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("5_8adme")
+stream = ExtResource("7_click")
 
 [node name="ButtonHover" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("6_7sx5d")
-
-[connection signal="pressed" from="MainContainer/HeaderContainer/BackButton" to="." method="_on_back_button_pressed"]
-[connection signal="pressed" from="MainContainer/CenterContainer/ContentPanel/ContentContainer/DemoSection/BuildWordButton" to="." method="_on_build_word_pressed"]
+stream = ExtResource("8_hover")

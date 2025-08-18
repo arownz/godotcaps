@@ -23,9 +23,19 @@ var battle_active = false
 var battle_session_started = false # Tracks if any battle has occurred in this session
 var auto_battle = false
 var auto_battle_timer = null
-var auto_battle_speed = 4 # Adjusted from 5.0 to 4 for better pace
+var auto_battle_speed = 4.0
 var battle_result = ""
 var fresh_start = true
+
+func _speed_time(base: float) -> float:
+	return base * (auto_battle_speed / 4.0)
+
+func set_auto_battle_speed(new_speed: float):
+	auto_battle_speed = clamp(new_speed, 1.0, 8.0)
+	# Adjust pending timer if it exists
+	if auto_battle_timer:
+		auto_battle_timer.wait_time = _speed_time(1.0)
+	print("BattleScene: auto_battle_speed set to", auto_battle_speed)
 
 # Stage timer tracking
 var stage_start_time: float = 0.0
@@ -296,7 +306,8 @@ func _on_enemy_set_up(_enemy_name, _enemy_type):
 func _setup_auto_battle_timer():
 	auto_battle_timer = Timer.new()
 	auto_battle_timer.one_shot = true
-	auto_battle_timer.wait_time = 2.0 # Default to a faster battle speed
+	# Base loop delay is 1.0s (legacy used 2.0 here). Scaled by speed helper.
+	auto_battle_timer.wait_time = _speed_time(1.0)
 	auto_battle_timer.timeout.connect(_on_auto_battle_timer_timeout)
 	add_child(auto_battle_timer)
 
@@ -428,8 +439,8 @@ func _start_auto_battle():
 	# Add battle log message
 	battle_log_manager.add_message("[color=#000000]The turn-based battle begins![/color]")
 
-	# Start the automatic battle sequence after a short delay
-	await get_tree().create_timer(0.1).timeout
+	# Start the automatic battle sequence after a short (speed-scaled) delay
+	await get_tree().create_timer(_speed_time(0.1)).timeout
 	_auto_battle_turn()
 
 func _auto_battle_turn():
@@ -462,8 +473,8 @@ func _auto_battle_turn():
 		
 	battle_manager.player_attack()
 	
-	# Give a brief pause for animation
-	await get_tree().create_timer(0.8).timeout
+	# Give a brief pause for animation (player attack resolution)
+	await get_tree().create_timer(_speed_time(0.8)).timeout
 	
 	# Check if enemy is defeated - the enemy_defeated signal will handle victory automatically
 	if enemy_manager.enemy_health <= 0:
@@ -475,12 +486,12 @@ func _auto_battle_turn():
 	print("Enemy attacking with damage: " + str(enemy_manager.enemy_damage))
 	battle_manager.enemy_attack()
 	
-	# Give a brief pause for animation
-	await get_tree().create_timer(0.8).timeout
+	# Give a brief pause for animation (enemy attack resolution)
+	await get_tree().create_timer(_speed_time(0.8)).timeout
 	
 	# Check if enemy skill is ready and battle is still active
 	if battle_active and enemy_manager.enemy_skill_meter >= enemy_manager.enemy_skill_threshold:
-		await get_tree().create_timer(0.5).timeout
+		await get_tree().create_timer(_speed_time(0.5)).timeout
 		# Double-check battle is still active before triggering skill
 		if battle_active:
 			battle_manager.trigger_enemy_skill()
@@ -490,7 +501,7 @@ func _auto_battle_turn():
 		return
 	
 	# Continue battle after delay - make it a shorter delay for faster battles
-	auto_battle_timer.wait_time = 1.0
+	auto_battle_timer.wait_time = _speed_time(1.0)
 	auto_battle_timer.start()
 
 # Auto battle timer timeout (replaced from original code)
@@ -1078,7 +1089,10 @@ func _animate_skill_damage_indicator(label: Label):
 	tween.tween_callback(label.queue_free).set_delay(1.8)
 
 # Helper function for shake effect
-func _shake_label(label: Label, original_pos: Vector2, progress: float):
+## NOTE: tween_method passes the animated value as the FIRST argument.
+## Original signature (label, original_pos, progress) caused a type mismatch:
+## engine supplied a float where a Label was expected. We reorder so progress comes first.
+func _shake_label(progress: float, label: Label, original_pos: Vector2):
 	if progress < 0.5:
 		var shake_intensity = 5.0 * (0.5 - progress) * 2.0
 		label.position = original_pos + Vector2(

@@ -115,7 +115,7 @@ theme_override_colors/font_color = Color(0.101961, 0.101961, 0.101961, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_8hfec")
 theme_override_font_sizes/font_size = 24
-text = "Speak the word to counter the attack!"
+text = "Speak the word to counter the enemy skill!"
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="ChallengePanel/VBoxContainer"]
