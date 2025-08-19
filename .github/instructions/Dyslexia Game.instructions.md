@@ -249,3 +249,4 @@ Module-specific notes:
 - Enemy hurt and player hurt SFX always fire when damage is applied; lethal ordering on enemies is hurt → dead (if available).
 - Stage progress UI keeps completed icons semi-transparent; boss victory routes to DungeonSelection.
 - Web STT uses JavaScriptBridge with permission prompts and polling; guard all async paths with prints for debugging.
+- DO NOT USE EMOJI AS MY DYSLEXIA FONT DOES NOT SUPPORT IT WHEN EXPORTED TO WEB

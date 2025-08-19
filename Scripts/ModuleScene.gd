@@ -76,7 +76,17 @@ func _ready():
 	
 	# Update UI with current progress
 	_update_progress_displays()
-	
+
+func _notification(what):
+	if what == NOTIFICATION_WM_WINDOW_FOCUS_IN:
+		# Refresh progress when window regains focus (user returns from practice)
+		call_deferred("_refresh_progress")
+
+func _refresh_progress():
+	"""Refresh progress display when user returns to module selection"""
+	if module_progress:
+		await _load_firestore_modules()
+		_update_progress_displays()
 
 func _load_firestore_modules():
 	# Create and fetch Firestore-backed module progress

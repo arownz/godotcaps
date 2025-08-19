@@ -126,6 +126,8 @@ func _input(event):
 					_start_stroke(event.position - $VBoxContainer/DrawingArea.global_position)
 				else:
 					_end_stroke()
+					# Ensure dot strokes render right after click release
+					$VBoxContainer/DrawingArea.queue_redraw()
 			else:
 				# If mouse is released outside drawing area, end stroke to prevent corruption
 				if not event.pressed and drawing:
@@ -193,6 +195,8 @@ func _end_stroke():
 		$VBoxContainer/ButtonsContainer/UndoButton.disabled = false
 		$VBoxContainer/ButtonsContainer/RedoButton.disabled = true
 		current_stroke = null
+		# Force redraw so single-point (dot) strokes appear immediately
+		$VBoxContainer/DrawingArea.queue_redraw()
 
 # Handle mouse exiting drawing area to prevent drawing state corruption
 func _on_drawing_area_mouse_exited():
@@ -212,7 +216,13 @@ func _on_drawing_area_draw():
 
 # Helper function to draw a stroke with improved smoothness
 func _draw_stroke(stroke):
-	if stroke.points.size() < 2:
+	if stroke.points.size() == 0:
+		return
+	
+	# Handle single-point strokes as dots/circles
+	if stroke.points.size() == 1:
+		var point = stroke.points[0]
+		$VBoxContainer/DrawingArea.draw_circle(point, stroke.width / 2.0, stroke.color)
 		return
 		
 	var points_array = []
@@ -242,6 +252,11 @@ func _on_undo_button_pressed():
 		$VBoxContainer/ButtonsContainer/RedoButton.disabled = false
 		$VBoxContainer/ButtonsContainer/UndoButton.disabled = strokes.size() == 0
 		$VBoxContainer/DrawingArea.queue_redraw()
+		
+		# Show debug label when whiteboard is completely cleared through undo
+		if strokes.size() == 0 and debug_label:
+			debug_label.visible = true
+			debug_label.text = "Write in this whiteboard!"
 
 # Redo last undone stroke
 func _on_redo_button_pressed():
@@ -251,6 +266,13 @@ func _on_redo_button_pressed():
 		strokes.append(stroke)
 		$VBoxContainer/ButtonsContainer/RedoButton.disabled = undo_history.size() == 0
 		$VBoxContainer/ButtonsContainer/UndoButton.disabled = false
+		$VBoxContainer/DrawingArea.queue_redraw()
+		
+		# Hide debug label when redoing (adding content back)
+		if debug_label:
+			debug_label.visible = false
+	else:
+		# No redo available; ensure redraw reflects current state (e.g., after sequence of undos)
 		$VBoxContainer/DrawingArea.queue_redraw()
 
 # Clear drawing
@@ -659,3 +681,19 @@ func _on_cancel_button_mouse_entered() -> void:
 
 func _on_done_button_mouse_entered() -> void:
 	$ButtonHover.play()
+
+# Public helper: prepare the board for another attempt (called after celebration Try Again)
+func reset_for_retry():
+	print("[Whiteboard] reset_for_retry called")
+	strokes.clear()
+	undo_history.clear()
+	current_stroke = null
+	recognition_in_progress = false
+	$VBoxContainer/DrawingArea.queue_redraw()
+	_re_enable_buttons()
+	if debug_label:
+		debug_label.visible = true
+		debug_label.text = "Write in this whiteboard!"
+	# Hide any transient status
+	if status_label:
+		status_label.visible = false

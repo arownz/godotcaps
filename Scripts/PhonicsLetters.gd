@@ -9,6 +9,10 @@ var completion_celebration: CanvasLayer = null
 var current_target: String = "A"
 var letter_set := ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
 var letter_index := 0
+var session_completed_letters: Array = [] # Fallback local tracking when Firebase/module_progress unavailable
+var fade_trace_on_success := true
+var letter_focus_mode := false # Dims non-essential UI for reduced visual load
+var recent_errors: Array = [] # Track recently missed letters for adaptive revisit
 
 func _speak_text_simple(text: String):
 	"""Simple TTS without captions"""
@@ -41,16 +45,6 @@ func _ready():
 	
 	# Load progress
 	call_deferred("_load_progress")
-	
-	# Initialize notification popup
-	_init_notification_popup()
-
-func _init_notification_popup():
-	notification_popup = $NotificationPopup
-	if notification_popup:
-		print("PhonicsLetters: Notification popup initialized")
-	else:
-		print("PhonicsLetters: Warning - NotificationPopup not found")
 
 func _init_tts():
 	tts = TextToSpeech.new()
@@ -65,7 +59,7 @@ func _init_module_progress():
 		print("PhonicsLetters: Firebase not available; progress won't sync")
 
 func _connect_hover_events():
-	var back_btn = $MainContainer/HeaderPanel/HeaderContainer/BackButton
+	var back_btn = $MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton
 	if back_btn and not back_btn.mouse_entered.is_connected(_on_button_hover):
 		back_btn.mouse_entered.connect(_on_button_hover)
 	
@@ -84,6 +78,22 @@ func _connect_hover_events():
 			tts_btn.mouse_entered.connect(_on_button_hover)
 		if not tts_btn.pressed.is_connected(_on_tts_setting_button_pressed):
 			tts_btn.pressed.connect(_on_tts_setting_button_pressed)
+	
+	# Connect Previous button
+	var previous_btn = $MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/PreviousButton
+	if previous_btn:
+		if not previous_btn.mouse_entered.is_connected(_on_button_hover):
+			previous_btn.mouse_entered.connect(_on_button_hover)
+		if not previous_btn.pressed.is_connected(_on_previous_button_pressed):
+			previous_btn.pressed.connect(_on_previous_button_pressed)
+	
+	# Connect Next button
+	var next_btn = $MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/NextButton
+	if next_btn:
+		if not next_btn.mouse_entered.is_connected(_on_button_hover):
+			next_btn.mouse_entered.connect(_on_button_hover)
+		if not next_btn.pressed.is_connected(_on_NextButton_pressed):
+			next_btn.pressed.connect(_on_NextButton_pressed)
 
 func _update_target_display():
 	var target_label = $MainContainer/ContentContainer/InstructionPanel/InstructionContainer/TargetLabel
@@ -94,6 +104,23 @@ func _update_target_display():
 	var trace_overlay = $MainContainer/ContentContainer/WhiteboardPanel/WhiteboardContainer/TraceOverlay
 	if trace_overlay:
 		trace_overlay.text = current_target
+	
+	# Update button visibility
+	_update_button_visibility()
+
+	# Reset trace overlay opacity when showing new target
+	var trace_overlay_node = $MainContainer/ContentContainer/WhiteboardPanel/WhiteboardContainer/TraceOverlay
+	if trace_overlay_node:
+		trace_overlay_node.modulate.a = 1.0
+
+func _update_button_visibility():
+	var previous_btn = $MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/PreviousButton
+	var next_btn = $MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/NextButton
+	
+	if previous_btn:
+		previous_btn.visible = (letter_index > 0)
+	if next_btn:
+		next_btn.visible = (letter_index < letter_set.size() - 1)
 
 func _load_whiteboard():
 	var whiteboard_interface = $MainContainer/ContentContainer/WhiteboardPanel/WhiteboardContainer/WhiteboardInterface
@@ -112,12 +139,21 @@ func _load_progress():
 		return
 		
 	var firebase_modules = await module_progress.fetch_modules()
-	
+
 	if firebase_modules.has("phonics_letters"):
 		var fm = firebase_modules["phonics_letters"]
 		if typeof(fm) == TYPE_DICTIONARY:
 			var progress_percent = float(fm.get("progress", 0))
 			_update_progress_ui(progress_percent)
+	elif firebase_modules.has("phonics"):
+		# Fallback to aggregated phonics structure (letters + sight words)
+		var phonics = firebase_modules["phonics"]
+		if typeof(phonics) == TYPE_DICTIONARY:
+			var letters_completed = 0
+			if phonics.has("letters_completed") and typeof(phonics["letters_completed"]) == TYPE_ARRAY:
+				letters_completed = phonics["letters_completed"].size()
+			var percent = float(letters_completed) / 26.0 * 100.0
+			_update_progress_ui(percent)
 
 func _update_progress_ui(percent: float):
 	var progress_label = $MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressLabel
@@ -167,7 +203,7 @@ func _on_HearButton_pressed():
 func _on_guide_button_pressed():
 	$ButtonClick.play()
 	if tts:
-		var guide_text = "Welcome to Letters Practice! Here you will learn to trace letters from A to Z. Look at the letter shown above, then use your finger or mouse to trace it carefully on the whiteboard below. Listen to the letter sound by pressing 'Hear Letter', and when you're ready to move on, press 'Next Letter'. Take your time and practice until you feel confident with each letter!"
+		var guide_text = "Welcome to Letters Practice! Here you will learn to trace letters from A to Z. Look at the letter shown above, then use your finger or mouse to trace it carefully on the whiteboard below. Listen to the letter sound by pressing 'Hear Letter', and when you're ready to move on, press 'Next Letter'."
 		_speak_text_simple(guide_text)
 
 func _on_tts_setting_button_pressed():
@@ -222,9 +258,13 @@ func _get_letter_sound(letter: String) -> String:
 	}
 	return sounds.get(letter, letter.to_lower())
 
-func _on_NextTargetButton_pressed():
+func _on_NextButton_pressed():
 	$ButtonClick.play()
 	_advance_target()
+
+func _on_previous_button_pressed():
+	$ButtonClick.play()
+	_previous_target()
 
 func _advance_target():
 	letter_index = (letter_index + 1) % letter_set.size()
@@ -232,6 +272,15 @@ func _advance_target():
 	_update_target_display()
 	
 	# Clear whiteboard for next target
+	if whiteboard_instance and whiteboard_instance.has_method("_on_clear_button_pressed"):
+		whiteboard_instance._on_clear_button_pressed()
+
+func _previous_target():
+	letter_index = (letter_index - 1 + letter_set.size()) % letter_set.size()
+	current_target = letter_set[letter_index]
+	_update_target_display()
+	
+	# Clear whiteboard for previous target
 	if whiteboard_instance and whiteboard_instance.has_method("_on_clear_button_pressed"):
 		whiteboard_instance._on_clear_button_pressed()
 
@@ -264,24 +313,40 @@ func _on_whiteboard_result(text_result: String):
 		if letter_confusions.has(target_letter) and letter_confusions[target_letter].has(recognized_text):
 			is_correct = true # Accept common reversals/confusions
 	
-	if is_correct and module_progress:
+	if is_correct:
 		print("PhonicsLetters: Correct letter recognized - ", target_letter)
+		# Fade out trace overlay gradually to promote independence
+		if fade_trace_on_success:
+			var trace_overlay_node2 = $MainContainer/ContentContainer/WhiteboardPanel/WhiteboardContainer/TraceOverlay
+			if trace_overlay_node2:
+				var tween = create_tween()
+				tween.tween_property(trace_overlay_node2, "modulate:a", 0.15, 0.6)
+		# Track locally for this session
+		if not session_completed_letters.has(target_letter):
+			session_completed_letters.append(target_letter)
 		
-		# Update Firebase progress
-		var success = await module_progress.set_phonics_letter_completed(target_letter)
+		var progress_data: Dictionary = {"letters_completed": session_completed_letters, "percentage": float(session_completed_letters.size()) / 26.0 * 100.0}
 		
-		if success:
-			# Get updated progress data
-			var phonics_progress = await module_progress.get_phonics_progress()
-			
-			# Show completion celebration
-			_show_completion_celebration(target_letter, phonics_progress)
+		# Try to persist progress if module_progress available, but do not block celebration on failure
+		if module_progress:
+			var save_success = await module_progress.set_phonics_letter_completed(target_letter)
+			if save_success:
+				var phonics_progress = await module_progress.get_phonics_progress()
+				_update_progress_ui(phonics_progress.get("percentage", 0.0))
+				progress_data = phonics_progress
+			else:
+				print("PhonicsLetters: Warning - Firebase update failed, using session progress fallback")
 		else:
-			print("PhonicsLetters: Failed to update progress in Firebase")
+			print("PhonicsLetters: Firebase/module_progress not available, using local session progress")
+		
+		_show_completion_celebration(target_letter, progress_data)
 	elif not text_result.begins_with("recognition_error"):
 		print("PhonicsLetters: Letter not recognized correctly. Expected: ", target_letter, ", Got: ", recognized_text)
 		_show_encouragement_message(recognized_text, target_letter)
-		module_progress.increment_progress("phonics_letters", 3)
+		if not recent_errors.has(target_letter):
+			recent_errors.append(target_letter)
+			if recent_errors.size() > 5:
+				recent_errors.pop_front()
 
 func _on_whiteboard_cancelled():
 	print("PhonicsLetters: Whiteboard cancelled")
@@ -320,23 +385,62 @@ func _show_encouragement_message(recognized: String, expected: String):
 			notification_popup = popup_scene.instantiate()
 			add_child(notification_popup)
 	
+	# Disconnect any existing connections and connect for encouragement
+	if notification_popup.has_signal("button_pressed"):
+		# Disconnect all existing connections
+		var connections = notification_popup.get_signal_connection_list("button_pressed")
+		for connection in connections:
+			notification_popup.disconnect("button_pressed", connection["callable"])
+		# Connect encouragement handler
+		notification_popup.connect("button_pressed", Callable(self, "_on_encouragement_continue"))
+	
 	if notification_popup and notification_popup.has_method("show_notification"):
 		var message = "Great try! I see you wrote '" + recognized + "'.\n\nLet's practice the letter '" + expected + "' again.\nTake your time and trace it carefully."
-		notification_popup.show_notification("Keep Practicing!", message, "Try Again")
+		notification_popup.show_notification("Keep Practicing!", message, "Again")
+
+func _on_encouragement_continue():
+	print("PhonicsLetters: Encouragement popup button pressed - stay on current letter for more practice")
 
 func _on_celebration_try_again():
 	"""Handle try again button from celebration popup"""
 	print("PhonicsLetters: User chose to try again")
 	# Stay on current letter for more practice
+	if whiteboard_instance and whiteboard_instance.has_method("reset_for_retry"):
+		whiteboard_instance.reset_for_retry()
+		print("PhonicsLetters: Whiteboard reset after Try Again")
 
 func _on_celebration_next():
 	"""Handle next button from celebration popup"""
 	print("PhonicsLetters: User chose to move to next letter")
-	_advance_target()
+	# Adaptive: if user struggled with a recent letter, occasionally revisit it before moving on
+	if recent_errors.size() > 0 and randi() % 4 == 0:
+		var revisit = recent_errors[randi() % recent_errors.size()]
+		letter_index = letter_set.find(revisit)
+		current_target = revisit
+		_update_target_display()
+		print("PhonicsLetters: Adaptive revisit of letter ", revisit)
+	else:
+		_advance_target()
 
 func _on_celebration_closed():
 	"""Handle celebration popup closed"""
 	print("PhonicsLetters: Celebration popup closed")
+	# Also ensure whiteboard is ready if user dismissed popup
+	if whiteboard_instance and whiteboard_instance.has_method("reset_for_retry"):
+		whiteboard_instance.reset_for_retry()
+
+func _toggle_focus_mode():
+	letter_focus_mode = !letter_focus_mode
+	var dim_targets = [
+		$MainContainer/ContentContainer/InstructionPanel,
+		$MainContainer/HeaderPanel
+	]
+	for node in dim_targets:
+		if node:
+			var tween = create_tween()
+			var target_alpha = 0.35 if letter_focus_mode else 1.0
+			tween.tween_property(node, "modulate:a", target_alpha, 0.4)
+	print("PhonicsLetters: Focus mode = ", letter_focus_mode)
 
 func _on_tts_settings_saved(voice_id: String, rate: float):
 	"""Handle TTS settings save to update local TTS instance"""

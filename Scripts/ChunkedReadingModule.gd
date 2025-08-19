@@ -1,6 +1,7 @@
 extends Control
 
 var module_progress: ModuleProgress
+var completion_celebration: CanvasLayer = null
 var completion_celebration_scene = preload("res://Scenes/CompletionCelebration.tscn")
 
 # Dyslexia-friendly chunked reading lessons with visual supports

@@ -559,11 +559,12 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_axc1p")
 text = "Reset Password"
 
 [node name="AdminButton" type="Button" parent="."]
+visible = false
 layout_mode = 0
 offset_left = 40.0
 offset_top = 737.0
-offset_right = 165.0
-offset_bottom = 782.0
+offset_right = 163.0
+offset_bottom = 790.0
 scale = Vector2(1.23082, 1.23082)
 mouse_default_cursor_shape = 2
 theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
@@ -571,7 +572,7 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
 theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("3_4bnr5")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 15
 theme_override_styles/focus = SubResource("StyleBoxEmpty_6oq4l")
 text = "Admin"
 icon = ExtResource("8_6oq4l")

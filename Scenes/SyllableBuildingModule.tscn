@@ -120,7 +120,6 @@ alignment = 1
 [node name="TitleLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold")
 theme_override_font_sizes/font_size = 36
@@ -153,7 +152,7 @@ alignment = 1
 
 [node name="ProgressLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular")
 theme_override_font_sizes/font_size = 16
 text = "Overall Progress: 0%"
@@ -252,7 +251,6 @@ horizontal_alignment = 1
 
 [node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/LettersCard/LettersContent"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold")
 theme_override_font_sizes/font_size = 20
@@ -262,7 +260,7 @@ horizontal_alignment = 1
 [node name="DescLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/LettersCard/LettersContent"]
 custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular")
 theme_override_font_sizes/font_size = 14
 text = "Trace A-Z and hear sounds"
@@ -271,7 +269,7 @@ autowrap_mode = 2
 
 [node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/LettersCard/LettersContent"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular")
 theme_override_font_sizes/font_size = 12
 text = "0% Complete"
@@ -333,7 +331,6 @@ horizontal_alignment = 1
 
 [node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard/SightWordsContent"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold")
 theme_override_font_sizes/font_size = 20
@@ -343,7 +340,7 @@ horizontal_alignment = 1
 [node name="DescLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard/SightWordsContent"]
 custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular")
 theme_override_font_sizes/font_size = 14
 text = "Common words like 'the', 'and'"
@@ -352,7 +349,7 @@ autowrap_mode = 2
 
 [node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard/SightWordsContent"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular")
 theme_override_font_sizes/font_size = 12
 text = "0% Complete"

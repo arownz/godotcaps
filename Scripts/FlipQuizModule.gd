@@ -2,14 +2,18 @@ extends Control
 
 var tts: TextToSpeech = null
 var module_progress: ModuleProgress = null
+var completion_celebration: CanvasLayer = null
+
+# Load completion celebration scene
+var completion_celebration_scene = preload("res://Scenes/CompletionCelebration.tscn")
 
 # Categories: Animals and Food flip quiz games
 var categories = {
 	"animals": {
 		"name": "Animals",
 		"firestore_key": "flip_quiz_animals",
-		"description": "Match animals through flip",
-		"scene_path": "res://Scenes/FlipQuizAnimal.tscn"
+		"description": "Match cats, dogs, birds and fish",
+		"scene_path": "res://Scenes/FlipQuizAnimals.tscn"
 	},
 	"food": {
 		"name": "Food",
@@ -21,7 +25,6 @@ var categories = {
 
 # Load dyslexia-friendly font
 var dyslexia_font: FontFile
-var completion_celebration_scene = preload("res://Scenes/CompletionCelebration.tscn")
 
 # Dyslexia-friendly quiz sets with visual associations
 var quiz_sets = {
@@ -99,12 +102,12 @@ func _init_module_progress():
 
 func _connect_hover_events():
 	# Connect back button hover
-	var back_btn = $MainContainer/HeaderPanel/HeaderContainer/BackButton
+	var back_btn = $MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton
 	if back_btn and not back_btn.mouse_entered.is_connected(_on_button_hover):
 		back_btn.mouse_entered.connect(_on_button_hover)
 			
 	# Connect guide button
-	var guide_btn = $ButtonHover/MainContainer/HeaderPanel/GuideButton
+	var guide_btn = $MainContainer/HeaderPanel/GuideButton
 	if guide_btn:
 		if not guide_btn.mouse_entered.is_connected(_on_button_hover):
 			guide_btn.mouse_entered.connect(_on_button_hover)
@@ -112,7 +115,7 @@ func _connect_hover_events():
 			guide_btn.pressed.connect(_on_guide_button_pressed)
 	
 	# Connect TTS settings button
-	var tts_btn = $ButtonHover/MainContainer/HeaderPanel/TTSSettingButton
+	var tts_btn = $MainContainer/HeaderPanel/TTSSettingButton
 	if tts_btn:
 		if not tts_btn.mouse_entered.is_connected(_on_button_hover):
 			tts_btn.mouse_entered.connect(_on_button_hover)
@@ -120,14 +123,14 @@ func _connect_hover_events():
 			tts_btn.pressed.connect(_on_tts_setting_button_pressed)
 			
 	# Connect category buttons
-	var animals_btn = $ButtonHover/MainContainer/ScrollContainer/CategoriesGrid/AnimalsCard/AnimalsContent/EnterButton
+	var animals_btn = $MainContainer/ScrollContainer/CategoriesGrid/AnimalsCard/AnimalsContent/EnterButton
 	if animals_btn:
 		if not animals_btn.mouse_entered.is_connected(_on_button_hover):
 			animals_btn.mouse_entered.connect(_on_button_hover)
 		if not animals_btn.pressed.is_connected(_on_animals_button_pressed):
 			animals_btn.pressed.connect(_on_animals_button_pressed)
 
-	var food_btn = $ButtonHover/MainContainer/ScrollContainer/CategoriesGrid/FoodCard/FoodContent/EnterButton
+	var food_btn = $MainContainer/ScrollContainer/CategoriesGrid/FoodCard/FoodContent/EnterButton
 	if food_btn:
 		if not food_btn.mouse_entered.is_connected(_on_button_hover):
 			food_btn.mouse_entered.connect(_on_button_hover)
@@ -137,8 +140,7 @@ func _connect_hover_events():
 func _style_category_cards():
 	# Style icon containers with white background and black borders
 	var icon_containers = [
-		$ButtonHover/MainContainer/ScrollContainer/CategoriesGrid/AnimalsCard/AnimalsContent/IconContainer,
-		$ButtonHover/MainContainer/ScrollContainer/CategoriesGrid/FoodCard/FoodContent/IconContainer
+		$MainContainer/ScrollContainer/CategoriesGrid/AnimalsCard/AnimalsContent/IconContainer,
 	]
 	
 	for icon_container in icon_containers:
@@ -211,7 +213,7 @@ func _on_button_hover():
 func _on_guide_button_pressed():
 	$ButtonClick.play()
 	if tts:
-		var guide_text = "Welcome to Flip Quiz Learning! Here you can practice memory matching games with two fun categories. Choose 'Animals' to match cats, dogs, birds, and fish with their words. Choose 'Food' to match apples, bananas, bread, and milk with their words. Both activities will help improve your memory and reading skills!"
+		var guide_text = "Welcome to Flip Quiz Learning! Here you can practice memory matching games with two fun categories. Choose 'Animals' to match animals. Choose 'Food' to match apples, bananas, bread, and milk with their words. Both activities will help improve your memory and reading skills!"
 		
 		# Simplified: just TTS without captions
 		_speak_text_simple(guide_text)

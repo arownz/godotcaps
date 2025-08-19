@@ -21,7 +21,6 @@ var module_colors = {
 	"read_aloud": Color(0.1, 0.4, 0.8, 1), # Blue for read aloud
 	"chunked_reading": Color(0.6, 0.2, 0.8, 1), # Purple for chunked reading
 	"syllable_building": Color(0.8, 0.2, 0.4, 1), # Pink for syllable building
-	"speech": Color(0.4, 0.7, 0.9, 1) # Light blue for speech
 }
 
 func _ready():
@@ -99,9 +98,9 @@ func _update_content(module_key: String = "phonics"):
 	match completion_type:
 		CompletionType.LETTER:
 			if title_label:
-				title_label.text = "Excellent Work!"
+				title_label.text = "Nice tracing!"
 			if message_label:
-				message_label.text = "You successfully traced the letter '" + completed_item.to_upper() + "'!\nGreat job practicing your letter formation."
+				message_label.text = "You traced '" + completed_item.to_upper() + "'."
 			
 			# Update progress for letters (26 total)
 			var letters_completed = progress_data.get("letters_completed", []).size()
@@ -115,7 +114,7 @@ func _update_content(module_key: String = "phonics"):
 			
 			# Show appropriate buttons
 			if try_again_btn:
-				try_again_btn.text = "Try Again"
+				try_again_btn.text = "Again"
 				try_again_btn.visible = true
 			if next_btn:
 				next_btn.text = "Next Letter"
@@ -127,9 +126,9 @@ func _update_content(module_key: String = "phonics"):
 		
 		CompletionType.SIGHT_WORD:
 			if title_label:
-				title_label.text = "Fantastic!"
+				title_label.text = "Well done!"
 			if message_label:
-				message_label.text = "You successfully wrote the sight word '" + completed_item.to_lower() + "'!\nThis word will help you read faster."
+				message_label.text = "You wrote '" + completed_item.to_lower() + "'."
 			
 			# Update progress for sight words (20 total)
 			var words_completed = progress_data.get("sight_words_completed", []).size()
@@ -143,7 +142,7 @@ func _update_content(module_key: String = "phonics"):
 			
 			# Show appropriate buttons
 			if try_again_btn:
-				try_again_btn.text = "Try Again"
+				try_again_btn.text = "Again"
 				try_again_btn.visible = true
 			if next_btn:
 				next_btn.text = "Next Word"
@@ -155,9 +154,9 @@ func _update_content(module_key: String = "phonics"):
 		
 		CompletionType.CATEGORY_COMPLETE:
 			if title_label:
-				title_label.text = "Amazing Achievement!"
+				title_label.text = "All done!"
 			if message_label:
-				message_label.text = "You completed all " + completed_item + "!\nYou're becoming a great reader and writer."
+				message_label.text = "You finished all " + completed_item + "."
 			
 			# Show overall phonics progress
 			var overall_progress = progress_data.get("progress", 0)

@@ -82,6 +82,16 @@ func _safe_get_modules_dict(doc) -> Dictionary:
 			modules[module_key] = {"completed": false, "progress": 0}
 			for field_key in module_defaults[module_key].keys():
 				modules[module_key][field_key] = module_defaults[module_key][field_key]
+
+	# Recalculate aggregated phonics progress (letters + sight words) for consistency
+	if modules.has("phonics") and typeof(modules["phonics"]) == TYPE_DICTIONARY:
+		var letters_completed = modules["phonics"].get("letters_completed", [])
+		var sight_words_completed = modules["phonics"].get("sight_words_completed", [])
+		if typeof(letters_completed) == TYPE_ARRAY and typeof(sight_words_completed) == TYPE_ARRAY:
+			var total_completed = letters_completed.size() + sight_words_completed.size()
+			var progress_percent = int((float(total_completed) / 46.0) * 100.0)
+			modules["phonics"]["progress"] = progress_percent
+			modules["phonics"]["completed"] = progress_percent >= 100
 	
 	return modules
 

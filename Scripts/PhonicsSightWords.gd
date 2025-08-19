@@ -9,6 +9,10 @@ var completion_celebration: CanvasLayer = null
 var current_target: String = "the"
 var sight_words := ["the", "and", "to", "a", "of", "in", "is", "you", "that", "it", "he", "was", "for", "on", "are", "as", "with", "his", "they", "I"]
 var word_index := 0
+var session_completed_words: Array = [] # Fallback local tracking when Firebase/module_progress unavailable
+var fade_trace_on_success := true
+var sight_focus_mode := false
+var recent_word_errors: Array = []
 
 func _speak_text_simple(text: String):
 	"""Simple TTS without captions"""
@@ -41,16 +45,6 @@ func _ready():
 	
 	# Load progress
 	call_deferred("_load_progress")
-	
-	# Initialize notification popup
-	_init_notification_popup()
-
-func _init_notification_popup():
-	notification_popup = $NotificationPopup
-	if notification_popup:
-		print("PhonicsSightWords: Notification popup initialized")
-	else:
-		print("PhonicsSightWords: Warning - NotificationPopup not found")
 
 func _init_tts():
 	tts = TextToSpeech.new()
@@ -65,7 +59,7 @@ func _init_module_progress():
 		print("PhonicsSightWords: Firebase not available; progress won't sync")
 
 func _connect_hover_events():
-	var back_btn = $MainContainer/HeaderPanel/HeaderContainer/BackButton
+	var back_btn = $MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton
 	if back_btn and not back_btn.mouse_entered.is_connected(_on_button_hover):
 		back_btn.mouse_entered.connect(_on_button_hover)
 	
@@ -84,6 +78,22 @@ func _connect_hover_events():
 			tts_btn.mouse_entered.connect(_on_button_hover)
 		if not tts_btn.pressed.is_connected(_on_tts_setting_button_pressed):
 			tts_btn.pressed.connect(_on_tts_setting_button_pressed)
+	
+	# Connect Previous button
+	var previous_btn = $MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/PreviousButton
+	if previous_btn:
+		if not previous_btn.mouse_entered.is_connected(_on_button_hover):
+			previous_btn.mouse_entered.connect(_on_button_hover)
+		if not previous_btn.pressed.is_connected(_on_previous_button_pressed):
+			previous_btn.pressed.connect(_on_previous_button_pressed)
+	
+	# Connect Next button
+	var next_btn = $MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/NextButton
+	if next_btn:
+		if not next_btn.mouse_entered.is_connected(_on_button_hover):
+			next_btn.mouse_entered.connect(_on_button_hover)
+		if not next_btn.pressed.is_connected(_on_NextButton_pressed):
+			next_btn.pressed.connect(_on_NextButton_pressed)
 
 func _update_target_display():
 	var target_label = $MainContainer/ContentContainer/InstructionPanel/InstructionContainer/TargetLabel
@@ -94,6 +104,22 @@ func _update_target_display():
 	var trace_overlay = $MainContainer/ContentContainer/WhiteboardPanel/WhiteboardContainer/TraceOverlay
 	if trace_overlay:
 		trace_overlay.text = current_target
+	
+	# Update button visibility
+	_update_button_visibility()
+	# Reset overlay opacity
+	var trace_overlay_node = $MainContainer/ContentContainer/WhiteboardPanel/WhiteboardContainer/TraceOverlay
+	if trace_overlay_node:
+		trace_overlay_node.modulate.a = 1.0
+
+func _update_button_visibility():
+	var previous_btn = $MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/PreviousButton
+	var next_btn = $MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/NextButton
+	
+	if previous_btn:
+		previous_btn.visible = (word_index > 0)
+	if next_btn:
+		next_btn.visible = (word_index < sight_words.size() - 1)
 
 func _load_whiteboard():
 	var whiteboard_interface = $MainContainer/ContentContainer/WhiteboardPanel/WhiteboardContainer/WhiteboardInterface
@@ -112,12 +138,20 @@ func _load_progress():
 		return
 		
 	var firebase_modules = await module_progress.fetch_modules()
-	
+
 	if firebase_modules.has("phonics_sight_words"):
 		var fm = firebase_modules["phonics_sight_words"]
 		if typeof(fm) == TYPE_DICTIONARY:
 			var progress_percent = float(fm.get("progress", 0))
 			_update_progress_ui(progress_percent)
+	elif firebase_modules.has("phonics"):
+		var phonics = firebase_modules["phonics"]
+		if typeof(phonics) == TYPE_DICTIONARY:
+			var words_completed = 0
+			if phonics.has("sight_words_completed") and typeof(phonics["sight_words_completed"]) == TYPE_ARRAY:
+				words_completed = phonics["sight_words_completed"].size()
+			var percent = float(words_completed) / 20.0 * 100.0
+			_update_progress_ui(percent)
 
 func _update_progress_ui(percent: float):
 	var progress_label = $MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressLabel
@@ -173,9 +207,13 @@ func _spell_out_word(word: String) -> String:
 			spelled += " - "
 	return spelled
 
-func _on_NextTargetButton_pressed():
+func _on_NextButton_pressed():
 	$ButtonClick.play()
 	_advance_target()
+
+func _on_previous_button_pressed():
+	$ButtonClick.play()
+	_previous_target()
 
 func _on_guide_button_pressed():
 	$ButtonClick.play()
@@ -248,6 +286,15 @@ func _advance_target():
 	if whiteboard_instance and whiteboard_instance.has_method("_on_clear_button_pressed"):
 		whiteboard_instance._on_clear_button_pressed()
 
+func _previous_target():
+	word_index = (word_index - 1 + sight_words.size()) % sight_words.size()
+	current_target = sight_words[word_index]
+	_update_target_display()
+	
+	# Clear whiteboard for previous target
+	if whiteboard_instance and whiteboard_instance.has_method("_on_clear_button_pressed"):
+		whiteboard_instance._on_clear_button_pressed()
+
 func _on_whiteboard_result(text_result: String):
 	print("PhonicsSightWords: Whiteboard result -> ", text_result)
 	
@@ -263,24 +310,38 @@ func _on_whiteboard_result(text_result: String):
 	elif _calculate_word_similarity(recognized_text, target_word) >= 0.7:
 		is_correct = true # Accept close matches for dyslexic users
 	
-	if is_correct and module_progress:
+	if is_correct:
 		print("PhonicsSightWords: Correct sight word recognized - ", target_word)
+		if fade_trace_on_success:
+			var trace_overlay_node2 = $MainContainer/ContentContainer/WhiteboardPanel/WhiteboardContainer/TraceOverlay
+			if trace_overlay_node2:
+				var tween = create_tween()
+				tween.tween_property(trace_overlay_node2, "modulate:a", 0.15, 0.6)
+		# Track locally in session
+		if not session_completed_words.has(target_word):
+			session_completed_words.append(target_word)
 		
-		# Update Firebase progress
-		var success = await module_progress.set_phonics_sight_word_completed(target_word)
+		var progress_data: Dictionary = {"sight_words_completed": session_completed_words, "percentage": float(session_completed_words.size()) / 20.0 * 100.0}
 		
-		if success:
-			# Get updated progress data
-			var phonics_progress = await module_progress.get_phonics_progress()
-			
-			# Show completion celebration
-			_show_completion_celebration(target_word, phonics_progress)
+		if module_progress:
+			var save_success = await module_progress.set_phonics_sight_word_completed(target_word)
+			if save_success:
+				var phonics_progress = await module_progress.get_phonics_progress()
+				_update_progress_ui(phonics_progress.get("percentage", 0.0))
+				progress_data = phonics_progress
+			else:
+				print("PhonicsSightWords: Warning - Firebase update failed, using session progress fallback")
 		else:
-			print("PhonicsSightWords: Failed to update progress in Firebase")
+			print("PhonicsSightWords: Firebase/module_progress not available, using local session progress")
+		
+		_show_completion_celebration(target_word, progress_data)
 	elif not text_result.begins_with("recognition_error"):
 		print("PhonicsSightWords: Sight word not recognized correctly. Expected: ", target_word, ", Got: ", recognized_text)
 		_show_encouragement_message(recognized_text, target_word)
-		module_progress.increment_progress("phonics_sight_words", 5)
+		if not recent_word_errors.has(target_word):
+			recent_word_errors.append(target_word)
+			if recent_word_errors.size() > 5:
+				recent_word_errors.pop_front()
 
 func _on_whiteboard_cancelled():
 	print("PhonicsSightWords: Whiteboard cancelled")
@@ -356,20 +417,57 @@ func _show_encouragement_message(recognized: String, expected: String):
 			notification_popup = popup_scene.instantiate()
 			add_child(notification_popup)
 	
+	# Disconnect any existing connections and connect for encouragement
+	if notification_popup.has_signal("button_pressed"):
+		# Disconnect all existing connections
+		var connections = notification_popup.get_signal_connection_list("button_pressed")
+		for connection in connections:
+			notification_popup.disconnect("button_pressed", connection["callable"])
+		# Connect encouragement handler
+		notification_popup.connect("button_pressed", Callable(self, "_on_encouragement_continue"))
+	
 	if notification_popup and notification_popup.has_method("show_notification"):
 		var message = "Good effort! I see you wrote '" + recognized + "'.\n\nLet's practice the sight word '" + expected + "' again.\nRemember, sight words are special words we see often in reading."
 		notification_popup.show_notification("Keep Trying!", message, "Practice Again")
+
+func _on_encouragement_continue():
+	print("PhonicsSightWords: Encouragement popup button pressed - remain on current word for more practice")
 
 func _on_celebration_try_again():
 	"""Handle try again button from celebration popup"""
 	print("PhonicsSightWords: User chose to try again")
 	# Stay on current word for more practice
+	if whiteboard_instance and whiteboard_instance.has_method("reset_for_retry"):
+		whiteboard_instance.reset_for_retry()
+		print("PhonicsSightWords: Whiteboard reset after Try Again")
 
 func _on_celebration_next():
 	"""Handle next button from celebration popup"""
 	print("PhonicsSightWords: User chose to move to next word")
-	_advance_target()
+	if recent_word_errors.size() > 0 and randi() % 4 == 0:
+		var revisit = recent_word_errors[randi() % recent_word_errors.size()]
+		word_index = sight_words.find(revisit)
+		current_target = revisit
+		_update_target_display()
+		print("PhonicsSightWords: Adaptive revisit of word ", revisit)
+	else:
+		_advance_target()
 
 func _on_celebration_closed():
 	"""Handle celebration popup closed"""
 	print("PhonicsSightWords: Celebration popup closed")
+	if whiteboard_instance and whiteboard_instance.has_method("reset_for_retry"):
+		whiteboard_instance.reset_for_retry()
+
+func _toggle_focus_mode():
+	sight_focus_mode = !sight_focus_mode
+	var dim_targets = [
+		$MainContainer/ContentContainer/InstructionPanel,
+		$MainContainer/HeaderPanel
+	]
+	for node in dim_targets:
+		if node:
+			var tween = create_tween()
+			var target_alpha = 0.35 if sight_focus_mode else 1.0
+			tween.tween_property(node, "modulate:a", target_alpha, 0.4)
+	print("PhonicsSightWords: Focus mode = ", sight_focus_mode)
