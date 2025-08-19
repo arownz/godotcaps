@@ -253,7 +253,7 @@ func update_ui() -> void:
 		
 		# Create and apply the ui_2.png style
 		var style = StyleBoxTexture.new()
-		style.texture = load("res://gui/Update/UI/ui_2.png")
+		style.texture = load("res://gui/Update/UI/ui.png")
 		style.content_margin_left = 8
 		style.content_margin_right = 8
 		style.content_margin_top = 6

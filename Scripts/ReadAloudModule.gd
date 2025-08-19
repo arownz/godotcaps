@@ -32,12 +32,20 @@ var current_passage = null
 var current_word_index = 0
 var reading_speed = 150 # WPM, adjustable for dyslexic users
 var is_reading = false
+var reading_timer: Timer
+var words: PackedStringArray = []
+var reading_finished = false
 
 func _ready():
 	print("ReadAloudModule: Interactive Read-Aloud module loaded")
 	module_progress = ModuleProgress.new()
 	_setup_passages()
 	_connect_signals()
+	# Timer for word highlighting
+	reading_timer = Timer.new()
+	reading_timer.one_shot = true
+	add_child(reading_timer)
+	reading_timer.timeout.connect(_on_reading_tick)
 
 func _connect_signals():
 	"""Connect all UI signals"""
@@ -63,7 +71,7 @@ func _connect_signals():
 	if play_button:
 		play_button.pressed.connect(_on_play_button_pressed)
 		play_button.mouse_entered.connect(_on_button_hover)
-	
+
 	var pause_button = $MainContainer/ScrollContainer/ContentContainer/ReadingCard/ReadingContainer/ReadingButtonsContainer/PauseButton
 	if pause_button:
 		pause_button.pressed.connect(_on_pause_button_pressed)
@@ -73,7 +81,6 @@ func _connect_signals():
 	if back_to_menu:
 		back_to_menu.pressed.connect(_on_back_to_menu_pressed)
 		back_to_menu.mouse_entered.connect(_on_button_hover)
-	
 	# Speed slider
 	var speed_slider = $MainContainer/ScrollContainer/ContentContainer/ReadingCard/ReadingContainer/ControlsContainer/SpeedSlider
 	if speed_slider:
@@ -85,7 +92,6 @@ func _setup_passages():
 
 func _on_button_hover():
 	$ButtonHover.play()
-
 func _on_back_button_pressed():
 	print("ReadAloudModule: Returning to module selection")
 	get_tree().change_scene_to_file("res://Scenes/ModuleScene.tscn")
@@ -155,12 +161,45 @@ func _start_reading_animation():
 	is_reading = true
 	current_word_index = 0
 	print("ReadAloudModule: Starting reading animation at ", reading_speed, " WPM")
-	
-	# Simple word-by-word highlighting simulation
+	reading_finished = false
+	words = []
 	var reading_text = $MainContainer/ScrollContainer/ContentContainer/ReadingCard/ReadingContainer/ReadingArea/ReadingText
 	if reading_text and current_passage:
-		# For demo, just show that reading started
-		reading_text.text = "[color=blue]" + current_passage.text + "[/color]"
+		words = current_passage.text.split(" ")
+		_update_highlight(reading_text)
+		_schedule_next_tick()
+
+func _schedule_next_tick():
+	if not is_reading:
+		return
+	var wpm = max(reading_speed, 60)
+	var seconds_per_word = 60.0 / float(wpm)
+	reading_timer.start(seconds_per_word)
+
+func _on_reading_tick():
+	if not is_reading:
+		return
+	current_word_index += 1
+	var reading_text = $MainContainer/ScrollContainer/ContentContainer/ReadingCard/ReadingContainer/ReadingArea/ReadingText
+	if not reading_text:
+		return
+	if current_word_index < words.size():
+		_update_highlight(reading_text)
+		_schedule_next_tick()
+	else:
+		is_reading = false
+		reading_finished = true
+		await _simulate_passage_completion()
+		_show_completion_celebration()
+
+func _update_highlight(reading_text: RichTextLabel):
+	var builder: Array[String] = []
+	for i in range(words.size()):
+		if i == current_word_index:
+			builder.append("[color=blue]" + words[i] + "[/color]")
+		else:
+			builder.append(words[i])
+	reading_text.text = " ".join(builder)
 
 func _pause_reading_animation():
 	"""Pause the reading animation"""
@@ -184,6 +223,7 @@ func _simulate_passage_completion():
 	
 	if success:
 		print("ReadAloudModule: Passage completed successfully!")
+	return success
 
 func _show_completion_celebration():
 	"""Show completion celebration for finished passage"""

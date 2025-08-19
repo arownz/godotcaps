@@ -291,7 +291,7 @@ func _check_match():
 		matched_pairs += 1
 		print("FlipQuizAnimals: Match found! ", data1.animal.name)
 		
-		# Play animal sound
+		# Play animal sound (animals category uniquely uses SFX)
 		var sound_node = get_node_or_null(data1.animal.sound_node)
 		if sound_node:
 			sound_node.play()
@@ -351,11 +351,11 @@ func _complete_game():
 	"""Handle game completion with celebration"""
 	print("FlipQuizAnimals: Game completed!")
 	
-	# Update progress in Firebase
+	# Update progress in Firebase using generic set completion
 	if module_progress:
-		var success = await module_progress.set_flip_quiz_animals_completed()
+		var success = await module_progress.set_flip_quiz_set_completed("Animals")
 		if success:
-			print("FlipQuizAnimals: Progress saved to Firebase")
+			print("FlipQuizAnimals: Progress saved to Firebase (Animals set)")
 	
 	# Show completion celebration
 	_show_completion_celebration()
@@ -372,7 +372,7 @@ func _show_completion_celebration():
 		"percentage": 100.0
 	}
 	
-	celebration.show_completion("flip_quiz_animals", "Animal Memory Game", progress_data, "animals")
+	celebration.show_completion("flip_quiz", "Animal Memory Game", progress_data, "animals")
 	
 	# Connect celebration signals
 	if celebration.has_signal("try_again_pressed"):
@@ -390,22 +390,24 @@ func _on_celebration_continue():
 
 func _update_score_display():
 	"""Update score display with encouraging messages"""
-	var score_label = $MainContainer/ContentContainer/GamePanel/GameContainer/ScoreContainer/ScoreLabel
-	var attempts_label = $MainContainer/ContentContainer/GamePanel/GameContainer/ScoreContainer/AttemptsLabel
-	var encouragement_label = $MainContainer/ContentContainer/GamePanel/GameContainer/ScoreContainer/EncouragementLabel
-	
-	score_label.text = "Matches: " + str(matched_pairs) + "/" + str(selected_animals.size())
-	attempts_label.text = "Attempts: " + str(attempts)
-	
-	# Show encouraging messages based on progress
-	if matched_pairs == 0:
-		encouragement_label.text = "Take your time!"
-	elif matched_pairs < float(selected_animals.size()) / 2.0:
-		encouragement_label.text = "Great start!"
-	elif matched_pairs < selected_animals.size():
-		encouragement_label.text = "Almost there!"
-	else:
-		encouragement_label.text = "Amazing work!"
+	var score_label = get_node_or_null("MainContainer/ContentContainer/GamePanel/GameContainer/ScoreContainer/ScoreLabel")
+	var attempts_label = get_node_or_null("MainContainer/ContentContainer/GamePanel/GameContainer/ScoreContainer/AttemptsLabel")
+	var encouragement_label = get_node_or_null("MainContainer/ContentContainer/GamePanel/GameContainer/ScoreContainer/EncouragementLabel")
+
+	if score_label:
+		score_label.text = "Matches: " + str(matched_pairs) + "/" + str(selected_animals.size())
+	if attempts_label:
+		attempts_label.text = "Attempts: " + str(attempts)
+
+	if encouragement_label:
+		if matched_pairs == 0:
+			encouragement_label.text = "Take your time!"
+		elif matched_pairs < float(selected_animals.size()) / 2.0:
+			encouragement_label.text = "Great start!"
+		elif matched_pairs < selected_animals.size():
+			encouragement_label.text = "Almost there!"
+		else:
+			encouragement_label.text = "Amazing work!"
 
 func _load_progress():
 	"""Load progress from Firebase"""
@@ -417,14 +419,16 @@ func _load_progress():
 		_update_progress_display(firebase_modules)
 
 func _update_progress_display(firebase_modules: Dictionary):
-	"""Update progress display"""
+	"""Update progress display using unified flip_quiz module"""
 	var progress_percent = 0.0
-	
-	# Get flip quiz animals data
-	if firebase_modules.has("flip_quiz_animals"):
-		var animals_data = firebase_modules["flip_quiz_animals"]
-		if typeof(animals_data) == TYPE_DICTIONARY:
-			progress_percent = float(animals_data.get("progress", 0))
+	if firebase_modules.has("flip_quiz"):
+		var fq = firebase_modules["flip_quiz"]
+		if typeof(fq) == TYPE_DICTIONARY:
+			var sets_completed = fq.get("sets_completed", [])
+			# Animals set counts as 1 of the 10 total
+			if sets_completed.has("Animals"):
+				# Show partial progress relative to the Animals game itself
+				progress_percent = 100.0
 	
 	# Update progress display
 	var progress_label = $MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressLabel
@@ -441,23 +445,23 @@ func _on_button_hover():
 func _on_guide_button_pressed():
 	$ButtonClick.play()
 	if tts:
-		var guide_text = "Welcome to the Animal Memory Game! This is a fun flip card game where you match animals with their words. Click on cards to flip them over and find pairs. You can hear animal sounds when you make a match! Use the Previous and Next buttons to review different animals, and click Hear Animal to listen to the current animal's sound. Take your time and have fun learning!"
+		var guide_text = "Welcome to the Animal Memory Game! This is a flip card game where you match animals with their words. Flip two cards to find a pair. Animal sounds will help you remember. Take your time and have fun learning!"
 		_speak_text_simple(guide_text)
 
 func _on_tts_setting_button_pressed():
 	$ButtonClick.play()
-	print("PhonicsLetters: Looking for TTSSettingsPopup (robust lookup)...")
+	print("FlipQuizAnimals: Looking for TTSSettingsPopup (robust lookup)...")
 	var tts_popup = get_node_or_null("TTSSettingsPopup")
 	if not tts_popup:
 		tts_popup = find_child("TTSSettingsPopup", true, false)
 	if not tts_popup:
-		print("PhonicsLetters: TTSSettingsPopup not found - instantiating dynamically")
+		print("FlipQuizAnimals: TTSSettingsPopup not found - instantiating dynamically")
 		var popup_scene: PackedScene = load("res://Scenes/TTSSettingsPopup.tscn")
 		if popup_scene:
 			tts_popup = popup_scene.instantiate()
 			tts_popup.name = "TTSSettingsPopup"
 			add_child(tts_popup)
-	print("PhonicsLetters: TTSSettingsPopup final status:", tts_popup != null)
+	print("FlipQuizAnimals: TTSSettingsPopup final status:", tts_popup != null)
 	if tts_popup:
 		# Setup popup with current settings
 		var current_voice = SettingsManager.get_setting("accessibility", "tts_voice_id")
@@ -481,9 +485,9 @@ func _on_tts_setting_button_pressed():
 			tts_popup.settings_saved.connect(_on_tts_settings_saved)
 		
 		tts_popup.visible = true
-		print("PhonicsLetters: TTS Settings popup opened")
+		print("FlipQuizAnimals: TTS Settings popup opened")
 	else:
-		print("PhonicsLetters: Warning - TTSSettingsPopup still not found after dynamic attempt")
+		print("FlipQuizAnimals: Warning - TTSSettingsPopup still not found after dynamic attempt")
 
 func _on_tts_settings_saved(voice_id: String, rate: float):
 	"""Handle TTS settings save"""

@@ -624,23 +624,32 @@ func _create_user_document(collection, user_id: String, auth):
 		"modules": {
 			"phonics": {
 				"completed": false,
-				"progress": 0
+				"progress": 0,
+				"letters_completed": [],
+				"sight_words_completed": []
 			},
 			"flip_quiz": {
 				"completed": false,
-				"progress": 0
+				"progress": 0,
+				"sets_completed": []
 			},
 			"read_aloud": {
 				"completed": false,
-				"progress": 0
+				"progress": 0,
+				"passages_completed": [],
+				"total_comprehension": 0
 			},
 			"chunked_reading": {
 				"completed": false,
-				"progress": 0
+				"progress": 0,
+				"lessons_completed": [],
+				"avg_accuracy": 0.0
 			},
 			"syllable_building": {
 				"completed": false,
-				"progress": 0
+				"progress": 0,
+				"activities_completed": [],
+				"syllable_types_mastered": []
 			}
 		},
 		"stage_times": {
@@ -649,8 +658,7 @@ func _create_user_document(collection, user_id: String, auth):
 			"dungeon_3": {}
 		}
 	}
-	
-	# Create the document using add method (which creates if not exists)
+
 	var task = await collection.add(user_id, user_doc)
 	if task:
 		print("DEBUG: User document creation task initiated")

@@ -8,14 +8,14 @@
 [ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="7_click"]
 [ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="8_hover"]
 [ext_resource type="Texture2D" uid="uid://qmmpx3uab5h7" path="res://gui/Update/UI/next button.png" id="9_next"]
-[ext_resource type="AudioStream" uid="uid://bsr5nqxwd3i1u" path="res://audio/animals_sfx/animals-cat.mp3" id="20_cat_sfx"]
-[ext_resource type="AudioStream" uid="uid://cbkuckl7fee0q" path="res://audio/animals_sfx/animals-duck-64800.mp3" id="21_duck_sfx"]
-[ext_resource type="AudioStream" uid="uid://dskj8s25iwamy" path="res://audio/animals_sfx/animals-elephant.mp3" id="22_elephant_sfx"]
-[ext_resource type="AudioStream" uid="uid://cgquktsvhpnvg" path="res://audio/animals_sfx/animals-fox.mp3" id="23_fox_sfx"]
-[ext_resource type="AudioStream" uid="uid://cgbfr05b5w25p" path="res://audio/animals_sfx/animals-frog.mp3" id="24_frog_sfx"]
-[ext_resource type="AudioStream" uid="uid://bftdntecdndop" path="res://audio/animals_sfx/animals-giraffe.mp3" id="25_giraffe_sfx"]
-[ext_resource type="AudioStream" uid="uid://dauwfj5246m5y" path="res://audio/animals_sfx/animals-monkey.mp3" id="26_monkey_sfx"]
-[ext_resource type="AudioStream" uid="uid://d64cs0mryqcp" path="res://audio/animals_sfx/animals-racoon.mp3" id="27_racoon_sfx"]
+[ext_resource type="AudioStream" uid="uid://eiurhhollhgj" path="res://audio/animals_sfx/animals-duck.mp3" id="10_dgjvx"]
+[ext_resource type="AudioStream" uid="uid://h4e5utexiraj" path="res://audio/animals_sfx/animals-cat.mp3" id="20_cat_sfx"]
+[ext_resource type="AudioStream" uid="uid://do5bxrcxevn15" path="res://audio/animals_sfx/animals-elephant.mp3" id="22_elephant_sfx"]
+[ext_resource type="AudioStream" uid="uid://cmtuoeo7abddf" path="res://audio/animals_sfx/animals-fox.mp3" id="23_fox_sfx"]
+[ext_resource type="AudioStream" uid="uid://bh5lrcn6rhql3" path="res://audio/animals_sfx/animals-frog.mp3" id="24_frog_sfx"]
+[ext_resource type="AudioStream" uid="uid://ca5c0yol4i0hf" path="res://audio/animals_sfx/animals-giraffe.mp3" id="25_giraffe_sfx"]
+[ext_resource type="AudioStream" uid="uid://ds7ggfwqanrae" path="res://audio/animals_sfx/animals-monkey.mp3" id="26_monkey_sfx"]
+[ext_resource type="AudioStream" uid="uid://c6nlsy3p3bh6s" path="res://audio/animals_sfx/animals-racoon.mp3" id="27_racoon_sfx"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_header"]
 bg_color = Color(0.901961, 0.301961, 0.301961, 1)
@@ -385,7 +385,7 @@ stream = ExtResource("8_hover")
 stream = ExtResource("20_cat_sfx")
 
 [node name="duck_sfx" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("21_duck_sfx")
+stream = ExtResource("10_dgjvx")
 
 [node name="elephant_sfx" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("22_elephant_sfx")

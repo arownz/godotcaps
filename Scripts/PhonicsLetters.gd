@@ -203,7 +203,7 @@ func _on_HearButton_pressed():
 func _on_guide_button_pressed():
 	$ButtonClick.play()
 	if tts:
-		var guide_text = "Welcome to Letters Practice! Here you will learn to trace letters from A to Z. Look at the letter shown above, then use your finger or mouse to trace it carefully on the whiteboard below. Listen to the letter sound by pressing 'Hear Letter', and when you're ready to move on, press 'Next Letter'."
+		var guide_text = "Welcome to Letters Practice! Here you will learn to trace letters from A to Z. Look at the letter shown above, then use your finger or mouse to trace it carefully on the whiteboard below. Listen to the letter sound by pressing 'Hear Letter', and when you're ready to move on, press 'Next'."
 		_speak_text_simple(guide_text)
 
 func _on_tts_setting_button_pressed():

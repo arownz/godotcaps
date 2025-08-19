@@ -45,8 +45,8 @@ func show_completion(type: CompletionType, item: String, progress: Dictionary = 
 	# Show the popup
 	show()
 	
-	# Play success sound
-	$SuccessSound.play()
+	# Play success sound safely
+	_play_sound($SuccessSound, "success")
 	
 	# Animated entrance with celebration
 	var popup_container = $PopupContainer
@@ -69,8 +69,15 @@ func show_completion(type: CompletionType, item: String, progress: Dictionary = 
 		tween.tween_property(popup_container, "scale", Vector2(1.0, 1.0), 0.1).set_ease(Tween.EASE_IN).set_delay(0.6)
 	
 	# Play celebration sound after a brief delay
-	await get_tree().create_timer(0.3).timeout
-	$CelebrationSound.play()
+	if $CelebrationSound and $CelebrationSound.stream:
+		await get_tree().create_timer(0.3).timeout
+		_play_sound($CelebrationSound, "celebration")
+
+func _play_sound(player: Node, label: String):
+	if player and player is AudioStreamPlayer and player.stream:
+		player.play()
+	else:
+		print("CompletionCelebration: Missing/invalid " + label + " sound stream (skipping play)")
 
 func _update_content(module_key: String = "phonics"):
 	"""Update popup content based on completion type with dyslexia-friendly messaging"""
@@ -117,7 +124,7 @@ func _update_content(module_key: String = "phonics"):
 				try_again_btn.text = "Again"
 				try_again_btn.visible = true
 			if next_btn:
-				next_btn.text = "Next Letter"
+				next_btn.text = "Next"
 				# Hide next button if all letters are complete
 				if letters_completed >= total_letters:
 					next_btn.visible = false

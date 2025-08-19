@@ -12,17 +12,17 @@ var reading_lessons = [
 		"chunks": [
 			{
 				"text": "Lions are big cats.",
-				"image": "🦁",
+				"image": "lion",
 				"key_words": ["lions", "big", "cats"]
 			},
 			{
 				"text": "They live in groups.",
-				"image": "👥",
+				"image": "group",
 				"key_words": ["live", "groups"]
 			},
 			{
 				"text": "Lions hunt for food.",
-				"image": "🍖",
+				"image": "food",
 				"key_words": ["hunt", "food"]
 			}
 		],
@@ -37,17 +37,17 @@ var reading_lessons = [
 		"chunks": [
 			{
 				"text": "The sun makes it warm.",
-				"image": "☀️",
+				"image": "sun",
 				"key_words": ["sun", "warm"]
 			},
 			{
 				"text": "Rain makes puddles.",
-				"image": "🌧️",
+				"image": "rain",
 				"key_words": ["rain", "puddles"]
 			},
 			{
 				"text": "Snow is cold and white.",
-				"image": "❄️",
+				"image": "snow",
 				"key_words": ["snow", "cold", "white"]
 			}
 		],
@@ -192,7 +192,8 @@ func _on_next_chunk_pressed():
 		_update_chunk_display()
 	else:
 		# Lesson completed
-		_simulate_lesson_completion()
+		await _simulate_lesson_completion()
+		_show_completion_celebration()
 
 func _on_back_to_lessons_pressed():
 	"""Return to lesson selection"""
@@ -237,6 +238,7 @@ func _simulate_lesson_completion():
 	
 	if success:
 		print("ChunkedReadingModule: Lesson completed successfully!")
+	return success
 
 func _show_completion_celebration():
 	"""Show completion celebration for finished lesson"""

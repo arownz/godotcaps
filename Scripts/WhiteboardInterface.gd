@@ -599,11 +599,6 @@ func test_javascript_bridge():
 		# Test debug log
 		debug_log("Whiteboard interface initialized")
 		
-		# Test Vision API
-		JavaScriptBridge.eval("window.testVisionAPI()")
-	else:
-		print("Not running on web platform, skipping JavaScript bridge test")
-
 # Consistent debug logging helper
 func debug_log(message):
 	print(message)

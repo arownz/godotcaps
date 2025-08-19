@@ -192,10 +192,10 @@ func _start_syllable_activity():
 	"""Start syllable building activity with explicit instruction"""
 	var dialog = AcceptDialog.new()
 	var activity_info = "Syllable Building: " + current_activity.title + "\n\n"
-	activity_info += "📚 Learning: " + current_activity.description + "\n"
-	activity_info += "🎨 Color: " + str(current_activity.color) + " coding\n"
-	activity_info += "🔊 Listen to each syllable\n"
-	activity_info += "🧩 Drag syllables to build words\n\n"
+	activity_info += "Learning: " + current_activity.description + "\n"
+	activity_info += "Color code: " + str(current_activity.color) + "\n"
+	activity_info += "Listen to each syllable\n"
+	activity_info += "Build words step by step\n\n"
 	
 	activity_info += "Example words:\n"
 	for example in current_activity.examples:
@@ -222,12 +222,10 @@ func _start_syllable_activity():
 func _simulate_activity_completion():
 	"""Simulate completing a syllable building activity"""
 	print("SyllableBuildingModule: Simulating activity completion")
-	
-	# Update progress in Firebase
-	var success = await module_progress.set_syllable_activity_completed(current_activity.id, current_activity.type)
-	
-	if success:
-		_show_completion_celebration()
+	if module_progress and current_activity:
+		var success = await module_progress.set_syllable_activity_completed(current_activity.id, current_activity.type)
+		if success:
+			_show_completion_celebration()
 
 func _show_completion_celebration():
 	"""Show completion celebration for finished activity"""

@@ -10,7 +10,7 @@ var module_data = {
 	},
 	"flip_quiz": {
 		"name": "Flip Quiz",
-		"description": "Flashcard game with symbols",
+		"description": "Flipcard game with symbols",
 		"total_lessons": 20,
 		"scene_path": "res://Scenes/FlipQuizModule.tscn"
 	},
@@ -25,7 +25,8 @@ var module_data = {
 		"description": "Small sections with guided questions",
 		"total_lessons": 12, # More realistic for reading comprehension
 		"scene_path": "res://Scenes/ChunkedReadingModule.tscn"
-	}, "syllable_building": {
+	},
+	"syllable_building": {
 		"name": "Syllable Building",
 		"description": "Drag syllables to build words",
 		"total_lessons": 25, # Variety of syllable patterns
