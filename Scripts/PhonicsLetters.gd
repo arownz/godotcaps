@@ -138,10 +138,14 @@ func _update_target_display():
 	# Update button visibility
 	_update_button_visibility()
 
-	# Reset trace overlay opacity when showing new target
+	# Reset trace overlay opacity when showing new target (unless already completed)
 	var trace_overlay_node = $MainContainer/ContentContainer/WhiteboardPanel/WhiteboardContainer/TraceOverlay
 	if trace_overlay_node:
-		trace_overlay_node.modulate.a = 1.0
+		# Check if current letter is completed and adjust opacity
+		if current_target in session_completed_letters:
+			trace_overlay_node.modulate.a = 0.3 # Semi-transparent for completed
+		else:
+			trace_overlay_node.modulate.a = 1.0 # Full opacity for uncompleted
 
 func _update_button_visibility():
 	var previous_btn = $MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/PreviousButton
@@ -184,6 +188,26 @@ func _load_progress():
 				var progress_percent = float(phonics.get("progress", 0))
 				print("PhonicsLetters: Loaded phonics progress: ", progress_percent, "%")
 				_update_progress_ui(progress_percent)
+				
+				# Load completed letters and set current position to next uncompleted letter
+				var letters_completed = phonics.get("letters_completed", [])
+				print("PhonicsLetters: Completed letters: ", letters_completed)
+				
+				# Update session array with Firebase data
+				session_completed_letters = letters_completed.duplicate()
+				
+				# Find first uncompleted letter
+				for i in range(letter_set.size()):
+					var letter = letter_set[i]
+					if not letters_completed.has(letter):
+						letter_index = i
+						current_target = letter
+						print("PhonicsLetters: Starting from uncompleted letter: ", letter)
+						break
+				
+				# Update display with loaded position
+				_update_target_display()
+				_update_completed_letters_display(letters_completed)
 			else:
 				print("PhonicsLetters: Phonics module data is not a dictionary")
 		else:
@@ -199,6 +223,14 @@ func _update_progress_ui(percent: float):
 		progress_label.text = str(int(percent)) + "% Complete"
 	if progress_bar:
 		progress_bar.value = percent
+
+func _update_completed_letters_display(completed_letters: Array):
+	"""Update trace overlay opacity to show completed letters as transparent"""
+	var trace_overlay = $MainContainer/ContentContainer/WhiteboardPanel/WhiteboardContainer/TraceOverlay
+	if trace_overlay and completed_letters.has(current_target):
+		# Make completed letters semi-transparent but still visible
+		trace_overlay.modulate.a = 0.3
+		print("PhonicsLetters: Letter ", current_target, " already completed - showing as transparent")
 
 func _on_button_hover():
 	$ButtonHover.play()

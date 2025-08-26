@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://bkdtvnxqiivs6"]
+[gd_scene load_steps=32 format=3 uid="uid://bkdtvnxqiivs6"]
 
 [ext_resource type="Script" uid="uid://1unnrip8fo36" path="res://Scripts/FlipQuizAnimals.gd" id="1_dgjvx"]
 [ext_resource type="Texture2D" uid="uid://ciaa4qe2o2juf" path="res://gui/Update/UI/ui 3.png" id="2_bg"]
@@ -9,7 +9,13 @@
 [ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="8_hover"]
 [ext_resource type="Texture2D" uid="uid://qmmpx3uab5h7" path="res://gui/Update/UI/next button.png" id="9_next"]
 [ext_resource type="AudioStream" uid="uid://eiurhhollhgj" path="res://audio/animals_sfx/animals-duck.mp3" id="10_dgjvx"]
+[ext_resource type="AudioStream" uid="uid://15a7g8q64d0p" path="res://audio/animals_sfx/animals-bear.mp3" id="17_xi3er"]
+[ext_resource type="AudioStream" uid="uid://djroclrklfq2a" path="res://audio/animals_sfx/animals-dog.mp3" id="18_ibjjj"]
+[ext_resource type="AudioStream" uid="uid://ttclbdk5l40v" path="res://audio/animals_sfx/animals-chicken.mp3" id="19_s880e"]
 [ext_resource type="AudioStream" uid="uid://h4e5utexiraj" path="res://audio/animals_sfx/animals-cat.mp3" id="20_cat_sfx"]
+[ext_resource type="AudioStream" uid="uid://l10msflj6m2v" path="res://audio/animals_sfx/animals-lion.mp3" id="20_ibjjj"]
+[ext_resource type="AudioStream" uid="uid://rqucx4610y7t" path="res://audio/animals_sfx/animals-rabbit.mp3" id="21_s880e"]
+[ext_resource type="AudioStream" uid="uid://cmg4mitugagci" path="res://audio/animals_sfx/animals-tiger.mp3" id="22_aicwg"]
 [ext_resource type="AudioStream" uid="uid://do5bxrcxevn15" path="res://audio/animals_sfx/animals-elephant.mp3" id="22_elephant_sfx"]
 [ext_resource type="AudioStream" uid="uid://cmtuoeo7abddf" path="res://audio/animals_sfx/animals-fox.mp3" id="23_fox_sfx"]
 [ext_resource type="AudioStream" uid="uid://bh5lrcn6rhql3" path="res://audio/animals_sfx/animals-frog.mp3" id="24_frog_sfx"]
@@ -404,6 +410,24 @@ stream = ExtResource("26_monkey_sfx")
 
 [node name="racoon_sfx" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("27_racoon_sfx")
+
+[node name="bear_sfx" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("17_xi3er")
+
+[node name="dog_sfx" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("18_ibjjj")
+
+[node name="chicken_sfx" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("19_s880e")
+
+[node name="lion_sfx" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("20_ibjjj")
+
+[node name="bunny_sfx" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("21_s880e")
+
+[node name="tiger_sfx" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("22_aicwg")
 
 [connection signal="pressed" from="MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton" to="." method="_on_back_button_pressed"]
 [connection signal="pressed" from="MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/PreviousButton" to="." method="_on_previous_button_pressed"]

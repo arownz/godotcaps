@@ -129,10 +129,15 @@ func _update_target_display():
 	
 	# Update button visibility
 	_update_button_visibility()
-	# Reset overlay opacity
+	
+	# Reset overlay opacity but check if current word is completed
 	var trace_overlay_node = $MainContainer/ContentContainer/WhiteboardPanel/WhiteboardContainer/TraceOverlay
 	if trace_overlay_node:
-		trace_overlay_node.modulate.a = 1.0
+		# Check if current word is completed and adjust opacity
+		if current_target.to_lower() in session_completed_words:
+			trace_overlay_node.modulate.a = 0.3 # Semi-transparent for completed
+		else:
+			trace_overlay_node.modulate.a = 1.0 # Full opacity for uncompleted
 
 func _update_button_visibility():
 	var previous_btn = $MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/PreviousButton
@@ -175,6 +180,26 @@ func _load_progress():
 				var progress_percent = float(phonics.get("progress", 0))
 				print("PhonicsSightWords: Loaded phonics progress: ", progress_percent, "%")
 				_update_progress_ui(progress_percent)
+				
+				# Load completed sight words and set current position to next uncompleted word
+				var sight_words_completed = phonics.get("sight_words_completed", [])
+				print("PhonicsSightWords: Completed sight words: ", sight_words_completed)
+				
+				# Update session array with Firebase data
+				session_completed_words = sight_words_completed.duplicate()
+				
+				# Find first uncompleted sight word
+				for i in range(sight_words.size()):
+					var word = sight_words[i].to_lower()
+					if not sight_words_completed.has(word):
+						word_index = i
+						current_target = sight_words[i]
+						print("PhonicsSightWords: Starting from uncompleted word: ", current_target)
+						break
+				
+				# Update display with loaded position
+				_update_target_display()
+				_update_completed_words_display(sight_words_completed)
 			else:
 				print("PhonicsSightWords: Phonics module data is not a dictionary")
 		else:
@@ -190,6 +215,14 @@ func _update_progress_ui(percent: float):
 		progress_label.text = str(int(percent)) + "% Complete"
 	if progress_bar:
 		progress_bar.value = percent
+
+func _update_completed_words_display(completed_words: Array):
+	"""Update trace overlay opacity to show completed words as transparent"""
+	var trace_overlay = $MainContainer/ContentContainer/WhiteboardPanel/WhiteboardContainer/TraceOverlay
+	if trace_overlay and completed_words.has(current_target.to_lower()):
+		# Make completed words semi-transparent but still visible
+		trace_overlay.modulate.a = 0.3
+		print("PhonicsSightWords: Word ", current_target, " already completed - showing as transparent")
 
 func _on_button_hover():
 	$ButtonHover.play()

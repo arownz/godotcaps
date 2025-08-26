@@ -164,17 +164,26 @@ func _update_content(module_key: String = "phonics"):
 				title_label.text = "All done!"
 			if message_label:
 				message_label.text = "You finished all " + completed_item + "."
-			
-			# Show overall phonics progress
-			var overall_progress = progress_data.get("progress", 0)
-			if progress_label:
-				progress_label.text = "Overall Phonics Progress: " + str(overall_progress) + "%"
-			if progress_bar:
-				progress_bar.value = overall_progress
-			
+
+			# Show overall module progress
+			if module_key == "flip_quiz":
+				var total_sets := 3 # Update if you add more sets
+				var sets_completed: int = progress_data.get("sets_completed", []).size()
+				var percent := (float(sets_completed) / float(total_sets)) * 100.0
+				if progress_label:
+					progress_label.text = "Flip Quiz Progress: " + str(sets_completed) + "/" + str(total_sets) + " sets (" + str(int(percent)) + "%)"
+				if progress_bar:
+					progress_bar.value = percent
+			else:
+				var overall_progress = progress_data.get("progress", 0)
+				if progress_label:
+					progress_label.text = "Overall Phonics Progress: " + str(overall_progress) + "%"
+				if progress_bar:
+					progress_bar.value = overall_progress
+
 			# Only show try again button for category completion
 			if try_again_btn:
-				try_again_btn.text = "Practice More"
+				try_again_btn.text = "Again"
 				try_again_btn.visible = true
 			if next_btn:
 				next_btn.visible = false

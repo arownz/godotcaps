@@ -162,26 +162,30 @@ func _load_category_progress():
 		print("FlipQuizModule: Failed to fetch document or document has error")
 
 func _update_progress_displays(firebase_modules: Dictionary):
-	var total_progress = 0.0
-	var category_count = 0
-	for category_key in categories.keys():
-		var progress_percent = 0.0
-		if firebase_modules.has("flip_quiz"):
-			var fq = firebase_modules["flip_quiz"]
-			if typeof(fq) == TYPE_DICTIONARY:
-				var sets_completed = fq.get("sets_completed", [])
-				if category_key == "animals" and sets_completed.has("Animals"):
-					progress_percent = 100.0
-		var card_path = "MainContainer/ScrollContainer/CategoriesGrid/" + category_key.capitalize() + "Card"
-		var progress_label = get_node_or_null(card_path + "/" + category_key.capitalize() + "Content/ProgressLabel")
-		if progress_label:
-			progress_label.text = str(int(progress_percent)) + "% Complete"
-		total_progress += progress_percent
-		category_count += 1
-	var overall_percent = total_progress / max(category_count, 1)
+	# Show progress for Animals set (like Phonics)
+	var total_sets := 3 # Update this if you add more sets
+	var sets_completed := 0
+	if firebase_modules.has("flip_quiz"):
+		var fq = firebase_modules["flip_quiz"]
+		if typeof(fq) == TYPE_DICTIONARY:
+			var completed_array = fq.get("sets_completed", [])
+			sets_completed = completed_array.size()
+	var percent := (float(sets_completed) / float(total_sets)) * 100.0
+	# Update Animals card progress
+	var animals_card_path = "MainContainer/ScrollContainer/CategoriesGrid/AnimalsCard/AnimalsContent"
+	var progress_label = get_node_or_null(animals_card_path + "/ProgressLabel")
+	var progress_bar = get_node_or_null(animals_card_path + "/ProgressBar")
+	if progress_label:
+		progress_label.text = "Flip Quiz Progress: " + str(sets_completed) + "/" + str(total_sets) + " sets (" + str(int(percent)) + "%)"
+	if progress_bar:
+		progress_bar.value = percent
+	# Update overall progress bar/label
 	var overall_label = $MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressLabel
+	var overall_bar = $MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressBar
 	if overall_label:
-		overall_label.text = "Overall Progress: " + str(int(overall_percent)) + "%"
+		overall_label.text = "Flip Quiz Progress: " + str(sets_completed) + "/" + str(total_sets) + " sets (" + str(int(percent)) + "%)"
+	if overall_bar:
+		overall_bar.value = percent
 
 func _on_button_hover():
 	$ButtonHover.play()

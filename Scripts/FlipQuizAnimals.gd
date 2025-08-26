@@ -54,13 +54,12 @@ func _load_progress_from_firebase():
 		if modules != null and typeof(modules) == TYPE_DICTIONARY:
 			var flip_quiz_data = modules.get("flip_quiz", {})
 			if typeof(flip_quiz_data) == TYPE_DICTIONARY:
-				var animals_data = flip_quiz_data.get("animals", {})
-				if typeof(animals_data) == TYPE_DICTIONARY:
-					# Load completed animal sets
-					var completed_sets = animals_data.get("completed_sets", [])
-					print("FlipQuizAnimals: Loaded completed sets: ", completed_sets)
-					# Update local progress based on Firebase data
-					_update_local_progress_from_firebase(completed_sets)
+				var sets_completed = flip_quiz_data.get("sets_completed", [])
+				print("FlipQuizAnimals: Loaded completed sets: ", sets_completed)
+				# Update local progress based on Firebase data
+				_update_local_progress_from_firebase(sets_completed)
+				# Update progress display
+				_update_progress_display(modules)
 		else:
 			print("FlipQuizAnimals: No modules data found")
 	else:
@@ -68,9 +67,26 @@ func _load_progress_from_firebase():
 
 func _update_local_progress_from_firebase(completed_sets: Array):
 	"""Update local progress display based on Firebase data"""
-	# This would update any progress indicators in the FlipQuiz interface
+	# Check if Animals set is already completed
+	var animals_completed = false
+	for set_item in completed_sets:
+		if set_item.to_lower() == "animals":
+			animals_completed = true
+			break
+	
+	if animals_completed:
+		print("FlipQuizAnimals: Animals set already completed - showing completion status")
+		# Show visual indication that this set is completed
+		_show_set_completed_status()
+	
 	print("FlipQuizAnimals: Processing completed sets from Firebase: ", completed_sets.size(), " sets completed")
-	# Add any UI updates here based on completed sets
+
+func _show_set_completed_status():
+	"""Show visual indication that the Animals set is already completed"""
+	var instruction_label = $MainContainer/ContentContainer/InstructionPanel/InstructionContainer/TargetLabel
+	if instruction_label:
+		instruction_label.text = "Animals Set ✓ Completed! Play again for practice!"
+		instruction_label.add_theme_color_override("font_color", Color(0.2, 0.6, 0.2, 1)) # Green color
 
 func _ready():
 	print("FlipQuizAnimals: Animal flip quiz loaded")
@@ -287,6 +303,9 @@ func _create_flip_cards():
 		card_button.add_theme_color_override("font_pressed_color", Color.BLACK)
 		card_button.add_theme_color_override("font_focus_color", Color.BLACK)
 		
+		# Set mouse cursor to pointer for better UX
+		card_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+		
 		# Store card data
 		card_button.set_meta("card_data", card_data)
 		card_button.set_meta("is_flipped", false)
@@ -319,8 +338,8 @@ func _on_card_pressed(card: Button):
 	if card_data.type == "image":
 		card.icon = card_data.animal.image
 		card.text = ""
-		card.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		card.expand_icon = true
+		card.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	else: # text card - dyslexia-friendly text display
 		card.text = card_data.animal.name.capitalize()
 		card.icon = null
@@ -331,9 +350,7 @@ func _on_card_pressed(card: Button):
 		card.add_theme_color_override("font_hover_color", Color.BLACK)
 		card.add_theme_color_override("font_pressed_color", Color.BLACK)
 		card.add_theme_color_override("font_focus_color", Color.BLACK)
-		# Add text wrapping and better alignment for dyslexic children
-		card.vertical_icon_alignment = VERTICAL_ALIGNMENT_CENTER
-		card.horizontal_icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		# Text centering is handled automatically by Button in Godot 4.x
 		card.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		# Ensure adequate padding to prevent text overlap
 		card.add_theme_constant_override("text_margin_left", 8)
@@ -347,7 +364,7 @@ func _on_card_pressed(card: Button):
 	if flipped_cards.size() == 2:
 		is_checking_match = true
 		# Give more time for dyslexic children to process information
-		await get_tree().create_timer(2.5).timeout # Increased from 1.5 to 2.5 seconds
+		await get_tree().create_timer(1.0).timeout
 		_check_match()
 
 func _check_match():
@@ -401,7 +418,7 @@ func _check_match():
 			_complete_game()
 	else:
 		# No match - give more time for dyslexic children to process before flipping back
-		await get_tree().create_timer(2.0).timeout # Increased from 1.0 to 2.0 seconds
+		await get_tree().create_timer(1.0).timeout # Increased from 1.0 to 2.0 seconds
 		
 		# Reset cards to face-down
 		card1.text = "?"
@@ -455,17 +472,19 @@ func _show_match_feedback(animal_name: String):
 		tween.tween_property(encouragement_label, "scale", Vector2(1.0, 1.0), 0.5).set_ease(Tween.EASE_OUT)
 		
 		# Clear the message after some time
-		await get_tree().create_timer(3.0).timeout
-		if encouragement_label:
-			var fade_tween = create_tween()
-			fade_tween.tween_property(encouragement_label, "modulate:a", 0.0, 1.0)
-	
-	# Use TTS to give positive feedback with simple, clear language
+	await get_tree().create_timer(3.0).timeout
+	if encouragement_label:
+		var fade_tween = create_tween()
+		fade_tween.tween_property(encouragement_label, "modulate:a", 0.0, 1.0)
+
+	# Play narrator guide first, then animal sound (no overlap)
 	if tts:
 		var feedback_text = "Well done! You found the " + animal_name + "!"
-		_speak_text_simple(feedback_text)
-	if tts:
-		_speak_text_simple("Great job! You found " + animal_name + "!")
+		tts.speak(feedback_text)
+		await tts.finished
+		var sound_node = get_node_or_null(animal_name + "_sfx")
+		if sound_node:
+			sound_node.play()
 
 func _complete_game():
 	"""Handle game completion with celebration"""
@@ -479,6 +498,8 @@ func _complete_game():
 	
 	# Show completion celebration
 	_show_completion_celebration()
+	# Update progress bar/label after completion
+	await _load_progress_from_firebase()
 
 func _show_completion_celebration():
 	"""Show completion celebration popup"""
@@ -491,8 +512,7 @@ func _show_completion_celebration():
 		"total": selected_animals.size(),
 		"percentage": 100.0
 	}
-	
-	celebration.show_completion("flip_quiz", "Animal Memory Game", progress_data, "animals")
+	celebration.show_completion(celebration.CompletionType.CATEGORY_COMPLETE, "Animal Memory Game", progress_data, "flip_quiz")
 	
 	# Connect celebration signals
 	if celebration.has_signal("try_again_pressed"):
@@ -552,25 +572,21 @@ func _load_progress():
 		print("FlipQuizAnimals: Failed to fetch document or document has error")
 
 func _update_progress_display(firebase_modules: Dictionary):
-	"""Update progress display using unified flip_quiz module"""
-	var progress_percent = 0.0
+	"""Update overall Flip Quiz progress (completed sets/total sets)"""
+	var total_sets := 3 # Update this if you add more sets
+	var sets_completed := 0
 	if firebase_modules.has("flip_quiz"):
 		var fq = firebase_modules["flip_quiz"]
 		if typeof(fq) == TYPE_DICTIONARY:
-			var sets_completed = fq.get("sets_completed", [])
-			# Animals set counts as 1 of the 10 total
-			if sets_completed.has("Animals"):
-				# Show partial progress relative to the Animals game itself
-				progress_percent = 100.0
-	
-	# Update progress display
+			var completed_array = fq.get("sets_completed", [])
+			sets_completed = completed_array.size()
+	var percent := (float(sets_completed) / float(total_sets)) * 100.0
 	var progress_label = $MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressLabel
 	var progress_bar = $MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressBar
-	
 	if progress_label:
-		progress_label.text = str(int(progress_percent)) + "% Complete"
+		progress_label.text = "Flip Quiz Progress: " + str(sets_completed) + "/" + str(total_sets) + " sets (" + str(int(percent)) + "%)"
 	if progress_bar:
-		progress_bar.value = progress_percent
+		progress_bar.value = percent
 
 func _on_button_hover():
 	$ButtonHover.play()
