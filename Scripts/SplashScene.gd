@@ -23,7 +23,7 @@ func start_splash_animation():
 	
 	# Create the main animation sequence
 	var tween = create_tween()
-	tween.set_parallel(true)  # Allow multiple animations to run simultaneously
+	tween.set_parallel(true) # Allow multiple animations to run simultaneously
 		# Logo fade-in and scale animation (dyslexia-friendly: smooth, predictable movement)
 	tween.tween_property(logo_panel, "modulate", Color(1, 1, 1, 1), 1.2).set_ease(Tween.EASE_OUT)
 	tween.tween_property(logo_panel, "scale", Vector2(1.0, 1.0), 1.0).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
@@ -65,7 +65,7 @@ func start_loading_dots_animation():
 	var dots_tween = create_tween()
 	dots_tween.set_loops()
 	dots_tween.tween_callback(update_loading_dots)
-	dots_tween.tween_interval(0.8)  # Slower, more predictable timing
+	dots_tween.tween_interval(0.8) # Slower, more predictable timing
 
 func update_loading_dots():
 	dots_state = (dots_state + 1) % 4

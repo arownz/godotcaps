@@ -1,7 +1,6 @@
 extends Control
 
 var tts: TextToSpeech = null
-var module_progress: ModuleProgress = null
 
 # Categories: Only Letters and Sight Words
 var categories = {
@@ -55,8 +54,7 @@ func _notification(what):
 
 func _refresh_progress():
 	"""Refresh progress display when user returns to phonics module"""
-	if module_progress:
-		await _load_category_progress()
+	await _load_category_progress()
 
 func _init_tts():
 	tts = TextToSpeech.new()
@@ -64,9 +62,9 @@ func _init_tts():
 	# Don't auto-play welcome message - only when guide button is pressed
 
 func _init_module_progress():
+	# Simplified Firebase approach - no need for ModuleProgress.gd wrapper
 	if Engine.has_singleton("Firebase"):
-		module_progress = ModuleProgress.new()
-		add_child(module_progress)
+		print("PhonicsModule: Firebase singleton available")
 	else:
 		print("PhonicsModule: Firebase not available; progress won't sync")
 
@@ -115,12 +113,25 @@ func _style_category_cards():
 			icon_container.add_theme_stylebox_override("panel", icon_style)
 
 func _load_category_progress():
-	if not module_progress:
+	if not Engine.has_singleton("Firebase") or not Firebase.Auth.auth:
+		print("PhonicsModule: Firebase not available or not authenticated")
 		return
 		
-	var firebase_modules = await module_progress.fetch_modules()
-	if firebase_modules.size() > 0:
-		_update_progress_displays(firebase_modules)
+	var user_id = Firebase.Auth.auth.localid
+	var collection = Firebase.Firestore.collection("dyslexia_users")
+	
+	# Use working Journey Mode pattern: direct document fetch
+	print("PhonicsModule: Loading progress for user: ", user_id)
+	var document = await collection.get_doc(user_id)
+	if document and !("error" in document.keys() and document.get_value("error")):
+		print("PhonicsModule: Document fetched successfully")
+		var modules = document.get_value("modules")
+		if modules != null and typeof(modules) == TYPE_DICTIONARY:
+			_update_progress_displays(modules)
+		else:
+			print("PhonicsModule: No modules data found")
+	else:
+		print("PhonicsModule: Failed to fetch document or document has error")
 
 func _update_progress_displays(firebase_modules: Dictionary):
 	var total_progress = 0.0

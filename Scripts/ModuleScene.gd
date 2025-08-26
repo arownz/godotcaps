@@ -47,9 +47,8 @@ var syllable_building_button
 # Progress tracking
 var user_progress_data = {}
 
-# Firebase modules progress (Firestore)
+# Firebase modules progress (Firestore) - using direct access like Journey Mode
 var firebase_modules: Dictionary = {}
-var module_progress = null
 
 # Load dyslexia-friendly font
 var dyslexia_font: FontFile
@@ -85,21 +84,33 @@ func _notification(what):
 
 func _refresh_progress():
 	"""Refresh progress display when user returns to module selection"""
-	if module_progress:
-		await _load_firestore_modules()
-		_update_progress_displays()
+	print("ModuleScene: Refreshing progress display")
+	await _load_firestore_modules()
 
 func _load_firestore_modules():
-	# Create and fetch Firestore-backed module progress
-	if Engine.has_singleton("Firebase"):
-		module_progress = ModuleProgress.new()
-		add_child(module_progress)
-		firebase_modules = await module_progress.fetch_modules()
-		if firebase_modules.size() > 0:
-			print("ModuleScene: Loaded Firestore module progress: ", firebase_modules)
-			_update_progress_displays()
+	# Use direct Firebase access like Journey Mode instead of ModuleProgress wrapper
+	if Engine.has_singleton("Firebase") and Firebase.Auth.auth:
+		print("ModuleScene: Loading modules from Firebase directly")
+		var user_id = Firebase.Auth.auth.localid
+		var collection = Firebase.Firestore.collection("dyslexia_users")
+		
+		# Use working Journey Mode pattern: direct document fetch
+		var document = await collection.get_doc(user_id)
+		if document and !("error" in document.keys() and document.get_value("error")):
+			print("ModuleScene: Document fetched successfully")
+			var modules = document.get_value("modules")
+			if modules != null and typeof(modules) == TYPE_DICTIONARY:
+				firebase_modules = modules
+				print("ModuleScene: Loaded Firebase module progress: ", firebase_modules.keys())
+				if firebase_modules.has("phonics"):
+					print("ModuleScene: Phonics progress: ", firebase_modules["phonics"].get("progress", 0), "%")
+				_update_progress_displays()
+			else:
+				print("ModuleScene: No modules data found in document")
+		else:
+			print("ModuleScene: Failed to fetch document or document has error")
 	else:
-		print("ModuleScene: Firebase not available or not initialized")
+		print("ModuleScene: Firebase not available or not authenticated")
 
 func _get_node_references():
 	# Main navigation - now using the new navigation bar

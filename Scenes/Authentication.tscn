@@ -559,7 +559,6 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_axc1p")
 text = "Reset Password"
 
 [node name="AdminButton" type="Button" parent="."]
-visible = false
 layout_mode = 0
 offset_left = 40.0
 offset_top = 737.0

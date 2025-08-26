@@ -152,7 +152,7 @@ func _update_content(module_key: String = "phonics"):
 				try_again_btn.text = "Again"
 				try_again_btn.visible = true
 			if next_btn:
-				next_btn.text = "Next Word"
+				next_btn.text = "Next"
 				# Hide next button if all words are complete
 				if words_completed >= total_words:
 					next_btn.visible = false
