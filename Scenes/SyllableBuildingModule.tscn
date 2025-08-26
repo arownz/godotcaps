@@ -1,6 +1,5 @@
-[gd_scene load_steps=15 format=3 uid="uid://coam7h4k8b2q1"]
+[gd_scene load_steps=14 format=3 uid="uid://coam7h4k8b2q1"]
 
-[ext_resource type="Script" uid="uid://bpm4fs4clb2en" path="res://Scripts/SyllableBuildingModule.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://0con8ixqofpr" path="res://gui/Update/UI/ui 8.png" id="2_bg"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="3_regular"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="4_bold"]
@@ -66,7 +65,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_script")
 
 [node name="Background" type="TextureRect" parent="."]
 layout_mode = 1

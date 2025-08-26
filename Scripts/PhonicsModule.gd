@@ -62,9 +62,9 @@ func _init_tts():
 	# Don't auto-play welcome message - only when guide button is pressed
 
 func _init_module_progress():
-	# Simplified Firebase approach - no need for ModuleProgress.gd wrapper
-	if Engine.has_singleton("Firebase"):
-		print("PhonicsModule: Firebase singleton available")
+	# Use direct Firebase access like authentication.gd pattern
+	if Firebase.Auth.auth:
+		print("PhonicsModule: Firebase available for progress tracking")
 	else:
 		print("PhonicsModule: Firebase not available; progress won't sync")
 
@@ -113,14 +113,14 @@ func _style_category_cards():
 			icon_container.add_theme_stylebox_override("panel", icon_style)
 
 func _load_category_progress():
-	if not Engine.has_singleton("Firebase") or not Firebase.Auth.auth:
+	if not Firebase.Auth.auth:
 		print("PhonicsModule: Firebase not available or not authenticated")
 		return
 		
 	var user_id = Firebase.Auth.auth.localid
 	var collection = Firebase.Firestore.collection("dyslexia_users")
 	
-	# Use working Journey Mode pattern: direct document fetch
+	# Use authentication.gd pattern: direct document fetch
 	print("PhonicsModule: Loading progress for user: ", user_id)
 	var document = await collection.get_doc(user_id)
 	if document and !("error" in document.keys() and document.get_value("error")):

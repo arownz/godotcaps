@@ -287,78 +287,6 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="FoodCard" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid"]
-custom_minimum_size = Vector2(430, 300)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_dt2ji")
-
-[node name="FoodContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/FoodCard"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 15.0
-offset_top = 15.0
-offset_right = -15.0
-offset_bottom = -15.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="IconContainer" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid/FoodCard/FoodContent"]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="CenterContainer" type="CenterContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/FoodCard/FoodContent/IconContainer"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="IconLabel" type="TextureRect" parent="MainContainer/ScrollContainer/CategoriesGrid/FoodCard/FoodContent/IconContainer/CenterContainer"]
-layout_mode = 2
-
-[node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/FoodCard/FoodContent"]
-layout_mode = 2
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("4_bold")
-theme_override_font_sizes/font_size = 20
-text = "?"
-horizontal_alignment = 1
-
-[node name="DescLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/FoodCard/FoodContent"]
-custom_minimum_size = Vector2(1, 0)
-layout_mode = 2
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_regular")
-theme_override_font_sizes/font_size = 14
-text = "?"
-horizontal_alignment = 1
-autowrap_mode = 2
-
-[node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/FoodCard/FoodContent"]
-layout_mode = 2
-theme_override_fonts/font = ExtResource("3_regular")
-theme_override_font_sizes/font_size = 12
-text = "0% Complete"
-horizontal_alignment = 1
-
-[node name="EnterButton" type="Button" parent="MainContainer/ScrollContainer/CategoriesGrid/FoodCard/FoodContent"]
-layout_mode = 2
-mouse_default_cursor_shape = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
-theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("4_bold")
-theme_override_font_sizes/font_size = 16
-theme_override_styles/focus = SubResource("StyleBoxEmpty_o85yv")
-text = "?"
-icon = ExtResource("10_0kgie")
-flat = true
-icon_alignment = 1
-expand_icon = true
-
 [node name="ButtonClick" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("7_click")
 
@@ -369,4 +297,3 @@ stream = ExtResource("8_hover")
 [connection signal="pressed" from="MainContainer/HeaderPanel/GuideButton" to="." method="_on_guide_button_pressed"]
 [connection signal="pressed" from="MainContainer/HeaderPanel/TTSSettingButton" to="." method="_on_tts_setting_button_pressed"]
 [connection signal="pressed" from="MainContainer/ScrollContainer/CategoriesGrid/AnimalsCard/AnimalsContent/EnterButton" to="." method="_on_animals_button_pressed"]
-[connection signal="pressed" from="MainContainer/ScrollContainer/CategoriesGrid/FoodCard/FoodContent/EnterButton" to="." method="_on_food_button_pressed"]

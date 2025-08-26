@@ -88,13 +88,13 @@ func _refresh_progress():
 	await _load_firestore_modules()
 
 func _load_firestore_modules():
-	# Use direct Firebase access like Journey Mode instead of ModuleProgress wrapper
-	if Engine.has_singleton("Firebase") and Firebase.Auth.auth:
+	# Use direct Firebase access like authentication.gd pattern
+	if Firebase.Auth.auth:
 		print("ModuleScene: Loading modules from Firebase directly")
 		var user_id = Firebase.Auth.auth.localid
 		var collection = Firebase.Firestore.collection("dyslexia_users")
 		
-		# Use working Journey Mode pattern: direct document fetch
+		# Use working authentication.gd pattern: direct document fetch
 		var document = await collection.get_doc(user_id)
 		if document and !("error" in document.keys() and document.get_value("error")):
 			print("ModuleScene: Document fetched successfully")
@@ -104,6 +104,8 @@ func _load_firestore_modules():
 				print("ModuleScene: Loaded Firebase module progress: ", firebase_modules.keys())
 				if firebase_modules.has("phonics"):
 					print("ModuleScene: Phonics progress: ", firebase_modules["phonics"].get("progress", 0), "%")
+				if firebase_modules.has("flip_quiz"):
+					print("ModuleScene: Flip Quiz progress: ", firebase_modules["flip_quiz"].get("progress", 0), "%")
 				_update_progress_displays()
 			else:
 				print("ModuleScene: No modules data found in document")
@@ -206,21 +208,36 @@ func _update_card_progress(module_key: String, card_name: String):
 		print("Warning: Card node not found: " + card_name)
 		return
 
-	# Prefer Firestore progress if available, else fallback to local file percent
+	# Calculate overall progress from detailed Firebase structures (for ModuleScene overall view)
 	var progress_percent := 0.0
 	var completed := false
+	
 	if firebase_modules.has(module_key):
 		var fm = firebase_modules[module_key]
 		if typeof(fm) == TYPE_DICTIONARY:
-			progress_percent = float(fm.get("progress", 0))
-			completed = bool(fm.get("completed", false))
-	elif module_key == "phonics" and firebase_modules.has("phonics"):
-		# Handle phonics module with detailed tracking
-		var phonics = firebase_modules["phonics"]
-		if typeof(phonics) == TYPE_DICTIONARY:
-			progress_percent = float(phonics.get("progress", 0))
-			completed = bool(phonics.get("completed", false))
+			# Calculate overall progress based on module type
+			if module_key == "phonics":
+				# Overall phonics progress: average of letters and sight words
+				var letters_completed = fm.get("letters_completed", []).size()
+				var sight_words_completed = fm.get("sight_words_completed", []).size()
+				var letters_percent = (float(letters_completed) / 26.0) * 100.0
+				var sight_words_percent = (float(sight_words_completed) / 20.0) * 100.0
+				progress_percent = (letters_percent + sight_words_percent) / 2.0
+				completed = (letters_completed >= 26 and sight_words_completed >= 20)
+				print("ModuleScene: Phonics overall - Letters:", letters_completed, "/26, Sight Words:", sight_words_completed, "/20, Overall:", int(progress_percent), "%")
+			elif module_key == "flip_quiz":
+				# Overall flip quiz progress based on completed sets
+				var sets_completed = fm.get("sets_completed", [])
+				var total_sets = 3 # Animals, Shapes, Colors (or however many sets you have)
+				progress_percent = (float(sets_completed.size()) / float(total_sets)) * 100.0
+				completed = sets_completed.size() >= total_sets
+				print("ModuleScene: FlipQuiz overall - Sets:", sets_completed.size(), "/", total_sets, ", Overall:", int(progress_percent), "%")
+			else:
+				# For other modules, use direct progress value
+				progress_percent = float(fm.get("progress", 0))
+				completed = bool(fm.get("completed", false))
 	elif user_progress_data.has(module_key) and module_data.has(module_key):
+		# Fallback to local data
 		var progress = user_progress_data[module_key]
 		var completed_count = progress.completed_lessons.size()
 		var total_lessons = int(module_data[module_key]["total_lessons"]) if module_data.has(module_key) and module_data[module_key].has("total_lessons") else 20

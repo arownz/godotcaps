@@ -1,9 +1,8 @@
 extends Control
 
 var tts: TextToSpeech = null
-var module_progress: ModuleProgress = null
 
-# Animal data with images and sounds
+# Animal data with images and sounds - Updated with all available animals
 var animals = [
 	{"name": "cat", "image": preload("res://gui/animalsquiz/split_images/cat.png"), "sound_node": "cat_sfx"},
 	{"name": "duck", "image": preload("res://gui/animalsquiz/split_images/duck.png"), "sound_node": "duck_sfx"},
@@ -12,7 +11,14 @@ var animals = [
 	{"name": "frog", "image": preload("res://gui/animalsquiz/split_images/frog.png"), "sound_node": "frog_sfx"},
 	{"name": "giraffe", "image": preload("res://gui/animalsquiz/split_images/giraffe.png"), "sound_node": "giraffe_sfx"},
 	{"name": "monkey", "image": preload("res://gui/animalsquiz/split_images/monkey.png"), "sound_node": "monkey_sfx"},
-	{"name": "racoon", "image": preload("res://gui/animalsquiz/split_images/racoon.png"), "sound_node": "racoon_sfx"}
+	{"name": "pig", "image": preload("res://gui/animalsquiz/split_images/pig.png"), "sound_node": "pig_sfx"},
+	{"name": "racoon", "image": preload("res://gui/animalsquiz/split_images/racoon.png"), "sound_node": "racoon_sfx"},
+	{"name": "bear", "image": preload("res://gui/animalsquiz/split_images/bear.jpg"), "sound_node": "bear_sfx"},
+	{"name": "bunny", "image": preload("res://gui/animalsquiz/split_images/bunny.jpg"), "sound_node": "bunny_sfx"},
+	{"name": "chicken", "image": preload("res://gui/animalsquiz/split_images/chicken.jpg"), "sound_node": "chicken_sfx"},
+	{"name": "dog", "image": preload("res://gui/animalsquiz/split_images/dog.jpg"), "sound_node": "dog_sfx"},
+	{"name": "lion", "image": preload("res://gui/animalsquiz/split_images/lion.jpg"), "sound_node": "lion_sfx"},
+	{"name": "tiger", "image": preload("res://gui/animalsquiz/split_images/tiger.jpg"), "sound_node": "tiger_sfx"}
 ]
 
 # Game state
@@ -29,6 +35,42 @@ func _speak_text_simple(text: String):
 	"""Simple TTS without captions"""
 	if tts:
 		tts.speak(text)
+
+func _load_progress_from_firebase():
+	"""Load flip quiz progress from Firebase using authentication.gd pattern"""
+	if not Firebase.Auth.auth:
+		print("FlipQuizAnimals: Firebase not authenticated")
+		return
+	
+	var user_id = Firebase.Auth.auth.localid
+	var collection = Firebase.Firestore.collection("dyslexia_users")
+	
+	# Use authentication.gd pattern: direct document fetch
+	print("FlipQuizAnimals: Loading progress for user: ", user_id)
+	var document = await collection.get_doc(user_id)
+	if document and !("error" in document.keys() and document.get_value("error")):
+		print("FlipQuizAnimals: Document fetched successfully")
+		var modules = document.get_value("modules")
+		if modules != null and typeof(modules) == TYPE_DICTIONARY:
+			var flip_quiz_data = modules.get("flip_quiz", {})
+			if typeof(flip_quiz_data) == TYPE_DICTIONARY:
+				var animals_data = flip_quiz_data.get("animals", {})
+				if typeof(animals_data) == TYPE_DICTIONARY:
+					# Load completed animal sets
+					var completed_sets = animals_data.get("completed_sets", [])
+					print("FlipQuizAnimals: Loaded completed sets: ", completed_sets)
+					# Update local progress based on Firebase data
+					_update_local_progress_from_firebase(completed_sets)
+		else:
+			print("FlipQuizAnimals: No modules data found")
+	else:
+		print("FlipQuizAnimals: Failed to fetch document or document has error")
+
+func _update_local_progress_from_firebase(completed_sets: Array):
+	"""Update local progress display based on Firebase data"""
+	# This would update any progress indicators in the FlipQuiz interface
+	print("FlipQuizAnimals: Processing completed sets from Firebase: ", completed_sets.size(), " sets completed")
+	# Add any UI updates here based on completed sets
 
 func _ready():
 	print("FlipQuizAnimals: Animal flip quiz loaded")
@@ -48,11 +90,11 @@ func _ready():
 	# Connect hover events
 	_connect_hover_events()
 	
+	# Load progress from Firebase
+	await _load_progress_from_firebase()
+	
 	# Initialize animals for the game
 	_initialize_game()
-	
-	# Load progress from Firestore
-	await _load_progress()
 
 func _notification(what):
 	if what == NOTIFICATION_WM_WINDOW_FOCUS_IN:
@@ -61,19 +103,41 @@ func _notification(what):
 
 func _refresh_progress():
 	"""Refresh progress display when user returns"""
-	if module_progress:
-		await _load_progress()
+	await _load_progress()
 
 func _init_tts():
 	tts = TextToSpeech.new()
 	add_child(tts)
 
 func _init_module_progress():
-	if Engine.has_singleton("Firebase"):
-		module_progress = ModuleProgress.new()
-		add_child(module_progress)
-	else:
-		print("FlipQuizAnimals: Firebase not available; progress won't sync")
+	# Use same Firebase pattern as authentication.gd (which works)
+	print("FlipQuizAnimals: Initializing Firebase access")
+	
+	# Wait for Firebase to be ready (like authentication.gd does)
+	await get_tree().process_frame
+	
+	# Check Firebase availability using authentication.gd pattern (no Engine.has_singleton check)
+	if not Firebase or not Firebase.Auth:
+		print("FlipQuizAnimals: Firebase or Firebase.Auth not available")
+		return
+	
+	# Check authentication status (exact authentication.gd pattern)
+	if Firebase.Auth.auth == null:
+		print("FlipQuizAnimals: No authenticated user")
+		return
+	
+	if not Firebase.Auth.auth.localid:
+		print("FlipQuizAnimals: No localid available")
+		return
+	
+	print("FlipQuizAnimals: Firebase authenticated successfully for user: ", Firebase.Auth.auth.localid)
+	
+	# Test Firestore access (exact authentication.gd pattern)
+	if Firebase.Firestore == null:
+		print("FlipQuizAnimals: ERROR - Firestore is null")
+		return
+	
+	print("FlipQuizAnimals: Firestore available - ready for progress updates")
 
 func _connect_hover_events():
 	# Connect all button hover events and press events
@@ -133,14 +197,22 @@ func _initialize_game():
 	_update_score_display()
 
 func _update_instruction():
-	"""Update the instruction text for current animal"""
+	"""Update the instruction text for current animal with dyslexia-friendly formatting"""
 	if current_animal_index < selected_animals.size():
 		var animal = selected_animals[current_animal_index]
 		var instruction_label = $MainContainer/ContentContainer/InstructionPanel/InstructionContainer/TargetLabel
-		instruction_label.text = "Find pairs for: " + animal.name.capitalize() + "!"
+		if instruction_label:
+			instruction_label.text = "Find pairs for: " + animal.name.capitalize() + "!"
+			# Apply dyslexia-friendly font and larger size
+			instruction_label.add_theme_font_override("font", preload("res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf"))
+			instruction_label.add_theme_font_size_override("font_size", 22)
+			instruction_label.add_theme_color_override("font_color", Color(0.2, 0.2, 0.8, 1)) # Clear blue color
+			instruction_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	else:
 		var instruction_label = $MainContainer/ContentContainer/InstructionPanel/InstructionContainer/TargetLabel
-		instruction_label.text = "Great job! You've seen all animals!"
+		if instruction_label:
+			instruction_label.text = "Great job! You've seen all animals!"
+			instruction_label.add_theme_color_override("font_color", Color(0.2, 0.6, 0.2, 1)) # Green for completion
 
 func _update_navigation_buttons():
 	"""Update visibility of previous/next buttons"""
@@ -183,7 +255,7 @@ func _create_flip_cards():
 	for i in range(all_cards.size()):
 		var card_data = all_cards[i]
 		var card_button = Button.new()
-		card_button.custom_minimum_size = Vector2(140, 120) # Large, easy to click
+		card_button.custom_minimum_size = Vector2(160, 140) # Larger cards for better text display
 		card_button.name = "Card_" + str(i)
 		
 		# Style the card
@@ -202,10 +274,18 @@ func _create_flip_cards():
 		card_button.add_theme_stylebox_override("hover", card_style)
 		card_button.add_theme_stylebox_override("pressed", card_style)
 		
-		# Set card face-down initially
+		# Add empty style for focus to remove default focus border
+		var empty_style = StyleBoxEmpty.new()
+		card_button.add_theme_stylebox_override("focus", empty_style)
+		
+		# Set card face-down initially with black font color
 		card_button.text = "?"
 		card_button.add_theme_font_override("font", preload("res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf"))
 		card_button.add_theme_font_size_override("font_size", 48)
+		card_button.add_theme_color_override("font_color", Color.BLACK)
+		card_button.add_theme_color_override("font_hover_color", Color.BLACK)
+		card_button.add_theme_color_override("font_pressed_color", Color.BLACK)
+		card_button.add_theme_color_override("font_focus_color", Color.BLACK)
 		
 		# Store card data
 		card_button.set_meta("card_data", card_data)
@@ -241,17 +321,33 @@ func _on_card_pressed(card: Button):
 		card.text = ""
 		card.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		card.expand_icon = true
-	else: # text card
+	else: # text card - dyslexia-friendly text display
 		card.text = card_data.animal.name.capitalize()
 		card.icon = null
-		card.add_theme_font_size_override("font_size", 24)
+		# Use larger font size to prevent overlapping and improve readability
+		card.add_theme_font_size_override("font_size", 18)
+		# Ensure black font color for better readability
+		card.add_theme_color_override("font_color", Color.BLACK)
+		card.add_theme_color_override("font_hover_color", Color.BLACK)
+		card.add_theme_color_override("font_pressed_color", Color.BLACK)
+		card.add_theme_color_override("font_focus_color", Color.BLACK)
+		# Add text wrapping and better alignment for dyslexic children
+		card.vertical_icon_alignment = VERTICAL_ALIGNMENT_CENTER
+		card.horizontal_icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		card.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		# Ensure adequate padding to prevent text overlap
+		card.add_theme_constant_override("text_margin_left", 8)
+		card.add_theme_constant_override("text_margin_right", 8)
+		card.add_theme_constant_override("text_margin_top", 8)
+		card.add_theme_constant_override("text_margin_bottom", 8)
 	
 	flipped_cards.append(card)
 	
 	# Check for matches when 2 cards are flipped
 	if flipped_cards.size() == 2:
 		is_checking_match = true
-		await get_tree().create_timer(1.5).timeout # Give time to see both cards
+		# Give more time for dyslexic children to process information
+		await get_tree().create_timer(2.5).timeout # Increased from 1.5 to 2.5 seconds
 		_check_match()
 
 func _check_match():
@@ -304,8 +400,8 @@ func _check_match():
 			await get_tree().create_timer(2.0).timeout
 			_complete_game()
 	else:
-		# No match - flip cards back after a moment
-		await get_tree().create_timer(1.0).timeout
+		# No match - give more time for dyslexic children to process before flipping back
+		await get_tree().create_timer(2.0).timeout # Increased from 1.0 to 2.0 seconds
 		
 		# Reset cards to face-down
 		card1.text = "?"
@@ -339,11 +435,35 @@ func _check_match():
 	_update_score_display()
 
 func _show_match_feedback(animal_name: String):
-	"""Show encouraging feedback for matches"""
+	"""Show encouraging feedback for matches with dyslexia-friendly design"""
 	var encouragement_label = $MainContainer/ContentContainer/GamePanel/GameContainer/ScoreContainer/EncouragementLabel
-	encouragement_label.text = "Great match! " + animal_name.capitalize() + " found!"
+	if encouragement_label:
+		# Clear, simple positive feedback
+		encouragement_label.text = "Great! " + animal_name.capitalize() + " found!"
+		
+		# Make text larger and easier to read for dyslexic children
+		encouragement_label.add_theme_font_override("font", preload("res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf"))
+		encouragement_label.add_theme_font_size_override("font_size", 20)
+		encouragement_label.add_theme_color_override("font_color", Color(0.2, 0.6, 0.2, 1)) # Green color for positive feedback
+		
+		# Animate the feedback for better visual impact
+		encouragement_label.modulate.a = 0.0
+		encouragement_label.scale = Vector2(0.8, 0.8)
+		var tween = create_tween()
+		tween.set_parallel(true)
+		tween.tween_property(encouragement_label, "modulate:a", 1.0, 0.5).set_ease(Tween.EASE_OUT)
+		tween.tween_property(encouragement_label, "scale", Vector2(1.0, 1.0), 0.5).set_ease(Tween.EASE_OUT)
+		
+		# Clear the message after some time
+		await get_tree().create_timer(3.0).timeout
+		if encouragement_label:
+			var fade_tween = create_tween()
+			fade_tween.tween_property(encouragement_label, "modulate:a", 0.0, 1.0)
 	
-	# Use TTS to give positive feedback
+	# Use TTS to give positive feedback with simple, clear language
+	if tts:
+		var feedback_text = "Well done! You found the " + animal_name + "!"
+		_speak_text_simple(feedback_text)
 	if tts:
 		_speak_text_simple("Great job! You found " + animal_name + "!")
 
@@ -351,9 +471,9 @@ func _complete_game():
 	"""Handle game completion with celebration"""
 	print("FlipQuizAnimals: Game completed!")
 	
-	# Update progress in Firebase using generic set completion
-	if module_progress:
-		var success = await module_progress.set_flip_quiz_set_completed("Animals")
+	# Update progress in Firebase using direct authentication.gd pattern
+	if Firebase.Auth.auth:
+		var success = await _save_flip_quiz_completion_to_firebase("Animals")
 		if success:
 			print("FlipQuizAnimals: Progress saved to Firebase (Animals set)")
 	
@@ -411,12 +531,25 @@ func _update_score_display():
 
 func _load_progress():
 	"""Load progress from Firebase"""
-	if not module_progress:
+	if not Firebase.Auth.auth:
+		print("FlipQuizAnimals: Firebase not available or not authenticated")
 		return
+		
+	var user_id = Firebase.Auth.auth.localid
+	var collection = Firebase.Firestore.collection("dyslexia_users")
 	
-	var firebase_modules = await module_progress.fetch_modules()
-	if firebase_modules.size() > 0:
-		_update_progress_display(firebase_modules)
+	# Use working authentication.gd pattern: direct document fetch
+	print("FlipQuizAnimals: Loading progress for user: ", user_id)
+	var document = await collection.get_doc(user_id)
+	if document and !("error" in document.keys() and document.get_value("error")):
+		print("FlipQuizAnimals: Document fetched successfully")
+		var modules = document.get_value("modules")
+		if modules != null and typeof(modules) == TYPE_DICTIONARY:
+			_update_progress_display(modules)
+		else:
+			print("FlipQuizAnimals: No modules data found")
+	else:
+		print("FlipQuizAnimals: Failed to fetch document or document has error")
 
 func _update_progress_display(firebase_modules: Dictionary):
 	"""Update progress display using unified flip_quiz module"""
@@ -445,7 +578,8 @@ func _on_button_hover():
 func _on_guide_button_pressed():
 	$ButtonClick.play()
 	if tts:
-		var guide_text = "Welcome to the Animal Memory Game! This is a flip card game where you match animals with their words. Flip two cards to find a pair. Animal sounds will help you remember. Take your time and have fun learning!"
+		# Simpler, clearer instructions for dyslexic children
+		var guide_text = "This is a memory game! Find two cards that match. One card has a picture of an animal. The other card has the animal's name. When you find a match, you'll hear the animal sound! Take your time. You're doing great!"
 		_speak_text_simple(guide_text)
 
 func _on_tts_setting_button_pressed():
@@ -528,14 +662,24 @@ func _on_hear_button_pressed():
 	if current_animal_index < selected_animals.size():
 		var animal = selected_animals[current_animal_index]
 		
-		# Play animal sound
+		# Play animal sound first (primary hint)
 		var sound_node = get_node_or_null(animal.sound_node)
 		if sound_node:
 			sound_node.play()
 		
-		# Also speak the animal name
+		# Wait a moment, then speak the animal name clearly (secondary hint)
+		await get_tree().create_timer(1.0).timeout
 		if tts:
-			_speak_text_simple(animal.name.capitalize())
+			var hint_text = "Listen! This is a " + animal.name.capitalize() + ". Find the picture and the word!"
+			_speak_text_simple(hint_text)
+		
+		# Visual hint: briefly highlight the target animal name in the instruction
+		var instruction_label = $MainContainer/ContentContainer/InstructionPanel/InstructionContainer/TargetLabel
+		if instruction_label:
+			var original_color = instruction_label.get_theme_color("font_color")
+			instruction_label.add_theme_color_override("font_color", Color(1.0, 0.6, 0.0, 1)) # Orange highlight
+			await get_tree().create_timer(2.0).timeout
+			instruction_label.add_theme_color_override("font_color", original_color)
 
 func _on_next_button_pressed():
 	$ButtonClick.play()
@@ -572,3 +716,119 @@ func _stop_tts():
 
 func _exit_tree():
 	_stop_tts()
+
+# Direct Firebase flip quiz completion update using working authentication.gd pattern
+func _save_flip_quiz_completion_to_firebase(quiz_set_name: String) -> bool:
+	"""Save flip quiz set completion to Firebase using EXACT authentication.gd pattern"""
+	print("FlipQuizAnimals: _save_flip_quiz_completion_to_firebase called with set: ", quiz_set_name)
+	
+	# Check authentication using EXACT authentication.gd pattern
+	if Firebase.Auth.auth == null:
+		print("FlipQuizAnimals: No authenticated user, returning false")
+		return false
+	
+	var user_id = Firebase.Auth.auth.localid
+	print("FlipQuizAnimals: Loading data for user ID: ", user_id)
+	
+	# Check Firestore using EXACT authentication.gd pattern
+	if Firebase.Firestore == null:
+		print("FlipQuizAnimals: ERROR - Firestore is null, returning false")
+		return false
+	
+	# Use EXACT authentication.gd collection pattern
+	var collection = Firebase.Firestore.collection("dyslexia_users")
+	print("FlipQuizAnimals: Attempting to fetch document with ID: ", user_id)
+	
+	# Use EXACT authentication.gd await pattern
+	var document = await collection.get_doc(user_id)
+	
+	# Use EXACT authentication.gd error checking pattern
+	if document != null:
+		print("FlipQuizAnimals: Document received")
+		
+		# Check for errors using EXACT authentication.gd pattern
+		var has_error = false
+		var error_data = null
+		
+		if document.has_method("keys"):
+			var doc_keys = document.keys()
+			
+			if "error" in doc_keys:
+				error_data = document.get_value("error")
+				if error_data:
+					has_error = true
+					print("FlipQuizAnimals: Error in document: ", error_data)
+					return false
+			
+			if !has_error:
+				# Process document using nested structure pattern from authentication.gd
+				print("FlipQuizAnimals: Document retrieved successfully")
+				
+				# Get modules data (create if missing)
+				var modules = document.get_value("modules")
+				if modules == null or typeof(modules) != TYPE_DICTIONARY:
+					print("FlipQuizAnimals: Creating modules structure")
+					modules = {
+						"flip_quiz": {
+							"completed": false,
+							"progress": 0,
+							"sets_completed": []
+						}
+					}
+				
+				# Ensure flip_quiz module exists
+				if !modules.has("flip_quiz"):
+					print("FlipQuizAnimals: Creating flip_quiz module")
+					modules["flip_quiz"] = {
+						"completed": false,
+						"progress": 0,
+						"sets_completed": []
+					}
+				
+				var flip_quiz_data = modules["flip_quiz"]
+				var sets_completed = flip_quiz_data.get("sets_completed", [])
+				
+				var set_lower = quiz_set_name.to_lower()
+				print("FlipQuizAnimals: Current sets completed: ", sets_completed)
+				
+				if not sets_completed.has(set_lower):
+					print("FlipQuizAnimals: Adding new set: ", set_lower)
+					sets_completed.append(set_lower)
+					flip_quiz_data["sets_completed"] = sets_completed
+					
+					# Calculate progress (simplified - 1 set = 100%)
+					var progress_percent = min(100, sets_completed.size() * 100)
+					
+					print("FlipQuizAnimals: Total sets: ", sets_completed.size())
+					print("FlipQuizAnimals: Calculated progress: ", progress_percent, "%")
+					
+					flip_quiz_data["progress"] = progress_percent
+					flip_quiz_data["completed"] = progress_percent >= 100
+					modules["flip_quiz"] = flip_quiz_data
+					
+					# Update document using EXACT authentication.gd pattern
+					document.add_or_update_field("modules", modules)
+					
+					# Save using EXACT authentication.gd pattern
+					print("FlipQuizAnimals: About to update document with modules: ", modules)
+					var updated_document = await collection.update(document)
+					
+					# Check if update was successful
+					if updated_document != null:
+						print("FlipQuizAnimals: ✓ Set '", set_lower, "' saved to Firebase. Progress: ", progress_percent, "%")
+						return true
+					else:
+						print("FlipQuizAnimals: Failed to update document")
+						return false
+				else:
+					print("FlipQuizAnimals: Set '", set_lower, "' already completed")
+					return true
+			else:
+				print("FlipQuizAnimals: Document has no keys method")
+				return false
+	else:
+		print("FlipQuizAnimals: Failed to get document for flip quiz completion update")
+		return false
+	
+	# Fallback return (should never be reached)
+	return false
