@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://cjrrrf0p4lr7q"]
+[gd_scene load_steps=17 format=3 uid="uid://cjrrrf0p4lr7q"]
 
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="1_font_bold"]
 [ext_resource type="Texture2D" uid="uid://0con8ixqofpr" path="res://gui/Update/UI/ui 8.png" id="2_ch0ic"]
@@ -12,6 +12,7 @@
 [ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="8_green_button"]
 [ext_resource type="Texture2D" uid="uid://bmjd8nkagj08e" path="res://gui/Update/UI/long uncolored button.png" id="10_o7c00"]
 [ext_resource type="PackedScene" uid="uid://7wtij707stht" path="res://Scenes/TTSSettingsPopup.tscn" id="11_tts_popup"]
+[ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="13_avqid"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_l5u2n"]
 
@@ -212,10 +213,10 @@ vertical_alignment = 1
 [node name="FontSizeSlider" type="HSlider" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/FontSizeContainer"]
 custom_minimum_size = Vector2(150, 30)
 layout_mode = 2
-min_value = 18.0
-max_value = 28.0
+min_value = 12.0
+max_value = 20.0
 step = 2.0
-value = 20.0
+value = 12.0
 editable = false
 
 [node name="FontSizeValue" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/FontSizeContainer"]
@@ -225,7 +226,7 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_font_regular")
 theme_override_font_sizes/font_size = 14
-text = "18"
+text = "12"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -292,6 +293,7 @@ min_value = 1.0
 max_value = 2.0
 step = 0.1
 value = 1.0
+editable = false
 
 [node name="ReadingSpeedValue" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/ReadingSpeedContainer"]
 custom_minimum_size = Vector2(40, 0)
@@ -301,6 +303,17 @@ theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_font_regular")
 theme_override_font_sizes/font_size = 14
 text = "1.0x"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="NotYetDone" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/ReadingSpeedContainer"]
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_font_regular")
+theme_override_font_sizes/font_size = 14
+text = "Maintenance"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -575,7 +588,7 @@ visible = false
 stream = ExtResource("7_button_click")
 
 [node name="ButtonHover" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("7_button_click")
+stream = ExtResource("13_avqid")
 
 [connection signal="mouse_entered" from="SettingsContainer/CloseButton" to="." method="_on_close_button_mouse_entered"]
 [connection signal="pressed" from="SettingsContainer/CloseButton" to="." method="_on_close_button_pressed"]
@@ -583,6 +596,7 @@ stream = ExtResource("7_button_click")
 [connection signal="pressed" from="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/BattleSection/BattleButtonContainer/EngageButton" to="." method="_on_engage_button_pressed"]
 [connection signal="mouse_entered" from="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/BattleSection/BattleButtonContainer/LeaveButton" to="." method="_on_quit_button_mouse_entered"]
 [connection signal="pressed" from="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/BattleSection/BattleButtonContainer/LeaveButton" to="." method="_on_quit_button_pressed"]
+[connection signal="mouse_entered" from="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/TTSContainer/TTSSettingsButton" to="." method="_on_tts_settings_button_mouse_entered"]
 [connection signal="pressed" from="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/TTSContainer/TTSSettingsButton" to="." method="_on_tts_settings_button_pressed"]
 [connection signal="mouse_entered" from="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/DataSection/ExportDataButton" to="." method="_on_export_data_button_mouse_entered"]
 [connection signal="pressed" from="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/DataSection/ExportDataButton" to="." method="_on_export_data_button_pressed"]

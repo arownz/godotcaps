@@ -134,49 +134,31 @@ func _load_category_progress():
 		print("PhonicsModule: Failed to fetch document or document has error")
 
 func _update_progress_displays(firebase_modules: Dictionary):
-	var total_progress = 0.0
-	var category_count = 0
-	
-	for category_key in categories.keys():
-		var firestore_key = categories[category_key]["firestore_key"]
-		var progress_percent = 0.0
-		
-		# Get phonics data and calculate specific category progress
-		if firebase_modules.has("phonics"):
-			var phonics = firebase_modules["phonics"]
-			if typeof(phonics) == TYPE_DICTIONARY:
-				# Calculate category-specific progress from detailed phonics data
-				if category_key == "letters":
-					var letters_completed = phonics.get("letters_completed", []).size()
-					progress_percent = (float(letters_completed) / 26.0) * 100.0
-				elif category_key == "sight_words":
-					var words_completed = phonics.get("sight_words_completed", []).size()
-					progress_percent = (float(words_completed) / 20.0) * 100.0
-		elif firebase_modules.has(firestore_key):
-			var fm = firebase_modules[firestore_key]
-			if typeof(fm) == TYPE_DICTIONARY:
-				progress_percent = float(fm.get("progress", 0))
-		
-		# Update card progress label - fix the correct path
-		var card_path = "MainContainer/ScrollContainer/CategoriesGrid/" + category_key.capitalize() + "Card"
-		var progress_label = get_node_or_null(card_path + "/" + category_key.capitalize() + "Content/ProgressContainer/ProgressLabel")
-		var progress_bar = get_node_or_null(card_path + "/" + category_key.capitalize() + "Content/ProgressContainer/ProgressBar")
-		
-		if progress_label:
-			progress_label.text = str(int(progress_percent)) + "% Complete"
-		if progress_bar:
-			progress_bar.value = progress_percent
-		
-		total_progress += progress_percent
-		category_count += 1
-	
-	# Update overall progress
-	var overall_percent = total_progress / max(category_count, 1)
-	var overall_label = $MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressLabel
+	# Letters progress
+	var letters_percent = 0.0
+	if firebase_modules.has("phonics"):
+		var phonics = firebase_modules["phonics"]
+		if typeof(phonics) == TYPE_DICTIONARY:
+			var letters_completed = phonics.get("letters_completed", []).size()
+			letters_percent = (float(letters_completed) / 26.0) * 100.0
+	var letters_label = get_node_or_null("MainContainer/ScrollContainer/CategoriesGrid/LettersCard/LettersContent/ProgressLabel")
+	if letters_label:
+		letters_label.text = str(int(letters_percent)) + "% Complete"
+
+	# Sight Words progress
+	var sight_words_percent = 0.0
+	if firebase_modules.has("phonics"):
+		var phonics = firebase_modules["phonics"]
+		if typeof(phonics) == TYPE_DICTIONARY:
+			var words_completed = phonics.get("sight_words_completed", []).size()
+			sight_words_percent = (float(words_completed) / 20.0) * 100.0
+	var sight_label = get_node_or_null("MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard/SightWordsContent/ProgressLabel")
+	if sight_label:
+		sight_label.text = str(int(sight_words_percent)) + "% Complete"
+
+	# Overall progress (average)
+	var overall_percent = (letters_percent + sight_words_percent) / 2.0
 	var overall_bar = $MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressBar
-	
-	if overall_label:
-		overall_label.text = "Overall Progress: " + str(int(overall_percent)) + "%"
 	if overall_bar:
 		overall_bar.value = overall_percent
 

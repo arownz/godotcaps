@@ -163,7 +163,7 @@ func _load_category_progress():
 
 func _update_progress_displays(firebase_modules: Dictionary):
 	# Show progress for Animals set (like Phonics)
-	var total_sets := 3 # Update this if you add more sets
+	var total_sets := 3 # Always 3 sets for Flip Quiz
 	var sets_completed := 0
 	if firebase_modules.has("flip_quiz"):
 		var fq = firebase_modules["flip_quiz"]
@@ -176,14 +176,11 @@ func _update_progress_displays(firebase_modules: Dictionary):
 	var progress_label = get_node_or_null(animals_card_path + "/ProgressLabel")
 	var progress_bar = get_node_or_null(animals_card_path + "/ProgressBar")
 	if progress_label:
-		progress_label.text = "Flip Quiz Progress: " + str(sets_completed) + "/" + str(total_sets) + " sets (" + str(int(percent)) + "%)"
+		progress_label.text = str(sets_completed) + "/" + str(total_sets) + " sets (" + str(int(percent)) + "%)" + " Complete"
 	if progress_bar:
 		progress_bar.value = percent
 	# Update overall progress bar/label
-	var overall_label = $MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressLabel
 	var overall_bar = $MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressBar
-	if overall_label:
-		overall_label.text = "Flip Quiz Progress: " + str(sets_completed) + "/" + str(total_sets) + " sets (" + str(int(percent)) + "%)"
 	if overall_bar:
 		overall_bar.value = percent
 

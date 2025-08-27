@@ -7,7 +7,7 @@ signal closed
 enum CompletionType {
 	LETTER,
 	SIGHT_WORD,
-	CATEGORY_COMPLETE
+	FLIP_ANIMAL
 }
 
 var completion_type: CompletionType = CompletionType.LETTER
@@ -159,7 +159,7 @@ func _update_content(module_key: String = "phonics"):
 				else:
 					next_btn.visible = true
 		
-		CompletionType.CATEGORY_COMPLETE:
+		CompletionType.FLIP_ANIMAL:
 			if title_label:
 				title_label.text = "All done!"
 			if message_label:
@@ -168,25 +168,37 @@ func _update_content(module_key: String = "phonics"):
 			# Show overall module progress
 			if module_key == "flip_quiz":
 				var total_sets := 3 # Update if you add more sets
-				var sets_completed: int = progress_data.get("sets_completed", []).size()
-				var percent := (float(sets_completed) / float(total_sets)) * 100.0
+				var sets_completed = progress_data.get("sets_completed", [])
+				if typeof(sets_completed) == TYPE_INT:
+					sets_completed = [sets_completed] # convert int to array
+				var completed_count = 0
+				if typeof(sets_completed) == TYPE_ARRAY:
+					completed_count = sets_completed.size()
+				else:
+					completed_count = int(sets_completed)
+				var percent = (float(completed_count) / float(total_sets)) * 100.0
 				if progress_label:
-					progress_label.text = "Flip Quiz Progress: " + str(sets_completed) + "/" + str(total_sets) + " sets (" + str(int(percent)) + "%)"
+					progress_label.text = "Flip Quiz Progress: " + str(completed_count) + "/" + str(total_sets) + " sets (" + str(int(percent)) + "%)"
 				if progress_bar:
 					progress_bar.value = percent
+
+				# Show both try again and next button for category completion
+				if try_again_btn:
+					try_again_btn.text = "Again"
+					try_again_btn.visible = true
+				if next_btn:
+					next_btn.text = "Next"
+					# Hide next button if all sets are complete (100%)
+					if percent >= 100.0:
+						next_btn.visible = false
+					else:
+						next_btn.visible = true
 			else:
 				var overall_progress = progress_data.get("progress", 0)
 				if progress_label:
 					progress_label.text = "Overall Phonics Progress: " + str(overall_progress) + "%"
 				if progress_bar:
 					progress_bar.value = overall_progress
-
-			# Only show try again button for category completion
-			if try_again_btn:
-				try_again_btn.text = "Again"
-				try_again_btn.visible = true
-			if next_btn:
-				next_btn.visible = false
 
 func close_celebration():
 	"""Close celebration with animation"""

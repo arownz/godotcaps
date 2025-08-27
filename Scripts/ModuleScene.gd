@@ -265,12 +265,6 @@ func _update_card_progress(module_key: String, card_name: String):
 			if module_data.has(module_key):
 				module_name = module_data[module_key]["name"].split(" ")[0] # Get first word
 			action_button.text = "Continue " + module_name
-		else:
-			# Get module name from module_data for new modules
-			var module_name = ""
-			if module_data.has(module_key):
-				module_name = module_data[module_key]["name"].split(" ")[0] # Get first word
-			action_button.text = "Enter " + module_name
 
 # Button sound event handlers
 func _on_button_hover():

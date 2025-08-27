@@ -12,12 +12,12 @@
 [ext_resource type="Texture2D" uid="uid://bmjd8nkagj08e" path="res://gui/Update/UI/long uncolored button.png" id="10_0kgie"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dt2ji"]
-bg_color = Color(0.901961, 0.301961, 0.301961, 1)
+bg_color = Color(0.980392, 0.870588, 0.870588, 1)
 border_width_left = 5
 border_width_top = 5
 border_width_right = 5
 border_width_bottom = 5
-border_color = Color(0, 0, 0, 1)
+border_color = Color(0.901961, 0.301961, 0.301961, 1)
 corner_radius_top_left = 25
 corner_radius_top_right = 25
 corner_radius_bottom_right = 25
@@ -121,7 +121,7 @@ alignment = 1
 [node name="TitleLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold")
 theme_override_font_sizes/font_size = 36
 text = "FLIP QUIZ"
@@ -148,15 +148,15 @@ expand_icon = true
 [node name="ProgressContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer"]
 layout_mode = 2
 size_flags_vertical = 0
-theme_override_constants/separation = 25
+theme_override_constants/separation = 15
 alignment = 1
 
 [node name="ProgressLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer"]
 layout_mode = 2
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular")
 theme_override_font_sizes/font_size = 16
-text = "Overall Progress: 0%"
+text = "Overall Progress:"
 
 [node name="ProgressBar" type="ProgressBar" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer"]
 custom_minimum_size = Vector2(300, 20)
@@ -248,7 +248,7 @@ texture = ExtResource("7_qpuos")
 
 [node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/AnimalsCard/AnimalsContent"]
 layout_mode = 2
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold")
 theme_override_font_sizes/font_size = 20
 text = "Animals"
@@ -257,7 +257,7 @@ horizontal_alignment = 1
 [node name="DescLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/AnimalsCard/AnimalsContent"]
 custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular")
 theme_override_font_sizes/font_size = 14
 text = "Match animals"
@@ -266,7 +266,7 @@ autowrap_mode = 2
 
 [node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/AnimalsCard/AnimalsContent"]
 layout_mode = 2
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular")
 theme_override_font_sizes/font_size = 12
 text = "0% Complete"

@@ -90,16 +90,23 @@ func set_current_profile(profile_id):
 	update_checkmarks()
 
 func update_checkmarks():
-	# Hide all checkmarks first
-	for icon in checkmark_icons.values():
-		if icon:
-			icon.visible = false
-	
-	# Show checkmark for currently equipped profile
+	# Hide all checkmarks and reset highlight for all portrait buttons
+	for child in $PictureContainer/ScrollContainer/GridContainer.get_children():
+		if child is TextureButton:
+			child.modulate = Color(1, 1, 1, 1)
+			var child_portrait_id = child.name.replace("Portrait", "")
+			if child_portrait_id in checkmark_icons:
+				checkmark_icons[child_portrait_id].visible = false
+
+	# Show checkmark and highlight for currently equipped profile
 	if current_equipped_id in checkmark_icons:
 		var icon = checkmark_icons[current_equipped_id]
 		if icon:
 			icon.visible = true
+		var button_name = "Portrait" + current_equipped_id
+		var equipped_button = $PictureContainer/ScrollContainer/GridContainer.get_node_or_null(button_name)
+		if equipped_button and equipped_button is TextureButton:
+			equipped_button.modulate = Color(0.5, 0.8, 1.0, 1.0)
 
 func _on_portrait_button_pressed(picture_id):
 	$ButtonClick.play()

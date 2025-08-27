@@ -192,7 +192,7 @@ func update_ui_from_settings():
 
 # ===== Signal Handlers =====
 
-func _on_close_button_pressed():
+func _on_close_button_pressed() -> void:
 	$ButtonClick.play()
 	print("SettingScene: Close button pressed - closing popup")
 	_close_popup()
@@ -200,7 +200,7 @@ func _on_close_button_pressed():
 func _on_close_button_mouse_entered() -> void:
 	$ButtonHover.play()
 
-func _on_back_button_pressed():
+func _on_back_button_pressed() -> void:
 	$ButtonClick.play()
 	print("SettingScene: Back button pressed - closing popup")
 	_close_popup()
@@ -232,6 +232,7 @@ func _on_high_contrast_toggled(pressed: bool):
 	print("SettingScene: High contrast mode: ", pressed)
 
 func _on_tts_settings_button_pressed():
+	$ButtonClick.play()
 	"""Open TTS Settings popup for voice customization"""
 	print("SettingScene: Opening TTS Settings for global voice preferences (robust lookup)...")
 	var tts_popup = get_node_or_null("TTSSettingsPopup")
@@ -662,7 +663,7 @@ func permanently_hide_engage_button():
 func _engage_hide_internal(existing_tween: Tween = null):
 	if not engage_button:
 		return
-	var tween = existing_tween if existing_tween else create_tween()	
+	var tween = existing_tween if existing_tween else create_tween()
 	engage_button.disabled = true
 	tween.tween_property(engage_button, "modulate", Color(1, 1, 1, 0.3), 0.25)
 	tween.tween_callback(func():
@@ -684,3 +685,7 @@ func _hard_remove_engage_button():
 			# If only leave button remains, ensure its size flags fill space
 			leave_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 			leave_button.visible = true
+
+
+func _on_tts_settings_button_mouse_entered() -> void:
+	$ButtonHover.play()

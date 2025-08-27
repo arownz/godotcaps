@@ -428,7 +428,7 @@ size_flags_vertical = 0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular_font")
 theme_override_font_sizes/font_size = 16
-text = "Trace letters that appear and help you hear sounds with interactive whiteboard exercises. Perfect for building word recognition skills."
+text = "Trace letters that appear and help you hear sounds with whiteboard exercises. Building word recognition skills."
 autowrap_mode = 3
 
 [node name="ProgressContainer" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/PhonicsCard/CardContent"]
@@ -441,7 +441,6 @@ custom_minimum_size = Vector2(0, 12)
 layout_mode = 2
 theme_override_styles/background = SubResource("StyleBoxFlat_progress_bg")
 theme_override_styles/fill = SubResource("StyleBoxFlat_phonics_progress")
-value = 65.0
 show_percentage = false
 
 [node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/PhonicsCard/CardContent/ProgressContainer"]
@@ -450,7 +449,7 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular_font")
 theme_override_font_sizes/font_size = 14
-text = "65% Complete"
+text = "0% Complete"
 horizontal_alignment = 2
 
 [node name="ActionButton" type="Button" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/PhonicsCard/CardContent"]
@@ -533,7 +532,7 @@ size_flags_vertical = 0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular_font")
 theme_override_font_sizes/font_size = 16
-text = "Fast-paced flashcard quizzes with voice input and text recognition. Build vocabulary through engaging challenges."
+text = "Fast-paced flashcard quizzes with text speech guide. Building memorization skill through media and sound."
 autowrap_mode = 3
 
 [node name="ProgressContainer" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent"]
@@ -546,7 +545,6 @@ custom_minimum_size = Vector2(0, 12)
 layout_mode = 2
 theme_override_styles/background = SubResource("StyleBoxFlat_progress_bg")
 theme_override_styles/fill = SubResource("StyleBoxFlat_quiz_progress")
-value = 40.0
 show_percentage = false
 
 [node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent/ProgressContainer"]
@@ -555,7 +553,7 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular_font")
 theme_override_font_sizes/font_size = 14
-text = "40% Complete"
+text = "0% Complete"
 horizontal_alignment = 2
 
 [node name="ActionButton" type="Button" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent"]
@@ -652,7 +650,6 @@ custom_minimum_size = Vector2(0, 12)
 layout_mode = 2
 theme_override_styles/background = SubResource("StyleBoxFlat_progress_bg")
 theme_override_styles/fill = SubResource("StyleBoxFlat_reading_progress")
-value = 55.0
 show_percentage = false
 
 [node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent/ProgressContainer"]
@@ -661,7 +658,7 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular_font")
 theme_override_font_sizes/font_size = 14
-text = "55% Complete"
+text = "0% Complete"
 horizontal_alignment = 2
 
 [node name="ActionButton" type="Button" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent"]
@@ -758,7 +755,6 @@ custom_minimum_size = Vector2(0, 12)
 layout_mode = 2
 theme_override_styles/background = SubResource("StyleBoxFlat_progress_bg")
 theme_override_styles/fill = SubResource("StyleBoxFlat_chunked_progress")
-value = 25.0
 show_percentage = false
 
 [node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ChunkedReadingCard/CardContent/ProgressContainer"]
@@ -767,7 +763,7 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular_font")
 theme_override_font_sizes/font_size = 14
-text = "25% Complete"
+text = "0% Complete"
 horizontal_alignment = 2
 
 [node name="ActionButton" type="Button" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ChunkedReadingCard/CardContent"]
@@ -864,7 +860,6 @@ custom_minimum_size = Vector2(0, 12)
 layout_mode = 2
 theme_override_styles/background = SubResource("StyleBoxFlat_progress_bg")
 theme_override_styles/fill = SubResource("StyleBoxFlat_syllable_progress")
-value = 70.0
 show_percentage = false
 
 [node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/SyllableBuildingCard/CardContent/ProgressContainer"]
@@ -873,7 +868,7 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular_font")
 theme_override_font_sizes/font_size = 14
-text = "70% Complete"
+text = "0% Complete"
 horizontal_alignment = 2
 
 [node name="ActionButton" type="Button" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/SyllableBuildingCard/CardContent"]

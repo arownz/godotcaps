@@ -471,7 +471,7 @@ func _show_encouragement_message(recognized: String, expected: String):
 		notification_popup.connect("button_pressed", Callable(self, "_on_encouragement_continue"))
 	
 	if notification_popup and notification_popup.has_method("show_notification"):
-		var message = "Great try! I see you wrote '" + recognized + "'.\n\nLet's practice the letter '" + expected + "' again.\nTake your time and trace it carefully."
+		var message = "Great try! I see you wrote '" + recognized + "'.\n\nLet's practice the letter '" + expected + "' again.\nTrace it carefully."
 		notification_popup.show_notification("Keep Practicing!", message, "Again")
 
 func _on_encouragement_continue():
