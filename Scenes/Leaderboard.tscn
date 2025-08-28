@@ -245,4 +245,5 @@ stream = ExtResource("5_67k4m")
 [node name="ButtonHover" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("6_r3gmb")
 
+[connection signal="mouse_entered" from="MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton" to="." method="_on_back_button_mouse_entered"]
 [connection signal="pressed" from="MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton" to="." method="_on_back_button_pressed"]

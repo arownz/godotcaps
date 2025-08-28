@@ -538,6 +538,9 @@ func _on_recognition_completed(text_result: String):
 	# Reset recognition state
 	recognition_in_progress = false
 	
+	# Re-enable buttons after recognition
+	_re_enable_buttons()
+	
 	# Emit signal with recognized text
 	emit_signal("drawing_submitted", text_result)
 

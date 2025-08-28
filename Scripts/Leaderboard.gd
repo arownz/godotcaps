@@ -982,3 +982,7 @@ func _fade_out_and_change_scene(scene_path: String):
 	tween.tween_property(self, "scale", Vector2(0.8, 0.8), 0.3).set_ease(Tween.EASE_IN)
 	await tween.finished
 	get_tree().change_scene_to_file(scene_path)
+
+
+func _on_back_button_mouse_entered():
+	$ButtonHover.play()

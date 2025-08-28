@@ -476,6 +476,12 @@ func _show_encouragement_message(recognized: String, expected: String):
 
 func _on_encouragement_continue():
 	print("PhonicsLetters: Encouragement popup button pressed - stay on current letter for more practice")
+	# Ensure whiteboard is ready for another attempt
+	if whiteboard_instance:
+		if whiteboard_instance.has_method("_on_clear_button_pressed"):
+			whiteboard_instance._on_clear_button_pressed()
+		if whiteboard_instance.has_method("_re_enable_buttons"):
+			whiteboard_instance._re_enable_buttons()
 
 func _on_celebration_try_again():
 	"""Handle try again button from celebration popup"""

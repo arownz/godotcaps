@@ -2,9 +2,39 @@
 .godot/
 /android/
 
-# Firebase configuration
+# Firebase configuration and cache
 addons/godot-firebase/.env
+.env
+*.env
+.firebase/
+firebase-debug.log*
+firebase-debug.*.log*
 
+# Node.js and npm
+node_modules/
+npm-debug.log*
+.npm
+*.tgz
+
+# Build and export directories
+/WebTest/
+/StandaloneTest/
+*.exe
+*.pck
+
+# Web-specific files
+*.wasm
+*.js
+*.worker.js
+*.json
+*.html
+*.css
+
+# Assets and media (if needed to track separately)
+*.woff
+*.woff2
+*.ttf
+*.otf
 
 #Ignore vscode AI rules
-.github\instructions\codacy.instructions.md
+.github/instructions/dyslexia-game.instructions.md

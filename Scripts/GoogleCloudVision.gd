@@ -11,6 +11,18 @@ func _ready():
 	http_request = HTTPRequest.new()
 	add_child(http_request)
 	http_request.request_completed.connect(_on_request_completed)
+	
+	# Set the API key in JavaScript if we're on web platform
+	if OS.has_feature("web"):
+		# Get API key from environment
+		var config = ConfigFile.new()
+		var err = config.load("res://addons/godot-firebase/.env")
+		if err == OK:
+			var api_key = config.get_value("firebase/environment_variables", "apiKey", "")
+			if api_key != "":
+				# Set the API key in JavaScript
+				JavaScriptBridge.eval("window.GOOGLE_CLOUD_API_KEY = '%s';" % api_key)
+				print("Google Cloud Vision API key set from environment")
 
 # Main function to recognize handwriting
 func recognize_handwriting(image_data):

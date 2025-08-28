@@ -50,7 +50,17 @@ func _on_background_clicked(event):
 
 func close_notification():
 	"""Close notification with animation"""
-	$ButtonClick.play()
+	# Try playing sound with error handling
+	var button_click = $ButtonClick
+	if button_click and button_click.has_method("play"):
+		button_click.set_stream_paused(false) # Ensure not paused
+		if OS.has_feature("web"):
+			# Web-specific sound handling
+			if button_click.stream and button_click.stream.is_class("AudioStreamOGGVorbis"):
+				button_click.play()
+		else:
+			button_click.play()
+	
 	var popup_container = $PopupContainer
 	if popup_container:
 		# Enhanced fade-out animation matching SettingScene style
