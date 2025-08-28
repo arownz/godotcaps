@@ -177,21 +177,22 @@ func _load_progress():
 		if modules != null and typeof(modules) == TYPE_DICTIONARY and modules.has("phonics"):
 			var phonics = modules["phonics"]
 			if typeof(phonics) == TYPE_DICTIONARY:
-				var progress_percent = float(phonics.get("progress", 0))
-				print("PhonicsSightWords: Loaded phonics progress: ", progress_percent, "%")
-				_update_progress_ui(progress_percent)
-				
-				# Load completed sight words and set current position to next uncompleted word
-				var sight_words_completed = phonics.get("sight_words_completed", [])
-				print("PhonicsSightWords: Completed sight words: ", sight_words_completed)
-				
-				# Update session array with Firebase data
-				session_completed_words = sight_words_completed.duplicate()
+				var words_completed = phonics.get("sight_words_completed", [])
+				# Update session tracking
+				session_completed_words = words_completed.duplicate()
+				# Update UI with loaded progress
+				var completed_count = words_completed.size()
+				var total_words = sight_words.size()
+				var words_percent = (float(completed_count) / float(total_words)) * 100.0
+				_update_progress_ui(words_percent)
+				# Update trace overlay for current word if completed
+				_update_completed_words_display(words_completed)
+				print("PhonicsSightWords: Loaded progress - ", completed_count, "/", total_words, " words completed")
 				
 				# Find first uncompleted sight word
 				for i in range(sight_words.size()):
 					var word = sight_words[i].to_lower()
-					if not sight_words_completed.has(word):
+					if not words_completed.has(word):
 						word_index = i
 						current_target = sight_words[i]
 						print("PhonicsSightWords: Starting from uncompleted word: ", current_target)
@@ -199,7 +200,6 @@ func _load_progress():
 				
 				# Update display with loaded position
 				_update_target_display()
-				_update_completed_words_display(sight_words_completed)
 			else:
 				print("PhonicsSightWords: Phonics module data is not a dictionary")
 		else:
@@ -207,14 +207,19 @@ func _load_progress():
 	else:
 		print("PhonicsSightWords: Failed to fetch document or document has error")
 
-func _update_progress_ui(percent: float):
+func _update_progress_ui(_percent: float):
 	var progress_label = $MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressLabel
 	var progress_bar = $MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressBar
 	
+	# Calculate sight words-specific progress
+	var completed_count = session_completed_words.size()
+	var total_words = sight_words.size()
+	var words_percent = (completed_count / float(total_words)) * 100.0
+	
 	if progress_label:
-		progress_label.text = str(int(percent)) + "% Complete"
+		progress_label.text = str(completed_count) + "/" + str(total_words) + " Words"
 	if progress_bar:
-		progress_bar.value = percent
+		progress_bar.value = words_percent
 
 func _update_completed_words_display(completed_words: Array):
 	"""Update trace overlay opacity to show completed words as transparent"""

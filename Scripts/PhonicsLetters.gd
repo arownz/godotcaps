@@ -185,16 +185,17 @@ func _load_progress():
 		if modules != null and typeof(modules) == TYPE_DICTIONARY and modules.has("phonics"):
 			var phonics = modules["phonics"]
 			if typeof(phonics) == TYPE_DICTIONARY:
-				var progress_percent = float(phonics.get("progress", 0))
-				print("PhonicsLetters: Loaded phonics progress: ", progress_percent, "%")
-				_update_progress_ui(progress_percent)
-				
-				# Load completed letters and set current position to next uncompleted letter
 				var letters_completed = phonics.get("letters_completed", [])
-				print("PhonicsLetters: Completed letters: ", letters_completed)
-				
-				# Update session array with Firebase data
+				# Update session tracking
 				session_completed_letters = letters_completed.duplicate()
+				# Update UI with loaded progress
+				var completed_count = letters_completed.size()
+				var total_letters = letter_set.size()
+				var letters_percent = (float(completed_count) / float(total_letters)) * 100.0
+				_update_progress_ui(letters_percent)
+				# Update trace overlay for current letter if completed
+				_update_completed_letters_display(letters_completed)
+				print("PhonicsLetters: Loaded progress - ", completed_count, "/", total_letters, " letters completed")
 				
 				# Find first uncompleted letter
 				for i in range(letter_set.size()):
@@ -207,7 +208,6 @@ func _load_progress():
 				
 				# Update display with loaded position
 				_update_target_display()
-				_update_completed_letters_display(letters_completed)
 			else:
 				print("PhonicsLetters: Phonics module data is not a dictionary")
 		else:
@@ -215,14 +215,21 @@ func _load_progress():
 	else:
 		print("PhonicsLetters: Failed to fetch document or document has error")
 
-func _update_progress_ui(percent: float):
+func _update_progress_ui(_percent: float):
 	var progress_label = $MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressLabel
 	var progress_bar = $MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressBar
 	
+	# Calculate letters-specific progress
+	var completed_count = session_completed_letters.size()
+	var total_letters = letter_set.size()
+	var letters_percent = (completed_count / float(total_letters)) * 100.0
+	
 	if progress_label:
-		progress_label.text = str(int(percent)) + "% Complete"
+		progress_label.text = str(completed_count) + "/" + str(total_letters) + " Letters"
 	if progress_bar:
-		progress_bar.value = percent
+		progress_bar.value = letters_percent
+		print("PhonicsLetters: Progress updated to ", letters_percent, "% (", completed_count, "/", total_letters, ")")
+		progress_bar.value = letters_percent
 
 func _update_completed_letters_display(completed_letters: Array):
 	"""Update trace overlay opacity to show completed letters as transparent"""
