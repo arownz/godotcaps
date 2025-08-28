@@ -9,11 +9,7 @@ var completion_celebration_scene = preload("res://Scenes/CompletionCelebration.t
 # Categories metadata (only animals has SFX)
 var categories = {
 	"animals": {
-		"name": "Animals",
-		"firestore_key": "flip_quiz", # unified module key
-		"description": "Match animals with their words using sounds",
 		"scene_path": "res://Scenes/FlipQuizAnimals.tscn",
-		"has_sfx": true
 	}
 }
 

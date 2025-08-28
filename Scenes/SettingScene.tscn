@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://cjrrrf0p4lr7q"]
+[gd_scene load_steps=18 format=3 uid="uid://cjrrrf0p4lr7q"]
 
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="1_font_bold"]
 [ext_resource type="Texture2D" uid="uid://0con8ixqofpr" path="res://gui/Update/UI/ui 8.png" id="2_ch0ic"]
@@ -13,6 +13,21 @@
 [ext_resource type="Texture2D" uid="uid://bmjd8nkagj08e" path="res://gui/Update/UI/long uncolored button.png" id="10_o7c00"]
 [ext_resource type="PackedScene" uid="uid://7wtij707stht" path="res://Scenes/TTSSettingsPopup.tscn" id="11_tts_popup"]
 [ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="13_avqid"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_header"]
+bg_color = Color(0.933333, 0.764706, 0.603922, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0, 0, 0, 0.1)
+shadow_size = 8
+shadow_offset = Vector2(0, 4)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_l5u2n"]
 
@@ -59,6 +74,46 @@ grow_vertical = 2
 texture = ExtResource("2_ch0ic")
 region_rect = Rect2(0, 0, 130, 118)
 
+[node name="HeaderPanel" type="Panel" parent="SettingsContainer"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+offset_left = 23.0
+offset_top = 11.0
+offset_right = 702.0
+offset_bottom = 91.0
+scale = Vector2(0.803788, 0.803788)
+theme_override_styles/panel = SubResource("StyleBoxFlat_header")
+
+[node name="TitleContainer" type="HBoxContainer" parent="SettingsContainer/HeaderPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 143.0
+offset_top = 13.0
+offset_right = -139.0
+offset_bottom = -9.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="SettingsContainer/HeaderPanel/TitleContainer"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+size_flags_vertical = 4
+texture = ExtResource("6_66loe")
+expand_mode = 2
+
+[node name="TitleLabel" type="Label" parent="SettingsContainer/HeaderPanel/TitleContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("1_font_bold")
+theme_override_font_sizes/font_size = 32
+text = "SETTING"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="CloseButton" type="TextureButton" parent="SettingsContainer"]
 layout_mode = 1
 anchors_preset = -1
@@ -75,33 +130,6 @@ mouse_default_cursor_shape = 2
 texture_normal = ExtResource("5_close")
 texture_hover = ExtResource("6_close_hover")
 stretch_mode = 5
-
-[node name="TitleContainer" type="HBoxContainer" parent="SettingsContainer"]
-layout_mode = 1
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 90.0
-offset_top = -401.0
-offset_right = 443.0
-offset_bottom = -350.0
-grow_vertical = 0
-alignment = 1
-
-[node name="TextureRect" type="TextureRect" parent="SettingsContainer/TitleContainer"]
-layout_mode = 2
-texture = ExtResource("6_66loe")
-expand_mode = 2
-
-[node name="TitleLabel" type="Label" parent="SettingsContainer/TitleContainer"]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("1_font_bold")
-theme_override_font_sizes/font_size = 20
-text = "SETTING"
-horizontal_alignment = 1
-vertical_alignment = 1
 
 [node name="SettingsContent" type="MarginContainer" parent="SettingsContainer"]
 layout_mode = 1

@@ -5,15 +5,9 @@ var tts: TextToSpeech = null
 # Categories: Only Letters and Sight Words
 var categories = {
 	"letters": {
-		"name": "Letters",
-		"firestore_key": "phonics_letters",
-		"description": "Trace A-Z and hear sounds",
 		"scene_path": "res://Scenes/PhonicsLetters.tscn"
 	},
 	"sight_words": {
-		"name": "Sight Words",
-		"firestore_key": "phonics_sight_words",
-		"description": "Common words like 'the', 'and'",
 		"scene_path": "res://Scenes/PhonicsSightWords.tscn"
 	}
 }
@@ -91,7 +85,6 @@ func _connect_hover_events():
 			tts_btn.pressed.connect(_on_tts_setting_button_pressed)
 
 func _style_category_cards():
-	# Style icon containers with #FEB79A background and black borders
 	var icon_containers = [
 		$MainContainer/ScrollContainer/CategoriesGrid/LettersCard/LettersContent/IconContainer,
 		$MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard/SightWordsContent/IconContainer

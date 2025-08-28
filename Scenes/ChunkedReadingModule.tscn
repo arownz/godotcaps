@@ -1,5 +1,6 @@
-[gd_scene load_steps=14 format=3 uid="uid://bm8j5k6f3bar2"]
+[gd_scene load_steps=15 format=3 uid="uid://bm8j5k6f3bar2"]
 
+[ext_resource type="Script" uid="uid://cq7ki0xl6yxeo" path="res://Scripts/chunked_reading_module.gd" id="1_douby"]
 [ext_resource type="Texture2D" uid="uid://0con8ixqofpr" path="res://gui/Update/UI/ui 8.png" id="2_bg"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="3_regular"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="4_bold"]
@@ -65,6 +66,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_douby")
 
 [node name="Background" type="TextureRect" parent="."]
 layout_mode = 1
@@ -293,3 +295,5 @@ stream = ExtResource("7_click")
 
 [node name="ButtonHover" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("8_hover")
+
+[connection signal="pressed" from="MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton" to="." method="_on_back_button_pressed"]

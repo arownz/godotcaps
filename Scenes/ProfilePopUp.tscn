@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3 uid="uid://bysyq46j6ycis"]
+[gd_scene load_steps=31 format=3 uid="uid://bysyq46j6ycis"]
 
 [ext_resource type="Script" uid="uid://caa84ntbsorb8" path="res://Scripts/ProfilePopUp.gd" id="1_script"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="2_73kok"]
@@ -24,6 +24,21 @@
 [ext_resource type="Texture2D" uid="uid://b2qy87ktakwus" path="res://gui/Update/icons/mountaintransplant.png" id="13_tilb2"]
 [ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="22_6o1ar"]
 [ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="23_q75ak"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_header"]
+bg_color = Color(0.933333, 0.764706, 0.603922, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0, 0, 0, 0.1)
+shadow_size = 8
+shadow_offset = Vector2(0, 4)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_kmls2"]
 
@@ -111,41 +126,57 @@ texture = ExtResource("2_rwnca")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="CloseButton" type="TextureButton" parent="ProfileContainer"]
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -4.0
-offset_top = -46.0
-offset_right = 52.0
-offset_bottom = 8.0
-grow_horizontal = 0
-mouse_default_cursor_shape = 2
-texture_normal = ExtResource("3_rwnca")
-texture_hover = ExtResource("4_7j5ql")
-ignore_texture_size = true
-stretch_mode = 5
+[node name="HeaderPanel" type="Panel" parent="ProfileContainer"]
+custom_minimum_size = Vector2(0, 90)
+layout_mode = 2
+offset_left = -18.0
+offset_top = -10.0
+offset_right = 762.0
+offset_bottom = 107.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_header")
 
-[node name="TitleLabel" type="Label" parent="ProfileContainer"]
-layout_mode = 0
-offset_left = 242.0
-offset_top = 18.0
-offset_right = 493.0
-offset_bottom = 84.0
+[node name="TitleContainer" type="HBoxContainer" parent="ProfileContainer/HeaderPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_right = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="ProfileContainer/HeaderPanel/TitleContainer"]
+custom_minimum_size = Vector2(45, 45)
+layout_mode = 2
+size_flags_vertical = 4
+texture = ExtResource("6_q75ak")
+expand_mode = 2
+
+[node name="TitleLabel" type="Label" parent="ProfileContainer/HeaderPanel/TitleContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_73kok")
 theme_override_font_sizes/font_size = 36
 text = "PROFILE"
 horizontal_alignment = 1
 
-[node name="TextureRect" type="TextureRect" parent="ProfileContainer/TitleLabel"]
-layout_mode = 0
-offset_left = -54.6049
-offset_top = -0.465966
-offset_right = 1.39505
-offset_bottom = 55.534
-texture = ExtResource("6_q75ak")
+[node name="CloseButton" type="TextureButton" parent="ProfileContainer"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -0.419983
+offset_top = -48.2186
+offset_right = 55.58
+offset_bottom = 5.78141
+grow_horizontal = 0
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("3_rwnca")
+texture_hover = ExtResource("4_7j5ql")
+ignore_texture_size = true
+stretch_mode = 5
 
 [node name="ProfilePictureButton" type="TextureButton" parent="ProfileContainer"]
 layout_mode = 0

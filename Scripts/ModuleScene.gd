@@ -4,31 +4,26 @@ extends Control
 var module_data = {
 	"phonics": {
 		"name": "Phonics Interactive",
-		"description": "Trace while hearing sounds",
 		"total_lessons": 46, # 26 letters + 20 sight words
 		"scene_path": "res://Scenes/PhonicsModule.tscn"
 	},
 	"flip_quiz": {
 		"name": "Flip Quiz",
-		"description": "Flipcard game with symbols",
 		"total_lessons": 20,
 		"scene_path": "res://Scenes/FlipQuizModule.tscn"
 	},
 	"read_aloud": {
 		"name": "Interactive Read-Aloud",
-		"description": "Follow highlighted text with audio",
 		"total_lessons": 15, # More realistic for reading passages
 		"scene_path": "res://Scenes/ReadAloudModule.tscn"
 	},
 	"chunked_reading": {
 		"name": "Chunked Reading",
-		"description": "Small sections with guided questions",
 		"total_lessons": 12, # More realistic for reading comprehension
 		"scene_path": "res://Scenes/ChunkedReadingModule.tscn"
 	},
 	"syllable_building": {
 		"name": "Syllable Building",
-		"description": "Drag syllables to build words",
 		"total_lessons": 25, # Variety of syllable patterns
 		"scene_path": "res://Scenes/SyllableBuildingModule.tscn"
 	},
