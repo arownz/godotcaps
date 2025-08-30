@@ -1,0 +1,205 @@
+[gd_scene load_steps=16 format=3 uid="uid://dxu7c3jt0qlwy"]
+
+[ext_resource type="Script" path="res://Scripts/chunked_vocabulary.gd" id="1_j4k2p"]
+[ext_resource type="Theme" uid="uid://c6r0evyxh5rg4" path="res://Resources/DefaultTheme.tres" id="1_ssdkv"]
+[ext_resource type="AudioStream" uid="uid://c6x5vvyc18pmy" path="res://Audio/button_hover.wav" id="2_p4r6s"]
+[ext_resource type="AudioStream" uid="uid://bpj3gfsxqcq2r" path="res://Audio/button_click.wav" id="3_q2rmj"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8brwx"]
+bg_color = Color(0.929412, 0.921569, 0.905882, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pdv1a"]
+bg_color = Color(0.964706, 0.956863, 0.94902, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_y6yb5"]
+bg_color = Color(0.945098, 0.937255, 0.929412, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[node name="ChunkedVocabulary" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_ssdkv")
+script = ExtResource("1_j4k2p")
+
+[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_p4r6s")
+
+[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_q2rmj")
+
+[node name="MainContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+
+[node name="HeaderPanel" type="PanelContainer" parent="MainContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_8brwx")
+
+[node name="HeaderContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="TitleContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="BackButton" type="Button" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+focus_mode = 0
+text = "←"
+
+[node name="Title" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Vocabulary Building"
+vertical_alignment = 1
+
+[node name="ProgressContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+alignment = 2
+
+[node name="ProgressLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer"]
+layout_mode = 2
+text = "Progress:"
+vertical_alignment = 1
+
+[node name="ProgressBar" type="ProgressBar" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer"]
+custom_minimum_size = Vector2(150, 25)
+layout_mode = 2
+size_flags_vertical = 4
+max_value = 1.0
+step = 0.01
+value = 0.5
+show_percentage = false
+
+[node name="TTSSettingButton" type="Button" parent="MainContainer/HeaderPanel"]
+layout_mode = 2
+size_flags_horizontal = 8
+focus_mode = 0
+text = "🔊"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="ContentContainer" type="VBoxContainer" parent="MainContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 20
+
+[node name="TextPanel" type="PanelContainer" parent="MainContainer/ScrollContainer/ContentContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_pdv1a")
+
+[node name="TextContainer" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/TextPanel"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="PassageTitle" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/TextPanel/TextContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Current Vocabulary Set"
+horizontal_alignment = 1
+
+[node name="PassageText" type="RichTextLabel" parent="MainContainer/ScrollContainer/ContentContainer/TextPanel/TextContainer"]
+layout_mode = 2
+theme_override_font_sizes/normal_font_size = 18
+bbcode_enabled = true
+text = "[center]Click 'Start New' to begin a vocabulary set[/center]"
+fit_content = true
+
+[node name="ButtonContainer" type="HBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/TextPanel/TextContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="PlayButton" type="Button" parent="MainContainer/ScrollContainer/ContentContainer/TextPanel/TextContainer/ButtonContainer"]
+layout_mode = 2
+focus_mode = 0
+disabled = true
+text = "Play ▶"
+
+[node name="StartNewButton" type="Button" parent="MainContainer/ScrollContainer/ContentContainer/TextPanel/TextContainer/ButtonContainer"]
+layout_mode = 2
+focus_mode = 0
+text = "Start New"
+
+[node name="VocabPanel" type="PanelContainer" parent="MainContainer/ScrollContainer/ContentContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_y6yb5")
+
+[node name="VocabContainer" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/VocabPanel"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="Title" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/VocabPanel/VocabContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Vocabulary Tools"
+horizontal_alignment = 1
+
+[node name="ToolsGrid" type="GridContainer" parent="MainContainer/ScrollContainer/ContentContainer/VocabPanel/VocabContainer"]
+layout_mode = 2
+columns = 2
+
+[node name="ContextButton" type="Button" parent="MainContainer/ScrollContainer/ContentContainer/VocabPanel/VocabContainer/ToolsGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+disabled = true
+text = "Show in Context"
+
+[node name="DefinitionButton" type="Button" parent="MainContainer/ScrollContainer/ContentContainer/VocabPanel/VocabContainer/ToolsGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+disabled = true
+text = "View Definition"
+
+[node name="ExampleButton" type="Button" parent="MainContainer/ScrollContainer/ContentContainer/VocabPanel/VocabContainer/ToolsGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+disabled = true
+text = "See Examples"
+
+[node name="PracticeButton" type="Button" parent="MainContainer/ScrollContainer/ContentContainer/VocabPanel/VocabContainer/ToolsGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+disabled = true
+text = "Practice Usage"
+
+[connection signal="pressed" from="MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton" to="." method="_on_back_button_pressed"]
+[connection signal="pressed" from="MainContainer/HeaderPanel/TTSSettingButton" to="." method="_on_tts_setting_button_pressed"]
+[connection signal="pressed" from="MainContainer/ScrollContainer/ContentContainer/TextPanel/TextContainer/ButtonContainer/PlayButton" to="." method="_on_play_button_pressed"]
+[connection signal="pressed" from="MainContainer/ScrollContainer/ContentContainer/TextPanel/TextContainer/ButtonContainer/StartNewButton" to="." method="_on_start_new_button_pressed"]
+[connection signal="pressed" from="MainContainer/ScrollContainer/ContentContainer/VocabPanel/VocabContainer/ToolsGrid/ContextButton" to="." method="_on_context_button_pressed"]
+[connection signal="pressed" from="MainContainer/ScrollContainer/ContentContainer/VocabPanel/VocabContainer/ToolsGrid/DefinitionButton" to="." method="_on_definition_button_pressed"]
+[connection signal="pressed" from="MainContainer/ScrollContainer/ContentContainer/VocabPanel/VocabContainer/ToolsGrid/ExampleButton" to="." method="_on_example_button_pressed"]
+[connection signal="pressed" from="MainContainer/ScrollContainer/ContentContainer/VocabPanel/VocabContainer/ToolsGrid/PracticeButton" to="." method="_on_practice_button_pressed"]

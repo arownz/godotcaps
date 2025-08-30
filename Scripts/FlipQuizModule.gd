@@ -62,6 +62,15 @@ func _refresh_progress():
 func _init_tts():
 	tts = TextToSpeech.new()
 	add_child(tts)
+	
+	# Load TTS settings
+	var voice_id = SettingsManager.get_setting("accessibility", "tts_voice_id")
+	var rate = SettingsManager.get_setting("accessibility", "tts_rate")
+	
+	if voice_id != null and voice_id != "":
+		tts.set_voice(voice_id)
+	if rate != null:
+		tts.set_rate(rate)
 
 func _init_module_progress():
 	# Use same Firebase pattern as authentication.gd (which works)

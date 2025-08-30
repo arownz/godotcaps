@@ -625,22 +625,35 @@ func _create_user_document(collection, user_id: String, auth):
 			"phonics": {
 				"completed": false,
 				"progress": 0,
+				"letters_completed": [],
+				"sight_words_completed": []
 			},
 			"flip_quiz": {
 				"completed": false,
 				"progress": 0,
+				"sets_completed": []
 			},
 			"read_aloud": {
 				"completed": false,
 				"progress": 0,
+				"stories_completed": []
 			},
 			"chunked_reading": {
 				"completed": false,
 				"progress": 0,
+				"passages_completed": []
 			},
 			"syllable_building": {
 				"completed": false,
 				"progress": 0,
+				"syllable_types": {
+					"closed": {"completed": false, "words": []},
+					"open": {"completed": false, "words": []},
+					"magic_e": {"completed": false, "words": []},
+					"r_controlled": {"completed": false, "words": []},
+					"vowel_team": {"completed": false, "words": []},
+					"consonant_le": {"completed": false, "words": []}
+				}
 			}
 		},
 		"stage_times": {

@@ -1,30 +1,28 @@
-[gd_scene load_steps=18 format=3 uid="uid://0qstx7wmx0vr"]
+[gd_scene load_steps=16 format=3 uid="uid://q1yjdcnnetr4"]
 
-[ext_resource type="Script" uid="uid://b026p1dub2ejv" path="res://Scripts/PhonicsSightWords.gd" id="2_script"]
-[ext_resource type="Texture2D" uid="uid://ciaa4qe2o2juf" path="res://gui/Update/UI/ui 3.png" id="2_vpakk"]
-[ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="4_bold"]
-[ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="5_green"]
-[ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="5_yellow"]
-[ext_resource type="Texture2D" uid="uid://qmmpx3uab5h7" path="res://gui/Update/UI/next button.png" id="6_8msy7"]
-[ext_resource type="PackedScene" uid="uid://cvv1bpkfdvqjw" path="res://Scenes/WhiteboardInterface.tscn" id="6_whiteboard"]
-[ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="8_click"]
-[ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="9_hover"]
+[ext_resource type="Script" uid="uid://bepgjougb17nf" path="res://Scripts/vehicle_flip_scene.gd" id="1_7p1sg"]
+[ext_resource type="Texture2D" uid="uid://ciaa4qe2o2juf" path="res://gui/Update/UI/ui 3.png" id="2_y0fi5"]
+[ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="3_ma1yg"]
+[ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="4_4itq8"]
+[ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="5_88e7u"]
+[ext_resource type="Texture2D" uid="uid://qmmpx3uab5h7" path="res://gui/Update/UI/next button.png" id="6_p0mf6"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_header_panel"]
-bg_color = Color(0.85098, 0.921569, 0.980392, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_22x63"]
+bg_color = Color(0.980392, 0.870588, 0.870588, 1)
 border_width_left = 3
 border_width_top = 3
 border_width_right = 3
 border_width_bottom = 3
-border_color = Color(0.2, 0.6, 0.901961, 1)
+border_color = Color(0.901961, 0.301961, 0.301961, 1)
 corner_radius_top_left = 15
 corner_radius_top_right = 15
 corner_radius_bottom_right = 15
 corner_radius_bottom_left = 15
-shadow_color = Color(0, 0, 0, 0.3)
+shadow_color = Color(0, 0, 0, 0.2)
 shadow_size = 8
+shadow_offset = Vector2(0, 4)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_t0cn4"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d1161"]
 bg_color = Color(0.88, 0.91, 0.94, 1)
 border_width_left = 2
 border_width_top = 2
@@ -36,8 +34,8 @@ corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8msy7"]
-bg_color = Color(0.25098, 0.529412, 0.741176, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4j16c"]
+bg_color = Color(0.901961, 0.301961, 0.301961, 1)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
@@ -48,48 +46,52 @@ corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_a3qkd"]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6r5gh"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_instruction_panel"]
-bg_color = Color(0.85098, 0.921569, 0.980392, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.2, 0.6, 0.901961, 1)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
-shadow_color = Color(0, 0, 0, 0.2)
-shadow_size = 5
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_shffy"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_8msy7"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_word_panel"]
-bg_color = Color(0.85098, 0.921569, 0.980392, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.2, 0.6, 0.901961, 1)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
-shadow_color = Color(0, 0, 0, 0.25)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5sqj8"]
+bg_color = Color(0.980392, 0.870588, 0.870588, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.901961, 0.301961, 0.301961, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+shadow_color = Color(0, 0, 0, 0.15)
 shadow_size = 6
+shadow_offset = Vector2(0, 3)
 
-[node name="PhonicsSightWords" type="Control"]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_vmau7"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_oebjl"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_fpdu0"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1i48n"]
+bg_color = Color(0.980392, 0.870588, 0.870588, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.901961, 0.301961, 0.301961, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+shadow_color = Color(0, 0, 0, 0.2)
+shadow_size = 6
+shadow_offset = Vector2(0, 3)
+
+[node name="VehicleFlipScene" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("2_script")
+script = ExtResource("1_7p1sg")
 
 [node name="Background" type="TextureRect" parent="."]
 layout_mode = 1
@@ -98,7 +100,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_vpakk")
+texture = ExtResource("2_y0fi5")
 
 [node name="MainContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -111,13 +113,13 @@ offset_right = -58.0
 offset_bottom = -35.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 30
+theme_override_constants/separation = 20
 
 [node name="HeaderPanel" type="Panel" parent="MainContainer"]
 custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 size_flags_vertical = 0
-theme_override_styles/panel = SubResource("StyleBoxFlat_header_panel")
+theme_override_styles/panel = SubResource("StyleBoxFlat_22x63")
 
 [node name="HeaderContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel"]
 layout_mode = 1
@@ -135,21 +137,21 @@ theme_override_constants/separation = 20
 [node name="ProgressContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer"]
 layout_mode = 2
 size_flags_vertical = 4
-theme_override_constants/separation = 20
+theme_override_constants/separation = 15
 alignment = 2
 
 [node name="ProgressBar" type="ProgressBar" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer"]
 custom_minimum_size = Vector2(200, 20)
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("4_bold")
-theme_override_styles/background = SubResource("StyleBoxFlat_t0cn4")
-theme_override_styles/fill = SubResource("StyleBoxFlat_8msy7")
+theme_override_fonts/font = ExtResource("3_ma1yg")
+theme_override_styles/background = SubResource("StyleBoxFlat_d1161")
+theme_override_styles/fill = SubResource("StyleBoxFlat_4j16c")
 
 [node name="ProgressLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("4_bold")
+theme_override_fonts/font = ExtResource("3_ma1yg")
 theme_override_font_sizes/font_size = 16
 text = "Complete"
 
@@ -162,9 +164,9 @@ theme_override_constants/separation = 20
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("4_bold")
+theme_override_fonts/font = ExtResource("3_ma1yg")
 theme_override_font_sizes/font_size = 32
-text = "Sight Words Practice"
+text = "Vehicle Memory Game"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -176,11 +178,11 @@ mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
 theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("4_bold")
+theme_override_fonts/font = ExtResource("3_ma1yg")
 theme_override_font_sizes/font_size = 18
-theme_override_styles/focus = SubResource("StyleBoxEmpty_a3qkd")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_6r5gh")
 text = "Back"
-icon = ExtResource("5_yellow")
+icon = ExtResource("4_4itq8")
 flat = true
 icon_alignment = 1
 expand_icon = true
@@ -194,7 +196,7 @@ theme_override_constants/separation = 20
 custom_minimum_size = Vector2(0, 120)
 layout_mode = 2
 size_flags_vertical = 0
-theme_override_styles/panel = SubResource("StyleBoxFlat_instruction_panel")
+theme_override_styles/panel = SubResource("StyleBoxFlat_5sqj8")
 
 [node name="InstructionContainer" type="VBoxContainer" parent="MainContainer/ContentContainer/InstructionPanel"]
 layout_mode = 1
@@ -213,14 +215,15 @@ theme_override_constants/separation = 10
 [node name="TargetLabel" type="Label" parent="MainContainer/ContentContainer/InstructionPanel/InstructionContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("4_bold")
+theme_override_fonts/font = ExtResource("3_ma1yg")
 theme_override_font_sizes/font_size = 48
-text = "Trace: the"
+text = "Loading..."
 horizontal_alignment = 1
 
 [node name="ControlsContainer" type="HBoxContainer" parent="MainContainer/ContentContainer/InstructionPanel/InstructionContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_constants/separation = 0
 alignment = 1
 
 [node name="PreviousButton" type="Button" parent="MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer"]
@@ -231,11 +234,11 @@ mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
 theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("4_bold")
+theme_override_fonts/font = ExtResource("3_ma1yg")
 theme_override_font_sizes/font_size = 16
-theme_override_styles/focus = SubResource("StyleBoxEmpty_shffy")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_vmau7")
 text = "Previous"
-icon = ExtResource("5_yellow")
+icon = ExtResource("4_4itq8")
 flat = true
 icon_alignment = 1
 expand_icon = true
@@ -247,11 +250,11 @@ mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
 theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("4_bold")
+theme_override_fonts/font = ExtResource("3_ma1yg")
 theme_override_font_sizes/font_size = 16
-theme_override_styles/focus = SubResource("StyleBoxEmpty_shffy")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_vmau7")
 text = "Hear"
-icon = ExtResource("5_green")
+icon = ExtResource("5_88e7u")
 flat = true
 icon_alignment = 1
 expand_icon = true
@@ -263,11 +266,11 @@ mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
 theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("4_bold")
+theme_override_fonts/font = ExtResource("3_ma1yg")
 theme_override_font_sizes/font_size = 16
-theme_override_styles/focus = SubResource("StyleBoxEmpty_shffy")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_vmau7")
 text = "Next"
-icon = ExtResource("5_yellow")
+icon = ExtResource("4_4itq8")
 flat = true
 icon_alignment = 1
 expand_icon = true
@@ -281,10 +284,10 @@ mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
 theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("4_bold")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_8msy7")
+theme_override_fonts/font = ExtResource("3_ma1yg")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_oebjl")
 text = "Guide"
-icon = ExtResource("6_8msy7")
+icon = ExtResource("6_p0mf6")
 flat = true
 icon_alignment = 1
 expand_icon = true
@@ -299,77 +302,74 @@ mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
 theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("4_bold")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_8msy7")
+theme_override_fonts/font = ExtResource("3_ma1yg")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_fpdu0")
 text = "TTS"
-icon = ExtResource("5_yellow")
+icon = ExtResource("4_4itq8")
 flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="WhiteboardPanel" type="Panel" parent="MainContainer/ContentContainer"]
+[node name="GamePanel" type="Panel" parent="MainContainer/ContentContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_word_panel")
+theme_override_styles/panel = SubResource("StyleBoxFlat_1i48n")
 
-[node name="WhiteboardContainer" type="Control" parent="MainContainer/ContentContainer/WhiteboardPanel"]
+[node name="GameContainer" type="VBoxContainer" parent="MainContainer/ContentContainer/GamePanel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 20.0
+offset_left = 30.0
 offset_top = 20.0
-offset_right = -20.0
+offset_right = -30.0
 offset_bottom = -20.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/separation = 20
 
-[node name="WhiteboardInterface" parent="MainContainer/ContentContainer/WhiteboardPanel/WhiteboardContainer" instance=ExtResource("6_whiteboard")]
-layout_mode = 1
-anchors_preset = 15
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 0.0
-offset_top = 13.0
-offset_right = 0.0
-offset_bottom = 0.0
-module_mode = true
+[node name="ScoreContainer" type="HBoxContainer" parent="MainContainer/ContentContainer/GamePanel/GameContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_constants/separation = 30
+alignment = 1
 
-[node name="TraceOverlay" type="Label" parent="MainContainer/ContentContainer/WhiteboardPanel/WhiteboardContainer"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -100.0
-offset_top = -60.0
-offset_right = 100.0
-offset_bottom = 60.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_colors/font_color = Color(0.2, 0.6, 0.901961, 0.52549)
-theme_override_fonts/font = ExtResource("4_bold")
-theme_override_font_sizes/font_size = 120
-text = "the"
+[node name="ScoreLabel" type="Label" parent="MainContainer/ContentContainer/GamePanel/GameContainer/ScoreContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_ma1yg")
+theme_override_font_sizes/font_size = 24
+text = "Matches: 0/4"
 horizontal_alignment = 1
-vertical_alignment = 1
 
-[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("8_click")
+[node name="AttemptsLabel" type="Label" parent="MainContainer/ContentContainer/GamePanel/GameContainer/ScoreContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_ma1yg")
+theme_override_font_sizes/font_size = 24
+text = "Attempts: 0"
+horizontal_alignment = 1
 
-[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("9_hover")
+[node name="CardsContainer" type="GridContainer" parent="MainContainer/ContentContainer/GamePanel/GameContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+theme_override_constants/h_separation = 20
+theme_override_constants/v_separation = 20
+columns = 4
+
+[node name="car_sfx" type="AudioStreamPlayer" parent="."]
+
+[node name="truck_sfx" type="AudioStreamPlayer" parent="."]
+
+[node name="train_sfx" type="AudioStreamPlayer" parent="."]
+
+[node name="airplane_sfx" type="AudioStreamPlayer" parent="."]
+
+[node name="boat_sfx" type="AudioStreamPlayer" parent="."]
+
+[node name="bus_sfx" type="AudioStreamPlayer" parent="."]
 
 [connection signal="pressed" from="MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton" to="." method="_on_back_button_pressed"]
-[connection signal="mouse_entered" from="MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/PreviousButton" to="." method="_on_button_hover"]
-[connection signal="pressed" from="MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/PreviousButton" to="." method="_on_previous_button_pressed"]
-[connection signal="mouse_entered" from="MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/HearButton" to="." method="_on_button_hover"]
-[connection signal="pressed" from="MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/HearButton" to="." method="_on_HearButton_pressed"]
-[connection signal="mouse_entered" from="MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/NextButton" to="." method="_on_button_hover"]
-[connection signal="pressed" from="MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/NextButton" to="." method="_on_NextTargetButton_pressed"]
 [connection signal="pressed" from="MainContainer/ContentContainer/InstructionPanel/GuideButton" to="." method="_on_guide_button_pressed"]
-[connection signal="mouse_entered" from="MainContainer/ContentContainer/InstructionPanel/TTSSettingButton" to="." method="_on_button_hover"]
 [connection signal="pressed" from="MainContainer/ContentContainer/InstructionPanel/TTSSettingButton" to="." method="_on_tts_setting_button_pressed"]
