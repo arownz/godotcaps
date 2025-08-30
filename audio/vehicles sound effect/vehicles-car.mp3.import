@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://b75ef7f7rlo08"
+path="res://.godot/imported/vehicles-car.mp3-ff32b1ee218d144df040abfb97b586a2.mp3str"
+
+[deps]
+
+source_file="res://audio/vehicles sound effect/vehicles-car.mp3"
+dest_files=["res://.godot/imported/vehicles-car.mp3-ff32b1ee218d144df040abfb97b586a2.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

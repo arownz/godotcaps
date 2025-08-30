@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://r6x858r4b75h"
+path="res://.godot/imported/vehicles-bus.mp3-f2bd3373443db6670034bb4e9f08565e.mp3str"
+
+[deps]
+
+source_file="res://audio/vehicles sound effect/vehicles-bus.mp3"
+dest_files=["res://.godot/imported/vehicles-bus.mp3-f2bd3373443db6670034bb4e9f08565e.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4
