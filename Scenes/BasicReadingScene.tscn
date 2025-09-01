@@ -1,8 +1,7 @@
-[gd_scene load_steps=15 format=3]
+[gd_scene load_steps=6 format=3 uid="uid://dkom663rauo0p"]
 
-[ext_resource type="Script" path="res://Scripts/basic_reading_scene.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://da4otyf0n3fv" path="res://Scripts/basic_reading_scene.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://0con8ixqofpr" path="res://gui/Update/UI/ui 8.png" id="2_bg"]
-[ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="3_regular"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="4_bold"]
 [ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="5_yellow"]
 

@@ -1,0 +1,442 @@
+[gd_scene load_steps=5 format=3 uid="uid://bxgo4srdaqa25"]
+
+[sub_resource type="GDScript" id="GDScript_v004v"]
+script/source = "extends Control
+
+var tts: TextToSpeech = null
+var module_progress = null
+var current_passage = null
+
+# Analysis state tracking
+var chunks_visible = false
+var highlights_visible = false
+var visual_aids_visible = false
+
+func _ready():
+	print(\"ChunkedAnalysis: Initializing\")
+	
+	# Setup fade-in animation
+	modulate.a = 0.0
+	var tween = create_tween()
+	tween.tween_property(self, \"modulate:a\", 1.0, 0.35)
+	
+	# Initialize components
+	_init_tts()
+	_init_module_progress()
+	
+	# Connect hover events for audio feedback
+	_connect_hover_events()
+
+func _notification(what):
+	if what == NOTIFICATION_WM_WINDOW_FOCUS_IN:
+		# Refresh progress when window regains focus
+		call_deferred(\"_refresh_progress\")
+
+func _init_tts():
+	tts = TextToSpeech.new()
+	add_child(tts)
+	
+	# Load TTS settings
+	var voice_id = SettingsManager.get_setting(\"accessibility\", \"tts_voice_id\")
+	var rate = SettingsManager.get_setting(\"accessibility\", \"tts_rate\")
+	
+	if voice_id != null and voice_id != \"\":
+		tts.set_voice(voice_id)
+	if rate != null:
+		tts.set_rate(rate)
+
+func _init_module_progress():
+	if Engine.has_singleton(\"Firebase\"):
+		module_progress = ModuleProgress.new()
+		add_child(module_progress)
+		print(\"ChunkedAnalysis: ModuleProgress initialized\")
+		_load_progress()
+	else:
+		print(\"ChunkedAnalysis: Firebase not available\")
+
+func _load_progress():
+	if not module_progress or not module_progress.is_authenticated():
+		print(\"ChunkedAnalysis: Not authenticated\")
+		return
+	
+	print(\"ChunkedAnalysis: Loading progress\")
+	var progress = await module_progress.get_chunked_reading_progress()
+	if progress:
+		var completed_analyses = progress.get(\"completed_analysis\", []).size()
+		var percent = float(completed_analyses) / 10.0
+		_update_progress_bar(percent)
+
+func _update_progress_bar(percent: float):
+	var progress_bar = $MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressBar
+	if progress_bar:
+		progress_bar.value = percent
+
+func _connect_hover_events():
+	# Connect all buttons to hover sound
+	var buttons = get_tree().get_nodes_in_group(\"buttons\")
+	for button in buttons:
+		if not button.mouse_entered.is_connected(_on_button_hover):
+			button.mouse_entered.connect(_on_button_hover)
+
+func _on_button_hover():
+	$ButtonHover.play()
+
+func _on_tts_setting_button_pressed():
+	$ButtonClick.play()
+	var tts_popup = get_node_or_null(\"TTSSettingsPopup\")
+	if not tts_popup:
+		var popup_scene = load(\"res://Scenes/TTSSettingsPopup.tscn\")
+		if popup_scene:
+			tts_popup = popup_scene.instantiate()
+			add_child(tts_popup)
+			
+			# Setup popup
+			var current_voice = SettingsManager.get_setting(\"accessibility\", \"tts_voice_id\")
+			var current_rate = SettingsManager.get_setting(\"accessibility\", \"tts_rate\")
+			
+			if current_voice == null or current_voice == \"\":
+				current_voice = \"default\"
+			if current_rate == null:
+				current_rate = 1.0
+			
+			if tts_popup.has_method(\"setup\"):
+				tts_popup.setup(tts, current_voice, current_rate, \"Testing Text to Speech\")
+			
+			# Connect settings saved signal
+			if not tts_popup.settings_saved.is_connected(_on_tts_settings_saved):
+				tts_popup.settings_saved.connect(_on_tts_settings_saved)
+	
+	if tts_popup:
+		tts_popup.visible = true
+
+func _on_tts_settings_saved(voice_id: String, rate: float):
+	if tts:
+		if voice_id != null and voice_id != \"\":
+			tts.set_voice(voice_id)
+		if rate != null:
+			tts.set_rate(rate)
+	
+	SettingsManager.set_setting(\"accessibility\", \"tts_voice_id\", voice_id)
+	SettingsManager.set_setting(\"accessibility\", \"tts_rate\", rate)
+
+func _on_back_button_pressed():
+	$ButtonClick.play()
+	_stop_tts()
+	_fade_out_and_return()
+
+func _fade_out_and_return():
+	var tween = create_tween()
+	tween.tween_property(self, \"modulate:a\", 0.0, 0.25)
+	await tween.finished
+	get_tree().change_scene_to_file(\"res://Scenes/ChunkedReadingModule.tscn\")
+
+func _stop_tts():
+	if tts and tts.has_method(\"stop\"):
+		tts.stop()
+
+func _exit_tree():
+	_stop_tts()
+
+func _on_play_button_pressed():
+	$ButtonClick.play()
+	if current_passage and tts:
+		tts.speak(current_passage[\"text\"])
+
+func _on_start_new_button_pressed():
+	$ButtonClick.play()
+	_load_new_passage()
+
+func _load_new_passage():
+	# TODO: Load from curated passage database
+	current_passage = {
+		\"text\": \"The small cat sat on the soft mat. It was a sunny day, and the cat felt very warm and happy. A bird flew by the window, but the cat was too comfortable to move.\",
+		\"chunks\": [
+			\"The small cat | sat on | the soft mat.\",
+			\"It was | a sunny day, | and the cat | felt very | warm and happy.\",
+			\"A bird | flew by | the window, | but the cat | was too comfortable | to move.\"
+		],
+		\"key_ideas\": [
+			{\"text\": \"cat sat on mat\", \"color\": Color(1, 0.8, 0.8, 1)},
+			{\"text\": \"sunny day\", \"color\": Color(1, 1, 0.8, 1)},
+			{\"text\": \"cat felt happy\", \"color\": Color(0.8, 1, 0.8, 1)},
+			{\"text\": \"bird flew by\", \"color\": Color(0.8, 0.8, 1, 1)},
+			{\"text\": \"cat stayed\", \"color\": Color(1, 0.8, 1, 1)}
+		],
+		\"visual_aids\": [
+			{\"type\": \"image\", \"description\": \"cat_on_mat\"},
+			{\"type\": \"image\", \"description\": \"sunny_day\"},
+			{\"type\": \"image\", \"description\": \"bird_window\"}
+		]
+	}
+	
+	# Enable analysis tools
+	_enable_analysis_tools()
+	
+	# Update passage display
+	var passage_text = $MainContainer/ScrollContainer/ContentContainer/TextPanel/TextContainer/PassageText
+	if passage_text:
+		passage_text.text = current_passage[\"text\"]
+	
+	# Enable play button
+	var play_button = $MainContainer/ScrollContainer/ContentContainer/TextPanel/TextContainer/ButtonContainer/PlayButton
+	if play_button:
+		play_button.disabled = false
+
+func _enable_analysis_tools():
+	var tools = [
+		\"ChunkButton\",
+		\"HighlightButton\",
+		\"VisualAidsButton\",
+		\"ComprehensionButton\"
+	]
+	
+	for tool_name in tools:
+		var button = $MainContainer/ScrollContainer/ContentContainer/AnalysisPanel/AnalysisContainer/ToolsGrid.get_node(tool_name)
+		if button:
+			button.disabled = false
+
+func _on_chunk_button_pressed():
+	$ButtonClick.play()
+	if not current_passage:
+		return
+	
+	chunks_visible = not chunks_visible
+	var passage_text = $MainContainer/ScrollContainer/ContentContainer/TextPanel/TextContainer/PassageText
+	if passage_text:
+		if chunks_visible:
+			var formatted_text = \"\"
+			for chunk in current_passage[\"chunks\"]:
+				formatted_text += \"[color=#4a90e2]\" + chunk + \"[/color]\\n\"
+			passage_text.text = formatted_text
+		else:
+			passage_text.text = current_passage[\"text\"]
+
+func _on_highlight_button_pressed():
+	$ButtonClick.play()
+	if not current_passage:
+		return
+	
+	highlights_visible = not highlights_visible
+	var passage_text = $MainContainer/ScrollContainer/ContentContainer/TextPanel/TextContainer/PassageText
+	if passage_text:
+		if highlights_visible:
+			var text = current_passage[\"text\"]
+			for idea in current_passage[\"key_ideas\"]:
+				var color = idea[\"color\"]
+				var hex_color = color.to_html(false)
+				text = text.replace(idea[\"text\"], \"[color=#\" + hex_color + \"]\" + idea[\"text\"] + \"[/color]\")
+			passage_text.text = text
+		else:
+			passage_text.text = current_passage[\"text\"]
+
+func _on_visual_aids_button_pressed():
+	$ButtonClick.play()
+	if not current_passage:
+		return
+	
+	visual_aids_visible = not visual_aids_visible
+	# TODO: Implement visual aids overlay system
+
+func _on_comprehension_button_pressed():
+	$ButtonClick.play()
+	if not current_passage:
+		return
+	
+	# TODO: Show comprehension check popup with questions
+	print(\"ChunkedAnalysis: Comprehension check not implemented yet\")
+"
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8brwx"]
+bg_color = Color(0.929412, 0.921569, 0.905882, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pdv1a"]
+bg_color = Color(0.964706, 0.956863, 0.94902, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_y6yb5"]
+bg_color = Color(0.945098, 0.937255, 0.929412, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[node name="ChunkedAnalysis" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = SubResource("GDScript_v004v")
+
+[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+
+[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+
+[node name="MainContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+
+[node name="HeaderPanel" type="PanelContainer" parent="MainContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_8brwx")
+
+[node name="HeaderContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="TitleContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="BackButton" type="Button" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+focus_mode = 0
+text = "←"
+
+[node name="Title" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Text Analysis"
+vertical_alignment = 1
+
+[node name="ProgressContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+alignment = 2
+
+[node name="ProgressLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer"]
+layout_mode = 2
+text = "Progress:"
+vertical_alignment = 1
+
+[node name="ProgressBar" type="ProgressBar" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer"]
+custom_minimum_size = Vector2(150, 25)
+layout_mode = 2
+size_flags_vertical = 4
+max_value = 1.0
+value = 0.5
+show_percentage = false
+
+[node name="TTSSettingButton" type="Button" parent="MainContainer/HeaderPanel"]
+layout_mode = 2
+size_flags_horizontal = 8
+focus_mode = 0
+text = "🔊"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="ContentContainer" type="VBoxContainer" parent="MainContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 20
+
+[node name="TextPanel" type="PanelContainer" parent="MainContainer/ScrollContainer/ContentContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_pdv1a")
+
+[node name="TextContainer" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/TextPanel"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="PassageTitle" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/TextPanel/TextContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Current Passage"
+horizontal_alignment = 1
+
+[node name="PassageText" type="RichTextLabel" parent="MainContainer/ScrollContainer/ContentContainer/TextPanel/TextContainer"]
+layout_mode = 2
+theme_override_font_sizes/normal_font_size = 18
+bbcode_enabled = true
+text = "[center]Click 'Start New' to begin analyzing a passage[/center]"
+fit_content = true
+
+[node name="ButtonContainer" type="HBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/TextPanel/TextContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="PlayButton" type="Button" parent="MainContainer/ScrollContainer/ContentContainer/TextPanel/TextContainer/ButtonContainer"]
+layout_mode = 2
+focus_mode = 0
+disabled = true
+text = "Play ▶"
+
+[node name="StartNewButton" type="Button" parent="MainContainer/ScrollContainer/ContentContainer/TextPanel/TextContainer/ButtonContainer"]
+layout_mode = 2
+focus_mode = 0
+text = "Start New"
+
+[node name="AnalysisPanel" type="PanelContainer" parent="MainContainer/ScrollContainer/ContentContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_y6yb5")
+
+[node name="AnalysisContainer" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/AnalysisPanel"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="Title" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/AnalysisPanel/AnalysisContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Analysis Tools"
+horizontal_alignment = 1
+
+[node name="ToolsGrid" type="GridContainer" parent="MainContainer/ScrollContainer/ContentContainer/AnalysisPanel/AnalysisContainer"]
+layout_mode = 2
+columns = 2
+
+[node name="ChunkButton" type="Button" parent="MainContainer/ScrollContainer/ContentContainer/AnalysisPanel/AnalysisContainer/ToolsGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+disabled = true
+text = "Show Chunks"
+
+[node name="HighlightButton" type="Button" parent="MainContainer/ScrollContainer/ContentContainer/AnalysisPanel/AnalysisContainer/ToolsGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+disabled = true
+text = "Highlight Key Ideas"
+
+[node name="VisualAidsButton" type="Button" parent="MainContainer/ScrollContainer/ContentContainer/AnalysisPanel/AnalysisContainer/ToolsGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+disabled = true
+text = "Visual Aids"
+
+[node name="ComprehensionButton" type="Button" parent="MainContainer/ScrollContainer/ContentContainer/AnalysisPanel/AnalysisContainer/ToolsGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+disabled = true
+text = "Check Understanding"
+
+[connection signal="pressed" from="MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton" to="." method="_on_back_button_pressed"]
+[connection signal="pressed" from="MainContainer/HeaderPanel/TTSSettingButton" to="." method="_on_tts_setting_button_pressed"]
+[connection signal="pressed" from="MainContainer/ScrollContainer/ContentContainer/TextPanel/TextContainer/ButtonContainer/PlayButton" to="." method="_on_play_button_pressed"]
+[connection signal="pressed" from="MainContainer/ScrollContainer/ContentContainer/TextPanel/TextContainer/ButtonContainer/StartNewButton" to="." method="_on_start_new_button_pressed"]
+[connection signal="pressed" from="MainContainer/ScrollContainer/ContentContainer/AnalysisPanel/AnalysisContainer/ToolsGrid/ChunkButton" to="." method="_on_chunk_button_pressed"]
+[connection signal="pressed" from="MainContainer/ScrollContainer/ContentContainer/AnalysisPanel/AnalysisContainer/ToolsGrid/HighlightButton" to="." method="_on_highlight_button_pressed"]
+[connection signal="pressed" from="MainContainer/ScrollContainer/ContentContainer/AnalysisPanel/AnalysisContainer/ToolsGrid/VisualAidsButton" to="." method="_on_visual_aids_button_pressed"]
+[connection signal="pressed" from="MainContainer/ScrollContainer/ContentContainer/AnalysisPanel/AnalysisContainer/ToolsGrid/ComprehensionButton" to="." method="_on_comprehension_button_pressed"]

@@ -1,9 +1,6 @@
-[gd_scene load_steps=16 format=3 uid="uid://dxu7c3jt0qlwy"]
+[gd_scene load_steps=5 format=3 uid="uid://chvlymqxjdcbm"]
 
-[ext_resource type="Script" path="res://Scripts/chunked_vocabulary.gd" id="1_j4k2p"]
-[ext_resource type="Theme" uid="uid://c6r0evyxh5rg4" path="res://Resources/DefaultTheme.tres" id="1_ssdkv"]
-[ext_resource type="AudioStream" uid="uid://c6x5vvyc18pmy" path="res://Audio/button_hover.wav" id="2_p4r6s"]
-[ext_resource type="AudioStream" uid="uid://bpj3gfsxqcq2r" path="res://Audio/button_click.wav" id="3_q2rmj"]
+[ext_resource type="Script" uid="uid://ba71prjiyls7h" path="res://Scripts/chunked_vocabulary.gd" id="1_j4k2p"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8brwx"]
 bg_color = Color(0.929412, 0.921569, 0.905882, 1)
@@ -33,14 +30,11 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme = ExtResource("1_ssdkv")
 script = ExtResource("1_j4k2p")
 
 [node name="ButtonHover" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("2_p4r6s")
 
 [node name="ButtonClick" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("3_q2rmj")
 
 [node name="MainContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -92,7 +86,6 @@ custom_minimum_size = Vector2(150, 25)
 layout_mode = 2
 size_flags_vertical = 4
 max_value = 1.0
-step = 0.01
 value = 0.5
 show_percentage = false
 

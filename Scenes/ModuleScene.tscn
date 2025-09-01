@@ -156,36 +156,6 @@ shadow_color = Color(0, 0, 0, 0.3)
 shadow_size = 4
 shadow_offset = Vector2(0, 2)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_reading_card"]
-bg_color = Color(0.87, 0.98, 0.9, 1)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.2, 0.8, 0.4, 1)
-corner_radius_top_left = 20
-corner_radius_top_right = 20
-corner_radius_bottom_right = 20
-corner_radius_bottom_left = 20
-shadow_color = Color(0, 0, 0, 0.2)
-shadow_size = 8
-shadow_offset = Vector2(0, 4)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_reading_progress"]
-bg_color = Color(0.2, 0.8, 0.4, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0, 0, 0, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-shadow_color = Color(0, 0, 0, 0.3)
-shadow_size = 4
-shadow_offset = Vector2(0, 2)
-
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_chunked_card"]
 bg_color = Color(0.94, 0.89, 0.98, 1)
 border_width_left = 3
@@ -203,6 +173,36 @@ shadow_offset = Vector2(0, 4)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_chunked_progress"]
 bg_color = Color(0.7, 0.4, 0.9, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+shadow_color = Color(0, 0, 0, 0.3)
+shadow_size = 4
+shadow_offset = Vector2(0, 2)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_reading_card"]
+bg_color = Color(0.87, 0.98, 0.9, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.2, 0.8, 0.4, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0, 0, 0, 0.2)
+shadow_size = 8
+shadow_offset = Vector2(0, 4)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_reading_progress"]
+bg_color = Color(0.2, 0.8, 0.4, 1)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
@@ -576,111 +576,6 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="ReadAloudCard" type="Panel" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid"]
-custom_minimum_size = Vector2(350, 360)
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_reading_card")
-
-[node name="CardContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 30.0
-offset_top = 30.0
-offset_right = -30.0
-offset_bottom = -30.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/separation = 15
-
-[node name="Header" type="HBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent"]
-layout_mode = 2
-size_flags_vertical = 0
-theme_override_constants/separation = 20
-
-[node name="IconPanel" type="Panel" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent/Header"]
-custom_minimum_size = Vector2(80, 80)
-layout_mode = 2
-size_flags_horizontal = 0
-theme_override_styles/panel = SubResource("StyleBoxFlat_icon")
-
-[node name="IconTexture" type="TextureRect" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent/Header/IconPanel"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -10.0
-offset_top = -14.0
-offset_right = 410.0
-offset_bottom = 406.0
-grow_horizontal = 2
-grow_vertical = 2
-scale = Vector2(0.204558, 0.204558)
-texture = ExtResource("9_bmnuq")
-
-[node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent/Header"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("4_bold_font")
-theme_override_font_sizes/font_size = 24
-text = "Interactive Read-Aloud"
-vertical_alignment = 1
-
-[node name="DescriptionLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent"]
-custom_minimum_size = Vector2(1, 0)
-layout_mode = 2
-size_flags_vertical = 0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_regular_font")
-theme_override_font_sizes/font_size = 16
-text = "Text passages with real-time highlighting. Follow along as words are read aloud with pause and replay options."
-autowrap_mode = 3
-
-[node name="ProgressContainer" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent"]
-layout_mode = 2
-size_flags_vertical = 0
-theme_override_constants/separation = 8
-
-[node name="ProgressBar" type="ProgressBar" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent/ProgressContainer"]
-custom_minimum_size = Vector2(0, 12)
-layout_mode = 2
-theme_override_styles/background = SubResource("StyleBoxFlat_progress_bg")
-theme_override_styles/fill = SubResource("StyleBoxFlat_reading_progress")
-show_percentage = false
-
-[node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent/ProgressContainer"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_regular_font")
-theme_override_font_sizes/font_size = 14
-text = "0% Complete"
-horizontal_alignment = 2
-
-[node name="ActionButton" type="Button" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent"]
-custom_minimum_size = Vector2(0, 50)
-layout_mode = 2
-size_flags_vertical = 8
-mouse_default_cursor_shape = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
-theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("4_bold_font")
-theme_override_font_sizes/font_size = 18
-theme_override_styles/focus = SubResource("StyleBoxEmpty_wwwj0")
-theme_override_styles/hover = SubResource("StyleBoxFlat_action_btn_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_action_btn_hover")
-theme_override_styles/normal = SubResource("StyleBoxFlat_action_btn")
-text = "Enter Interactive"
-icon = ExtResource("6_wwwj0")
-flat = true
-icon_alignment = 1
-expand_icon = true
-
 [node name="ChunkedReadingCard" type="Panel" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid"]
 custom_minimum_size = Vector2(350, 360)
 layout_mode = 2
@@ -781,6 +676,111 @@ theme_override_styles/hover = SubResource("StyleBoxFlat_action_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_action_btn_hover")
 theme_override_styles/normal = SubResource("StyleBoxFlat_action_btn")
 text = "Start Chunked"
+icon = ExtResource("6_wwwj0")
+flat = true
+icon_alignment = 1
+expand_icon = true
+
+[node name="ReadAloudCard" type="Panel" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid"]
+custom_minimum_size = Vector2(350, 360)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_reading_card")
+
+[node name="CardContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 30.0
+offset_top = 30.0
+offset_right = -30.0
+offset_bottom = -30.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 15
+
+[node name="Header" type="HBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent"]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_constants/separation = 20
+
+[node name="IconPanel" type="Panel" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent/Header"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_icon")
+
+[node name="IconTexture" type="TextureRect" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent/Header/IconPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -10.0
+offset_top = -14.0
+offset_right = 410.0
+offset_bottom = 406.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.204558, 0.204558)
+texture = ExtResource("9_bmnuq")
+
+[node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold_font")
+theme_override_font_sizes/font_size = 24
+text = "Interactive Read-Aloud"
+vertical_alignment = 1
+
+[node name="DescriptionLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent"]
+custom_minimum_size = Vector2(1, 0)
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_regular_font")
+theme_override_font_sizes/font_size = 16
+text = "Text passages with real-time highlighting. Follow along as words are read aloud with pause and replay options."
+autowrap_mode = 3
+
+[node name="ProgressContainer" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent"]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_constants/separation = 8
+
+[node name="ProgressBar" type="ProgressBar" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent/ProgressContainer"]
+custom_minimum_size = Vector2(0, 12)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_progress_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_reading_progress")
+show_percentage = false
+
+[node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent/ProgressContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_regular_font")
+theme_override_font_sizes/font_size = 14
+text = "0% Complete"
+horizontal_alignment = 2
+
+[node name="ActionButton" type="Button" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+size_flags_vertical = 8
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold_font")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/focus = SubResource("StyleBoxEmpty_wwwj0")
+theme_override_styles/hover = SubResource("StyleBoxFlat_action_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_action_btn_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_action_btn")
+text = "Enter Interactive"
 icon = ExtResource("6_wwwj0")
 flat = true
 icon_alignment = 1

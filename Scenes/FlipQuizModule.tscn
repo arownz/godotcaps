@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://bnaj2f5n3k8l6"]
+[gd_scene load_steps=17 format=3 uid="uid://bnaj2f5n3k8l6"]
 
 [ext_resource type="Script" uid="uid://dgl0bug32bd8w" path="res://Scripts/FlipQuizModule.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://0con8ixqofpr" path="res://gui/Update/UI/ui 8.png" id="2_bg"]
@@ -9,6 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://yblgdoniaxlp" path="res://gui/animalsquiz/animal_trans.png" id="7_qpuos"]
 [ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="8_hover"]
 [ext_resource type="Texture2D" uid="uid://qmmpx3uab5h7" path="res://gui/Update/UI/next button.png" id="9_a4okv"]
+[ext_resource type="Texture2D" uid="uid://drj7ht58m02jg" path="res://gui/vehiclesquiz/craiyon_103600_image.png" id="9_p1t5b"]
 [ext_resource type="Texture2D" uid="uid://bmjd8nkagj08e" path="res://gui/Update/UI/long uncolored button.png" id="10_0kgie"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dt2ji"]
@@ -309,21 +310,16 @@ layout_mode = 2
 size_flags_vertical = 3
 
 [node name="CenterContainer" type="CenterContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/VehiclesCard/VehiclesContent/IconContainer"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+clip_contents = true
+layout_mode = 0
+offset_left = 130.0
+offset_right = 1154.0
+offset_bottom = 1024.0
+scale = Vector2(0.130107, 0.131631)
 
-[node name="IconLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/VehiclesCard/VehiclesContent/IconContainer/CenterContainer"]
+[node name="IconLabel" type="TextureRect" parent="MainContainer/ScrollContainer/CategoriesGrid/VehiclesCard/VehiclesContent/IconContainer/CenterContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.901961, 0.4, 0.4, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("4_bold")
-theme_override_font_sizes/font_size = 48
-text = "Vv"
-horizontal_alignment = 1
+texture = ExtResource("9_p1t5b")
 
 [node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/VehiclesCard/VehiclesContent"]
 layout_mode = 2
