@@ -178,6 +178,7 @@ horizontal_alignment = 1
 
 [node name="AnswersContainer" type="GridContainer" parent="MarginContainer/VBoxContainer/QuestionPanel/MarginContainer/VBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 4
 theme_override_constants/h_separation = 20
 theme_override_constants/v_separation = 15
 columns = 2

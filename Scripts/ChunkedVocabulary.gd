@@ -158,8 +158,12 @@ func _on_back_button_pressed():
 
 func _on_hear_word_button_pressed():
 	button_click.play()
-	var word_to_speak = vocabulary_data[current_word_index].word
-	_speak_text(word_to_speak)
+	# Check bounds before accessing the array
+	if current_word_index < vocabulary_data.size():
+		var word_to_speak = vocabulary_data[current_word_index].word
+		_speak_text(word_to_speak)
+	else:
+		print("ChunkedVocabulary: Warning - current_word_index out of bounds: ", current_word_index)
 
 func _on_next_word_button_pressed():
 	button_click.play()
@@ -184,6 +188,35 @@ func _on_next_word_button_pressed():
 
 func _on_button_hover():
 	button_hover.play()
+
+func _on_vocabulary_done_button_pressed():
+	"""Mark current vocabulary word as completed and advance"""
+	button_click.play()
+	
+	# Mark current word as completed
+	if current_word_index < vocabulary_data.size():
+		var completed_word = vocabulary_data[current_word_index].word
+		if not completed_word in completed_words:
+			completed_words.append(completed_word)
+			
+			# Save progress to Firebase
+			if is_firebase_available and module_progress:
+				var success = await module_progress.save_chunked_vocabulary_progress(completed_words)
+				if success:
+					print("ChunkedVocabulary: Word '", completed_word, "' marked as completed in Firebase")
+				else:
+					print("ChunkedVocabulary: Failed to save word completion to Firebase")
+			else:
+				print("ChunkedVocabulary: Module progress not available, using local tracking")
+			
+			# Move to next word
+			current_word_index += 1
+			_display_current_word()
+			_update_progress()
+		else:
+			print("ChunkedVocabulary: Word '", completed_word, "' already completed")
+	else:
+		print("ChunkedVocabulary: All words completed!")
 
 func _speak_text(text: String):
 	# Use Godot's built-in TTS if available

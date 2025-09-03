@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://ck20f1yv7hm3f"]
+[gd_scene load_steps=21 format=3 uid="uid://ck20f1yv7hm3f"]
 
 [ext_resource type="Script" uid="uid://b0qfatr6d87bk" path="res://Scripts/AdvancedSyllablesScene.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://ciaa4qe2o2juf" path="res://gui/Update/UI/ui 3.png" id="2_ofi6a"]
@@ -25,100 +25,173 @@ shadow_offset = Vector2(0, 6)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_button"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_r_controlled"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_practice_panel"]
 bg_color = Color(0.980392, 0.941176, 0.85098, 1)
 border_width_left = 3
 border_width_top = 3
 border_width_right = 3
 border_width_bottom = 3
 border_color = Color(0.901961, 0.6, 0.2, 1)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_r_controlled_hover"]
-bg_color = Color(0.7, 0.5, 0.85, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
+content_margin_left = 12.0
+content_margin_top = 8.0
+content_margin_right = 12.0
+content_margin_bottom = 8.0
+bg_color = Color(0.9, 0.4, 0.4, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.7, 0.3, 0.3, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_r_controlled_pressed"]
-bg_color = Color(0.5, 0.3, 0.7, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
+content_margin_left = 12.0
+content_margin_top = 8.0
+content_margin_right = 12.0
+content_margin_bottom = 8.0
+bg_color = Color(0.7, 0.2, 0.2, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.5, 0.1, 0.1, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_r_controlled_normal"]
-bg_color = Color(0.6, 0.4, 0.8, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vowel_teams"]
-bg_color = Color(0.980392, 0.941176, 0.85098, 1)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.901961, 0.6, 0.2, 1)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
+content_margin_left = 12.0
+content_margin_top = 8.0
+content_margin_right = 12.0
+content_margin_bottom = 8.0
+bg_color = Color(0.8, 0.3, 0.3, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6, 0.2, 0.2, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vowel_teams_hover"]
-bg_color = Color(0.3, 0.7, 0.85, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
+content_margin_left = 12.0
+content_margin_top = 8.0
+content_margin_right = 12.0
+content_margin_bottom = 8.0
+bg_color = Color(0.4, 0.7, 0.9, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.3, 0.5, 0.7, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vowel_teams_pressed"]
-bg_color = Color(0.1, 0.5, 0.7, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
+content_margin_left = 12.0
+content_margin_top = 8.0
+content_margin_right = 12.0
+content_margin_bottom = 8.0
+bg_color = Color(0.2, 0.5, 0.7, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.1, 0.3, 0.5, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vowel_teams_normal"]
-bg_color = Color(0.2, 0.6, 0.8, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
+content_margin_left = 12.0
+content_margin_top = 8.0
+content_margin_right = 12.0
+content_margin_bottom = 8.0
+bg_color = Color(0.901961, 0.6, 0.2, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.333913, 0.205831, 0.0266313, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_consonant_le"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_consonantle_hover"]
+content_margin_left = 12.0
+content_margin_top = 8.0
+content_margin_right = 12.0
+content_margin_bottom = 8.0
+bg_color = Color(0.7, 0.5, 0.9, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.5, 0.3, 0.7, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_consonantle_pressed"]
+content_margin_left = 12.0
+content_margin_top = 8.0
+content_margin_right = 12.0
+content_margin_bottom = 8.0
+bg_color = Color(0.5, 0.3, 0.7, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.3, 0.1, 0.5, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_consonantle_normal"]
+content_margin_left = 12.0
+content_margin_top = 8.0
+content_margin_right = 12.0
+content_margin_bottom = 8.0
+bg_color = Color(0.6, 0.4, 0.8, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.4, 0.2, 0.6, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_syllable_box"]
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
 bg_color = Color(0.980392, 0.941176, 0.85098, 1)
 border_width_left = 3
 border_width_top = 3
 border_width_right = 3
 border_width_bottom = 3
 border_color = Color(0.901961, 0.6, 0.2, 1)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_consonantle_hover"]
-bg_color = Color(0.85, 0.7, 0.3, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_consonantle_pressed"]
-bg_color = Color(0.7, 0.5, 0.1, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_consonantle_normal"]
-bg_color = Color(0.8, 0.6, 0.2, 1)
 corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
@@ -204,18 +277,18 @@ layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
-[node name="SyllableContainer" type="VBoxContainer" parent="MainContainer/ContentContainer"]
+[node name="MainContent" type="VBoxContainer" parent="MainContainer/ContentContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/separation = 15
+theme_override_constants/separation = 20
 
-[node name="RControlledCard" type="Panel" parent="MainContainer/ContentContainer/SyllableContainer"]
+[node name="CategorySelectionPanel" type="Panel" parent="MainContainer/ContentContainer/MainContent"]
+custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
-size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_r_controlled")
+theme_override_styles/panel = SubResource("StyleBoxFlat_practice_panel")
 
-[node name="RControlledContainer" type="VBoxContainer" parent="MainContainer/ContentContainer/SyllableContainer/RControlledCard"]
+[node name="CategoryContainer" type="HBoxContainer" parent="MainContainer/ContentContainer/MainContent/CategorySelectionPanel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -226,179 +299,314 @@ offset_right = -15.0
 offset_bottom = -10.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 15
 
-[node name="TitleLabel" type="Label" parent="MainContainer/ContentContainer/SyllableContainer/RControlledCard/RControlledContainer"]
+[node name="CategoryLabel" type="Label" parent="MainContainer/ContentContainer/MainContent/CategorySelectionPanel/CategoryContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold")
-theme_override_font_sizes/font_size = 18
-text = "R-Controlled Syllables"
-horizontal_alignment = 1
+theme_override_font_sizes/font_size = 16
+text = "Choose a syllable type to practice:"
+vertical_alignment = 1
 
-[node name="DescLabel" type="RichTextLabel" parent="MainContainer/ContentContainer/SyllableContainer/RControlledCard/RControlledContainer"]
-custom_minimum_size = Vector2(0, 40)
+[node name="RControlledButton" type="Button" parent="MainContainer/ContentContainer/MainContent/CategorySelectionPanel/CategoryContainer"]
 layout_mode = 2
-theme_override_colors/default_color = Color(0, 0, 0, 1)
-theme_override_fonts/normal_font = ExtResource("3_regular")
-theme_override_font_sizes/normal_font_size = 14
-bbcode_enabled = true
-text = "[center]When R follows a vowel, it changes the sound: car, her, bird[/center]"
-fit_content = true
-
-[node name="ExamplesLabel" type="Label" parent="MainContainer/ContentContainer/SyllableContainer/RControlledCard/RControlledContainer"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
-theme_override_fonts/font = ExtResource("3_regular")
-theme_override_font_sizes/font_size = 13
-text = "Examples: car, park, bird, turn, her"
-horizontal_alignment = 1
-
-[node name="ProgressLabel" type="Label" parent="MainContainer/ContentContainer/SyllableContainer/RControlledCard/RControlledContainer"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_regular")
-theme_override_font_sizes/font_size = 12
-text = "Progress: 0/5 completed"
-horizontal_alignment = 1
-
-[node name="PracticeButton" type="Button" parent="MainContainer/ContentContainer/SyllableContainer/RControlledCard/RControlledContainer"]
-layout_mode = 2
-theme_override_colors/font_hover_color = Color(0.9, 0.9, 0.9, 1)
+size_flags_horizontal = 3
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_pressed_color = Color(0.8, 0.8, 0.8, 1)
 theme_override_fonts/font = ExtResource("4_bold")
 theme_override_font_sizes/font_size = 14
 theme_override_styles/hover = SubResource("StyleBoxFlat_r_controlled_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_r_controlled_pressed")
 theme_override_styles/normal = SubResource("StyleBoxFlat_r_controlled_normal")
-text = "Practice"
+text = "R-Controlled"
 
-[node name="VowelTeamsCard" type="Panel" parent="MainContainer/ContentContainer/SyllableContainer"]
+[node name="VowelTeamsButton" type="Button" parent="MainContainer/ContentContainer/MainContent/CategorySelectionPanel/CategoryContainer"]
 layout_mode = 2
-size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_vowel_teams")
-
-[node name="VowelTeamsContainer" type="VBoxContainer" parent="MainContainer/ContentContainer/SyllableContainer/VowelTeamsCard"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 15.0
-offset_top = 10.0
-offset_right = -15.0
-offset_bottom = -10.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/separation = 8
-
-[node name="TitleLabel" type="Label" parent="MainContainer/ContentContainer/SyllableContainer/VowelTeamsCard/VowelTeamsContainer"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("4_bold")
-theme_override_font_sizes/font_size = 18
-text = "Vowel Teams"
-horizontal_alignment = 1
-
-[node name="DescLabel" type="RichTextLabel" parent="MainContainer/ContentContainer/SyllableContainer/VowelTeamsCard/VowelTeamsContainer"]
-custom_minimum_size = Vector2(0, 40)
-layout_mode = 2
-theme_override_colors/default_color = Color(0, 0, 0, 1)
-theme_override_fonts/normal_font = ExtResource("3_regular")
-theme_override_font_sizes/normal_font_size = 14
-bbcode_enabled = true
-text = "[center]Two vowels work together to make one sound: rain, boat, bread[/center]"
-fit_content = true
-
-[node name="ExamplesLabel" type="Label" parent="MainContainer/ContentContainer/SyllableContainer/VowelTeamsCard/VowelTeamsContainer"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
-theme_override_fonts/font = ExtResource("3_regular")
-theme_override_font_sizes/font_size = 13
-text = "Examples: rain, boat, bread, piece, caught"
-horizontal_alignment = 1
-
-[node name="ProgressLabel" type="Label" parent="MainContainer/ContentContainer/SyllableContainer/VowelTeamsCard/VowelTeamsContainer"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_regular")
-theme_override_font_sizes/font_size = 12
-
-[node name="PracticeButton" type="Button" parent="MainContainer/ContentContainer/SyllableContainer/VowelTeamsCard/VowelTeamsContainer"]
-layout_mode = 2
-theme_override_colors/font_hover_color = Color(0.9, 0.9, 0.9, 1)
+size_flags_horizontal = 3
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_pressed_color = Color(0.8, 0.8, 0.8, 1)
 theme_override_fonts/font = ExtResource("4_bold")
 theme_override_font_sizes/font_size = 14
 theme_override_styles/hover = SubResource("StyleBoxFlat_vowel_teams_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_vowel_teams_pressed")
 theme_override_styles/normal = SubResource("StyleBoxFlat_vowel_teams_normal")
-text = "Progress: 0/5 completed"
+text = "Vowel Teams"
 
-[node name="ConsonantLECard" type="Panel" parent="MainContainer/ContentContainer/SyllableContainer"]
+[node name="ConsonantLEButton" type="Button" parent="MainContainer/ContentContainer/MainContent/CategorySelectionPanel/CategoryContainer"]
 layout_mode = 2
-size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_consonant_le")
-
-[node name="ConsonantLEContainer" type="VBoxContainer" parent="MainContainer/ContentContainer/SyllableContainer/ConsonantLECard"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 15.0
-offset_top = 10.0
-offset_right = -15.0
-offset_bottom = -10.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/separation = 8
-
-[node name="TitleLabel" type="Label" parent="MainContainer/ContentContainer/SyllableContainer/ConsonantLECard/ConsonantLEContainer"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("4_bold")
-theme_override_font_sizes/font_size = 18
-text = "Consonant-LE"
-horizontal_alignment = 1
-
-[node name="DescLabel" type="RichTextLabel" parent="MainContainer/ContentContainer/SyllableContainer/ConsonantLECard/ConsonantLEContainer"]
-custom_minimum_size = Vector2(0, 40)
-layout_mode = 2
-theme_override_colors/default_color = Color(0, 0, 0, 1)
-theme_override_fonts/normal_font = ExtResource("3_regular")
-theme_override_font_sizes/normal_font_size = 14
-bbcode_enabled = true
-text = "[center]Words ending with consonant + LE: table, apple, giggle[/center]"
-fit_content = true
-
-[node name="ExamplesLabel" type="Label" parent="MainContainer/ContentContainer/SyllableContainer/ConsonantLECard/ConsonantLEContainer"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
-theme_override_fonts/font = ExtResource("3_regular")
-theme_override_font_sizes/font_size = 13
-text = "Examples: table, apple, giggle, purple, simple"
-horizontal_alignment = 1
-
-[node name="ProgressLabel" type="Label" parent="MainContainer/ContentContainer/SyllableContainer/ConsonantLECard/ConsonantLEContainer"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_regular")
-theme_override_font_sizes/font_size = 12
-text = "Progress: 0/5 completed"
-horizontal_alignment = 1
-
-[node name="PracticeButton" type="Button" parent="MainContainer/ContentContainer/SyllableContainer/ConsonantLECard/ConsonantLEContainer"]
-layout_mode = 2
-theme_override_colors/font_hover_color = Color(0.9, 0.9, 0.9, 1)
+size_flags_horizontal = 3
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_pressed_color = Color(0.8, 0.8, 0.8, 1)
 theme_override_fonts/font = ExtResource("4_bold")
 theme_override_font_sizes/font_size = 14
 theme_override_styles/hover = SubResource("StyleBoxFlat_consonantle_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_consonantle_pressed")
 theme_override_styles/normal = SubResource("StyleBoxFlat_consonantle_normal")
-text = "Practice"
+text = "Consonant-LE"
+
+[node name="PracticePanel" type="Panel" parent="MainContainer/ContentContainer/MainContent"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_practice_panel")
+
+[node name="PracticeContainer" type="VBoxContainer" parent="MainContainer/ContentContainer/MainContent/PracticePanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 15.0
+offset_right = -20.0
+offset_bottom = -15.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+
+[node name="WordDisplaySection" type="VBoxContainer" parent="MainContainer/ContentContainer/MainContent/PracticePanel/PracticeContainer"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="InstructionLabel" type="Label" parent="MainContainer/ContentContainer/MainContent/PracticePanel/PracticeContainer/WordDisplaySection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 18
+text = "Listen to the word and break it into syllables"
+horizontal_alignment = 1
+
+[node name="CurrentWordLabel" type="Label" parent="MainContainer/ContentContainer/MainContent/PracticePanel/PracticeContainer/WordDisplaySection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.2, 0.7, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 32
+text = "garden"
+horizontal_alignment = 1
+
+[node name="HearWordButton" type="Button" parent="MainContainer/ContentContainer/MainContent/PracticePanel/PracticeContainer/WordDisplaySection"]
+custom_minimum_size = Vector2(120, 45)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("StyleBoxFlat_vowel_teams_normal")
+text = "Hear"
+
+[node name="SyllableBuilderSection" type="VBoxContainer" parent="MainContainer/ContentContainer/MainContent/PracticePanel/PracticeContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 15
+
+[node name="SyllablePartsLabel" type="Label" parent="MainContainer/ContentContainer/MainContent/PracticePanel/PracticeContainer/SyllableBuilderSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 16
+text = "Syllable Parts:"
+horizontal_alignment = 1
+
+[node name="SyllablePartsContainer" type="HBoxContainer" parent="MainContainer/ContentContainer/MainContent/PracticePanel/PracticeContainer/SyllableBuilderSection"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 20
+
+[node name="SyllablePart1" type="Panel" parent="MainContainer/ContentContainer/MainContent/PracticePanel/PracticeContainer/SyllableBuilderSection/SyllablePartsContainer"]
+custom_minimum_size = Vector2(100, 60)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_syllable_box")
+
+[node name="SyllableLabel1" type="Label" parent="MainContainer/ContentContainer/MainContent/PracticePanel/PracticeContainer/SyllableBuilderSection/SyllablePartsContainer/SyllablePart1"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 20
+text = "gar"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HearSyllable1" type="Button" parent="MainContainer/ContentContainer/MainContent/PracticePanel/PracticeContainer/SyllableBuilderSection/SyllablePartsContainer/SyllablePart1"]
+custom_minimum_size = Vector2(30, 20)
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -77.0
+offset_top = 10.0
+offset_right = -20.0
+offset_bottom = 45.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("3_regular")
+theme_override_font_sizes/font_size = 10
+theme_override_styles/normal = SubResource("StyleBoxFlat_r_controlled_normal")
+text = "Hear"
+
+[node name="SyllablePart2" type="Panel" parent="MainContainer/ContentContainer/MainContent/PracticePanel/PracticeContainer/SyllableBuilderSection/SyllablePartsContainer"]
+custom_minimum_size = Vector2(100, 60)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_syllable_box")
+
+[node name="SyllableLabel2" type="Label" parent="MainContainer/ContentContainer/MainContent/PracticePanel/PracticeContainer/SyllableBuilderSection/SyllablePartsContainer/SyllablePart2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 20
+text = "den"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HearSyllable2" type="Button" parent="MainContainer/ContentContainer/MainContent/PracticePanel/PracticeContainer/SyllableBuilderSection/SyllablePartsContainer/SyllablePart2"]
+custom_minimum_size = Vector2(30, 20)
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -74.0
+offset_top = 10.0
+offset_right = -17.0
+offset_bottom = 45.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("3_regular")
+theme_override_font_sizes/font_size = 10
+theme_override_styles/normal = SubResource("StyleBoxFlat_r_controlled_normal")
+text = "Hear"
+
+[node name="PatternExplanation" type="VBoxContainer" parent="MainContainer/ContentContainer/MainContent/PracticePanel/PracticeContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="PatternLabel" type="Label" parent="MainContainer/ContentContainer/MainContent/PracticePanel/PracticeContainer/PatternExplanation"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 16
+text = "Pattern: R-Controlled + Closed"
+horizontal_alignment = 1
+
+[node name="ExplanationText" type="RichTextLabel" parent="MainContainer/ContentContainer/MainContent/PracticePanel/PracticeContainer/PatternExplanation"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_fonts/normal_font = ExtResource("3_regular")
+theme_override_font_sizes/normal_font_size = 14
+bbcode_enabled = true
+text = "[center]'gar' has an R-controlled vowel (ar sound)
+'den' is a closed syllable (ends with consonant)[/center]"
+fit_content = true
+
+[node name="ControlsSection" type="HBoxContainer" parent="MainContainer/ContentContainer/MainContent/PracticePanel/PracticeContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 20
+
+[node name="ProgressLabel" type="Label" parent="MainContainer/ContentContainer/MainContent/PracticePanel/PracticeContainer/ControlsSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_regular")
+theme_override_font_sizes/font_size = 14
+text = "Word 1 of 5"
+vertical_alignment = 1
+
+[node name="UnderstoodButton" type="Button" parent="MainContainer/ContentContainer/MainContent/PracticePanel/PracticeContainer/ControlsSection"]
+custom_minimum_size = Vector2(120, 45)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 14
+theme_override_styles/hover = SubResource("StyleBoxFlat_vowel_teams_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_vowel_teams_pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_vowel_teams_normal")
+text = "I Understand!"
+
+[node name="NextWordButton" type="Button" parent="MainContainer/ContentContainer/MainContent/PracticePanel/PracticeContainer/ControlsSection"]
+custom_minimum_size = Vector2(120, 45)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 14
+theme_override_styles/hover = SubResource("StyleBoxFlat_r_controlled_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_r_controlled_pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_r_controlled_normal")
+text = "Next Word"
+
+[node name="CompletionPanel" type="Panel" parent="MainContainer/ContentContainer/MainContent"]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_practice_panel")
+
+[node name="CompletionContainer" type="VBoxContainer" parent="MainContainer/ContentContainer/MainContent/CompletionPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 15.0
+offset_right = -20.0
+offset_bottom = -15.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 15
+
+[node name="CongratulationsLabel" type="Label" parent="MainContainer/ContentContainer/MainContent/CompletionPanel/CompletionContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.6, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 24
+text = "Excellent Work!"
+horizontal_alignment = 1
+
+[node name="CompletionMessage" type="RichTextLabel" parent="MainContainer/ContentContainer/MainContent/CompletionPanel/CompletionContainer"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_fonts/normal_font = ExtResource("3_regular")
+theme_override_font_sizes/normal_font_size = 16
+bbcode_enabled = true
+text = "[center]You've completed all the R-Controlled syllable practice words!
+You're getting better at recognizing syllable patterns.[/center]"
+fit_content = true
+
+[node name="DoneButtonContainer" type="HBoxContainer" parent="MainContainer/ContentContainer/MainContent/CompletionPanel/CompletionContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 20
+
+[node name="DoneButton" type="Button" parent="MainContainer/ContentContainer/MainContent/CompletionPanel/CompletionContainer/DoneButtonContainer"]
+custom_minimum_size = Vector2(150, 50)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 16
+theme_override_styles/hover = SubResource("StyleBoxFlat_vowel_teams_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_vowel_teams_pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_vowel_teams_normal")
+text = "Done"
+
+[node name="PracticeDifferentButton" type="Button" parent="MainContainer/ContentContainer/MainContent/CompletionPanel/CompletionContainer/DoneButtonContainer"]
+custom_minimum_size = Vector2(150, 50)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 16
+theme_override_styles/hover = SubResource("StyleBoxFlat_consonantle_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_consonantle_pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_consonantle_normal")
+text = "Practice Different"
 
 [node name="ButtonHover" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("7_hover")

@@ -157,11 +157,16 @@ func _update_progress_displays(firebase_modules: Dictionary):
 	if sight_label:
 		sight_label.text = str(int(sight_words_percent)) + "% Complete"
 
-	# Overall progress (average)
+	# Overall progress calculation
 	var overall_percent = (letters_percent + sight_words_percent) / 2.0
 	var overall_bar = $MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressBar
 	if overall_bar:
 		overall_bar.value = overall_percent
+	var overall_label = $MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressLabel
+	if overall_label:
+		overall_label.text = str(int(overall_percent)) + "% Complete"
+	
+	print("PhonicsModule: Progress updated - Letters: ", int(letters_percent), "%, Sight Words: ", int(sight_words_percent), "%, Overall: ", int(overall_percent), "%")
 
 func _on_button_hover():
 	$ButtonHover.play()

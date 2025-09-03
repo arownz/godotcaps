@@ -92,17 +92,11 @@ func _ready():
 
 func _init_module_progress():
 	# Initialize module progress for Firebase integration
-	if Engine.has_singleton("Firebase"):
+	if Engine.has_singleton("Firebase") and Firebase.Auth.auth:
 		var ModuleProgressScript = load("res://Scripts/ModulesManager/ModuleProgress.gd")
-		if ModuleProgressScript:
-			module_progress = ModuleProgressScript.new()
-			is_firebase_available = await module_progress.is_authenticated()
-			if is_firebase_available:
-				print("BasicSyllablesScene: Firebase module progress initialized")
-			else:
-				print("BasicSyllablesScene: Firebase not authenticated, using local progress")
-		else:
-			print("BasicSyllablesScene: ModuleProgress script not found")
+		module_progress = ModuleProgressScript.new()
+		is_firebase_available = true
+		print("BasicSyllablesScene: ModuleProgress initialized")
 	else:
 		print("BasicSyllablesScene: Firebase not available")
 
@@ -196,6 +190,29 @@ func _on_next_word_button_pressed():
 	current_word_index += 1
 	_display_current_word()
 	_update_progress()
+
+func _on_word_done_button_pressed():
+	"""Mark current syllable word as completed and advance"""
+	button_click.play()
+	
+	# Mark current word as completed
+	if current_word_index < syllable_words.size():
+		var completed_word = syllable_words[current_word_index].word
+		if not completed_words.has(completed_word):
+			completed_words.append(completed_word)
+			
+			# Save progress to Firebase
+			if is_firebase_available and module_progress:
+				var success = await module_progress.save_syllable_basic_word_progress(completed_words)
+				if success:
+					print("BasicSyllablesScene: Word '", completed_word, "' marked as completed")
+				else:
+					print("BasicSyllablesScene: Failed to save word progress to Firebase")
+		
+		# Move to next word
+		current_word_index += 1
+		_display_current_word()
+		_update_progress()
 
 func _on_button_hover():
 	button_hover.play()

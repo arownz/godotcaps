@@ -6,14 +6,10 @@ var tts: TextToSpeech = null
 var categories = {
 	"vocabulary_building": {
 		"title": "Vocabulary Building",
-		"icon": "📚",
-		"description": "Learn new words in context through chunked passages. Build your vocabulary while improving comprehension.",
 		"scene_path": "res://Scenes/ChunkedVocabulary.tscn"
 	},
 	"chunked_question": {
 		"title": "Chunked Question",
-		"icon": "❓",
-		"description": "Answer questions based on chunked passages. Improve comprehension and retention through targeted questioning.",
 		"scene_path": "res://Scenes/ChunkedQuestion.tscn"
 	}
 }
@@ -61,17 +57,18 @@ func _setup_category_cards():
 	]
 	for icon_container in icon_containers:
 		if icon_container:
-			var style = StyleBoxFlat.new()
-			style.bg_color = Color(1, 1, 1, 1)
-			style.border_width_left = 2
-			style.border_width_right = 2
-			style.border_width_top = 2
-			style.border_width_bottom = 2
-			style.corner_radius_top_left = 10
-			style.corner_radius_top_right = 10
-			style.corner_radius_bottom_left = 10
-			style.corner_radius_bottom_right = 10
-			icon_container.add_theme_stylebox_override("panel", style)
+			var icon_style = StyleBoxFlat.new()
+			icon_style.corner_radius_top_left = 10
+			icon_style.corner_radius_top_right = 10
+			icon_style.corner_radius_bottom_left = 10
+			icon_style.corner_radius_bottom_right = 10
+			icon_style.bg_color = Color(1, 1, 1, 1) # white color
+			icon_style.border_width_left = 2
+			icon_style.border_width_right = 2
+			icon_style.border_width_top = 2
+			icon_style.border_width_bottom = 2
+			icon_style.border_color = Color(0, 0, 0, 1) # Black border outline
+			icon_container.add_theme_stylebox_override("panel", icon_style)
 	# Load progress
 	_refresh_progress()
 
@@ -104,21 +101,31 @@ func _update_progress_displays(firebase_modules: Dictionary):
 	if firebase_modules.has("chunked_reading"):
 		var chunked = firebase_modules["chunked_reading"]
 		if typeof(chunked) == TYPE_DICTIONARY:
-			var completed_vocab = chunked.get("completed_vocabulary", []).size()
+			# Get vocabulary progress from the correct nested structure
+			var vocab_building = chunked.get("vocabulary_building", {})
+			var completed_vocab = vocab_building.get("vocabulary_words_completed", []).size()
 			vocab_percent = (float(completed_vocab) / 10.0) * 100.0
-			var completed_questions = chunked.get("completed_questions", []).size()
-			question_percent = (float(completed_questions) / 10.0) * 100.0
+			
+			# Get question progress
+			var chunked_question = chunked.get("chunked_question", {})
+			var completed_questions = chunked_question.get("activities_completed", []).size()
+			question_percent = (float(completed_questions) / 5.0) * 100.0
 	var vocab_label = get_node_or_null("MainContainer/ScrollContainer/CategoriesGrid/VocubalaryCard/Content/ProgressLabel")
 	if vocab_label:
 		vocab_label.text = str(int(vocab_percent)) + "% Complete"
 	var question_label = get_node_or_null("MainContainer/ScrollContainer/CategoriesGrid/QuestionCard/Content/ProgressLabel")
 	if question_label:
 		question_label.text = str(int(question_percent)) + "% Complete"
-	# Overall progress
+	# Overall progress calculation
 	var overall_percent = (vocab_percent + question_percent) / 2.0
 	var progress_bar = get_node_or_null("MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressBar")
 	if progress_bar:
 		progress_bar.value = overall_percent
+	var progress_label = get_node_or_null("MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressLabel")
+	if progress_label:
+		progress_label.text = str(int(overall_percent)) + "% Complete"
+	
+	print("ChunkedReadingModule: Progress updated - Vocabulary: ", int(vocab_percent), "%, Questions: ", int(question_percent), "%, Overall: ", int(overall_percent), "%")
 
 func _connect_hover_events():
 	# Connect back button hover

@@ -221,12 +221,65 @@ func _update_card_progress(module_key: String, card_name: String):
 				completed = (letters_completed >= 26 and sight_words_completed >= 20)
 				print("ModuleScene: Phonics overall - Letters:", letters_completed, "/26, Sight Words:", sight_words_completed, "/20, Overall:", int(progress_percent), "%")
 			elif module_key == "flip_quiz":
-				# Overall flip quiz progress based on completed sets
-				var sets_completed = fm.get("sets_completed", [])
-				var total_sets = 3 # Animals, Shapes, Colors (or however many sets you have)
-				progress_percent = (float(sets_completed.size()) / float(total_sets)) * 100.0
-				completed = sets_completed.size() >= total_sets
-				print("ModuleScene: FlipQuiz overall - Sets:", sets_completed.size(), "/", total_sets, ", Overall:", int(progress_percent), "%")
+				# Overall flip quiz progress based on completed sets from both animals and vehicles
+				var total_animals_sets = 0
+				var total_vehicles_sets = 0
+				
+				# Check animals progress
+				if fm.has("animals") and typeof(fm["animals"]) == TYPE_DICTIONARY:
+					var animals_sets = fm["animals"].get("sets_completed", [])
+					total_animals_sets = animals_sets.size()
+				
+				# Check vehicles progress
+				if fm.has("vehicles") and typeof(fm["vehicles"]) == TYPE_DICTIONARY:
+					var vehicles_sets = fm["vehicles"].get("sets_completed", [])
+					total_vehicles_sets = vehicles_sets.size()
+				
+				var total_completed_sets = total_animals_sets + total_vehicles_sets
+				var total_possible_sets = 6 # 3 sets per category (animals + vehicles) = 6 total
+				progress_percent = (float(total_completed_sets) / float(total_possible_sets)) * 100.0
+				completed = total_completed_sets >= total_possible_sets
+				print("ModuleScene: FlipQuiz overall - Animals sets:", total_animals_sets, "/3, Vehicles sets:", total_vehicles_sets, "/3, Total:", total_completed_sets, "/", total_possible_sets, ", Overall:", int(progress_percent), "%")
+			elif module_key == "read_aloud":
+				# Overall read aloud progress based on completed stories and guided activities
+				var stories_completed = 0
+				var guided_completed = 0
+				
+				# Check stories progress
+				if fm.has("stories") and typeof(fm["stories"]) == TYPE_DICTIONARY:
+					var stories_data = fm["stories"].get("stories_completed", [])
+					stories_completed = stories_data.size()
+				
+				# Check guided progress  
+				if fm.has("guided") and typeof(fm["guided"]) == TYPE_DICTIONARY:
+					var guided_data = fm["guided"].get("activities_completed", [])
+					guided_completed = guided_data.size()
+				
+				var total_completed = stories_completed + guided_completed
+				var total_possible = 15 # Total activities across both categories
+				progress_percent = (float(total_completed) / float(total_possible)) * 100.0
+				completed = total_completed >= total_possible
+				print("ModuleScene: ReadAloud overall - Stories:", stories_completed, ", Guided:", guided_completed, ", Total:", total_completed, "/", total_possible, ", Overall:", int(progress_percent), "%")
+			elif module_key == "chunked_reading":
+				# Overall chunked reading progress based on vocabulary and comprehension activities
+				var vocabulary_completed = 0
+				var question_completed = 0
+				
+				# Check vocabulary building progress
+				if fm.has("vocabulary_building") and typeof(fm["vocabulary_building"]) == TYPE_DICTIONARY:
+					var vocab_data = fm["vocabulary_building"].get("vocabulary_words_completed", [])
+					vocabulary_completed = vocab_data.size()
+				
+				# Check chunked question progress
+				if fm.has("chunked_question") and typeof(fm["chunked_question"]) == TYPE_DICTIONARY:
+					var question_data = fm["chunked_question"].get("activities_completed", [])
+					question_completed = question_data.size()
+				
+				var total_completed = vocabulary_completed + question_completed
+				var total_possible = 12 # Total activities across both categories
+				progress_percent = (float(total_completed) / float(total_possible)) * 100.0
+				completed = total_completed >= total_possible
+				print("ModuleScene: ChunkedReading overall - Vocabulary:", vocabulary_completed, ", Questions:", question_completed, ", Total:", total_completed, "/", total_possible, ", Overall:", int(progress_percent), "%")
 			elif module_key == "syllable_building":
 				# Overall syllable building progress combining all syllable types
 				var basic_completed = 0

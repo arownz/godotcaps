@@ -6,14 +6,10 @@ var tts: TextToSpeech = null
 var categories = {
 	"story_reading": {
 		"title": "Story Reading",
-		"icon": "📖",
-		"description": "Progressive stories with synchronized highlighting and audio. Adjustable reading speed and text size.",
 		"scene_path": "res://Scenes/ReadAloudStories.tscn"
 	},
 	"guided_reading": {
 		"title": "Guided Reading",
-		"icon": "�‍🏫",
-		"description": "Interactive reading with teacher-like guidance. Focus on pacing, expression, and confidence building.",
 		"scene_path": "res://Scenes/ReadAloudGuided.tscn"
 	}
 }
@@ -178,11 +174,16 @@ func _update_progress_displays(firebase_modules: Dictionary):
 	if guided_label:
 		guided_label.text = str(int(guided_percent)) + "% Complete"
 
-	# Overall progress (average)
+	# Overall progress calculation
 	var overall_percent = (story_percent + guided_percent) / 2.0
-	var overall_bar = get_node_or_null("MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressBar")
+	var overall_bar = $MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressBar
 	if overall_bar:
 		overall_bar.value = overall_percent
+	var overall_label = $MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressLabel
+	if overall_label:
+		overall_label.text = str(int(overall_percent)) + "% Complete"
+	
+	print("ReadAloudModule: Progress updated - Stories: ", int(story_percent), "%, Guided: ", int(guided_percent), "%, Overall: ", int(overall_percent), "%")
 
 func _on_button_hover():
 	$ButtonHover.play()

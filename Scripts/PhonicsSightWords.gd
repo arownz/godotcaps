@@ -263,6 +263,24 @@ func _on_previous_button_pressed():
 	$ButtonClick.play()
 	_previous_target()
 
+func _on_sight_word_done_button_pressed():
+	"""Mark current sight word as completed and advance"""
+	$ButtonClick.play()
+	
+	# Mark current sight word as completed using ModuleProgress
+	if module_progress and module_progress.is_authenticated():
+		var success = await module_progress.set_sight_word_completed(current_target)
+		if success:
+			print("PhonicsSightWords: Sight word ", current_target, " marked as completed in Firebase")
+			session_completed_words.append(current_target)
+			_advance_target()
+		else:
+			print("PhonicsSightWords: Failed to save sight word completion to Firebase")
+	else:
+		print("PhonicsSightWords: ModuleProgress not available, using local session tracking")
+		session_completed_words.append(current_target)
+		_advance_target()
+
 func _on_guide_button_pressed():
 	$ButtonClick.play()
 	if tts:

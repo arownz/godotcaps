@@ -193,6 +193,43 @@ func _on_next_story_button_pressed():
 		current_story_index += 1
 		_display_current_story()
 
+func _on_story_done_button_pressed():
+	"""Mark current story as completed and save progress"""
+	$ButtonClick.play()
+	_stop_reading()
+	
+	# Mark story as completed
+	var story_id = stories[current_story_index]["id"]
+	if not completed_stories.has(story_id):
+		completed_stories.append(story_id)
+		
+		# Save progress to Firebase
+		if module_progress and module_progress.is_authenticated():
+			var success = await module_progress.complete_read_aloud_activity("story_reading", story_id)
+			if success:
+				print("ReadAloudStories: Story '", story_id, "' marked as completed")
+				_update_progress_display()
+			else:
+				print("ReadAloudStories: Failed to save story completion")
+	
+	# Move to next story or show completion
+	if current_story_index < stories.size() - 1:
+		current_story_index += 1
+		_display_current_story()
+	else:
+		_show_all_stories_completed()
+
+func _show_all_stories_completed():
+	"""Show completion message when all stories are read"""
+	var story_title = $MarginContainer/VBoxContainer/StoryPanel/MarginContainer/StoryTitle
+	var story_text = $MarginContainer/VBoxContainer/StoryPanel/MarginContainer/StoryText
+	
+	if story_title:
+		story_title.text = "Congratulations!"
+	if story_text:
+		story_text.clear()
+		story_text.append_text("[center][b]You have completed all stories![/b]\n\nGreat job improving your reading skills![/center]")
+
 func _on_play_button_pressed():
 	$ButtonClick.play()
 	var play_button = $MarginContainer/VBoxContainer/ControlsContainer/PlayButton

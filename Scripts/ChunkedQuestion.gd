@@ -261,7 +261,7 @@ func _update_play_button_text():
 		if is_reading:
 			play_button.text = "Pause"
 		else:
-			play_button.text = "Read Aloud"
+			play_button.text = "Read"
 
 func _on_answer_selected(answer_index: int):
 	$ButtonClick.play()
@@ -275,6 +275,10 @@ func _on_answer_selected(answer_index: int):
 		print("ChunkedQuestion: Correct answer!")
 		# Complete this chunk activity
 		await _complete_chunk_activity()
+		
+		# Auto-advance to next question after a short delay
+		await get_tree().create_timer(1.5).timeout
+		_advance_to_next()
 	else:
 		print("ChunkedQuestion: Incorrect answer, showing explanation")
 
@@ -359,6 +363,26 @@ func _on_previous_button_pressed():
 func _on_next_button_pressed():
 	$ButtonClick.play()
 	_stop_reading()
+	_advance_to_next()
+
+func _on_chunk_done_button_pressed():
+	"""Mark current chunk as completed and advance"""
+	$ButtonClick.play()
+	_stop_reading()
+	
+	# Mark current chunk as completed
+	var reading_material = reading_materials[current_material_index]
+	var activity_id = reading_material.title + "_chunk_" + str(current_chunk_index)
+	
+	if module_progress and module_progress.is_authenticated():
+		var success = await module_progress.complete_chunked_reading_activity("chunked_question", activity_id)
+		if success:
+			print("ChunkedQuestion: Chunk ", activity_id, " marked as completed in Firebase")
+		else:
+			print("ChunkedQuestion: Failed to save chunk completion to Firebase")
+	else:
+		print("ChunkedQuestion: Module progress not available, using local tracking")
+	
 	_advance_to_next()
 
 func _fade_out_and_change_scene(scene_path: String):

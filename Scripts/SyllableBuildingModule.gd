@@ -33,6 +33,8 @@ func _ready():
 	tween.tween_property(self, "modulate:a", 1.0, 0.35).set_ease(Tween.EASE_OUT)
 	tween.tween_property(self, "scale", Vector2(1.0, 1.0), 0.35).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
 
+	_setup_category_cards()
+
 func _init_tts():
 	tts = TextToSpeech.new()
 	add_child(tts)
@@ -46,21 +48,33 @@ func _init_tts():
 	if rate != null:
 		tts.set_rate(rate)
 
+func _setup_category_cards():
+	# Apply rounded corners and backgrounds to icon containers
+	var icon_containers = [
+		$"MainContainer/ScrollContainer/CategoriesGrid/BasicSyllablesCard/Content/IconContainer/CenterContainer",
+		$"MainContainer/ScrollContainer/CategoriesGrid/AdvancedSyllablesCard/Content/IconContainer/CenterContainer"
+	]
+	for icon_container in icon_containers:
+		if icon_container:
+			var icon_style = StyleBoxFlat.new()
+			icon_style.corner_radius_top_left = 10
+			icon_style.corner_radius_top_right = 10
+			icon_style.corner_radius_bottom_left = 10
+			icon_style.corner_radius_bottom_right = 10
+			icon_style.bg_color = Color(1, 1, 1, 1) # white color
+			icon_style.border_width_left = 2
+			icon_style.border_width_right = 2
+			icon_style.border_width_top = 2
+			icon_style.border_width_bottom = 2
+			icon_style.border_color = Color(0, 0, 0, 1) # Black border outline
+			icon_container.add_theme_stylebox_override("panel", icon_style)
+
 func _init_module_progress():
-	# Initialize module progress for Firebase integration
-	if Engine.has_singleton("Firebase"):
-		var ModuleProgressScript = load("res://Scripts/ModulesManager/ModuleProgress.gd")
-		if ModuleProgressScript:
-			module_progress = ModuleProgressScript.new()
-			is_firebase_available = await module_progress.is_authenticated()
-			if is_firebase_available:
-				print("SyllableBuildingModule: Firebase module progress initialized")
-			else:
-				print("SyllableBuildingModule: Firebase not authenticated, using local progress")
-		else:
-			print("SyllableBuildingModule: ModuleProgress script not found")
+	# Use direct Firebase access like authentication.gd pattern
+	if Firebase.Auth.auth:
+		print("SyllableBuildingModule: Firebase available for progress tracking")
 	else:
-		print("SyllableBuildingModule: Firebase not available")
+		print("SyllableBuildingModule: Firebase not available; progress won't sync")
 
 func _setup_ui():
 	# Connect button signals
@@ -98,26 +112,56 @@ func _connect_buttons():
 			tts_btn.pressed.connect(_on_tts_setting_button_pressed)
 
 func _load_progress():
-	# Load progress from Firebase
-	if is_firebase_available and module_progress:
-		var syllable_data = await module_progress.get_syllable_building_progress()
-		if syllable_data:
-			var progress_percent = syllable_data.get("progress", 0)
-			_update_progress_ui(progress_percent)
-			
-			# Update individual category progress
-			var basic_data = syllable_data.get("basic_syllables", {})
-			var advanced_data = syllable_data.get("advanced_syllables", {})
-			
+	# Load progress from Firebase using the same pattern as other modules
+	if not Firebase.Auth.auth:
+		print("SyllableBuildingModule: Firebase not available or not authenticated")
+		return
+		
+	var user_id = Firebase.Auth.auth.localid
+	var collection = Firebase.Firestore.collection("dyslexia_users")
+	
+	print("SyllableBuildingModule: Loading progress for user: ", user_id)
+	var document = await collection.get_doc(user_id)
+	if document and !("error" in document.keys()):
+		print("SyllableBuildingModule: Document fetched successfully")
+		var modules = document.get_value("modules")
+		if modules != null and typeof(modules) == TYPE_DICTIONARY:
+			_update_progress_displays(modules)
+		else:
+			print("SyllableBuildingModule: No modules data found")
+	else:
+		print("SyllableBuildingModule: Failed to fetch document")
+
+func _update_progress_displays(firebase_modules: Dictionary):
+	# Basic Syllables progress
+	var basic_percent = 0.0
+	var advanced_percent = 0.0
+	if firebase_modules.has("syllable_building"):
+		var syllable_building = firebase_modules["syllable_building"]
+		if typeof(syllable_building) == TYPE_DICTIONARY:
+			# Get basic syllables progress
+			var basic_data = syllable_building.get("basic_syllables", {})
 			var basic_words = basic_data.get("basic_completed_words", []).size()
-			var basic_percent = (float(basic_words) / 12.0) * 100
-			basic_progress_label.text = str(int(basic_percent)) + "% Complete"
+			basic_percent = (float(basic_words) / 12.0) * 100.0
 			
+			# Get advanced syllables progress
+			var advanced_data = syllable_building.get("advanced_syllables", {})
 			var advanced_activities = advanced_data.get("activities_completed", []).size()
-			var advanced_percent = (float(advanced_activities) / 6.0) * 100
-			advanced_progress_label.text = str(int(advanced_percent)) + "% Complete"
-			
-			print("SyllableBuildingModule: Loaded progress - Basic:", int(basic_percent), "%, Advanced:", int(advanced_percent), "%")
+			advanced_percent = (float(advanced_activities) / 6.0) * 100.0
+	
+	if basic_progress_label:
+		basic_progress_label.text = str(int(basic_percent)) + "% Complete"
+	if advanced_progress_label:
+		advanced_progress_label.text = str(int(advanced_percent)) + "% Complete"
+	
+	# Overall progress calculation
+	var overall_percent = (basic_percent + advanced_percent) / 2.0
+	if progress_bar:
+		progress_bar.value = overall_percent
+	if progress_label:
+		progress_label.text = str(int(overall_percent)) + "% Complete"
+	
+	print("SyllableBuildingModule: Progress updated - Basic: ", int(basic_percent), "%, Advanced: ", int(advanced_percent), "%, Overall: ", int(overall_percent), "%")
 
 func _update_progress_ui(percent: float):
 	if progress_bar:

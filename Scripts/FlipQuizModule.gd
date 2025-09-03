@@ -166,27 +166,65 @@ func _load_category_progress():
 		print("FlipQuizModule: Failed to fetch document or document has error")
 
 func _update_progress_displays(firebase_modules: Dictionary):
-	# Show progress for Animals set (like Phonics)
-	var total_sets := 3 # Always 3 sets for Flip Quiz
-	var sets_completed := 0
-	if firebase_modules.has("flip_quiz"):
-		var fq = firebase_modules["flip_quiz"]
-		if typeof(fq) == TYPE_DICTIONARY:
-			var completed_array = fq.get("sets_completed", [])
-			sets_completed = completed_array.size()
-	var percent := (float(sets_completed) / float(total_sets)) * 100.0
+	print("FlipQuizModule: Updating progress displays with Firebase data")
+	
+	var total_sets_per_category := 3 # Always 3 sets per category for Flip Quiz
+	
+	# Handle Animals progress
+	var animals_sets_completed := 0
+	if firebase_modules.has("flip_quiz") and firebase_modules["flip_quiz"].has("animals"):
+		var animals_data = firebase_modules["flip_quiz"]["animals"]
+		if typeof(animals_data) == TYPE_DICTIONARY:
+			var completed_array = animals_data.get("sets_completed", [])
+			animals_sets_completed = completed_array.size()
+			print("FlipQuizModule: Animals sets completed: ", animals_sets_completed)
+	
+	var animals_percent := (float(animals_sets_completed) / float(total_sets_per_category)) * 100.0
+	
 	# Update Animals card progress
-	var animals_card_path = "MainContainer/ScrollContainer/CategoriesGrid/AnimalsCard/AnimalsContent"
-	var progress_label = get_node_or_null(animals_card_path + "/ProgressLabel")
-	var progress_bar = get_node_or_null(animals_card_path + "/ProgressBar")
-	if progress_label:
-		progress_label.text = str(sets_completed) + "/" + str(total_sets) + " sets (" + str(int(percent)) + "%)" + " Complete"
-	if progress_bar:
-		progress_bar.value = percent
-	# Update overall progress bar/label
-	var overall_bar = $MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressBar
+	var animals_progress_label = get_node_or_null("MainContainer/ScrollContainer/CategoriesGrid/AnimalsCard/AnimalsContent/ProgressLabel")
+	if animals_progress_label:
+		animals_progress_label.text = str(animals_sets_completed) + "/" + str(total_sets_per_category) + " sets (" + str(int(animals_percent)) + "%) Complete"
+		print("FlipQuizModule: Updated animals progress label: ", animals_progress_label.text)
+	else:
+		print("FlipQuizModule: Animals progress label not found")
+	
+	# Handle Vehicles progress
+	var vehicles_sets_completed := 0
+	if firebase_modules.has("flip_quiz") and firebase_modules["flip_quiz"].has("vehicles"):
+		var vehicles_data = firebase_modules["flip_quiz"]["vehicles"]
+		if typeof(vehicles_data) == TYPE_DICTIONARY:
+			var completed_array = vehicles_data.get("sets_completed", [])
+			vehicles_sets_completed = completed_array.size()
+			print("FlipQuizModule: Vehicles sets completed: ", vehicles_sets_completed)
+	
+	var vehicles_percent := (float(vehicles_sets_completed) / float(total_sets_per_category)) * 100.0
+	
+	# Update Vehicles card progress
+	var vehicles_progress_label = get_node_or_null("MainContainer/ScrollContainer/CategoriesGrid/VehiclesCard/VehiclesContent/ProgressLabel")
+	if vehicles_progress_label:
+		vehicles_progress_label.text = str(vehicles_sets_completed) + "/" + str(total_sets_per_category) + " sets (" + str(int(vehicles_percent)) + "%) Complete"
+		print("FlipQuizModule: Updated vehicles progress label: ", vehicles_progress_label.text)
+	else:
+		print("FlipQuizModule: Vehicles progress label not found")
+	
+	# Calculate overall Flip Quiz progress (average of both categories)
+	var total_completed := animals_sets_completed + vehicles_sets_completed
+	var total_possible := total_sets_per_category * 2 # 2 categories
+	var overall_percent := (float(total_completed) / float(total_possible)) * 100.0
+	
+	# Update overall progress bar/label in header
+	var overall_bar = get_node_or_null("MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressBar")
 	if overall_bar:
-		overall_bar.value = percent
+		overall_bar.value = overall_percent
+		print("FlipQuizModule: Updated overall progress bar: ", overall_percent, "%")
+	else:
+		print("FlipQuizModule: Overall progress bar not found")
+	
+	var overall_label = get_node_or_null("MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressLabel")
+	if overall_label:
+		overall_label.text = "Overall Progress: " + str(int(overall_percent)) + "%"
+		print("FlipQuizModule: Updated overall progress label: ", overall_label.text)
 
 func _on_button_hover():
 	$ButtonHover.play()
@@ -194,7 +232,7 @@ func _on_button_hover():
 func _on_guide_button_pressed():
 	$ButtonClick.play()
 	if tts:
-		var guide_text = "Match animal cards: pictures and words with helpful sounds. Finish all pairs to complete the set."
+		var guide_text = "Match flippable quiz cards: pictures and words with helpful sounds. Finish all pairs to complete the set."
 		_speak_text_simple(guide_text)
 
 func _on_tts_setting_button_pressed():

@@ -323,13 +323,50 @@ func _on_next_passage_button_pressed():
 		_update_navigation_buttons()
 
 func _on_practice_complete_button_pressed():
+	"""Mark current guided reading passage as completed"""
 	$ButtonClick.play()
-	await _complete_passage()
+	print("ReadAloudGuided: Practice complete button pressed for passage ", current_passage_index)
 	
-	# Show completion message
+	# Mark passage as completed with proper error handling
+	if module_progress and module_progress.is_authenticated():
+		var passage_id = "passage_" + str(current_passage_index)
+		print("ReadAloudGuided: Attempting to save passage completion: ", passage_id)
+		
+		var success = await module_progress.complete_read_aloud_activity("guided_reading", passage_id)
+		if success:
+			print("ReadAloudGuided: Passage '", passage_id, "' marked as completed in Firebase")
+		else:
+			print("ReadAloudGuided: Failed to save passage completion to Firebase")
+	else:
+		print("ReadAloudGuided: Module progress not available or not authenticated")
+	
+	# Show completion message and advance to next passage
 	var guide_display = $MarginContainer/VBoxContainer/GuidePanel/MarginContainer/GuideNotes
 	if guide_display:
-		guide_display.text = "Great job! You completed this guided reading passage. Try the next one!"
+		guide_display.text = "Great job! You completed this guided reading passage."
+	
+	# Auto-advance to next passage after a short delay
+	await get_tree().create_timer(1.5).timeout
+	if current_passage_index < passages.size() - 1:
+		current_passage_index += 1
+		_display_passage(current_passage_index)
+	else:
+		# All passages completed
+		_show_all_passages_completed()
+
+func _show_all_passages_completed():
+	"""Show completion message when all passages are completed"""
+	var title_label = $MarginContainer/VBoxContainer/HeaderContainer/PassageTitle
+	var text_display = $MarginContainer/VBoxContainer/PassagePanel/MarginContainer/PassageText
+	var guide_display = $MarginContainer/VBoxContainer/GuidePanel/MarginContainer/GuideNotes
+	
+	if title_label:
+		title_label.text = "All Passages Complete!"
+	if text_display:
+		text_display.clear()
+		text_display.append_text("[center][b]Congratulations![/b]\n\nYou have completed all guided reading passages![/center]")
+	if guide_display:
+		guide_display.text = "Excellent work! You've mastered guided reading skills."
 
 func _fade_out_and_change_scene(scene_path: String):
 	_stop_guided_reading()

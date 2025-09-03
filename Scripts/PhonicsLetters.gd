@@ -317,6 +317,24 @@ func _on_previous_button_pressed():
 	$ButtonClick.play()
 	_previous_target()
 
+func _on_letter_done_button_pressed():
+	"""Mark current letter as completed and advance"""
+	$ButtonClick.play()
+	
+	# Mark current letter as completed using ModuleProgress
+	if module_progress and module_progress.is_authenticated():
+		var success = await module_progress.set_phonics_letter_completed(current_target)
+		if success:
+			print("PhonicsLetters: Letter ", current_target, " marked as completed in Firebase")
+			session_completed_letters.append(current_target)
+			_advance_target()
+		else:
+			print("PhonicsLetters: Failed to save letter completion to Firebase")
+	else:
+		print("PhonicsLetters: ModuleProgress not available, using local session tracking")
+		session_completed_letters.append(current_target)
+		_advance_target()
+
 func _advance_target():
 	letter_index = (letter_index + 1) % letter_set.size()
 	current_target = letter_set[letter_index]

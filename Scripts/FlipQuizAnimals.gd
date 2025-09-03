@@ -87,7 +87,7 @@ func _ready():
 	_connect_hover_events()
 	
 	# Load progress from ModuleProgress
-	await _load_progress()
+	await _load_progress_from_firebase()
 	
 	# Initialize animals for the game
 	_initialize_game()
@@ -98,7 +98,7 @@ func _notification(what):
 		call_deferred("_refresh_progress")
 
 func _refresh_progress():
-	await _load_progress()
+	await _load_progress_from_firebase()
 
 func _init_tts():
 	tts = TextToSpeech.new()
@@ -114,14 +114,48 @@ func _init_tts():
 		tts.set_rate(rate)
 
 func _init_module_progress():
-	print("FlipQuizAnimals: Loading ModuleProgress.gd")
-	var module_progress_script = load("res://Scripts/ModulesManager/ModuleProgress.gd")
-	if module_progress_script:
-		module_progress = module_progress_script.new()
-		add_child(module_progress)
-		print("FlipQuizAnimals: ModuleProgress loaded successfully")
+	if Firebase and Firebase.Auth and Firebase.Auth.auth:
+		var ModuleProgressScript = load("res://Scripts/ModulesManager/ModuleProgress.gd")
+		if ModuleProgressScript:
+			module_progress = ModuleProgressScript.new()
+			print("FlipQuizAnimals: ModuleProgress initialized")
+		else:
+			print("FlipQuizAnimals: ModuleProgress script not found")
 	else:
-		print("FlipQuizAnimals: Failed to load ModuleProgress.gd")
+		print("FlipQuizAnimals: Firebase not available")
+
+func _load_progress_from_firebase():
+	"""Load flip quiz progress from Firebase using ModuleProgress"""
+	if not module_progress or not module_progress.is_authenticated():
+		print("FlipQuizAnimals: Module progress not available")
+		return
+	
+	var flip_quiz_data = await module_progress.get_flip_quiz_progress()
+	if flip_quiz_data and flip_quiz_data.has("animals"):
+		sets_completed = flip_quiz_data["animals"].get("sets_completed", [])
+		current_set_index = sets_completed.size()
+		_update_progress_display(flip_quiz_data)
+		print("FlipQuizAnimals: Loaded progress - sets completed: ", sets_completed)
+	else:
+		print("FlipQuizAnimals: No animals flip quiz progress found")
+
+func _update_progress_display(flip_quiz_data: Dictionary):
+	"""Update animals-specific progress display"""
+	var animals_data = flip_quiz_data.get("animals", {})
+	var completed_array = animals_data.get("sets_completed", [])
+	current_set_index = completed_array.size()
+	
+	# Update progress in UI
+	var progress_percent = (float(completed_array.size()) / float(total_sets)) * 100.0
+	var progress_bar = get_node_or_null("MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressBar")
+	if progress_bar:
+		progress_bar.value = progress_percent
+	
+	var progress_label = get_node_or_null("MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressLabel")
+	if progress_label:
+		progress_label.text = str(int(progress_percent)) + "% Complete"
+	
+	print("FlipQuizAnimals: Progress updated - ", completed_array.size(), "/", total_sets, " sets completed")
 	
 	# Test Firestore access (exact authentication.gd pattern)
 	if Firebase.Firestore == null:
@@ -540,23 +574,6 @@ func _update_score_display():
 		score_label.text = "Matches: " + str(matched_pairs) + "/" + str(selected_animals.size())
 	if attempts_label:
 		attempts_label.text = "Attempts: " + str(attempts)
-
-func _update_progress_display(firebase_modules: Dictionary):
-	"""Update overall Flip Quiz progress (completed sets/total sets)"""
-	var completed_array = []
-	if firebase_modules.has("flip_quiz"):
-		var fq = firebase_modules["flip_quiz"]
-		if typeof(fq) == TYPE_DICTIONARY:
-			completed_array = fq.get("sets_completed", [])
-	var percent := (float(completed_array.size()) / float(total_sets)) * 100.0
-	# Update overall progress bar/label
-	var overall_bar = $MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressBar
-	if overall_bar:
-		overall_bar.value = percent
-	# Update Animals card progress bar/label if present
-	var animals_label = get_node_or_null("MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressLabel")
-	if animals_label:
-		animals_label.text = str(completed_array.size()) + "/" + str(total_sets) + " sets" + " Complete"
 
 func _on_button_hover():
 	$ButtonHover.play()
