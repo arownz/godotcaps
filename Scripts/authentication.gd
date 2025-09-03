@@ -631,29 +631,26 @@ func _create_user_document(collection, user_id: String, auth):
 			"flip_quiz": {
 				"completed": false,
 				"progress": 0,
-				"sets_completed": []
+				"animals": {"sets_completed": []},
+				"vehicles": {"sets_completed": []}
 			},
 			"read_aloud": {
 				"completed": false,
 				"progress": 0,
-				"stories_completed": []
+				"story_reading": {"activities_completed": []},
+				"guided_reading": {"activities_completed": []}
 			},
 			"chunked_reading": {
 				"completed": false,
 				"progress": 0,
-				"passages_completed": []
+				"vocabulary_building": {"activities_completed": []},
+				"chunked_question": {"activities_completed": []}
 			},
 			"syllable_building": {
 				"completed": false,
 				"progress": 0,
-				"syllable_types": {
-					"closed": {"completed": false, "words": []},
-					"open": {"completed": false, "words": []},
-					"magic_e": {"completed": false, "words": []},
-					"r_controlled": {"completed": false, "words": []},
-					"vowel_team": {"completed": false, "words": []},
-					"consonant_le": {"completed": false, "words": []}
-				}
+				"basic_syllables": {"activities_completed": []},
+				"advanced_syllables": {"activities_completed": []}
 			}
 		},
 		"stage_times": {

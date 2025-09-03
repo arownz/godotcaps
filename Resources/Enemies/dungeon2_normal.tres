@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="EnemyTypeResource" load_steps=3 format=3 uid="uid://duatpfkra7k5y"]
 
-[ext_resource type="Script" uid="uid://d2ghh4os1rp2o" path="res://Scripts/Resources/enemy_type_resource.gd" id="1_1"]
+[ext_resource type="Script" uid="uid://d2ghh4os1rp2o" path="res://Scripts/Resources/EnemyTypeResource.gd" id="1_1"]
 [ext_resource type="PackedScene" uid="uid://detxp7ylydvcd" path="res://Sprites/Animation/Snake_Animation.tscn" id="2_1"]
 
 [resource]

@@ -67,8 +67,7 @@ theme_override_constants/separation = 10
 [node name="TitleLabel" type="Label" parent="Panel/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("2_m3f5r")
+theme_override_fonts/font = ExtResource("5_jb0wy")
 theme_override_font_sizes/font_size = 20
 text = "Text-to-Speech Settings"
 horizontal_alignment = 1
@@ -82,7 +81,6 @@ layout_mode = 2
 [node name="Label" type="Label" parent="Panel/VBoxContainer/VoiceContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_m3f5r")
 theme_override_font_sizes/font_size = 18
 text = "Voice:"
@@ -101,7 +99,6 @@ layout_mode = 2
 [node name="Label" type="Label" parent="Panel/VBoxContainer/RateContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_m3f5r")
 theme_override_font_sizes/font_size = 18
 text = "Speech Rate:"

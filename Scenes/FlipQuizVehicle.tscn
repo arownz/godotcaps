@@ -1,6 +1,6 @@
 [gd_scene load_steps=16 format=3 uid="uid://q1yjdcnnetr4"]
 
-[ext_resource type="Script" uid="uid://bepgjougb17nf" path="res://Scripts/vehicle_flip_scene.gd" id="1_7p1sg"]
+[ext_resource type="Script" uid="uid://bgt50sf3dooe2" path="res://Scripts/FlipQuizVehicle.gd" id="1_7p1sg"]
 [ext_resource type="Texture2D" uid="uid://ciaa4qe2o2juf" path="res://gui/Update/UI/ui 3.png" id="2_y0fi5"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="3_ma1yg"]
 [ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="4_4itq8"]
@@ -350,6 +350,13 @@ theme_override_font_sizes/font_size = 24
 text = "Attempts: 0"
 horizontal_alignment = 1
 
+[node name="EncouragementLabel" type="Label" parent="MainContainer/ContentContainer/GamePanel/GameContainer/ScoreContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.6, 0.2, 1)
+theme_override_fonts/font = ExtResource("3_ma1yg")
+theme_override_font_sizes/font_size = 20
+horizontal_alignment = 1
+
 [node name="CardsContainer" type="GridContainer" parent="MainContainer/ContentContainer/GamePanel/GameContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
@@ -369,6 +376,10 @@ columns = 4
 [node name="boat_sfx" type="AudioStreamPlayer" parent="."]
 
 [node name="bus_sfx" type="AudioStreamPlayer" parent="."]
+
+[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+
+[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
 
 [connection signal="pressed" from="MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton" to="." method="_on_back_button_pressed"]
 [connection signal="pressed" from="MainContainer/ContentContainer/InstructionPanel/GuideButton" to="." method="_on_guide_button_pressed"]

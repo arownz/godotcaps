@@ -4,6 +4,7 @@ var tts: TextToSpeech = null
 var whiteboard_instance: Control = null
 var notification_popup: CanvasLayer = null
 var completion_celebration: CanvasLayer = null
+var module_progress = null # ModuleProgress.gd instance for centralized Firebase operations
 
 var current_target: String = "the"
 var sight_words := ["the", "and", "to", "a", "of", "in", "is", "you", "that", "it", "he", "was", "for", "on", "are", "as", "with", "his", "they", "I"]
@@ -59,34 +60,20 @@ func _init_tts():
 		tts.set_rate(rate)
 
 func _init_module_progress():
-	# Use same Firebase pattern as authentication.gd (which works)
-	print("PhonicsSightWords: Initializing Firebase access")
-	
-	# Wait for Firebase to be ready (like authentication.gd does)
-	await get_tree().process_frame
-	
-	# Check Firebase availability using authentication.gd pattern (no Engine.has_singleton check)
-	if not Firebase or not Firebase.Auth:
-		print("PhonicsSightWords: Firebase or Firebase.Auth not available")
-		return
-	
-	# Check authentication status (exact authentication.gd pattern)
-	if Firebase.Auth.auth == null:
-		print("PhonicsSightWords: No authenticated user")
-		return
-	
-	if not Firebase.Auth.auth.localid:
-		print("PhonicsSightWords: No localid available")
-		return
-	
-	print("PhonicsSightWords: Firebase authenticated successfully for user: ", Firebase.Auth.auth.localid)
-	
-	# Test Firestore access (exact authentication.gd pattern)
-	if Firebase.Firestore == null:
-		print("PhonicsSightWords: ERROR - Firestore is null")
-		return
-	
-	print("PhonicsSightWords: Firestore available - ready for progress updates")
+	print("PhonicsSightWords: Loading ModuleProgress.gd")
+	var module_progress_script = load("res://Scripts/ModuleProgress.gd")
+	if module_progress_script:
+		module_progress = module_progress_script.new()
+		add_child(module_progress)
+		print("PhonicsSightWords: ModuleProgress loaded successfully")
+	else:
+		print("PhonicsSightWords: Failed to load ModuleProgress.gd")
+
+func _notification(what):
+	if what == NOTIFICATION_WM_WINDOW_FOCUS_IN:
+		# Refresh progress when returning to the scene
+		if module_progress:
+			call_deferred("_load_progress")
 
 func _connect_hover_events():
 	var back_btn = $MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton
@@ -169,51 +156,37 @@ func _load_whiteboard():
 		print("PhonicsSightWords: WhiteboardInterface not found")
 
 func _load_progress():
-	if not Firebase.Auth.auth:
-		print("PhonicsSightWords: Firebase not available or not authenticated")
-		return
-		
-	var user_id = Firebase.Auth.auth.localid
-	var collection = Firebase.Firestore.collection("dyslexia_users")
-	
-	# Use working authentication.gd pattern: direct document fetch
-	print("PhonicsSightWords: Loading progress for user: ", user_id)
-	var document = await collection.get_doc(user_id)
-	if document and !("error" in document.keys() and document.get_value("error")):
-		print("PhonicsSightWords: Document fetched successfully")
-		var modules = document.get_value("modules")
-		if modules != null and typeof(modules) == TYPE_DICTIONARY and modules.has("phonics"):
-			var phonics = modules["phonics"]
-			if typeof(phonics) == TYPE_DICTIONARY:
-				var words_completed = phonics.get("sight_words_completed", [])
-				# Update session tracking
-				session_completed_words = words_completed.duplicate()
-				# Update UI with loaded progress
-				var completed_count = words_completed.size()
-				var total_words = sight_words.size()
-				var words_percent = (float(completed_count) / float(total_words)) * 100.0
-				_update_progress_ui(words_percent)
-				# Update trace overlay for current word if completed
-				_update_completed_words_display(words_completed)
-				print("PhonicsSightWords: Loaded progress - ", completed_count, "/", total_words, " words completed")
-				
-				# Find first uncompleted sight word
-				for i in range(sight_words.size()):
-					var word = sight_words[i].to_lower()
-					if not words_completed.has(word):
-						word_index = i
-						current_target = sight_words[i]
-						print("PhonicsSightWords: Starting from uncompleted word: ", current_target)
-						break
-				
-				# Update display with loaded position
-				_update_target_display()
-			else:
-				print("PhonicsSightWords: Phonics module data is not a dictionary")
+	if module_progress and module_progress.is_authenticated():
+		print("PhonicsSightWords: Loading phonics progress via ModuleProgress")
+		var phonics_progress = await module_progress.get_phonics_progress()
+		if phonics_progress:
+			var words_data = phonics_progress.get("phonics_sight_words", {})
+			var words_completed = words_data.get("sight_words_completed", [])
+			var words_progress = words_data.get("progress", 0)
+			
+			# Update session tracking
+			session_completed_words = words_completed.duplicate()
+			
+			# Update UI with loaded progress
+			_update_progress_ui(words_progress)
+			
+			# Update trace overlay for current word if completed
+			_update_completed_words_display(words_completed)
+			
+			print("PhonicsSightWords: Loaded progress - ", words_completed.size(), "/20 words completed (", words_progress, "%)")
+			
+			# Find first uncompleted sight word
+			for i in range(sight_words.size()):
+				var word = sight_words[i].to_lower()
+				if not words_completed.has(word):
+					word_index = i
+					current_target = sight_words[i]
+					_update_target_display()
+					break
 		else:
-			print("PhonicsSightWords: No modules or phonics data found")
+			print("PhonicsSightWords: No phonics progress found")
 	else:
-		print("PhonicsSightWords: Failed to fetch document or document has error")
+		print("PhonicsSightWords: ModuleProgress not available, using local session progress")
 
 func _update_progress_ui(_percent: float):
 	var progress_label = $MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressLabel
@@ -406,17 +379,17 @@ func _on_whiteboard_result(text_result: String):
 		
 		var progress_data: Dictionary = {"sight_words_completed": session_completed_words, "percentage": float(session_completed_words.size()) / 20.0 * 100.0}
 		
-		# Try to persist progress using direct Firebase update (authentication.gd pattern)
-		if Firebase.Auth.auth:
-			var save_success = await _save_sight_word_completion_to_firebase(target_word)
+		# Save progress using ModuleProgress system
+		if module_progress and module_progress.is_authenticated():
+			var save_success = await module_progress.set_phonics_sight_word_completed(target_word)
 			if save_success:
-				print("PhonicsSightWords: Firebase update successful")
+				print("PhonicsSightWords: Progress saved successfully via ModuleProgress")
 				# Reload progress to get updated percentage
 				await _load_progress()
 			else:
-				print("PhonicsSightWords: Firebase update failed, using session progress fallback")
+				print("PhonicsSightWords: Failed to save progress, using session progress fallback")
 		else:
-			print("PhonicsSightWords: Firebase not available, using local session progress")
+			print("PhonicsSightWords: ModuleProgress not available, using session progress fallback")
 		
 		_show_completion_celebration(target_word, progress_data)
 	elif not text_result.begins_with("recognition_error"):
@@ -550,115 +523,6 @@ func _on_celebration_closed():
 	# Ensure buttons are enabled after celebration popup closes
 	if whiteboard_instance and whiteboard_instance.has_method("_re_enable_buttons"):
 		whiteboard_instance._re_enable_buttons()
-
-# Direct Firebase sight word completion update using working Journey Mode pattern
-func _save_sight_word_completion_to_firebase(word: String) -> bool:
-	"""Save sight word completion to Firebase using the exact working pattern from Journey Mode"""
-	print("PhonicsSightWords: _save_sight_word_completion_to_firebase called with word: ", word)
-	
-	if !Firebase.Auth.auth:
-		print("PhonicsSightWords: No Firebase auth, returning false")
-		return false
-		
-	var user_id = Firebase.Auth.auth.localid
-	var collection = Firebase.Firestore.collection("dyslexia_users")
-	
-	print("PhonicsSightWords: Getting document for user: ", user_id)
-	
-	# Step 1: Get the document first (exact Journey Mode pattern)
-	var document = await collection.get_doc(user_id)
-	print("PhonicsSightWords: Document response type: ", typeof(document))
-	print("PhonicsSightWords: Document keys: ", document.keys() if document else "null")
-	
-	if document and !("error" in document.keys() and document.get_value("error")):
-		print("PhonicsSightWords: Document retrieved successfully")
-		
-		# Step 2: Get current modules structure (exact Journey Mode pattern)
-		var modules = document.get_value("modules")
-		print("PhonicsSightWords: Modules raw data type: ", typeof(modules))
-		print("PhonicsSightWords: Modules raw data: ", modules)
-		if modules == null or typeof(modules) != TYPE_DICTIONARY:
-			print("PhonicsSightWords: Modules not found, creating default structure")
-			modules = {
-				"phonics": {
-					"completed": false,
-					"progress": 0,
-					"letters_completed": [],
-					"sight_words_completed": []
-				}
-			}
-		
-		# Ensure phonics module exists
-		if !modules.has("phonics"):
-			print("PhonicsSightWords: Creating phonics module")
-			modules["phonics"] = {
-				"completed": false,
-				"progress": 0,
-				"letters_completed": [],
-				"sight_words_completed": []
-			}
-		
-		var phonics = modules["phonics"]
-		if typeof(phonics) != TYPE_DICTIONARY:
-			phonics = {
-				"completed": false,
-				"progress": 0,
-				"letters_completed": [],
-				"sight_words_completed": []
-			}
-			modules["phonics"] = phonics
-		
-		# Ensure arrays exist
-		if !phonics.has("letters_completed") or typeof(phonics["letters_completed"]) != TYPE_ARRAY:
-			phonics["letters_completed"] = []
-		if !phonics.has("sight_words_completed") or typeof(phonics["sight_words_completed"]) != TYPE_ARRAY:
-			phonics["sight_words_completed"] = []
-		
-		# Step 3: Update the data
-		var sight_words_completed = phonics["sight_words_completed"]
-		var word_lower = word.to_lower()
-		
-		print("PhonicsSightWords: Current sight words completed: ", sight_words_completed)
-		
-		if not sight_words_completed.has(word_lower):
-			print("PhonicsSightWords: Adding new sight word: ", word_lower)
-			sight_words_completed.append(word_lower)
-			phonics["sight_words_completed"] = sight_words_completed
-			
-			# Calculate progress (26 letters + 20 sight words = 46 total)
-			var total_letters = phonics["letters_completed"].size()
-			var total_sight_words = sight_words_completed.size()
-			var total_completed = total_letters + total_sight_words
-			var progress_percent = int((float(total_completed) / 46.0) * 100.0)
-			
-			print("PhonicsSightWords: Total letters: ", total_letters, ", Total sight words: ", total_sight_words)
-			print("PhonicsSightWords: Calculated progress: ", progress_percent, "%")
-			
-			phonics["progress"] = progress_percent
-			phonics["completed"] = progress_percent >= 100
-			modules["phonics"] = phonics
-			
-			# Step 4: Update the document field (exact Journey Mode pattern)
-			document.add_or_update_field("modules", modules)
-			
-			# Step 5: Save the updated document (exact Journey Mode pattern)
-			print("PhonicsSightWords: About to update document with modules: ", modules)
-			var updated_document = await collection.update(document)
-			print("PhonicsSightWords: Update response type: ", typeof(updated_document))
-			print("PhonicsSightWords: Update response: ", updated_document)
-			
-			if updated_document:
-				print("PhonicsSightWords: ✓ Sight word '", word_lower, "' saved to Firebase. Progress: ", progress_percent, "%")
-				return true
-			else:
-				print("PhonicsSightWords: ✗ Failed to update Firebase document")
-				return false
-		else:
-			print("PhonicsSightWords: Sight word '", word_lower, "' already completed")
-			return true
-	else:
-		print("PhonicsSightWords: Failed to get document for sight word completion update")
-		return false
 
 func _toggle_focus_mode():
 	sight_focus_mode = !sight_focus_mode

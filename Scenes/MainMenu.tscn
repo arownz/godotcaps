@@ -1,6 +1,6 @@
 [gd_scene load_steps=21 format=3 uid="uid://d36ytiqg31edd"]
 
-[ext_resource type="Script" uid="uid://datbxxer3mwvc" path="res://Scripts/mainmenu.gd" id="1_tt5f1"]
+[ext_resource type="Script" uid="uid://datbxxer3mwvc" path="res://Scripts/MainMenu.gd" id="1_tt5f1"]
 [ext_resource type="Texture2D" uid="uid://btkgwisgme2q2" path="res://gui/Update/Backgrounds/Main_menu_Background.png" id="2_pjscj"]
 [ext_resource type="PackedScene" uid="uid://e6bec84rrthm" path="res://Sprites/Animation/DefaultPlayer_Animation.tscn" id="4_8e205"]
 [ext_resource type="Texture2D" uid="uid://bctgpjuu2tes7" path="res://gui/profile pic with border.png" id="5_8e205"]
@@ -17,7 +17,7 @@
 [ext_resource type="Texture2D" uid="uid://m6ls0r18o3xg" path="res://gui/settings.png" id="12_q0r2p"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="13_uaqt0"]
 [ext_resource type="Texture2D" uid="uid://drwre8l5sq5ql" path="res://gui/Update/UI/hover long button.png" id="14_yxkem"]
-[ext_resource type="Script" uid="uid://brblauco221pt" path="res://Scripts/title_animation.gd" id="18_title_anim"]
+[ext_resource type="Script" uid="uid://brblauco221pt" path="res://Scripts/TitleAnimation.gd" id="18_title_anim"]
 [ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="19_pjscj"]
 [ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="20_m7n2d"]
 

@@ -1,24 +1,13 @@
-[gd_scene load_steps=10 format=3 uid="uid://jjasexff7wqn"]
+[gd_scene load_steps=12 format=3 uid="uid://jjasexff7wqn"]
 
-[ext_resource type="Script" uid="uid://coxbl1t7ghyt4" path="res://Scripts/chunked_question.gd" id="1_li3yj"]
+[ext_resource type="Script" uid="uid://coxbl1t7ghyt4" path="res://Scripts/ChunkedQuestion.gd" id="1_li3yj"]
+[ext_resource type="Texture2D" uid="uid://ciaa4qe2o2juf" path="res://gui/Update/UI/ui 3.png" id="2_02iud"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="2_hs48w"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="3_02iud"]
 [ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="4_17sh3"]
 [ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="5_0btiu"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_main"]
-bg_color = Color(0.870588, 0.980392, 0.901961, 1)
-border_width_left = 5
-border_width_top = 5
-border_width_right = 5
-border_width_bottom = 5
-border_color = Color(0.2, 0.8, 0.4, 1)
-corner_radius_top_left = 25
-corner_radius_top_right = 25
-corner_radius_bottom_right = 25
-corner_radius_bottom_left = 25
-shadow_color = Color(0, 0, 0, 0.3)
-shadow_size = 10
+[ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="5_02iud"]
+[ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="6_17sh3"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_progress_bg"]
 bg_color = Color(0.88, 0.91, 0.94, 1)
@@ -45,12 +34,12 @@ corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_chunk"]
-bg_color = Color(1, 1, 1, 1)
+bg_color = Color(0.941176, 0.890196, 0.980392, 1)
 border_width_left = 3
 border_width_top = 3
 border_width_right = 3
 border_width_bottom = 3
-border_color = Color(0.2, 0.8, 0.4, 1)
+border_color = Color(0.701961, 0.4, 0.901961, 1)
 corner_radius_top_left = 15
 corner_radius_top_right = 15
 corner_radius_bottom_right = 15
@@ -65,14 +54,14 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_li3yj")
 
-[node name="Background" type="Panel" parent="."]
+[node name="Background" type="TextureRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_main")
+texture = ExtResource("2_02iud")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -92,7 +81,7 @@ theme_override_constants/separation = 20
 
 [node name="HeaderContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_constants/separation = 0
+theme_override_constants/separation = 10
 
 [node name="ProgressBar" type="ProgressBar" parent="MarginContainer/VBoxContainer/HeaderContainer"]
 custom_minimum_size = Vector2(200, 30)
@@ -123,9 +112,14 @@ horizontal_alignment = 1
 custom_minimum_size = Vector2(100, 40)
 layout_mode = 2
 mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_hs48w")
 theme_override_font_sizes/font_size = 16
 text = "Back"
+icon = ExtResource("5_02iud")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [node name="ChunkPanel" type="Panel" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -195,9 +189,14 @@ alignment = 1
 custom_minimum_size = Vector2(120, 40)
 layout_mode = 2
 mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_hs48w")
 theme_override_font_sizes/font_size = 16
 text = "Play"
+icon = ExtResource("6_17sh3")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [node name="ButtonClick" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("4_17sh3")

@@ -1,24 +1,13 @@
-[gd_scene load_steps=10 format=3 uid="uid://ckleh0vv6ckwu"]
+[gd_scene load_steps=12 format=3 uid="uid://ckleh0vv6ckwu"]
 
-[ext_resource type="Script" uid="uid://dpg5b8tb0kkl8" path="res://Scripts/read_aloud_stories.gd" id="1_stories"]
+[ext_resource type="Script" uid="uid://dpg5b8tb0kkl8" path="res://Scripts/ReadAloudStories.gd" id="1_stories"]
+[ext_resource type="Texture2D" uid="uid://ciaa4qe2o2juf" path="res://gui/Update/UI/ui 3.png" id="2_ko3re"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="2_regular"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="3_bold"]
 [ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="4_click"]
+[ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="5_4b6fw"]
 [ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="5_hover"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_main"]
-bg_color = Color(0.870588, 0.980392, 0.901961, 1)
-border_width_left = 5
-border_width_top = 5
-border_width_right = 5
-border_width_bottom = 5
-border_color = Color(0.2, 0.8, 0.4, 1)
-corner_radius_top_left = 25
-corner_radius_top_right = 25
-corner_radius_bottom_right = 25
-corner_radius_bottom_left = 25
-shadow_color = Color(0, 0, 0, 0.3)
-shadow_size = 10
+[ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="6_shcbt"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_progress_bg"]
 bg_color = Color(0.88, 0.91, 0.94, 1)
@@ -65,14 +54,14 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_stories")
 
-[node name="Background" type="Panel" parent="."]
+[node name="Background" type="TextureRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_main")
+texture = ExtResource("2_ko3re")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -122,9 +111,14 @@ horizontal_alignment = 1
 custom_minimum_size = Vector2(100, 40)
 layout_mode = 2
 mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_bold")
 theme_override_font_sizes/font_size = 16
 text = "Back"
+icon = ExtResource("5_4b6fw")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [node name="StoryPanel" type="Panel" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -159,25 +153,40 @@ alignment = 1
 custom_minimum_size = Vector2(120, 40)
 layout_mode = 2
 mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_bold")
 theme_override_font_sizes/font_size = 16
 text = "Previous"
+icon = ExtResource("5_4b6fw")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [node name="PlayButton" type="Button" parent="MarginContainer/VBoxContainer/ControlsContainer"]
 custom_minimum_size = Vector2(120, 40)
 layout_mode = 2
 mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_bold")
 theme_override_font_sizes/font_size = 16
 text = "Play"
+icon = ExtResource("6_shcbt")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [node name="NextButton" type="Button" parent="MarginContainer/VBoxContainer/ControlsContainer"]
 custom_minimum_size = Vector2(120, 40)
 layout_mode = 2
 mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_bold")
 theme_override_font_sizes/font_size = 16
 text = "Next"
+icon = ExtResource("5_4b6fw")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [node name="ButtonClick" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("4_click")

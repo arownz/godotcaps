@@ -1,6 +1,7 @@
 extends Control
 
 var tts: TextToSpeech = null
+var module_progress = null
 var whiteboard_instance: Control = null
 var notification_popup: CanvasLayer = null
 var completion_celebration: CanvasLayer = null
@@ -45,6 +46,11 @@ func _ready():
 	# Load progress
 	call_deferred("_load_progress")
 
+func _notification(what):
+	if what == NOTIFICATION_WM_WINDOW_FOCUS_IN:
+		# Refresh progress when window gains focus
+		call_deferred("_load_progress")
+
 # Call this function from the Godot editor Remote Inspector
 # Or add a button temporarily to call it during gameplay
 func _input(event):
@@ -66,34 +72,12 @@ func _init_tts():
 	if rate != null:
 		tts.set_rate(rate)
 func _init_module_progress():
-	# Use same Firebase pattern as authentication.gd (which works)
-	print("PhonicsLetters: Initializing Firebase access")
-	
-	# Wait for Firebase to be ready (like authentication.gd does)
-	await get_tree().process_frame
-	
-	# Check Firebase availability using authentication.gd pattern (no Engine.has_singleton check)
-	if not Firebase or not Firebase.Auth:
-		print("PhonicsLetters: Firebase or Firebase.Auth not available")
-		return
-	
-	# Check authentication status (exact authentication.gd pattern)
-	if Firebase.Auth.auth == null:
-		print("PhonicsLetters: No authenticated user")
-		return
-	
-	if not Firebase.Auth.auth.localid:
-		print("PhonicsLetters: No localid available")
-		return
-	
-	print("PhonicsLetters: Firebase authenticated successfully for user: ", Firebase.Auth.auth.localid)
-	
-	# Test Firestore access (exact authentication.gd pattern)
-	if Firebase.Firestore == null:
-		print("PhonicsLetters: ERROR - Firestore is null")
-		return
-	
-	print("PhonicsLetters: Firestore available - ready for progress updates")
+	if Engine.has_singleton("Firebase") and Firebase.Auth.auth:
+		var ModuleProgressScript = load("res://Scripts/ModulesManager/ModuleProgress.gd")
+		module_progress = ModuleProgressScript.new()
+		print("PhonicsLetters: ModuleProgress initialized")
+	else:
+		print("PhonicsLetters: Firebase not available, using local tracking")
 
 func _connect_hover_events():
 	var back_btn = $MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton
@@ -176,51 +160,36 @@ func _load_whiteboard():
 		print("PhonicsLetters: WhiteboardInterface not found")
 
 func _load_progress():
-	if not Firebase.Auth.auth:
-		print("PhonicsLetters: Firebase not available or not authenticated")
-		return
-		
-	var user_id = Firebase.Auth.auth.localid
-	var collection = Firebase.Firestore.collection("dyslexia_users")
-	
-	# Use working authentication.gd pattern: direct document fetch
-	print("PhonicsLetters: Loading progress for user: ", user_id)
-	var document = await collection.get_doc(user_id)
-	if document and !("error" in document.keys() and document.get_value("error")):
-		print("PhonicsLetters: Document fetched successfully")
-		var modules = document.get_value("modules")
-		if modules != null and typeof(modules) == TYPE_DICTIONARY and modules.has("phonics"):
-			var phonics = modules["phonics"]
-			if typeof(phonics) == TYPE_DICTIONARY:
-				var letters_completed = phonics.get("letters_completed", [])
-				# Update session tracking
-				session_completed_letters = letters_completed.duplicate()
-				# Update UI with loaded progress
-				var completed_count = letters_completed.size()
-				var total_letters = letter_set.size()
-				var letters_percent = (float(completed_count) / float(total_letters)) * 100.0
-				_update_progress_ui(letters_percent)
-				# Update trace overlay for current letter if completed
-				_update_completed_letters_display(letters_completed)
-				print("PhonicsLetters: Loaded progress - ", completed_count, "/", total_letters, " letters completed")
-				
-				# Find first uncompleted letter
-				for i in range(letter_set.size()):
-					var letter = letter_set[i]
-					if not letters_completed.has(letter):
-						letter_index = i
-						current_target = letter
-						print("PhonicsLetters: Starting from uncompleted letter: ", letter)
-						break
-				
-				# Update display with loaded position
-				_update_target_display()
-			else:
-				print("PhonicsLetters: Phonics module data is not a dictionary")
+	if module_progress and module_progress.is_authenticated():
+		print("PhonicsLetters: Loading phonics progress via ModuleProgress")
+		var phonics_progress = await module_progress.get_phonics_progress()
+		if phonics_progress:
+			var letters_data = phonics_progress.get("phonics_letters", {})
+			var letters_completed = letters_data.get("letters_completed", [])
+			var letters_progress = letters_data.get("progress", 0)
+			
+			# Update session tracking
+			session_completed_letters = letters_completed.duplicate()
+			
+			# Update UI with loaded progress
+			_update_progress_ui(letters_progress)
+			
+			# Update trace overlay for current letter if completed
+			_update_completed_letters_display(letters_completed)
+			
+			print("PhonicsLetters: Loaded progress - ", letters_completed.size(), "/26 letters completed (", letters_progress, "%)")
+			
+			# Find first uncompleted letter
+			for i in range(letter_set.size()):
+				if letter_set[i] not in letters_completed:
+					letter_index = i
+					current_target = letter_set[i]
+					_update_target_display()
+					break
 		else:
-			print("PhonicsLetters: No modules or phonics data found")
+			print("PhonicsLetters: No phonics progress found")
 	else:
-		print("PhonicsLetters: Failed to fetch document or document has error")
+		print("PhonicsLetters: ModuleProgress not available, using local session progress")
 
 func _update_progress_ui(_percent: float):
 	var progress_label = $MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressLabel
@@ -417,17 +386,20 @@ func _on_whiteboard_result(text_result: String):
 		
 		var progress_data: Dictionary = {"letters_completed": session_completed_letters, "percentage": float(session_completed_letters.size()) / 26.0 * 100.0}
 		
-		# Try to persist progress using direct Firebase update (authentication.gd pattern)
-		if Firebase.Auth.auth:
-			var save_success = await _save_letter_completion_to_firebase(target_letter)
+		# Try to persist progress using ModuleProgress
+		if module_progress and module_progress.is_authenticated():
+			var save_success = await module_progress.set_phonics_letter_completed(target_letter)
 			if save_success:
-				print("PhonicsLetters: Firebase update successful")
-				# Reload progress to get updated percentage
-				await _load_progress()
+				print("PhonicsLetters: ModuleProgress update successful")
+				# Update progress display
+				var phonics_progress = await module_progress.get_phonics_progress()
+				if phonics_progress:
+					var letters_progress = phonics_progress.get("phonics_letters", {}).get("progress", 0)
+					_update_progress_ui(letters_progress)
 			else:
-				print("PhonicsLetters: Firebase update failed, using session progress fallback")
+				print("PhonicsLetters: ModuleProgress update failed, using session progress fallback")
 		else:
-			print("PhonicsLetters: Firebase not available, using local session progress")
+			print("PhonicsLetters: ModuleProgress not available, using local session progress")
 		
 		_show_completion_celebration(target_letter, progress_data)
 	elif not text_result.begins_with("recognition_error"):
@@ -532,145 +504,6 @@ func _on_celebration_closed():
 	# Ensure buttons are enabled after celebration popup closes
 	if whiteboard_instance and whiteboard_instance.has_method("_re_enable_buttons"):
 		whiteboard_instance._re_enable_buttons()
-
-# Direct Firebase letter completion update using working Journey Mode pattern
-func _save_letter_completion_to_firebase(letter: String) -> bool:
-	"""Save letter completion to Firebase using EXACT ProfilePopUp.gd pattern"""
-	print("PhonicsLetters: _save_letter_completion_to_firebase called with letter: ", letter)
-	
-	# Check authentication using EXACT ProfilePopUp pattern
-	if Firebase.Auth.auth == null:
-		print("PhonicsLetters: No authenticated user, using local session progress")
-		_save_letter_locally(letter)
-		return false
-	
-	var user_id = Firebase.Auth.auth.localid
-	print("PhonicsLetters: Loading data for user ID: ", user_id)
-	
-	# Check Firestore using EXACT ProfilePopUp pattern
-	if Firebase.Firestore == null:
-		print("PhonicsLetters: ERROR - Firestore is null, using local session progress")
-		_save_letter_locally(letter)
-		return false
-	
-	# Use EXACT ProfilePopUp collection pattern
-	var collection = Firebase.Firestore.collection("dyslexia_users")
-	print("PhonicsLetters: Attempting to fetch document with ID: ", user_id)
-	
-	# Use EXACT ProfilePopUp await pattern
-	var document = await collection.get_doc(user_id)
-	
-	# Use EXACT ProfilePopUp error checking pattern
-	if document != null:
-		print("PhonicsLetters: Document received")
-		
-		# Check for errors using EXACT ProfilePopUp pattern
-		var has_error = false
-		var error_data = null
-		
-		if document.has_method("keys"):
-			var doc_keys = document.keys()
-			
-			if "error" in doc_keys:
-				error_data = document.get_value("error")
-				if error_data:
-					has_error = true
-					print("PhonicsLetters: Error in document: ", error_data)
-					_save_letter_locally(letter)
-					return false
-			
-			if !has_error:
-				# Process document using nested structure pattern from ProfilePopUp
-				print("PhonicsLetters: Document retrieved successfully")
-				
-				# Get modules data (create if missing)
-				var modules = document.get_value("modules")
-				if modules == null or typeof(modules) != TYPE_DICTIONARY:
-					print("PhonicsLetters: Creating modules structure")
-					modules = {
-						"phonics": {
-							"completed": false,
-							"progress": 0,
-							"letters_completed": [],
-							"sight_words_completed": []
-						}
-					}
-				
-				# Ensure phonics module exists
-				if !modules.has("phonics"):
-					print("PhonicsLetters: Creating phonics module")
-					modules["phonics"] = {
-						"completed": false,
-						"progress": 0,
-						"letters_completed": [],
-						"sight_words_completed": []
-					}
-				
-				var phonics_data = modules["phonics"]
-				var letters_completed = phonics_data.get("letters_completed", [])
-				var sight_words_completed = phonics_data.get("sight_words_completed", [])
-				
-				var letter_upper = letter.to_upper()
-				print("PhonicsLetters: Current letters completed: ", letters_completed)
-				
-				if not letters_completed.has(letter_upper):
-					print("PhonicsLetters: Adding new letter: ", letter_upper)
-					letters_completed.append(letter_upper)
-					phonics_data["letters_completed"] = letters_completed
-					
-					# Calculate progress (26 letters + 20 sight words = 46 total)
-					var total_letters = letters_completed.size()
-					var total_sight_words = sight_words_completed.size()
-					var total_completed = total_letters + total_sight_words
-					var progress_percent = int((float(total_completed) / 46.0) * 100.0)
-					
-					print("PhonicsLetters: Total letters: ", total_letters, ", Total sight words: ", total_sight_words)
-					print("PhonicsLetters: Calculated progress: ", progress_percent, "%")
-					
-					phonics_data["progress"] = progress_percent
-					phonics_data["completed"] = progress_percent >= 100
-					modules["phonics"] = phonics_data
-					
-					# Update document using EXACT ProfilePopUp pattern
-					document.add_or_update_field("modules", modules)
-					
-					# Save using EXACT ProfilePopUp pattern
-					print("PhonicsLetters: About to update document with modules: ", modules)
-					var updated_document = await collection.update(document)
-					
-					if updated_document:
-						print("PhonicsLetters: ✓ Letter ", letter_upper, " saved to Firebase. Progress: ", progress_percent, "%")
-						return true
-					else:
-						print("PhonicsLetters: ✗ Failed to update Firebase document")
-						_save_letter_locally(letter)
-						return false
-				else:
-					print("PhonicsLetters: Letter ", letter_upper, " already completed")
-					return true
-			else:
-				print("PhonicsLetters: Document has no keys method")
-				_save_letter_locally(letter)
-				return false
-	else:
-		print("PhonicsLetters: Failed to get document for letter completion update")
-		_save_letter_locally(letter)
-		return false
-	
-	# Fallback return (should never be reached)
-	_save_letter_locally(letter)
-	return false
-
-func _save_letter_locally(letter: String):
-	"""Fallback to save letter completion locally when Firebase is unavailable"""
-	var letter_upper = letter.to_upper()
-	if letter_upper not in session_completed_letters:
-		session_completed_letters.append(letter_upper)
-		print("PhonicsLetters: Letter ", letter_upper, " saved locally (session only)")
-		
-		# Calculate local progress for display
-		var progress_percent = (session_completed_letters.size() / 26.0) * 100.0
-		_update_progress_ui(progress_percent)
 
 func _toggle_focus_mode():
 	letter_focus_mode = !letter_focus_mode

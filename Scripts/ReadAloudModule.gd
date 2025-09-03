@@ -97,11 +97,26 @@ func _connect_hover_events():
 			tts_btn.mouse_entered.connect(_on_button_hover)
 		if not tts_btn.pressed.is_connected(_on_tts_setting_button_pressed):
 			tts_btn.pressed.connect(_on_tts_setting_button_pressed)
+	
+	# Connect category enter buttons
+	var story_enter_btn = get_node_or_null("MainContainer/ScrollContainer/CategoriesGrid/StoryReadingCard/StoryContent/EnterButton")
+	if story_enter_btn:
+		if not story_enter_btn.mouse_entered.is_connected(_on_button_hover):
+			story_enter_btn.mouse_entered.connect(_on_button_hover)
+		if not story_enter_btn.pressed.is_connected(_on_story_reading_button_pressed):
+			story_enter_btn.pressed.connect(_on_story_reading_button_pressed)
+	
+	var guided_enter_btn = get_node_or_null("MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard/GuidedContent/EnterButton")
+	if guided_enter_btn:
+		if not guided_enter_btn.mouse_entered.is_connected(_on_button_hover):
+			guided_enter_btn.mouse_entered.connect(_on_button_hover)
+		if not guided_enter_btn.pressed.is_connected(_on_guided_reading_button_pressed):
+			guided_enter_btn.pressed.connect(_on_guided_reading_button_pressed)
 
 func _style_category_cards():
 	var icon_containers = [
-		$MainContainer/ScrollContainer/CategoriesGrid/ShortStoriesCard/StoriesContent/IconContainer,
-		$MainContainer/ScrollContainer/CategoriesGrid/ChunkedReadingCard/ChunkedContent/IconContainer
+		get_node_or_null("MainContainer/ScrollContainer/CategoriesGrid/StoryReadingCard/StoryContent/IconContainer"),
+		get_node_or_null("MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard/GuidedContent/IconContainer")
 	]
 	
 	for icon_container in icon_containers:
@@ -141,31 +156,31 @@ func _load_category_progress():
 		print("ReadAloudModule: Failed to fetch document or document has error")
 
 func _update_progress_displays(firebase_modules: Dictionary):
-	# Letters progress
-	var letters_percent = 0.0
-	if firebase_modules.has("phonics"):
-		var phonics = firebase_modules["phonics"]
-		if typeof(phonics) == TYPE_DICTIONARY:
-			var letters_completed = phonics.get("letters_completed", []).size()
-			letters_percent = (float(letters_completed) / 26.0) * 100.0
-	var letters_label = get_node_or_null("MainContainer/ScrollContainer/CategoriesGrid/LettersCard/LettersContent/ProgressLabel")
-	if letters_label:
-		letters_label.text = str(int(letters_percent)) + "% Complete"
+	# Story Reading progress
+	var story_percent = 0.0
+	if firebase_modules.has("read_aloud"):
+		var read_aloud = firebase_modules["read_aloud"]
+		if typeof(read_aloud) == TYPE_DICTIONARY:
+			var story_activities = read_aloud.get("story_reading", {}).get("activities_completed", []).size()
+			story_percent = (float(story_activities) / 5.0) * 100.0 # Assuming 5 story activities
+	var story_label = get_node_or_null("MainContainer/ScrollContainer/CategoriesGrid/StoryReadingCard/StoryContent/ProgressLabel")
+	if story_label:
+		story_label.text = str(int(story_percent)) + "% Complete"
 
-	# Sight Words progress
-	var sight_words_percent = 0.0
-	if firebase_modules.has("phonics"):
-		var phonics = firebase_modules["phonics"]
-		if typeof(phonics) == TYPE_DICTIONARY:
-			var words_completed = phonics.get("sight_words_completed", []).size()
-			sight_words_percent = (float(words_completed) / 20.0) * 100.0
-	var sight_label = get_node_or_null("MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard/SightWordsContent/ProgressLabel")
-	if sight_label:
-		sight_label.text = str(int(sight_words_percent)) + "% Complete"
+	# Guided Reading progress
+	var guided_percent = 0.0
+	if firebase_modules.has("read_aloud"):
+		var read_aloud = firebase_modules["read_aloud"]
+		if typeof(read_aloud) == TYPE_DICTIONARY:
+			var guided_activities = read_aloud.get("guided_reading", {}).get("activities_completed", []).size()
+			guided_percent = (float(guided_activities) / 5.0) * 100.0 # Assuming 5 guided activities
+	var guided_label = get_node_or_null("MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard/GuidedContent/ProgressLabel")
+	if guided_label:
+		guided_label.text = str(int(guided_percent)) + "% Complete"
 
 	# Overall progress (average)
-	var overall_percent = (letters_percent + sight_words_percent) / 2.0
-	var overall_bar = $MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressBar
+	var overall_percent = (story_percent + guided_percent) / 2.0
+	var overall_bar = get_node_or_null("MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressBar")
 	if overall_bar:
 		overall_bar.value = overall_percent
 
@@ -268,7 +283,17 @@ func _exit_tree():
 func _on_readaloud_button_pressed():
 	$ButtonClick.play()
 	print("ReadAloudModule: Starting Read Aloud")
-	_launch_category("words")
+	_launch_category("story_reading")
+
+func _on_story_reading_button_pressed():
+	$ButtonClick.play()
+	print("ReadAloudModule: Starting Story Reading")
+	_launch_category("story_reading")
+
+func _on_guided_reading_button_pressed():
+	$ButtonClick.play()
+	print("ReadAloudModule: Starting Guided Reading")
+	_launch_category("guided_reading")
 
 func _launch_category(category_key: String):
 	# Navigate to category scene

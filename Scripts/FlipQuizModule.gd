@@ -10,21 +10,10 @@ var completion_celebration_scene = preload("res://Scenes/CompletionCelebration.t
 var categories = {
 	"animals": {
 		"scene_path": "res://Scenes/FlipQuizAnimals.tscn",
+	},
+	"vehicles": {
+		"scene_path": "res://Scenes/FlipQuizVehicle.tscn"
 	}
-}
-
-# Dyslexia-friendly quiz sets (no emojis; visual assets handled in scene). Animals retains optional sound_base for SFX mapping.
-var quiz_sets = {
-	"Animals": [
-		{"word": "cat", "sound_base": "cat"},
-		{"word": "dog", "sound_base": "dog"},
-		{"word": "monkey", "sound_base": "monkey"},
-		{"word": "elephant", "sound_base": "elephant"},
-		{"word": "duck", "sound_base": "duck"},
-		{"word": "fox", "sound_base": "fox"},
-		{"word": "raccoon", "sound_base": "racoon"},
-		{"word": "frog", "sound_base": "frog"}
-	]
 }
 
 var current_set = ""
@@ -106,29 +95,39 @@ func _connect_hover_events():
 	var back_btn = $MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton
 	if back_btn and not back_btn.mouse_entered.is_connected(_on_button_hover):
 		back_btn.mouse_entered.connect(_on_button_hover)
+
 	var guide_btn = $MainContainer/HeaderPanel/GuideButton
 	if guide_btn:
 		if not guide_btn.mouse_entered.is_connected(_on_button_hover):
 			guide_btn.mouse_entered.connect(_on_button_hover)
 		if not guide_btn.pressed.is_connected(_on_guide_button_pressed):
 			guide_btn.pressed.connect(_on_guide_button_pressed)
+
 	var tts_btn = $MainContainer/HeaderPanel/TTSSettingButton
 	if tts_btn:
 		if not tts_btn.mouse_entered.is_connected(_on_button_hover):
 			tts_btn.mouse_entered.connect(_on_button_hover)
 		if not tts_btn.pressed.is_connected(_on_tts_setting_button_pressed):
 			tts_btn.pressed.connect(_on_tts_setting_button_pressed)
+
 	var animals_btn = $MainContainer/ScrollContainer/CategoriesGrid/AnimalsCard/AnimalsContent/EnterButton
 	if animals_btn:
 		if not animals_btn.mouse_entered.is_connected(_on_button_hover):
 			animals_btn.mouse_entered.connect(_on_button_hover)
 		if not animals_btn.pressed.is_connected(_on_animals_button_pressed):
 			animals_btn.pressed.connect(_on_animals_button_pressed)
-	# Food category removed
+
+	var vehicles_btn = $MainContainer/ScrollContainer/CategoriesGrid/VehiclesCard/VehiclesContent/EnterButton
+	if vehicles_btn:
+		if not vehicles_btn.mouse_entered.is_connected(_on_button_hover):
+			vehicles_btn.mouse_entered.connect(_on_button_hover)
+		if not vehicles_btn.pressed.is_connected(_on_vehicles_button_pressed):
+			vehicles_btn.pressed.connect(_on_vehicles_button_pressed)
 
 func _style_category_cards():
 	var icon_containers = [
 		$MainContainer/ScrollContainer/CategoriesGrid/AnimalsCard/AnimalsContent/IconContainer,
+		$MainContainer/ScrollContainer/CategoriesGrid/VehiclesCard/VehiclesContent/IconContainer
 	]
 	for icon_container in icon_containers:
 		if icon_container:
@@ -266,7 +265,10 @@ func _on_animals_button_pressed():
 	print("FlipQuizModule: Starting Animals category")
 	_launch_category("animals")
 
- # Food category removed per requirements
+func _on_vehicles_button_pressed() -> void:
+	$ButtonClick.play()
+	print("FlipQuizModule: Starting Vehicles category")
+	_launch_category("vehicles")
 
 func _launch_category(category_key: String):
 	var scene_path = categories[category_key]["scene_path"]

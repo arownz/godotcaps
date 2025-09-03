@@ -1,6 +1,6 @@
 [gd_scene load_steps=14 format=3 uid="uid://cbpwvuj8kdyod"]
 
-[ext_resource type="Script" uid="uid://t5tc36uuxhcf" path="res://Scripts/authentication.gd" id="1_6ea5n"]
+[ext_resource type="Script" uid="uid://t5tc36uuxhcf" path="res://Scripts/Authentication.gd" id="1_6ea5n"]
 [ext_resource type="Texture2D" uid="uid://cxqd6wyqy8g22" path="res://gui/Update/Backgrounds/battlescene background.png" id="2_6oq4l"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="2_edc1m"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="3_4bnr5"]

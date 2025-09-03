@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="EnemyTypeResource" load_steps=3 format=3 uid="uid://2uq4jhyo2yql"]
 
-[ext_resource type="Script" uid="uid://d2ghh4os1rp2o" path="res://Scripts/Resources/enemy_type_resource.gd" id="1_1"]
+[ext_resource type="Script" uid="uid://d2ghh4os1rp2o" path="res://Scripts/Resources/EnemyTypeResource.gd" id="1_1"]
 [ext_resource type="PackedScene" uid="uid://d4gnmb7y5laks" path="res://Sprites/Animation/Treant_Animation.tscn" id="2_1"]
 
 [resource]

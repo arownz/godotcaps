@@ -1,6 +1,6 @@
 [gd_scene load_steps=25 format=3 uid="uid://cotie2n1uaq7k"]
 
-[ext_resource type="Script" uid="uid://dw8lmitmopbq7" path="res://Scripts/dungeon_2_map.gd" id="1_qpxt0"]
+[ext_resource type="Script" uid="uid://dw8lmitmopbq7" path="res://Scripts/Dungeon2Map.gd" id="1_qpxt0"]
 [ext_resource type="Texture2D" uid="uid://n08ji1i2co16" path="res://gui/Update/UI/small button.png" id="2_feumf"]
 [ext_resource type="Texture2D" uid="uid://c4irhu03t0gej" path="res://gui/Update/Backgrounds/forestmap1.png" id="2_v6wxw"]
 [ext_resource type="Texture2D" uid="uid://da6rdtvo1nlwj" path="res://gui/Update/icons/return.png" id="3_u8y63"]

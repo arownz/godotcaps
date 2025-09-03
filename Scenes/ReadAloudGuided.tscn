@@ -1,24 +1,11 @@
 [gd_scene load_steps=11 format=3 uid="uid://c4s0f4n6pxn6o"]
 
-[ext_resource type="Script" uid="uid://h4w722tfbmr7" path="res://Scripts/read_aloud_guided.gd" id="1_guided"]
+[ext_resource type="Script" uid="uid://h4w722tfbmr7" path="res://Scripts/ReadAloudGuided.gd" id="1_guided"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="2_regular"]
+[ext_resource type="Texture2D" uid="uid://ciaa4qe2o2juf" path="res://gui/Update/UI/ui 3.png" id="2_retjp"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="3_bold"]
 [ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="4_click"]
 [ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="5_hover"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_main"]
-bg_color = Color(0.870588, 0.980392, 0.901961, 1)
-border_width_left = 5
-border_width_top = 5
-border_width_right = 5
-border_width_bottom = 5
-border_color = Color(0.2, 0.8, 0.4, 1)
-corner_radius_top_left = 25
-corner_radius_top_right = 25
-corner_radius_bottom_right = 25
-corner_radius_bottom_left = 25
-shadow_color = Color(0, 0, 0, 0.3)
-shadow_size = 10
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_progress_bg"]
 bg_color = Color(0.88, 0.91, 0.94, 1)
@@ -77,14 +64,14 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_guided")
 
-[node name="Background" type="Panel" parent="."]
+[node name="Background" type="TextureRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_main")
+texture = ExtResource("2_retjp")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1

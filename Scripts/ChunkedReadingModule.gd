@@ -56,8 +56,8 @@ func _init_tts():
 func _setup_category_cards():
 	# Apply rounded corners and backgrounds to icon containers
 	var icon_containers = [
-		$MainContainer/ScrollContainer/CategoriesGrid/VocabularyCard/VocabularyContent/IconContainer,
-		$MainContainer/ScrollContainer/CategoriesGrid/QuestionCard/QuestionContent/IconContainer
+		get_node_or_null("MainContainer/ScrollContainer/CategoriesGrid/VocubalaryCard/Content/IconContainer"),
+		get_node_or_null("MainContainer/ScrollContainer/CategoriesGrid/QuestionCard/Content/IconContainer")
 	]
 	for icon_container in icon_containers:
 		if icon_container:
@@ -108,24 +108,56 @@ func _update_progress_displays(firebase_modules: Dictionary):
 			vocab_percent = (float(completed_vocab) / 10.0) * 100.0
 			var completed_questions = chunked.get("completed_questions", []).size()
 			question_percent = (float(completed_questions) / 10.0) * 100.0
-	var vocab_label = $MainContainer/ScrollContainer/CategoriesGrid/VocabularyCard/VocabularyContent/ProgressLabel
+	var vocab_label = get_node_or_null("MainContainer/ScrollContainer/CategoriesGrid/VocubalaryCard/Content/ProgressLabel")
 	if vocab_label:
 		vocab_label.text = str(int(vocab_percent)) + "% Complete"
-	var question_label = $MainContainer/ScrollContainer/CategoriesGrid/QuestionCard/QuestionContent/ProgressLabel
+	var question_label = get_node_or_null("MainContainer/ScrollContainer/CategoriesGrid/QuestionCard/Content/ProgressLabel")
 	if question_label:
 		question_label.text = str(int(question_percent)) + "% Complete"
 	# Overall progress
 	var overall_percent = (vocab_percent + question_percent) / 2.0
-	var progress_bar = $MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressBar
+	var progress_bar = get_node_or_null("MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressBar")
 	if progress_bar:
-		progress_bar.value = overall_percent / 100.0
+		progress_bar.value = overall_percent
 
 func _connect_hover_events():
-	# Connect button hover sounds
-	var buttons = get_tree().get_nodes_in_group("buttons")
-	for button in buttons:
-		if not button.mouse_entered.is_connected(_on_button_hover):
-			button.mouse_entered.connect(_on_button_hover)
+	# Connect back button hover
+	var back_btn = get_node_or_null("MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton")
+	if back_btn and not back_btn.mouse_entered.is_connected(_on_button_hover):
+		back_btn.mouse_entered.connect(_on_button_hover)
+		if not back_btn.pressed.is_connected(_on_back_button_pressed):
+			back_btn.pressed.connect(_on_back_button_pressed)
+	
+	# Connect guide button
+	var guide_btn = get_node_or_null("MainContainer/HeaderPanel/GuideButton")
+	if guide_btn:
+		if not guide_btn.mouse_entered.is_connected(_on_button_hover):
+			guide_btn.mouse_entered.connect(_on_button_hover)
+		if not guide_btn.pressed.is_connected(_on_guide_button_pressed):
+			guide_btn.pressed.connect(_on_guide_button_pressed)
+	
+	# Connect TTS settings button
+	var tts_btn = get_node_or_null("MainContainer/HeaderPanel/TTSSettingButton")
+	if tts_btn:
+		if not tts_btn.mouse_entered.is_connected(_on_button_hover):
+			tts_btn.mouse_entered.connect(_on_button_hover)
+		if not tts_btn.pressed.is_connected(_on_tts_setting_button_pressed):
+			tts_btn.pressed.connect(_on_tts_setting_button_pressed)
+	
+	# Connect category enter buttons
+	var vocab_enter_btn = get_node_or_null("MainContainer/ScrollContainer/CategoriesGrid/VocubalaryCard/Content/EnterButton")
+	if vocab_enter_btn:
+		if not vocab_enter_btn.mouse_entered.is_connected(_on_button_hover):
+			vocab_enter_btn.mouse_entered.connect(_on_button_hover)
+		if not vocab_enter_btn.pressed.is_connected(_on_vocabulary_building_button_pressed):
+			vocab_enter_btn.pressed.connect(_on_vocabulary_building_button_pressed)
+	
+	var question_enter_btn = get_node_or_null("MainContainer/ScrollContainer/CategoriesGrid/QuestionCard/Content/EnterButton")
+	if question_enter_btn:
+		if not question_enter_btn.mouse_entered.is_connected(_on_button_hover):
+			question_enter_btn.mouse_entered.connect(_on_button_hover)
+		if not question_enter_btn.pressed.is_connected(_on_chunked_question_button_pressed):
+			question_enter_btn.pressed.connect(_on_chunked_question_button_pressed)
 
 func _on_button_hover():
 	$ButtonHover.play()
@@ -179,6 +211,11 @@ func _on_tts_settings_saved(voice_id: String, rate: float):
 	SettingsManager.set_setting("accessibility", "tts_voice_id", voice_id)
 	SettingsManager.set_setting("accessibility", "tts_rate", rate)
 
+
+func _on_vocabulary_building_button_pressed():
+	$ButtonClick.play()
+	print("ChunkedReadingModule: Starting Vocabulary Building")
+	_fade_out_and_change_scene(categories["vocabulary_building"]["scene_path"])
 
 func _on_chunked_question_button_pressed():
 	$ButtonClick.play()

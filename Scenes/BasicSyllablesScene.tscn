@@ -1,17 +1,21 @@
-[gd_scene load_steps=6 format=3 uid="uid://pp7wqdat2rvr"]
+[gd_scene load_steps=13 format=3 uid="uid://pp7wqdat2rvr"]
 
-[ext_resource type="Script" uid="uid://perc22dk1y15" path="res://Scripts/basic_syllables_scene.gd" id="1_script"]
-[ext_resource type="Texture2D" uid="uid://0con8ixqofpr" path="res://gui/Update/UI/ui 8.png" id="2_bg"]
+[ext_resource type="Script" uid="uid://perc22dk1y15" path="res://Scripts/BasicSyllablesScene.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://ciaa4qe2o2juf" path="res://gui/Update/UI/ui 3.png" id="2_67frg"]
+[ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="3_regular"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="4_bold"]
 [ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="5_yellow"]
+[ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="6_green"]
+[ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="7_click"]
+[ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="8_hover"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dt2ji"]
-bg_color = Color(0.941176, 0.890196, 0.980392, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_header"]
+bg_color = Color(0.980392, 0.941176, 0.85098, 1)
 border_width_left = 5
 border_width_top = 5
 border_width_right = 5
 border_width_bottom = 5
-border_color = Color(0.701961, 0.4, 0.901961, 1)
+border_color = Color(0.901961, 0.6, 0.2, 1)
 corner_radius_top_left = 25
 corner_radius_top_right = 25
 corner_radius_bottom_right = 25
@@ -19,6 +23,32 @@ corner_radius_bottom_left = 25
 shadow_color = Color(0, 0, 0, 0.3)
 shadow_size = 10
 shadow_offset = Vector2(0, 6)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_button"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_word_panel"]
+bg_color = Color(0.980392, 0.941176, 0.85098, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.901961, 0.6, 0.2, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_syllable"]
+bg_color = Color(0.901961, 0.6, 0.2, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.372532, 0.231711, 0.0333288, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
 [node name="BasicSyllablesScene" type="Control"]
 layout_mode = 3
@@ -36,61 +66,237 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_bg")
+texture = ExtResource("2_67frg")
 
 [node name="MainContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 57.0
-offset_top = 33.0
-offset_right = -58.0
-offset_bottom = -35.0
+offset_left = 50.0
+offset_top = 30.0
+offset_right = -50.0
+offset_bottom = -30.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/separation = 20
 
 [node name="HeaderPanel" type="Panel" parent="MainContainer"]
+custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_dt2ji")
+size_flags_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_header")
 
-[node name="HeaderContainer" type="VBoxContainer" parent="MainContainer/HeaderPanel"]
+[node name="HeaderContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 15.0
+offset_right = -20.0
+offset_bottom = -15.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 20
 
-[node name="Title" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer"]
+[node name="TitleContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer"]
 layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 20
+
+[node name="TitleLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold")
-theme_override_font_sizes/font_size = 32
-text = "Basic Syllables"
+theme_override_font_sizes/font_size = 28
+text = "Basic Syllables Practice"
 horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="BackButton" type="Button" parent="MainContainer/HeaderPanel/HeaderContainer"]
-custom_minimum_size = Vector2(120, 45)
+[node name="BackButton" type="Button" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer"]
+custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
-size_flags_horizontal = 4
+size_flags_horizontal = 0
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold")
 theme_override_font_sizes/font_size = 16
+theme_override_styles/focus = SubResource("StyleBoxEmpty_button")
 text = "Back"
 icon = ExtResource("5_yellow")
 flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="Content" type="ScrollContainer" parent="MainContainer"]
+[node name="ContentContainer" type="VBoxContainer" parent="MainContainer"]
 layout_mode = 2
-size_flags_vertical = 3
-
-[node name="VBoxContainer" type="VBoxContainer" parent="MainContainer/Content"]
-layout_mode = 2
-size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 20
+
+[node name="WordPanel" type="Panel" parent="MainContainer/ContentContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_word_panel")
+
+[node name="WordContainer" type="VBoxContainer" parent="MainContainer/ContentContainer/WordPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 15.0
+offset_right = -20.0
+offset_bottom = -15.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+
+[node name="CurrentWordLabel" type="Label" parent="MainContainer/ContentContainer/WordPanel/WordContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 40
+text = "sunshine"
+horizontal_alignment = 1
+
+[node name="SyllableContainer" type="HBoxContainer" parent="MainContainer/ContentContainer/WordPanel/WordContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 10
+
+[node name="SyllablePanel1" type="Panel" parent="MainContainer/ContentContainer/WordPanel/WordContainer/SyllableContainer"]
+custom_minimum_size = Vector2(100, 60)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_syllable")
+
+[node name="SyllableLabel1" type="Label" parent="MainContainer/ContentContainer/WordPanel/WordContainer/SyllableContainer/SyllablePanel1"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 24
+text = "sun"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SyllablePanel2" type="Panel" parent="MainContainer/ContentContainer/WordPanel/WordContainer/SyllableContainer"]
+custom_minimum_size = Vector2(100, 60)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_syllable")
+
+[node name="SyllableLabel2" type="Label" parent="MainContainer/ContentContainer/WordPanel/WordContainer/SyllableContainer/SyllablePanel2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 24
+text = "shine"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TypeLabel" type="Label" parent="MainContainer/ContentContainer/WordPanel/WordContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.4, 0.4, 1)
+theme_override_fonts/font = ExtResource("3_regular")
+theme_override_font_sizes/font_size = 18
+text = "Closed + Open Syllables"
+horizontal_alignment = 1
+
+[node name="ButtonContainer" type="HBoxContainer" parent="MainContainer/ContentContainer/WordPanel/WordContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 20
+
+[node name="HearWordButton" type="Button" parent="MainContainer/ContentContainer/WordPanel/WordContainer/ButtonContainer"]
+custom_minimum_size = Vector2(150, 50)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 16
+text = "Hear Word"
+icon = ExtResource("6_green")
+flat = true
+icon_alignment = 1
+expand_icon = true
+
+[node name="NextWordButton" type="Button" parent="MainContainer/ContentContainer/WordPanel/WordContainer/ButtonContainer"]
+custom_minimum_size = Vector2(150, 50)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 16
+text = "Next Word"
+icon = ExtResource("5_yellow")
+flat = true
+icon_alignment = 1
+expand_icon = true
+
+[node name="ProgressPanel" type="Panel" parent="MainContainer/ContentContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_word_panel")
+
+[node name="ProgressContainer" type="VBoxContainer" parent="MainContainer/ContentContainer/ProgressPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 15.0
+offset_right = -20.0
+offset_bottom = -15.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+
+[node name="ProgressTitle" type="Label" parent="MainContainer/ContentContainer/ProgressPanel/ProgressContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold")
+theme_override_font_sizes/font_size = 18
+text = "Syllable Practice Progress"
+horizontal_alignment = 1
+
+[node name="ProgressInfo" type="HBoxContainer" parent="MainContainer/ContentContainer/ProgressPanel/ProgressContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 30
+
+[node name="ProgressLabel" type="Label" parent="MainContainer/ContentContainer/ProgressPanel/ProgressContainer/ProgressInfo"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_regular")
+theme_override_font_sizes/font_size = 16
+text = "Word 1 of 12"
+vertical_alignment = 1
+
+[node name="TypeProgressLabel" type="Label" parent="MainContainer/ContentContainer/ProgressPanel/ProgressContainer/ProgressInfo"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_regular")
+theme_override_font_sizes/font_size = 16
+text = "Closed + Open + Magic-E"
+vertical_alignment = 1
+
+[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("8_hover")
+
+[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("7_click")
+
+[connection signal="pressed" from="MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton" to="." method="_on_back_button_pressed"]
+[connection signal="pressed" from="MainContainer/ContentContainer/WordPanel/WordContainer/ButtonContainer/HearWordButton" to="." method="_on_hear_word_button_pressed"]
+[connection signal="pressed" from="MainContainer/ContentContainer/WordPanel/WordContainer/ButtonContainer/NextWordButton" to="." method="_on_next_word_button_pressed"]

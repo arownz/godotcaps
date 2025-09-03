@@ -1,6 +1,6 @@
 [gd_scene load_steps=17 format=3 uid="uid://beu8uw5oqkvxd"]
 
-[ext_resource type="Script" uid="uid://liwnmmbqa706" path="res://Scripts/change_character_scene.gd" id="1_rnq7s"]
+[ext_resource type="Script" uid="uid://liwnmmbqa706" path="res://Scripts/ChangeCharacterScene.gd" id="1_rnq7s"]
 [ext_resource type="Texture2D" uid="uid://n08ji1i2co16" path="res://gui/Update/UI/small button.png" id="2_6nemp"]
 [ext_resource type="Texture2D" uid="uid://djjuy3y73ahpe" path="res://gui/Update/Backgrounds/battlescene background3.png" id="2_ccovg"]
 [ext_resource type="Texture2D" uid="uid://da6rdtvo1nlwj" path="res://gui/Update/icons/return.png" id="3_oxpqv"]

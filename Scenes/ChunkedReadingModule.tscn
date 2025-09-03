@@ -1,6 +1,6 @@
 [gd_scene load_steps=15 format=3 uid="uid://bm8j5k6f3bar2"]
 
-[ext_resource type="Script" uid="uid://cq7ki0xl6yxeo" path="res://Scripts/chunked_reading_module.gd" id="1_douby"]
+[ext_resource type="Script" uid="uid://cq7ki0xl6yxeo" path="res://Scripts/ChunkedReadingModule.gd" id="1_douby"]
 [ext_resource type="Texture2D" uid="uid://0con8ixqofpr" path="res://gui/Update/UI/ui 8.png" id="2_bg"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="3_regular"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="4_bold"]
@@ -212,12 +212,12 @@ theme_override_constants/h_separation = 25
 theme_override_constants/v_separation = 25
 columns = 3
 
-[node name="BasicReadingCard" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid"]
+[node name="VocubalaryCard" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid"]
 custom_minimum_size = Vector2(430, 300)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_8um6u")
 
-[node name="Content" type="VBoxContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/BasicReadingCard"]
+[node name="Content" type="VBoxContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/VocubalaryCard"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -229,11 +229,11 @@ offset_bottom = -15.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="IconContainer" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid/BasicReadingCard/Content"]
+[node name="IconContainer" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid/VocubalaryCard/Content"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="CenterContainer" type="CenterContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/BasicReadingCard/Content/IconContainer"]
+[node name="CenterContainer" type="CenterContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/VocubalaryCard/Content/IconContainer"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -241,24 +241,24 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="IconLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/BasicReadingCard/Content/IconContainer/CenterContainer"]
+[node name="IconLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/VocubalaryCard/Content/IconContainer/CenterContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.2, 0.6, 0.901961, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold")
 theme_override_font_sizes/font_size = 48
-text = "Reading"
+text = "Vocubalary"
 horizontal_alignment = 1
 
-[node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/BasicReadingCard/Content"]
+[node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/VocubalaryCard/Content"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold")
 theme_override_font_sizes/font_size = 20
-text = "Basic Reading"
+text = "Vocubalary Reading"
 horizontal_alignment = 1
 
-[node name="DescLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/BasicReadingCard/Content"]
+[node name="DescLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/VocubalaryCard/Content"]
 custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -268,7 +268,7 @@ text = "Start with simple sentences and short paragraphs"
 horizontal_alignment = 1
 autowrap_mode = 2
 
-[node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/BasicReadingCard/Content"]
+[node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/VocubalaryCard/Content"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular")
@@ -276,7 +276,7 @@ theme_override_font_sizes/font_size = 12
 text = "0% Complete"
 horizontal_alignment = 1
 
-[node name="EnterButton" type="Button" parent="MainContainer/ScrollContainer/CategoriesGrid/BasicReadingCard/Content"]
+[node name="EnterButton" type="Button" parent="MainContainer/ScrollContainer/CategoriesGrid/VocubalaryCard/Content"]
 layout_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -291,12 +291,12 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="ChunkReadQuestionCard" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid"]
+[node name="QuestionCard" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid"]
 custom_minimum_size = Vector2(430, 300)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_8um6u")
 
-[node name="Content" type="VBoxContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/ChunkReadQuestionCard"]
+[node name="Content" type="VBoxContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/QuestionCard"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -308,11 +308,11 @@ offset_bottom = -15.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="IconContainer" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid/ChunkReadQuestionCard/Content"]
+[node name="IconContainer" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid/QuestionCard/Content"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="CenterContainer" type="CenterContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/ChunkReadQuestionCard/Content/IconContainer"]
+[node name="CenterContainer" type="CenterContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/QuestionCard/Content/IconContainer"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -320,7 +320,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="IconLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/ChunkReadQuestionCard/Content/IconContainer/CenterContainer"]
+[node name="IconLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/QuestionCard/Content/IconContainer/CenterContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.901961, 0.4, 0.4, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -329,7 +329,7 @@ theme_override_font_sizes/font_size = 48
 text = "Question"
 horizontal_alignment = 1
 
-[node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/ChunkReadQuestionCard/Content"]
+[node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/QuestionCard/Content"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold")
@@ -337,7 +337,7 @@ theme_override_font_sizes/font_size = 20
 text = "Chunk Question"
 horizontal_alignment = 1
 
-[node name="DescLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/ChunkReadQuestionCard/Content"]
+[node name="DescLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/QuestionCard/Content"]
 custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -347,7 +347,7 @@ text = "Improve comprehension and retention through targeted questioning."
 horizontal_alignment = 1
 autowrap_mode = 2
 
-[node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/ChunkReadQuestionCard/Content"]
+[node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/QuestionCard/Content"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular")
@@ -355,7 +355,7 @@ theme_override_font_sizes/font_size = 12
 text = "0% Complete"
 horizontal_alignment = 1
 
-[node name="EnterButton" type="Button" parent="MainContainer/ScrollContainer/CategoriesGrid/ChunkReadQuestionCard/Content"]
+[node name="EnterButton" type="Button" parent="MainContainer/ScrollContainer/CategoriesGrid/QuestionCard/Content"]
 layout_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
