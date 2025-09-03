@@ -227,6 +227,26 @@ func _update_card_progress(module_key: String, card_name: String):
 				progress_percent = (float(sets_completed.size()) / float(total_sets)) * 100.0
 				completed = sets_completed.size() >= total_sets
 				print("ModuleScene: FlipQuiz overall - Sets:", sets_completed.size(), "/", total_sets, ", Overall:", int(progress_percent), "%")
+			elif module_key == "syllable_building":
+				# Overall syllable building progress combining all syllable types
+				var basic_completed = 0
+				var advanced_completed = 0
+				
+				# Check basic syllables
+				if fm.has("basic_syllables") and typeof(fm["basic_syllables"]) == TYPE_DICTIONARY:
+					var basic_activities = fm["basic_syllables"].get("activities_completed", [])
+					basic_completed = basic_activities.size()
+				
+				# Check advanced syllables
+				if fm.has("advanced_syllables") and typeof(fm["advanced_syllables"]) == TYPE_DICTIONARY:
+					var advanced_activities = fm["advanced_syllables"].get("activities_completed", [])
+					advanced_completed = advanced_activities.size()
+				
+				var total_activities = 25 # Total syllable activities across both basic and advanced
+				var total_completed = basic_completed + advanced_completed
+				progress_percent = (float(total_completed) / float(total_activities)) * 100.0
+				completed = total_completed >= total_activities
+				print("ModuleScene: Syllable Building overall - Basic:", basic_completed, ", Advanced:", advanced_completed, ", Total:", total_completed, "/", total_activities, ", Overall:", int(progress_percent), "%")
 			else:
 				# For other modules, use direct progress value
 				progress_percent = float(fm.get("progress", 0))
@@ -255,11 +275,7 @@ func _update_card_progress(module_key: String, card_name: String):
 		if completed or int(progress_percent) >= 100:
 			action_button.text = "COMPLETED"
 		elif progress_percent > 0:
-			# Get module name from module_data
-			var module_name = ""
-			if module_data.has(module_key):
-				module_name = module_data[module_key]["name"].split(" ")[0] # Get first word
-			action_button.text = "Continue " + module_name
+			action_button.text = "Continue"
 
 # Button sound event handlers
 func _on_button_hover():

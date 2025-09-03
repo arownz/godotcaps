@@ -1,11 +1,14 @@
-[gd_scene load_steps=11 format=3 uid="uid://c4s0f4n6pxn6o"]
+[gd_scene load_steps=15 format=3 uid="uid://c4s0f4n6pxn6o"]
 
 [ext_resource type="Script" uid="uid://h4w722tfbmr7" path="res://Scripts/ReadAloudGuided.gd" id="1_guided"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="2_regular"]
 [ext_resource type="Texture2D" uid="uid://ciaa4qe2o2juf" path="res://gui/Update/UI/ui 3.png" id="2_retjp"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="3_bold"]
 [ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="4_click"]
+[ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="4_ra7s8"]
 [ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="5_hover"]
+[ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="6_073yc"]
+[ext_resource type="Texture2D" uid="uid://bp53fsaou53ad" path="res://gui/Update/UI/white button.png" id="7_ely31"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_progress_bg"]
 bg_color = Color(0.88, 0.91, 0.94, 1)
@@ -30,6 +33,8 @@ corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ely31"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_guide"]
 bg_color = Color(1, 0.95, 0.8, 1)
@@ -92,13 +97,22 @@ theme_override_constants/separation = 20
 [node name="HeaderContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="BackButton" type="Button" parent="MarginContainer/VBoxContainer/HeaderContainer"]
-custom_minimum_size = Vector2(100, 40)
+[node name="ProgressBar" type="ProgressBar" parent="MarginContainer/VBoxContainer/HeaderContainer"]
+custom_minimum_size = Vector2(200, 30)
 layout_mode = 2
-mouse_default_cursor_shape = 2
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_bold")
+theme_override_styles/background = SubResource("StyleBoxFlat_progress_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_progress_fill")
+step = 1.0
+
+[node name="ProgressLabel" type="Label" parent="MarginContainer/VBoxContainer/HeaderContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_bold")
 theme_override_font_sizes/font_size = 16
-text = "Back"
+text = "Complete"
 
 [node name="PassageTitle" type="Label" parent="MarginContainer/VBoxContainer/HeaderContainer"]
 layout_mode = 2
@@ -109,13 +123,19 @@ theme_override_font_sizes/font_size = 24
 text = "Passage Title"
 horizontal_alignment = 1
 
-[node name="ProgressBar" type="ProgressBar" parent="MarginContainer/VBoxContainer/HeaderContainer"]
-custom_minimum_size = Vector2(200, 30)
+[node name="BackButton" type="Button" parent="MarginContainer/VBoxContainer/HeaderContainer"]
+custom_minimum_size = Vector2(100, 40)
 layout_mode = 2
-size_flags_vertical = 4
-theme_override_styles/background = SubResource("StyleBoxFlat_progress_bg")
-theme_override_styles/fill = SubResource("StyleBoxFlat_progress_fill")
-step = 1.0
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_bold")
+theme_override_font_sizes/font_size = 16
+theme_override_styles/focus = SubResource("StyleBoxEmpty_ely31")
+text = "Back"
+icon = ExtResource("4_ra7s8")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [node name="GuidePanel" type="Panel" parent="MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 100)
@@ -177,33 +197,57 @@ alignment = 1
 custom_minimum_size = Vector2(120, 40)
 layout_mode = 2
 mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_bold")
 theme_override_font_sizes/font_size = 16
+theme_override_styles/focus = SubResource("StyleBoxEmpty_ely31")
 text = "Previous"
+icon = ExtResource("4_ra7s8")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [node name="PlayButton" type="Button" parent="MarginContainer/VBoxContainer/ControlsContainer"]
 custom_minimum_size = Vector2(120, 40)
 layout_mode = 2
 mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_bold")
 theme_override_font_sizes/font_size = 16
+theme_override_styles/focus = SubResource("StyleBoxEmpty_ely31")
 text = "Start"
+icon = ExtResource("6_073yc")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [node name="NextButton" type="Button" parent="MarginContainer/VBoxContainer/ControlsContainer"]
 custom_minimum_size = Vector2(120, 40)
 layout_mode = 2
 mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_bold")
 theme_override_font_sizes/font_size = 16
+theme_override_styles/focus = SubResource("StyleBoxEmpty_ely31")
 text = "Next"
+icon = ExtResource("4_ra7s8")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [node name="CompleteButton" type="Button" parent="MarginContainer/VBoxContainer/ControlsContainer"]
 custom_minimum_size = Vector2(120, 40)
 layout_mode = 2
 mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_bold")
 theme_override_font_sizes/font_size = 16
-text = "Complete"
+theme_override_styles/focus = SubResource("StyleBoxEmpty_ely31")
+text = "Done"
+icon = ExtResource("7_ely31")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [node name="ButtonClick" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("4_click")

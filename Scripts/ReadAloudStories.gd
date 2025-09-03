@@ -111,7 +111,7 @@ func _update_progress_display():
 	if progress_bar:
 		progress_bar.value = progress
 	
-	var progress_label = $MarginContainer/VBoxContainer/HeaderContainer/Label
+	var progress_label = $MarginContainer/VBoxContainer/HeaderContainer/ProgressLabel
 	if progress_label:
 		progress_label.text = str(completed_stories.size()) + "/" + str(stories.size()) + " Complete"
 
@@ -158,7 +158,7 @@ func _display_current_story():
 		# Update play button text
 		var play_button = $MarginContainer/VBoxContainer/ControlsContainer/PlayButton
 		if play_button:
-			play_button.text = "Play Story"
+			play_button.text = "Read"
 			is_playing = false
 
 func _update_navigation_buttons():
@@ -207,13 +207,13 @@ func _on_play_button_pressed():
 		# Stop reading
 		_stop_reading()
 		if play_button:
-			play_button.text = "Play Story"
+			play_button.text = "Play"
 		is_playing = false
 
 func _start_reading():
 	"""Start reading the current story with sentence highlighting"""
 	if current_story_index < stories.size() and tts:
-		var story = stories[current_story_index]
+		# var story = stories[current_story_index]  # Not used in this function
 		current_sentence_index = 0
 		_read_next_sentence()
 
@@ -324,7 +324,7 @@ func _stop_reading():
 	
 	var play_button = $MarginContainer/VBoxContainer/ControlsContainer/PlayButton
 	if play_button:
-		play_button.text = "Play Story"
+		play_button.text = "Play"
 
 func _fade_out_and_change_scene(scene_path: String):
 	_stop_reading()

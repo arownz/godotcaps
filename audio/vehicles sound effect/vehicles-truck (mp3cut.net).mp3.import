@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://11gqcsqeoxn4"
+path="res://.godot/imported/vehicles-truck (mp3cut.net).mp3-212152c9d8e997796ac4a59713b3189e.mp3str"
+
+[deps]
+
+source_file="res://audio/vehicles sound effect/vehicles-truck (mp3cut.net).mp3"
+dest_files=["res://.godot/imported/vehicles-truck (mp3cut.net).mp3-212152c9d8e997796ac4a59713b3189e.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

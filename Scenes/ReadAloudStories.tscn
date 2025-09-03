@@ -92,11 +92,12 @@ theme_override_styles/background = SubResource("StyleBoxFlat_progress_bg")
 theme_override_styles/fill = SubResource("StyleBoxFlat_progress_fill")
 step = 1.0
 
-[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HeaderContainer"]
+[node name="ProgressLabel" type="Label" parent="MarginContainer/VBoxContainer/HeaderContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("2_regular")
-text = "Completion"
+theme_override_fonts/font = ExtResource("3_bold")
+theme_override_font_sizes/font_size = 16
+text = "Complete"
 
 [node name="StoryTitle" type="Label" parent="MarginContainer/VBoxContainer/HeaderContainer"]
 layout_mode = 2

@@ -3,14 +3,14 @@ extends Control
 var tts: TextToSpeech = null
 var module_progress: ModuleProgress = null
 
-# Vehicle data with images - no sounds as vehicles category is text/visual focused
+# Vehicle data with images and sounds for dyslexic learning
 var vehicles = [
-	{"name": "car", "image": preload("res://gui/vehiclesquiz/car.png")},
-	{"name": "truck", "image": preload("res://gui/vehiclesquiz/truck.png")},
-	{"name": "train", "image": preload("res://gui/vehiclesquiz/train.png")},
-	{"name": "airplane", "image": preload("res://gui/vehiclesquiz/airplane.png")},
-	{"name": "boat", "image": preload("res://gui/vehiclesquiz/boat.png")},
-	{"name": "bus", "image": preload("res://gui/vehiclesquiz/bus.png")}
+	{"name": "car", "image": preload("res://gui/vehiclesquiz/car.png"), "sound_node": "car_sfx"},
+	{"name": "truck", "image": preload("res://gui/vehiclesquiz/truck.png"), "sound_node": "truck_sfx"},
+	{"name": "train", "image": preload("res://gui/vehiclesquiz/train.png"), "sound_node": "train_sfx"},
+	{"name": "airplane", "image": preload("res://gui/vehiclesquiz/airplane.png"), "sound_node": "airplane_sfx"},
+	{"name": "boat", "image": preload("res://gui/vehiclesquiz/boat.png"), "sound_node": "boat_sfx"},
+	{"name": "bus", "image": preload("res://gui/vehiclesquiz/bus.png"), "sound_node": "bus_sfx"}
 ]
 
 # Game state
@@ -308,6 +308,14 @@ func _on_card_pressed(card: Button):
 		card.add_theme_constant_override("text_margin_top", 8)
 		card.add_theme_constant_override("text_margin_bottom", 8)
 	
+	# Play vehicle sound when card is flipped for dyslexic children learning pattern
+	var sound_node = get_node_or_null(card_data.vehicle.sound_node)
+	if sound_node:
+		sound_node.play()
+		print("FlipQuizVehicle: Playing sound on flip for ", card_data.vehicle.name)
+	else:
+		print("FlipQuizVehicle: Sound node not found: ", card_data.vehicle.sound_node)
+	
 	flipped_cards.append(card)
 	
 	# Check for matches when 2 cards are flipped
@@ -334,9 +342,9 @@ func _check_match():
 		card1.set_meta("is_matched", true)
 		card2.set_meta("is_matched", true)
 		
-		# Visual feedback for match
+		# Visual feedback for match - GREEN like animals
 		var match_style = StyleBoxFlat.new()
-		match_style.bg_color = Color(0.8, 0.2, 0.2, 1) # Red background for vehicles
+		match_style.bg_color = Color(0.2, 0.8, 0.2, 1) # Green background like animals
 		match_style.border_width_left = 3
 		match_style.border_width_right = 3
 		match_style.border_width_top = 3
@@ -352,6 +360,14 @@ func _check_match():
 		
 		matched_pairs += 1
 		print("FlipQuizVehicle: Match found! ", data1.vehicle.name)
+		
+		# Play vehicle sound
+		var sound_node = get_node_or_null(data1.vehicle.sound_node)
+		if sound_node:
+			sound_node.play()
+			print("FlipQuizVehicle: Playing sound for ", data1.vehicle.name)
+		else:
+			print("FlipQuizVehicle: Sound node not found for ", data1.vehicle.sound_node)
 		
 		# Give encouraging feedback
 		_show_match_feedback(data1.vehicle.name)

@@ -115,7 +115,7 @@ func _init_tts():
 
 func _init_module_progress():
 	print("FlipQuizAnimals: Loading ModuleProgress.gd")
-	var module_progress_script = load("res://Scripts/ModuleProgress.gd")
+	var module_progress_script = load("res://Scripts/ModulesManager/ModuleProgress.gd")
 	if module_progress_script:
 		module_progress = module_progress_script.new()
 		add_child(module_progress)
@@ -336,6 +336,12 @@ func _on_card_pressed(card: Button):
 		card.add_theme_constant_override("text_margin_top", 8)
 		card.add_theme_constant_override("text_margin_bottom", 8)
 	
+	# Play animal sound when card is flipped for dyslexic children learning pattern
+	var sound_node = get_node_or_null(card_data.animal.sound_node)
+	if sound_node:
+		sound_node.play()
+		print("FlipQuizAnimals: Playing sound on flip for ", card_data.animal.name)
+	
 	flipped_cards.append(card)
 	
 	# Check for matches when 2 cards are flipped
@@ -431,7 +437,7 @@ func _check_match():
 
 func _show_match_feedback(animal_name: String):
 	"""Show encouraging feedback for matches with dyslexia-friendly design"""
-	var encouragement_label = $MainContainer/ContentContainer/GamePanel/GameContainer/ScoreContainer/EncouragementLabel
+	var encouragement_label = get_node_or_null("MainContainer/ContentContainer/GamePanel/GameContainer/ScoreContainer/EncouragementLabel")
 	if encouragement_label:
 		# Clear, simple positive feedback
 		encouragement_label.text = "Great! " + animal_name.capitalize() + " found!"
@@ -450,10 +456,12 @@ func _show_match_feedback(animal_name: String):
 		tween.tween_property(encouragement_label, "scale", Vector2(1.0, 1.0), 0.5).set_ease(Tween.EASE_OUT)
 		
 		# Clear the message after some time
-	await get_tree().create_timer(3.0).timeout
-	if encouragement_label:
-		var fade_tween = create_tween()
-		fade_tween.tween_property(encouragement_label, "modulate:a", 0.0, 1.0)
+		await get_tree().create_timer(3.0).timeout
+		if encouragement_label:
+			var fade_tween = create_tween()
+			fade_tween.tween_property(encouragement_label, "modulate:a", 0.0, 1.0)
+	else:
+		print("FlipQuizAnimals: EncouragementLabel not found, feedback shown via console")
 
 	# Play narrator guide first, then animal sound (no overlap)
 	if tts:

@@ -61,7 +61,7 @@ func _init_tts():
 
 func _init_module_progress():
 	print("PhonicsSightWords: Loading ModuleProgress.gd")
-	var module_progress_script = load("res://Scripts/ModuleProgress.gd")
+	var module_progress_script = load("res://Scripts/ModulesManager/ModuleProgress.gd")
 	if module_progress_script:
 		module_progress = module_progress_script.new()
 		add_child(module_progress)

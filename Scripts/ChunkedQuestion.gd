@@ -132,7 +132,7 @@ func _display_current_chunk():
 		title_label.text = reading_material.title + " - Part " + str(current_chunk_index + 1)
 	
 	# Display chunk text
-	var text_display = $MarginContainer/VBoxContainer/TextPanel/MarginContainer/ChunkText
+	var text_display = $MarginContainer/VBoxContainer/ChunkPanel/MarginContainer/ChunkText
 	if text_display:
 		text_display.clear()
 		text_display.append_text(chunk.text)
@@ -171,16 +171,18 @@ func _setup_answer_buttons(chunk):
 		answers_container.add_child(button)
 
 func _update_navigation_buttons():
-	var prev_button = $MarginContainer/VBoxContainer/ControlsContainer/PreviousButton
-	var next_button = $MarginContainer/VBoxContainer/ControlsContainer/NextButton
+	# Navigation buttons not present in current scene structure
+	pass
+	# var prev_button = $MarginContainer/VBoxContainer/ControlsContainer/PreviousButton
+	# var next_button = $MarginContainer/VBoxContainer/ControlsContainer/NextButton
 	
-	if prev_button:
-		prev_button.disabled = (current_material_index == 0 and current_chunk_index == 0)
-	if next_button:
-		var reading_material = reading_materials[current_material_index]
-		var is_last_chunk = (current_chunk_index >= reading_material.chunks.size() - 1)
-		var is_last_material = (current_material_index >= reading_materials.size() - 1)
-		next_button.disabled = (is_last_chunk and is_last_material)
+	# if prev_button:
+	#	prev_button.disabled = (current_material_index == 0 and current_chunk_index == 0)
+	# if next_button:
+	#	var reading_material = reading_materials[current_material_index]
+	#	var is_last_chunk = (current_chunk_index >= reading_material.chunks.size() - 1)
+	#	var is_last_material = (current_material_index >= reading_materials.size() - 1)
+	#	next_button.disabled = (is_last_chunk and is_last_material)
 
 func _start_reading():
 	if is_reading:
@@ -205,7 +207,7 @@ func _start_reading():
 	_stop_reading()
 
 func _highlight_text_while_reading(text: String):
-	var text_display = $MarginContainer/VBoxContainer/TextPanel/MarginContainer/ChunkText
+	var text_display = $MarginContainer/VBoxContainer/ChunkPanel/MarginContainer/ChunkText
 	if not text_display:
 		return
 	
@@ -276,23 +278,27 @@ func _on_answer_selected(answer_index: int):
 	else:
 		print("ChunkedQuestion: Incorrect answer, showing explanation")
 
-func _show_explanation(chunk, selected_answer: int):
-	var explanation_panel = $MarginContainer/VBoxContainer/ExplanationPanel
-	var explanation_text = $MarginContainer/VBoxContainer/ExplanationPanel/MarginContainer/ExplanationText
+func _show_explanation(_chunk, _selected_answer: int):
+	# ExplanationPanel not present in current scene structure
+	pass
+	# var explanation_panel = $MarginContainer/VBoxContainer/ExplanationPanel
+	# var explanation_text = $MarginContainer/VBoxContainer/ExplanationPanel/MarginContainer/ExplanationText
 	
-	if explanation_panel and explanation_text:
-		explanation_panel.visible = true
+	# if explanation_panel and explanation_text:
+	#	explanation_panel.visible = true
 		
-		if selected_answer == chunk.correct:
-			explanation_text.text = "[color=green][b]Correct![/b][/color]\n\n" + chunk.explanation
-		else:
-			explanation_text.text = "[color=red][b]Not quite right.[/b][/color]\n\n" + chunk.explanation
-			explanation_text.text += "\n\nThe correct answer was: " + chunk.answers[chunk.correct]
+	#	if selected_answer == chunk.correct:
+	#		explanation_text.text = "[color=green][b]Correct![/b][/color]\n\n" + chunk.explanation
+	#	else:
+	#		explanation_text.text = "[color=red][b]Not quite right.[/b][/color]\n\n" + chunk.explanation
+	#		explanation_text.text += "\n\nThe correct answer was: " + chunk.answers[chunk.correct]
 
 func _hide_explanation():
-	var explanation_panel = $MarginContainer/VBoxContainer/ExplanationPanel
-	if explanation_panel:
-		explanation_panel.visible = false
+	# ExplanationPanel not present in current scene structure  
+	pass
+	# var explanation_panel = $MarginContainer/VBoxContainer/ExplanationPanel
+	# if explanation_panel:
+	#	explanation_panel.visible = false
 
 func _complete_chunk_activity():
 	if module_progress and module_progress.is_authenticated():

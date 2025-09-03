@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://d3x7m130eewix"
+path="res://.godot/imported/vehicles-train (mp3cut.net).mp3-2840138ad9219eb27a31b628c8988e0f.mp3str"
+
+[deps]
+
+source_file="res://audio/vehicles sound effect/vehicles-train (mp3cut.net).mp3"
+dest_files=["res://.godot/imported/vehicles-train (mp3cut.net).mp3-2840138ad9219eb27a31b628c8988e0f.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

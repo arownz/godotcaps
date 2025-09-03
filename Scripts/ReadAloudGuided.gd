@@ -201,7 +201,7 @@ func _update_play_button_text():
 		if is_reading:
 			play_button.text = "Pause"
 		else:
-			play_button.text = "Start Reading"
+			play_button.text = "Read"
 
 func _start_guided_reading():
 	if is_reading:

@@ -59,6 +59,22 @@ func _connect_button_signals():
 	var back_button = $MainContainer/HeaderPanel/HeaderContainer/BackButton
 	if back_button:
 		back_button.mouse_entered.connect(_on_button_hover)
+	
+	# Connect practice buttons
+	var r_controlled_button = $MainContainer/ContentContainer/SyllableContainer/RControlledCard/RControlledContainer/PracticeButton
+	if r_controlled_button:
+		r_controlled_button.pressed.connect(_on_r_controlled_practice_pressed)
+		r_controlled_button.mouse_entered.connect(_on_button_hover)
+	
+	var vowel_teams_button = $MainContainer/ContentContainer/SyllableContainer/VowelTeamsCard/VowelTeamsContainer/PracticeButton
+	if vowel_teams_button:
+		vowel_teams_button.pressed.connect(_on_vowel_teams_practice_pressed)
+		vowel_teams_button.mouse_entered.connect(_on_button_hover)
+	
+	var consonant_le_button = $MainContainer/ContentContainer/SyllableContainer/ConsonantLECard/ConsonantLEContainer/PracticeButton
+	if consonant_le_button:
+		consonant_le_button.pressed.connect(_on_consonant_le_practice_pressed)
+		consonant_le_button.mouse_entered.connect(_on_button_hover)
 
 func _update_progress_display():
 	r_controlled_progress.text = "Progress: %d/5 completed" % syllable_progress.r_controlled
@@ -86,3 +102,22 @@ func complete_syllable_type(type: String):
 				print("AdvancedSyllablesScene: Syllable progress saved to Firebase - ", activity_id)
 			else:
 				print("AdvancedSyllablesScene: Failed to save syllable progress to Firebase")
+
+# Practice button handlers
+func _on_r_controlled_practice_pressed():
+	button_click.play()
+	print("AdvancedSyllablesScene: R-Controlled practice started")
+	# For now, simulate completing an activity
+	complete_syllable_type("r_controlled")
+
+func _on_vowel_teams_practice_pressed():
+	button_click.play()
+	print("AdvancedSyllablesScene: Vowel Teams practice started")
+	# For now, simulate completing an activity
+	complete_syllable_type("vowel_teams")
+
+func _on_consonant_le_practice_pressed():
+	button_click.play()
+	print("AdvancedSyllablesScene: Consonant LE practice started")
+	# For now, simulate completing an activity
+	complete_syllable_type("consonant_le")

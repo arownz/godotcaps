@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://cjkpe4p5gdq5y"
+path="res://.godot/imported/vehicles-boat (mp3cut.net).mp3-8d9e6b6375675d88b0983f40f9c63214.mp3str"
+
+[deps]
+
+source_file="res://audio/vehicles sound effect/vehicles-boat (mp3cut.net).mp3"
+dest_files=["res://.godot/imported/vehicles-boat (mp3cut.net).mp3-8d9e6b6375675d88b0983f40f9c63214.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

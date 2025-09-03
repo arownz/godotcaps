@@ -10,7 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="6_17sh3"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_progress_bg"]
-bg_color = Color(0.88, 0.91, 0.94, 1)
+bg_color = Color(1, 1, 1, 1)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
@@ -93,11 +93,12 @@ theme_override_styles/background = SubResource("StyleBoxFlat_progress_bg")
 theme_override_styles/fill = SubResource("StyleBoxFlat_progress_fill")
 step = 1.0
 
-[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HeaderContainer"]
+[node name="ProgressLabel" type="Label" parent="MarginContainer/VBoxContainer/HeaderContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_02iud")
-text = "Completion"
+theme_override_fonts/font = ExtResource("2_hs48w")
+theme_override_font_sizes/font_size = 16
+text = "Complete"
 
 [node name="MaterialTitle" type="Label" parent="MarginContainer/VBoxContainer/HeaderContainer"]
 layout_mode = 2

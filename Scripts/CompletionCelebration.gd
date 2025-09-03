@@ -7,7 +7,8 @@ signal closed
 enum CompletionType {
 	LETTER,
 	SIGHT_WORD,
-	FLIP_ANIMAL
+	FLIP_ANIMAL,
+	FLIP_VEHICLE
 }
 
 var completion_type: CompletionType = CompletionType.LETTER
@@ -188,8 +189,40 @@ func _update_content(module_key: String = "phonics"):
 					try_again_btn.visible = true
 				if next_btn:
 					next_btn.text = "Next"
+					next_btn.visible = true
+		
+		CompletionType.FLIP_VEHICLE:
+			if title_label:
+				title_label.text = "All done!"
+			if message_label:
+				message_label.text = "You finished all " + completed_item + "."
+
+			# Show overall module progress for vehicles
+			if module_key == "flip_quiz":
+				var vehicle_total_sets := 3 # Update if you add more sets
+				var vehicle_sets_completed = progress_data.get("sets_completed", [])
+				if typeof(vehicle_sets_completed) == TYPE_INT:
+					vehicle_sets_completed = [vehicle_sets_completed] # convert int to array
+				var vehicle_completed_count = 0
+				if typeof(vehicle_sets_completed) == TYPE_ARRAY:
+					vehicle_completed_count = vehicle_sets_completed.size()
+				else:
+					vehicle_completed_count = int(vehicle_sets_completed)
+				var vehicle_percent = (float(vehicle_completed_count) / float(vehicle_total_sets)) * 100.0
+				if progress_label:
+					progress_label.text = "Vehicle Quiz Progress: " + str(vehicle_completed_count) + "/" + str(vehicle_total_sets) + " sets (" + str(int(vehicle_percent)) + "%)"
+				if progress_bar:
+					progress_bar.value = vehicle_percent
+
+				# Show both try again and next button for category completion
+				if try_again_btn:
+					try_again_btn.text = "Again"
+					try_again_btn.visible = true
+				if next_btn:
+					next_btn.text = "Next"
+					next_btn.visible = true
 					# Hide next button if all sets are complete (100%)
-					if percent >= 100.0:
+					if vehicle_percent >= 100.0:
 						next_btn.visible = false
 					else:
 						next_btn.visible = true
