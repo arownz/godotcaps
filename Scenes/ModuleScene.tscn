@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3 uid="uid://cpuv0hhhcq6sv"]
+[gd_scene load_steps=26 format=3 uid="uid://cpuv0hhhcq6sv"]
 
 [ext_resource type="Texture2D" uid="uid://c75anq8c0biyi" path="res://gui/Update/UI/ui 7.png" id="2_178ft"]
 [ext_resource type="Script" uid="uid://dgboy6v1hc540" path="res://Scripts/ModuleScene.gd" id="2_module_script"]
@@ -9,8 +9,6 @@
 [ext_resource type="Texture2D" uid="uid://bmjd8nkagj08e" path="res://gui/Update/UI/long uncolored button.png" id="6_wwwj0"]
 [ext_resource type="Texture2D" uid="uid://bpafutairj0k6" path="res://gui/Update/icons/flipquizicon.png" id="8_jsrwg"]
 [ext_resource type="Texture2D" uid="uid://blijwx5trtlcr" path="res://gui/Update/icons/readaloudicon.png" id="9_bmnuq"]
-[ext_resource type="Texture2D" uid="uid://wjhcl5yb28ii" path="res://gui/Update/icons/chuckedicon.png" id="10_eollr"]
-[ext_resource type="Texture2D" uid="uid://cqx6x07u267ym" path="res://gui/Update/icons/syllableicon.png" id="11_d4mch"]
 [ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="12_n8sgv"]
 [ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="13_bh0w4"]
 
@@ -156,36 +154,6 @@ shadow_color = Color(0, 0, 0, 0.3)
 shadow_size = 4
 shadow_offset = Vector2(0, 2)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_chunked_card"]
-bg_color = Color(0.94, 0.89, 0.98, 1)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.7, 0.4, 0.9, 1)
-corner_radius_top_left = 20
-corner_radius_top_right = 20
-corner_radius_bottom_right = 20
-corner_radius_bottom_left = 20
-shadow_color = Color(0, 0, 0, 0.2)
-shadow_size = 8
-shadow_offset = Vector2(0, 4)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_chunked_progress"]
-bg_color = Color(0.7, 0.4, 0.9, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0, 0, 0, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-shadow_color = Color(0, 0, 0, 0.3)
-shadow_size = 4
-shadow_offset = Vector2(0, 2)
-
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_reading_card"]
 bg_color = Color(0.87, 0.98, 0.9, 1)
 border_width_left = 3
@@ -203,36 +171,6 @@ shadow_offset = Vector2(0, 4)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_reading_progress"]
 bg_color = Color(0.2, 0.8, 0.4, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0, 0, 0, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-shadow_color = Color(0, 0, 0, 0.3)
-shadow_size = 4
-shadow_offset = Vector2(0, 2)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_syllable_card"]
-bg_color = Color(0.98, 0.94, 0.85, 1)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.9, 0.6, 0.2, 1)
-corner_radius_top_left = 20
-corner_radius_top_right = 20
-corner_radius_bottom_right = 20
-corner_radius_bottom_left = 20
-shadow_color = Color(0, 0, 0, 0.2)
-shadow_size = 8
-shadow_offset = Vector2(0, 4)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_syllable_progress"]
-bg_color = Color(0.9, 0.6, 0.2, 1)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
@@ -576,111 +514,6 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="ChunkedReadingCard" type="Panel" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid"]
-custom_minimum_size = Vector2(350, 360)
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_chunked_card")
-
-[node name="CardContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ChunkedReadingCard"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 30.0
-offset_top = 30.0
-offset_right = -30.0
-offset_bottom = -30.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/separation = 15
-
-[node name="Header" type="HBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ChunkedReadingCard/CardContent"]
-layout_mode = 2
-size_flags_vertical = 0
-theme_override_constants/separation = 20
-
-[node name="IconPanel" type="Panel" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ChunkedReadingCard/CardContent/Header"]
-custom_minimum_size = Vector2(80, 80)
-layout_mode = 2
-size_flags_horizontal = 0
-theme_override_styles/panel = SubResource("StyleBoxFlat_icon")
-
-[node name="IconTexture" type="TextureRect" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ChunkedReadingCard/CardContent/Header/IconPanel"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -8.00001
-offset_top = -7.00001
-offset_right = 412.0
-offset_bottom = 413.0
-grow_horizontal = 2
-grow_vertical = 2
-scale = Vector2(0.193897, 0.193897)
-texture = ExtResource("10_eollr")
-
-[node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ChunkedReadingCard/CardContent/Header"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("4_bold_font")
-theme_override_font_sizes/font_size = 24
-text = "Chunked Reading"
-vertical_alignment = 1
-
-[node name="DescriptionLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ChunkedReadingCard/CardContent"]
-custom_minimum_size = Vector2(1, 0)
-layout_mode = 2
-size_flags_vertical = 0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_regular_font")
-theme_override_font_sizes/font_size = 16
-text = "Break texts into manageable sections with guided questions. Reduce cognitive overload and improve comprehension."
-autowrap_mode = 3
-
-[node name="ProgressContainer" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ChunkedReadingCard/CardContent"]
-layout_mode = 2
-size_flags_vertical = 0
-theme_override_constants/separation = 8
-
-[node name="ProgressBar" type="ProgressBar" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ChunkedReadingCard/CardContent/ProgressContainer"]
-custom_minimum_size = Vector2(0, 12)
-layout_mode = 2
-theme_override_styles/background = SubResource("StyleBoxFlat_progress_bg")
-theme_override_styles/fill = SubResource("StyleBoxFlat_chunked_progress")
-show_percentage = false
-
-[node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ChunkedReadingCard/CardContent/ProgressContainer"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_regular_font")
-theme_override_font_sizes/font_size = 14
-text = "0% Complete"
-horizontal_alignment = 2
-
-[node name="ActionButton" type="Button" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ChunkedReadingCard/CardContent"]
-custom_minimum_size = Vector2(0, 50)
-layout_mode = 2
-size_flags_vertical = 8
-mouse_default_cursor_shape = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
-theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("4_bold_font")
-theme_override_font_sizes/font_size = 18
-theme_override_styles/focus = SubResource("StyleBoxEmpty_wwwj0")
-theme_override_styles/hover = SubResource("StyleBoxFlat_action_btn_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_action_btn_hover")
-theme_override_styles/normal = SubResource("StyleBoxFlat_action_btn")
-text = "Enter Chunked"
-icon = ExtResource("6_wwwj0")
-flat = true
-icon_alignment = 1
-expand_icon = true
-
 [node name="ReadAloudCard" type="Panel" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid"]
 custom_minimum_size = Vector2(350, 360)
 layout_mode = 2
@@ -781,111 +614,6 @@ theme_override_styles/hover = SubResource("StyleBoxFlat_action_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_action_btn_hover")
 theme_override_styles/normal = SubResource("StyleBoxFlat_action_btn")
 text = "Enter Interactive"
-icon = ExtResource("6_wwwj0")
-flat = true
-icon_alignment = 1
-expand_icon = true
-
-[node name="SyllableBuildingCard" type="Panel" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid"]
-custom_minimum_size = Vector2(350, 360)
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_syllable_card")
-
-[node name="CardContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/SyllableBuildingCard"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 30.0
-offset_top = 21.0
-offset_right = -30.0
-offset_bottom = -21.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/separation = 15
-
-[node name="Header" type="HBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/SyllableBuildingCard/CardContent"]
-layout_mode = 2
-size_flags_vertical = 0
-theme_override_constants/separation = 20
-
-[node name="IconPanel" type="Panel" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/SyllableBuildingCard/CardContent/Header"]
-custom_minimum_size = Vector2(80, 80)
-layout_mode = 2
-size_flags_horizontal = 0
-theme_override_styles/panel = SubResource("StyleBoxFlat_icon")
-
-[node name="IconTexture" type="TextureRect" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/SyllableBuildingCard/CardContent/Header/IconPanel"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -10.0
-offset_top = -12.0
-offset_right = 410.0
-offset_bottom = 408.0
-grow_horizontal = 2
-grow_vertical = 2
-scale = Vector2(0.207245, 0.207245)
-texture = ExtResource("11_d4mch")
-
-[node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/SyllableBuildingCard/CardContent/Header"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("4_bold_font")
-theme_override_font_sizes/font_size = 24
-text = "Syllable Building"
-vertical_alignment = 1
-
-[node name="DescriptionLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/SyllableBuildingCard/CardContent"]
-custom_minimum_size = Vector2(1, 0)
-layout_mode = 2
-size_flags_vertical = 0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_regular_font")
-theme_override_font_sizes/font_size = 16
-text = "Manipulate letters and syllables to form words. Color-coded syllables and rainbow reading for better decoding."
-autowrap_mode = 3
-
-[node name="ProgressContainer" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/SyllableBuildingCard/CardContent"]
-layout_mode = 2
-size_flags_vertical = 0
-theme_override_constants/separation = 8
-
-[node name="ProgressBar" type="ProgressBar" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/SyllableBuildingCard/CardContent/ProgressContainer"]
-custom_minimum_size = Vector2(0, 12)
-layout_mode = 2
-theme_override_styles/background = SubResource("StyleBoxFlat_progress_bg")
-theme_override_styles/fill = SubResource("StyleBoxFlat_syllable_progress")
-show_percentage = false
-
-[node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/SyllableBuildingCard/CardContent/ProgressContainer"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_regular_font")
-theme_override_font_sizes/font_size = 14
-text = "0% Complete"
-horizontal_alignment = 2
-
-[node name="ActionButton" type="Button" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/SyllableBuildingCard/CardContent"]
-custom_minimum_size = Vector2(0, 50)
-layout_mode = 2
-size_flags_vertical = 8
-mouse_default_cursor_shape = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
-theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("4_bold_font")
-theme_override_font_sizes/font_size = 18
-theme_override_styles/focus = SubResource("StyleBoxEmpty_wwwj0")
-theme_override_styles/hover = SubResource("StyleBoxFlat_action_btn_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_action_btn_hover")
-theme_override_styles/normal = SubResource("StyleBoxFlat_action_btn")
-text = "Enter Syllable"
 icon = ExtResource("6_wwwj0")
 flat = true
 icon_alignment = 1

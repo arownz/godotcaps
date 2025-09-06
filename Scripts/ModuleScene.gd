@@ -4,28 +4,18 @@ extends Control
 var module_data = {
 	"phonics": {
 		"name": "Phonics Interactive",
-		"total_lessons": 46, # 26 letters + 20 sight words
+		"total_lessons": null,
 		"scene_path": "res://Scenes/PhonicsModule.tscn"
 	},
 	"flip_quiz": {
 		"name": "Flip Quiz",
-		"total_lessons": 20,
+		"total_lessons": null,
 		"scene_path": "res://Scenes/FlipQuizModule.tscn"
 	},
 	"read_aloud": {
 		"name": "Interactive Read-Aloud",
-		"total_lessons": 15, # More realistic for reading passages
+		"total_lessons": null,
 		"scene_path": "res://Scenes/ReadAloudModule.tscn"
-	},
-	"chunked_reading": {
-		"name": "Chunked Reading",
-		"total_lessons": 12, # More realistic for reading comprehension
-		"scene_path": "res://Scenes/ChunkedReadingModule.tscn"
-	},
-	"syllable_building": {
-		"name": "Syllable Building",
-		"total_lessons": 25, # Variety of syllable patterns
-		"scene_path": "res://Scenes/SyllableBuildingModule.tscn"
 	},
 }
 
@@ -36,8 +26,6 @@ var title_label
 var phonics_button
 var flip_quiz_button
 var read_aloud_button
-var chunked_reading_button
-var syllable_building_button
 
 # Progress tracking
 var user_progress_data = {}
@@ -119,17 +107,11 @@ func _get_node_references():
 	phonics_button = get_node_or_null("MainContainer/ScrollContainer/ContentContainer/ModulesGrid/PhonicsCard/CardContent/ActionButton")
 	flip_quiz_button = get_node_or_null("MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent/ActionButton")
 	read_aloud_button = get_node_or_null("MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent/ActionButton")
-	chunked_reading_button = get_node_or_null("MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ChunkedReadingCard/CardContent/ActionButton")
-	syllable_building_button = get_node_or_null("MainContainer/ScrollContainer/ContentContainer/ModulesGrid/SyllableBuildingCard/CardContent/ActionButton")
-	var adaptive_button = get_node_or_null("MainContainer/ScrollContainer/ContentContainer/ModulesGrid/AdaptiveLearningCard/CardContent/ActionButton")
 	
 	# Connect navigation buttons
 	if menu_button:
 		menu_button.pressed.connect(_on_menu_button_pressed)
 		menu_button.mouse_entered.connect(_on_button_hover)
-
-	if adaptive_button:
-		adaptive_button.pressed.connect(_show_coming_soon_notification.bind("Adaptive Learning", "AI"))
 	
 	# Debug: Check if nodes were found
 	if not menu_button:
@@ -140,10 +122,6 @@ func _get_node_references():
 		print("Warning: Flip quiz button not found")
 	if not read_aloud_button:
 		print("Warning: Read aloud button not found")
-	if not chunked_reading_button:
-		print("Warning: Chunked reading button not found")
-	if not syllable_building_button:
-		print("Warning: Syllable building button not found")
 
 func _connect_signals():
 	# Connect module buttons
@@ -156,12 +134,6 @@ func _connect_signals():
 	if read_aloud_button:
 		read_aloud_button.pressed.connect(_on_read_aloud_button_pressed)
 		read_aloud_button.mouse_entered.connect(_on_button_hover)
-	if chunked_reading_button:
-		chunked_reading_button.pressed.connect(_on_chunked_reading_button_pressed)
-		chunked_reading_button.mouse_entered.connect(_on_button_hover)
-	if syllable_building_button:
-		syllable_building_button.pressed.connect(_on_syllable_building_button_pressed)
-		syllable_building_button.mouse_entered.connect(_on_button_hover)
 
 	else:
 		# Initialize default progress
@@ -169,8 +141,6 @@ func _connect_signals():
 			"phonics": {"current_lesson": 1, "completed_lessons": []},
 			"flip_quiz": {"current_lesson": 1, "completed_lessons": []},
 			"read_aloud": {"current_lesson": 1, "completed_lessons": []},
-			"chunked_reading": {"current_lesson": 1, "completed_lessons": []},
-			"syllable_building": {"current_lesson": 1, "completed_lessons": []},
 		}
 		_save_user_progress()
 
@@ -189,8 +159,6 @@ func _update_progress_displays():
 	_update_card_progress("phonics", "PhonicsCard")
 	_update_card_progress("flip_quiz", "FlipQuizCard")
 	_update_card_progress("read_aloud", "ReadAloudCard")
-	_update_card_progress("chunked_reading", "ChunkedReadingCard")
-	_update_card_progress("syllable_building", "SyllableBuildingCard")
 
 func _update_card_progress(module_key: String, card_name: String):
 	var modules_grid = get_node_or_null("MainContainer/ScrollContainer/ContentContainer/ModulesGrid")
@@ -260,46 +228,6 @@ func _update_card_progress(module_key: String, card_name: String):
 				progress_percent = (float(total_completed) / float(total_possible)) * 100.0
 				completed = total_completed >= total_possible
 				print("ModuleScene: ReadAloud overall - Stories:", stories_completed, ", Guided:", guided_completed, ", Total:", total_completed, "/", total_possible, ", Overall:", int(progress_percent), "%")
-			elif module_key == "chunked_reading":
-				# Overall chunked reading progress based on vocabulary and comprehension activities
-				var vocabulary_completed = 0
-				var question_completed = 0
-				
-				# Check vocabulary building progress
-				if fm.has("vocabulary_building") and typeof(fm["vocabulary_building"]) == TYPE_DICTIONARY:
-					var vocab_data = fm["vocabulary_building"].get("vocabulary_words_completed", [])
-					vocabulary_completed = vocab_data.size()
-				
-				# Check chunked question progress
-				if fm.has("chunked_question") and typeof(fm["chunked_question"]) == TYPE_DICTIONARY:
-					var question_data = fm["chunked_question"].get("activities_completed", [])
-					question_completed = question_data.size()
-				
-				var total_completed = vocabulary_completed + question_completed
-				var total_possible = 12 # Total activities across both categories
-				progress_percent = (float(total_completed) / float(total_possible)) * 100.0
-				completed = total_completed >= total_possible
-				print("ModuleScene: ChunkedReading overall - Vocabulary:", vocabulary_completed, ", Questions:", question_completed, ", Total:", total_completed, "/", total_possible, ", Overall:", int(progress_percent), "%")
-			elif module_key == "syllable_building":
-				# Overall syllable building progress combining all syllable types
-				var basic_completed = 0
-				var advanced_completed = 0
-				
-				# Check basic syllables
-				if fm.has("basic_syllables") and typeof(fm["basic_syllables"]) == TYPE_DICTIONARY:
-					var basic_activities = fm["basic_syllables"].get("activities_completed", [])
-					basic_completed = basic_activities.size()
-				
-				# Check advanced syllables
-				if fm.has("advanced_syllables") and typeof(fm["advanced_syllables"]) == TYPE_DICTIONARY:
-					var advanced_activities = fm["advanced_syllables"].get("activities_completed", [])
-					advanced_completed = advanced_activities.size()
-				
-				var total_activities = 25 # Total syllable activities across both basic and advanced
-				var total_completed = basic_completed + advanced_completed
-				progress_percent = (float(total_completed) / float(total_activities)) * 100.0
-				completed = total_completed >= total_activities
-				print("ModuleScene: Syllable Building overall - Basic:", basic_completed, ", Advanced:", advanced_completed, ", Total:", total_completed, "/", total_activities, ", Overall:", int(progress_percent), "%")
 			else:
 				# For other modules, use direct progress value
 				progress_percent = float(fm.get("progress", 0))
@@ -365,16 +293,6 @@ func _on_read_aloud_button_pressed():
 	print("ModuleScene: Starting Interactive Read-Aloud module")
 	_launch_module("read_aloud")
 
-func _on_chunked_reading_button_pressed():
-	$ButtonClick.play()
-	print("ModuleScene: Starting Chunked Reading module")
-	_launch_module("chunked_reading")
-
-func _on_syllable_building_button_pressed():
-	$ButtonClick.play()
-	print("ModuleScene: Starting Syllable Building module")
-	_launch_module("syllable_building")
-
 func _launch_module(module_key: String):
 	# Store current module for returning later
 	# Navigate to appropriate module scene with fade animation
@@ -385,10 +303,6 @@ func _launch_module(module_key: String):
 			_fade_out_and_change_scene("res://Scenes/FlipQuizModule.tscn")
 		"read_aloud":
 			_fade_out_and_change_scene("res://Scenes/ReadAloudModule.tscn")
-		"chunked_reading":
-			_fade_out_and_change_scene("res://Scenes/ChunkedReadingModule.tscn")
-		"syllable_building":
-			_fade_out_and_change_scene("res://Scenes/SyllableBuildingModule.tscn")
 
 func _show_coming_soon_notification(module_name: String, icon: String):
 	# Create a simple notification popup

@@ -20,8 +20,6 @@ var module_colors = {
 	"phonics": Color(0.2, 0.6, 0.2, 1), # Green for phonics
 	"flip_quiz": Color(0.8, 0.4, 0.1, 1), # Orange for flip quiz
 	"read_aloud": Color(0.1, 0.4, 0.8, 1), # Blue for read aloud
-	"chunked_reading": Color(0.6, 0.2, 0.8, 1), # Purple for chunked reading
-	"syllable_building": Color(0.8, 0.2, 0.4, 1), # Pink for syllable building
 }
 
 func _ready():

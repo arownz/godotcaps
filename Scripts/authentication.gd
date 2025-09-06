@@ -639,18 +639,6 @@ func _create_user_document(collection, user_id: String, auth):
 				"progress": 0,
 				"story_reading": {"activities_completed": []},
 				"guided_reading": {"activities_completed": []}
-			},
-			"chunked_reading": {
-				"completed": false,
-				"progress": 0,
-				"vocabulary_building": {"activities_completed": []},
-				"chunked_question": {"activities_completed": []}
-			},
-			"syllable_building": {
-				"completed": false,
-				"progress": 0,
-				"basic_syllables": {"activities_completed": []},
-				"advanced_syllables": {"activities_completed": []}
 			}
 		},
 		"stage_times": {

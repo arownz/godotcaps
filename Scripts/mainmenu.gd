@@ -288,14 +288,6 @@ func _create_default_user_document(user_id):
 			"read_aloud": {
 				"completed": false,
 				"progress": 0
-			},
-			"chunked_reading": {
-				"completed": false,
-				"progress": 0
-			},
-			"syllable_building": {
-				"completed": false,
-				"progress": 0
 			}
 		}
     }
