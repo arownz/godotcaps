@@ -266,10 +266,10 @@ text = "Loading..."
 
 [node name="UIDLabel" type="Label" parent="ProfileContainer/UserInfoArea"]
 layout_mode = 0
-offset_left = 4.0
-offset_top = 48.0
-offset_right = 185.0
-offset_bottom = 82.0
+offset_left = -0.413207
+offset_top = 126.449
+offset_right = 180.587
+offset_bottom = 160.449
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_73kok")
 theme_override_font_sizes/font_size = 18
@@ -277,10 +277,10 @@ text = "UID:"
 
 [node name="UIDValue" type="Label" parent="ProfileContainer/UserInfoArea"]
 layout_mode = 0
-offset_left = 72.0
-offset_top = 52.0
-offset_right = 486.0
-offset_bottom = 86.0
+offset_left = 67.5868
+offset_top = 130.449
+offset_right = 481.587
+offset_bottom = 164.449
 theme_override_colors/font_color = Color(0.988235, 0.988235, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_uyv5l")
@@ -289,10 +289,10 @@ text = "Loading..."
 
 [node name="CopyUIDButton" type="TextureButton" parent="ProfileContainer/UserInfoArea"]
 layout_mode = 0
-offset_left = 490.0
-offset_top = 51.0
-offset_right = 498.0
-offset_bottom = 59.0
+offset_left = 489.444
+offset_top = 126.449
+offset_right = 497.444
+offset_bottom = 134.449
 scale = Vector2(2.92016, 3.53089)
 tooltip_text = "Copy UID to Clipboard"
 mouse_default_cursor_shape = 2
@@ -301,9 +301,10 @@ texture_hover = ExtResource("13_q75ak")
 
 [node name="RankLabel" type="Label" parent="ProfileContainer/UserInfoArea"]
 layout_mode = 0
-offset_top = 126.0
-offset_right = 73.0
-offset_bottom = 159.0
+offset_left = -0.413228
+offset_top = 49.5455
+offset_right = 74.5868
+offset_bottom = 86.2122
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_73kok")
 theme_override_font_sizes/font_size = 20
@@ -312,20 +313,20 @@ text = "Rank:"
 [node name="RankIcon" type="TextureRect" parent="ProfileContainer/UserInfoArea"]
 custom_minimum_size = Vector2(30, 30)
 layout_mode = 0
-offset_left = 87.0
-offset_top = 126.0
-offset_right = 117.0
-offset_bottom = 156.0
+offset_left = 86.5868
+offset_top = 49.5455
+offset_right = 116.587
+offset_bottom = 79.5455
 texture = ExtResource("7_medal")
 expand_mode = 1
 stretch_mode = 5
 
 [node name="RankValue" type="Label" parent="ProfileContainer/UserInfoArea"]
 layout_mode = 0
-offset_left = 120.0
-offset_top = 124.0
-offset_right = 280.0
-offset_bottom = 161.0
+offset_left = 119.587
+offset_top = 47.5455
+offset_right = 279.587
+offset_bottom = 84.5455
 theme_override_colors/font_color = Color(0.988235, 0.988235, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_uyv5l")

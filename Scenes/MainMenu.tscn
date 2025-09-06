@@ -1,7 +1,8 @@
-[gd_scene load_steps=21 format=3 uid="uid://d36ytiqg31edd"]
+[gd_scene load_steps=22 format=3 uid="uid://d36ytiqg31edd"]
 
 [ext_resource type="Script" uid="uid://datbxxer3mwvc" path="res://Scripts/MainMenu.gd" id="1_tt5f1"]
 [ext_resource type="Texture2D" uid="uid://btkgwisgme2q2" path="res://gui/Update/Backgrounds/Main_menu_Background.png" id="2_pjscj"]
+[ext_resource type="PackedScene" uid="uid://df6msh4r8y56y" path="res://Sprites/Animation/fire.tscn" id="3_65hh5"]
 [ext_resource type="PackedScene" uid="uid://e6bec84rrthm" path="res://Sprites/Animation/DefaultPlayer_Animation.tscn" id="4_8e205"]
 [ext_resource type="Texture2D" uid="uid://bctgpjuu2tes7" path="res://gui/profile pic with border.png" id="5_8e205"]
 [ext_resource type="Texture2D" uid="uid://cn716b8kx5vgr" path="res://gui/energy.png" id="6_7q2f4"]
@@ -40,6 +41,10 @@ grow_vertical = 2
 texture = ExtResource("2_pjscj")
 expand_mode = 1
 stretch_mode = 6
+
+[node name="Fire" parent="Background" instance=ExtResource("3_65hh5")]
+position = Vector2(845, 492)
+scale = Vector2(1.88983, 1.88983)
 
 [node name="TitleContainer" type="Control" parent="."]
 layout_mode = 1
