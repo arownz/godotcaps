@@ -60,14 +60,15 @@ func _init_tts():
 		tts.set_rate(rate)
 
 func _init_module_progress():
-	print("PhonicsSightWords: Loading ModuleProgress.gd")
-	var module_progress_script = load("res://Scripts/ModulesManager/ModuleProgress.gd")
-	if module_progress_script:
-		module_progress = module_progress_script.new()
-		add_child(module_progress)
-		print("PhonicsSightWords: ModuleProgress loaded successfully")
+	if Firebase and Firebase.Auth and Firebase.Auth.auth:
+		var ModuleProgressScript = load("res://Scripts/ModulesManager/ModuleProgress.gd")
+		if ModuleProgressScript:
+			module_progress = ModuleProgressScript.new()
+			print("PhonicsSightWords: ModuleProgress initialized")
+		else:
+			print("PhonicsSightWords: ModuleProgress script not found")
 	else:
-		print("PhonicsSightWords: Failed to load ModuleProgress.gd")
+		print("PhonicsSightWords: Firebase not available, using local tracking")
 
 func _notification(what):
 	if what == NOTIFICATION_WM_WINDOW_FOCUS_IN:
@@ -160,29 +161,35 @@ func _load_progress():
 		print("PhonicsSightWords: Loading phonics progress via ModuleProgress")
 		var phonics_progress = await module_progress.get_phonics_progress()
 		if phonics_progress:
-			var words_data = phonics_progress.get("phonics_sight_words", {})
-			var words_completed = words_data.get("sight_words_completed", [])
-			var words_progress = words_data.get("progress", 0)
+			var words_completed = phonics_progress.get("sight_words_completed", [])
+			var progress_percent = phonics_progress.get("progress", 0)
 			
 			# Update session tracking
 			session_completed_words = words_completed.duplicate()
 			
-			# Update UI with loaded progress
-			_update_progress_ui(words_progress)
+			# Resume at the correct position - find the first uncompleted sight word
+			var resume_index = 0
+			for i in range(sight_words.size()):
+				var word = sight_words[i].to_lower()
+				if not words_completed.has(word):
+					resume_index = i
+					break
+				elif i == sight_words.size() - 1: # All words completed
+					resume_index = sight_words.size() - 1
+			
+			# Update current position
+			word_index = resume_index
+			current_target = sight_words[word_index]
+			print("PhonicsSightWords: Resuming at sight word: ", current_target, " (index: ", word_index, ")")
+			
+			# Update UI with loaded progress and current position
+			_update_progress_ui(progress_percent)
+			_update_target_display()
 			
 			# Update trace overlay for current word if completed
 			_update_completed_words_display(words_completed)
 			
-			print("PhonicsSightWords: Loaded progress - ", words_completed.size(), "/20 words completed (", words_progress, "%)")
-			
-			# Find first uncompleted sight word
-			for i in range(sight_words.size()):
-				var word = sight_words[i].to_lower()
-				if not words_completed.has(word):
-					word_index = i
-					current_target = sight_words[i]
-					_update_target_display()
-					break
+			print("PhonicsSightWords: Loaded progress - ", words_completed.size(), "/20 words completed (", progress_percent, "%)")
 		else:
 			print("PhonicsSightWords: No phonics progress found")
 	else:
@@ -272,19 +279,25 @@ func _on_sight_word_done_button_pressed():
 		var success = await module_progress.set_sight_word_completed(current_target)
 		if success:
 			print("PhonicsSightWords: Sight word ", current_target, " marked as completed in Firebase")
-			session_completed_words.append(current_target)
-			_advance_target()
+			if not session_completed_words.has(current_target):
+				session_completed_words.append(current_target)
+			
+			# Show completion celebration like the whiteboard result does
+			var progress_data: Dictionary = {"sight_words_completed": session_completed_words, "percentage": float(session_completed_words.size()) / 20.0 * 100.0}
+			_show_completion_celebration(current_target, progress_data)
 		else:
 			print("PhonicsSightWords: Failed to save sight word completion to Firebase")
 	else:
 		print("PhonicsSightWords: ModuleProgress not available, using local session tracking")
-		session_completed_words.append(current_target)
-		_advance_target()
+		if not session_completed_words.has(current_target):
+			session_completed_words.append(current_target)
+		var progress_data: Dictionary = {"sight_words_completed": session_completed_words, "percentage": float(session_completed_words.size()) / 20.0 * 100.0}
+		_show_completion_celebration(current_target, progress_data)
 
 func _on_guide_button_pressed():
 	$ButtonClick.play()
 	if tts:
-		var guide_text = "Welcome to Sight Words Practice! Sight words are common words you'll see often when reading. Look at the word shown above - these are words like 'the', 'and', 'to' that you should recognize quickly. Practice writing each word on the whiteboard below. Press 'Hear Word' to listen to the word and how to spell it, then trace or write it carefully. When ready, press 'Next' to continue!"
+		var guide_text = "Welcome to Sight Words Practice! Sight words are common words you'll see often when reading. Look at the word shown above - these are words like 'the', 'and', 'to' that you should recognize quickly. Practice writing each word on the whiteboard below. Press 'Hear' to listen to the word and how to spell it, then trace or write it carefully. When ready, press 'Next' to continue!"
 		_speak_text_simple(guide_text)
 
 func _on_tts_setting_button_pressed():
@@ -399,7 +412,7 @@ func _on_whiteboard_result(text_result: String):
 		
 		# Save progress using ModuleProgress system
 		if module_progress and module_progress.is_authenticated():
-			var save_success = await module_progress.set_phonics_sight_word_completed(target_word)
+			var save_success = await module_progress.set_sight_word_completed(target_word)
 			if save_success:
 				print("PhonicsSightWords: Progress saved successfully via ModuleProgress")
 				# Reload progress to get updated percentage

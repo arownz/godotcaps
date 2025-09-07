@@ -1,6 +1,7 @@
 extends Control
 
 var tts: TextToSpeech = null
+var module_progress: ModuleProgress = null
 
 # Categories: Only Letters and Sight Words
 var categories = {
@@ -34,6 +35,13 @@ func _ready():
 	
 	# Connect hover events
 	_connect_hover_events()
+
+func _init_module_progress():
+	if Firebase and Firebase.Auth and Firebase.Auth.auth:
+		module_progress = ModuleProgress.new()
+		print("PhonicsModule: ModuleProgress initialized")
+	else:
+		print("PhonicsModule: Firebase not available, using local tracking")
 	
 	# Style cards with rounded corners and IconContainer backgrounds
 	_style_category_cards()
@@ -62,13 +70,6 @@ func _init_tts():
 		tts.set_voice(voice_id)
 	if rate != null:
 		tts.set_rate(rate)
-
-func _init_module_progress():
-	# Use direct Firebase access like authentication.gd pattern
-	if Firebase.Auth.auth:
-		print("PhonicsModule: Firebase available for progress tracking")
-	else:
-		print("PhonicsModule: Firebase not available; progress won't sync")
 
 func _connect_hover_events():
 	# Connect back button hover
@@ -114,25 +115,16 @@ func _style_category_cards():
 			icon_container.add_theme_stylebox_override("panel", icon_style)
 
 func _load_category_progress():
-	if not Firebase.Auth.auth:
-		print("PhonicsModule: Firebase not available or not authenticated")
+	if not module_progress or not module_progress.is_authenticated():
+		print("PhonicsModule: ModuleProgress not available or not authenticated")
 		return
 		
-	var user_id = Firebase.Auth.auth.localid
-	var collection = Firebase.Firestore.collection("dyslexia_users")
-	
-	# Use authentication.gd pattern: direct document fetch
-	print("PhonicsModule: Loading progress for user: ", user_id)
-	var document = await collection.get_doc(user_id)
-	if document and !("error" in document.keys() and document.get_value("error")):
-		print("PhonicsModule: Document fetched successfully")
-		var modules = document.get_value("modules")
-		if modules != null and typeof(modules) == TYPE_DICTIONARY:
-			_update_progress_displays(modules)
-		else:
-			print("PhonicsModule: No modules data found")
+	print("PhonicsModule: Loading phonics progress via ModuleProgress")
+	var phonics_progress = await module_progress.get_phonics_progress()
+	if phonics_progress:
+		_update_progress_displays({"phonics": phonics_progress})
 	else:
-		print("PhonicsModule: Failed to fetch document or document has error")
+		print("PhonicsModule: Failed to fetch phonics progress")
 
 func _update_progress_displays(firebase_modules: Dictionary):
 	# Letters progress

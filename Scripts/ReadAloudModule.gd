@@ -1,6 +1,7 @@
 extends Control
 
 var tts: TextToSpeech = null
+var module_progress: ModuleProgress = null
 
 # Categories for Read Aloud
 var categories = {
@@ -66,11 +67,11 @@ func _init_tts():
 		tts.set_rate(rate)
 
 func _init_module_progress():
-	# Use direct Firebase access like authentication.gd pattern
-	if Firebase.Auth.auth:
-		print("ReadAloudModule: Firebase available for progress tracking")
+	if Firebase and Firebase.Auth and Firebase.Auth.auth:
+		module_progress = ModuleProgress.new()
+		print("ReadAloudModule: ModuleProgress initialized")
 	else:
-		print("ReadAloudModule: Firebase not available; progress won't sync")
+		print("ReadAloudModule: Firebase not available, using local tracking")
 
 func _connect_hover_events():
 	# Connect back button hover
@@ -131,25 +132,16 @@ func _style_category_cards():
 			icon_container.add_theme_stylebox_override("panel", icon_style)
 
 func _load_category_progress():
-	if not Firebase.Auth.auth:
-		print("ReadAloudModule: Firebase not available or not authenticated")
+	if not module_progress or not module_progress.is_authenticated():
+		print("ReadAloudModule: ModuleProgress not available or not authenticated")
 		return
 		
-	var user_id = Firebase.Auth.auth.localid
-	var collection = Firebase.Firestore.collection("dyslexia_users")
-	
-	# Use authentication.gd pattern: direct document fetch
-	print("ReadAloudModule: Loading progress for user: ", user_id)
-	var document = await collection.get_doc(user_id)
-	if document and !("error" in document.keys() and document.get_value("error")):
-		print("ReadAloudModule: Document fetched successfully")
-		var modules = document.get_value("modules")
-		if modules != null and typeof(modules) == TYPE_DICTIONARY:
-			_update_progress_displays(modules)
-		else:
-			print("ReadAloudModule: No modules data found")
+	print("ReadAloudModule: Loading read aloud progress via ModuleProgress")
+	var read_aloud_progress = await module_progress.get_read_aloud_progress()
+	if read_aloud_progress:
+		_update_progress_displays({"read_aloud": read_aloud_progress})
 	else:
-		print("ReadAloudModule: Failed to fetch document or document has error")
+		print("ReadAloudModule: Failed to fetch read aloud progress")
 
 func _update_progress_displays(firebase_modules: Dictionary):
 	# Story Reading progress

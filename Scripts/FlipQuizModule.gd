@@ -1,6 +1,7 @@
 extends Control
 
 var tts: TextToSpeech = null
+var module_progress: ModuleProgress = null
 var completion_celebration: CanvasLayer = null
 
 # Load completion celebration scene
@@ -62,34 +63,11 @@ func _init_tts():
 		tts.set_rate(rate)
 
 func _init_module_progress():
-	# Use same Firebase pattern as authentication.gd (which works)
-	print("FlipQuizModule: Initializing Firebase access")
-	
-	# Wait for Firebase to be ready (like authentication.gd does)
-	await get_tree().process_frame
-	
-	# Check Firebase availability using authentication.gd pattern (no Engine.has_singleton check)
-	if not Firebase or not Firebase.Auth:
-		print("FlipQuizModule: Firebase or Firebase.Auth not available")
-		return
-	
-	# Check authentication status (exact authentication.gd pattern)
-	if Firebase.Auth.auth == null:
-		print("FlipQuizModule: No authenticated user")
-		return
-	
-	if not Firebase.Auth.auth.localid:
-		print("FlipQuizModule: No localid available")
-		return
-	
-	print("FlipQuizModule: Firebase authenticated successfully for user: ", Firebase.Auth.auth.localid)
-	
-	# Test Firestore access (exact authentication.gd pattern)
-	if Firebase.Firestore == null:
-		print("FlipQuizModule: ERROR - Firestore is null")
-		return
-	
-	print("FlipQuizModule: Firestore available - ready for progress updates")
+	if Firebase and Firebase.Auth and Firebase.Auth.auth:
+		module_progress = ModuleProgress.new()
+		print("FlipQuizModule: ModuleProgress initialized")
+	else:
+		print("FlipQuizModule: Firebase not available, using local tracking")
 
 func _connect_hover_events():
 	var back_btn = $MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton
@@ -145,25 +123,16 @@ func _style_category_cards():
 			icon_container.add_theme_stylebox_override("panel", icon_style)
 
 func _load_category_progress():
-	if not Firebase.Auth.auth:
-		print("FlipQuizModule: Firebase not available or not authenticated")
+	if not module_progress or not module_progress.is_authenticated():
+		print("FlipQuizModule: ModuleProgress not available or not authenticated")
 		return
 		
-	var user_id = Firebase.Auth.auth.localid
-	var collection = Firebase.Firestore.collection("dyslexia_users")
-	
-	# Use working authentication.gd pattern: direct document fetch
-	print("FlipQuizModule: Loading progress for user: ", user_id)
-	var document = await collection.get_doc(user_id)
-	if document and !("error" in document.keys() and document.get_value("error")):
-		print("FlipQuizModule: Document fetched successfully")
-		var modules = document.get_value("modules")
-		if modules != null and typeof(modules) == TYPE_DICTIONARY:
-			_update_progress_displays(modules)
-		else:
-			print("FlipQuizModule: No modules data found")
+	print("FlipQuizModule: Loading flip quiz progress via ModuleProgress")
+	var flip_quiz_progress = await module_progress.get_flip_quiz_progress()
+	if flip_quiz_progress:
+		_update_progress_displays({"flip_quiz": flip_quiz_progress})
 	else:
-		print("FlipQuizModule: Failed to fetch document or document has error")
+		print("FlipQuizModule: Failed to fetch flip quiz progress")
 
 func _update_progress_displays(firebase_modules: Dictionary):
 	print("FlipQuizModule: Updating progress displays with Firebase data")
@@ -223,7 +192,7 @@ func _update_progress_displays(firebase_modules: Dictionary):
 	
 	var overall_label = get_node_or_null("MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressLabel")
 	if overall_label:
-		overall_label.text = "Overall Progress: " + str(int(overall_percent)) + "%"
+		overall_label.text = str(int(overall_percent)) + "%" + " Complete"
 		print("FlipQuizModule: Updated overall progress label: ", overall_label.text)
 
 func _on_button_hover():

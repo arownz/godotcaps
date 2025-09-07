@@ -1,17 +1,35 @@
-[gd_scene load_steps=15 format=3 uid="uid://c4s0f4n6pxn6o"]
+[gd_scene load_steps=17 format=3 uid="uid://c4s0f4n6pxn6o"]
 
 [ext_resource type="Script" uid="uid://h4w722tfbmr7" path="res://Scripts/ReadAloudGuided.gd" id="1_guided"]
+[ext_resource type="Texture2D" uid="uid://0con8ixqofpr" path="res://gui/Update/UI/ui 8.png" id="2_background"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="2_regular"]
-[ext_resource type="Texture2D" uid="uid://ciaa4qe2o2juf" path="res://gui/Update/UI/ui 3.png" id="2_retjp"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="3_bold"]
 [ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="4_click"]
-[ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="4_ra7s8"]
+[ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="4_yellow"]
 [ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="5_hover"]
-[ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="6_073yc"]
+[ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="6_green"]
+[ext_resource type="Texture2D" uid="uid://qmmpx3uab5h7" path="res://gui/Update/UI/next button.png" id="6_next"]
 [ext_resource type="Texture2D" uid="uid://bp53fsaou53ad" path="res://gui/Update/UI/white button.png" id="7_ely31"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_header"]
+bg_color = Color(0.870588, 0.980392, 0.901961, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.2, 0.8, 0.4, 1)
+corner_radius_top_left = 25
+corner_radius_top_right = 25
+corner_radius_bottom_right = 25
+corner_radius_bottom_left = 25
+shadow_color = Color(0, 0, 0, 0.3)
+shadow_size = 10
+shadow_offset = Vector2(0, 6)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_focus"]
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_progress_bg"]
-bg_color = Color(0.88, 0.91, 0.94, 1)
+bg_color = Color(1, 1, 1, 1)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
@@ -21,6 +39,9 @@ corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.2)
+shadow_size = 4
+shadow_offset = Vector2(0, 2)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_progress_fill"]
 bg_color = Color(0.2, 0.8, 0.4, 1)
@@ -33,8 +54,9 @@ corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ely31"]
+shadow_color = Color(0, 0, 0, 0.3)
+shadow_size = 4
+shadow_offset = Vector2(0, 2)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_guide"]
 bg_color = Color(1, 0.95, 0.8, 1)
@@ -47,9 +69,12 @@ corner_radius_top_left = 15
 corner_radius_top_right = 15
 corner_radius_bottom_right = 15
 corner_radius_bottom_left = 15
+shadow_color = Color(0, 0, 0, 0.2)
+shadow_size = 8
+shadow_offset = Vector2(0, 4)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_passage"]
-bg_color = Color(1, 1, 1, 1)
+bg_color = Color(0.870588, 0.980392, 0.901961, 1)
 border_width_left = 3
 border_width_top = 3
 border_width_right = 3
@@ -59,6 +84,9 @@ corner_radius_top_left = 15
 corner_radius_top_right = 15
 corner_radius_bottom_right = 15
 corner_radius_bottom_left = 15
+shadow_color = Color(0, 0, 0, 0.2)
+shadow_size = 8
+shadow_offset = Vector2(0, 4)
 
 [node name="ReadAloudGuided" type="Control"]
 layout_mode = 3
@@ -76,175 +104,279 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_retjp")
+texture = ExtResource("2_background")
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="MainContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 57.0
+offset_top = 33.0
+offset_right = -58.0
+offset_bottom = -35.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 40
-theme_override_constants/margin_top = 40
-theme_override_constants/margin_right = 40
-theme_override_constants/margin_bottom = 40
+theme_override_constants/separation = 30
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+[node name="HeaderPanel" type="Panel" parent="MainContainer"]
+custom_minimum_size = Vector2(0, 123)
 layout_mode = 2
-theme_override_constants/separation = 20
+size_flags_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_header")
 
-[node name="HeaderContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+[node name="HeaderContainer" type="VBoxContainer" parent="MainContainer/HeaderPanel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -632.5
+offset_top = -57.0
+offset_right = 695.5
+offset_bottom = 58.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.95167, 0.95167)
+theme_override_constants/separation = 15
+
+[node name="TitleContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer"]
 layout_mode = 2
+size_flags_vertical = 0
+alignment = 1
 
-[node name="ProgressBar" type="ProgressBar" parent="MarginContainer/VBoxContainer/HeaderContainer"]
-custom_minimum_size = Vector2(200, 30)
-layout_mode = 2
-size_flags_vertical = 4
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_bold")
-theme_override_styles/background = SubResource("StyleBoxFlat_progress_bg")
-theme_override_styles/fill = SubResource("StyleBoxFlat_progress_fill")
-step = 1.0
-
-[node name="ProgressLabel" type="Label" parent="MarginContainer/VBoxContainer/HeaderContainer"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_bold")
-theme_override_font_sizes/font_size = 16
-text = "Complete"
-
-[node name="PassageTitle" type="Label" parent="MarginContainer/VBoxContainer/HeaderContainer"]
+[node name="TitleLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_bold")
-theme_override_font_sizes/font_size = 24
-text = "Passage Title"
+theme_override_font_sizes/font_size = 36
+text = "    GUIDED READING"
 horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="BackButton" type="Button" parent="MarginContainer/VBoxContainer/HeaderContainer"]
-custom_minimum_size = Vector2(100, 40)
+[node name="BackButton" type="Button" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer"]
+custom_minimum_size = Vector2(120, 45)
 layout_mode = 2
+size_flags_horizontal = 8
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_bold")
 theme_override_font_sizes/font_size = 16
-theme_override_styles/focus = SubResource("StyleBoxEmpty_ely31")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_focus")
 text = "Back"
-icon = ExtResource("4_ra7s8")
+icon = ExtResource("4_yellow")
 flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="GuidePanel" type="Panel" parent="MarginContainer/VBoxContainer"]
+[node name="ProgressContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_constants/separation = 15
+alignment = 1
+
+[node name="ProgressLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_regular")
+theme_override_font_sizes/font_size = 16
+text = "Reading Progress:"
+
+[node name="ProgressBar" type="ProgressBar" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer"]
+custom_minimum_size = Vector2(300, 20)
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_bold")
+theme_override_styles/background = SubResource("StyleBoxFlat_progress_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_progress_fill")
+
+[node name="GuideButton" type="Button" parent="MainContainer/HeaderPanel"]
+layout_mode = 0
+offset_left = 30.0
+offset_right = 129.0
+offset_bottom = 81.0
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_bold")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_focus")
+text = "Guide"
+icon = ExtResource("6_next")
+flat = true
+icon_alignment = 1
+expand_icon = true
+
+[node name="TTSSettingButton" type="Button" parent="MainContainer/HeaderPanel"]
+layout_mode = 0
+offset_left = 30.0
+offset_top = 81.0
+offset_right = 129.0
+offset_bottom = 119.0
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_bold")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_focus")
+text = "TTS"
+icon = ExtResource("4_yellow")
+flat = true
+icon_alignment = 1
+expand_icon = true
+
+[node name="GuidePanel" type="Panel" parent="MainContainer"]
 custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_guide")
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/GuidePanel"]
+[node name="MarginContainer" type="MarginContainer" parent="MainContainer/GuidePanel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 20
+theme_override_constants/margin_left = 25
 theme_override_constants/margin_top = 20
-theme_override_constants/margin_right = 20
+theme_override_constants/margin_right = 25
 theme_override_constants/margin_bottom = 20
 
-[node name="GuideNotes" type="Label" parent="MarginContainer/VBoxContainer/GuidePanel/MarginContainer"]
+[node name="GuideContainer" type="VBoxContainer" parent="MainContainer/GuidePanel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="GuideTitle" type="Label" parent="MainContainer/GuidePanel/MarginContainer/GuideContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_bold")
+theme_override_font_sizes/font_size = 20
+text = "Reading Guide"
+horizontal_alignment = 1
+
+[node name="GuideNotes" type="Label" parent="MainContainer/GuidePanel/MarginContainer/GuideContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_regular")
-theme_override_font_sizes/font_size = 18
-text = "Reading guide notes will appear here..."
+theme_override_font_sizes/font_size = 16
+text = "Let's read about Mia and her cat. Take your time with each sentence."
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 2
 
-[node name="PassagePanel" type="Panel" parent="MarginContainer/VBoxContainer"]
+[node name="PassagePanel" type="Panel" parent="MainContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_passage")
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/PassagePanel"]
+[node name="MarginContainer" type="MarginContainer" parent="MainContainer/PassagePanel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 20
-theme_override_constants/margin_top = 20
-theme_override_constants/margin_right = 20
-theme_override_constants/margin_bottom = 20
+theme_override_constants/margin_left = 25
+theme_override_constants/margin_top = 25
+theme_override_constants/margin_right = 25
+theme_override_constants/margin_bottom = 25
 
-[node name="PassageText" type="RichTextLabel" parent="MarginContainer/VBoxContainer/PassagePanel/MarginContainer"]
+[node name="PassageContainer" type="VBoxContainer" parent="MainContainer/PassagePanel/MarginContainer"]
 layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="PassageTitleLabel" type="Label" parent="MainContainer/PassagePanel/MarginContainer/PassageContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_bold")
+theme_override_font_sizes/font_size = 28
+text = "The Friendly Cat"
+horizontal_alignment = 1
+
+[node name="PassageText" type="RichTextLabel" parent="MainContainer/PassagePanel/MarginContainer/PassageContainer"]
+layout_mode = 2
+size_flags_vertical = 3
 theme_override_colors/default_color = Color(0, 0, 0, 1)
 theme_override_fonts/normal_font = ExtResource("2_regular")
 theme_override_font_sizes/normal_font_size = 24
 bbcode_enabled = true
-text = "Reading passage will appear here..."
+text = "Mia has a cat named Sam.
 
-[node name="ControlsContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+Sam is orange and white.
+
+Sam likes to play with a red ball.
+
+Mia gives Sam food every day."
+
+[node name="ControlsContainer" type="HBoxContainer" parent="MainContainer"]
 layout_mode = 2
+theme_override_constants/separation = 20
 alignment = 1
 
-[node name="PreviousButton" type="Button" parent="MarginContainer/VBoxContainer/ControlsContainer"]
-custom_minimum_size = Vector2(120, 40)
+[node name="PreviousButton" type="Button" parent="MainContainer/ControlsContainer"]
+custom_minimum_size = Vector2(150, 50)
 layout_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_bold")
 theme_override_font_sizes/font_size = 16
-theme_override_styles/focus = SubResource("StyleBoxEmpty_ely31")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_focus")
 text = "Previous"
-icon = ExtResource("4_ra7s8")
+icon = ExtResource("4_yellow")
 flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="PlayButton" type="Button" parent="MarginContainer/VBoxContainer/ControlsContainer"]
-custom_minimum_size = Vector2(120, 40)
+[node name="ReadButton" type="Button" parent="MainContainer/ControlsContainer"]
+custom_minimum_size = Vector2(150, 50)
 layout_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_bold")
 theme_override_font_sizes/font_size = 16
-theme_override_styles/focus = SubResource("StyleBoxEmpty_ely31")
-text = "Start"
-icon = ExtResource("6_073yc")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_focus")
+text = "Read"
+icon = ExtResource("6_green")
 flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="NextButton" type="Button" parent="MarginContainer/VBoxContainer/ControlsContainer"]
-custom_minimum_size = Vector2(120, 40)
+[node name="SpeakButton" type="Button" parent="MainContainer/ControlsContainer"]
+custom_minimum_size = Vector2(150, 50)
 layout_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_bold")
 theme_override_font_sizes/font_size = 16
-theme_override_styles/focus = SubResource("StyleBoxEmpty_ely31")
-text = "Next"
-icon = ExtResource("4_ra7s8")
-flat = true
-icon_alignment = 1
-expand_icon = true
-
-[node name="CompleteButton" type="Button" parent="MarginContainer/VBoxContainer/ControlsContainer"]
-custom_minimum_size = Vector2(120, 40)
-layout_mode = 2
-mouse_default_cursor_shape = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_bold")
-theme_override_font_sizes/font_size = 16
-theme_override_styles/focus = SubResource("StyleBoxEmpty_ely31")
-text = "Done"
+theme_override_styles/focus = SubResource("StyleBoxEmpty_focus")
+text = "Speak"
 icon = ExtResource("7_ely31")
+flat = true
+icon_alignment = 1
+expand_icon = true
+
+[node name="NextButton" type="Button" parent="MainContainer/ControlsContainer"]
+custom_minimum_size = Vector2(150, 50)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_bold")
+theme_override_font_sizes/font_size = 16
+theme_override_styles/focus = SubResource("StyleBoxEmpty_focus")
+text = "Next"
+icon = ExtResource("4_yellow")
 flat = true
 icon_alignment = 1
 expand_icon = true
@@ -255,8 +387,14 @@ stream = ExtResource("4_click")
 [node name="ButtonHover" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("5_hover")
 
-[connection signal="pressed" from="MarginContainer/VBoxContainer/HeaderContainer/BackButton" to="." method="_on_back_button_pressed"]
-[connection signal="pressed" from="MarginContainer/VBoxContainer/ControlsContainer/PreviousButton" to="." method="_on_previous_passage_button_pressed"]
-[connection signal="pressed" from="MarginContainer/VBoxContainer/ControlsContainer/PlayButton" to="." method="_on_play_button_pressed"]
-[connection signal="pressed" from="MarginContainer/VBoxContainer/ControlsContainer/NextButton" to="." method="_on_next_passage_button_pressed"]
-[connection signal="pressed" from="MarginContainer/VBoxContainer/ControlsContainer/CompleteButton" to="." method="_on_practice_complete_button_pressed"]
+[connection signal="pressed" from="MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton" to="." method="_on_back_button_pressed"]
+[connection signal="pressed" from="MainContainer/HeaderPanel/GuideButton" to="." method="_on_guide_button_pressed"]
+[connection signal="pressed" from="MainContainer/HeaderPanel/TTSSettingButton" to="." method="_on_tts_setting_button_pressed"]
+[connection signal="mouse_entered" from="MainContainer/ControlsContainer/PreviousButton" to="." method="_on_button_hover"]
+[connection signal="pressed" from="MainContainer/ControlsContainer/PreviousButton" to="." method="_on_previous_passage_button_pressed"]
+[connection signal="mouse_entered" from="MainContainer/ControlsContainer/ReadButton" to="." method="_on_button_hover"]
+[connection signal="pressed" from="MainContainer/ControlsContainer/ReadButton" to="." method="_on_read_button_pressed"]
+[connection signal="mouse_entered" from="MainContainer/ControlsContainer/SpeakButton" to="." method="_on_button_hover"]
+[connection signal="pressed" from="MainContainer/ControlsContainer/SpeakButton" to="." method="_on_speak_button_pressed"]
+[connection signal="mouse_entered" from="MainContainer/ControlsContainer/NextButton" to="." method="_on_button_hover"]
+[connection signal="pressed" from="MainContainer/ControlsContainer/NextButton" to="." method="_on_next_passage_button_pressed"]

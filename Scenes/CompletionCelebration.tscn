@@ -7,10 +7,9 @@
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="4_3id8v"]
 [ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="6_uu2wo"]
 [ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="7_up78n"]
+[ext_resource type="AudioStream" uid="uid://bhn1ijdk0yxbj" path="res://audio/theater-applause-128kbps.mp3" id="8_up78n"]
 
 [sub_resource type="AudioStream" id="AudioStream_success"]
-
-[sub_resource type="AudioStream" id="AudioStream_celebration"]
 
 [node name="CompletionCelebration" type="CanvasLayer"]
 layer = 200
@@ -137,7 +136,7 @@ expand_icon = true
 stream = SubResource("AudioStream_success")
 
 [node name="CelebrationSound" type="AudioStreamPlayer" parent="."]
-stream = SubResource("AudioStream_celebration")
+stream = ExtResource("8_up78n")
 
 [node name="ButtonClick" type="AudioStreamPlayer" parent="."]
 

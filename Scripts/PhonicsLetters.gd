@@ -72,10 +72,13 @@ func _init_tts():
 	if rate != null:
 		tts.set_rate(rate)
 func _init_module_progress():
-	if Engine.has_singleton("Firebase") and Firebase.Auth.auth:
+	if Firebase and Firebase.Auth and Firebase.Auth.auth:
 		var ModuleProgressScript = load("res://Scripts/ModulesManager/ModuleProgress.gd")
-		module_progress = ModuleProgressScript.new()
-		print("PhonicsLetters: ModuleProgress initialized")
+		if ModuleProgressScript:
+			module_progress = ModuleProgressScript.new()
+			print("PhonicsLetters: ModuleProgress initialized")
+		else:
+			print("PhonicsLetters: ModuleProgress script not found")
 	else:
 		print("PhonicsLetters: Firebase not available, using local tracking")
 
@@ -164,28 +167,35 @@ func _load_progress():
 		print("PhonicsLetters: Loading phonics progress via ModuleProgress")
 		var phonics_progress = await module_progress.get_phonics_progress()
 		if phonics_progress:
-			var letters_data = phonics_progress.get("phonics_letters", {})
-			var letters_completed = letters_data.get("letters_completed", [])
-			var letters_progress = letters_data.get("progress", 0)
+			var letters_completed = phonics_progress.get("letters_completed", [])
+			var progress_percent = phonics_progress.get("progress", 0)
 			
 			# Update session tracking
 			session_completed_letters = letters_completed.duplicate()
 			
-			# Update UI with loaded progress
-			_update_progress_ui(letters_progress)
+			# Resume at the correct position - find the first uncompleted letter
+			var resume_index = 0
+			for i in range(letter_set.size()):
+				var letter = letter_set[i]
+				if not letters_completed.has(letter):
+					resume_index = i
+					break
+				elif i == letter_set.size() - 1: # All letters completed
+					resume_index = letter_set.size() - 1
+			
+			# Update current position
+			letter_index = resume_index
+			current_target = letter_set[letter_index]
+			print("PhonicsLetters: Resuming at letter: ", current_target, " (index: ", letter_index, ")")
+			
+			# Update UI with loaded progress and current position
+			_update_progress_ui(progress_percent)
+			_update_target_display()
 			
 			# Update trace overlay for current letter if completed
 			_update_completed_letters_display(letters_completed)
 			
-			print("PhonicsLetters: Loaded progress - ", letters_completed.size(), "/26 letters completed (", letters_progress, "%)")
-			
-			# Find first uncompleted letter
-			for i in range(letter_set.size()):
-				if letter_set[i] not in letters_completed:
-					letter_index = i
-					current_target = letter_set[i]
-					_update_target_display()
-					break
+			print("PhonicsLetters: Loaded progress - ", letters_completed.size(), "/26 letters completed (", progress_percent, "%)")
 		else:
 			print("PhonicsLetters: No phonics progress found")
 	else:
@@ -254,7 +264,7 @@ func _on_HearButton_pressed():
 func _on_guide_button_pressed():
 	$ButtonClick.play()
 	if tts:
-		var guide_text = "Welcome to Letters Practice! Here you will learn to trace letters from A to Z. Look at the letter shown above, then use your finger or mouse to trace it carefully on the whiteboard below. Listen to the letter sound by pressing 'Hear Letter', and when you're ready to move on, press 'Next'."
+		var guide_text = "Welcome to Letters Practice! Here you will learn to trace letters from A to Z. Look at the letter shown above, then use your finger or mouse to trace it carefully on the whiteboard below. Listen to the letter sound by pressing 'Hear', and when you're ready to move on, press 'Next'."
 		_speak_text_simple(guide_text)
 
 func _on_tts_setting_button_pressed():

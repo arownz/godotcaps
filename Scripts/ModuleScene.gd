@@ -1,5 +1,7 @@
 extends Control
 
+var module_progress: ModuleProgress = null
+
 # Module config (presentation + totals). Progress is fetched from Firestore.
 var module_data = {
 	"phonics": {
@@ -47,6 +49,8 @@ func _ready():
 	tween.tween_property(self, "modulate:a", 1.0, 0.35).set_ease(Tween.EASE_OUT)
 	tween.tween_property(self, "scale", Vector2(1.0, 1.0), 0.35).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
 
+	# Initialize ModuleProgress
+	_init_module_progress()
 	
 	# Get node references
 	_get_node_references()
@@ -70,32 +74,36 @@ func _refresh_progress():
 	print("ModuleScene: Refreshing progress display")
 	await _load_firestore_modules()
 
-func _load_firestore_modules():
-	# Use direct Firebase access like authentication.gd pattern
-	if Firebase.Auth.auth:
-		print("ModuleScene: Loading modules from Firebase directly")
-		var user_id = Firebase.Auth.auth.localid
-		var collection = Firebase.Firestore.collection("dyslexia_users")
-		
-		# Use working authentication.gd pattern: direct document fetch
-		var document = await collection.get_doc(user_id)
-		if document and !("error" in document.keys() and document.get_value("error")):
-			print("ModuleScene: Document fetched successfully")
-			var modules = document.get_value("modules")
-			if modules != null and typeof(modules) == TYPE_DICTIONARY:
-				firebase_modules = modules
-				print("ModuleScene: Loaded Firebase module progress: ", firebase_modules.keys())
-				if firebase_modules.has("phonics"):
-					print("ModuleScene: Phonics progress: ", firebase_modules["phonics"].get("progress", 0), "%")
-				if firebase_modules.has("flip_quiz"):
-					print("ModuleScene: Flip Quiz progress: ", firebase_modules["flip_quiz"].get("progress", 0), "%")
-				_update_progress_displays()
-			else:
-				print("ModuleScene: No modules data found in document")
-		else:
-			print("ModuleScene: Failed to fetch document or document has error")
+func _init_module_progress():
+	if Firebase and Firebase.Auth and Firebase.Auth.auth:
+		module_progress = ModuleProgress.new()
+		print("ModuleScene: ModuleProgress initialized")
 	else:
-		print("ModuleScene: Firebase not available or not authenticated")
+		print("ModuleScene: Firebase not available, using local tracking")
+
+func _load_firestore_modules():
+	if not module_progress or not module_progress.is_authenticated():
+		print("ModuleScene: ModuleProgress not available or not authenticated")
+		return
+		
+	print("ModuleScene: Loading all module progress via ModuleProgress")
+	
+	# Load all modules via ModuleProgress methods
+	var phonics_progress = await module_progress.get_phonics_progress()
+	var flip_quiz_progress = await module_progress.get_flip_quiz_progress()
+	var read_aloud_progress = await module_progress.get_read_aloud_progress()
+	
+	# Combine into firebase_modules format
+	firebase_modules = {}
+	if phonics_progress:
+		firebase_modules["phonics"] = phonics_progress
+	if flip_quiz_progress:
+		firebase_modules["flip_quiz"] = flip_quiz_progress
+	if read_aloud_progress:
+		firebase_modules["read_aloud"] = read_aloud_progress
+		
+	print("ModuleScene: Loaded module progress via ModuleProgress: ", firebase_modules.keys())
+	_update_progress_displays()
 
 func _get_node_references():
 	# Main navigation - now using the new navigation bar
@@ -209,25 +217,25 @@ func _update_card_progress(module_key: String, card_name: String):
 				completed = total_completed_sets >= total_possible_sets
 				print("ModuleScene: FlipQuiz overall - Animals sets:", total_animals_sets, "/3, Vehicles sets:", total_vehicles_sets, "/3, Total:", total_completed_sets, "/", total_possible_sets, ", Overall:", int(progress_percent), "%")
 			elif module_key == "read_aloud":
-				# Overall read aloud progress based on completed stories and guided activities
-				var stories_completed = 0
+				# Overall read aloud progress based on Firebase structure from ModuleProgress
+				var story_completed = 0
 				var guided_completed = 0
 				
-				# Check stories progress
-				if fm.has("stories") and typeof(fm["stories"]) == TYPE_DICTIONARY:
-					var stories_data = fm["stories"].get("stories_completed", [])
-					stories_completed = stories_data.size()
+				# Check story_reading progress
+				if fm.has("story_reading") and typeof(fm["story_reading"]) == TYPE_DICTIONARY:
+					var story_data = fm["story_reading"].get("activities_completed", [])
+					story_completed = story_data.size()
 				
-				# Check guided progress  
-				if fm.has("guided") and typeof(fm["guided"]) == TYPE_DICTIONARY:
-					var guided_data = fm["guided"].get("activities_completed", [])
+				# Check guided_reading progress  
+				if fm.has("guided_reading") and typeof(fm["guided_reading"]) == TYPE_DICTIONARY:
+					var guided_data = fm["guided_reading"].get("activities_completed", [])
 					guided_completed = guided_data.size()
 				
-				var total_completed = stories_completed + guided_completed
-				var total_possible = 15 # Total activities across both categories
+				var total_completed = story_completed + guided_completed
+				var total_possible = 10 # 5 stories + 5 guided activities = 10 total (as defined in ModuleProgress)
 				progress_percent = (float(total_completed) / float(total_possible)) * 100.0
 				completed = total_completed >= total_possible
-				print("ModuleScene: ReadAloud overall - Stories:", stories_completed, ", Guided:", guided_completed, ", Total:", total_completed, "/", total_possible, ", Overall:", int(progress_percent), "%")
+				print("ModuleScene: ReadAloud overall - Stories:", story_completed, "/5, Guided:", guided_completed, "/5, Total:", total_completed, "/", total_possible, ", Overall:", int(progress_percent), "%")
 			else:
 				# For other modules, use direct progress value
 				progress_percent = float(fm.get("progress", 0))

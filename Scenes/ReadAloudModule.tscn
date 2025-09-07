@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://bh58ks8y1mr5l"]
+[gd_scene load_steps=17 format=3 uid="uid://bh58ks8y1mr5l"]
 
 [ext_resource type="Script" uid="uid://rxbjx6aq2wjr" path="res://Scripts/ReadAloudModule.gd" id="1_u04du"]
 [ext_resource type="Texture2D" uid="uid://0con8ixqofpr" path="res://gui/Update/UI/ui 8.png" id="2_bg"]
@@ -58,6 +58,10 @@ shadow_size = 4
 shadow_offset = Vector2(0, 2)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_tbhtg"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_u04du"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_d0twa"]
 
 [node name="ReadAloudModule" type="Control"]
 layout_mode = 3
@@ -155,7 +159,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular")
 theme_override_font_sizes/font_size = 16
-text = "Overall Progress:"
+text = "Complete"
 
 [node name="ProgressBar" type="ProgressBar" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer"]
 custom_minimum_size = Vector2(300, 20)
@@ -278,6 +282,7 @@ mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold")
 theme_override_font_sizes/font_size = 16
+theme_override_styles/focus = SubResource("StyleBoxEmpty_u04du")
 text = "Play"
 icon = ExtResource("10_0kgie")
 flat = true
@@ -351,6 +356,7 @@ mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold")
 theme_override_font_sizes/font_size = 16
+theme_override_styles/focus = SubResource("StyleBoxEmpty_d0twa")
 text = "Play"
 icon = ExtResource("10_0kgie")
 flat = true
