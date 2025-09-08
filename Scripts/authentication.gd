@@ -637,7 +637,6 @@ func _create_user_document(collection, user_id: String, auth):
 			"read_aloud": {
 				"completed": false,
 				"progress": 0,
-				"story_reading": {"activities_completed": []},
 				"guided_reading": {"activities_completed": []}
 			}
 		},

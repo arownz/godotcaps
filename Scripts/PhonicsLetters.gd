@@ -169,24 +169,34 @@ func _load_progress():
 		if phonics_progress:
 			var letters_completed = phonics_progress.get("letters_completed", [])
 			var progress_percent = phonics_progress.get("progress", 0)
+			var saved_index = phonics_progress.get("current_letter_index", 0)
 			
 			# Update session tracking
 			session_completed_letters = letters_completed.duplicate()
 			
-			# Resume at the correct position - find the first uncompleted letter
-			var resume_index = 0
-			for i in range(letter_set.size()):
-				var letter = letter_set[i]
-				if not letters_completed.has(letter):
-					resume_index = i
-					break
-				elif i == letter_set.size() - 1: # All letters completed
-					resume_index = letter_set.size() - 1
+			# Resume at saved position OR find first uncompleted letter
+			var resume_index = saved_index
+			
+			# Validate saved index is within bounds
+			if saved_index >= letter_set.size():
+				resume_index = letter_set.size() - 1
+			
+			# If saved position letter is already completed, find next uncompleted
+			var saved_letter = letter_set[resume_index]
+			if letters_completed.has(saved_letter):
+				print("PhonicsLetters: Saved letter '", saved_letter, "' already completed, finding next uncompleted")
+				for i in range(letter_set.size()):
+					var letter = letter_set[i]
+					if not letters_completed.has(letter):
+						resume_index = i
+						break
+					elif i == letter_set.size() - 1: # All letters completed
+						resume_index = letter_set.size() - 1
 			
 			# Update current position
 			letter_index = resume_index
 			current_target = letter_set[letter_index]
-			print("PhonicsLetters: Resuming at letter: ", current_target, " (index: ", letter_index, ")")
+			print("PhonicsLetters: Resuming at letter: ", current_target, " (index: ", letter_index, ", saved index was: ", saved_index, ")")
 			
 			# Update UI with loaded progress and current position
 			_update_progress_ui(progress_percent)
@@ -350,6 +360,12 @@ func _advance_target():
 	current_target = letter_set[letter_index]
 	_update_target_display()
 	
+	# Save current position to Firebase
+	if module_progress and module_progress.is_authenticated():
+		var save_success = await module_progress.set_phonics_current_letter_index(letter_index)
+		if save_success:
+			print("PhonicsLetters: Saved current position: ", letter_index)
+	
 	# Clear whiteboard for next target
 	if whiteboard_instance and whiteboard_instance.has_method("_on_clear_button_pressed"):
 		whiteboard_instance._on_clear_button_pressed()
@@ -362,6 +378,12 @@ func _previous_target():
 	letter_index = (letter_index - 1 + letter_set.size()) % letter_set.size()
 	current_target = letter_set[letter_index]
 	_update_target_display()
+	
+	# Save current position to Firebase
+	if module_progress and module_progress.is_authenticated():
+		var save_success = await module_progress.set_phonics_current_letter_index(letter_index)
+		if save_success:
+			print("PhonicsLetters: Saved current position: ", letter_index)
 	
 	# Clear whiteboard for previous target
 	if whiteboard_instance and whiteboard_instance.has_method("_on_clear_button_pressed"):

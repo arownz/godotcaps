@@ -132,10 +132,18 @@ func _load_progress_from_firebase():
 	
 	var flip_quiz_data = await module_progress.get_flip_quiz_progress()
 	if flip_quiz_data and flip_quiz_data.has("animals"):
-		sets_completed = flip_quiz_data["animals"].get("sets_completed", [])
+		var animals_data = flip_quiz_data["animals"]
+		sets_completed = animals_data.get("sets_completed", [])
 		current_set_index = sets_completed.size()
+		
+		# Load saved current position
+		var saved_index = animals_data.get("current_index", 0)
+		if saved_index < animals.size():
+			current_animal_index = saved_index
+			print("FlipQuizAnimals: Resuming at animal index: ", current_animal_index)
+		
 		_update_progress_display(flip_quiz_data)
-		print("FlipQuizAnimals: Loaded progress - sets completed: ", sets_completed)
+		print("FlipQuizAnimals: Loaded progress - sets completed: ", sets_completed, ", current animal: ", current_animal_index)
 	else:
 		print("FlipQuizAnimals: No animals flip quiz progress found")
 
@@ -654,6 +662,12 @@ func _on_previous_button_pressed():
 		_update_instruction()
 		_update_navigation_buttons()
 		
+		# Save current position to Firebase
+		if module_progress and module_progress.is_authenticated():
+			var save_success = await module_progress.set_flip_quiz_current_index("animals", current_animal_index)
+			if save_success:
+				print("FlipQuizAnimals: Saved current position: ", current_animal_index)
+		
 		# Speak the animal name
 		if current_animal_index < selected_animals.size():
 			var animal = selected_animals[current_animal_index]
@@ -694,6 +708,12 @@ func _on_next_button_pressed():
 	
 	_update_instruction()
 	_update_navigation_buttons()
+	
+	# Save current position to Firebase
+	if module_progress and module_progress.is_authenticated():
+		var save_success = await module_progress.set_flip_quiz_current_index("animals", current_animal_index)
+		if save_success:
+			print("FlipQuizAnimals: Saved current position: ", current_animal_index)
 	
 	# Speak the animal name
 	if current_animal_index < selected_animals.size():

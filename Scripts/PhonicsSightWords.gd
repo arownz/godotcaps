@@ -163,24 +163,34 @@ func _load_progress():
 		if phonics_progress:
 			var words_completed = phonics_progress.get("sight_words_completed", [])
 			var progress_percent = phonics_progress.get("progress", 0)
+			var saved_index = phonics_progress.get("current_sight_word_index", 0)
 			
 			# Update session tracking
 			session_completed_words = words_completed.duplicate()
 			
-			# Resume at the correct position - find the first uncompleted sight word
-			var resume_index = 0
-			for i in range(sight_words.size()):
-				var word = sight_words[i].to_lower()
-				if not words_completed.has(word):
-					resume_index = i
-					break
-				elif i == sight_words.size() - 1: # All words completed
-					resume_index = sight_words.size() - 1
+			# Resume at saved position OR find first uncompleted word
+			var resume_index = saved_index
+			
+			# Validate saved index is within bounds
+			if saved_index >= sight_words.size():
+				resume_index = sight_words.size() - 1
+			
+			# If saved position word is already completed, find next uncompleted
+			var saved_word = sight_words[resume_index].to_lower()
+			if words_completed.has(saved_word):
+				print("PhonicsSightWords: Saved word '", saved_word, "' already completed, finding next uncompleted")
+				for i in range(sight_words.size()):
+					var word = sight_words[i].to_lower()
+					if not words_completed.has(word):
+						resume_index = i
+						break
+					elif i == sight_words.size() - 1: # All words completed
+						resume_index = sight_words.size() - 1
 			
 			# Update current position
 			word_index = resume_index
 			current_target = sight_words[word_index]
-			print("PhonicsSightWords: Resuming at sight word: ", current_target, " (index: ", word_index, ")")
+			print("PhonicsSightWords: Resuming at sight word: ", current_target, " (index: ", word_index, ", saved index was: ", saved_index, ")")
 			
 			# Update UI with loaded progress and current position
 			_update_progress_ui(progress_percent)
@@ -361,6 +371,12 @@ func _advance_target():
 	current_target = sight_words[word_index]
 	_update_target_display()
 	
+	# Save current position to Firebase
+	if module_progress and module_progress.is_authenticated():
+		var save_success = await module_progress.set_phonics_current_sight_word_index(word_index)
+		if save_success:
+			print("PhonicsSightWords: Saved current position: ", word_index)
+	
 	# Clear whiteboard for next target
 	if whiteboard_instance and whiteboard_instance.has_method("_on_clear_button_pressed"):
 		whiteboard_instance._on_clear_button_pressed()
@@ -373,6 +389,12 @@ func _previous_target():
 	word_index = (word_index - 1 + sight_words.size()) % sight_words.size()
 	current_target = sight_words[word_index]
 	_update_target_display()
+	
+	# Save current position to Firebase
+	if module_progress and module_progress.is_authenticated():
+		var save_success = await module_progress.set_phonics_current_sight_word_index(word_index)
+		if save_success:
+			print("PhonicsSightWords: Saved current position: ", word_index)
 	
 	# Clear whiteboard for previous target
 	if whiteboard_instance and whiteboard_instance.has_method("_on_clear_button_pressed"):

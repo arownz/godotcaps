@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://bh58ks8y1mr5l"]
+[gd_scene load_steps=16 format=3 uid="uid://bh58ks8y1mr5l"]
 
 [ext_resource type="Script" uid="uid://rxbjx6aq2wjr" path="res://Scripts/ReadAloudModule.gd" id="1_u04du"]
 [ext_resource type="Texture2D" uid="uid://0con8ixqofpr" path="res://gui/Update/UI/ui 8.png" id="2_bg"]
@@ -58,8 +58,6 @@ shadow_size = 4
 shadow_offset = Vector2(0, 2)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_tbhtg"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_u04du"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_d0twa"]
 
@@ -213,85 +211,11 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/h_separation = 25
-columns = 3
-
-[node name="StoryReadingCard" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid"]
-custom_minimum_size = Vector2(430, 300)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_dt2ji")
-
-[node name="StoryContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/StoryReadingCard"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 15.0
-offset_top = 15.0
-offset_right = -15.0
-offset_bottom = -15.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="IconContainer" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid/StoryReadingCard/StoryContent"]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="CenterContainer" type="CenterContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/StoryReadingCard/StoryContent/IconContainer"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="IconLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/StoryReadingCard/StoryContent/IconContainer/CenterContainer"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.2, 0.8, 0.4, 1)
-theme_override_fonts/font = ExtResource("4_bold")
-theme_override_font_sizes/font_size = 48
-text = "Story"
-
-[node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/StoryReadingCard/StoryContent"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("4_bold")
-theme_override_font_sizes/font_size = 20
-text = "Story Reading"
-horizontal_alignment = 1
-
-[node name="DescLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/StoryReadingCard/StoryContent"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_regular")
-theme_override_font_sizes/font_size = 14
-text = "Progressive stories with highlighting and audio."
-horizontal_alignment = 1
-autowrap_mode = 2
-
-[node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/StoryReadingCard/StoryContent"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_regular")
-theme_override_font_sizes/font_size = 12
-text = "0% Complete"
-horizontal_alignment = 1
-
-[node name="EnterButton" type="Button" parent="MainContainer/ScrollContainer/CategoriesGrid/StoryReadingCard/StoryContent"]
-layout_mode = 2
-mouse_default_cursor_shape = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("4_bold")
-theme_override_font_sizes/font_size = 16
-theme_override_styles/focus = SubResource("StyleBoxEmpty_u04du")
-text = "Play"
-icon = ExtResource("10_0kgie")
-flat = true
-icon_alignment = 1
-expand_icon = true
 
 [node name="GuidedReadingCard" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid"]
-custom_minimum_size = Vector2(430, 300)
+custom_minimum_size = Vector2(600, 350)
 layout_mode = 2
+size_flags_horizontal = 4
 theme_override_styles/panel = SubResource("StyleBoxFlat_dt2ji")
 
 [node name="GuidedContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard"]

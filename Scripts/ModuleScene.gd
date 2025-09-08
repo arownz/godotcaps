@@ -218,24 +218,18 @@ func _update_card_progress(module_key: String, card_name: String):
 				print("ModuleScene: FlipQuiz overall - Animals sets:", total_animals_sets, "/3, Vehicles sets:", total_vehicles_sets, "/3, Total:", total_completed_sets, "/", total_possible_sets, ", Overall:", int(progress_percent), "%")
 			elif module_key == "read_aloud":
 				# Overall read aloud progress based on Firebase structure from ModuleProgress
-				var story_completed = 0
 				var guided_completed = 0
 				
-				# Check story_reading progress
-				if fm.has("story_reading") and typeof(fm["story_reading"]) == TYPE_DICTIONARY:
-					var story_data = fm["story_reading"].get("activities_completed", [])
-					story_completed = story_data.size()
-				
-				# Check guided_reading progress  
+				# Check guided_reading progress (only category available now)
 				if fm.has("guided_reading") and typeof(fm["guided_reading"]) == TYPE_DICTIONARY:
 					var guided_data = fm["guided_reading"].get("activities_completed", [])
 					guided_completed = guided_data.size()
 				
-				var total_completed = story_completed + guided_completed
-				var total_possible = 10 # 5 stories + 5 guided activities = 10 total (as defined in ModuleProgress)
+				var total_completed = guided_completed
+				var total_possible = 5 # 5 guided activities total (as defined in ModuleProgress)
 				progress_percent = (float(total_completed) / float(total_possible)) * 100.0
 				completed = total_completed >= total_possible
-				print("ModuleScene: ReadAloud overall - Stories:", story_completed, "/5, Guided:", guided_completed, "/5, Total:", total_completed, "/", total_possible, ", Overall:", int(progress_percent), "%")
+				print("ModuleScene: ReadAloud overall - Guided:", guided_completed, "/5, Total:", total_completed, "/", total_possible, ", Overall:", int(progress_percent), "%")
 			else:
 				# For other modules, use direct progress value
 				progress_percent = float(fm.get("progress", 0))

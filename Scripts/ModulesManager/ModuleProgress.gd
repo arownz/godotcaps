@@ -43,7 +43,7 @@ func set_phonics_letter_completed(letter: String) -> bool:
 	if document and !("error" in document.keys()):
 		var modules = document.get_value("modules")
 		if not modules.has("phonics"):
-			modules["phonics"] = {"completed": false, "progress": 0, "letters_completed": [], "sight_words_completed": []}
+			modules["phonics"] = {"completed": false, "progress": 0, "letters_completed": [], "sight_words_completed": [], "current_letter_index": 0, "current_sight_word_index": 0}
 		
 		var phonics = modules["phonics"]
 		if not letter in phonics["letters_completed"]:
@@ -53,6 +53,42 @@ func set_phonics_letter_completed(letter: String) -> bool:
 			phonics["progress"] = (total / 46.0) * 100 # 26 letters + 20 sight words
 			phonics["completed"] = total >= 46 # All letters and sight words completed
 		
+		document.add_or_update_field("modules", modules)
+		var updated = await collection.update(document)
+		return !("error" in updated.keys())
+	return false
+
+func set_phonics_current_letter_index(index: int) -> bool:
+	"""Store the current letter index for resuming progress"""
+	if not is_authenticated():
+		return false
+	
+	var user_id = Firebase.Auth.auth.localid
+	var document = await collection.get_doc(user_id)
+	if document and !("error" in document.keys()):
+		var modules = document.get_value("modules")
+		if not modules.has("phonics"):
+			modules["phonics"] = {"completed": false, "progress": 0, "letters_completed": [], "sight_words_completed": [], "current_letter_index": 0, "current_sight_word_index": 0}
+		
+		modules["phonics"]["current_letter_index"] = index
+		document.add_or_update_field("modules", modules)
+		var updated = await collection.update(document)
+		return !("error" in updated.keys())
+	return false
+
+func set_phonics_current_sight_word_index(index: int) -> bool:
+	"""Store the current sight word index for resuming progress"""
+	if not is_authenticated():
+		return false
+	
+	var user_id = Firebase.Auth.auth.localid
+	var document = await collection.get_doc(user_id)
+	if document and !("error" in document.keys()):
+		var modules = document.get_value("modules")
+		if not modules.has("phonics"):
+			modules["phonics"] = {"completed": false, "progress": 0, "letters_completed": [], "sight_words_completed": [], "current_letter_index": 0, "current_sight_word_index": 0}
+		
+		modules["phonics"]["current_sight_word_index"] = index
 		document.add_or_update_field("modules", modules)
 		var updated = await collection.update(document)
 		return !("error" in updated.keys())
@@ -68,7 +104,7 @@ func set_sight_word_completed(word: String) -> bool:
 	if document and !("error" in document.keys()):
 		var modules = document.get_value("modules")
 		if not modules.has("phonics"):
-			modules["phonics"] = {"completed": false, "progress": 0, "letters_completed": [], "sight_words_completed": []}
+			modules["phonics"] = {"completed": false, "progress": 0, "letters_completed": [], "sight_words_completed": [], "current_letter_index": 0, "current_sight_word_index": 0}
 		
 		var phonics = modules["phonics"]
 		if not word in phonics["sight_words_completed"]:
@@ -102,8 +138,8 @@ func complete_flip_quiz_set(category: String, set_id: String) -> bool:
 			modules["flip_quiz"] = {
 				"completed": false,
 				"progress": 0,
-				"animals": {"sets_completed": []},
-				"vehicles": {"sets_completed": []}
+				"animals": {"sets_completed": [], "current_index": 0},
+				"vehicles": {"sets_completed": [], "current_index": 0}
 			}
 		
 		var flip_quiz = modules["flip_quiz"]
@@ -127,6 +163,33 @@ func complete_flip_quiz_set(category: String, set_id: String) -> bool:
 		return !("error" in updated.keys())
 	return false
 
+func set_flip_quiz_current_index(category: String, index: int) -> bool:
+	"""Store current position for FlipQuiz category (animals/vehicles)"""
+	if not is_authenticated():
+		return false
+		
+	var user_id = Firebase.Auth.auth.localid
+	var document = await collection.get_doc(user_id)
+	if document and !("error" in document.keys()):
+		var modules = document.get_value("modules")
+		if not modules.has("flip_quiz"):
+			modules["flip_quiz"] = {
+				"completed": false,
+				"progress": 0,
+				"animals": {"sets_completed": [], "current_index": 0},
+				"vehicles": {"sets_completed": [], "current_index": 0}
+			}
+		
+		var flip_quiz = modules["flip_quiz"]
+		if not flip_quiz.has(category):
+			flip_quiz[category] = {"sets_completed": [], "current_index": 0}
+		
+		flip_quiz[category]["current_index"] = index
+		document.add_or_update_field("modules", modules)
+		var updated = await collection.update(document)
+		return !("error" in updated.keys())
+	return false
+
 # Read Aloud Module - Enhanced with Story Reading and Guided Reading
 func get_read_aloud_progress():
 	"""Get progress for the Read Aloud module"""
@@ -134,7 +197,7 @@ func get_read_aloud_progress():
 	return modules.get("read_aloud", {}) if modules else null
 
 func complete_read_aloud_activity(category: String, activity_id: String) -> bool:
-	"""Complete a read aloud activity for a specific category (story_reading/guided_reading)"""
+	"""Complete a read aloud activity for guided_reading category only"""
 	if not is_authenticated():
 		return false
 		
@@ -146,26 +209,58 @@ func complete_read_aloud_activity(category: String, activity_id: String) -> bool
 			modules["read_aloud"] = {
 				"completed": false,
 				"progress": 0,
-				"story_reading": {"activities_completed": []},
-				"guided_reading": {"activities_completed": []}
+				"guided_reading": {"activities_completed": [], "current_index": 0}
 			}
 		
 		var read_aloud = modules["read_aloud"]
-		# Ensure category exists
+		# Ensure category exists (only guided_reading supported)
+		if category != "guided_reading":
+			print("ModuleProgress: Only guided_reading category is supported")
+			return false
+			
 		if not read_aloud.has(category):
-			read_aloud[category] = {"activities_completed": []}
+			read_aloud[category] = {"activities_completed": [], "current_index": 0}
 		
 		var category_data = read_aloud[category]
 		if not activity_id in category_data["activities_completed"]:
 			category_data["activities_completed"].append(activity_id)
 			
-			# Calculate overall progress (2 categories × 5 activities each = 10 total)
-			var story_count = read_aloud.get("story_reading", {}).get("activities_completed", []).size()
+			# Calculate progress based on guided reading only (5 total activities)
 			var guided_count = read_aloud.get("guided_reading", {}).get("activities_completed", []).size()
-			var total_completed = story_count + guided_count
-			read_aloud["progress"] = (total_completed / 10.0) * 100 # 10 total activities
-			read_aloud["completed"] = total_completed >= 10
+			read_aloud["progress"] = (guided_count / 5.0) * 100 # 5 total activities in guided reading
+			read_aloud["completed"] = guided_count >= 5
 		
+		document.add_or_update_field("modules", modules)
+		var updated = await collection.update(document)
+		return !("error" in updated.keys())
+	return false
+
+func set_read_aloud_current_index(category: String, index: int) -> bool:
+	"""Store current position for ReadAloud guided_reading category only"""
+	if not is_authenticated():
+		return false
+		
+	var user_id = Firebase.Auth.auth.localid
+	var document = await collection.get_doc(user_id)
+	if document and !("error" in document.keys()):
+		var modules = document.get_value("modules")
+		if not modules.has("read_aloud"):
+			modules["read_aloud"] = {
+				"completed": false,
+				"progress": 0,
+				"guided_reading": {"activities_completed": [], "current_index": 0}
+			}
+		
+		var read_aloud = modules["read_aloud"]
+		# Only support guided_reading category
+		if category != "guided_reading":
+			print("ModuleProgress: Only guided_reading category is supported")
+			return false
+			
+		if not read_aloud.has(category):
+			read_aloud[category] = {"activities_completed": [], "current_index": 0}
+		
+		read_aloud[category]["current_index"] = index
 		document.add_or_update_field("modules", modules)
 		var updated = await collection.update(document)
 		return !("error" in updated.keys())

@@ -98,6 +98,12 @@ func _load_progress_from_firebase():
 		if current_set_index >= total_sets:
 			current_set_index = total_sets - 1
 		
+		# Load saved current position
+		var saved_index = vehicles_data.get("current_index", 0)
+		if saved_index < vehicles.size():
+			current_vehicle_index = saved_index
+			print("FlipQuizVehicle: Resuming at vehicle index: ", current_vehicle_index)
+		
 		# Update progress display
 		_update_progress_display(flip_quiz_data)
 	else:
@@ -558,6 +564,12 @@ func _on_previous_button_pressed():
 		_update_instruction()
 		_update_navigation_buttons()
 		
+		# Save current position to Firebase
+		if module_progress and module_progress.is_authenticated():
+			var save_success = await module_progress.set_flip_quiz_current_index("vehicles", current_vehicle_index)
+			if save_success:
+				print("FlipQuizVehicle: Saved current position: ", current_vehicle_index)
+		
 		if current_vehicle_index < selected_vehicles.size():
 			var vehicle = selected_vehicles[current_vehicle_index]
 			if tts:
@@ -590,6 +602,12 @@ func _on_next_button_pressed():
 	
 	_update_instruction()
 	_update_navigation_buttons()
+	
+	# Save current position to Firebase
+	if module_progress and module_progress.is_authenticated():
+		var save_success = await module_progress.set_flip_quiz_current_index("vehicles", current_vehicle_index)
+		if save_success:
+			print("FlipQuizVehicle: Saved current position: ", current_vehicle_index)
 	
 	if current_vehicle_index < selected_vehicles.size():
 		var vehicle = selected_vehicles[current_vehicle_index]

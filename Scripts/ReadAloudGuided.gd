@@ -112,7 +112,7 @@ var passages = [
 func _ready():
 	print("ReadAloudGuided: Initializing guided reading interface")
 	
-	# Enhanced fade-in animation matching ReadAloudStories
+	# Enhanced fade-in animation
 	modulate.a = 0.0
 	scale = Vector2(0.8, 0.8)
 	var tween = create_tween()
@@ -422,7 +422,7 @@ func _show_success_feedback(recognized_text: String):
 		# Reset button state and advance to next sentence
 		var speak_button = $MainContainer/ControlsContainer/SpeakButton
 		if speak_button:
-			speak_button.text = "Practice Speaking"
+			speak_button.text = "Speak"
 			speak_button.disabled = false
 		
 		_next_guided_sentence()
@@ -440,7 +440,7 @@ func _show_encouragement_feedback(recognized_text: String, target_text: String):
 	# Reset button state for retry
 	var speak_button = $MainContainer/ControlsContainer/SpeakButton
 	if speak_button:
-		speak_button.text = "Practice Speaking"
+		speak_button.text = "Speak"
 		speak_button.disabled = false
 
 func _show_try_again_feedback(_recognized_text: String, target_text: String):
@@ -456,7 +456,7 @@ func _show_try_again_feedback(_recognized_text: String, target_text: String):
 	# Reset button state for retry
 	var speak_button = $MainContainer/ControlsContainer/SpeakButton
 	if speak_button:
-		speak_button.text = "Practice Speaking"
+		speak_button.text = "Speak"
 		speak_button.disabled = false
 
 func _load_progress():
@@ -466,16 +466,27 @@ func _load_progress():
 		if progress_data and progress_data.has("guided_reading"):
 			var guided_data = progress_data["guided_reading"]
 			completed_activities = guided_data.get("activities_completed", [])
+			var saved_index = guided_data.get("current_index", 0)
 			
-			# Find first uncompleted passage for resume
-			var resume_index = 0
-			for i in range(passages.size()):
-				var passage_id = "passage_" + str(i)
-				if not passage_id in completed_activities:
-					resume_index = i
-					break
+			# Resume at saved position OR find first uncompleted passage
+			var resume_index = saved_index
+			
+			# Validate saved index is within bounds
+			if saved_index >= passages.size():
+				resume_index = passages.size() - 1
+			
+			# If saved position passage is already completed, find next uncompleted
+			var saved_passage_id = "passage_" + str(resume_index)
+			if saved_passage_id in completed_activities:
+				print("ReadAloudGuided: Saved passage '", saved_passage_id, "' already completed, finding next uncompleted")
+				for i in range(passages.size()):
+					var passage_id = "passage_" + str(i)
+					if not passage_id in completed_activities:
+						resume_index = i
+						break
 			
 			current_passage_index = resume_index
+			print("ReadAloudGuided: Resuming at passage: ", current_passage_index, " (saved index was: ", saved_index, ")")
 			var progress_percent = (float(completed_activities.size()) / float(passages.size())) * 100.0
 			_update_progress_display(progress_percent)
 		else:
@@ -739,6 +750,12 @@ func _on_previous_passage_button_pressed():
 		current_passage_index -= 1
 		_display_passage(current_passage_index)
 		_update_navigation_buttons()
+		
+		# Save current position to Firebase
+		if module_progress and module_progress.is_authenticated():
+			var save_success = await module_progress.set_read_aloud_current_index("guided_reading", current_passage_index)
+			if save_success:
+				print("ReadAloudGuided: Saved current position: ", current_passage_index)
 
 func _on_next_passage_button_pressed():
 	$ButtonClick.play()
@@ -747,6 +764,12 @@ func _on_next_passage_button_pressed():
 		current_passage_index += 1
 		_display_passage(current_passage_index)
 		_update_navigation_buttons()
+		
+		# Save current position to Firebase
+		if module_progress and module_progress.is_authenticated():
+			var save_success = await module_progress.set_read_aloud_current_index("guided_reading", current_passage_index)
+			if save_success:
+				print("ReadAloudGuided: Saved current position: ", current_passage_index)
 
 func _on_practice_complete_button_pressed():
 	"""Mark current guided reading passage as completed"""
@@ -822,7 +845,7 @@ func _update_listen_button():
 			listen_button.text = "Listening..."
 			listen_button.disabled = true
 		else:
-			listen_button.text = "Practice Speaking"
+			listen_button.text = "Speak"
 			listen_button.disabled = false
 
 func _handle_stt_error(error: String):
@@ -906,10 +929,10 @@ func _on_read_button_pressed():
 				_on_read_button_pressed() # Try next sentence
 
 func _on_speak_button_pressed():
-	"""Practice Speaking button - STT functionality for current sentence"""
+	"""Speak button - STT functionality for current sentence"""
 	$ButtonClick.play()
-	print("ReadAloudGuided: Practice Speaking button pressed")
-	
+	print("ReadAloudGuided: Speak button pressed")
+
 	if current_passage_index < passages.size():
 		var passage = passages[current_passage_index]
 		
@@ -934,7 +957,7 @@ func _on_speak_button_pressed():
 					print("ReadAloudGuided: Failed to start speech recognition")
 					# Reset button state on failure
 					if speak_button:
-						speak_button.text = "Practice Speaking"
+						speak_button.text = "Speak"
 						speak_button.disabled = false
 			else:
 				print("ReadAloudGuided: No sentence to practice")

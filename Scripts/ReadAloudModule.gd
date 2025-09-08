@@ -3,12 +3,8 @@ extends Control
 var tts: TextToSpeech = null
 var module_progress: ModuleProgress = null
 
-# Categories for Read Aloud
+# Categories for Read Aloud - Only Guided Reading available
 var categories = {
-	"story_reading": {
-		"title": "Story Reading",
-		"scene_path": "res://Scenes/ReadAloudStories.tscn"
-	},
 	"guided_reading": {
 		"title": "Guided Reading",
 		"scene_path": "res://Scenes/ReadAloudGuided.tscn"
@@ -95,14 +91,7 @@ func _connect_hover_events():
 		if not tts_btn.pressed.is_connected(_on_tts_setting_button_pressed):
 			tts_btn.pressed.connect(_on_tts_setting_button_pressed)
 	
-	# Connect category enter buttons
-	var story_enter_btn = get_node_or_null("MainContainer/ScrollContainer/CategoriesGrid/StoryReadingCard/StoryContent/EnterButton")
-	if story_enter_btn:
-		if not story_enter_btn.mouse_entered.is_connected(_on_button_hover):
-			story_enter_btn.mouse_entered.connect(_on_button_hover)
-		if not story_enter_btn.pressed.is_connected(_on_story_reading_button_pressed):
-			story_enter_btn.pressed.connect(_on_story_reading_button_pressed)
-	
+	# Connect category enter button - only guided reading
 	var guided_enter_btn = get_node_or_null("MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard/GuidedContent/EnterButton")
 	if guided_enter_btn:
 		if not guided_enter_btn.mouse_entered.is_connected(_on_button_hover):
@@ -112,7 +101,6 @@ func _connect_hover_events():
 
 func _style_category_cards():
 	var icon_containers = [
-		get_node_or_null("MainContainer/ScrollContainer/CategoriesGrid/StoryReadingCard/StoryContent/IconContainer"),
 		get_node_or_null("MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard/GuidedContent/IconContainer")
 	]
 	
@@ -144,18 +132,7 @@ func _load_category_progress():
 		print("ReadAloudModule: Failed to fetch read aloud progress")
 
 func _update_progress_displays(firebase_modules: Dictionary):
-	# Story Reading progress
-	var story_percent = 0.0
-	if firebase_modules.has("read_aloud"):
-		var read_aloud = firebase_modules["read_aloud"]
-		if typeof(read_aloud) == TYPE_DICTIONARY:
-			var story_activities = read_aloud.get("story_reading", {}).get("activities_completed", []).size()
-			story_percent = (float(story_activities) / 5.0) * 100.0 # Assuming 5 story activities
-	var story_label = get_node_or_null("MainContainer/ScrollContainer/CategoriesGrid/StoryReadingCard/StoryContent/ProgressLabel")
-	if story_label:
-		story_label.text = str(int(story_percent)) + "% Complete"
-
-	# Guided Reading progress
+	# Guided Reading progress - Now the only available category
 	var guided_percent = 0.0
 	if firebase_modules.has("read_aloud"):
 		var read_aloud = firebase_modules["read_aloud"]
@@ -166,16 +143,15 @@ func _update_progress_displays(firebase_modules: Dictionary):
 	if guided_label:
 		guided_label.text = str(int(guided_percent)) + "% Complete"
 
-	# Overall progress calculation
-	var overall_percent = (story_percent + guided_percent) / 2.0
+	# Overall progress is just guided reading progress
 	var overall_bar = $MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressBar
 	if overall_bar:
-		overall_bar.value = overall_percent
+		overall_bar.value = guided_percent
 	var overall_label = $MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressLabel
 	if overall_label:
-		overall_label.text = str(int(overall_percent)) + "% Complete"
+		overall_label.text = str(int(guided_percent)) + "% Complete"
 	
-	print("ReadAloudModule: Progress updated - Stories: ", int(story_percent), "%, Guided: ", int(guided_percent), "%, Overall: ", int(overall_percent), "%")
+	print("ReadAloudModule: Progress updated - Guided: ", int(guided_percent), "%, Overall: ", int(guided_percent), "%")
 
 func _on_button_hover():
 	$ButtonHover.play()
@@ -273,16 +249,6 @@ func _stop_tts():
 func _exit_tree():
 	_stop_tts()
 	
-func _on_readaloud_button_pressed():
-	$ButtonClick.play()
-	print("ReadAloudModule: Starting Read Aloud")
-	_launch_category("story_reading")
-
-func _on_story_reading_button_pressed():
-	$ButtonClick.play()
-	print("ReadAloudModule: Starting Story Reading")
-	_launch_category("story_reading")
-
 func _on_guided_reading_button_pressed():
 	$ButtonClick.play()
 	print("ReadAloudModule: Starting Guided Reading")
