@@ -10,7 +10,7 @@ var module_data = {
 		"scene_path": "res://Scenes/PhonicsModule.tscn"
 	},
 	"flip_quiz": {
-		"name": "Flip Quiz",
+		"name": "Flip Quiz Interactive",
 		"total_lessons": null,
 		"scene_path": "res://Scenes/FlipQuizModule.tscn"
 	},

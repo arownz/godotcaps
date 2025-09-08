@@ -38,6 +38,7 @@ var popup_message_label
 var notification_popup: CanvasLayer
 
 func _ready():
+	
 	# Enhanced fade-in animation matching SettingScene style
 	modulate.a = 0.0
 	scale = Vector2(0.8, 0.8)

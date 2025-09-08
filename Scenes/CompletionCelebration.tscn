@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://co41nrvqyx6g8"]
+[gd_scene load_steps=9 format=3 uid="uid://co41nrvqyx6g8"]
 
 [ext_resource type="Script" uid="uid://cwl7hqcbavcop" path="res://Scripts/CompletionCelebration.gd" id="1"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="2"]
@@ -8,8 +8,6 @@
 [ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="6_uu2wo"]
 [ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="7_up78n"]
 [ext_resource type="AudioStream" uid="uid://bhn1ijdk0yxbj" path="res://audio/theater-applause-128kbps.mp3" id="8_up78n"]
-
-[sub_resource type="AudioStream" id="AudioStream_success"]
 
 [node name="CompletionCelebration" type="CanvasLayer"]
 layer = 200
@@ -131,9 +129,6 @@ icon = ExtResource("7_up78n")
 flat = true
 icon_alignment = 1
 expand_icon = true
-
-[node name="SuccessSound" type="AudioStreamPlayer" parent="."]
-stream = SubResource("AudioStream_success")
 
 [node name="CelebrationSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("8_up78n")

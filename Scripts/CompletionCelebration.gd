@@ -44,8 +44,8 @@ func show_completion(type: CompletionType, item: String, progress: Dictionary = 
 	# Show the popup
 	show()
 	
-	# Play success sound safely
-	_play_sound($SuccessSound, "success")
+	# Play theater applause (success sound)
+	_play_sound($CelebrationSound, "theater applause")
 	
 	# Animated entrance with celebration
 	var popup_container = $PopupContainer
@@ -66,11 +66,6 @@ func show_completion(type: CompletionType, item: String, progress: Dictionary = 
 		# Add a little extra celebration bounce
 		tween.tween_property(popup_container, "scale", Vector2(1.05, 1.05), 0.1).set_ease(Tween.EASE_OUT).set_delay(0.5)
 		tween.tween_property(popup_container, "scale", Vector2(1.0, 1.0), 0.1).set_ease(Tween.EASE_IN).set_delay(0.6)
-	
-	# Play celebration sound after a brief delay
-	if $CelebrationSound and $CelebrationSound.stream:
-		await get_tree().create_timer(0.3).timeout
-		_play_sound($CelebrationSound, "celebration")
 
 func _play_sound(player: Node, label: String):
 	if player and player is AudioStreamPlayer and player.stream:
@@ -233,6 +228,11 @@ func _update_content(module_key: String = "phonics"):
 
 func close_celebration():
 	"""Close celebration with animation"""
+	# Stop theater applause when closing
+	var celebration_sound = $CelebrationSound
+	if celebration_sound and celebration_sound.playing:
+		celebration_sound.stop()
+	
 	var popup_container = $PopupContainer
 	if popup_container:
 		var tween = create_tween()

@@ -179,129 +179,262 @@ func _setup_speech_recognition():
 		call_deferred("_check_and_wait_for_permissions")
 
 func _process(_delta):
-	"""Check for speech recognition results"""
-	if stt_listening and OS.get_name() == "Web":
-		var result_json = JavaScriptBridge.eval("getGuidedSttResult();")
-		if result_json != null and result_json != "":
+	"""Check for speech recognition results - Enhanced polling like WordChallengePanel_STT"""
+	if stt_listening and OS.get_name() == "Web" and JavaScriptBridge.has_method("eval"):
+		# Check for recognition results
+		var result_json = JavaScriptBridge.eval("getGuidedResult();")
+		if result_json != null and result_json != "" and result_json != "null":
 			var json = JSON.new()
 			var parse_result = json.parse(result_json)
 			
 			if parse_result == OK:
 				var result_data = json.data
-				if result_data.has("success") and result_data.success:
-					var text = result_data.get("text", "")
-					var confidence = result_data.get("confidence", 0.8)
-					_handle_stt_result(text, confidence)
-				elif result_data.has("error"):
-					var error = result_data.get("error", "unknown")
-					_handle_stt_error(error)
+				print("ReadAloudGuided: Got STT result: ", result_data)
 				
-				stt_listening = false
-				_update_listen_button()
+				if result_data.has("type"):
+					if result_data.type == "result" and result_data.has("text"):
+						var text = result_data.text
+						if text and text.length() > 0:
+							print("ReadAloudGuided: Processing speech result: ", text)
+							stt_listening = false
+							_handle_stt_result(text, 0.8) # Default confidence
+					elif result_data.type == "error" and result_data.has("error"):
+						var error = result_data.error
+						print("ReadAloudGuided: Speech recognition error: ", error)
+						stt_listening = false
+						_handle_stt_error(error)
+		
+		# Also check for interim results for live feedback (optional)
+		var interim_result = JavaScriptBridge.eval("getGuidedInterimResult();")
+		if interim_result != null and interim_result != "" and interim_result != "null":
+			# Show interim feedback (optional live transcription)
+			var interim_text = str(interim_result).strip_edges()
+			if interim_text.length() > 0 and interim_text != current_target_sentence:
+				# Could show live transcription here if desired
+				pass
 
 func _initialize_web_audio_environment():
-	"""Initialize JavaScript environment for web audio - Simplified approach"""
-	var js_code = """
-	// Speech recognition setup for ReadAloudGuided
-	window.guidedSttRecognition = null;
-	window.guidedSttActive = false;
-	window.guidedSttCallback = null;
-	
-	function initGuidedSpeechRecognition() {
-		if ('webkitSpeechRecognition' in window) {
-			window.guidedSttRecognition = new webkitSpeechRecognition();
-		} else if ('SpeechRecognition' in window) {
-			window.guidedSttRecognition = new SpeechRecognition();
-		} else {
-			console.log('Speech recognition not supported');
-			return false;
+	"""Initialize JavaScript environment for web audio - FIXED ENGINE DETECTION"""
+	if JavaScriptBridge.has_method("eval"):
+		var js_code = """
+		// Global speech recognition variables
+		window.guidedRecognition = null;
+		window.guidedRecognitionActive = false;
+		window.guidedPermissionGranted = false;
+		window.guidedPermissionChecked = false;
+		window.guidedFinalResult = '';
+		window.guidedInterimResult = '';
+		window.guidedResult = null;
+		
+		// Permission check function
+		function checkGuidedPermissions() {
+			if (navigator.permissions) {
+				navigator.permissions.query({name: 'microphone'}).then(function(result) {
+					window.guidedPermissionGranted = (result.state === 'granted');
+					window.guidedPermissionChecked = true;
+					console.log('ReadAloudGuided: Permission state:', result.state);
+				}).catch(function(error) {
+					console.log('ReadAloudGuided: Permission check failed:', error);
+					window.guidedPermissionChecked = true;
+				});
+			} else {
+				// Fallback for browsers without permission API
+				window.guidedPermissionChecked = true;
+			}
 		}
 		
-		var recognition = window.guidedSttRecognition;
-		recognition.continuous = false;
-		recognition.interimResults = false;
-		recognition.lang = 'en-US';
-		recognition.maxAlternatives = 1;
+		// Request microphone permission
+		function requestGuidedMicPermission() {
+			return navigator.mediaDevices.getUserMedia({ audio: true })
+				.then(function(stream) {
+					window.guidedPermissionGranted = true;
+					stream.getTracks().forEach(track => track.stop()); // Clean up
+					return true;
+				})
+				.catch(function(error) {
+					console.log('ReadAloudGuided: Permission denied:', error);
+					window.guidedPermissionGranted = false;
+					return false;
+				});
+		}
 		
-		recognition.onresult = function(event) {
-			var result = event.results[0];
-			var transcript = result[0].transcript;
-			var confidence = result[0].confidence || 0.8;
-			
-			console.log('Speech result:', transcript, 'Confidence:', confidence);
-			
-			window.guidedSttResult = {
-				ready: true,
-				success: true,
-				text: transcript,
-				confidence: confidence
-			};
-		};
-		
-		recognition.onerror = function(event) {
-			console.log('Speech recognition error:', event.error);
-			window.guidedSttResult = {
-				ready: true,
-				success: false,
-				error: event.error
-			};
-		};
-		
-		recognition.onend = function() {
-			window.guidedSttActive = false;
-			console.log('Speech recognition ended');
-		};
-		
-		return true;
-	}
-	
-	function startGuidedSpeechRecognition() {
-		if (window.guidedSttRecognition && !window.guidedSttActive) {
+		// Initialize speech recognition
+		function initGuidedSpeechRecognition() {
 			try {
-				window.guidedSttRecognition.start();
-				window.guidedSttActive = true;
-				window.guidedSttResult = { ready: false };
+				if ('webkitSpeechRecognition' in window) {
+					window.guidedRecognition = new webkitSpeechRecognition();
+				} else if ('SpeechRecognition' in window) {
+					window.guidedRecognition = new SpeechRecognition();
+				} else {
+					console.log('ReadAloudGuided: Speech recognition not supported');
+					return false;
+				}
+				
+				var recognition = window.guidedRecognition;
+				recognition.continuous = false;
+				recognition.interimResults = true;
+				recognition.lang = 'en-US';
+				recognition.maxAlternatives = 1;
+				
+				recognition.onstart = function() {
+					console.log('ReadAloudGuided: Recognition started');
+					window.guidedRecognitionActive = true;
+					window.guidedFinalResult = '';
+					window.guidedInterimResult = '';
+				};
+				
+				recognition.onresult = function(event) {
+					var finalTranscript = '';
+					var interimTranscript = '';
+					
+					for (var i = event.resultIndex; i < event.results.length; i++) {
+						var transcript = event.results[i][0].transcript;
+						if (event.results[i].isFinal) {
+							finalTranscript += transcript;
+						} else {
+							interimTranscript += transcript;
+						}
+					}
+					
+					window.guidedFinalResult = finalTranscript;
+					window.guidedInterimResult = interimTranscript;
+					
+					console.log('ReadAloudGuided: Final:', finalTranscript, 'Interim:', interimTranscript);
+				};
+				
+				recognition.onerror = function(event) {
+					console.log('ReadAloudGuided: Recognition error:', event.error);
+					window.guidedRecognitionActive = false;
+					
+					// Store error result
+					window.guidedResult = {
+						type: 'error',
+						error: event.error,
+						timestamp: Date.now()
+					};
+				};
+				
+				recognition.onend = function() {
+					console.log('ReadAloudGuided: Recognition ended');
+					window.guidedRecognitionActive = false;
+					
+					// Store final result if we have one
+					if (window.guidedFinalResult && window.guidedFinalResult.trim() !== '') {
+						window.guidedResult = {
+							type: 'result',
+							text: window.guidedFinalResult.trim(),
+							timestamp: Date.now()
+						};
+					}
+				};
+				
 				return true;
-			} catch (e) {
-				console.log('Failed to start speech recognition:', e);
+			} catch (error) {
+				console.log('ReadAloudGuided: Failed to initialize recognition:', error);
 				return false;
 			}
 		}
-		return false;
-	}
-	
-	function stopGuidedSpeechRecognition() {
-		if (window.guidedSttRecognition && window.guidedSttActive) {
-			window.guidedSttRecognition.stop();
-			window.guidedSttActive = false;
+		
+		// Start recognition
+		function startGuidedRecognition() {
+			if (!window.guidedRecognition) {
+				console.log('ReadAloudGuided: Recognition not initialized');
+				return false;
+			}
+			
+			if (window.guidedRecognitionActive) {
+				console.log('ReadAloudGuided: Recognition already active');
+				return false;
+			}
+			
+			try {
+				window.guidedResult = null; // Clear previous result
+				window.guidedRecognition.start();
+				return true;
+			} catch (error) {
+				console.log('ReadAloudGuided: Failed to start recognition:', error);
+				return false;
+			}
 		}
-	}
-	
-	function getGuidedSttResult() {
-		if (window.guidedSttResult && window.guidedSttResult.ready) {
-			var result = window.guidedSttResult;
-			window.guidedSttResult = { ready: false };
-			return JSON.stringify(result);
+		
+		// Stop recognition
+		function stopGuidedRecognition() {
+			if (window.guidedRecognition && window.guidedRecognitionActive) {
+				try {
+					window.guidedRecognition.stop();
+				} catch (error) {
+					console.log('ReadAloudGuided: Error stopping recognition:', error);
+				}
+			}
 		}
-		return null;
-	}
-	"""
-	
-	JavaScriptBridge.eval(js_code)
-	var init_result = JavaScriptBridge.eval("initGuidedSpeechRecognition();")
-	print("ReadAloudGuided: Speech recognition initialized: ", init_result)
+		
+		// Get recognition result
+		function getGuidedResult() {
+			if (window.guidedResult) {
+				var result = window.guidedResult;
+				window.guidedResult = null; // Clear after reading
+				return JSON.stringify(result);
+			}
+			return null;
+		}
+		
+		// Get interim result for live feedback
+		function getGuidedInterimResult() {
+			return window.guidedInterimResult || '';
+		}
+		
+		// Check if recognition is active
+		function isGuidedRecognitionActive() {
+			return window.guidedRecognitionActive || false;
+		}
+		
+		// Initialize everything
+		checkGuidedPermissions();
+		var initResult = initGuidedSpeechRecognition();
+		console.log('ReadAloudGuided: Initialization complete:', initResult);
+		"""
+		
+		JavaScriptBridge.eval(js_code)
+		print("ReadAloudGuided: JavaScript environment initialized for web speech recognition")
 
 func _check_and_wait_for_permissions():
 	"""Check microphone permissions"""
-	var permission_js = """
-	navigator.permissions.query({name: 'microphone'}).then(function(result) {
-		godot.ReadAloudGuided.update_mic_permission_state(result.state);
-	}).catch(function(error) {
-		console.log('Permission check failed:', error);
-		godot.ReadAloudGuided.update_mic_permission_state('prompt');
-	});
-	"""
-	JavaScriptBridge.eval(permission_js)
+	print("ReadAloudGuided: Checking microphone permissions...")
+	permission_check_complete = false
+	
+	if JavaScriptBridge.has_method("eval"):
+		var js_code = """
+		(function() {
+			checkGuidedPermissions();
+			
+			// Wait for permission check to complete
+			var checkInterval = setInterval(function() {
+				if (window.guidedPermissionChecked) {
+					clearInterval(checkInterval);
+					// Use a more direct approach to communicate with Godot
+					console.log('ReadAloudGuided: Permission granted:', window.guidedPermissionGranted);
+				}
+			}, 50);
+		})();
+		"""
+		JavaScriptBridge.eval(js_code)
+		
+		# Wait for permission check to complete
+		var max_wait_time = 3.0
+		var wait_time = 0.0
+		while not permission_check_complete and wait_time < max_wait_time:
+			await get_tree().process_frame
+			wait_time += 0.016 # Approximate frame time
+			
+			# Check permission status from JavaScript
+			if JavaScriptBridge.has_method("eval"):
+				var permission_status = JavaScriptBridge.eval("window.guidedPermissionChecked || false")
+				if permission_status:
+					var granted = JavaScriptBridge.eval("window.guidedPermissionGranted || false")
+					update_mic_permission_state("granted" if granted else "prompt")
+					break
+		
+		print("ReadAloudGuided: Permission check completed. Granted: ", mic_permission_granted)
 
 func update_mic_permission_state(state):
 	"""Callback for permission state updates"""
@@ -315,41 +448,68 @@ func update_mic_permission_state(state):
 
 func _start_speech_recognition():
 	"""Start speech recognition"""
+	print("ReadAloudGuided: Starting speech recognition...")
+	
 	if not mic_permission_granted:
+		print("ReadAloudGuided: Requesting microphone permission...")
 		_request_microphone_permission()
 		return false
 	
 	if OS.get_name() == "Web":
-		var result = JavaScriptBridge.eval("startGuidedSpeechRecognition();")
-		if result:
-			recognition_active = true
-			stt_listening = true
-			_update_listen_button()
-			print("ReadAloudGuided: Speech recognition started")
-			return true
-		else:
-			print("ReadAloudGuided: Failed to start web speech recognition")
+		if JavaScriptBridge.has_method("eval"):
+			var result = JavaScriptBridge.eval("startGuidedRecognition();")
+			if result:
+				recognition_active = true
+				stt_listening = true
+				_update_listen_button()
+				print("ReadAloudGuided: Speech recognition started successfully")
+				return true
+			else:
+				print("ReadAloudGuided: Failed to start web speech recognition")
 	
 	return false
 
 func _stop_speech_recognition():
 	"""Stop speech recognition"""
 	if OS.get_name() == "Web":
-		JavaScriptBridge.eval("stopGuidedSpeechRecognition();")
+		JavaScriptBridge.eval("stopGuidedRecognition();")
 	recognition_active = false
+	stt_listening = false
+	_update_listen_button()
 
 func _request_microphone_permission():
 	"""Request microphone permission"""
-	var request_js = """
-	navigator.mediaDevices.getUserMedia({ audio: true })
-		.then(function(stream) {
-			godot.ReadAloudGuided.update_mic_permission_state('granted');
-		})
-		.catch(function(error) {
-			godot.ReadAloudGuided.update_mic_permission_state('denied');
-		});
-	"""
-	JavaScriptBridge.eval(request_js)
+	print("ReadAloudGuided: Requesting microphone permission...")
+	permission_check_complete = false
+	
+	if JavaScriptBridge.has_method("eval"):
+		var request_js = """
+		(function() {
+			requestGuidedMicPermission().then(function(granted) {
+				window.guidedPermissionGranted = granted;
+				window.guidedPermissionChecked = true;
+				console.log('ReadAloudGuided: Permission request result:', granted);
+			});
+		})();
+		"""
+		JavaScriptBridge.eval(request_js)
+		
+		# Wait for permission request to complete
+		var max_wait_time = 5.0
+		var wait_time = 0.0
+		while not permission_check_complete and wait_time < max_wait_time:
+			await get_tree().process_frame
+			wait_time += 0.016
+			
+			# Check permission status from JavaScript
+			if JavaScriptBridge.has_method("eval"):
+				var permission_checked = JavaScriptBridge.eval("window.guidedPermissionChecked || false")
+				if permission_checked:
+					var granted = JavaScriptBridge.eval("window.guidedPermissionGranted || false")
+					update_mic_permission_state("granted" if granted else "denied")
+					break
+		
+		print("ReadAloudGuided: Permission request completed. Granted: ", mic_permission_granted)
 
 func speech_result_callback(text, confidence):
 	"""Callback for speech recognition results"""
@@ -366,46 +526,189 @@ func recognition_ended_callback():
 	recognition_active = false
 
 func _process_speech_result(recognized_text: String, confidence: float):
-	"""Process speech recognition result and compare with target sentence"""
+	"""Process speech recognition result and compare with target sentence - Enhanced for dyslexic users"""
 	print("ReadAloudGuided: Recognized: '", recognized_text, "' (confidence: ", confidence, ")")
 	print("ReadAloudGuided: Target: '", current_target_sentence, "'")
 	
-	# Clean and compare text
-	var cleaned_recognized = _clean_text_for_comparison(recognized_text)
-	var cleaned_target = _clean_text_for_comparison(current_target_sentence)
+	# Enhanced text processing pipeline like WordChallengePanel_STT
+	var processed_text = recognized_text
 	
-	var similarity = _calculate_sentence_similarity(cleaned_recognized, cleaned_target)
-	print("ReadAloudGuided: Similarity score: ", similarity)
+	# Step 1: Convert numbers to words
+	processed_text = _convert_numbers_to_words(processed_text)
 	
-	# Show feedback based on similarity
-	if similarity >= 0.7: # 70% similarity threshold for dyslexic users
+	# Step 2: Clean text (remove non-letters except spaces)
+	processed_text = _clean_text_for_words(processed_text)
+	
+	# Step 3: Apply phonetic improvements for dyslexic-friendly recognition
+	processed_text = _apply_phonetic_improvements(processed_text, current_target_sentence)
+	
+	# Step 4: Normalize for comparison
+	var recognized_normalized = processed_text.to_lower().strip_edges()
+	var target_normalized = current_target_sentence.to_lower().strip_edges()
+	
+	print("ReadAloudGuided: Enhanced processing pipeline:")
+	print("  Original: '", recognized_text, "'")
+	print("  After numbers->words: '", _convert_numbers_to_words(recognized_text), "'")
+	print("  After cleaning: '", _clean_text_for_words(_convert_numbers_to_words(recognized_text)), "'")
+	print("  After phonetic: '", processed_text, "'")
+	print("  Final normalized: '", recognized_normalized, "'")
+	print("  Target: '", target_normalized, "'")
+	
+	# Enhanced similarity calculation for sentences
+	var similarity = _calculate_enhanced_sentence_similarity(recognized_normalized, target_normalized)
+	print("ReadAloudGuided: Enhanced similarity score: ", similarity)
+	
+	# More forgiving thresholds for dyslexic learners
+	if similarity >= 0.8: # 80% similarity - excellent match
 		_show_success_feedback(recognized_text)
-	elif similarity >= 0.5: # 50% similarity - encourage and show target
+	elif similarity >= 0.65: # 65% similarity - good attempt, encourage
 		_show_encouragement_feedback(recognized_text, current_target_sentence)
+	elif similarity >= 0.4: # 40% similarity - partial match, guide them
+		_show_partial_match_feedback(recognized_text, current_target_sentence)
 	else:
 		_show_try_again_feedback(recognized_text, current_target_sentence)
 
-func _clean_text_for_comparison(text: String) -> String:
-	"""Clean text for comparison"""
-	return text.to_lower().strip_edges().replace(".", "").replace(",", "").replace("!", "").replace("?", "")
+func _convert_numbers_to_words(text: String) -> String:
+	"""Convert numbers to words for better speech recognition matching"""
+	var number_map = {
+		"0": "zero", "1": "one", "2": "two", "3": "three", "4": "four",
+		"5": "five", "6": "six", "7": "seven", "8": "eight", "9": "nine",
+		"10": "ten", "11": "eleven", "12": "twelve", "13": "thirteen", "14": "fourteen",
+		"15": "fifteen", "16": "sixteen", "17": "seventeen", "18": "eighteen", "19": "nineteen",
+		"20": "twenty", "30": "thirty", "40": "forty", "50": "fifty"
+	}
+	
+	var result = text
+	for num in number_map.keys():
+		result = result.replace(num, number_map[num])
+	
+	return result
 
-func _calculate_sentence_similarity(text1: String, text2: String) -> float:
-	"""Calculate similarity between two sentences"""
+func _clean_text_for_words(text: String) -> String:
+	"""Clean text and keep only letters and spaces"""
+	var regex = RegEx.new()
+	regex.compile("[^a-zA-Z ]")
+	var cleaned = regex.sub(text, "", true)
+	
+	# Normalize multiple spaces to single space
+	var space_regex = RegEx.new()
+	space_regex.compile("[ ]+")
+	cleaned = space_regex.sub(cleaned, " ", true)
+	
+	return cleaned.strip_edges()
+
+func _apply_phonetic_improvements(recognized_text: String, target_sentence: String) -> String:
+	"""Apply phonetic improvements for dyslexic-friendly recognition"""
+	if recognized_text.is_empty() or target_sentence.is_empty():
+		return recognized_text
+	
+	var target_lower = target_sentence.to_lower().strip_edges()
+	var recognized_lower = recognized_text.to_lower().strip_edges()
+	
+	# Enhanced phonetic substitutions for better STT accuracy
+	var phonetic_substitutions = {
+		# Common STT misunderstandings
+		"to": "two", "too": "two", "for": "four", "fore": "four", "ate": "eight",
+		"won": "one", "sun": "son", "no": "know", "there": "their", "where": "wear",
+		"right": "write", "night": "knight", "sea": "see", "be": "bee",
+		# Dyslexic common confusions
+		"was": "saw", "now": "won", "tap": "pat", "top": "pot", "god": "dog",
+		"net": "ten", "rats": "star", "ward": "draw", "evil": "live"
+	}
+	
+	# Split into words and apply substitutions
+	var words = recognized_lower.split(" ")
+	var improved_words = []
+	
+	for word in words:
+		word = word.strip_edges()
+		if word in phonetic_substitutions:
+			# Check if the substitution makes sense in context
+			var substituted = phonetic_substitutions[word]
+			if target_lower.contains(substituted):
+				improved_words.append(substituted)
+			else:
+				improved_words.append(word)
+		else:
+			improved_words.append(word)
+	
+	return " ".join(improved_words)
+
+func _calculate_enhanced_sentence_similarity(text1: String, text2: String) -> float:
+	"""Calculate enhanced similarity between two sentences with word order flexibility"""
 	var words1 = text1.split(" ")
 	var words2 = text2.split(" ")
-	
-	var matches = 0
-	for word1 in words1:
-		if word1 in words2:
-			matches += 1
 	
 	if words2.size() == 0:
 		return 0.0
 	
-	return float(matches) / float(words2.size())
+	var matches = 0
+	var partial_matches = 0
+	
+	# Count exact word matches
+	for word1 in words1:
+		if word1 in words2:
+			matches += 1
+		else:
+			# Check for partial/phonetic matches
+			for word2 in words2:
+				if _is_phonetic_match(word1, word2):
+					partial_matches += 1
+					break
+	
+	# Calculate similarity with partial match bonus
+	var exact_score = float(matches) / float(words2.size())
+	var partial_score = float(partial_matches) / float(words2.size()) * 0.7 # Partial matches worth 70%
+	
+	return min(exact_score + partial_score, 1.0)
+
+func _is_phonetic_match(word1: String, word2: String) -> bool:
+	"""Check if two words are phonetically similar"""
+	if word1 == word2:
+		return true
+	
+	# Calculate Levenshtein distance for similarity
+	var distance = levenshtein_distance(word1, word2)
+	var max_length = max(word1.length(), word2.length())
+	var similarity = 1.0 - (float(distance) / max_length) if max_length > 0 else 0.0
+	
+	# More lenient threshold for phonetic matching (75% similarity)
+	return similarity >= 0.75
+
+func levenshtein_distance(s1: String, s2: String) -> int:
+	"""Calculate Levenshtein distance between two strings"""
+	var m = s1.length()
+	var n = s2.length()
+	
+	# Create a matrix of size (m+1) x (n+1)
+	var d = []
+	for i in range(m + 1):
+		d.append([])
+		for j in range(n + 1):
+			d[i].append(0)
+	
+	# Initialize the first row and column
+	for i in range(m + 1):
+		d[i][0] = i
+	for j in range(n + 1):
+		d[0][j] = j
+	
+	# Fill the matrix
+	for j in range(1, n + 1):
+		for i in range(1, m + 1):
+			var cost = 0 if s1[i - 1] == s2[j - 1] else 1
+			d[i][j] = min(
+				d[i - 1][j] + 1, # deletion
+				min(d[i][j - 1] + 1, # insertion
+				d[i - 1][j - 1] + cost) # substitution
+			)
+	
+	return d[m][n]
+
 
 func _show_success_feedback(recognized_text: String):
 	"""Show success feedback"""
+	print("ReadAloudGuided: Success! Moving to next sentence.")
 	var feedback_panel = get_node_or_null("STTFeedbackPanel")
 	if feedback_panel:
 		var feedback_label = feedback_panel.get_node("FeedbackLabel")
@@ -429,6 +732,7 @@ func _show_success_feedback(recognized_text: String):
 
 func _show_encouragement_feedback(recognized_text: String, target_text: String):
 	"""Show encouragement feedback"""
+	print("ReadAloudGuided: Close match, encouraging user to try again.")
 	var feedback_panel = get_node_or_null("STTFeedbackPanel")
 	if feedback_panel:
 		var feedback_label = feedback_panel.get_node("FeedbackLabel")
@@ -443,14 +747,32 @@ func _show_encouragement_feedback(recognized_text: String, target_text: String):
 		speak_button.text = "Speak"
 		speak_button.disabled = false
 
+func _show_partial_match_feedback(_recognized_text: String, target_text: String):
+	"""Show partial match feedback - new function for moderate similarity"""
+	print("ReadAloudGuided: Partial match, providing guidance.")
+	var feedback_panel = get_node_or_null("STTFeedbackPanel")
+	if feedback_panel:
+		var feedback_label = feedback_panel.get_node("FeedbackLabel")
+		if feedback_label:
+			feedback_label.text = "Good try! Let's practice:\n\"" + target_text + "\"\nKeep trying!"
+			feedback_label.modulate = Color.ORANGE
+		feedback_panel.visible = true
+	
+	# Reset button state for retry
+	var speak_button = $MainContainer/ControlsContainer/SpeakButton
+	if speak_button:
+		speak_button.text = "Speak"
+		speak_button.disabled = false
+
 func _show_try_again_feedback(_recognized_text: String, target_text: String):
 	"""Show try again feedback"""
+	print("ReadAloudGuided: Low similarity, asking user to try again.")
 	var feedback_panel = get_node_or_null("STTFeedbackPanel")
 	if feedback_panel:
 		var feedback_label = feedback_panel.get_node("FeedbackLabel")
 		if feedback_label:
 			feedback_label.text = "Let's try again:\n\"" + target_text + "\""
-			feedback_label.modulate = Color.ORANGE
+			feedback_label.modulate = Color.LIGHT_CORAL
 		feedback_panel.visible = true
 	
 	# Reset button state for retry
