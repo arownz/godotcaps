@@ -36,8 +36,8 @@ anchor_bottom = 1.0
 custom_minimum_size = Vector2(400, 300)
 layout_mode = 2
 texture = ExtResource("2_3id8v")
-region_rect = Rect2(20.7003, 0, 65.1658, 20.6818)
-patch_margin_top = 19
+region_rect = Rect2(20.7003, 0, 79.7997, 21.5)
+patch_margin_top = 23
 patch_margin_bottom = 474
 
 [node name="MainContainer" type="VBoxContainer" parent="PopupContainer/CenterContainer/PopupBackground"]

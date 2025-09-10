@@ -1,4 +1,4 @@
-[gd_scene load_steps=88 format=3 uid="uid://e6bec84rrthm"]
+[gd_scene load_steps=85 format=3 uid="uid://e6bec84rrthm"]
 
 [ext_resource type="Texture2D" uid="uid://bs7axy8rkm4ei" path="res://Sprites/Frame Sprites/Lexia.png" id="1_0riqc"]
 [ext_resource type="AudioStream" uid="uid://dmsn7fibj384u" path="res://audio/player/sword slash.ogg" id="2_81ctd"]
@@ -221,18 +221,6 @@ region = Rect2(328, 0, 82, 82)
 [sub_resource type="AtlasTexture" id="AtlasTexture_7shuu"]
 atlas = ExtResource("1_0riqc")
 region = Rect2(410, 0, 82, 82)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_tfrlm"]
-atlas = ExtResource("2_sj52a")
-region = Rect2(0, 23, 824, 48)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_qj6ke"]
-atlas = ExtResource("2_sj52a")
-region = Rect2(824, 23, 824, 48)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_u4squ"]
-atlas = ExtResource("2_sj52a")
-region = Rect2(1648, 23, 824, 48)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_bvcky"]
 atlas = ExtResource("2_sj52a")
@@ -538,15 +526,6 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_tfrlm")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_qj6ke")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_u4squ")
-}, {
-"duration": 1.0,
 "texture": SubResource("AtlasTexture_bvcky")
 }, {
 "duration": 1.0,
@@ -632,9 +611,10 @@ animations = [{
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_fdt5l")
-animation = &"new_counter"
+animation = &"counter"
 autoplay = "idle"
-frame_progress = 0.496381
+frame = 18
+frame_progress = 1.0
 
 [node name="sfx_autoattack_swordslash" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_0var5")

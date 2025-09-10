@@ -2,6 +2,7 @@ extends Control
 
 # Core systems
 var tts: TextToSpeech = null
+var tts_speaking = false # Track TTS speaking state manually
 var module_progress = null
 var current_passage_index: int = 0
 var is_reading: bool = false
@@ -9,13 +10,36 @@ var current_sentence_index: int = 0
 var reading_speed: float = 150.0 # words per minute
 var completed_activities: Array = [] # Track completed guided reading activities
 
-# STT functionality
+# STT functionality - Enhanced from WordChallengePanel_STT.gd
 var recognition_active = false
 var mic_permission_granted = false
 var permission_check_complete = false
 var current_target_sentence = ""
 var stt_feedback_active = false
 var stt_listening = false
+var live_transcription_enabled = false
+var current_interim_result = ""
+var debounce_timer = null
+
+# Enhanced debouncing for similar-sounding words
+var last_interim_result = ""
+var interim_change_count = 0
+var last_change_time = 0
+
+# Flag to track if result panel is already showing
+var result_panel_active = false
+
+# Flag to track if result is being processed
+var result_being_processed = false
+
+# Live word highlighting for STT feedback
+var highlighted_words = []
+var current_spoken_words = []
+var sentence_words = []
+
+# TTS timer fallback
+var use_timer_fallback_for_tts = false
+var tts_timer: Timer = null
 
 # Guided Reading Passages - dyslexia-friendly with structured guidance
 var passages = [
@@ -148,6 +172,26 @@ func _init_tts():
 		tts.set_rate(rate)
 	else:
 		tts.set_rate(0.8) # Slightly slower for dyslexic learners
+	
+	# Connect TTS finished signal for guided reading flow
+	if tts:
+		# Check what signals are available and connect the appropriate one
+		if tts.has_signal("utterance_finished"):
+			tts.utterance_finished.connect(_on_tts_finished)
+		elif tts.has_signal("finished"):
+			tts.finished.connect(_on_tts_finished)
+		elif tts.has_signal("speaking_finished"):
+			tts.speaking_finished.connect(_on_tts_finished)
+		else:
+			print("ReadAloudGuided: No suitable TTS finished signal found")
+			# Use a timer fallback approach
+			use_timer_fallback_for_tts = true
+			
+			# Create timer for TTS fallback
+			tts_timer = Timer.new()
+			tts_timer.one_shot = true
+			add_child(tts_timer)
+			tts_timer.timeout.connect(_on_tts_finished)
 
 func _init_module_progress():
 	if Firebase and Firebase.Auth and Firebase.Auth.auth:
@@ -179,219 +223,243 @@ func _setup_speech_recognition():
 		call_deferred("_check_and_wait_for_permissions")
 
 func _process(_delta):
-	"""Check for speech recognition results - Enhanced polling like WordChallengePanel_STT"""
+	"""Check for speech recognition results - Enhanced polling for continuous listening"""
 	if stt_listening and OS.get_name() == "Web" and JavaScriptBridge.has_method("eval"):
-		# Check for recognition results
-		var result_json = JavaScriptBridge.eval("getGuidedResult();")
-		if result_json != null and result_json != "" and result_json != "null":
-			var json = JSON.new()
-			var parse_result = json.parse(result_json)
-			
-			if parse_result == OK:
-				var result_data = json.data
-				print("ReadAloudGuided: Got STT result: ", result_data)
-				
-				if result_data.has("type"):
-					if result_data.type == "result" and result_data.has("text"):
-						var text = result_data.text
-						if text and text.length() > 0:
-							print("ReadAloudGuided: Processing speech result: ", text)
-							stt_listening = false
-							_handle_stt_result(text, 0.8) # Default confidence
-					elif result_data.type == "error" and result_data.has("error"):
-						var error = result_data.error
-						print("ReadAloudGuided: Speech recognition error: ", error)
-						stt_listening = false
-						_handle_stt_error(error)
+		# Check for interim results with improved polling for continuous listening
+		var interim_js = """
+		(function() {
+			if (window.guidedInterimResult) {
+				var result = window.guidedInterimResult;
+				window.guidedInterimResult = '';
+				return result;
+			}
+			return '';
+		})();
+		"""
+		var interim_result = JavaScriptBridge.eval(interim_js)
+		if interim_result != null and str(interim_result) != "null" and str(interim_result) != "":
+			var text_str = str(interim_result).strip_edges()
+			if text_str != "":
+				_process_interim_transcription(text_str)
 		
-		# Also check for interim results for live feedback (optional)
-		var interim_result = JavaScriptBridge.eval("getGuidedInterimResult();")
-		if interim_result != null and interim_result != "" and interim_result != "null":
-			# Show interim feedback (optional live transcription)
-			var interim_text = str(interim_result).strip_edges()
-			if interim_text.length() > 0 and interim_text != current_target_sentence:
-				# Could show live transcription here if desired
-				pass
+		# Check for final results with enhanced handling
+		var final_js = """
+		(function() {
+			if (window.guidedFinalResult) {
+				var result = window.guidedFinalResult;
+				window.guidedFinalResult = '';
+				return result;
+			}
+			return '';
+		})();
+		"""
+		var final_result = JavaScriptBridge.eval(final_js)
+		if final_result != null and str(final_result) != "null" and str(final_result) != "":
+			var text_str = str(final_result).strip_edges()
+			if text_str != "" and not result_being_processed:
+				print("ReadAloudGuided: Final result received: ", text_str)
+				_process_speech_result(text_str, 1.0)
 
 func _initialize_web_audio_environment():
 	"""Initialize JavaScript environment for web audio - FIXED ENGINE DETECTION"""
 	if JavaScriptBridge.has_method("eval"):
 		var js_code = """
-		// Global speech recognition variables
-		window.guidedRecognition = null;
-		window.guidedRecognitionActive = false;
-		window.guidedPermissionGranted = false;
-		window.guidedPermissionChecked = false;
-		window.guidedFinalResult = '';
-		window.guidedInterimResult = '';
-		window.guidedResult = null;
-		
-		// Permission check function
-		function checkGuidedPermissions() {
-			if (navigator.permissions) {
-				navigator.permissions.query({name: 'microphone'}).then(function(result) {
-					window.guidedPermissionGranted = (result.state === 'granted');
-					window.guidedPermissionChecked = true;
-					console.log('ReadAloudGuided: Permission state:', result.state);
-				}).catch(function(error) {
-					console.log('ReadAloudGuided: Permission check failed:', error);
-					window.guidedPermissionChecked = true;
-				});
-			} else {
-				// Fallback for browsers without permission API
-				window.guidedPermissionChecked = true;
-			}
-		}
-		
-		// Request microphone permission
-		function requestGuidedMicPermission() {
-			return navigator.mediaDevices.getUserMedia({ audio: true })
-				.then(function(stream) {
-					window.guidedPermissionGranted = true;
-					stream.getTracks().forEach(track => track.stop()); // Clean up
-					return true;
-				})
-				.catch(function(error) {
-					console.log('ReadAloudGuided: Permission denied:', error);
-					window.guidedPermissionGranted = false;
-					return false;
-				});
-		}
-		
-		// Initialize speech recognition
-		function initGuidedSpeechRecognition() {
-			try {
-				if ('webkitSpeechRecognition' in window) {
-					window.guidedRecognition = new webkitSpeechRecognition();
-				} else if ('SpeechRecognition' in window) {
-					window.guidedRecognition = new SpeechRecognition();
+		// Check if functions already exist to avoid redefinition
+		if (typeof window.guidedRecognition === 'undefined') {
+			// Global speech recognition variables
+			window.guidedRecognition = null;
+			window.guidedRecognitionActive = false;
+			window.guidedPermissionGranted = false;
+			window.guidedPermissionChecked = false;
+			window.guidedFinalResult = '';
+			window.guidedInterimResult = '';
+			window.guidedResult = null;
+			
+			// Permission check function
+			window.checkGuidedPermissions = function() {
+				if (navigator.permissions) {
+					navigator.permissions.query({name: 'microphone'}).then(function(result) {
+						window.guidedPermissionGranted = (result.state === 'granted');
+						window.guidedPermissionChecked = true;
+						console.log('ReadAloudGuided: Permission state:', result.state);
+					}).catch(function(error) {
+						console.log('ReadAloudGuided: Permission check failed:', error);
+						window.guidedPermissionChecked = true;
+					});
 				} else {
-					console.log('ReadAloudGuided: Speech recognition not supported');
-					return false;
+					// Fallback for browsers without permission API
+					window.guidedPermissionChecked = true;
 				}
-				
-				var recognition = window.guidedRecognition;
-				recognition.continuous = false;
-				recognition.interimResults = true;
-				recognition.lang = 'en-US';
-				recognition.maxAlternatives = 1;
-				
-				recognition.onstart = function() {
-					console.log('ReadAloudGuided: Recognition started');
-					window.guidedRecognitionActive = true;
-					window.guidedFinalResult = '';
-					window.guidedInterimResult = '';
-				};
-				
-				recognition.onresult = function(event) {
-					var finalTranscript = '';
-					var interimTranscript = '';
-					
-					for (var i = event.resultIndex; i < event.results.length; i++) {
-						var transcript = event.results[i][0].transcript;
-						if (event.results[i].isFinal) {
-							finalTranscript += transcript;
-						} else {
-							interimTranscript += transcript;
-						}
+			};
+			
+			// Request microphone permission
+			window.requestGuidedMicPermission = function() {
+				return navigator.mediaDevices.getUserMedia({ audio: true })
+					.then(function(stream) {
+						window.guidedPermissionGranted = true;
+						stream.getTracks().forEach(track => track.stop()); // Clean up
+						return true;
+					})
+					.catch(function(error) {
+						console.log('ReadAloudGuided: Permission denied:', error);
+						window.guidedPermissionGranted = false;
+						return false;
+					});
+			};
+			
+			// Initialize speech recognition
+			window.initGuidedSpeechRecognition = function() {
+				try {
+					if ('webkitSpeechRecognition' in window) {
+						window.guidedRecognition = new webkitSpeechRecognition();
+					} else if ('SpeechRecognition' in window) {
+						window.guidedRecognition = new SpeechRecognition();
+					} else {
+						console.log('ReadAloudGuided: Speech recognition not supported');
+						return false;
 					}
 					
-					window.guidedFinalResult = finalTranscript;
-					window.guidedInterimResult = interimTranscript;
+					var recognition = window.guidedRecognition;
+					recognition.continuous = true; // Enable continuous recognition for dyslexic users
+					recognition.interimResults = true;
+					recognition.lang = 'en-US';
+					recognition.maxAlternatives = 1;
 					
-					console.log('ReadAloudGuided: Final:', finalTranscript, 'Interim:', interimTranscript);
-				};
-				
-				recognition.onerror = function(event) {
-					console.log('ReadAloudGuided: Recognition error:', event.error);
-					window.guidedRecognitionActive = false;
-					
-					// Store error result
-					window.guidedResult = {
-						type: 'error',
-						error: event.error,
-						timestamp: Date.now()
+					recognition.onstart = function() {
+						console.log('ReadAloudGuided: Recognition started');
+						window.guidedRecognitionActive = true;
+						window.guidedFinalResult = '';
+						window.guidedInterimResult = '';
 					};
-				};
-				
-				recognition.onend = function() {
-					console.log('ReadAloudGuided: Recognition ended');
-					window.guidedRecognitionActive = false;
 					
-					// Store final result if we have one
-					if (window.guidedFinalResult && window.guidedFinalResult.trim() !== '') {
+					recognition.onresult = function(event) {
+						var finalTranscript = '';
+						var interimTranscript = '';
+						
+						for (var i = event.resultIndex; i < event.results.length; i++) {
+							var transcript = event.results[i][0].transcript;
+							if (event.results[i].isFinal) {
+								finalTranscript += transcript;
+							} else {
+								interimTranscript += transcript;
+							}
+						}
+						
+						window.guidedFinalResult = finalTranscript;
+						window.guidedInterimResult = interimTranscript;
+						
+						console.log('ReadAloudGuided: Final:', finalTranscript, 'Interim:', interimTranscript);
+					};
+					
+					recognition.onerror = function(event) {
+						console.log('ReadAloudGuided: Recognition error:', event.error);
+						window.guidedRecognitionActive = false;
+						
+						// Store error result
 						window.guidedResult = {
-							type: 'result',
-							text: window.guidedFinalResult.trim(),
+							type: 'error',
+							error: event.error,
 							timestamp: Date.now()
 						};
-					}
-				};
-				
-				return true;
-			} catch (error) {
-				console.log('ReadAloudGuided: Failed to initialize recognition:', error);
-				return false;
-			}
-		}
-		
-		// Start recognition
-		function startGuidedRecognition() {
-			if (!window.guidedRecognition) {
-				console.log('ReadAloudGuided: Recognition not initialized');
-				return false;
-			}
-			
-			if (window.guidedRecognitionActive) {
-				console.log('ReadAloudGuided: Recognition already active');
-				return false;
-			}
-			
-			try {
-				window.guidedResult = null; // Clear previous result
-				window.guidedRecognition.start();
-				return true;
-			} catch (error) {
-				console.log('ReadAloudGuided: Failed to start recognition:', error);
-				return false;
-			}
-		}
-		
-		// Stop recognition
-		function stopGuidedRecognition() {
-			if (window.guidedRecognition && window.guidedRecognitionActive) {
-				try {
-					window.guidedRecognition.stop();
+					};
+					
+					recognition.onend = function() {
+						console.log('ReadAloudGuided: Recognition ended');
+						window.guidedRecognitionActive = false;
+						
+						// Store final result if we have one
+						if (window.guidedFinalResult && window.guidedFinalResult.trim() !== '') {
+							window.guidedResult = {
+								type: 'result',
+								text: window.guidedFinalResult.trim(),
+								timestamp: Date.now()
+							};
+						}
+						
+						// Auto-restart for continuous listening if still active
+						if (window.guidedContinuousMode && !window.guidedStopRequested) {
+							console.log('ReadAloudGuided: Auto-restarting recognition for continuous mode');
+							setTimeout(function() {
+								try {
+									window.guidedRecognition.start();
+								} catch (error) {
+									console.log('ReadAloudGuided: Failed to auto-restart:', error);
+								}
+							}, 100);
+						}
+					};
+					
+					return true;
 				} catch (error) {
-					console.log('ReadAloudGuided: Error stopping recognition:', error);
+					console.log('ReadAloudGuided: Failed to initialize recognition:', error);
+					return false;
 				}
-			}
+			};
+			
+			// Start recognition
+			window.startGuidedRecognition = function() {
+				if (!window.guidedRecognition) {
+					console.log('ReadAloudGuided: Recognition not initialized');
+					return false;
+				}
+				
+				if (window.guidedRecognitionActive) {
+					console.log('ReadAloudGuided: Recognition already active');
+					return false;
+				}
+				
+				try {
+					window.guidedResult = null; // Clear previous result
+					window.guidedContinuousMode = true; // Enable continuous mode for dyslexic users
+					window.guidedStopRequested = false; // Reset stop flag
+					window.guidedRecognition.start();
+					return true;
+				} catch (error) {
+					console.log('ReadAloudGuided: Failed to start recognition:', error);
+					return false;
+				}
+			};
+			
+			// Stop recognition
+			window.stopGuidedRecognition = function() {
+				window.guidedStopRequested = true; // Prevent auto-restart
+				window.guidedContinuousMode = false; // Disable continuous mode
+				if (window.guidedRecognition && window.guidedRecognitionActive) {
+					try {
+						window.guidedRecognition.stop();
+					} catch (error) {
+						console.log('ReadAloudGuided: Error stopping recognition:', error);
+					}
+				}
+			};
+			
+			// Get recognition result
+			window.getGuidedResult = function() {
+				if (window.guidedResult) {
+					var result = window.guidedResult;
+					window.guidedResult = null; // Clear after reading
+					return JSON.stringify(result);
+				}
+				return null;
+			};
+			
+			// Get interim result for live feedback
+			window.getGuidedInterimResult = function() {
+				return window.guidedInterimResult || '';
+			};
+			
+			// Check if recognition is active
+			window.isGuidedRecognitionActive = function() {
+				return window.guidedRecognitionActive || false;
+			};
+			
+			// Initialize everything
+			window.checkGuidedPermissions();
+			var initResult = window.initGuidedSpeechRecognition();
+			console.log('ReadAloudGuided: Initialization complete:', initResult);
+		} else {
+			console.log('ReadAloudGuided: JavaScript functions already initialized');
 		}
-		
-		// Get recognition result
-		function getGuidedResult() {
-			if (window.guidedResult) {
-				var result = window.guidedResult;
-				window.guidedResult = null; // Clear after reading
-				return JSON.stringify(result);
-			}
-			return null;
-		}
-		
-		// Get interim result for live feedback
-		function getGuidedInterimResult() {
-			return window.guidedInterimResult || '';
-		}
-		
-		// Check if recognition is active
-		function isGuidedRecognitionActive() {
-			return window.guidedRecognitionActive || false;
-		}
-		
-		// Initialize everything
-		checkGuidedPermissions();
-		var initResult = initGuidedSpeechRecognition();
-		console.log('ReadAloudGuided: Initialization complete:', initResult);
 		"""
 		
 		JavaScriptBridge.eval(js_code)
@@ -405,16 +473,19 @@ func _check_and_wait_for_permissions():
 	if JavaScriptBridge.has_method("eval"):
 		var js_code = """
 		(function() {
-			checkGuidedPermissions();
-			
-			// Wait for permission check to complete
-			var checkInterval = setInterval(function() {
-				if (window.guidedPermissionChecked) {
-					clearInterval(checkInterval);
-					// Use a more direct approach to communicate with Godot
-					console.log('ReadAloudGuided: Permission granted:', window.guidedPermissionGranted);
-				}
-			}, 50);
+			if (typeof window.checkGuidedPermissions === 'function') {
+				window.checkGuidedPermissions();
+				
+				// Wait for permission check to complete
+				var checkInterval = setInterval(function() {
+					if (window.guidedPermissionChecked) {
+						clearInterval(checkInterval);
+						console.log('ReadAloudGuided: Permission granted:', window.guidedPermissionGranted);
+					}
+				}, 50);
+			} else {
+				console.log('ReadAloudGuided: checkGuidedPermissions function not available');
+			}
 		})();
 		"""
 		JavaScriptBridge.eval(js_code)
@@ -457,7 +528,7 @@ func _start_speech_recognition():
 	
 	if OS.get_name() == "Web":
 		if JavaScriptBridge.has_method("eval"):
-			var result = JavaScriptBridge.eval("startGuidedRecognition();")
+			var result = JavaScriptBridge.eval("window.startGuidedRecognition && window.startGuidedRecognition()")
 			if result:
 				recognition_active = true
 				stt_listening = true
@@ -472,7 +543,8 @@ func _start_speech_recognition():
 func _stop_speech_recognition():
 	"""Stop speech recognition"""
 	if OS.get_name() == "Web":
-		JavaScriptBridge.eval("stopGuidedRecognition();")
+		if JavaScriptBridge.has_method("eval"):
+			JavaScriptBridge.eval("window.stopGuidedRecognition && window.stopGuidedRecognition()")
 	recognition_active = false
 	stt_listening = false
 	_update_listen_button()
@@ -485,11 +557,16 @@ func _request_microphone_permission():
 	if JavaScriptBridge.has_method("eval"):
 		var request_js = """
 		(function() {
-			requestGuidedMicPermission().then(function(granted) {
-				window.guidedPermissionGranted = granted;
+			if (typeof window.requestGuidedMicPermission === 'function') {
+				window.requestGuidedMicPermission().then(function(granted) {
+					window.guidedPermissionGranted = granted;
+					window.guidedPermissionChecked = true;
+					console.log('ReadAloudGuided: Permission request result:', granted);
+				});
+			} else {
+				console.log('ReadAloudGuided: requestGuidedMicPermission function not available');
 				window.guidedPermissionChecked = true;
-				console.log('ReadAloudGuided: Permission request result:', granted);
-			});
+			}
 		})();
 		"""
 		JavaScriptBridge.eval(request_js)
@@ -527,6 +604,13 @@ func recognition_ended_callback():
 
 func _process_speech_result(recognized_text: String, confidence: float):
 	"""Process speech recognition result and compare with target sentence - Enhanced for dyslexic users"""
+	
+	# Prevent double processing during continuous listening
+	if result_being_processed:
+		print("ReadAloudGuided: Result already being processed, skipping...")
+		return
+	
+	result_being_processed = true
 	print("ReadAloudGuided: Recognized: '", recognized_text, "' (confidence: ", confidence, ")")
 	print("ReadAloudGuided: Target: '", current_target_sentence, "'")
 	
@@ -567,6 +651,9 @@ func _process_speech_result(recognized_text: String, confidence: float):
 		_show_partial_match_feedback(recognized_text, current_target_sentence)
 	else:
 		_show_try_again_feedback(recognized_text, current_target_sentence)
+	
+	# Reset processing flag for continuous listening
+	result_being_processed = false
 
 func _convert_numbers_to_words(text: String) -> String:
 	"""Convert numbers to words for better speech recognition matching"""
@@ -598,69 +685,196 @@ func _clean_text_for_words(text: String) -> String:
 	return cleaned.strip_edges()
 
 func _apply_phonetic_improvements(recognized_text: String, target_sentence: String) -> String:
-	"""Apply phonetic improvements for dyslexic-friendly recognition"""
+	"""Apply enhanced phonetic improvements for dyslexic-friendly STT recognition"""
 	if recognized_text.is_empty() or target_sentence.is_empty():
 		return recognized_text
 	
 	var target_lower = target_sentence.to_lower().strip_edges()
 	var recognized_lower = recognized_text.to_lower().strip_edges()
 	
-	# Enhanced phonetic substitutions for better STT accuracy
+	# ENHANCED phonetic substitutions for STT mistakes and dyslexic users
 	var phonetic_substitutions = {
-		# Common STT misunderstandings
+		# Common STT confusions
 		"to": "two", "too": "two", "for": "four", "fore": "four", "ate": "eight",
-		"won": "one", "sun": "son", "no": "know", "there": "their", "where": "wear",
+		"one": "won", "sun": "son", "no": "know", "there": "their", "wear": "where",
 		"right": "write", "night": "knight", "sea": "see", "be": "bee",
-		# Dyslexic common confusions
-		"was": "saw", "now": "won", "tap": "pat", "top": "pot", "god": "dog",
-		"net": "ten", "rats": "star", "ward": "draw", "evil": "live"
+		
+		# STT system mistakes that disadvantage dyslexic users
+		"cut": "cat", "cap": "cat", "bat": "cat", "rat": "cat", "mat": "cat",
+		"dog": "god", "bog": "dog", "log": "dog", "fog": "dog",
+		"saw": "was", "now": "won", "tap": "pat", "top": "pot", "pit": "tip", "net": "ten",
+		
+		# Dyslexic common letter reversals and confusions
+		"left": "felt", "felt": "left", "form": "from", "from": "form",
+		"trail": "trial", "trial": "trail", "unite": "untie", "untie": "unite",
+		
+		# Common sight word confusions
+		"them": "then", "then": "them", "were": "where", "what": "want", "want": "what",
+		"with": "wish", "wish": "with",
+		
+		# Phonetically similar words that STT often confuses
+		"red": "read", "read": "red", "call": "ball", "play": "pray", "pray": "play",
+		"happy": "happen", "happen": "happy", "garden": "guardian", "planted": "plant",
+		"watered": "water", "yellow": "fellow", "school": "cool", "morning": "mourning"
 	}
 	
-	# Split into words and apply substitutions
-	var words = recognized_lower.split(" ")
+	# Enhanced bidirectional substitution system
+	var target_words = target_lower.split(" ")
+	var recognized_words = recognized_lower.split(" ")
 	var improved_words = []
 	
-	for word in words:
-		word = word.strip_edges()
-		if word in phonetic_substitutions:
-			# Check if the substitution makes sense in context
-			var substituted = phonetic_substitutions[word]
-			if target_lower.contains(substituted):
-				improved_words.append(substituted)
-			else:
-				improved_words.append(word)
-		else:
-			improved_words.append(word)
+	for rec_word in recognized_words:
+		rec_word = rec_word.strip_edges()
+		var best_match = rec_word
+		var best_similarity = 0.0
+		
+		# First check direct phonetic substitutions
+		if rec_word in phonetic_substitutions:
+			var substituted = phonetic_substitutions[rec_word]
+			for target_word in target_words:
+				if target_word == substituted:
+					best_match = substituted
+					best_similarity = 1.0
+					break
+		
+		# If no direct substitution found, check similarity with target words
+		if best_similarity < 1.0:
+			for target_word in target_words:
+				# Calculate phonetic similarity
+				var similarity = _calculate_word_phonetic_similarity(rec_word, target_word)
+				if similarity > best_similarity and similarity >= 0.6: # 60% threshold for STT tolerance
+					best_match = target_word
+					best_similarity = similarity
+		
+		improved_words.append(best_match)
+		
+		if best_match != rec_word:
+			print("ReadAloudGuided: STT Correction - '", rec_word, "' -> '", best_match, "' (similarity: ", best_similarity, ")")
 	
 	return " ".join(improved_words)
 
+func _calculate_word_phonetic_similarity(word1: String, word2: String) -> float:
+	"""Calculate enhanced phonetic similarity for STT tolerance"""
+	if word1 == word2:
+		return 1.0
+	
+	# Phonetic transformations for better matching
+	var phonetic1 = _apply_phonetic_normalization(word1)
+	var phonetic2 = _apply_phonetic_normalization(word2)
+	
+	# Calculate Levenshtein similarity
+	var distance = levenshtein_distance(phonetic1, phonetic2)
+	var max_length = max(phonetic1.length(), phonetic2.length())
+	var base_similarity = 1.0 - (float(distance) / max_length) if max_length > 0 else 0.0
+	
+	# Bonus for similar sounds (especially helpful for dyslexic users)
+	var sound_bonus = 0.0
+	if _have_similar_sounds(word1, word2):
+		sound_bonus = 0.15 # 15% bonus for similar phonetic patterns
+	
+	# Bonus for same length (STT often preserves syllable count)
+	var length_bonus = 0.0
+	if abs(word1.length() - word2.length()) <= 1:
+		length_bonus = 0.1 # 10% bonus for similar length
+	
+	return min(base_similarity + sound_bonus + length_bonus, 1.0)
+
+func _apply_phonetic_normalization(word: String) -> String:
+	"""Apply phonetic normalization to improve matching"""
+	var normalized = word.to_lower()
+	
+	# Common sound substitutions for better STT tolerance
+	var sound_mappings = {
+		"ph": "f", "gh": "f", "ck": "k", "qu": "kw",
+		"c": "k", "x": "ks", "y": "i", "tion": "shun",
+		"sion": "shun", "ough": "uff", "augh": "aff"
+	}
+	
+	for sound in sound_mappings.keys():
+		normalized = normalized.replace(sound, sound_mappings[sound])
+	
+	return normalized
+
+func _have_similar_sounds(word1: String, word2: String) -> bool:
+	"""Check if words have similar phonetic patterns"""
+	var w1 = word1.to_lower()
+	var w2 = word2.to_lower()
+	
+	# Check for similar starting sounds
+	if w1.length() > 0 and w2.length() > 0:
+		if w1[0] == w2[0]: # Same first letter
+			return true
+	
+	# Check for similar ending sounds
+	if w1.length() > 1 and w2.length() > 1:
+		if w1.substr(w1.length() - 2) == w2.substr(w2.length() - 2): # Same last 2 letters
+			return true
+	
+	# Check for rhyming patterns (same ending sounds)
+	var common_endings = ["ing", "ed", "er", "ly", "tion", "ness", "ment"]
+	for ending in common_endings:
+		if w1.ends_with(ending) and w2.ends_with(ending):
+			return true
+	
+	return false
+
 func _calculate_enhanced_sentence_similarity(text1: String, text2: String) -> float:
-	"""Calculate enhanced similarity between two sentences with word order flexibility"""
+	"""Calculate enhanced similarity with maximum forgiveness for dyslexic learners and STT mistakes"""
 	var words1 = text1.split(" ")
 	var words2 = text2.split(" ")
 	
 	if words2.size() == 0:
 		return 0.0
 	
-	var matches = 0
+	var exact_matches = 0
+	var phonetic_matches = 0
 	var partial_matches = 0
 	
-	# Count exact word matches
+	# Enhanced matching system with multiple levels of forgiveness
 	for word1 in words1:
-		if word1 in words2:
-			matches += 1
-		else:
-			# Check for partial/phonetic matches
-			for word2 in words2:
-				if _is_phonetic_match(word1, word2):
-					partial_matches += 1
-					break
+		var best_match_score = 0.0
+		var matched = false
+		
+		for word2 in words2:
+			if word1 == word2:
+				# Perfect match
+				exact_matches += 1
+				matched = true
+				break
+			elif _is_phonetic_match(word1, word2):
+				# Strong phonetic match
+				if not matched:
+					phonetic_matches += 1
+					matched = true
+			else:
+				# Check for partial/similar match
+				var similarity = _calculate_word_phonetic_similarity(word1, word2)
+				if similarity > best_match_score:
+					best_match_score = similarity
+		
+		# Count partial matches (60%+ similarity)
+		if not matched and best_match_score >= 0.6:
+			partial_matches += 1
 	
-	# Calculate similarity with partial match bonus
-	var exact_score = float(matches) / float(words2.size())
-	var partial_score = float(partial_matches) / float(words2.size()) * 0.7 # Partial matches worth 70%
+	# Calculate weighted similarity score (very forgiving for dyslexic users)
+	var exact_score = float(exact_matches) / float(words2.size())
+	var phonetic_score = float(phonetic_matches) / float(words2.size()) * 0.85 # 85% value
+	var partial_score = float(partial_matches) / float(words2.size()) * 0.65 # 65% value
 	
-	return min(exact_score + partial_score, 1.0)
+	var total_similarity = exact_score + phonetic_score + partial_score
+	
+	# Bonus for length similarity (STT often gets word count right)
+	var length_bonus = 0.0
+	var length_ratio = min(words1.size(), words2.size()) / float(max(words1.size(), words2.size()))
+	if length_ratio >= 0.8: # 80% or more words present
+		length_bonus = 0.1 # 10% bonus
+	
+	# Final forgiveness: if user got most of the content, be very generous
+	var final_score = min(total_similarity + length_bonus, 1.0)
+	
+	print("ReadAloudGuided: Similarity breakdown - Exact:", exact_matches, " Phonetic:", phonetic_matches, " Partial:", partial_matches, " Final:", final_score)
+	
+	return final_score
 
 func _is_phonetic_match(word1: String, word2: String) -> bool:
 	"""Check if two words are phonetically similar"""
@@ -705,81 +919,254 @@ func levenshtein_distance(s1: String, s2: String) -> int:
 	
 	return d[m][n]
 
-
-func _show_success_feedback(recognized_text: String):
-	"""Show success feedback"""
-	print("ReadAloudGuided: Success! Moving to next sentence.")
-	var feedback_panel = get_node_or_null("STTFeedbackPanel")
-	if feedback_panel:
-		var feedback_label = feedback_panel.get_node("FeedbackLabel")
-		if feedback_label:
-			feedback_label.text = "Great reading! ✓\nYou said: \"" + recognized_text + "\""
-			feedback_label.modulate = Color.GREEN
-		feedback_panel.visible = true
-		
-		# Auto-hide after 2 seconds and move to next sentence
-		await get_tree().create_timer(2.0).timeout
-		feedback_panel.visible = false
-		stt_feedback_active = false
-		
-		# Reset button state and advance to next sentence
-		var speak_button = $MainContainer/ControlsContainer/SpeakButton
-		if speak_button:
-			speak_button.text = "Speak"
-			speak_button.disabled = false
-		
-		_next_guided_sentence()
-
-func _show_encouragement_feedback(recognized_text: String, target_text: String):
-	"""Show encouragement feedback"""
-	print("ReadAloudGuided: Close match, encouraging user to try again.")
-	var feedback_panel = get_node_or_null("STTFeedbackPanel")
-	if feedback_panel:
-		var feedback_label = feedback_panel.get_node("FeedbackLabel")
-		if feedback_label:
-			feedback_label.text = "Close! Try again:\n\"" + target_text + "\"\nYou said: \"" + recognized_text + "\""
-			feedback_label.modulate = Color.YELLOW
-		feedback_panel.visible = true
+# TTS finished handler for guided reading flow
+func _on_tts_finished():
+	"""Called when TTS finishes reading a sentence"""
+	print("ReadAloudGuided: TTS finished, prompting user to speak")
 	
-	# Reset button state for retry
+	# Reset TTS speaking flag
+	tts_speaking = false
+	
+	# Reset read button
+	var read_button = $MainContainer/ControlsContainer/ReadButton
+	if read_button:
+		read_button.text = "Read"
+		read_button.disabled = false
+		read_button.modulate = Color.WHITE
+	
+	# Update guide to prompt user to speak
+	var guide_display = $MainContainer/GuidePanel/MarginContainer/GuideContainer/GuideNotes
+	if guide_display:
+		guide_display.text = "Now click the 'Speak' button to repeat what I said: \"" + current_target_sentence + "\""
+		guide_display.modulate = Color.ORANGE # Make it stand out
+	
+	# Enable speak button and make it prominent
+	var speak_button = $MainContainer/ControlsContainer/SpeakButton
+	if speak_button:
+		speak_button.disabled = false
+		speak_button.modulate = Color.LIGHT_GREEN # Highlight the button
+		speak_button.text = "Speak"
+		
+	# Optional: Add a gentle audio prompt
+	await get_tree().create_timer(1.0).timeout # Short pause
+	if tts:
+		tts.speak("Now click the speak button to repeat what I said.")
+
+# Live word highlighting function
+func _update_live_word_highlighting(interim_text: String):
+	"""Update live word highlighting based on STT interim results"""
+	if current_target_sentence.is_empty():
+		return
+		
+	# Clean and process interim text
+	var processed_interim = _clean_text_for_words(interim_text.to_lower())
+	var spoken_words = processed_interim.split(" ")
+	
+	# Get target sentence words
+	sentence_words = current_target_sentence.to_lower().split(" ")
+	
+	# Clear previous highlighting
+	_clear_word_highlighting()
+	
+	# Find matching words with phonetic tolerance
+	highlighted_words.clear()
+	for spoken_word in spoken_words:
+		if spoken_word.length() < 2: # Skip very short words
+			continue
+			
+		for i in range(sentence_words.size()):
+			var target_word = sentence_words[i]
+			if _is_word_match_for_highlighting(spoken_word, target_word):
+				if i not in highlighted_words:
+					highlighted_words.append(i)
+	
+	# Apply highlighting to the passage text
+	_apply_word_highlighting()
+
+# Word matching for live highlighting (more forgiving than final matching)
+func _is_word_match_for_highlighting(spoken_word: String, target_word: String) -> bool:
+	"""Check if spoken word matches target word for live highlighting"""
+	if spoken_word == target_word:
+		return true
+		
+	# Apply phonetic improvements
+	var improved_spoken = _apply_phonetic_improvements(spoken_word, target_word)
+	if improved_spoken == target_word:
+		return true
+		
+	# Calculate similarity (more lenient for live feedback)
+	var distance = levenshtein_distance(spoken_word, target_word)
+	var max_length = max(spoken_word.length(), target_word.length())
+	var similarity = 1.0 - (float(distance) / max_length) if max_length > 0 else 0.0
+	
+	# 70% similarity for live highlighting (more forgiving)
+	return similarity >= 0.7
+
+# Apply yellow highlighting to matched words
+func _apply_word_highlighting():
+	"""Apply yellow highlighting to matched words in the passage"""
+	var text_display = $MainContainer/PassagePanel/MarginContainer/PassageContainer/PassageText
+	if not text_display or sentence_words.is_empty():
+		return
+		
+	# Build highlighted text with BBCode
+	var highlighted_text = ""
+	for i in range(sentence_words.size()):
+		var word = sentence_words[i]
+		if i in highlighted_words:
+			highlighted_text += "[bgcolor=yellow][color=black]" + word + "[/color][/bgcolor] "
+		else:
+			highlighted_text += word + " "
+	
+	# Update only the current sentence with highlighting
+	var passage = passages[current_passage_index]
+	var full_text = ""
+	
+	for j in range(passage.sentences.size()):
+		if j == current_sentence_index:
+			full_text += highlighted_text.strip_edges() + "\n\n"
+		else:
+			full_text += passage.sentences[j] + "\n\n"
+	
+	text_display.text = full_text.strip_edges()
+
+# Clear word highlighting
+func _clear_word_highlighting():
+	"""Clear all word highlighting"""
+	var text_display = $MainContainer/PassagePanel/MarginContainer/PassageContainer/PassageText
+	if text_display:
+		var passage = passages[current_passage_index]
+		text_display.text = passage.text
+
+
+func _show_success_feedback(_recognized_text: String):
+	"""Show success feedback and move to next sentence"""
+	print("ReadAloudGuided: Success! Moving to next sentence.")
+	
+	# Clear highlighting
+	_clear_word_highlighting()
+	
+	# Stop STT and reset button
+	if stt_listening:
+		_stop_speech_recognition()
+	
+	# Reset speak button
 	var speak_button = $MainContainer/ControlsContainer/SpeakButton
 	if speak_button:
 		speak_button.text = "Speak"
 		speak_button.disabled = false
+		speak_button.modulate = Color.WHITE
+	
+	# Show success message
+	var guide_display = $MainContainer/GuidePanel/MarginContainer/GuideContainer/GuideNotes
+	if guide_display:
+		guide_display.text = "Excellent! You read that perfectly! Moving to the next sentence..."
+		guide_display.modulate = Color.GREEN
+	
+	# Audio encouragement for dyslexic learners
+	if tts:
+		tts.speak("Excellent work! You read that perfectly!")
+	
+	# Wait a moment for feedback, then move to next sentence
+	await get_tree().create_timer(2.0).timeout
+	
+	# Move to next sentence or complete passage
+	_advance_to_next_sentence()
+
+func _show_encouragement_feedback(_recognized_text: String, target_text: String):
+	"""Show encouragement feedback for close matches"""
+	print("ReadAloudGuided: Close match, encouraging user to try again.")
+	
+	# Stop STT to reset state
+	if stt_listening:
+		_stop_speech_recognition()
+	
+	# Reset speak button
+	var speak_button = $MainContainer/ControlsContainer/SpeakButton
+	if speak_button:
+		speak_button.text = "Speak"
+		speak_button.disabled = false
+		speak_button.modulate = Color.WHITE
+	
+	var guide_display = $MainContainer/GuidePanel/MarginContainer/GuideContainer/GuideNotes
+	if guide_display:
+		guide_display.text = "Good try! Very close! Let's try again: \"" + target_text + "\""
+		guide_display.modulate = Color.ORANGE
+	
+	# Audio encouragement for dyslexic learners
+	if tts:
+		tts.speak("Good try! Very close! Listen again...")
+		await get_tree().create_timer(1.0).timeout
+		tts.speak(target_text)
 
 func _show_partial_match_feedback(_recognized_text: String, target_text: String):
-	"""Show partial match feedback - new function for moderate similarity"""
-	print("ReadAloudGuided: Partial match, providing guidance.")
-	var feedback_panel = get_node_or_null("STTFeedbackPanel")
-	if feedback_panel:
-		var feedback_label = feedback_panel.get_node("FeedbackLabel")
-		if feedback_label:
-			feedback_label.text = "Good try! Let's practice:\n\"" + target_text + "\"\nKeep trying!"
-			feedback_label.modulate = Color.ORANGE
-		feedback_panel.visible = true
+	"""Show partial match feedback with extra help for dyslexic learners"""
+	print("ReadAloudGuided: Partial match, providing extra guidance.")
 	
-	# Reset button state for retry
+	# Stop STT to reset state
+	if stt_listening:
+		_stop_speech_recognition()
+	
+	# Reset speak button
 	var speak_button = $MainContainer/ControlsContainer/SpeakButton
 	if speak_button:
 		speak_button.text = "Speak"
 		speak_button.disabled = false
+		speak_button.modulate = Color.WHITE
+	
+	var guide_display = $MainContainer/GuidePanel/MarginContainer/GuideContainer/GuideNotes
+	if guide_display:
+		guide_display.text = "Good effort! Let's break it down: \"" + target_text + "\""
+		guide_display.modulate = Color.CYAN
+	
+	# Break down sentence for dyslexic learners
+	if tts:
+		tts.speak("Good effort! Let me help you break it down.")
+		await get_tree().create_timer(1.0).timeout
+		
+		# Read slowly word by word
+		var words = target_text.split(" ")
+		for word in words:
+			tts.speak(word)
+			await get_tree().create_timer(0.8).timeout # Pause between words
+		
+		await get_tree().create_timer(0.5).timeout
+		tts.speak("Now try the whole sentence: " + target_text)
 
 func _show_try_again_feedback(_recognized_text: String, target_text: String):
-	"""Show try again feedback"""
-	print("ReadAloudGuided: Low similarity, asking user to try again.")
-	var feedback_panel = get_node_or_null("STTFeedbackPanel")
-	if feedback_panel:
-		var feedback_label = feedback_panel.get_node("FeedbackLabel")
-		if feedback_label:
-			feedback_label.text = "Let's try again:\n\"" + target_text + "\""
-			feedback_label.modulate = Color.LIGHT_CORAL
-		feedback_panel.visible = true
+	"""Show try again feedback with patient encouragement for dyslexic learners"""
+	print("ReadAloudGuided: Low similarity, asking user to try again with extra help.")
 	
-	# Reset button state for retry
+	# Stop STT to reset state
+	if stt_listening:
+		_stop_speech_recognition()
+	
+	# Reset speak button
 	var speak_button = $MainContainer/ControlsContainer/SpeakButton
 	if speak_button:
 		speak_button.text = "Speak"
 		speak_button.disabled = false
+		speak_button.modulate = Color.WHITE
+	
+	var guide_display = $MainContainer/GuidePanel/MarginContainer/GuideContainer/GuideNotes
+	if guide_display:
+		guide_display.text = "Let's practice together. I'll read it slowly: \"" + target_text + "\""
+		guide_display.modulate = Color.LIGHT_CORAL
+	
+	# Extra patient support for dyslexic learners
+	if tts:
+		tts.speak("That's okay! Let's practice together. I'll read it slowly for you.")
+		await get_tree().create_timer(1.5).timeout
+		
+		# Set slower rate for struggling readers
+		var original_rate = tts.get_rate()
+		tts.set_rate(0.6) # Much slower for dyslexic learners
+		tts.speak(target_text)
+		await get_tree().create_timer(2.0).timeout
+		
+		# Restore original rate
+		tts.set_rate(original_rate)
+		tts.speak("Now you try!")
 
 func _load_progress():
 	if module_progress and module_progress.is_authenticated():
@@ -823,8 +1210,22 @@ func _update_progress_display(progress_percentage: float):
 		print("ReadAloudGuided: Progress updated to ", progress_percentage, "%")
 
 func _setup_initial_display():
+	"""Setup initial display with first sentence ready for practice"""
 	_display_passage(current_passage_index)
 	_update_navigation_buttons()
+	
+	# Initialize first sentence for practice
+	if current_passage_index < passages.size():
+		var passage = passages[current_passage_index]
+		if current_sentence_index < passage.sentences.size():
+			current_target_sentence = passage.sentences[current_sentence_index]
+			_highlight_current_sentence()
+			
+			# Update guide for first sentence
+			var guide_display = $MainContainer/GuidePanel/MarginContainer/GuideContainer/GuideNotes
+			if guide_display:
+				guide_display.text = "Click 'Read' to hear the first sentence, then click 'Speak' to practice reading it yourself!"
+				guide_display.modulate = Color.CYAN
 
 func _display_passage(passage_index: int):
 	if passage_index < 0 or passage_index >= passages.size():
@@ -857,9 +1258,9 @@ func _update_navigation_buttons():
 	var next_button = $MainContainer/ControlsContainer/NextButton
 	
 	if prev_button:
-		prev_button.disabled = (current_passage_index <= 0)
+		prev_button.visible = (current_passage_index > 0)
 	if next_button:
-		next_button.disabled = (current_passage_index >= passages.size() - 1)
+		next_button.visible = (current_passage_index < passages.size() - 1)
 
 func _update_play_button_text():
 	var play_button = $MainContainer/ControlsContainer/ReadButton
@@ -887,32 +1288,24 @@ func _start_sentence_practice():
 			_show_microphone_error()
 
 func _highlight_current_sentence():
-	"""Highlight the current sentence for practice"""
+	"""Highlight the current sentence for STT practice"""
 	var passage = passages[current_passage_index]
 	var text_display = $MainContainer/PassagePanel/MarginContainer/PassageContainer/PassageText
 	
 	if text_display and current_sentence_index < passage.sentences.size():
-		text_display.clear()
+		# Build text with current sentence highlighted in light blue
+		var highlighted_text = ""
+		for i in range(passage.sentences.size()):
+			if i == current_sentence_index:
+				highlighted_text += "[bgcolor=lightblue][color=black]" + passage.sentences[i] + "[/color][/bgcolor]\n\n"
+			else:
+				highlighted_text += passage.sentences[i] + "\n\n"
 		
-		# Add sentences before current one (normal color)
-		for i in range(current_sentence_index):
-			text_display.append_text(passage.sentences[i])
-			if i < current_sentence_index - 1:
-				text_display.append_text(" ")
+		text_display.text = highlighted_text.strip_edges()
 		
-		# Add current sentence (highlighted)
-		if current_sentence_index > 0:
-			text_display.append_text(" ")
-		text_display.push_color(Color.YELLOW)
-		text_display.push_bgcolor(Color(1, 1, 0, 0.3))
-		text_display.append_text(passage.sentences[current_sentence_index])
-		text_display.pop()
-		text_display.pop()
-		
-		# Add sentences after current one (normal color)
-		for i in range(current_sentence_index + 1, passage.sentences.size()):
-			text_display.append_text(" ")
-			text_display.append_text(passage.sentences[i])
+		# Store sentence words for live highlighting
+		sentence_words = passage.sentences[current_sentence_index].to_lower().split(" ")
+		current_target_sentence = passage.sentences[current_sentence_index]
 
 func _show_microphone_error():
 	"""Show error when microphone is not available"""
@@ -946,6 +1339,7 @@ func _read_sentence_aloud():
 	var passage = passages[current_passage_index]
 	if current_sentence_index < passage.sentences.size() and tts:
 		var sentence = passage.sentences[current_sentence_index].strip_edges()
+		tts_speaking = true # Set speaking flag
 		tts.speak(sentence)
 
 func _start_guided_reading():
@@ -977,6 +1371,7 @@ func _start_guided_reading():
 		
 		# Speak the sentence
 		if tts:
+			tts_speaking = true # Set speaking flag
 			tts.speak(sentence)
 		
 		# Wait based on sentence length and reading speed
@@ -1021,6 +1416,7 @@ func _stop_guided_reading():
 	
 	if tts:
 		tts.stop()
+		tts_speaking = false # Reset speaking flag when manually stopped
 	
 	# Reset text display to normal
 	_display_passage(current_passage_index)
@@ -1127,18 +1523,59 @@ func _on_practice_complete_button_pressed():
 		_show_all_passages_completed()
 
 func _show_all_passages_completed():
-	"""Show completion message when all passages are completed"""
+	"""Show completion celebration when all passages are completed"""
+	print("ReadAloudGuided: All passages completed!")
+	
+	# Update UI to show completion
 	var title_label = $MainContainer/PassagePanel/MarginContainer/PassageContainer/PassageTitleLabel
 	var text_display = $MainContainer/PassagePanel/MarginContainer/PassageContainer/PassageText
 	var guide_display = $MainContainer/GuidePanel/MarginContainer/GuideContainer/GuideNotes
 	
 	if title_label:
 		title_label.text = "All Passages Complete!"
+	
 	if text_display:
 		text_display.clear()
-		text_display.append_text("[center][b]Congratulations![/b]\n\nYou have completed all guided reading passages![/center]")
+		text_display.append_text("[center][color=gold][b]CONGRATULATIONS![/b][/color]\n\n")
+		text_display.append_text("You have successfully completed all guided reading passages!\n\n")
+		text_display.append_text("[color=green]✓ The Friendly Cat[/color]\n")
+		text_display.append_text("[color=green]✓ The Garden Surprise[/color]\n")
+		text_display.append_text("[color=green]✓ The School Bus Adventure[/color]\n")
+		text_display.append_text("[color=green]✓ The Rainy Day Plan[/color]\n\n")
+		text_display.append_text("You're becoming an excellent reader![/center]")
+	
 	if guide_display:
-		guide_display.text = "Excellent work! You've mastered guided reading skills."
+		guide_display.text = "Amazing work! You've completed all guided reading activities. You can review any passage or return to the main menu."
+		guide_display.modulate = Color.GOLD
+	
+	# Disable navigation and reading controls
+	var read_button = $MainContainer/ControlsContainer/ReadButton
+	var speak_button = $MainContainer/ControlsContainer/SpeakButton
+	var prev_button = $MainContainer/ControlsContainer/PreviousButton
+	var next_button = $MainContainer/ControlsContainer/NextButton
+	
+	if read_button:
+		read_button.text = "Review"
+		read_button.disabled = false
+	if speak_button:
+		speak_button.disabled = true
+	if prev_button:
+		prev_button.visible = true # Allow reviewing previous passages
+	if next_button:
+		next_button.visible = false # No more passages
+	
+	# Audio celebration
+	if tts:
+		tts.speak("Congratulations! You have completed all guided reading passages! You're doing fantastic work!")
+	
+	# Update progress to 100%
+	_update_progress_display(100.0)
+	
+	# Save final completion status to Firebase
+	if module_progress and module_progress.is_authenticated():
+		var final_save = await module_progress.set_read_aloud_guided_completed("all_passages_complete")
+		if final_save:
+			print("ReadAloudGuided: Final completion status saved to Firebase")
 
 func _fade_out_and_change_scene(scene_path: String):
 	_stop_guided_reading()
@@ -1164,11 +1601,13 @@ func _update_listen_button():
 	var listen_button = get_node_or_null("MainContainer/ControlsContainer/SpeakButton")
 	if listen_button:
 		if stt_listening:
-			listen_button.text = "Listening..."
-			listen_button.disabled = true
+			listen_button.text = "Stop"
+			listen_button.disabled = false # Keep button enabled so user can stop
+			listen_button.modulate = Color.ORANGE
 		else:
 			listen_button.text = "Speak"
 			listen_button.disabled = false
+			listen_button.modulate = Color.WHITE
 
 func _handle_stt_error(error: String):
 	"""Handle speech recognition errors"""
@@ -1184,6 +1623,81 @@ func _handle_stt_error(error: String):
 		error_message = "Network error. Please check your connection and try again."
 	
 	_show_stt_feedback(error_message, Color.RED)
+
+func _process_interim_transcription(text):
+	"""Process interim speech results for live feedback during guided reading"""
+	if not live_transcription_enabled:
+		return
+	
+	print("ReadAloudGuided: Processing interim text: '", text, "'")
+	
+	# Update the last interim result for continuous listening
+	last_interim_result = text
+	
+	# Clean the text for display
+	var cleaned_text = text.strip_edges()
+	current_interim_result = cleaned_text
+	
+	# Reset debounce timer to keep recognition active longer for dyslexic users
+	_reset_debounce_timer()
+	
+	# IMPORTANT: Trigger live word highlighting for dyslexic users
+	_update_live_word_highlighting(cleaned_text)
+	
+	# Update any live transcription display if we have one
+	if has_node("VBoxContainer/LiveTranscriptionText"):
+		var live_text = get_node("VBoxContainer/LiveTranscriptionText")
+		if live_text:
+			live_text.text = "You said: " + cleaned_text
+	
+	# Optional: Check if interim result matches current sentence for real-time feedback
+	_check_interim_match(cleaned_text)
+
+func _reset_debounce_timer():
+	"""Reset the debounce timer to extend listening time for dyslexic users"""
+	if debounce_timer:
+		debounce_timer.queue_free()
+	
+	debounce_timer = Timer.new()
+	debounce_timer.wait_time = 3.0 # Extended wait time for dyslexic users
+	debounce_timer.one_shot = true
+	add_child(debounce_timer)
+	debounce_timer.timeout.connect(_on_debounce_timeout)
+	debounce_timer.start()
+
+func _on_debounce_timeout():
+	"""Handle debounce timeout - continue listening if no final result yet"""
+	print("ReadAloudGuided: Debounce timeout - extending listening time for dyslexic users")
+	# Keep the recognition active - the continuous JavaScript mode will handle this
+
+func _check_interim_match(interim_text):
+	"""Check if interim speech matches parts of the current sentence"""
+	if current_target_sentence.is_empty() or interim_text.is_empty():
+		return
+	
+	# Simple word matching for dyslexia-friendly feedback
+	var target_words = current_target_sentence.to_lower().split(" ")
+	var spoken_words = interim_text.to_lower().split(" ")
+	
+	# Count matching words for encouragement
+	var matches = 0
+	for spoken_word in spoken_words:
+		if spoken_word in target_words:
+			matches += 1
+	
+	# Provide gentle feedback for progress with visual guide updates
+	if matches > 0:
+		print("ReadAloudGuided: Found ", matches, " matching words - good progress!")
+		
+		# Update guide with encouraging feedback
+		var guide_display = $MainContainer/GuidePanel/MarginContainer/GuideContainer/GuideNotes
+		if guide_display:
+			var progress_text = "Great! Found " + str(matches) + " word"
+			if matches > 1:
+				progress_text += "s"
+			progress_text += ". Keep going: \"" + current_target_sentence + "\""
+			guide_display.text = progress_text
+			guide_display.modulate = Color.LIGHT_GREEN
 
 func _handle_stt_result(text: String, confidence: float):
 	"""Handle successful speech recognition result"""
@@ -1209,52 +1723,99 @@ func _on_button_hover():
 	$ButtonHover.play()
 
 func _on_read_button_pressed():
-	"""Read button - TTS reads one sentence at a time"""
+	"""Read button - TTS reads current sentence with start/stop control"""
 	$ButtonClick.play()
 	print("ReadAloudGuided: Read button pressed")
+
+	var read_button = $MainContainer/ControlsContainer/ReadButton
+	
+	# Check if TTS is currently speaking (allow stop functionality)
+	# Note: Godot's TTS doesn't have is_speaking(), so we track state manually
+	if tts_speaking:
+		# Stop TTS
+		if tts:
+			tts.stop()
+		tts_speaking = false
+		if read_button:
+			read_button.text = "Read"
+			read_button.disabled = false
+			read_button.modulate = Color.WHITE
+		print("ReadAloudGuided: TTS stopped by user")
+		return
 
 	if current_passage_index < passages.size():
 		var passage = passages[current_passage_index]
 		
 		if current_sentence_index < passage.sentences.size():
 			var sentence = passage.sentences[current_sentence_index].strip_edges()
+			current_target_sentence = sentence
 			
 			if sentence != "":
-				# Highlight current sentence in yellow
-				_highlight_sentence(current_sentence_index)
+				# Highlight current sentence
+				_highlight_current_sentence()
 				
-				# Update button text to show reading state
-				var read_button = $MainContainer/ControlsContainer/ReadButton
+				# Update button text to show reading state with stop capability
 				if read_button:
-					read_button.text = "Reading..."
-					read_button.disabled = true
+					read_button.text = "Stop"
+					read_button.disabled = false
+					read_button.modulate = Color.ORANGE
 				
-				# Use TTS to read only this sentence
+				# Use TTS to read this sentence (will trigger _on_tts_finished when done)
 				if tts:
+					tts_speaking = true # Set speaking flag
 					tts.speak(sentence)
-					
-					# Calculate reading time based on sentence length
-					var words = sentence.split(" ").size()
-					var reading_time = (words / float(reading_speed)) * 60.0 # Convert to seconds
-					
-					# Wait for the sentence to be read, then re-enable buttons
-					await get_tree().create_timer(reading_time + 0.5).timeout
-					
+					print("ReadAloudGuided: Reading sentence: ", sentence)
+				else:
+					print("ReadAloudGuided: TTS not available")
 					if read_button:
 						read_button.text = "Read"
-						read_button.disabled = false
+						read_button.modulate = Color.WHITE
 					
-					print("ReadAloudGuided: Finished reading sentence ", current_sentence_index + 1, " of ", passage.sentences.size())
+					# If using timer fallback, estimate reading time and start timer
+					if use_timer_fallback_for_tts and tts_timer:
+						var word_count = sentence.split(" ").size()
+						var estimated_time = (word_count / 2.5) + 1.0 # ~150 WPM + buffer
+						tts_timer.wait_time = estimated_time
+						tts_timer.start()
+					
+				print("ReadAloudGuided: Reading sentence ", current_sentence_index + 1, ": ", sentence)
 			else:
 				print("ReadAloudGuided: Empty sentence, advancing...")
 				current_sentence_index += 1
 				_on_read_button_pressed() # Try next sentence
 
 func _on_speak_button_pressed():
-	"""Speak button - STT functionality for current sentence"""
+	"""Speak button - STT functionality with start/stop control"""
 	$ButtonClick.play()
 	print("ReadAloudGuided: Speak button pressed")
 
+	var speak_button = $MainContainer/ControlsContainer/SpeakButton
+	
+	# Check if currently listening (allowing stop functionality)
+	if stt_listening:
+		print("ReadAloudGuided: Stopping speech recognition")
+		_stop_speech_recognition()
+		
+		# Reset button state
+		if speak_button:
+			speak_button.text = "Speak"
+			speak_button.disabled = false
+			speak_button.modulate = Color.WHITE
+		
+		# Reset guide message
+		var guide_display = $MainContainer/GuidePanel/MarginContainer/GuideContainer/GuideNotes
+		if guide_display:
+			guide_display.text = "Click 'Speak' to try reading the sentence again."
+			guide_display.modulate = Color.WHITE
+		
+		# Clear any interim results and reset STT state
+		current_interim_result = ""
+		last_interim_result = ""
+		result_being_processed = false
+		
+		return
+
+	# Start speech recognition
 	if current_passage_index < passages.size():
 		var passage = passages[current_passage_index]
 		
@@ -1265,11 +1826,42 @@ func _on_speak_button_pressed():
 			if sentence != "":
 				print("ReadAloudGuided: Target sentence for STT: ", sentence)
 				
+				# Clear previous interim results
+				current_interim_result = ""
+				last_interim_result = ""
+				result_being_processed = false
+				
 				# Update button text to show listening state
-				var speak_button = $MainContainer/ControlsContainer/SpeakButton
 				if speak_button:
-					speak_button.text = "Listening..."
-					speak_button.disabled = true
+					speak_button.text = "Stop"
+					speak_button.disabled = false
+					speak_button.modulate = Color.ORANGE
+				
+				# Update guide message
+				var guide_panel = $MainContainer/GuidePanel/MarginContainer/GuideContainer/GuideNotes
+				if guide_panel:
+					guide_panel.text = "Now speak: \"" + sentence + "\""
+					guide_panel.modulate = Color.CYAN
+				
+				# Enable live transcription for better feedback
+				live_transcription_enabled = true
+				
+				# Start speech recognition for this specific sentence
+				if _start_speech_recognition():
+					stt_feedback_active = true
+					print("ReadAloudGuided: Speech recognition started for sentence practice")
+				else:
+					print("ReadAloudGuided: Failed to start speech recognition")
+					# Reset button if failed to start
+					if speak_button:
+						speak_button.text = "Speak"
+						speak_button.modulate = Color.WHITE
+				
+				# Update guide to show listening state
+				var guide_display = $MainContainer/GuidePanel/MarginContainer/GuideContainer/GuideNotes
+				if guide_display:
+					guide_display.text = "Listening... Click 'Stop' to cancel."
+					guide_display.modulate = Color.CYAN
 				
 				# Start speech recognition for this specific sentence
 				if _start_speech_recognition():
@@ -1281,6 +1873,7 @@ func _on_speak_button_pressed():
 					if speak_button:
 						speak_button.text = "Speak"
 						speak_button.disabled = false
+						speak_button.modulate = Color.WHITE
 			else:
 				print("ReadAloudGuided: No sentence to practice")
 
@@ -1299,3 +1892,98 @@ func _on_tts_setting_button_pressed():
 	# Open TTS settings popup
 	var tts_popup = load("res://Scenes/TTSSettingsPopup.tscn").instantiate()
 	get_tree().current_scene.add_child(tts_popup)
+
+# New function to advance to next sentence with progress tracking
+func _advance_to_next_sentence():
+	"""Advance to the next sentence and update progress"""
+	var passage = passages[current_passage_index]
+	
+	if current_sentence_index < passage.sentences.size() - 1:
+		# Move to next sentence in current passage
+		current_sentence_index += 1
+		current_target_sentence = passage.sentences[current_sentence_index]
+		
+		# Update display to highlight current sentence
+		_highlight_current_sentence()
+		
+		# Update guide for the new sentence with encouraging progress info
+		var guide_display = $MainContainer/GuidePanel/MarginContainer/GuideContainer/GuideNotes
+		if guide_display:
+			var progress_text = "Sentence " + str(current_sentence_index + 1) + " of " + str(passage.sentences.size())
+			progress_text += " - You're doing great! Ready for the next one?"
+			if current_sentence_index < passage.guide_notes.size():
+				progress_text += "\n" + passage.guide_notes[current_sentence_index]
+			guide_display.text = progress_text
+			guide_display.modulate = Color.CYAN
+		
+		# Reset speak button for new sentence
+		var speak_button = $MainContainer/ControlsContainer/SpeakButton
+		if speak_button:
+			speak_button.disabled = false
+			speak_button.modulate = Color.WHITE
+			speak_button.text = "Speak"
+		
+		# Clear any previous highlighting
+		_clear_word_highlighting()
+		
+		# Read the new sentence with TTS
+		if tts:
+			await get_tree().create_timer(0.5).timeout # Brief pause
+			tts.speak(current_target_sentence)
+		
+		print("ReadAloudGuided: Advanced to sentence ", current_sentence_index + 1, " of ", passage.sentences.size())
+		
+	else:
+		# All sentences completed in this passage
+		await _complete_current_passage()
+
+# Complete current passage and move to next or finish
+func _complete_current_passage():
+	"""Complete current passage and advance to next"""
+	print("ReadAloudGuided: Completing passage ", current_passage_index + 1)
+	
+	# Save passage completion to Firebase
+	if module_progress and module_progress.is_authenticated():
+		var firebase_passage_id = "passage_" + str(current_passage_index)
+		var success = await module_progress.complete_read_aloud_activity("guided_reading", firebase_passage_id)
+		if success:
+			print("ReadAloudGuided: Passage completion saved to Firebase")
+		else:
+			print("ReadAloudGuided: Failed to save passage completion")
+	
+	# Update local completed activities
+	var passage_id = "passage_" + str(current_passage_index)
+	if passage_id not in completed_activities:
+		completed_activities.append(passage_id)
+	
+	# Update progress bar
+	var progress_percentage = (completed_activities.size() / float(passages.size())) * 100.0
+	_update_progress_display(progress_percentage)
+	
+	# Show completion message
+	var guide_display = $MainContainer/GuidePanel/MarginContainer/GuideContainer/GuideNotes
+	if guide_display:
+		guide_display.text = "Great job! You completed this passage. " + str(completed_activities.size()) + " of " + str(passages.size()) + " passages done!"
+		guide_display.modulate = Color.GREEN
+	
+	# Wait for celebration
+	await get_tree().create_timer(2.0).timeout
+	
+	# Check if more passages available
+	if current_passage_index < passages.size() - 1:
+		# Move to next passage
+		current_passage_index += 1
+		current_sentence_index = 0
+		_setup_initial_display()
+		
+		# Show new passage introduction
+		if guide_display:
+			var passage = passages[current_passage_index]
+			guide_display.text = "Starting new passage: \"" + passage.title + "\". Click 'Read' to begin!"
+			guide_display.modulate = Color.CYAN
+	else:
+		# All passages completed!
+		_show_all_passages_completed()
+		var final_save = await module_progress.complete_read_aloud_activity("guided_reading", "all_passages_complete")
+		if final_save:
+			print("ReadAloudGuided: Final completion status saved to Firebase")

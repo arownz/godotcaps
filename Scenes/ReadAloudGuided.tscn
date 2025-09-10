@@ -117,7 +117,7 @@ offset_right = -58.0
 offset_bottom = -35.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 30
+theme_override_constants/separation = 35
 
 [node name="HeaderPanel" type="Panel" parent="MainContainer"]
 custom_minimum_size = Vector2(0, 123)
@@ -259,6 +259,7 @@ text = "Reading Guide"
 horizontal_alignment = 1
 
 [node name="GuideNotes" type="Label" parent="MainContainer/GuidePanel/MarginContainer/GuideContainer"]
+custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_regular")

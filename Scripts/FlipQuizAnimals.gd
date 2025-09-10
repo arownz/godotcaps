@@ -41,33 +41,6 @@ func _speak_text_simple(text: String):
 	if tts:
 		tts.speak(text)
 
-func _load_progress():
-	if module_progress and module_progress.is_authenticated():
-		print("FlipQuizAnimals: Loading flip quiz progress via ModuleProgress")
-		var flip_quiz_progress = await module_progress.get_flip_quiz_progress()
-		if flip_quiz_progress:
-			var animals_data = flip_quiz_progress.get("flip_quiz_animals", {})
-			sets_completed = animals_data.get("sets_completed", [])
-			var _animals_progress = animals_data.get("progress", 0)
-			
-			print("FlipQuizAnimals: Loaded completed sets: ", sets_completed)
-			# Set current_set_index to number of completed sets (advance to next set)
-			current_set_index = sets_completed.size()
-			
-			print("FlipQuizAnimals: Current set index set to: ", current_set_index)
-			
-			# Update local progress based on ModuleProgress data
-			_update_local_progress_from_completed_sets(sets_completed)
-		else:
-			print("FlipQuizAnimals: No flip quiz progress found")
-	else:
-		print("FlipQuizAnimals: ModuleProgress not available, using local session progress")
-
-func _update_local_progress_from_completed_sets(completed_sets: Array):
-	"""Update local progress display based on Firebase data"""
-	# Print completed sets for debug
-	print("FlipQuizAnimals: Processing completed sets from Firebase: ", completed_sets.size(), " sets completed: ", completed_sets)
-
 func _ready():
 	print("FlipQuizAnimals: Animal flip quiz loaded")
 	
@@ -115,26 +88,27 @@ func _init_tts():
 
 func _init_module_progress():
 	if Firebase and Firebase.Auth and Firebase.Auth.auth:
-		var ModuleProgressScript = load("res://Scripts/ModulesManager/ModuleProgress.gd")
-		if ModuleProgressScript:
-			module_progress = ModuleProgressScript.new()
-			print("FlipQuizAnimals: ModuleProgress initialized")
-		else:
-			print("FlipQuizAnimals: ModuleProgress script not found")
+		module_progress = ModuleProgress.new()
+		print("FlipQuizAnimals: ModuleProgress initialized")
 	else:
 		print("FlipQuizAnimals: Firebase not available")
 
 func _load_progress_from_firebase():
 	"""Load flip quiz progress from Firebase using ModuleProgress"""
 	if not module_progress or not module_progress.is_authenticated():
-		print("FlipQuizAnimals: Module progress not available")
+		print("FlipQuizAnimals: Module progress not available or not authenticated")
 		return
 	
 	var flip_quiz_data = await module_progress.get_flip_quiz_progress()
 	if flip_quiz_data and flip_quiz_data.has("animals"):
 		var animals_data = flip_quiz_data["animals"]
 		sets_completed = animals_data.get("sets_completed", [])
+		print("FlipQuizAnimals: Loaded completed animal sets: ", sets_completed)
+		
+		# Set current_set_index to next uncompleted set
 		current_set_index = sets_completed.size()
+		if current_set_index >= total_sets:
+			current_set_index = total_sets - 1
 		
 		# Load saved current position
 		var saved_index = animals_data.get("current_index", 0)
@@ -142,35 +116,24 @@ func _load_progress_from_firebase():
 			current_animal_index = saved_index
 			print("FlipQuizAnimals: Resuming at animal index: ", current_animal_index)
 		
+		# Update progress display
 		_update_progress_display(flip_quiz_data)
-		print("FlipQuizAnimals: Loaded progress - sets completed: ", sets_completed, ", current animal: ", current_animal_index)
 	else:
-		print("FlipQuizAnimals: No animals flip quiz progress found")
+		print("FlipQuizAnimals: No animal data found")
 
 func _update_progress_display(flip_quiz_data: Dictionary):
 	"""Update animals-specific progress display"""
 	var animals_data = flip_quiz_data.get("animals", {})
 	var completed_array = animals_data.get("sets_completed", [])
-	current_set_index = completed_array.size()
+	var percent := (float(completed_array.size()) / float(total_sets)) * 100.0
 	
-	# Update progress in UI
-	var progress_percent = (float(completed_array.size()) / float(total_sets)) * 100.0
-	var progress_bar = get_node_or_null("MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressBar")
+	var progress_bar = $MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressBar
 	if progress_bar:
-		progress_bar.value = progress_percent
+		progress_bar.value = percent
 	
-	var progress_label = get_node_or_null("MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressLabel")
+	var progress_label = $MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressLabel
 	if progress_label:
-		progress_label.text = str(int(progress_percent)) + "% Complete"
-	
-	print("FlipQuizAnimals: Progress updated - ", completed_array.size(), "/", total_sets, " sets completed")
-	
-	# Test Firestore access (exact authentication.gd pattern)
-	if Firebase.Firestore == null:
-		print("FlipQuizAnimals: ERROR - Firestore is null")
-		return
-	
-	print("FlipQuizAnimals: Firestore available - ready for progress updates")
+		progress_label.text = str(completed_array.size()) + "/" + str(total_sets) + " sets complete"
 
 func _connect_hover_events():
 	# Connect all button hover events and press events
@@ -521,24 +484,19 @@ func _show_match_feedback(animal_name: String):
 			sound_node.play()
 
 func _complete_game():
-	"""Handle game completion with celebration"""
+	"""Handle game completion"""
 	print("FlipQuizAnimals: Game completed!")
 	
-	# Update progress using ModuleProgress system
+	# Save progress using ModuleProgress
 	if module_progress and module_progress.is_authenticated():
 		var set_id = "animals_set_" + str(current_set_index + 1)
 		var success = await module_progress.complete_flip_quiz_set("animals", set_id)
 		if success:
-			print("FlipQuizAnimals: Progress saved via ModuleProgress (" + set_id + ")")
-		else:
-			print("FlipQuizAnimals: Failed to save progress via ModuleProgress")
-	else:
-		print("FlipQuizAnimals: ModuleProgress not available for saving")
+			print("FlipQuizAnimals: Progress saved (" + set_id + ")")
+			# Reload progress to update UI
+			await _load_progress_from_firebase()
 	
-	# Show completion celebration
 	_show_completion_celebration()
-	# Update progress bar/label after completion
-	await _load_progress()
 
 func _show_completion_celebration():
 	"""Show completion celebration popup"""
@@ -552,7 +510,7 @@ func _show_completion_celebration():
 		"total_sets": total_sets,
 		"percent": percent
 	}
-	var set_title = "Set " + str(current_set_index + 1)
+	var set_title = "Animal Set " + str(current_set_index + 1)
 	celebration.show_completion(celebration.CompletionType.FLIP_ANIMAL, set_title, progress_data, "flip_quiz")
 
 	# Connect celebration signals
@@ -566,12 +524,12 @@ func _on_celebration_try_again():
 	_initialize_game()
 
 func _on_celebration_next_set():
-	"""Advance to next set and re-initialize game"""
+	"""Advance to next set"""
 	if sets_completed.size() < total_sets:
 		current_set_index = sets_completed.size()
 		_initialize_game()
 	else:
-		print("FlipQuizAnimals: All sets completed!")
+		print("FlipQuizAnimals: All animal sets completed!")
 
 func _update_score_display():
 	"""Update score display with encouraging messages"""
