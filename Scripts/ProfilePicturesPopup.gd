@@ -201,6 +201,7 @@ func _update_profile_picture_in_firebase(picture_id):
 		return false
 
 func _on_close_button_pressed():
+	$ButtonClick.play()
 	print("ProfilePicturesPopup: Closing without selection")
 	_fade_out_and_close()
 
@@ -224,3 +225,7 @@ func _on_background_clicked(event):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		print("ProfilePicturesPopup: Background clicked, closing popup")
 		_on_close_button_pressed()
+
+
+func _on_close_button_mouse_entered():
+	$ButtonHover.play()

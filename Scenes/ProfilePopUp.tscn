@@ -704,5 +704,7 @@ stream = ExtResource("23_q75ak")
 [connection signal="pressed" from="ProfileContainer/ProfilePictureButton" to="." method="_on_profile_picture_button_pressed"]
 [connection signal="pressed" from="ProfileContainer/LogoutButton" to="." method="_on_logout_button_pressed"]
 [connection signal="text_submitted" from="EditUsernamePanel/EditContainer/ContentContainer/VBoxContainer/InputContainer/UsernameLineEdit" to="." method="_on_username_text_submitted"]
+[connection signal="mouse_entered" from="EditUsernamePanel/EditContainer/ContentContainer/VBoxContainer/ButtonContainer/CancelButton" to="." method="_on_cancel_button_mouse_entered"]
 [connection signal="pressed" from="EditUsernamePanel/EditContainer/ContentContainer/VBoxContainer/ButtonContainer/CancelButton" to="." method="_on_edit_username_cancel_pressed"]
+[connection signal="mouse_entered" from="EditUsernamePanel/EditContainer/ContentContainer/VBoxContainer/ButtonContainer/ConfirmButton" to="." method="_on_confirm_button_mouse_entered"]
 [connection signal="pressed" from="EditUsernamePanel/EditContainer/ContentContainer/VBoxContainer/ButtonContainer/ConfirmButton" to="." method="_on_edit_username_confirm_pressed"]

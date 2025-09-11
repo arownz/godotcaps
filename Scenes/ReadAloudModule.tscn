@@ -248,17 +248,18 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.2, 0.8, 0.4, 1)
 theme_override_fonts/font = ExtResource("4_bold")
 theme_override_font_sizes/font_size = 48
-text = "Guided"
+text = "Passage"
 
 [node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard/GuidedContent"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold")
 theme_override_font_sizes/font_size = 20
-text = "Guided Reading"
+text = "Guided Passage"
 horizontal_alignment = 1
 
 [node name="DescLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard/GuidedContent"]
+custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular")
@@ -289,6 +290,7 @@ icon_alignment = 1
 expand_icon = true
 
 [node name="GuidedReadingCard2" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid"]
+visible = false
 custom_minimum_size = Vector2(430, 300)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -334,6 +336,7 @@ text = "?"
 horizontal_alignment = 1
 
 [node name="DescLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard2/GuidedContent"]
+custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular")

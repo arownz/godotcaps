@@ -165,6 +165,10 @@ func set_voice_by_name(voice_name):
 func set_speech_rate(rate):
 	speech_rate = clamp(rate, 0.1, 2.0)
 
+# Get current speech rate
+func get_rate():
+	return speech_rate
+
 # Add this compatibility method to match WebTTS API
 func set_rate(rate):
 	set_speech_rate(rate)

@@ -9,6 +9,7 @@ var is_reading: bool = false
 var current_sentence_index: int = 0
 var reading_speed: float = 150.0 # words per minute
 var completed_activities: Array = [] # Track completed guided reading activities
+var completed_sentences: Array = [] # Track completed sentences in current passage
 
 # STT functionality - Enhanced from WordChallengePanel_STT.gd
 var recognition_active = false
@@ -43,94 +44,94 @@ var tts_timer: Timer = null
 
 # Guided Reading Passages - dyslexia-friendly with structured guidance
 var passages = [
-	{
-		"title": "The Friendly Cat",
-		"text": "Mia has a cat named Sam. Sam is orange and white. Sam likes to play with a red ball. Mia gives Sam food every day. Sam is very happy.",
-		"sentences": [
-			"Mia has a cat named Sam.",
-			"Sam is orange and white.",
-			"Sam likes to play with a red ball.",
-			"Mia gives Sam food every day.",
-			"Sam is very happy."
-		],
-		"guide_notes": [
-			"Let's read about Mia and her cat. Take your time with each sentence.",
-			"Notice the color words: orange, white, and red.",
-			"Listen for the action words: play, gives, likes.",
-			"See how each sentence tells us something new about Sam.",
-			"Think about how Sam feels at the end."
-		],
-		"vocabulary": [
-			{"word": "happy", "definition": "feeling good and cheerful"}
-		],
-		"level": 1
-	},
-	{
-		"title": "The Garden Surprise",
-		"text": "Ben planted seeds in his garden. He watered them every day. Small green plants started to grow. After many weeks, big red tomatoes appeared. Ben picked them for dinner.",
-		"sentences": [
-			"Ben planted seeds in his garden.",
-			"He watered them every day.",
-			"Small green plants started to grow.",
-			"After many weeks, big red tomatoes appeared.",
-			"Ben picked them for dinner."
-		],
-		"guide_notes": [
-			"This story teaches patience and caring for plants.",
-			"Notice the time words: every day, many weeks.",
-			"Watch for the growing process: seeds, plants, tomatoes.",
-			"Think about how hard work pays off.",
-			"Think about what Ben can do with his tomatoes."
-		],
-		"vocabulary": [
-			{"word": "appeared", "definition": "showed up or became visible"}
-		],
-		"level": 1
-	},
-	{
-		"title": "The School Bus Adventure",
-		"text": "Every morning, Lisa waits for the yellow school bus. The bus driver, Mr. Joe, always waves hello. Lisa sits with her friend Emma. They talk about their favorite books. When they reach school, they are ready to learn.",
-		"sentences": [
-			"Every morning, Lisa waits for the yellow school bus.",
-			"The bus driver, Mr. Joe, always waves hello.",
-			"Lisa sits with her friend Emma.",
-			"They talk about their favorite books.",
-			"When they reach school, they are ready to learn."
-		],
-		"guide_notes": [
-			"This story shows a daily routine and friendship.",
-			"Notice the friendly characters: Lisa, Mr. Joe, Emma.",
-			"Think about routines that happen every day.",
-			"See how friends enjoy talking together.",
-			"Think about how the girls feel about going to school."
-		],
-		"vocabulary": [
-			{"word": "favorite", "definition": "the thing you like best"}
-		],
-		"level": 2
-	},
-	{
-		"title": "The Rainy Day Plan",
-		"text": "Dark clouds covered the sky on Saturday morning. Rain began to fall softly. Maria and her brother Carlos could not play outside. Instead, they decided to build a fort with blankets and chairs. They had fun reading stories inside their cozy fort.",
-		"sentences": [
-			"Dark clouds covered the sky on Saturday morning.",
-			"Rain began to fall softly.",
-			"Maria and her brother Carlos could not play outside.",
-			"Instead, they decided to build a fort with blankets and chairs.",
-			"They had fun reading stories inside their cozy fort."
-		],
-		"guide_notes": [
-			"This story shows how to make the best of rainy weather.",
-			"Notice the weather words: dark clouds, rain, softly.",
-			"Watch for the describing words: dark, softly, cozy.",
-			"Think about creative ways to have fun indoors.",
-			"See how siblings can work together and have fun."
-		],
-		"vocabulary": [
-			{"word": "cozy", "definition": "warm and comfortable"}
-		],
-		"level": 2
-	}
+    {
+        "title": "The Friendly Cat",
+        "text": "Mia owns one cheerful cat named Sam. Sam has orange fur with white patches. Sam enjoys chasing one red ball around the room. Mia feeds Sam meals each day. Sam feels joyful and content.",
+        "sentences": [
+            "Mia owns one cheerful cat named Sam.",
+            "Sam has orange fur with white patches.",
+            "Sam enjoys chasing one red ball around the room.",
+            "Mia feeds Sam meals each day.",
+            "Sam feels joyful and content."
+        ],
+        "guide_notes": [
+            "Read about Mia and her cheerful pet.",
+            "Notice color words: orange, white, red.",
+            "Look for action words: enjoys, chasing, feeds.",
+            "Each sentence reveals something new about Sam.",
+            "Consider how Sam feels by the end."
+        ],
+        "vocabulary": [
+            {"word": "joyful", "definition": "feeling very happy and pleased"}
+        ],
+        "level": 1
+    },
+    {
+        "title": "The Garden Surprise",
+        "text": "Ben placed seeds into soil within his backyard garden. He poured water over them daily. Tiny green sprouts began growing. After several weeks, large red tomatoes appeared. Ben gathered them for supper.",
+        "sentences": [
+            "Ben placed seeds into soil within his backyard garden.",
+            "He poured water over them daily.",
+            "Tiny green sprouts began growing.",
+            "After several weeks, large red tomatoes appeared.",
+            "Ben gathered them for supper."
+        ],
+        "guide_notes": [
+            "This story teaches patience and plant care.",
+            "Notice time phrases: daily, several weeks.",
+            "Observe growth stages: seeds, sprouts, tomatoes.",
+            "Hard work leads to tasty rewards.",
+            "Think about meals Ben might prepare."
+        ],
+        "vocabulary": [
+            {"word": "gathered", "definition": "collected or picked up"}
+        ],
+        "level": 1
+    },
+    {
+        "title": "The School Bus Adventure",
+        "text": "Each morning, Lisa waits beside the road for her yellow school bus. The driver, Mr. Joe, waves with a smile. Lisa sits beside her friend Emma. They chat about favorite stories. Once they reach school, both girls feel eager to learn.",
+        "sentences": [
+            "Each morning, Lisa waits beside the road for her yellow school bus.",
+            "The driver, Mr. Joe, waves with a smile.",
+            "Lisa sits beside her friend Emma.",
+            "They chat about favorite stories.",
+            "Once they reach school, both girls feel eager to learn."
+        ],
+        "guide_notes": [
+            "This story shows daily habits and friendship.",
+            "Notice friendly people: Lisa, Mr. Joe, Emma.",
+            "Think about routines followed each morning.",
+            "Friends enjoy chatting together.",
+            "Consider how school makes them feel."
+        ],
+        "vocabulary": [
+            {"word": "eager", "definition": "excited and ready to do something"}
+        ],
+        "level": 2
+    },
+    {
+        "title": "The Rainy Day Plan",
+        "text": "Thick clouds filled the sky during Saturday morning. Rain started falling gently. Maria and her brother Carlos stayed indoors. They built one blanket fort using chairs. Inside their fort, both siblings read stories and laughed together.",
+        "sentences": [
+            "Thick clouds filled the sky during Saturday morning.",
+            "Rain started falling gently.",
+            "Maria and her brother Carlos stayed indoors.",
+            "They built one blanket fort using chairs.",
+            "Inside their fort, both siblings read stories and laughed together."
+        ],
+        "guide_notes": [
+            "This story shows creative fun during rainy weather.",
+            "Notice weather phrases: thick clouds, rain, gently.",
+            "Look for descriptive words: thick, gently, cozy.",
+            "Think about indoor activities during storms.",
+            "See how teamwork brings joy."
+        ],
+        "vocabulary": [
+            {"word": "sibling", "definition": "a brother or sister"}
+        ],
+        "level": 2
+    }
 ]
 
 func _ready():
@@ -178,20 +179,23 @@ func _init_tts():
 		# Check what signals are available and connect the appropriate one
 		if tts.has_signal("utterance_finished"):
 			tts.utterance_finished.connect(_on_tts_finished)
+			print("ReadAloudGuided: Connected to utterance_finished signal")
 		elif tts.has_signal("finished"):
 			tts.finished.connect(_on_tts_finished)
+			print("ReadAloudGuided: Connected to finished signal")
 		elif tts.has_signal("speaking_finished"):
 			tts.speaking_finished.connect(_on_tts_finished)
+			print("ReadAloudGuided: Connected to speaking_finished signal")
 		else:
 			print("ReadAloudGuided: No suitable TTS finished signal found")
-			# Use a timer fallback approach
 			use_timer_fallback_for_tts = true
-			
-			# Create timer for TTS fallback
-			tts_timer = Timer.new()
-			tts_timer.one_shot = true
-			add_child(tts_timer)
-			tts_timer.timeout.connect(_on_tts_finished)
+	
+	# ALWAYS create a backup timer to ensure button resets even if TTS signals fail
+	tts_timer = Timer.new()
+	tts_timer.one_shot = true
+	add_child(tts_timer)
+	tts_timer.timeout.connect(_on_tts_finished)
+	print("ReadAloudGuided: Created backup TTS timer")
 
 func _init_module_progress():
 	if Firebase and Firebase.Auth and Firebase.Auth.auth:
@@ -259,6 +263,21 @@ func _process(_delta):
 			if text_str != "" and not result_being_processed:
 				print("ReadAloudGuided: Final result received: ", text_str)
 				_process_speech_result(text_str, 1.0)
+	
+	# Safeguard: Check if TTS has been speaking too long and reset button if needed
+	_check_tts_button_state()
+
+func _check_tts_button_state():
+	"""Safeguard function to ensure Read button doesn't get stuck"""
+	var read_button = $MainContainer/ControlsContainer/ReadButton
+	if read_button and tts_speaking:
+		# Check if TTS has been speaking for more than 30 seconds (way too long)
+		if tts_timer and tts_timer.is_stopped():
+			print("ReadAloudGuided: TTS timer stopped but button still stuck - resetting")
+			tts_speaking = false
+			read_button.text = "Read"
+			read_button.disabled = false
+			read_button.modulate = Color.WHITE
 
 func _initialize_web_audio_environment():
 	"""Initialize JavaScript environment for web audio - FIXED ENGINE DETECTION"""
@@ -404,8 +423,8 @@ func _initialize_web_audio_environment():
 				}
 				
 				if (window.guidedRecognitionActive) {
-					console.log('ReadAloudGuided: Recognition already active');
-					return false;
+					console.log('ReadAloudGuided: Recognition already active, returning true for existing session');
+					return true; // Return true since recognition is already running
 				}
 				
 				try {
@@ -422,15 +441,21 @@ func _initialize_web_audio_environment():
 			
 			// Stop recognition
 			window.stopGuidedRecognition = function() {
+				console.log('ReadAloudGuided: Stopping recognition...');
 				window.guidedStopRequested = true; // Prevent auto-restart
 				window.guidedContinuousMode = false; // Disable continuous mode
 				if (window.guidedRecognition && window.guidedRecognitionActive) {
 					try {
 						window.guidedRecognition.stop();
+						console.log('ReadAloudGuided: Recognition stopped successfully');
 					} catch (error) {
 						console.log('ReadAloudGuided: Error stopping recognition:', error);
 					}
 				}
+				// Force state reset to prevent stuck states
+				window.guidedRecognitionActive = false;
+				window.guidedFinalResult = '';
+				window.guidedInterimResult = '';
 			};
 			
 			// Get recognition result
@@ -518,8 +543,13 @@ func update_mic_permission_state(state):
 		print("ReadAloudGuided: Microphone permission: ", state)
 
 func _start_speech_recognition():
-	"""Start speech recognition"""
+	"""Start speech recognition with safeguards against double initialization"""
 	print("ReadAloudGuided: Starting speech recognition...")
+	
+	# Prevent starting if already active
+	if recognition_active or stt_listening:
+		print("ReadAloudGuided: Speech recognition already active, skipping start")
+		return true # Return true since it's already running
 	
 	if not mic_permission_granted:
 		print("ReadAloudGuided: Requesting microphone permission...")
@@ -528,6 +558,15 @@ func _start_speech_recognition():
 	
 	if OS.get_name() == "Web":
 		if JavaScriptBridge.has_method("eval"):
+			# Check if recognition is already active on JavaScript side
+			var js_active = JavaScriptBridge.eval("window.guidedRecognitionActive || false")
+			if js_active:
+				print("ReadAloudGuided: JavaScript recognition already active")
+				recognition_active = true
+				stt_listening = true
+				_update_listen_button()
+				return true
+			
 			var result = JavaScriptBridge.eval("window.startGuidedRecognition && window.startGuidedRecognition()")
 			if result:
 				recognition_active = true
@@ -541,13 +580,26 @@ func _start_speech_recognition():
 	return false
 
 func _stop_speech_recognition():
-	"""Stop speech recognition"""
+	"""Stop speech recognition with comprehensive cleanup"""
+	print("ReadAloudGuided: Stopping speech recognition...")
+	
 	if OS.get_name() == "Web":
 		if JavaScriptBridge.has_method("eval"):
 			JavaScriptBridge.eval("window.stopGuidedRecognition && window.stopGuidedRecognition()")
+	
+	# Reset all STT-related state
 	recognition_active = false
 	stt_listening = false
+	stt_feedback_active = false
+	live_transcription_enabled = false
+	result_being_processed = false
+	
+	# Clear interim results
+	current_interim_result = ""
+	last_interim_result = ""
+	
 	_update_listen_button()
+	print("ReadAloudGuided: Speech recognition stopped and state reset")
 
 func _request_microphone_permission():
 	"""Request microphone permission"""
@@ -604,6 +656,11 @@ func recognition_ended_callback():
 
 func _process_speech_result(recognized_text: String, confidence: float):
 	"""Process speech recognition result and compare with target sentence - Enhanced for dyslexic users"""
+	
+	# Check if current sentence is already completed
+	if current_sentence_index in completed_sentences:
+		print("ReadAloudGuided: Current sentence ", current_sentence_index, " already completed, ignoring STT input")
+		return
 	
 	# Prevent double processing during continuous listening
 	if result_being_processed:
@@ -924,8 +981,18 @@ func _on_tts_finished():
 	"""Called when TTS finishes reading a sentence"""
 	print("ReadAloudGuided: TTS finished, prompting user to speak")
 	
+	# Prevent multiple calls if both signal and timer fire
+	if not tts_speaking:
+		print("ReadAloudGuided: TTS already finished, ignoring duplicate call")
+		return
+	
 	# Reset TTS speaking flag
 	tts_speaking = false
+	
+	# Stop the backup timer if it's running
+	if tts_timer and not tts_timer.is_stopped():
+		tts_timer.stop()
+		print("ReadAloudGuided: Stopped backup timer")
 	
 	# Reset read button
 	var read_button = $MainContainer/ControlsContainer/ReadButton
@@ -933,6 +1000,7 @@ func _on_tts_finished():
 		read_button.text = "Read"
 		read_button.disabled = false
 		read_button.modulate = Color.WHITE
+		print("ReadAloudGuided: Read button reset to 'Read' state")
 	
 	# Update guide to prompt user to speak
 	var guide_display = $MainContainer/GuidePanel/MarginContainer/GuideContainer/GuideNotes
@@ -947,10 +1015,8 @@ func _on_tts_finished():
 		speak_button.modulate = Color.LIGHT_GREEN # Highlight the button
 		speak_button.text = "Speak"
 		
-	# Optional: Add a gentle audio prompt
-	await get_tree().create_timer(1.0).timeout # Short pause
-	if tts:
-		tts.speak("Now click the speak button to repeat what I said.")
+	# Remove automatic audio prompt - user controls when to hear instructions
+	print("ReadAloudGuided: TTS finished, waiting for user to click Speak button")
 
 # Live word highlighting function
 func _update_live_word_highlighting(interim_text: String):
@@ -1032,19 +1098,37 @@ func _apply_word_highlighting():
 
 # Clear word highlighting
 func _clear_word_highlighting():
-	"""Clear all word highlighting"""
+	"""Clear word highlighting by restoring sentence highlighting"""
+	print("ReadAloudGuided: Clearing word highlighting")
+	# Simply restore the sentence highlighting without recursion
+	var passage = passages[current_passage_index]
 	var text_display = $MainContainer/PassagePanel/MarginContainer/PassageContainer/PassageText
+	
 	if text_display:
-		var passage = passages[current_passage_index]
-		text_display.text = passage.text
+		# Build clean text with sentence highlighting only
+		var highlighted_text = ""
+		for i in range(passage.sentences.size()):
+			if i in completed_sentences:
+				highlighted_text += "[bgcolor=lightgreen][color=black]" + passage.sentences[i] + "[/color][/bgcolor]\n\n"
+			elif i == current_sentence_index:
+				highlighted_text += "[bgcolor=lightblue][color=black]" + passage.sentences[i] + "[/color][/bgcolor]\n\n"
+			else:
+				highlighted_text += passage.sentences[i] + "\n\n"
+		
+		text_display.text = highlighted_text.strip_edges()
 
 
 func _show_success_feedback(_recognized_text: String):
 	"""Show success feedback and move to next sentence"""
 	print("ReadAloudGuided: Success! Moving to next sentence.")
 	
-	# Clear highlighting
-	_clear_word_highlighting()
+	# Mark current sentence as completed
+	if current_sentence_index not in completed_sentences:
+		completed_sentences.append(current_sentence_index)
+		print("ReadAloudGuided: Marked sentence ", current_sentence_index, " as completed")
+	
+	# Update display to show completed sentence with permanent green highlighting
+	_update_sentence_highlighting()
 	
 	# Stop STT and reset button
 	if stt_listening:
@@ -1063,15 +1147,42 @@ func _show_success_feedback(_recognized_text: String):
 		guide_display.text = "Excellent! You read that perfectly! Moving to the next sentence..."
 		guide_display.modulate = Color.GREEN
 	
-	# Audio encouragement for dyslexic learners
+	# Brief audio encouragement for dyslexic learners (much shorter)
 	if tts:
-		tts.speak("Excellent work! You read that perfectly!")
+		tts.speak("Great!")
 	
-	# Wait a moment for feedback, then move to next sentence
-	await get_tree().create_timer(2.0).timeout
+	# Much shorter wait time for faster progression
+	await get_tree().create_timer(0.5).timeout
+	
+	# Check if all sentences in passage are completed
+	_check_passage_completion()
 	
 	# Move to next sentence or complete passage
 	_advance_to_next_sentence()
+
+func _check_passage_completion():
+	"""Check if all sentences in current passage are completed and provide feedback"""
+	var passage = passages[current_passage_index]
+	var total_sentences = passage.sentences.size()
+	var completed_count = completed_sentences.size()
+	
+	print("ReadAloudGuided: Passage progress - ", completed_count, "/", total_sentences, " sentences completed")
+	
+	if completed_count == total_sentences:
+		print("ReadAloudGuided: All sentences completed! User can progress to next passage")
+		var guide_display = $MainContainer/GuidePanel/MarginContainer/GuideContainer/GuideNotes
+		if guide_display:
+			guide_display.text = "Amazing! You've completed ALL sentences in this passage! Ready for the next passage!"
+			guide_display.modulate = Color.GOLD
+		
+		if tts:
+			tts.speak("Great! Passage complete!")
+	elif completed_count == total_sentences - 1:
+		print("ReadAloudGuided: Almost done - only 1 sentence left!")
+		var guide_display = $MainContainer/GuidePanel/MarginContainer/GuideContainer/GuideNotes
+		if guide_display:
+			guide_display.text = "Great progress! Only 1 more sentence to complete this passage!"
+			guide_display.modulate = Color.ORANGE
 
 func _show_encouragement_feedback(_recognized_text: String, target_text: String):
 	"""Show encouragement feedback for close matches"""
@@ -1093,10 +1204,10 @@ func _show_encouragement_feedback(_recognized_text: String, target_text: String)
 		guide_display.text = "Good try! Very close! Let's try again: \"" + target_text + "\""
 		guide_display.modulate = Color.ORANGE
 	
-	# Audio encouragement for dyslexic learners
+	# Shorter audio encouragement for faster feedback
 	if tts:
-		tts.speak("Good try! Very close! Listen again...")
-		await get_tree().create_timer(1.0).timeout
+		tts.speak("Close! Try again.")
+		await get_tree().create_timer(0.3).timeout
 		tts.speak(target_text)
 
 func _show_partial_match_feedback(_recognized_text: String, target_text: String):
@@ -1121,16 +1232,16 @@ func _show_partial_match_feedback(_recognized_text: String, target_text: String)
 	
 	# Break down sentence for dyslexic learners
 	if tts:
-		tts.speak("Good effort! Let me help you break it down.")
-		await get_tree().create_timer(1.0).timeout
+		tts.speak("Let me help you!")
+		await get_tree().create_timer(0.5).timeout
 		
-		# Read slowly word by word
+		# Read slowly word by word (faster pace)
 		var words = target_text.split(" ")
 		for word in words:
 			tts.speak(word)
-			await get_tree().create_timer(0.8).timeout # Pause between words
+			await get_tree().create_timer(0.4).timeout # Shorter pause between words
 		
-		await get_tree().create_timer(0.5).timeout
+		await get_tree().create_timer(0.3).timeout
 		tts.speak("Now try the whole sentence: " + target_text)
 
 func _show_try_again_feedback(_recognized_text: String, target_text: String):
@@ -1153,16 +1264,16 @@ func _show_try_again_feedback(_recognized_text: String, target_text: String):
 		guide_display.text = "Let's practice together. I'll read it slowly: \"" + target_text + "\""
 		guide_display.modulate = Color.LIGHT_CORAL
 	
-	# Extra patient support for dyslexic learners
+	# Faster patient support for dyslexic learners
 	if tts:
-		tts.speak("That's okay! Let's practice together. I'll read it slowly for you.")
-		await get_tree().create_timer(1.5).timeout
+		tts.speak("Let's try again!")
+		await get_tree().create_timer(0.5).timeout
 		
-		# Set slower rate for struggling readers
+		# Set slower rate for struggling readers (but shorter wait)
 		var original_rate = tts.get_rate()
-		tts.set_rate(0.6) # Much slower for dyslexic learners
+		tts.set_rate(0.7) # Slightly slower but not too slow
 		tts.speak(target_text)
-		await get_tree().create_timer(2.0).timeout
+		await get_tree().create_timer(1.0).timeout # Shorter wait
 		
 		# Restore original rate
 		tts.set_rate(original_rate)
@@ -1219,7 +1330,9 @@ func _setup_initial_display():
 		var passage = passages[current_passage_index]
 		if current_sentence_index < passage.sentences.size():
 			current_target_sentence = passage.sentences[current_sentence_index]
-			_highlight_current_sentence()
+			
+			# Use new highlighting system that preserves completed sentences
+			_update_sentence_highlighting()
 			
 			# Update guide for first sentence
 			var guide_display = $MainContainer/GuidePanel/MarginContainer/GuideContainer/GuideNotes
@@ -1251,6 +1364,10 @@ func _display_passage(passage_index: int):
 	
 	# Reset sentence tracking
 	current_sentence_index = 0
+	
+	# Apply proper sentence highlighting
+	_update_sentence_highlighting()
+	
 	_update_play_button_text()
 
 func _update_navigation_buttons():
@@ -1277,8 +1394,14 @@ func _start_sentence_practice():
 		current_target_sentence = passage.sentences[current_sentence_index].strip_edges()
 		print("ReadAloudGuided: Starting practice for sentence: ", current_target_sentence)
 		
-		# Highlight current sentence
-		_highlight_current_sentence()
+		# Check if sentence is already completed
+		if current_sentence_index in completed_sentences:
+			print("ReadAloudGuided: Sentence ", current_sentence_index, " already completed, skipping to next")
+			_advance_to_next_sentence()
+			return
+		
+		# Highlight current sentence while preserving completed sentences
+		_update_sentence_highlighting()
 		
 		# Set up STT feedback
 		stt_feedback_active = true
@@ -1324,8 +1447,8 @@ func _next_guided_sentence():
 		current_sentence_index += 1
 		_start_sentence_practice()
 	else:
-		# All sentences practiced, mark passage as complete
-		await _complete_passage()
+		# All sentences practiced, mark passage as complete and advance properly
+		await _complete_current_passage()
 		_stop_guided_reading()
 
 func _previous_guided_sentence():
@@ -1381,8 +1504,8 @@ func _start_guided_reading():
 		# Brief pause between sentences for comprehension
 		await get_tree().create_timer(0.5).timeout
 	
-	# Mark as completed and save progress
-	await _complete_passage()
+	# Mark as completed and save progress  
+	await _complete_current_passage()
 	_stop_guided_reading()
 
 func _highlight_sentence(sentence_index: int):
@@ -1421,19 +1544,6 @@ func _stop_guided_reading():
 	# Reset text display to normal
 	_display_passage(current_passage_index)
 
-func _complete_passage():
-	if module_progress and module_progress.is_authenticated():
-		var passage_id = "passage_" + str(current_passage_index)
-		print("ReadAloudGuided: Completing passage: ", passage_id)
-		
-		var success = await module_progress.complete_read_aloud_activity("guided_reading", passage_id)
-		
-		if success:
-			completed_activities.append(passage_id)
-			print("ReadAloudGuided: Passage completed and saved!")
-		else:
-			print("ReadAloudGuided: Failed to save passage completion")
-
 # Button event handlers
 func _on_back_button_pressed():
 	$ButtonClick.play()
@@ -1466,6 +1576,12 @@ func _on_previous_passage_button_pressed():
 	if current_passage_index > 0:
 		_stop_guided_reading()
 		current_passage_index -= 1
+		current_sentence_index = 0
+		
+		# Reset completed sentences for new passage
+		completed_sentences.clear()
+		print("ReadAloudGuided: Reset completed sentences for previous passage ", current_passage_index)
+		
 		_display_passage(current_passage_index)
 		_update_navigation_buttons()
 		
@@ -1480,6 +1596,12 @@ func _on_next_passage_button_pressed():
 	if current_passage_index < passages.size() - 1:
 		_stop_guided_reading()
 		current_passage_index += 1
+		current_sentence_index = 0
+		
+		# Reset completed sentences for new passage
+		completed_sentences.clear()
+		print("ReadAloudGuided: Reset completed sentences for next passage ", current_passage_index)
+		
 		_display_passage(current_passage_index)
 		_update_navigation_buttons()
 		
@@ -1735,6 +1857,12 @@ func _on_read_button_pressed():
 		# Stop TTS
 		if tts:
 			tts.stop()
+		
+		# Stop backup timer if running
+		if tts_timer and not tts_timer.is_stopped():
+			tts_timer.stop()
+			print("ReadAloudGuided: Stopped backup timer on manual stop")
+		
 		tts_speaking = false
 		if read_button:
 			read_button.text = "Read"
@@ -1765,6 +1893,14 @@ func _on_read_button_pressed():
 					tts_speaking = true # Set speaking flag
 					tts.speak(sentence)
 					print("ReadAloudGuided: Reading sentence: ", sentence)
+					
+					# ALWAYS start a backup timer to ensure button resets even if TTS signal fails
+					if tts_timer:
+						var word_count = sentence.split(" ").size()
+						var estimated_time = (word_count / 2.5) + 2.0 # ~150 WPM + generous buffer
+						tts_timer.wait_time = estimated_time
+						tts_timer.start()
+						print("ReadAloudGuided: Started backup timer for ", estimated_time, " seconds")
 				else:
 					print("ReadAloudGuided: TTS not available")
 					if read_button:
@@ -1826,10 +1962,16 @@ func _on_speak_button_pressed():
 			if sentence != "":
 				print("ReadAloudGuided: Target sentence for STT: ", sentence)
 				
-				# Clear previous interim results
+				# ENSURE CLEAN STATE before starting new recognition
+				_stop_speech_recognition() # Stop any existing recognition first
+				await get_tree().process_frame # Wait one frame for cleanup
+				
+				# Clear ALL STT state for fresh start
 				current_interim_result = ""
 				last_interim_result = ""
 				result_being_processed = false
+				stt_feedback_active = false
+				live_transcription_enabled = false
 				
 				# Update button text to show listening state
 				if speak_button:
@@ -1846,33 +1988,21 @@ func _on_speak_button_pressed():
 				# Enable live transcription for better feedback
 				live_transcription_enabled = true
 				
-				# Start speech recognition for this specific sentence
+				# Start speech recognition for this specific sentence (SINGLE CALL)
 				if _start_speech_recognition():
 					stt_feedback_active = true
 					print("ReadAloudGuided: Speech recognition started for sentence practice")
+					
+					# Update guide to show listening state
+					var guide_display = $MainContainer/GuidePanel/MarginContainer/GuideContainer/GuideNotes
+					if guide_display:
+						guide_display.text = "Listening... Click 'Stop' to cancel."
+						guide_display.modulate = Color.CYAN
 				else:
 					print("ReadAloudGuided: Failed to start speech recognition")
 					# Reset button if failed to start
 					if speak_button:
 						speak_button.text = "Speak"
-						speak_button.modulate = Color.WHITE
-				
-				# Update guide to show listening state
-				var guide_display = $MainContainer/GuidePanel/MarginContainer/GuideContainer/GuideNotes
-				if guide_display:
-					guide_display.text = "Listening... Click 'Stop' to cancel."
-					guide_display.modulate = Color.CYAN
-				
-				# Start speech recognition for this specific sentence
-				if _start_speech_recognition():
-					# STT started successfully
-					stt_feedback_active = true
-				else:
-					print("ReadAloudGuided: Failed to start speech recognition")
-					# Reset button state on failure
-					if speak_button:
-						speak_button.text = "Speak"
-						speak_button.disabled = false
 						speak_button.modulate = Color.WHITE
 			else:
 				print("ReadAloudGuided: No sentence to practice")
@@ -1903,8 +2033,35 @@ func _advance_to_next_sentence():
 		current_sentence_index += 1
 		current_target_sentence = passage.sentences[current_sentence_index]
 		
-		# Update display to highlight current sentence
-		_highlight_current_sentence()
+		# Update display to highlight current sentence while preserving completed sentences
+		_update_sentence_highlighting()
+
+func _update_sentence_highlighting():
+	"""Update sentence highlighting to show completed (green) and current (blue) sentences"""
+	var passage = passages[current_passage_index]
+	var text_display = $MainContainer/PassagePanel/MarginContainer/PassageContainer/PassageText
+	
+	if text_display and current_sentence_index < passage.sentences.size():
+		# Build text with proper highlighting for all sentences
+		var highlighted_text = ""
+		for i in range(passage.sentences.size()):
+			if i in completed_sentences:
+				# Green highlighting for completed sentences (permanent)
+				highlighted_text += "[bgcolor=lightgreen][color=black]" + passage.sentences[i] + "[/color][/bgcolor]\n\n"
+			elif i == current_sentence_index:
+				# Light blue highlighting for current active sentence
+				highlighted_text += "[bgcolor=lightblue][color=black]" + passage.sentences[i] + "[/color][/bgcolor]\n\n"
+			else:
+				# Normal text for future sentences
+				highlighted_text += passage.sentences[i] + "\n\n"
+		
+		text_display.text = highlighted_text.strip_edges()
+		
+		# Store sentence words for live highlighting
+		sentence_words = passage.sentences[current_sentence_index].to_lower().split(" ")
+		current_target_sentence = passage.sentences[current_sentence_index]
+		
+		print("ReadAloudGuided: Updated highlighting - Completed: ", completed_sentences, " Current: ", current_sentence_index)
 		
 		# Update guide for the new sentence with encouraging progress info
 		var guide_display = $MainContainer/GuidePanel/MarginContainer/GuideContainer/GuideNotes
@@ -1926,12 +2083,14 @@ func _advance_to_next_sentence():
 		# Clear any previous highlighting
 		_clear_word_highlighting()
 		
-		# Read the new sentence with TTS
-		if tts:
-			await get_tree().create_timer(0.5).timeout # Brief pause
-			tts.speak(current_target_sentence)
-		
+		# Update display only - user must click Read button to hear it
 		print("ReadAloudGuided: Advanced to sentence ", current_sentence_index + 1, " of ", passage.sentences.size())
+		
+		# Update guide to prompt user to click Read
+		var guide_notes = $MainContainer/GuidePanel/MarginContainer/GuideContainer/GuideNotes
+		if guide_notes:
+			guide_notes.text = "Click 'Read' to hear the next sentence: \"" + current_target_sentence + "\""
+			guide_notes.modulate = Color.CYAN
 		
 	else:
 		# All sentences completed in this passage
@@ -1974,6 +2133,11 @@ func _complete_current_passage():
 		# Move to next passage
 		current_passage_index += 1
 		current_sentence_index = 0
+		
+		# Reset completed sentences for new passage
+		completed_sentences.clear()
+		print("ReadAloudGuided: Reset completed sentences for new passage ", current_passage_index)
+		
 		_setup_initial_display()
 		
 		# Show new passage introduction
