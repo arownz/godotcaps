@@ -8,7 +8,8 @@ enum CompletionType {
 	LETTER,
 	SIGHT_WORD,
 	FLIP_ANIMAL,
-	FLIP_VEHICLE
+	FLIP_VEHICLE,
+	READ_ALOUD_PASSAGE
 }
 
 var completion_type: CompletionType = CompletionType.LETTER
@@ -129,7 +130,7 @@ func _update_content(module_key: String = "phonics"):
 			if title_label:
 				title_label.text = "Well done!"
 			if message_label:
-				message_label.text = "You wrote '" + completed_item.to_lower() + "'."
+				message_label.text = "You wrote '" + completed_item.to_lower() + "'"
 			
 			# Update progress for sight words (20 total)
 			var words_completed = progress_data.get("sight_words_completed", []).size()
@@ -225,6 +226,34 @@ func _update_content(module_key: String = "phonics"):
 					progress_label.text = "Overall Phonics Progress: " + str(overall_progress) + "%"
 				if progress_bar:
 					progress_bar.value = overall_progress
+		
+		CompletionType.READ_ALOUD_PASSAGE:
+			if title_label:
+				title_label.text = "Great reading!"
+			if message_label:
+				message_label.text = "You completed " + completed_item + "."
+			
+			# Show overall read-aloud progress
+			var activities_completed = progress_data.get("activities_completed", []).size()
+			var total_passages = progress_data.get("total_passages", 5)
+			var passage_progress = (float(activities_completed) / float(total_passages)) * 100.0
+			
+			if progress_label:
+				progress_label.text = "Read-Aloud Progress: " + str(activities_completed) + "/" + str(total_passages) + " passages"
+			if progress_bar:
+				progress_bar.value = passage_progress
+			
+			# Show appropriate buttons
+			if try_again_btn:
+				try_again_btn.text = "Again"
+				try_again_btn.visible = true
+			if next_btn:
+				next_btn.text = "Next"
+				# Hide next button if all passages are complete
+				if activities_completed >= total_passages:
+					next_btn.visible = false
+				else:
+					next_btn.visible = true
 
 func close_celebration():
 	"""Close celebration with animation"""

@@ -202,7 +202,7 @@ func _get_fallback_word() -> String:
 	# REMOVED problematic pairs: mud/mad, heal/hill, too/two/to, there/their, see/sea, cat/bat, etc.
 	var word_categories_by_length = {
 		3: {
-			"animals": ["dog", "fox", "owl", "pig", "cow", "elk", "ape", "ant"], # Removed cat/bat confusion
+			"animals": ["dog", "fox", "owl", "pig", "cow", "ape", "ant"], # Removed cat/bat confusion
 			"objects": ["cup", "pot", "box", "key", "pen", "rod", "bag", "car", "bed", "toy"],
 			"nature": ["fog", "air", "ice", "gas", "web", "oak", "gem", "sky"],
 			"food": ["pie", "egg", "jam", "ham", "gum", "oat", "fig", "yam"], # Removed tea (sounds like "T")

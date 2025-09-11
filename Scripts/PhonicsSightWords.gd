@@ -61,12 +61,8 @@ func _init_tts():
 
 func _init_module_progress():
 	if Firebase and Firebase.Auth and Firebase.Auth.auth:
-		var ModuleProgressScript = load("res://Scripts/ModulesManager/ModuleProgress.gd")
-		if ModuleProgressScript:
-			module_progress = ModuleProgressScript.new()
-			print("PhonicsSightWords: ModuleProgress initialized")
-		else:
-			print("PhonicsSightWords: ModuleProgress script not found")
+		module_progress = ModuleProgress.new()
+		print("PhonicsSightWords: ModuleProgress initialized")
 	else:
 		print("PhonicsSightWords: Firebase not available, using local tracking")
 

@@ -51,19 +51,11 @@ func _notification(what):
 		# Refresh progress when window gains focus
 		call_deferred("_load_progress")
 
-# Call this function from the Godot editor Remote Inspector
-# Or add a button temporarily to call it during gameplay
-func _input(event):
-	if event is InputEventKey and event.pressed:
-		if event.keycode == KEY_F12: # Press F12 to run test
-			print("PhonicsLetters: F12 pressed - testing Firebase with ProfilePopUp pattern")
-			_init_module_progress()
-
 func _init_tts():
 	tts = TextToSpeech.new()
 	add_child(tts)
 	
-	# Load TTS settings
+	# Load TTS settings for dyslexia-friendly reading
 	var voice_id = SettingsManager.get_setting("accessibility", "tts_voice_id")
 	var rate = SettingsManager.get_setting("accessibility", "tts_rate")
 	
@@ -71,14 +63,11 @@ func _init_tts():
 		tts.set_voice(voice_id)
 	if rate != null:
 		tts.set_rate(rate)
+		
 func _init_module_progress():
 	if Firebase and Firebase.Auth and Firebase.Auth.auth:
-		var ModuleProgressScript = load("res://Scripts/ModulesManager/ModuleProgress.gd")
-		if ModuleProgressScript:
-			module_progress = ModuleProgressScript.new()
-			print("PhonicsLetters: ModuleProgress initialized")
-		else:
-			print("PhonicsLetters: ModuleProgress script not found")
+		module_progress = ModuleProgress.new()
+		print("PhonicsLetters: ModuleProgress initialized")
 	else:
 		print("PhonicsLetters: Firebase not available, using local tracking")
 

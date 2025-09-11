@@ -626,18 +626,20 @@ func _create_user_document(collection, user_id: String, auth):
 				"completed": false,
 				"progress": 0,
 				"letters_completed": [],
-				"sight_words_completed": []
+				"sight_words_completed": [],
+				"current_letter_index": 0,
+				"current_sight_word_index": 0
 			},
 			"flip_quiz": {
 				"completed": false,
 				"progress": 0,
-				"animals": {"sets_completed": []},
-				"vehicles": {"sets_completed": []}
+				"animals": {"sets_completed": [], "current_index": 0},
+				"vehicles": {"sets_completed": [], "current_index": 0}
 			},
 			"read_aloud": {
 				"completed": false,
 				"progress": 0,
-				"guided_reading": {"activities_completed": []}
+				"guided_reading": {"activities_completed": [], "current_index": 0}
 			}
 		},
 		"stage_times": {

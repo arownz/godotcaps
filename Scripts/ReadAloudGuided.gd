@@ -42,6 +42,12 @@ var sentence_words = []
 var use_timer_fallback_for_tts = false
 var tts_timer: Timer = null
 
+# Highlighting reset timer for partial speech
+var highlighting_reset_timer: Timer = null
+
+# Completion celebration system
+var completion_celebration: CanvasLayer = null
+
 # Guided Reading Passages - dyslexia-friendly with structured guidance
 var passages = [
     {
@@ -148,6 +154,7 @@ func _ready():
 	# Initialize components
 	_init_tts()
 	_init_module_progress()
+	_init_completion_celebration()
 	
 #	# Connect button events
 	_connect_button_events()
@@ -165,14 +172,14 @@ func _init_tts():
 	
 	# Load TTS settings for dyslexia-friendly reading
 	var voice_id = SettingsManager.get_setting("accessibility", "tts_voice_id")
-	var rate = SettingsManager.get_setting("accessibility", "tts_rate")
 	
 	if voice_id != null and voice_id != "":
 		tts.set_voice(voice_id)
-	if rate != null:
-		tts.set_rate(rate)
-	else:
-		tts.set_rate(0.8) # Slightly slower for dyslexic learners
+	
+	# Set slower rate specifically for guided reading (comfortable for dyslexic users)
+	# Use 0.8 instead of user settings for better comprehension
+	tts.set_rate(0.8)
+	print("ReadAloudGuided: TTS rate set to 0.8 for comfortable reading")
 	
 	# Connect TTS finished signal for guided reading flow
 	if tts:
@@ -196,6 +203,13 @@ func _init_tts():
 	add_child(tts_timer)
 	tts_timer.timeout.connect(_on_tts_finished)
 	print("ReadAloudGuided: Created backup TTS timer")
+	
+	# Create highlighting reset timer for partial speech detection
+	highlighting_reset_timer = Timer.new()
+	highlighting_reset_timer.one_shot = true
+	add_child(highlighting_reset_timer)
+	highlighting_reset_timer.timeout.connect(_on_highlighting_reset_timeout)
+	print("ReadAloudGuided: Created highlighting reset timer")
 
 func _init_module_progress():
 	if Firebase and Firebase.Auth and Firebase.Auth.auth:
@@ -203,6 +217,18 @@ func _init_module_progress():
 		print("ReadAloudGuided: ModuleProgress initialized")
 	else:
 		print("ReadAloudGuided: Firebase not available, using local tracking")
+
+func _init_completion_celebration():
+	"""Initialize completion celebration system"""
+	var celebration_scene = preload("res://Scenes/CompletionCelebration.tscn")
+	completion_celebration = celebration_scene.instantiate()
+	add_child(completion_celebration)
+	
+	# Connect celebration signals
+	completion_celebration.try_again_pressed.connect(_on_celebration_try_again)
+	completion_celebration.next_item_pressed.connect(_on_celebration_next)
+	completion_celebration.closed.connect(_on_celebration_closed)
+	print("ReadAloudGuided: Completion celebration initialized")
 
 func _connect_button_events():
 	"""Connect all button events with hover sounds"""
@@ -582,6 +608,11 @@ func _start_speech_recognition():
 func _stop_speech_recognition():
 	"""Stop speech recognition with comprehensive cleanup"""
 	print("ReadAloudGuided: Stopping speech recognition...")
+	
+	# Stop highlighting reset timer when manually stopping STT
+	if highlighting_reset_timer and not highlighting_reset_timer.is_stopped():
+		highlighting_reset_timer.stop()
+		print("ReadAloudGuided: Stopped highlighting reset timer - STT manually stopped")
 	
 	if OS.get_name() == "Web":
 		if JavaScriptBridge.has_method("eval"):
@@ -1018,6 +1049,17 @@ func _on_tts_finished():
 	# Remove automatic audio prompt - user controls when to hear instructions
 	print("ReadAloudGuided: TTS finished, waiting for user to click Speak button")
 
+func _on_highlighting_reset_timeout():
+	"""Called when highlighting reset timer expires - clears yellow highlighting for incomplete speech"""
+	print("ReadAloudGuided: Auto-resetting yellow highlighting due to incomplete speech")
+	_clear_word_highlighting()
+	
+	# Update guide to encourage trying again
+	var guide_display = $MainContainer/GuidePanel/MarginContainer/GuideContainer/GuideNotes
+	if guide_display:
+		guide_display.text = "Try reading the whole sentence: \"" + current_target_sentence + "\""
+		guide_display.modulate = Color.ORANGE
+
 # Live word highlighting function
 func _update_live_word_highlighting(interim_text: String):
 	"""Update live word highlighting based on STT interim results"""
@@ -1048,6 +1090,15 @@ func _update_live_word_highlighting(interim_text: String):
 	
 	# Apply highlighting to the passage text
 	_apply_word_highlighting()
+	
+	# Start/restart the highlighting reset timer for incomplete speech detection
+	# If user has highlighted some words but not all, prepare for auto-reset
+	if highlighted_words.size() > 0 and highlighted_words.size() < sentence_words.size():
+		if highlighting_reset_timer:
+			highlighting_reset_timer.stop() # Stop any existing timer
+			highlighting_reset_timer.wait_time = 3.0 # 3 seconds of inactivity
+			highlighting_reset_timer.start()
+			print("ReadAloudGuided: Started highlighting reset timer - partial speech detected")
 
 # Word matching for live highlighting (more forgiving than final matching)
 func _is_word_match_for_highlighting(spoken_word: String, target_word: String) -> bool:
@@ -1122,6 +1173,11 @@ func _show_success_feedback(_recognized_text: String):
 	"""Show success feedback and move to next sentence"""
 	print("ReadAloudGuided: Success! Moving to next sentence.")
 	
+	# Stop highlighting reset timer since user succeeded
+	if highlighting_reset_timer and not highlighting_reset_timer.is_stopped():
+		highlighting_reset_timer.stop()
+		print("ReadAloudGuided: Stopped highlighting reset timer - success achieved")
+	
 	# Mark current sentence as completed
 	if current_sentence_index not in completed_sentences:
 		completed_sentences.append(current_sentence_index)
@@ -1144,15 +1200,11 @@ func _show_success_feedback(_recognized_text: String):
 	# Show success message
 	var guide_display = $MainContainer/GuidePanel/MarginContainer/GuideContainer/GuideNotes
 	if guide_display:
-		guide_display.text = "Excellent! You read that perfectly! Moving to the next sentence..."
+		guide_display.text = "Great! Moving to next sentence..."
 		guide_display.modulate = Color.GREEN
 	
-	# Brief audio encouragement for dyslexic learners (much shorter)
-	if tts:
-		tts.speak("Great!")
-	
-	# Much shorter wait time for faster progression
-	await get_tree().create_timer(0.5).timeout
+	# Very quick progression for better user experience
+	await get_tree().create_timer(0.2).timeout
 	
 	# Check if all sentences in passage are completed
 	_check_passage_completion()
@@ -1307,18 +1359,26 @@ func _load_progress():
 			
 			current_passage_index = resume_index
 			print("ReadAloudGuided: Resuming at passage: ", current_passage_index, " (saved index was: ", saved_index, ")")
-			var progress_percent = (float(completed_activities.size()) / float(passages.size())) * 100.0
-			_update_progress_display(progress_percent)
+			_update_progress_display()
 		else:
-			_update_progress_display(0)
+			_update_progress_display()
 	else:
-		_update_progress_display(0)
+		_update_progress_display()
 
-func _update_progress_display(progress_percentage: float):
+func _update_progress_display(_progress_percentage: float = 0.0):
 	var progress_bar = $MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressBar
+	var progress_label = $MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressLabel
+	
+	# Calculate passage-specific progress
+	var completed_count = completed_activities.size()
+	var total_passages = passages.size()
+	var passages_percent = (float(completed_count) / float(total_passages)) * 100.0
+	
+	if progress_label:
+		progress_label.text = str(completed_count) + "/" + str(total_passages) + " Passages"
 	if progress_bar:
-		progress_bar.value = progress_percentage
-		print("ReadAloudGuided: Progress updated to ", progress_percentage, "%")
+		progress_bar.value = passages_percent
+		print("ReadAloudGuided: Progress updated to ", passages_percent, "% (", completed_count, "/", total_passages, " passages)")
 
 func _setup_initial_display():
 	"""Setup initial display with first sentence ready for practice"""
@@ -1690,12 +1750,12 @@ func _show_all_passages_completed():
 	if tts:
 		tts.speak("Congratulations! You have completed all guided reading passages! You're doing fantastic work!")
 	
-	# Update progress to 100%
-	_update_progress_display(100.0)
+	# Update progress display
+	_update_progress_display()
 	
 	# Save final completion status to Firebase
 	if module_progress and module_progress.is_authenticated():
-		var final_save = await module_progress.set_read_aloud_guided_completed("all_passages_complete")
+		var final_save = await module_progress.complete_read_aloud_activity("guided_reading", "all_passages_complete")
 		if final_save:
 			print("ReadAloudGuided: Final completion status saved to Firebase")
 
@@ -1715,7 +1775,13 @@ func _exit_tree():
 func _notification(what):
 	if what == NOTIFICATION_WM_WINDOW_FOCUS_IN:
 		# Refresh progress when window gains focus
-		_load_progress()
+		call_deferred("_refresh_progress")
+
+func _refresh_progress():
+	"""Refresh progress display when user returns to guided reading"""
+	print("ReadAloudGuided: Refreshing progress display")
+	await _load_progress()
+	_update_progress_display()
 
 # STT Functions for Web Speech API integration
 func _update_listen_button():
@@ -1863,6 +1929,9 @@ func _on_read_button_pressed():
 			tts_timer.stop()
 			print("ReadAloudGuided: Stopped backup timer on manual stop")
 		
+		# Reset yellow highlighting when user stops reading
+		_clear_word_highlighting()
+		
 		tts_speaking = false
 		if read_button:
 			read_button.text = "Read"
@@ -1931,6 +2000,9 @@ func _on_speak_button_pressed():
 	if stt_listening:
 		print("ReadAloudGuided: Stopping speech recognition")
 		_stop_speech_recognition()
+		
+		# Reset yellow highlighting when user stops speaking
+		_clear_word_highlighting()
 		
 		# Reset button state
 		if speak_button:
@@ -2116,17 +2188,97 @@ func _complete_current_passage():
 		completed_activities.append(passage_id)
 	
 	# Update progress bar
-	var progress_percentage = (completed_activities.size() / float(passages.size())) * 100.0
-	_update_progress_display(progress_percentage)
+	_update_progress_display()
 	
-	# Show completion message
+	# Stop any active TTS before showing celebration
+	if tts and tts_speaking:
+		tts.stop()
+		tts_speaking = false
+	
+	# Reset button states
+	var read_button = $MainContainer/ControlsContainer/ReadButton
+	if read_button:
+		read_button.text = "Read"
+		read_button.disabled = false
+	
+	var speak_button = $MainContainer/ControlsContainer/SpeakButton
+	if speak_button:
+		speak_button.text = "Speak"
+		speak_button.disabled = false
+	
+	# Show completion celebration instead of automatic progression
+	var passage = passages[current_passage_index]
+	var progress_data = {
+		"activities_completed": completed_activities,
+		"current_passage": current_passage_index + 1,
+		"total_passages": passages.size()
+	}
+	
+	# Show celebration with read-aloud specific data
+	if completion_celebration:
+		completion_celebration.show_completion(
+			completion_celebration.CompletionType.READ_ALOUD_PASSAGE,
+			passage.title + " passage",
+			progress_data,
+			"read_aloud"
+		)
+		print("ReadAloudGuided: Showing completion celebration for passage: ", passage.title)
+	else:
+		print("ReadAloudGuided: WARNING - Completion celebration not initialized")
+		# Fallback to old behavior
+		await get_tree().create_timer(2.0).timeout
+		_advance_to_next_passage_or_complete()
+
+func _advance_to_next_passage_or_complete():
+	"""Helper function to advance to next passage or complete all passages"""
+	# Check if more passages available
+	if current_passage_index < passages.size() - 1:
+		# Move to next passage
+		current_passage_index += 1
+		current_sentence_index = 0
+		
+		# Reset completed sentences for new passage
+		completed_sentences.clear()
+		print("ReadAloudGuided: Advanced to passage ", current_passage_index + 1)
+		
+		_setup_initial_display()
+		
+		# Show new passage introduction
+		var guide_display = $MainContainer/GuidePanel/MarginContainer/GuideContainer/GuideNotes
+		if guide_display:
+			var passage = passages[current_passage_index]
+			guide_display.text = "Starting new passage: \"" + passage.title + "\". Click 'Read' to begin!"
+			guide_display.modulate = Color.CYAN
+	else:
+		# All passages completed!
+		_show_all_passages_completed()
+		if module_progress and module_progress.is_authenticated():
+			var final_save = await module_progress.complete_read_aloud_activity("guided_reading", "all_passages_complete")
+			if final_save:
+				print("ReadAloudGuided: Final completion status saved to Firebase")
+
+# Completion celebration handler functions
+func _on_celebration_try_again():
+	"""Handle 'Try Again' button from completion celebration"""
+	print("ReadAloudGuided: Celebration 'Try Again' pressed - replaying current passage")
+	
+	# Reset current passage to beginning
+	current_sentence_index = 0
+	completed_sentences.clear()
+	
+	# Reset display
+	_setup_initial_display()
+	
+	# Show guide instruction
 	var guide_display = $MainContainer/GuidePanel/MarginContainer/GuideContainer/GuideNotes
 	if guide_display:
-		guide_display.text = "Great job! You completed this passage. " + str(completed_activities.size()) + " of " + str(passages.size()) + " passages done!"
-		guide_display.modulate = Color.GREEN
-	
-	# Wait for celebration
-	await get_tree().create_timer(2.0).timeout
+		var passage = passages[current_passage_index]
+		guide_display.text = "Let's practice \"" + passage.title + "\" again! Click 'Read' to begin."
+		guide_display.modulate = Color.CYAN
+
+func _on_celebration_next():
+	"""Handle 'Next' button from completion celebration"""
+	print("ReadAloudGuided: Celebration 'Next' pressed - advancing to next passage")
 	
 	# Check if more passages available
 	if current_passage_index < passages.size() - 1:
@@ -2136,18 +2288,22 @@ func _complete_current_passage():
 		
 		# Reset completed sentences for new passage
 		completed_sentences.clear()
-		print("ReadAloudGuided: Reset completed sentences for new passage ", current_passage_index)
+		print("ReadAloudGuided: Advanced to passage ", current_passage_index + 1)
 		
+		# Setup display for new passage
 		_setup_initial_display()
 		
 		# Show new passage introduction
+		var guide_display = $MainContainer/GuidePanel/MarginContainer/GuideContainer/GuideNotes
 		if guide_display:
 			var passage = passages[current_passage_index]
 			guide_display.text = "Starting new passage: \"" + passage.title + "\". Click 'Read' to begin!"
 			guide_display.modulate = Color.CYAN
 	else:
-		# All passages completed!
+		# All passages completed - return to module selection
 		_show_all_passages_completed()
-		var final_save = await module_progress.complete_read_aloud_activity("guided_reading", "all_passages_complete")
-		if final_save:
-			print("ReadAloudGuided: Final completion status saved to Firebase")
+
+func _on_celebration_closed():
+	"""Handle celebration popup being closed"""
+	print("ReadAloudGuided: Celebration popup closed")
+	# No specific action needed, user can continue with current state

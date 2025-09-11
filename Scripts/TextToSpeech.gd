@@ -1,6 +1,8 @@
 extends Node
 class_name TextToSpeech
 
+# https://docs.godotengine.org/en/stable/tutorials/audio/text_to_speech.html
+
 signal voices_loaded
 signal speech_started
 signal speech_finished
@@ -14,7 +16,7 @@ var current_voice = ""
 var tts_available = false
 var voices = []
 var selected_voice_id = ""
-var speech_rate = 0.8 # Default to a slightly slower rate (Range: 0.1 to 2.0)
+var speech_rate = 1.0 # Default to normal reading speed (Range: 0.1 to 2.0)
 var speech_volume = 1.0 # Volume (Range: 0.0 to 1.0)
 var speech_pitch = 1.0 # Pitch (Range: 0.5 to 2.0)
 
