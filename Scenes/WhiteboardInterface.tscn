@@ -54,7 +54,7 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_7wk35")
 [node name="ButtonsContainer" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_constants/separation = 20
+theme_override_constants/separation = 0
 
 [node name="UndoButton" type="Button" parent="VBoxContainer/ButtonsContainer"]
 custom_minimum_size = Vector2(100, 50)
@@ -105,7 +105,7 @@ icon_alignment = 1
 expand_icon = true
 
 [node name="CancelButton" type="Button" parent="VBoxContainer/ButtonsContainer"]
-custom_minimum_size = Vector2(100, 50)
+custom_minimum_size = Vector2(150, 50)
 layout_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -121,7 +121,7 @@ icon_alignment = 1
 expand_icon = true
 
 [node name="DoneButton" type="Button" parent="VBoxContainer/ButtonsContainer"]
-custom_minimum_size = Vector2(120, 50)
+custom_minimum_size = Vector2(150, 50)
 layout_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)

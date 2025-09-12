@@ -169,17 +169,14 @@ func _ready():
 func _init_tts():
 	tts = TextToSpeech.new()
 	add_child(tts)
-	
-	# Load TTS settings for dyslexia-friendly reading
+
 	var voice_id = SettingsManager.get_setting("accessibility", "tts_voice_id")
+	var rate = SettingsManager.get_setting("accessibility", "tts_rate")
 	
 	if voice_id != null and voice_id != "":
 		tts.set_voice(voice_id)
-	
-	# Set slower rate specifically for guided reading (comfortable for dyslexic users)
-	# Use 0.8 instead of user settings for better comprehension
-	tts.set_rate(0.8)
-	print("ReadAloudGuided: TTS rate set to 0.8 for comfortable reading")
+	if rate != null:
+		tts.set_rate(rate)
 	
 	# Connect TTS finished signal for guided reading flow
 	if tts:
@@ -569,13 +566,17 @@ func update_mic_permission_state(state):
 		print("ReadAloudGuided: Microphone permission: ", state)
 
 func _start_speech_recognition():
-	"""Start speech recognition with safeguards against double initialization"""
+	"""Start speech recognition with enhanced conflict prevention"""
 	print("ReadAloudGuided: Starting speech recognition...")
 	
-	# Prevent starting if already active
-	if recognition_active or stt_listening:
-		print("ReadAloudGuided: Speech recognition already active, skipping start")
-		return true # Return true since it's already running
+	# Enhanced check: Force stop any existing recognition first
+	if OS.get_name() == "Web" and JavaScriptBridge.has_method("eval"):
+		var js_active = JavaScriptBridge.eval("window.guidedRecognitionActive || false")
+		if js_active or recognition_active or stt_listening:
+			print("ReadAloudGuided: Recognition already active, forcing stop before restart")
+			_force_stop_recognition()
+			# Small delay to ensure cleanup
+			await get_tree().create_timer(0.1).timeout
 	
 	if not mic_permission_granted:
 		print("ReadAloudGuided: Requesting microphone permission...")
@@ -584,15 +585,6 @@ func _start_speech_recognition():
 	
 	if OS.get_name() == "Web":
 		if JavaScriptBridge.has_method("eval"):
-			# Check if recognition is already active on JavaScript side
-			var js_active = JavaScriptBridge.eval("window.guidedRecognitionActive || false")
-			if js_active:
-				print("ReadAloudGuided: JavaScript recognition already active")
-				recognition_active = true
-				stt_listening = true
-				_update_listen_button()
-				return true
-			
 			var result = JavaScriptBridge.eval("window.startGuidedRecognition && window.startGuidedRecognition()")
 			if result:
 				recognition_active = true
@@ -604,6 +596,39 @@ func _start_speech_recognition():
 				print("ReadAloudGuided: Failed to start web speech recognition")
 	
 	return false
+
+func _force_stop_recognition():
+	"""Force stop recognition to prevent conflicts"""
+	print("ReadAloudGuided: Force stopping any active recognition...")
+	
+	if OS.get_name() == "Web" and JavaScriptBridge.has_method("eval"):
+		# Force stop on JavaScript side
+		JavaScriptBridge.eval("""
+		if (window.guidedRecognition) {
+			try {
+				window.guidedRecognition.stop();
+				window.guidedRecognitionActive = false;
+				window.guidedStopRequested = true;
+				window.guidedContinuousMode = false;
+				console.log('ReadAloudGuided: Force stopped recognition');
+			} catch (error) {
+				console.log('ReadAloudGuided: Error in force stop:', error);
+			}
+		}
+		""")
+	
+	# Reset all local state
+	recognition_active = false
+	stt_listening = false
+	stt_feedback_active = false
+	result_being_processed = false
+	
+	# Stop timers
+	if highlighting_reset_timer and not highlighting_reset_timer.is_stopped():
+		highlighting_reset_timer.stop()
+	
+	_update_listen_button()
+	print("ReadAloudGuided: Force stop completed")
 
 func _stop_speech_recognition():
 	"""Stop speech recognition with comprehensive cleanup"""
@@ -1062,7 +1087,7 @@ func _on_highlighting_reset_timeout():
 
 # Live word highlighting function
 func _update_live_word_highlighting(interim_text: String):
-	"""Update live word highlighting based on STT interim results"""
+	"""Update live word highlighting based on STT interim results with fast progression"""
 	if current_target_sentence.is_empty():
 		return
 		
@@ -1078,6 +1103,7 @@ func _update_live_word_highlighting(interim_text: String):
 	
 	# Find matching words with phonetic tolerance
 	highlighted_words.clear()
+	
 	for spoken_word in spoken_words:
 		if spoken_word.length() < 2: # Skip very short words
 			continue
@@ -1091,14 +1117,36 @@ func _update_live_word_highlighting(interim_text: String):
 	# Apply highlighting to the passage text
 	_apply_word_highlighting()
 	
+	# FAST PROGRESSION: If user has highlighted 80%+ of words, immediately progress
+	var completion_threshold = max(1, int(sentence_words.size() * 0.8)) # At least 80% of words
+	if highlighted_words.size() >= completion_threshold:
+		print("ReadAloudGuided: Fast progression triggered - ", highlighted_words.size(), "/", sentence_words.size(), " words matched")
+		# Stop any timers
+		if highlighting_reset_timer and not highlighting_reset_timer.is_stopped():
+			highlighting_reset_timer.stop()
+		# Immediately trigger success
+		call_deferred("_trigger_fast_success")
+		return
+	
 	# Start/restart the highlighting reset timer for incomplete speech detection
-	# If user has highlighted some words but not all, prepare for auto-reset
-	if highlighted_words.size() > 0 and highlighted_words.size() < sentence_words.size():
+	# If user has highlighted some words but not enough, prepare for auto-reset
+	if highlighted_words.size() > 0 and highlighted_words.size() < completion_threshold:
 		if highlighting_reset_timer:
 			highlighting_reset_timer.stop() # Stop any existing timer
-			highlighting_reset_timer.wait_time = 3.0 # 3 seconds of inactivity
+			highlighting_reset_timer.wait_time = 2.0 # Reduced to 2 seconds for faster feedback
 			highlighting_reset_timer.start()
 			print("ReadAloudGuided: Started highlighting reset timer - partial speech detected")
+
+func _trigger_fast_success():
+	"""Immediately trigger success for fast progression"""
+	print("ReadAloudGuided: Fast success triggered - completing sentence immediately")
+	
+	# Stop STT
+	if stt_listening:
+		_stop_speech_recognition()
+	
+	# Mark as completed and progress
+	_show_success_feedback("(Fast progression)")
 
 # Word matching for live highlighting (more forgiving than final matching)
 func _is_word_match_for_highlighting(spoken_word: String, target_word: String) -> bool:
@@ -1160,13 +1208,17 @@ func _clear_word_highlighting():
 		var highlighted_text = ""
 		for i in range(passage.sentences.size()):
 			if i in completed_sentences:
-				highlighted_text += "[bgcolor=lightgreen][color=black]" + passage.sentences[i] + "[/color][/bgcolor]\n\n"
+				# GREEN: Keep completed sentences green
+				highlighted_text += "[bgcolor=green][color=white]" + passage.sentences[i] + "[/color][/bgcolor]\n\n"
 			elif i == current_sentence_index:
-				highlighted_text += "[bgcolor=lightblue][color=black]" + passage.sentences[i] + "[/color][/bgcolor]\n\n"
+				# YELLOW: Current sentence  
+				highlighted_text += "[bgcolor=yellow][color=black]" + passage.sentences[i] + "[/color][/bgcolor]\n\n"
 			else:
+				# Normal text for future sentences
 				highlighted_text += passage.sentences[i] + "\n\n"
 		
 		text_display.text = highlighted_text.strip_edges()
+		print("ReadAloudGuided: Word highlighting cleared, sentence highlighting restored")
 
 
 func _show_success_feedback(_recognized_text: String):
@@ -1203,8 +1255,8 @@ func _show_success_feedback(_recognized_text: String):
 		guide_display.text = "Great! Moving to next sentence..."
 		guide_display.modulate = Color.GREEN
 	
-	# Very quick progression for better user experience
-	await get_tree().create_timer(0.2).timeout
+	# INSTANT progression for better user experience
+	await get_tree().create_timer(0.05).timeout
 	
 	# Check if all sentences in passage are completed
 	_check_passage_completion()
@@ -1467,24 +1519,30 @@ func _start_sentence_practice():
 		stt_feedback_active = true
 		
 		# Start speech recognition
-		if not _start_speech_recognition():
+		if not await _start_speech_recognition():
 			_show_microphone_error()
 
 func _highlight_current_sentence():
-	"""Highlight the current sentence for STT practice"""
+	"""Highlight the current sentence while preserving completed sentences"""
 	var passage = passages[current_passage_index]
 	var text_display = $MainContainer/PassagePanel/MarginContainer/PassageContainer/PassageText
 	
 	if text_display and current_sentence_index < passage.sentences.size():
-		# Build text with current sentence highlighted in light blue
+		# Build text with proper highlighting - preserve completed sentences as GREEN
 		var highlighted_text = ""
 		for i in range(passage.sentences.size()):
-			if i == current_sentence_index:
-				highlighted_text += "[bgcolor=lightblue][color=black]" + passage.sentences[i] + "[/color][/bgcolor]\n\n"
+			if i in completed_sentences:
+				# GREEN: Keep completed sentences highlighted
+				highlighted_text += "[bgcolor=green][color=white]" + passage.sentences[i] + "[/color][/bgcolor]\n\n"
+			elif i == current_sentence_index:
+				# YELLOW: Current sentence for reading (changed from lightblue to yellow for consistency)
+				highlighted_text += "[bgcolor=yellow][color=black]" + passage.sentences[i] + "[/color][/bgcolor]\n\n"
 			else:
+				# Normal text for future sentences
 				highlighted_text += passage.sentences[i] + "\n\n"
 		
 		text_display.text = highlighted_text.strip_edges()
+		print("ReadAloudGuided: Current sentence highlighted while preserving ", completed_sentences.size(), " completed sentences")
 		
 		# Store sentence words for live highlighting
 		sentence_words = passage.sentences[current_sentence_index].to_lower().split(" ")
@@ -1948,8 +2006,8 @@ func _on_read_button_pressed():
 			current_target_sentence = sentence
 			
 			if sentence != "":
-				# Highlight current sentence
-				_highlight_current_sentence()
+				# Highlight current sentence PROPERLY (preserve completed green sentences)
+				_update_sentence_highlighting() # Use consistent highlighting function instead of _highlight_current_sentence
 				
 				# Update button text to show reading state with stop capability
 				if read_button:
@@ -2060,8 +2118,9 @@ func _on_speak_button_pressed():
 				# Enable live transcription for better feedback
 				live_transcription_enabled = true
 				
-				# Start speech recognition for this specific sentence (SINGLE CALL)
-				if _start_speech_recognition():
+				# Start speech recognition for this specific sentence (ENHANCED CONFLICT PREVENTION)
+				var start_success = await _start_speech_recognition()
+				if start_success:
 					stt_feedback_active = true
 					print("ReadAloudGuided: Speech recognition started for sentence practice")
 					
@@ -2097,8 +2156,10 @@ func _on_tts_setting_button_pressed():
 
 # New function to advance to next sentence with progress tracking
 func _advance_to_next_sentence():
-	"""Advance to the next sentence and update progress"""
+	"""Advance to the next sentence with complete passage handling"""
 	var passage = passages[current_passage_index]
+	
+	print("ReadAloudGuided: Advanced to sentence ", current_sentence_index + 1, " of ", passage.sentences.size())
 	
 	if current_sentence_index < passage.sentences.size() - 1:
 		# Move to next sentence in current passage
@@ -2107,9 +2168,25 @@ func _advance_to_next_sentence():
 		
 		# Update display to highlight current sentence while preserving completed sentences
 		_update_sentence_highlighting()
+		
+		# Update guide text for next sentence
+		var guide_display = $MainContainer/GuidePanel/MarginContainer/GuideContainer/GuideNotes
+		if guide_display:
+			guide_display.text = "Read the highlighted sentence: \"" + current_target_sentence + "\""
+			guide_display.modulate = Color.WHITE
+			
+	else:
+		# All sentences completed - advance to next passage
+		print("ReadAloudGuided: All sentences in passage completed! Advancing to next passage...")
+		await _complete_current_passage()
+		
+		# For immediate testing - bypass celebration and auto-advance after 2 seconds
+		print("ReadAloudGuided: Auto-advancing to next passage in 2 seconds...")
+		await get_tree().create_timer(2.0).timeout
+		_advance_to_next_passage_or_complete()
 
 func _update_sentence_highlighting():
-	"""Update sentence highlighting to show completed (green) and current (blue) sentences"""
+	"""Update sentence highlighting with persistent green for completed sentences"""
 	var passage = passages[current_passage_index]
 	var text_display = $MainContainer/PassagePanel/MarginContainer/PassageContainer/PassageText
 	
@@ -2118,18 +2195,25 @@ func _update_sentence_highlighting():
 		var highlighted_text = ""
 		for i in range(passage.sentences.size()):
 			if i in completed_sentences:
-				# Green highlighting for completed sentences (permanent)
-				highlighted_text += "[bgcolor=lightgreen][color=black]" + passage.sentences[i] + "[/color][/bgcolor]\n\n"
+				# GREEN: Completed sentences (permanent and visible)
+				highlighted_text += "[bgcolor=green][color=white]" + passage.sentences[i] + "[/color][/bgcolor]\n\n"
+				print("ReadAloudGuided: Sentence ", i, " highlighted as COMPLETED (GREEN)")
 			elif i == current_sentence_index:
-				# Light blue highlighting for current active sentence
-				highlighted_text += "[bgcolor=lightblue][color=black]" + passage.sentences[i] + "[/color][/bgcolor]\n\n"
+				# YELLOW: Current sentence being worked on
+				highlighted_text += "[bgcolor=yellow][color=black]" + passage.sentences[i] + "[/color][/bgcolor]\n\n"
+				print("ReadAloudGuided: Sentence ", i, " highlighted as CURRENT (YELLOW)")
 			else:
 				# Normal text for future sentences
 				highlighted_text += passage.sentences[i] + "\n\n"
 		
 		text_display.text = highlighted_text.strip_edges()
+		print("ReadAloudGuided: Updated highlighting - Completed: ", completed_sentences, " Current: ", current_sentence_index)
 		
 		# Store sentence words for live highlighting
+		if current_sentence_index < passage.sentences.size():
+			current_target_sentence = passage.sentences[current_sentence_index]
+			sentence_words = current_target_sentence.to_lower().split(" ")
+			print("ReadAloudGuided: Target sentence set: ", current_target_sentence)
 		sentence_words = passage.sentences[current_sentence_index].to_lower().split(" ")
 		current_target_sentence = passage.sentences[current_sentence_index]
 		
@@ -2170,7 +2254,7 @@ func _update_sentence_highlighting():
 
 # Complete current passage and move to next or finish
 func _complete_current_passage():
-	"""Complete current passage and advance to next"""
+	"""Complete current passage and advance to next with enhanced progress tracking"""
 	print("ReadAloudGuided: Completing passage ", current_passage_index + 1)
 	
 	# Save passage completion to Firebase
@@ -2186,9 +2270,11 @@ func _complete_current_passage():
 	var passage_id = "passage_" + str(current_passage_index)
 	if passage_id not in completed_activities:
 		completed_activities.append(passage_id)
+		print("ReadAloudGuided: Added passage to local completed activities: ", passage_id)
 	
-	# Update progress bar
+	# Update progress display immediately
 	_update_progress_display()
+	print("ReadAloudGuided: Progress updated after passage completion")
 	
 	# Stop any active TTS before showing celebration
 	if tts and tts_speaking:
@@ -2200,6 +2286,13 @@ func _complete_current_passage():
 	if read_button:
 		read_button.text = "Read"
 		read_button.disabled = false
+		read_button.modulate = Color.WHITE
+	
+	var speak_btn = $MainContainer/ControlsContainer/SpeakButton
+	if speak_btn:
+		speak_btn.text = "Speak"
+		speak_btn.disabled = false
+		speak_btn.modulate = Color.WHITE
 	
 	var speak_button = $MainContainer/ControlsContainer/SpeakButton
 	if speak_button:
@@ -2223,9 +2316,15 @@ func _complete_current_passage():
 			"read_aloud"
 		)
 		print("ReadAloudGuided: Showing completion celebration for passage: ", passage.title)
+		
+		# Auto-advance after 5 seconds if user doesn't interact with celebration
+		await get_tree().create_timer(5.0).timeout
+		if completion_celebration and completion_celebration.visible:
+			print("ReadAloudGuided: Auto-advancing after 5 seconds - moving to next passage")
+			_advance_to_next_passage_or_complete()
 	else:
 		print("ReadAloudGuided: WARNING - Completion celebration not initialized")
-		# Fallback to old behavior
+		# Fallback to immediate advancement
 		await get_tree().create_timer(2.0).timeout
 		_advance_to_next_passage_or_complete()
 
@@ -2280,6 +2379,10 @@ func _on_celebration_next():
 	"""Handle 'Next' button from completion celebration"""
 	print("ReadAloudGuided: Celebration 'Next' pressed - advancing to next passage")
 	
+	# Hide celebration immediately
+	if completion_celebration:
+		completion_celebration.hide()
+	
 	# Check if more passages available
 	if current_passage_index < passages.size() - 1:
 		# Move to next passage
@@ -2288,7 +2391,7 @@ func _on_celebration_next():
 		
 		# Reset completed sentences for new passage
 		completed_sentences.clear()
-		print("ReadAloudGuided: Advanced to passage ", current_passage_index + 1)
+		print("ReadAloudGuided: Advanced to passage ", current_passage_index + 1, " (", passages[current_passage_index].title, ")")
 		
 		# Setup display for new passage
 		_setup_initial_display()

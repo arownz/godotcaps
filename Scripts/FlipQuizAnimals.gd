@@ -76,8 +76,8 @@ func _refresh_progress():
 func _init_tts():
 	tts = TextToSpeech.new()
 	add_child(tts)
-
-	# Load TTS settings
+	
+	# Load TTS settings for dyslexia-friendly reading
 	var voice_id = SettingsManager.get_setting("accessibility", "tts_voice_id")
 	var rate = SettingsManager.get_setting("accessibility", "tts_rate")
 	

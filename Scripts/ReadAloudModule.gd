@@ -132,26 +132,33 @@ func _load_category_progress():
 		print("ReadAloudModule: Failed to fetch read aloud progress")
 
 func _update_progress_displays(firebase_modules: Dictionary):
-	# Guided Reading progress - Now the only available category
+	# Guided Reading progress - Enhanced calculation based on actual completion
 	var guided_percent = 0.0
 	if firebase_modules.has("read_aloud"):
 		var read_aloud = firebase_modules["read_aloud"]
 		if typeof(read_aloud) == TYPE_DICTIONARY:
 			var guided_activities = read_aloud.get("guided_reading", {}).get("activities_completed", []).size()
-			guided_percent = (float(guided_activities) / 5.0) * 100.0 # Assuming 5 guided activities
+			var total_guided_activities = 6 # Updated to match 6 passages (levels 1-4)
+			guided_percent = (float(guided_activities) / float(total_guided_activities)) * 100.0
+			print("ReadAloudModule: Guided Reading - ", guided_activities, "/", total_guided_activities, " activities completed (", int(guided_percent), "%)")
+	
 	var guided_label = get_node_or_null("MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard/GuidedContent/ProgressLabel")
 	if guided_label:
 		guided_label.text = str(int(guided_percent)) + "% Complete"
+		print("ReadAloudModule: Updated guided reading progress label to ", int(guided_percent), "%")
 
-	# Overall progress is just guided reading progress
+	# Overall progress is just guided reading progress (only category available)
 	var overall_bar = $MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressBar
 	if overall_bar:
 		overall_bar.value = guided_percent
+		print("ReadAloudModule: Updated overall progress bar to ", int(guided_percent), "%")
+	
 	var overall_label = $MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressLabel
 	if overall_label:
 		overall_label.text = str(int(guided_percent)) + "% Complete"
+		print("ReadAloudModule: Updated overall progress label to ", int(guided_percent), "%")
 	
-	print("ReadAloudModule: Progress updated - Guided: ", int(guided_percent), "%, Overall: ", int(guided_percent), "%")
+	print("ReadAloudModule: All progress displays updated - Guided: ", int(guided_percent), "%, Overall: ", int(guided_percent), "%")
 
 func _on_button_hover():
 	$ButtonHover.play()
