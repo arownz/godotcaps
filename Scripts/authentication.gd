@@ -11,6 +11,14 @@ var registration_email = ""
 var registration_birth_date = ""
 var registration_age = 0
 
+# Admin button access control
+var logo_click_count = 0
+var logo_click_timer = 0.0
+var max_click_interval = 2.0 # Reset counter if clicks are more than 2 seconds apart
+var required_clicks = 7 # Number of clicks needed to show admin button
+var admin_button_timer = 0.0
+var admin_button_visible_duration = 10.0 # Admin button stays visible for 10 seconds
+
 # Notification popup for user feedback
 var notification_popup
 
@@ -46,6 +54,9 @@ func _ready():
 	
 	# Initialize date picker dropdown
 	_initialize_date_pickers()
+	
+	# Hide admin button initially and make logo clickable
+	_setup_admin_access()
 	
 	# Make layout responsive
 	get_tree().root.size_changed.connect(_adjust_layout_for_screen_size)
@@ -194,6 +205,98 @@ func _adjust_layout_for_screen_size():
 		$MarginContainer/ContentContainer/RightPanel/MainContainer.custom_minimum_size.y = min(viewport_size.y * 0.9, 650)
 	else:
 		$MarginContainer/ContentContainer/RightPanel/MainContainer.custom_minimum_size.y = 0
+
+# Process function to handle logo click timer and admin button auto-hide
+func _process(delta):
+	if logo_click_timer > 0:
+		logo_click_timer -= delta
+		if logo_click_timer <= 0:
+			logo_click_count = 0 # Reset counter if too much time passed
+	
+	# Handle admin button auto-hide timer
+	if admin_button_timer > 0:
+		admin_button_timer -= delta
+		if admin_button_timer <= 0:
+			_hide_admin_button()
+
+# Setup admin access control
+func _setup_admin_access():
+	# Hide admin button initially
+	$AdminButton.visible = false
+	
+	# Connect logo button events
+	var logo_button = $MarginContainer/ContentContainer/LeftPanel/BrandContainer/LogoTexture/ClickArea
+	if logo_button:
+		if not logo_button.pressed.is_connected(_on_logo_button_pressed):
+			logo_button.pressed.connect(_on_logo_button_pressed)
+		if not logo_button.mouse_entered.is_connected(_on_logo_button_mouse_entered):
+			logo_button.mouse_entered.connect(_on_logo_button_mouse_entered)
+		if not logo_button.mouse_exited.is_connected(_on_logo_button_mouse_exited):
+			logo_button.mouse_exited.connect(_on_logo_button_mouse_exited)
+
+# Handle logo button hover enter
+func _on_logo_button_mouse_entered():
+	var logo_button = $MarginContainer/ContentContainer/LeftPanel/BrandContainer/LogoTexture
+	var tween = create_tween()
+	tween.tween_property(logo_button, "modulate", Color(1.1, 1.1, 1.1, 1.0), 0.2)
+
+# Handle logo button hover exit
+func _on_logo_button_mouse_exited():
+	var logo_button = $MarginContainer/ContentContainer/LeftPanel/BrandContainer/LogoTexture
+	var tween = create_tween()
+	tween.tween_property(logo_button, "modulate", Color(1.0, 1.0, 1.0, 1.0), 0.2)
+
+# Handle logo button clicks for admin access
+func _on_logo_button_pressed():
+	$ButtonClick.play()
+	logo_click_count += 1
+	logo_click_timer = max_click_interval
+	
+	# Add subtle visual feedback for each click
+	var logo_button = $MarginContainer/ContentContainer/LeftPanel/BrandContainer/LogoTexture
+	var tween = create_tween()
+	tween.tween_property(logo_button, "scale", Vector2(0.95, 0.95), 0.1)
+	tween.tween_property(logo_button, "scale", Vector2(1.0, 1.0), 0.1)
+	
+	print("Logo clicked ", logo_click_count, " times")
+	
+	if logo_click_count >= required_clicks:
+		_show_admin_button()
+		logo_click_count = 0 # Reset counter
+
+# Show admin button with subtle animation
+func _show_admin_button():
+	$AdminButton.visible = true
+	$AdminButton.modulate.a = 0.0
+	$AdminButton.scale = Vector2(0.5, 0.5)
+	
+	# Start the auto-hide timer
+	admin_button_timer = admin_button_visible_duration
+	
+	var tween = create_tween()
+	tween.set_parallel(true)
+	tween.tween_property($AdminButton, "modulate:a", 1.0, 0.5).set_ease(Tween.EASE_OUT)
+	tween.tween_property($AdminButton, "scale", Vector2(1.23082, 1.23082), 0.5).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+	
+	print("Admin button revealed! Will auto-hide in ", admin_button_visible_duration, " seconds")
+
+# Hide admin button with fade-out animation
+func _hide_admin_button():
+	if not $AdminButton.visible:
+		return
+	
+	var tween = create_tween()
+	tween.set_parallel(true)
+	tween.tween_property($AdminButton, "modulate:a", 0.0, 0.5).set_ease(Tween.EASE_IN)
+	tween.tween_property($AdminButton, "scale", Vector2(0.5, 0.5), 0.5).set_ease(Tween.EASE_IN)
+	
+	# Hide the button after animation completes
+	tween.tween_callback(func(): $AdminButton.visible = false).set_delay(0.5)
+	
+	# Reset the timer
+	admin_button_timer = 0.0
+	
+	print("Admin button hidden")
 
 # Helper function to show messages using notification popup with dyslexia-friendly feedback
 func show_message(text: String, is_success: bool = true):
@@ -921,6 +1024,9 @@ func _on_admin_button_pressed():
 	print("DEBUG: Super Admin button pressed")
 	var admin_url = "https://admin-teamlexia.web.app/login"
 	
+	# Hide admin button after being used
+	_hide_admin_button()
+	
 	if OS.has_feature('web'):
 		# Open in new tab for web builds
 		JavaScriptBridge.eval("window.open('" + admin_url + "', '_blank');")
@@ -1165,6 +1271,10 @@ func _on_sign_in_google_button_mouse_entered() -> void:
 
 func _on_admin_button_mouse_entered() -> void:
 	$ButtonHover.play()
+	# Extend the timer when user hovers over admin button
+	if admin_button_timer > 0:
+		admin_button_timer = admin_button_visible_duration
+		print("Admin button timer reset due to user interaction")
 
 func _on_day_option_button_pressed() -> void:
 	$ButtonClick.play()
@@ -1201,3 +1311,6 @@ func _on_register_button_mouse_entered() -> void:
 
 func _on_login_button_mouse_entered() -> void:
 	$ButtonHover.play()
+
+func _on_logo_texture_mouse_entered() -> void:
+	pass # Replace with function body.

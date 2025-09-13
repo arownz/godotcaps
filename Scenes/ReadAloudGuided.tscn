@@ -194,43 +194,8 @@ theme_override_fonts/font = ExtResource("3_bold")
 theme_override_styles/background = SubResource("StyleBoxFlat_progress_bg")
 theme_override_styles/fill = SubResource("StyleBoxFlat_progress_fill")
 
-[node name="GuideButton" type="Button" parent="MainContainer/HeaderPanel"]
-layout_mode = 0
-offset_left = 30.0
-offset_right = 129.0
-offset_bottom = 81.0
-mouse_default_cursor_shape = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
-theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_bold")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_focus")
-text = "Guide"
-icon = ExtResource("6_next")
-flat = true
-icon_alignment = 1
-expand_icon = true
-
-[node name="TTSSettingButton" type="Button" parent="MainContainer/HeaderPanel"]
-layout_mode = 0
-offset_left = 30.0
-offset_top = 81.0
-offset_right = 129.0
-offset_bottom = 119.0
-mouse_default_cursor_shape = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
-theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_bold")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_focus")
-text = "TTS"
-icon = ExtResource("4_yellow")
-flat = true
-icon_alignment = 1
-expand_icon = true
-
 [node name="GuidePanel" type="Panel" parent="MainContainer"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 130)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_guide")
 
@@ -268,6 +233,41 @@ text = "Let's read about Mia and her cat. Take your time with each sentence."
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 2
+
+[node name="GuideButton" type="Button" parent="MainContainer/GuidePanel"]
+layout_mode = 0
+offset_left = 25.0
+offset_right = 124.0
+offset_bottom = 81.0
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_bold")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_focus")
+text = "Guide"
+icon = ExtResource("6_next")
+flat = true
+icon_alignment = 1
+expand_icon = true
+
+[node name="TTSSettingButton" type="Button" parent="MainContainer/GuidePanel"]
+layout_mode = 0
+offset_left = 25.0
+offset_top = 81.0
+offset_right = 124.0
+offset_bottom = 119.0
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_bold")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_focus")
+text = "TTS"
+icon = ExtResource("4_yellow")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [node name="PassagePanel" type="Panel" parent="MainContainer"]
 layout_mode = 2
@@ -389,8 +389,8 @@ stream = ExtResource("4_click")
 stream = ExtResource("5_hover")
 
 [connection signal="pressed" from="MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton" to="." method="_on_back_button_pressed"]
-[connection signal="pressed" from="MainContainer/HeaderPanel/GuideButton" to="." method="_on_guide_button_pressed"]
-[connection signal="pressed" from="MainContainer/HeaderPanel/TTSSettingButton" to="." method="_on_tts_setting_button_pressed"]
+[connection signal="pressed" from="MainContainer/GuidePanel/GuideButton" to="." method="_on_guide_button_pressed"]
+[connection signal="pressed" from="MainContainer/GuidePanel/TTSSettingButton" to="." method="_on_tts_setting_button_pressed"]
 [connection signal="mouse_entered" from="MainContainer/ControlsContainer/PreviousButton" to="." method="_on_button_hover"]
 [connection signal="pressed" from="MainContainer/ControlsContainer/PreviousButton" to="." method="_on_previous_passage_button_pressed"]
 [connection signal="mouse_entered" from="MainContainer/ControlsContainer/ReadButton" to="." method="_on_button_hover"]

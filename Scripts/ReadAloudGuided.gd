@@ -231,8 +231,8 @@ func _connect_button_events():
 	"""Connect all button events with hover sounds"""
 	var buttons = [
 		$MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton,
-		$MainContainer/HeaderPanel/GuideButton,
-		$MainContainer/HeaderPanel/TTSSettingButton,
+		$MainContainer/GuidePanel/GuideButton,
+		$MainContainer/GuidePanel/TTSSettingButton,
 		$MainContainer/ControlsContainer/PreviousButton,
 		$MainContainer/ControlsContainer/ReadButton,
 		$MainContainer/ControlsContainer/SpeakButton,

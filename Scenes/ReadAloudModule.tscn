@@ -290,7 +290,6 @@ icon_alignment = 1
 expand_icon = true
 
 [node name="GuidedReadingCard2" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid"]
-visible = false
 custom_minimum_size = Vector2(430, 300)
 layout_mode = 2
 size_flags_horizontal = 4
