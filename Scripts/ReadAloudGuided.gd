@@ -2316,15 +2316,10 @@ func _complete_current_passage():
 			"read_aloud"
 		)
 		print("ReadAloudGuided: Showing completion celebration for passage: ", passage.title)
-		
-		# Auto-advance after 5 seconds if user doesn't interact with celebration
-		await get_tree().create_timer(5.0).timeout
-		if completion_celebration and completion_celebration.visible:
-			print("ReadAloudGuided: Auto-advancing after 5 seconds - moving to next passage")
-			_advance_to_next_passage_or_complete()
+		# User must click "Next" button to advance - no auto-advance for dyslexia-friendly UX
 	else:
 		print("ReadAloudGuided: WARNING - Completion celebration not initialized")
-		# Fallback to immediate advancement
+		# Fallback to immediate advancement only if celebration fails to load
 		await get_tree().create_timer(2.0).timeout
 		_advance_to_next_passage_or_complete()
 

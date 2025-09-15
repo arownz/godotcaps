@@ -1022,7 +1022,7 @@ func clear_google_auth_data():
 func _on_admin_button_pressed():
 	$ButtonClick.play()
 	print("DEBUG: Super Admin button pressed")
-	var admin_url = "https://admin-teamlexia.web.app/login"
+	var admin_url = "https://gamedevcapz-admin.web.app"
 	
 	# Hide admin button after being used
 	_hide_admin_button()

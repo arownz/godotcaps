@@ -18,9 +18,9 @@ var progress_data: Dictionary = {}
 
 # Module theme colors
 var module_colors = {
-	"phonics": Color(0.2, 0.6, 0.2, 1), # Green for phonics
-	"flip_quiz": Color(0.8, 0.4, 0.1, 1), # Orange for flip quiz
-	"read_aloud": Color(0.1, 0.4, 0.8, 1), # Blue for read aloud
+	"phonics": Color("#4087bd"), # Blue for phonics
+	"flip_quiz": Color("#e64d4d"), # Red for flip quiz
+	"read_aloud": Color("#33cc66"), # Green for read aloud
 }
 
 func _ready():

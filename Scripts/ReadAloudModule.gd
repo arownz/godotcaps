@@ -138,7 +138,7 @@ func _update_progress_displays(firebase_modules: Dictionary):
 		var read_aloud = firebase_modules["read_aloud"]
 		if typeof(read_aloud) == TYPE_DICTIONARY:
 			var guided_activities = read_aloud.get("guided_reading", {}).get("activities_completed", []).size()
-			var total_guided_activities = 6 # Updated to match 6 passages (levels 1-4)
+			var total_guided_activities = 4 # Updated to match 4 passages in ReadAloudGuided.gd
 			guided_percent = (float(guided_activities) / float(total_guided_activities)) * 100.0
 			print("ReadAloudModule: Guided Reading - ", guided_activities, "/", total_guided_activities, " activities completed (", int(guided_percent), "%)")
 	

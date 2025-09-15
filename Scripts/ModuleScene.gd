@@ -226,10 +226,10 @@ func _update_card_progress(module_key: String, card_name: String):
 					guided_completed = guided_data.size()
 				
 				var total_completed = guided_completed
-				var total_possible = 6 # Updated to 6 guided activities total (6 passages with levels 1-4)
+				var total_possible = 4 # Updated to 4 guided activities total (4 passages in ReadAloudGuided.gd)
 				progress_percent = (float(total_completed) / float(total_possible)) * 100.0
 				completed = total_completed >= total_possible
-				print("ModuleScene: ReadAloud overall - Guided:", guided_completed, "/6, Total:", total_completed, "/", total_possible, ", Overall:", int(progress_percent), "%")
+				print("ModuleScene: ReadAloud overall - Guided:", guided_completed, "/4, Total:", total_completed, "/", total_possible, ", Overall:", int(progress_percent), "%")
 			else:
 				# For other modules, use direct progress value
 				progress_percent = float(fm.get("progress", 0))
