@@ -267,45 +267,17 @@ func _on_guide_button_pressed():
 		_speak_text_simple(guide_text)
 
 func _on_tts_setting_button_pressed():
+	"""TTS Settings button - Open settings as popup overlay"""
 	$ButtonClick.play()
-	print("PhonicsLetters: Looking for TTSSettingsPopup (robust lookup)...")
-	var tts_popup = get_node_or_null("TTSSettingsPopup")
-	if not tts_popup:
-		tts_popup = find_child("TTSSettingsPopup", true, false)
-	if not tts_popup:
-		print("PhonicsLetters: TTSSettingsPopup not found - instantiating dynamically")
-		var popup_scene: PackedScene = load("res://Scenes/TTSSettingsPopup.tscn")
-		if popup_scene:
-			tts_popup = popup_scene.instantiate()
-			tts_popup.name = "TTSSettingsPopup"
-			add_child(tts_popup)
-	print("PhonicsLetters: TTSSettingsPopup final status:", tts_popup != null)
-	if tts_popup:
-		# Setup popup with current settings
-		var current_voice = SettingsManager.get_setting("accessibility", "tts_voice_id")
-		var current_rate = SettingsManager.get_setting("accessibility", "tts_rate")
-		
-		# Provide safe defaults
-		if current_voice == null or current_voice == "":
-			current_voice = "default"
-		if current_rate == null:
-			current_rate = 1.0
-		
-		# Pass current TTS instance to popup for voice testing
-		if tts_popup.has_method("set_tts_instance"):
-			tts_popup.set_tts_instance(tts)
-		
-		if tts_popup.has_method("setup"):
-			tts_popup.setup(tts, current_voice, current_rate, "Testing Text to Speech")
-		
-		# Connect to save signal if not already connected
-		if not tts_popup.settings_saved.is_connected(_on_tts_settings_saved):
-			tts_popup.settings_saved.connect(_on_tts_settings_saved)
-		
-		tts_popup.visible = true
-		print("PhonicsLetters: TTS Settings popup opened")
-	else:
-		print("PhonicsLetters: Warning - TTSSettingsPopup still not found after dynamic attempt")
+	print("PhonicsLetters: Settings button pressed")
+	
+	# Open settings as popup instead of changing scene
+	var settings_popup_scene = load("res://Scenes/SettingScene.tscn")
+	if settings_popup_scene:
+		var popup = settings_popup_scene.instantiate()
+		add_child(popup)
+		if popup.has_method("set_context"):
+			popup.set_context(false) # normal settings; hide battle buttons
 
 # Helper function to provide letter sound guidance
 func _get_letter_sound(letter: String) -> String:

@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://0qstx7wmx0vr"]
+[gd_scene load_steps=20 format=3 uid="uid://0qstx7wmx0vr"]
 
 [ext_resource type="Script" uid="uid://b026p1dub2ejv" path="res://Scripts/PhonicsSightWords.gd" id="2_script"]
 [ext_resource type="Texture2D" uid="uid://ciaa4qe2o2juf" path="res://gui/Update/UI/ui 3.png" id="2_vpakk"]
@@ -9,6 +9,8 @@
 [ext_resource type="PackedScene" uid="uid://cvv1bpkfdvqjw" path="res://Scenes/WhiteboardInterface.tscn" id="6_whiteboard"]
 [ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="8_click"]
 [ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="9_hover"]
+[ext_resource type="Texture2D" uid="uid://c8vnqmxwy0lsw" path="res://gui/Update/icons/small settings.png" id="10_settings"]
+[ext_resource type="Texture2D" uid="uid://bb3yuiy6n0i2" path="res://gui/Update/icons/small settings_hover.png" id="11_settings_hover"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_header_panel"]
 bg_color = Color(0.85098, 0.921569, 0.980392, 1)
@@ -139,7 +141,7 @@ theme_override_constants/separation = 20
 alignment = 2
 
 [node name="ProgressBar" type="ProgressBar" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer"]
-custom_minimum_size = Vector2(200, 20)
+custom_minimum_size = Vector2(250, 20)
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold")
@@ -289,23 +291,16 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="TTSSettingButton" type="Button" parent="MainContainer/ContentContainer/InstructionPanel"]
+[node name="TTSSettingButton" type="TextureButton" parent="MainContainer/ContentContainer/InstructionPanel"]
 layout_mode = 0
-offset_left = 30.0
-offset_top = 81.0
-offset_right = 129.0
-offset_bottom = 119.0
+offset_left = 48.0
+offset_top = 71.0
+offset_right = 86.0
+offset_bottom = 109.0
 mouse_default_cursor_shape = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
-theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("4_bold")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_8msy7")
-text = "TTS"
-icon = ExtResource("5_yellow")
-flat = true
-icon_alignment = 1
-expand_icon = true
+texture_normal = ExtResource("10_settings")
+texture_hover = ExtResource("11_settings_hover")
+stretch_mode = 5
 
 [node name="WhiteboardPanel" type="Panel" parent="MainContainer/ContentContainer"]
 layout_mode = 2

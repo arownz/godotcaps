@@ -3,11 +3,11 @@
 [ext_resource type="Script" uid="uid://caa84ntbsorb8" path="res://Scripts/ProfilePopUp.gd" id="1_script"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="2_73kok"]
 [ext_resource type="Texture2D" uid="uid://0con8ixqofpr" path="res://gui/Update/UI/ui 8.png" id="2_rwnca"]
+[ext_resource type="Texture2D" uid="uid://cmjgnxm6d3n84" path="res://gui/Update/icons/profile.png" id="3_q75ak"]
 [ext_resource type="Texture2D" uid="uid://cmvfv5h4u7j6e" path="res://gui/Update/icons/close icon.png" id="3_rwnca"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="3_uyv5l"]
 [ext_resource type="Texture2D" uid="uid://c5cpf575pv2ee" path="res://gui/Update/icons/close icon_hover.png" id="4_7j5ql"]
 [ext_resource type="Texture2D" uid="uid://bctgpjuu2tes7" path="res://gui/profile pic with border.png" id="5_r1smr"]
-[ext_resource type="Texture2D" uid="uid://d1cl5g1wmpkbe" path="res://gui/Update/icons/profile icon.png" id="6_q75ak"]
 [ext_resource type="Texture2D" uid="uid://b4ufiaccf4npq" path="res://gui/profile pic with border_hover.png" id="6_tilb2"]
 [ext_resource type="Texture2D" uid="uid://bky3s7o7g08k8" path="res://gui/Update/icons/bronze medal.png" id="7_medal"]
 [ext_resource type="Texture2D" uid="uid://dpejfssp2t44k" path="res://gui/Update/icons/edit name.png" id="7_rwnca"]
@@ -40,10 +40,8 @@ shadow_color = Color(0, 0, 0, 0.1)
 shadow_size = 8
 shadow_offset = Vector2(0, 4)
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_kmls2"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hover"]
-bg_color = Color(0.4, 0.22, 0.14, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_normal"]
+bg_color = Color(0.259622, 0.14214, 0.0862142, 1)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
@@ -66,8 +64,8 @@ corner_radius_top_right = 15
 corner_radius_bottom_right = 15
 corner_radius_bottom_left = 15
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_normal"]
-bg_color = Color(0.259622, 0.14214, 0.0862142, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hover"]
+bg_color = Color(0.4, 0.22, 0.14, 1)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
@@ -77,6 +75,8 @@ corner_radius_top_left = 15
 corner_radius_top_right = 15
 corner_radius_bottom_right = 15
 corner_radius_bottom_left = 15
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_kmls2"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_tilb2"]
 
@@ -127,7 +127,7 @@ stretch_mode = 6
 
 [node name="HeaderPanel" type="Panel" parent="ProfileContainer"]
 custom_minimum_size = Vector2(0, 90)
-layout_mode = 2
+layout_mode = 0
 offset_left = -18.0
 offset_top = -10.0
 offset_right = 762.0
@@ -149,7 +149,7 @@ alignment = 1
 custom_minimum_size = Vector2(45, 45)
 layout_mode = 2
 size_flags_vertical = 4
-texture = ExtResource("6_q75ak")
+texture = ExtResource("3_q75ak")
 expand_mode = 2
 
 [node name="TitleLabel" type="Label" parent="ProfileContainer/HeaderPanel/TitleContainer"]
@@ -243,9 +243,9 @@ texture_hover = ExtResource("11_6o1ar")
 
 [node name="EmailLabel" type="Label" parent="ProfileContainer/UserInfoArea"]
 layout_mode = 0
-offset_top = 89.0
+offset_top = 120.78047
 offset_right = 181.0
-offset_bottom = 126.0
+offset_bottom = 157.78047
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_73kok")
 theme_override_font_sizes/font_size = 20
@@ -254,9 +254,9 @@ text = "Email:"
 [node name="EmailValue" type="Label" parent="ProfileContainer/UserInfoArea"]
 layout_mode = 0
 offset_left = 101.0
-offset_top = 89.0
+offset_top = 120.78047
 offset_right = 473.0
-offset_bottom = 126.0
+offset_bottom = 157.78047
 theme_override_colors/font_color = Color(0.988235, 0.988235, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_uyv5l")
@@ -265,10 +265,10 @@ text = "Loading..."
 
 [node name="UIDLabel" type="Label" parent="ProfileContainer/UserInfoArea"]
 layout_mode = 0
-offset_left = -0.413207
-offset_top = 126.449
+offset_left = -0.41320693
+offset_top = 45.35377
 offset_right = 180.587
-offset_bottom = 160.449
+offset_bottom = 79.353775
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_73kok")
 theme_override_font_sizes/font_size = 18
@@ -277,9 +277,9 @@ text = "UID:"
 [node name="UIDValue" type="Label" parent="ProfileContainer/UserInfoArea"]
 layout_mode = 0
 offset_left = 67.5868
-offset_top = 130.449
-offset_right = 481.587
-offset_bottom = 164.449
+offset_top = 49.353786
+offset_right = 481.58698
+offset_bottom = 83.353775
 theme_override_colors/font_color = Color(0.988235, 0.988235, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_uyv5l")
@@ -289,9 +289,9 @@ text = "Loading..."
 [node name="CopyUIDButton" type="TextureButton" parent="ProfileContainer/UserInfoArea"]
 layout_mode = 0
 offset_left = 489.444
-offset_top = 126.449
+offset_top = 45.35377
 offset_right = 497.444
-offset_bottom = 134.449
+offset_bottom = 53.35378
 scale = Vector2(2.92016, 3.53089)
 tooltip_text = "Copy UID to Clipboard"
 mouse_default_cursor_shape = 2
@@ -301,9 +301,9 @@ texture_hover = ExtResource("13_q75ak")
 [node name="RankLabel" type="Label" parent="ProfileContainer/UserInfoArea"]
 layout_mode = 0
 offset_left = -0.413228
-offset_top = 49.5455
+offset_top = 81.32597
 offset_right = 74.5868
-offset_bottom = 86.2122
+offset_bottom = 117.99267
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_73kok")
 theme_override_font_sizes/font_size = 20
@@ -313,9 +313,9 @@ text = "Rank:"
 custom_minimum_size = Vector2(30, 30)
 layout_mode = 0
 offset_left = 86.5868
-offset_top = 49.5455
-offset_right = 116.587
-offset_bottom = 79.5455
+offset_top = 81.32597
+offset_right = 116.5868
+offset_bottom = 111.32597
 texture = ExtResource("7_medal")
 expand_mode = 1
 stretch_mode = 5
@@ -323,9 +323,9 @@ stretch_mode = 5
 [node name="RankValue" type="Label" parent="ProfileContainer/UserInfoArea"]
 layout_mode = 0
 offset_left = 119.587
-offset_top = 47.5455
+offset_top = 79.32597
 offset_right = 279.587
-offset_bottom = 84.5455
+offset_bottom = 116.32597
 theme_override_colors/font_color = Color(0.988235, 0.988235, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_uyv5l")
@@ -474,10 +474,10 @@ offset_top = 357.0
 offset_right = 747.0
 offset_bottom = 679.0
 mouse_default_cursor_shape = 2
-theme_override_styles/focus = SubResource("StyleBoxEmpty_kmls2")
-theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_pressed")
 theme_override_styles/normal = SubResource("StyleBoxFlat_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_kmls2")
 icon = ExtResource("12_kmls2")
 autowrap_mode = 3
 icon_alignment = 1
@@ -612,7 +612,7 @@ theme_override_constants/margin_bottom = 40
 layout_mode = 2
 
 [node name="TitleLabel" type="Label" parent="EditUsernamePanel/EditContainer/ContentContainer/VBoxContainer"]
-layout_mode = 2
+layout_mode = 0
 offset_left = -3.0
 offset_top = -24.0
 offset_right = 417.0
@@ -624,7 +624,7 @@ text = "Edit Username"
 horizontal_alignment = 1
 
 [node name="InstructionLabel" type="Label" parent="EditUsernamePanel/EditContainer/ContentContainer/VBoxContainer"]
-layout_mode = 2
+layout_mode = 0
 offset_top = 65.0
 offset_right = 420.0
 offset_bottom = 99.0
@@ -635,21 +635,21 @@ text = "Enter your new username:"
 horizontal_alignment = 1
 
 [node name="InputContainer" type="HBoxContainer" parent="EditUsernamePanel/EditContainer/ContentContainer/VBoxContainer"]
-layout_mode = 2
+layout_mode = 0
 offset_top = 119.0
 offset_right = 420.0
 offset_bottom = 159.0
 alignment = 1
 
 [node name="UsernameLineEdit" type="LineEdit" parent="EditUsernamePanel/EditContainer/ContentContainer/VBoxContainer/InputContainer"]
-custom_minimum_size = Vector2(300, 40)
+custom_minimum_size = Vector2(250, 40)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3_uyv5l")
 theme_override_font_sizes/font_size = 16
 placeholder_text = "New username"
 
 [node name="ButtonContainer" type="HBoxContainer" parent="EditUsernamePanel/EditContainer/ContentContainer/VBoxContainer"]
-layout_mode = 2
+layout_mode = 0
 offset_top = 179.0
 offset_right = 420.0
 offset_bottom = 224.0
@@ -685,7 +685,7 @@ expand_icon = true
 
 [node name="ErrorLabel" type="Label" parent="EditUsernamePanel/EditContainer/ContentContainer/VBoxContainer"]
 visible = false
-layout_mode = 2
+layout_mode = 0
 theme_override_colors/font_color = Color(1, 0.3, 0.3, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_uyv5l")

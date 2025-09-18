@@ -651,6 +651,7 @@ func _on_speak_button_pressed():
 			recognition_active = false
 			speak_button.text = "Start Speaking"
 			speak_button.disabled = false
+			speak_button.modulate = Color.ORANGE
 			status_label.text = "No speech detected. Try again."
 			
 			# Clear the live transcription display

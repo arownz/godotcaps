@@ -3,11 +3,15 @@ extends Control
 var tts: TextToSpeech = null
 var module_progress: ModuleProgress = null
 
-# Categories for Read Aloud - Only Guided Reading available
+# Categories for Read Aloud - Guided Reading and Syllable Workshop
 var categories = {
 	"guided_reading": {
 		"title": "Guided Reading",
 		"scene_path": "res://Scenes/ReadAloudGuided.tscn"
+	},
+	"syllable_workshop": {
+		"title": "Syllable Workshop",
+		"scene_path": "res://Scenes/SyllableBuildingModule.tscn"
 	}
 }
 
@@ -53,7 +57,7 @@ func _init_tts():
 	tts = TextToSpeech.new()
 	add_child(tts)
 	
-	# Load TTS settings
+	# Load TTS settings for dyslexia-friendly reading
 	var voice_id = SettingsManager.get_setting("accessibility", "tts_voice_id")
 	var rate = SettingsManager.get_setting("accessibility", "tts_rate")
 	
@@ -91,17 +95,26 @@ func _connect_hover_events():
 		if not tts_btn.pressed.is_connected(_on_tts_setting_button_pressed):
 			tts_btn.pressed.connect(_on_tts_setting_button_pressed)
 	
-	# Connect category enter button - only guided reading
+	# Connect category enter buttons
 	var guided_enter_btn = get_node_or_null("MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard/GuidedContent/EnterButton")
 	if guided_enter_btn:
 		if not guided_enter_btn.mouse_entered.is_connected(_on_button_hover):
 			guided_enter_btn.mouse_entered.connect(_on_button_hover)
 		if not guided_enter_btn.pressed.is_connected(_on_guided_reading_button_pressed):
 			guided_enter_btn.pressed.connect(_on_guided_reading_button_pressed)
+	
+	# Connect syllable workshop button
+	var syllable_enter_btn = get_node_or_null("MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard2/GuidedContent/EnterButton")
+	if syllable_enter_btn:
+		if not syllable_enter_btn.mouse_entered.is_connected(_on_button_hover):
+			syllable_enter_btn.mouse_entered.connect(_on_button_hover)
+		if not syllable_enter_btn.pressed.is_connected(_on_syllable_workshop_button_pressed):
+			syllable_enter_btn.pressed.connect(_on_syllable_workshop_button_pressed)
 
 func _style_category_cards():
 	var icon_containers = [
-		get_node_or_null("MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard/GuidedContent/IconContainer")
+		get_node_or_null("MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard/GuidedContent/IconContainer"),
+		get_node_or_null("MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard2/GuidedContent/IconContainer")
 	]
 	
 	for icon_container in icon_containers:
@@ -147,18 +160,34 @@ func _update_progress_displays(firebase_modules: Dictionary):
 		guided_label.text = str(int(guided_percent)) + "% Complete"
 		print("ReadAloudModule: Updated guided reading progress label to ", int(guided_percent), "%")
 
-	# Overall progress is just guided reading progress (only category available)
+	# Syllable Workshop progress - Based on syllable building activities
+	var syllable_percent = 0.0
+	if firebase_modules.has("read_aloud"):
+		var read_aloud = firebase_modules["read_aloud"]
+		if typeof(read_aloud) == TYPE_DICTIONARY:
+			var syllable_activities = read_aloud.get("syllable_workshop", {}).get("activities_completed", []).size()
+			var total_syllable_activities = 10 # Total syllable building activities
+			syllable_percent = (float(syllable_activities) / float(total_syllable_activities)) * 100.0
+			print("ReadAloudModule: Syllable Workshop - ", syllable_activities, "/", total_syllable_activities, " activities completed (", int(syllable_percent), "%)")
+	
+	var syllable_label = get_node_or_null("MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard2/GuidedContent/ProgressLabel")
+	if syllable_label:
+		syllable_label.text = str(int(syllable_percent)) + "% Complete"
+		print("ReadAloudModule: Updated syllable workshop progress label to ", int(syllable_percent), "%")
+
+	# Overall progress is average of both categories
+	var overall_percent = (guided_percent + syllable_percent) / 2.0
 	var overall_bar = $MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressBar
 	if overall_bar:
-		overall_bar.value = guided_percent
-		print("ReadAloudModule: Updated overall progress bar to ", int(guided_percent), "%")
+		overall_bar.value = overall_percent
+		print("ReadAloudModule: Updated overall progress bar to ", int(overall_percent), "%")
 	
 	var overall_label = $MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressLabel
 	if overall_label:
-		overall_label.text = str(int(guided_percent)) + "% Complete"
-		print("ReadAloudModule: Updated overall progress label to ", int(guided_percent), "%")
+		overall_label.text = str(int(overall_percent)) + "% Complete"
+		print("ReadAloudModule: Updated overall progress label to ", int(overall_percent), "%")
 	
-	print("ReadAloudModule: All progress displays updated - Guided: ", int(guided_percent), "%, Overall: ", int(guided_percent), "%")
+	print("ReadAloudModule: All progress displays updated - Guided: ", int(guided_percent), "%, Syllable: ", int(syllable_percent), "%, Overall: ", int(overall_percent), "%")
 
 func _on_button_hover():
 	$ButtonHover.play()
@@ -172,48 +201,17 @@ func _on_guide_button_pressed():
 		_speak_text_simple(guide_text)
 
 func _on_tts_setting_button_pressed():
+	"""TTS Settings button - Open settings as popup overlay"""
 	$ButtonClick.play()
-	print("ReadAloudModule: Looking for TTSSettingsPopup (robust lookup)...")
-	var tts_popup = get_node_or_null("TTSSettingsPopup")
-	if not tts_popup:
-		tts_popup = find_child("TTSSettingsPopup", true, false)
-	if not tts_popup:
-		print("ReadAloudModule: TTSSettingsPopup not found - instantiating dynamically")
-		var popup_scene: PackedScene = load("res://Scenes/TTSSettingsPopup.tscn")
-		if popup_scene:
-			tts_popup = popup_scene.instantiate()
-			tts_popup.name = "TTSSettingsPopup"
-			add_child(tts_popup)
-	print("ReadAloudModule: TTSSettingsPopup final status:", tts_popup != null)
-	if tts_popup:
-		# Pass current TTS instance to popup for voice testing
-		if tts_popup.has_method("set_tts_instance"):
-			tts_popup.set_tts_instance(tts)
-		
-		# Setup popup with current settings
-		var current_voice = SettingsManager.get_setting("accessibility", "tts_voice_id")
-		var current_rate = SettingsManager.get_setting("accessibility", "tts_rate")
-		
-		# Provide safe defaults
-		if current_voice == null or current_voice == "":
-			current_voice = "default"
-		if current_rate == null:
-			current_rate = 1.0
-		
-		if tts_popup.has_method("setup"):
-			tts_popup.setup(tts, current_voice, current_rate, "Testing Text to Speech")
-		
-		# Connect to save signal
-		if not tts_popup.settings_saved.is_connected(_on_tts_settings_saved):
-			tts_popup.settings_saved.connect(_on_tts_settings_saved)
-		
-		tts_popup.visible = true
-		print("ReadAloudModule: TTS Settings popup opened")
-	else:
-		print("ReadAloudModule: Warning - TTSSettingsPopup still not found after dynamic attempt")
-		print("ReadAloudModule: Available children:")
-		for child in get_children():
-			print("  - ", child.name, " (", child.get_class(), ")")
+	print("ReadAloudModule: Settings button pressed")
+	
+	# Open settings as popup instead of changing scene
+	var settings_popup_scene = load("res://Scenes/SettingScene.tscn")
+	if settings_popup_scene:
+		var popup = settings_popup_scene.instantiate()
+		add_child(popup)
+		if popup.has_method("set_context"):
+			popup.set_context(false) # normal settings; hide battle buttons
 
 func _on_tts_settings_saved(voice_id: String, rate: float):
 	"""Handle TTS settings save to update local TTS instance"""
@@ -260,6 +258,11 @@ func _on_guided_reading_button_pressed():
 	$ButtonClick.play()
 	print("ReadAloudModule: Starting Guided Reading")
 	_launch_category("guided_reading")
+
+func _on_syllable_workshop_button_pressed():
+	$ButtonClick.play()
+	print("ReadAloudModule: Starting Syllable Workshop")
+	_launch_category("syllable_workshop")
 
 func _launch_category(category_key: String):
 	# Navigate to category scene

@@ -9,7 +9,8 @@ enum CompletionType {
 	SIGHT_WORD,
 	FLIP_ANIMAL,
 	FLIP_VEHICLE,
-	READ_ALOUD_PASSAGE
+	READ_ALOUD_PASSAGE,
+	SYLLABLE_WORD
 }
 
 var completion_type: CompletionType = CompletionType.LETTER
@@ -251,6 +252,34 @@ func _update_content(module_key: String = "phonics"):
 				next_btn.text = "Next"
 				# Hide next button if all passages are complete
 				if activities_completed >= total_passages:
+					next_btn.visible = false
+				else:
+					next_btn.visible = true
+		
+		CompletionType.SYLLABLE_WORD:
+			if title_label:
+				title_label.text = "Perfect syllables!"
+			if message_label:
+				message_label.text = "You broke '" + completed_item + "' into syllables correctly!"
+			
+			# Show syllable workshop progress
+			var syllable_activities_completed = progress_data.get("activities_completed", []).size()
+			var total_syllable_words = progress_data.get("total_words", 10)
+			var syllable_progress = (float(syllable_activities_completed) / float(total_syllable_words)) * 100.0
+			
+			if progress_label:
+				progress_label.text = "Syllable Workshop: " + str(syllable_activities_completed) + "/" + str(total_syllable_words) + " words"
+			if progress_bar:
+				progress_bar.value = syllable_progress
+			
+			# Show appropriate buttons
+			if try_again_btn:
+				try_again_btn.text = "Again"
+				try_again_btn.visible = true
+			if next_btn:
+				next_btn.text = "Next"
+				# Hide next button if all syllable words are complete
+				if syllable_activities_completed >= total_syllable_words:
 					next_btn.visible = false
 				else:
 					next_btn.visible = true

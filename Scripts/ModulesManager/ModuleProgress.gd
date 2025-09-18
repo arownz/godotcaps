@@ -265,3 +265,69 @@ func set_read_aloud_current_index(category: String, index: int) -> bool:
 		var updated = await collection.update(document)
 		return !("error" in updated.keys())
 	return false
+
+# Syllable Workshop Methods (part of Read Aloud module)
+func complete_syllable_workshop_activity(activity_id: String) -> bool:
+	"""Complete a syllable workshop activity"""
+	if not is_authenticated():
+		return false
+		
+	var user_id = Firebase.Auth.auth.localid
+	var document = await collection.get_doc(user_id)
+	if document and !("error" in document.keys()):
+		var modules = document.get_value("modules")
+		if not modules.has("read_aloud"):
+			modules["read_aloud"] = {
+				"completed": false,
+				"progress": 0,
+				"guided_reading": {"activities_completed": [], "current_index": 0},
+				"syllable_workshop": {"activities_completed": [], "current_word_index": 0}
+			}
+		
+		var read_aloud = modules["read_aloud"]
+		if not read_aloud.has("syllable_workshop"):
+			read_aloud["syllable_workshop"] = {"activities_completed": [], "current_word_index": 0}
+		
+		var syllable_data = read_aloud["syllable_workshop"]
+		if not activity_id in syllable_data["activities_completed"]:
+			syllable_data["activities_completed"].append(activity_id)
+			print("ModuleProgress: Syllable workshop activity completed: ", activity_id)
+		
+		# Update overall read aloud progress
+		var total_guided_activities = read_aloud.get("guided_reading", {}).get("activities_completed", []).size()
+		var total_syllable_activities = syllable_data["activities_completed"].size()
+		var overall_progress = ((total_guided_activities + total_syllable_activities) / 14.0) * 100.0 # 4 guided + 10 syllable activities
+		read_aloud["progress"] = int(overall_progress)
+		read_aloud["completed"] = (overall_progress >= 100.0)
+		
+		document.add_or_update_field("modules", modules)
+		var updated = await collection.update(document)
+		return !("error" in updated.keys())
+	return false
+
+func set_syllable_workshop_current_index(index: int) -> bool:
+	"""Store current position for syllable workshop"""
+	if not is_authenticated():
+		return false
+		
+	var user_id = Firebase.Auth.auth.localid
+	var document = await collection.get_doc(user_id)
+	if document and !("error" in document.keys()):
+		var modules = document.get_value("modules")
+		if not modules.has("read_aloud"):
+			modules["read_aloud"] = {
+				"completed": false,
+				"progress": 0,
+				"guided_reading": {"activities_completed": [], "current_index": 0},
+				"syllable_workshop": {"activities_completed": [], "current_word_index": 0}
+			}
+		
+		var read_aloud = modules["read_aloud"]
+		if not read_aloud.has("syllable_workshop"):
+			read_aloud["syllable_workshop"] = {"activities_completed": [], "current_word_index": 0}
+		
+		read_aloud["syllable_workshop"]["current_word_index"] = index
+		document.add_or_update_field("modules", modules)
+		var updated = await collection.update(document)
+		return !("error" in updated.keys())
+	return false

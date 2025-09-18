@@ -12,27 +12,27 @@ var engage_permanently_hidden: bool = false # Once true, engage button stays hid
 # UI References
 @onready var close_button = $SettingsContainer/CloseButton
 
-# Accessibility Settings
-@onready var font_size_slider = $SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/FontSizeContainer/FontSizeSlider
-@onready var font_size_value = $SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/FontSizeContainer/FontSizeValue
-@onready var reading_speed_slider = $SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/ReadingSpeedContainer/ReadingSpeedSlider
-@onready var reading_speed_value = $SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/ReadingSpeedContainer/ReadingSpeedValue
-@onready var high_contrast_toggle = $SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/HighContrastContainer/HighContrastToggle
-@onready var tts_settings_button = $SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/TTSContainer/TTSSettingsButton
+# Accessibility Settings  
+@onready var font_size_slider = get_node_or_null("SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/FontSizeContainer/FontSizeSlider")
+@onready var font_size_value = get_node_or_null("SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/FontSizeContainer/FontSizeValue")
+@onready var reading_speed_slider = get_node_or_null("SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/ReadingSpeedContainer/ReadingSpeedSlider")
+@onready var reading_speed_value = get_node_or_null("SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/ReadingSpeedContainer/ReadingSpeedValue")
+@onready var high_contrast_toggle = get_node_or_null("SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/HighContrastContainer/HighContrastToggle")
+@onready var tts_settings_button = get_node_or_null("SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/TTSContainer/TTSSettingsButton")
 
 # Audio Settings (disabled for now)
-@onready var master_volume_slider = $SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MasterVolumeContainer/MasterVolumeSlider
-@onready var master_volume_value = $SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MasterVolumeContainer/MasterVolumeValue
-@onready var sfx_volume_slider = $SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/SFXVolumeContainer/SFXVolumeSlider
-@onready var sfx_volume_value = $SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/SFXVolumeContainer/SFXVolumeValue
-@onready var music_volume_slider = $SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MusicVolumeContainer/MusicVolumeSlider
-@onready var music_volume_value = $SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MusicVolumeContainer/MusicVolumeValue
+@onready var master_volume_slider = get_node_or_null("SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MasterVolumeContainer/MasterVolumeSlider")
+@onready var master_volume_value = get_node_or_null("SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MasterVolumeContainer/MasterVolumeValue")
+@onready var sfx_volume_slider = get_node_or_null("SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/SFXVolumeContainer/SFXVolumeSlider")
+@onready var sfx_volume_value = get_node_or_null("SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/SFXVolumeContainer/SFXVolumeValue")
+@onready var music_volume_slider = get_node_or_null("SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MusicVolumeContainer/MusicVolumeSlider")
+@onready var music_volume_value = get_node_or_null("SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MusicVolumeContainer/MusicVolumeValue")
 
 # Gameplay Settings
-@onready var tutorials_toggle = $SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/GameplaySection/TutorialsContainer/TutorialsToggle
+@onready var tutorials_toggle = get_node_or_null("SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/GameplaySection/TutorialsContainer/TutorialsToggle")
 
 # Data Settings
-@onready var data_section = $SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/DataSection
+@onready var data_section = get_node_or_null("SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/DataSection")
 
 # Battle Section (from TSCN)
 @onready var battle_section = $SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/BattleSection
@@ -68,7 +68,7 @@ func _ready():
 		close_button.pressed.connect(_on_close_button_pressed)
 	# Note: DataSection/ExportDataButton is already connected in the .tscn file
     
-	# Connect accessibility settings
+	# Connect accessibility settings - check for null first
 	if font_size_slider and not font_size_slider.value_changed.is_connected(_on_font_size_changed):
 		font_size_slider.value_changed.connect(_on_font_size_changed)
 	if reading_speed_slider and not reading_speed_slider.value_changed.is_connected(_on_reading_speed_changed):
@@ -78,7 +78,7 @@ func _ready():
 	if tts_settings_button and not tts_settings_button.pressed.is_connected(_on_tts_settings_button_pressed):
 		tts_settings_button.pressed.connect(_on_tts_settings_button_pressed)
     
-	# Connect audio settings (future use)
+	# Connect audio settings (future use) - check for null first
 	if master_volume_slider and not master_volume_slider.value_changed.is_connected(_on_master_volume_changed):
 		master_volume_slider.value_changed.connect(_on_master_volume_changed)
 	if sfx_volume_slider and not sfx_volume_slider.value_changed.is_connected(_on_sfx_volume_changed):
@@ -86,7 +86,7 @@ func _ready():
 	if music_volume_slider and not music_volume_slider.value_changed.is_connected(_on_music_volume_changed):
 		music_volume_slider.value_changed.connect(_on_music_volume_changed)
     
-	# Gameplay setting
+	# Gameplay setting - check for null first
 	if tutorials_toggle and not tutorials_toggle.toggled.is_connected(_on_tutorials_toggled):
 		tutorials_toggle.toggled.connect(_on_tutorials_toggled)
     
@@ -169,26 +169,38 @@ func update_ui_from_settings():
 	# Load TTS settings from Firebase/Firestore if authenticated
 	await _load_tts_settings_from_firebase()
 	
-	# Accessibility settings
-	font_size_slider.value = SettingsManager.get_setting("accessibility", "font_size")
-	font_size_value.text = str(int(SettingsManager.get_setting("accessibility", "font_size")))
+	# Accessibility settings - check for null first
+	if font_size_slider:
+		font_size_slider.value = SettingsManager.get_setting("accessibility", "font_size")
+	if font_size_value:
+		font_size_value.text = str(int(SettingsManager.get_setting("accessibility", "font_size")))
 	
-	reading_speed_slider.value = SettingsManager.get_setting("accessibility", "reading_speed")
-	reading_speed_value.text = str(SettingsManager.get_setting("accessibility", "reading_speed")) + "x"
+	if reading_speed_slider:
+		reading_speed_slider.value = SettingsManager.get_setting("accessibility", "reading_speed")
+	if reading_speed_value:
+		reading_speed_value.text = str(SettingsManager.get_setting("accessibility", "reading_speed")) + "x"
 	
-	high_contrast_toggle.button_pressed = SettingsManager.get_setting("accessibility", "high_contrast")
+	if high_contrast_toggle:
+		high_contrast_toggle.button_pressed = SettingsManager.get_setting("accessibility", "high_contrast")
 	
-	# Audio settings (disabled)
-	master_volume_slider.value = SettingsManager.get_setting("audio", "master_volume")
-	master_volume_value.text = str(SettingsManager.get_setting("audio", "master_volume")) + "%"
+	# Audio settings (disabled) - check for null first
+	if master_volume_slider:
+		master_volume_slider.value = SettingsManager.get_setting("audio", "master_volume")
+	if master_volume_value:
+		master_volume_value.text = str(SettingsManager.get_setting("audio", "master_volume")) + "%"
 	
-	sfx_volume_slider.value = SettingsManager.get_setting("audio", "sfx_volume")
-	sfx_volume_value.text = str(SettingsManager.get_setting("audio", "sfx_volume")) + "%"
+	if sfx_volume_slider:
+		sfx_volume_slider.value = SettingsManager.get_setting("audio", "sfx_volume")
+	if sfx_volume_value:
+		sfx_volume_value.text = str(SettingsManager.get_setting("audio", "sfx_volume")) + "%"
 	
-	music_volume_slider.value = SettingsManager.get_setting("audio", "music_volume")
-	music_volume_value.text = str(SettingsManager.get_setting("audio", "music_volume")) + "%"
+	if music_volume_slider:
+		music_volume_slider.value = SettingsManager.get_setting("audio", "music_volume")
+	if music_volume_value:
+		music_volume_value.text = str(SettingsManager.get_setting("audio", "music_volume")) + "%"
 	
-	tutorials_toggle.button_pressed = SettingsManager.get_setting("gameplay", "show_tutorials")
+	if tutorials_toggle:
+		tutorials_toggle.button_pressed = SettingsManager.get_setting("gameplay", "show_tutorials")
 
 # ===== Signal Handlers =====
 
@@ -215,7 +227,8 @@ func _fade_out_and_change_scene(_scene_path: String):
 func _on_font_size_changed(value: float):
 	"""Handle font size slider change"""
 	SettingsManager.set_setting("accessibility", "font_size", int(value))
-	font_size_value.text = str(int(value))
+	if font_size_value:
+		font_size_value.text = str(int(value))
 	print("SettingScene: Font size changed to: ", int(value))
 
 func _on_reading_speed_changed(value: float):
@@ -223,7 +236,8 @@ func _on_reading_speed_changed(value: float):
 	SettingsManager.set_setting("accessibility", "reading_speed", value)
 	# Also update TTS rate setting for consistency
 	SettingsManager.set_setting("accessibility", "tts_rate", value)
-	reading_speed_value.text = str(value) + "x"
+	if reading_speed_value:
+		reading_speed_value.text = str(value) + "x"
 	print("SettingScene: Reading speed changed to: ", value, " (also updated TTS rate)")
 
 func _on_high_contrast_toggled(pressed: bool):
@@ -371,19 +385,22 @@ func _load_tts_settings_from_firebase():
 func _on_master_volume_changed(value: float):
 	"""Handle master volume slider change"""
 	SettingsManager.set_setting("audio", "master_volume", int(value))
-	master_volume_value.text = str(int(value)) + "%"
+	if master_volume_value:
+		master_volume_value.text = str(int(value)) + "%"
 	print("SettingScene: Master volume changed to: ", int(value))
 
 func _on_sfx_volume_changed(value: float):
 	"""Handle SFX volume slider change"""
 	SettingsManager.set_setting("audio", "sfx_volume", int(value))
-	sfx_volume_value.text = str(int(value)) + "%"
+	if sfx_volume_value:
+		sfx_volume_value.text = str(int(value)) + "%"
 	print("SettingScene: SFX volume changed to: ", int(value))
 
 func _on_music_volume_changed(value: float):
 	"""Handle music volume slider change"""
 	SettingsManager.set_setting("audio", "music_volume", int(value))
-	music_volume_value.text = str(int(value)) + "%"
+	if music_volume_value:
+		music_volume_value.text = str(int(value)) + "%"
 	print("SettingScene: Music volume changed to: ", int(value))
 
 # === Gameplay Settings ===

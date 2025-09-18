@@ -351,7 +351,7 @@ size_flags_vertical = 0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular_font")
 theme_override_font_sizes/font_size = 16
-text = "Trace characters that appear and help you hear sounds with whiteboard exercises. Building character recognition skills."
+text = "Build foundational reading skills through interactive letter recognition, sound association, and visual learning exercises."
 autowrap_mode = 3
 
 [node name="ProgressContainer" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/PhonicsCard/CardContent"]
@@ -455,7 +455,7 @@ size_flags_vertical = 0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular_font")
 theme_override_font_sizes/font_size = 16
-text = "Fast-paced flashcard quizzes with text speech guide. Building memorization skill through media and sound."
+text = "Practice vocabulary and comprehension through engaging quiz activities with visual and audio support for diverse learning styles."
 autowrap_mode = 3
 
 [node name="ProgressContainer" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent"]
@@ -560,7 +560,7 @@ size_flags_vertical = 0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular_font")
 theme_override_font_sizes/font_size = 16
-text = "Text passages with real-time highlighting. Follow along speaking as sentences are read aloud. Building hearing and reading"
+text = "Develop reading fluency and phonological awareness through guided reading activities and interactive learning experiences."
 autowrap_mode = 3
 
 [node name="ProgressContainer" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent"]

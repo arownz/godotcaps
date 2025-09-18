@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://c4s0f4n6pxn6o"]
+[gd_scene load_steps=18 format=3 uid="uid://c4s0f4n6pxn6o"]
 
 [ext_resource type="Script" uid="uid://h4w722tfbmr7" path="res://Scripts/ReadAloudGuided.gd" id="1_guided"]
 [ext_resource type="Texture2D" uid="uid://0con8ixqofpr" path="res://gui/Update/UI/ui 8.png" id="2_background"]
@@ -10,6 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="6_green"]
 [ext_resource type="Texture2D" uid="uid://qmmpx3uab5h7" path="res://gui/Update/UI/next button.png" id="6_next"]
 [ext_resource type="Texture2D" uid="uid://bp53fsaou53ad" path="res://gui/Update/UI/white button.png" id="7_ely31"]
+[ext_resource type="Texture2D" uid="uid://c8vnqmxwy0lsw" path="res://gui/Update/icons/small settings.png" id="7_sp5qi"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_header"]
 bg_color = Color(0.870588, 0.980392, 0.901961, 1)
@@ -114,7 +115,7 @@ anchor_bottom = 1.0
 offset_left = 57.0
 offset_top = 33.0
 offset_right = -58.0
-offset_bottom = -35.0
+offset_bottom = -45.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 35
@@ -187,12 +188,39 @@ theme_override_font_sizes/font_size = 16
 text = "Reading Progress:"
 
 [node name="ProgressBar" type="ProgressBar" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer"]
-custom_minimum_size = Vector2(300, 20)
+custom_minimum_size = Vector2(250, 20)
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_bold")
 theme_override_styles/background = SubResource("StyleBoxFlat_progress_bg")
 theme_override_styles/fill = SubResource("StyleBoxFlat_progress_fill")
+
+[node name="GuideButton" type="Button" parent="MainContainer/HeaderPanel"]
+layout_mode = 0
+offset_left = 25.0
+offset_right = 124.0
+offset_bottom = 81.0
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_bold")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_focus")
+text = "Guide"
+icon = ExtResource("6_next")
+flat = true
+icon_alignment = 1
+expand_icon = true
+
+[node name="TTSSettingButton" type="TextureButton" parent="MainContainer/HeaderPanel"]
+layout_mode = 0
+offset_left = 15.0
+offset_top = 67.0
+offset_right = 114.0
+offset_bottom = 105.0
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("7_sp5qi")
+stretch_mode = 5
 
 [node name="GuidePanel" type="Panel" parent="MainContainer"]
 custom_minimum_size = Vector2(0, 130)
@@ -233,41 +261,6 @@ text = "Let's read about Mia and her cat. Take your time with each sentence."
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 2
-
-[node name="GuideButton" type="Button" parent="MainContainer/GuidePanel"]
-layout_mode = 0
-offset_left = 25.0
-offset_right = 124.0
-offset_bottom = 81.0
-mouse_default_cursor_shape = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
-theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_bold")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_focus")
-text = "Guide"
-icon = ExtResource("6_next")
-flat = true
-icon_alignment = 1
-expand_icon = true
-
-[node name="TTSSettingButton" type="Button" parent="MainContainer/GuidePanel"]
-layout_mode = 0
-offset_left = 25.0
-offset_top = 81.0
-offset_right = 124.0
-offset_bottom = 119.0
-mouse_default_cursor_shape = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
-theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_bold")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_focus")
-text = "TTS"
-icon = ExtResource("4_yellow")
-flat = true
-icon_alignment = 1
-expand_icon = true
 
 [node name="PassagePanel" type="Panel" parent="MainContainer"]
 layout_mode = 2
@@ -313,6 +306,26 @@ Sam likes to play with a red ball.
 
 Mia gives Sam food every day."
 
+[node name="ReadButton" type="Button" parent="MainContainer/PassagePanel"]
+custom_minimum_size = Vector2(150, 50)
+layout_mode = 0
+offset_left = 25.0
+offset_top = 25.0
+offset_right = 175.0
+offset_bottom = 75.0
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_bold")
+theme_override_font_sizes/font_size = 16
+theme_override_styles/focus = SubResource("StyleBoxEmpty_focus")
+text = "Read"
+icon = ExtResource("6_green")
+flat = true
+icon_alignment = 1
+expand_icon = true
+
 [node name="ControlsContainer" type="HBoxContainer" parent="MainContainer"]
 layout_mode = 2
 theme_override_constants/separation = 20
@@ -334,30 +347,14 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="ReadButton" type="Button" parent="MainContainer/ControlsContainer"]
-custom_minimum_size = Vector2(150, 50)
-layout_mode = 2
-mouse_default_cursor_shape = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
-theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_bold")
-theme_override_font_sizes/font_size = 16
-theme_override_styles/focus = SubResource("StyleBoxEmpty_focus")
-text = "Read"
-icon = ExtResource("6_green")
-flat = true
-icon_alignment = 1
-expand_icon = true
-
 [node name="SpeakButton" type="Button" parent="MainContainer/ControlsContainer"]
 custom_minimum_size = Vector2(150, 50)
 layout_mode = 2
 mouse_default_cursor_shape = 2
-theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
 theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("3_bold")
 theme_override_font_sizes/font_size = 16
 theme_override_styles/focus = SubResource("StyleBoxEmpty_focus")
@@ -390,12 +387,12 @@ stream = ExtResource("4_click")
 stream = ExtResource("5_hover")
 
 [connection signal="pressed" from="MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton" to="." method="_on_back_button_pressed"]
-[connection signal="pressed" from="MainContainer/GuidePanel/GuideButton" to="." method="_on_guide_button_pressed"]
-[connection signal="pressed" from="MainContainer/GuidePanel/TTSSettingButton" to="." method="_on_tts_setting_button_pressed"]
+[connection signal="pressed" from="MainContainer/HeaderPanel/GuideButton" to="." method="_on_guide_button_pressed"]
+[connection signal="pressed" from="MainContainer/HeaderPanel/TTSSettingButton" to="." method="_on_tts_setting_button_pressed"]
+[connection signal="mouse_entered" from="MainContainer/PassagePanel/ReadButton" to="." method="_on_button_hover"]
+[connection signal="pressed" from="MainContainer/PassagePanel/ReadButton" to="." method="_on_read_button_pressed"]
 [connection signal="mouse_entered" from="MainContainer/ControlsContainer/PreviousButton" to="." method="_on_button_hover"]
 [connection signal="pressed" from="MainContainer/ControlsContainer/PreviousButton" to="." method="_on_previous_passage_button_pressed"]
-[connection signal="mouse_entered" from="MainContainer/ControlsContainer/ReadButton" to="." method="_on_button_hover"]
-[connection signal="pressed" from="MainContainer/ControlsContainer/ReadButton" to="." method="_on_read_button_pressed"]
 [connection signal="mouse_entered" from="MainContainer/ControlsContainer/SpeakButton" to="." method="_on_button_hover"]
 [connection signal="pressed" from="MainContainer/ControlsContainer/SpeakButton" to="." method="_on_speak_button_pressed"]
 [connection signal="mouse_entered" from="MainContainer/ControlsContainer/NextButton" to="." method="_on_button_hover"]

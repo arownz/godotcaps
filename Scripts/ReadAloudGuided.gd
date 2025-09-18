@@ -170,6 +170,7 @@ func _init_tts():
 	tts = TextToSpeech.new()
 	add_child(tts)
 
+	# Load TTS settings for dyslexia-friendly reading
 	var voice_id = SettingsManager.get_setting("accessibility", "tts_voice_id")
 	var rate = SettingsManager.get_setting("accessibility", "tts_rate")
 	
@@ -231,10 +232,10 @@ func _connect_button_events():
 	"""Connect all button events with hover sounds"""
 	var buttons = [
 		$MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton,
-		$MainContainer/GuidePanel/GuideButton,
-		$MainContainer/GuidePanel/TTSSettingButton,
+		$MainContainer/HeaderPanel/GuideButton,
+		$MainContainer/HeaderPanel/TTSSettingButton,
 		$MainContainer/ControlsContainer/PreviousButton,
-		$MainContainer/ControlsContainer/ReadButton,
+		$MainContainer/PassagePanel/ReadButton,
 		$MainContainer/ControlsContainer/SpeakButton,
 		$MainContainer/ControlsContainer/NextButton
 	]
@@ -292,7 +293,7 @@ func _process(_delta):
 
 func _check_tts_button_state():
 	"""Safeguard function to ensure Read button doesn't get stuck"""
-	var read_button = $MainContainer/ControlsContainer/ReadButton
+	var read_button = $MainContainer/PassagePanel/ReadButton
 	if read_button and tts_speaking:
 		# Check if TTS has been speaking for more than 30 seconds (way too long)
 		if tts_timer and tts_timer.is_stopped():
@@ -1051,7 +1052,7 @@ func _on_tts_finished():
 		print("ReadAloudGuided: Stopped backup timer")
 	
 	# Reset read button
-	var read_button = $MainContainer/ControlsContainer/ReadButton
+	var read_button = $MainContainer/PassagePanel/ReadButton
 	if read_button:
 		read_button.text = "Read"
 		read_button.disabled = false
@@ -1492,7 +1493,7 @@ func _update_navigation_buttons():
 		next_button.visible = (current_passage_index < passages.size() - 1)
 
 func _update_play_button_text():
-	var play_button = $MainContainer/ControlsContainer/ReadButton
+	var play_button = $MainContainer/PassagePanel/ReadButton
 	if play_button:
 		if is_reading:
 			play_button.text = "Stop"
@@ -1669,7 +1670,7 @@ func _on_back_button_pressed():
 
 func _on_play_button_pressed():
 	$ButtonClick.play()
-	var play_button = $MainContainer/ControlsContainer/ReadButton
+	var play_button = $MainContainer/PassagePanel/ReadButton
 	
 	if not is_reading:
 		# Start STT practice mode
@@ -1677,7 +1678,7 @@ func _on_play_button_pressed():
 		current_sentence_index = 0
 		_start_sentence_practice()
 		if play_button:
-			play_button.text = "Stop Practice"
+			play_button.text = "Stop"
 	else:
 		# Stop practice
 		_stop_guided_reading()
@@ -1789,7 +1790,7 @@ func _show_all_passages_completed():
 		guide_display.modulate = Color.GOLD
 	
 	# Disable navigation and reading controls
-	var read_button = $MainContainer/ControlsContainer/ReadButton
+	var read_button = $MainContainer/PassagePanel/ReadButton
 	var speak_button = $MainContainer/ControlsContainer/SpeakButton
 	var prev_button = $MainContainer/ControlsContainer/PreviousButton
 	var next_button = $MainContainer/ControlsContainer/NextButton
@@ -1973,7 +1974,7 @@ func _on_read_button_pressed():
 	$ButtonClick.play()
 	print("ReadAloudGuided: Read button pressed")
 
-	var read_button = $MainContainer/ControlsContainer/ReadButton
+	var read_button = $MainContainer/PassagePanel/ReadButton
 	
 	# Check if TTS is currently speaking (allow stop functionality)
 	# Note: Godot's TTS doesn't have is_speaking(), so we track state manually
@@ -2146,13 +2147,17 @@ func _on_guide_button_pressed():
 		tts.speak(guide_text)
 
 func _on_tts_setting_button_pressed():
-	"""TTS Settings button - Open TTS settings popup"""
+	"""TTS Settings button - Open settings as popup overlay"""
 	$ButtonClick.play()
-	print("ReadAloudGuided: TTS Settings button pressed")
+	print("ReadAloudGuided: Settings button pressed")
 	
-	# Open TTS settings popup
-	var tts_popup = load("res://Scenes/TTSSettingsPopup.tscn").instantiate()
-	get_tree().current_scene.add_child(tts_popup)
+	# Open settings as popup instead of changing scene
+	var settings_popup_scene = load("res://Scenes/SettingScene.tscn")
+	if settings_popup_scene:
+		var popup = settings_popup_scene.instantiate()
+		add_child(popup)
+		if popup.has_method("set_context"):
+			popup.set_context(false) # normal settings; hide battle buttons
 
 # New function to advance to next sentence with progress tracking
 func _advance_to_next_sentence():
@@ -2282,7 +2287,7 @@ func _complete_current_passage():
 		tts_speaking = false
 	
 	# Reset button states
-	var read_button = $MainContainer/ControlsContainer/ReadButton
+	var read_button = $MainContainer/PassagePanel/ReadButton
 	if read_button:
 		read_button.text = "Read"
 		read_button.disabled = false

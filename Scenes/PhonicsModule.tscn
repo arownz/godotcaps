@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://c3eucvdnmnw54"]
+[gd_scene load_steps=17 format=3 uid="uid://c3eucvdnmnw54"]
 
 [ext_resource type="Script" uid="uid://c8qtq6lp3uc26" path="res://Scripts/PhonicsModule.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://0con8ixqofpr" path="res://gui/Update/UI/ui 8.png" id="2_edgla"]
@@ -9,6 +9,8 @@
 [ext_resource type="Texture2D" uid="uid://qmmpx3uab5h7" path="res://gui/Update/UI/next button.png" id="6_nm4xh"]
 [ext_resource type="Texture2D" uid="uid://bmjd8nkagj08e" path="res://gui/Update/UI/long uncolored button.png" id="6_ydvs0"]
 [ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="7_hover"]
+[ext_resource type="Texture2D" uid="uid://c8vnqmxwy0lsw" path="res://gui/Update/icons/small settings.png" id="8_settings"]
+[ext_resource type="Texture2D" uid="uid://bb3yuiy6n0i2" path="res://gui/Update/icons/small settings_hover.png" id="9_settings_hover"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ydvs0"]
 bg_color = Color(0.85098, 0.921569, 0.980392, 1)
@@ -158,7 +160,7 @@ theme_override_font_sizes/font_size = 16
 text = "Complete"
 
 [node name="ProgressBar" type="ProgressBar" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer"]
-custom_minimum_size = Vector2(300, 20)
+custom_minimum_size = Vector2(250, 20)
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold")
@@ -182,23 +184,16 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="TTSSettingButton" type="Button" parent="MainContainer/HeaderPanel"]
+[node name="TTSSettingButton" type="TextureButton" parent="MainContainer/HeaderPanel"]
 layout_mode = 0
-offset_left = 30.0
-offset_top = 81.0
-offset_right = 129.0
-offset_bottom = 119.0
+offset_left = 49.0
+offset_top = 66.0
+offset_right = 87.0
+offset_bottom = 104.0
 mouse_default_cursor_shape = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
-theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("4_bold")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_nm4xh")
-text = "TTS"
-icon = ExtResource("5_yellow")
-flat = true
-icon_alignment = 1
-expand_icon = true
+texture_normal = ExtResource("8_settings")
+texture_hover = ExtResource("9_settings_hover")
+stretch_mode = 5
 
 [node name="ScrollContainer" type="ScrollContainer" parent="MainContainer"]
 layout_mode = 2

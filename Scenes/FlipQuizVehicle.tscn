@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://q1yjdcnnetr4"]
+[gd_scene load_steps=23 format=3 uid="uid://q1yjdcnnetr4"]
 
 [ext_resource type="Script" uid="uid://bgt50sf3dooe2" path="res://Scripts/FlipQuizVehicle.gd" id="1_7p1sg"]
 [ext_resource type="Texture2D" uid="uid://ciaa4qe2o2juf" path="res://gui/Update/UI/ui 3.png" id="2_y0fi5"]
@@ -12,6 +12,8 @@
 [ext_resource type="AudioStream" uid="uid://df4jx5mo6nj3k" path="res://audio/vehicles sound effect/vehicles-airplane (mp3cut.net).mp3" id="10_6r5gh"]
 [ext_resource type="AudioStream" uid="uid://cjkpe4p5gdq5y" path="res://audio/vehicles sound effect/vehicles-boat (mp3cut.net).mp3" id="11_5sqj8"]
 [ext_resource type="AudioStream" uid="uid://la1lsc6v00fj" path="res://audio/vehicles sound effect/vehicles-bus (mp3cut.net).mp3" id="12_vmau7"]
+[ext_resource type="Texture2D" uid="uid://c8vnqmxwy0lsw" path="res://gui/Update/icons/small settings.png" id="13_settings"]
+[ext_resource type="Texture2D" uid="uid://bb3yuiy6n0i2" path="res://gui/Update/icons/small settings_hover.png" id="14_settings_hover"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_22x63"]
 bg_color = Color(0.980392, 0.870588, 0.870588, 1)
@@ -72,8 +74,6 @@ shadow_offset = Vector2(0, 3)
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_vmau7"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_oebjl"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_fpdu0"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1i48n"]
 bg_color = Color(0.980392, 0.870588, 0.870588, 1)
@@ -147,7 +147,7 @@ theme_override_constants/separation = 15
 alignment = 2
 
 [node name="ProgressBar" type="ProgressBar" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer"]
-custom_minimum_size = Vector2(200, 20)
+custom_minimum_size = Vector2(250, 20)
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_ma1yg")
@@ -298,23 +298,16 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="TTSSettingButton" type="Button" parent="MainContainer/ContentContainer/InstructionPanel"]
+[node name="TTSSettingButton" type="TextureButton" parent="MainContainer/ContentContainer/InstructionPanel"]
 layout_mode = 0
-offset_left = 30.0
-offset_top = 81.0
-offset_right = 129.0
-offset_bottom = 119.0
+offset_left = 50.0
+offset_top = 67.0
+offset_right = 88.0
+offset_bottom = 105.0
 mouse_default_cursor_shape = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
-theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_ma1yg")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_fpdu0")
-text = "TTS"
-icon = ExtResource("4_4itq8")
-flat = true
-icon_alignment = 1
-expand_icon = true
+texture_normal = ExtResource("13_settings")
+texture_hover = ExtResource("14_settings_hover")
+stretch_mode = 5
 
 [node name="GamePanel" type="Panel" parent="MainContainer/ContentContainer"]
 layout_mode = 2

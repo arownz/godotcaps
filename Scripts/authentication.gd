@@ -225,7 +225,7 @@ func _setup_admin_access():
 	$AdminButton.visible = false
 	
 	# Connect logo button events
-	var logo_button = $MarginContainer/ContentContainer/LeftPanel/BrandContainer/LogoTexture/ClickArea
+	var logo_button = $MarginContainer/ContentContainer/LeftPanel/BrandContainer/LogoTexture
 	if logo_button:
 		if not logo_button.pressed.is_connected(_on_logo_button_pressed):
 			logo_button.pressed.connect(_on_logo_button_pressed)
@@ -742,7 +742,8 @@ func _create_user_document(collection, user_id: String, auth):
 			"read_aloud": {
 				"completed": false,
 				"progress": 0,
-				"guided_reading": {"activities_completed": [], "current_index": 0}
+				"guided_reading": {"activities_completed": [], "current_index": 0},
+				"syllable_workshop": {"activities_completed": [], "current_word_index": 0}
 			}
 		},
 		"stage_times": {

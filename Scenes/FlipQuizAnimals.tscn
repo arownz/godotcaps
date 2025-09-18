@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3 uid="uid://bkdtvnxqiivs6"]
+[gd_scene load_steps=33 format=3 uid="uid://bkdtvnxqiivs6"]
 
 [ext_resource type="Script" uid="uid://1unnrip8fo36" path="res://Scripts/FlipQuizAnimals.gd" id="1_dgjvx"]
 [ext_resource type="Texture2D" uid="uid://ciaa4qe2o2juf" path="res://gui/Update/UI/ui 3.png" id="2_bg"]
@@ -9,6 +9,8 @@
 [ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="8_hover"]
 [ext_resource type="Texture2D" uid="uid://qmmpx3uab5h7" path="res://gui/Update/UI/next button.png" id="9_next"]
 [ext_resource type="AudioStream" uid="uid://eiurhhollhgj" path="res://audio/animals_sfx/animals-duck.mp3" id="10_dgjvx"]
+[ext_resource type="Texture2D" uid="uid://c8vnqmxwy0lsw" path="res://gui/Update/icons/small settings.png" id="11_settings"]
+[ext_resource type="Texture2D" uid="uid://bb3yuiy6n0i2" path="res://gui/Update/icons/small settings_hover.png" id="12_settings_hover"]
 [ext_resource type="AudioStream" uid="uid://15a7g8q64d0p" path="res://audio/animals_sfx/animals-bear.mp3" id="17_xi3er"]
 [ext_resource type="AudioStream" uid="uid://djroclrklfq2a" path="res://audio/animals_sfx/animals-dog.mp3" id="18_ibjjj"]
 [ext_resource type="AudioStream" uid="uid://ttclbdk5l40v" path="res://audio/animals_sfx/animals-chicken.mp3" id="19_s880e"]
@@ -82,8 +84,6 @@ shadow_offset = Vector2(0, 3)
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_1xms6"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hhqu2"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_xi3er"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_game"]
 bg_color = Color(0.980392, 0.870588, 0.870588, 1)
@@ -308,23 +308,16 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="TTSSettingButton" type="Button" parent="MainContainer/ContentContainer/InstructionPanel"]
+[node name="TTSSettingButton" type="TextureButton" parent="MainContainer/ContentContainer/InstructionPanel"]
 layout_mode = 0
-offset_left = 30.0
-offset_top = 81.0
-offset_right = 129.0
-offset_bottom = 119.0
+offset_left = 49.0
+offset_top = 66.0
+offset_right = 87.0
+offset_bottom = 104.0
 mouse_default_cursor_shape = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
-theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("4_bold")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_xi3er")
-text = "TTS"
-icon = ExtResource("5_yellow")
-flat = true
-icon_alignment = 1
-expand_icon = true
+texture_normal = ExtResource("11_settings")
+texture_hover = ExtResource("12_settings_hover")
+stretch_mode = 5
 
 [node name="GamePanel" type="Panel" parent="MainContainer/ContentContainer"]
 layout_mode = 2
