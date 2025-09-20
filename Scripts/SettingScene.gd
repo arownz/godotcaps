@@ -15,7 +15,7 @@ var engage_permanently_hidden: bool = false # Once true, engage button stays hid
 # Accessibility Settings  
 @onready var reading_speed_slider = get_node_or_null("SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/ReadingSpeedContainer/ReadingSpeedSlider")
 @onready var reading_speed_value = get_node_or_null("SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/ReadingSpeedContainer/ReadingSpeedValue")
-@onready var tts_settings_button = get_node_or_null("SettingsContainer/TTSSettingsButton")
+@onready var tts_settings_button = get_node_or_null("SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/TTSContainer/TTSSettingsButton")
 
 # Audio Settings (disabled for now)
 @onready var master_volume_slider = get_node_or_null("SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MasterVolumeContainer/MasterVolumeSlider")

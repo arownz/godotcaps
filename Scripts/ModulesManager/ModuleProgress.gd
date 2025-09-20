@@ -302,7 +302,7 @@ func complete_syllable_workshop_activity(activity_id: String) -> bool:
 		
 		# Update syllable workshop progress only (don't combine with guided reading)
 		var syllable_activities = syllable_data["activities_completed"].size()
-		var total_syllable_activities = 10 # 10 syllable words in SyllableBuildingModule
+		var total_syllable_activities = 9 # 9 syllable words in SyllableBuildingModule (matches actual array size)
 		var syllable_progress = (float(syllable_activities) / float(total_syllable_activities)) * 100.0
 		
 		# Update overall read aloud progress (this is mainly for overall tracking, specific categories use their own calculations)

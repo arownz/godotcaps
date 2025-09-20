@@ -48,7 +48,7 @@ var highlighting_reset_timer: Timer = null
 # Completion celebration system
 var completion_celebration: CanvasLayer = null
 
-# Guided Reading Passages - dyslexia-friendly with structured guidance
+# Guided Reading Passages - dyslexia-friendly with structured guidance 4/4
 var passages = [
     {
         "title": "The Friendly Cat",

@@ -166,7 +166,7 @@ func _update_progress_displays(firebase_modules: Dictionary):
 		var read_aloud = firebase_modules["read_aloud"]
 		if typeof(read_aloud) == TYPE_DICTIONARY:
 			var syllable_activities = read_aloud.get("syllable_workshop", {}).get("activities_completed", []).size()
-			var total_syllable_activities = 10 # Total syllable building activities
+			var total_syllable_activities = 9 # 9 syllable words in SyllableBuildingModule (matches actual array size)
 			syllable_percent = (float(syllable_activities) / float(total_syllable_activities)) * 100.0
 			print("ReadAloudModule: Syllable Workshop - ", syllable_activities, "/", total_syllable_activities, " activities completed (", int(syllable_percent), "%)")
 	

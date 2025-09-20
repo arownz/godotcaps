@@ -276,8 +276,24 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_font_regular")
 theme_override_font_sizes/font_size = 14
-text = "Text-to-Speech:"
+text = "Change Text-to-Speech:"
 vertical_alignment = 1
+
+[node name="TTSSettingsButton" type="Button" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/TTSContainer"]
+custom_minimum_size = Vector2(120, 32)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("1_font_bold")
+theme_override_font_sizes/font_size = 16
+theme_override_styles/focus = SubResource("StyleBoxEmpty_wwc4u")
+text = "Voice"
+icon = ExtResource("7_l5u2n")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [node name="Separator1" type="HSeparator" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox"]
 layout_mode = 2
@@ -458,27 +474,6 @@ expand_icon = true
 [node name="BottomSpacer" type="Control" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox"]
 custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
-
-[node name="TTSSettingsButton" type="Button" parent="SettingsContainer"]
-custom_minimum_size = Vector2(120, 32)
-layout_mode = 0
-offset_left = 188.0
-offset_top = 199.0
-offset_right = 369.53687
-offset_bottom = 280.0
-scale = Vector2(0.6007763, 0.6007763)
-mouse_default_cursor_shape = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
-theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("1_font_bold")
-theme_override_font_sizes/font_size = 16
-theme_override_styles/focus = SubResource("StyleBoxEmpty_wwc4u")
-text = "Change Voice"
-icon = ExtResource("7_l5u2n")
-flat = true
-icon_alignment = 1
-expand_icon = true
 
 [node name="TTSSettingsPopup" parent="." instance=ExtResource("11_tts_popup")]
 visible = false

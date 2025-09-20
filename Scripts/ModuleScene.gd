@@ -232,10 +232,10 @@ func _update_card_progress(module_key: String, card_name: String):
 					syllable_completed = syllable_data.size()
 				
 				var total_completed = guided_completed + syllable_completed
-				var total_possible = 14 # 4 guided activities + 10 syllable workshop activities (matches ModuleProgress.gd)
+				var total_possible = 13 # 4 guided activities + 9 syllable workshop activities (matches actual SyllableBuildingModule.gd array)
 				progress_percent = (float(total_completed) / float(total_possible)) * 100.0
 				completed = total_completed >= total_possible
-				print("ModuleScene: ReadAloud overall - Guided:", guided_completed, "/4, Syllable:", syllable_completed, "/10, Total:", total_completed, "/", total_possible, ", Overall:", int(progress_percent), "%")
+				print("ModuleScene: ReadAloud overall - Guided:", guided_completed, "/4, Syllable:", syllable_completed, "/9, Total:", total_completed, "/", total_possible, ", Overall:", int(progress_percent), "%")
 			else:
 				# For other modules, use direct progress value
 				progress_percent = float(fm.get("progress", 0))

@@ -43,14 +43,14 @@ var syllable_words = [
 	{"word": "garden", "syllables": ["gar", "den"], "difficulty": 2},
 	
 	# 3 syllables
-	{"word": "umbrella", "syllables": ["um", "brel", "la"], "difficulty": 3},
-	{"word": "computer", "syllables": ["com", "pu", "ter"], "difficulty": 3},
-	{"word": "pentagon", "syllables": ["pen", "ta", "gon"], "difficulty": 3},
+  	{"word": "butterfly", "syllables": ["but", "ter", "fly"], "difficulty": 3},
+  	{"word": "tomorrow", "syllables": ["to", "mor", "row"], "difficulty": 3},
+	{"word": "happiness", "syllables": ["hap", "pee", "ness"], "difficulty": 3},
 	
 	# 4 syllables (advanced level)
-	{"word": "calculator", "syllables": ["cal", "cu", "la", "tor"], "difficulty": 4},
-	{"word": "motorcycle", "syllables": ["mo", "tor", "cy", "cle"], "difficulty": 4},
-	{"word": "helicopter", "syllables": ["hel", "li", "cop", "ter"], "difficulty": 4}
+	{"word": "watermelon", "syllables": ["wuah", "ter", "mel", "on"], "difficulty": 4},
+	{"word": "information", "syllables": ["in", "for", "may", "tion"], "difficulty": 4},
+	{"word": "calculator", "syllables": ["cal", "cue", "lay", "tor"], "difficulty": 4}
 ]
 
 # UI References
@@ -290,158 +290,160 @@ func update_mic_permission_state(state):
 		print("SyllableBuildingModule: Microphone permission: ", state)
 	
 	var js_code = """
-		// Check if functions already exist to avoid redefinition
-		if (typeof window.syllableRecognition === 'undefined') {
-			// Global speech recognition variables
-			window.syllableRecognition = null;
-			window.syllableRecognitionActive = false;
-			window.syllablePermissionGranted = false;
-			window.syllablePermissionChecked = false;
-			window.syllableFinalResult = '';
-			window.syllableInterimResult = '';
-			window.syllableResult = null;
-			
-			// Permission check function
-			window.checkSyllablePermissions = function() {
-				if (navigator.permissions) {
-					navigator.permissions.query({name: 'microphone'}).then(function(result) {
-						window.syllablePermissionGranted = (result.state === 'granted');
-						window.syllablePermissionChecked = true;
-						console.log('SyllableBuildingModule: Permission state:', result.state);
-					}).catch(function(error) {
-						console.log('SyllableBuildingModule: Permission check failed:', error);
-						window.syllablePermissionChecked = true;
-					});
-				} else {
-					// Fallback for browsers without permission API
-					window.syllablePermissionChecked = true;
-				}
-			};
-			
-			// Request microphone permission
-			window.requestSyllableMicPermission = function() {
-				return navigator.mediaDevices.getUserMedia({audio: true})
-					.then(function(stream) {
-						window.syllablePermissionGranted = true;
-						stream.getTracks().forEach(function(track) {
-							track.stop();
+		(function() {
+			// Check if functions already exist to avoid redefinition
+			if (typeof window.syllableRecognition === 'undefined') {
+				// Global speech recognition variables
+				window.syllableRecognition = null;
+				window.syllableRecognitionActive = false;
+				window.syllablePermissionGranted = false;
+				window.syllablePermissionChecked = false;
+				window.syllableFinalResult = '';
+				window.syllableInterimResult = '';
+				window.syllableResult = null;
+				
+				// Permission check function
+				window.checkSyllablePermissions = function() {
+					if (navigator.permissions) {
+						navigator.permissions.query({name: 'microphone'}).then(function(result) {
+							window.syllablePermissionGranted = (result.state === 'granted');
+							window.syllablePermissionChecked = true;
+							console.log('SyllableBuildingModule: Permission state:', result.state);
+						}).catch(function(error) {
+							console.log('SyllableBuildingModule: Permission check failed:', error);
+							window.syllablePermissionChecked = true;
 						});
-						return true;
-					})
-					.catch(function(error) {
-						console.log('SyllableBuildingModule: Permission denied:', error);
-						window.syllablePermissionGranted = false;
-						return false;
-					});
-			};
-			
-			// Initialize speech recognition using ReadAloudGuided pattern
-			window.initSyllableSpeechRecognition = function() {
-				try {
-					if ('webkitSpeechRecognition' in window) {
-						window.syllableRecognition = new webkitSpeechRecognition();
-					} else if ('SpeechRecognition' in window) {
-						window.syllableRecognition = new SpeechRecognition();
 					} else {
-						console.log('SyllableBuildingModule: Speech recognition not supported');
-						return false;
+						// Fallback for browsers without permission API
+						window.syllablePermissionChecked = true;
 					}
-					
-					// Configure recognition for better short word detection
-					window.syllableRecognition.continuous = true;
-					window.syllableRecognition.interimResults = true;
-					window.syllableRecognition.lang = 'en-US';
-					window.syllableRecognition.maxAlternatives = 3; // More alternatives for better accuracy
-					
-					// Enhanced event handlers like ReadAloudGuided
-					window.syllableRecognition.onstart = function() {
-						console.log('SyllableBuildingModule: Recognition started');
-						window.syllableRecognitionActive = true;
-					};
-					
-					window.syllableRecognition.onresult = function(event) {
-						var finalTranscript = '';
-						var interimTranscript = '';
+				};
+				
+				// Request microphone permission
+				window.requestSyllableMicPermission = function() {
+					return navigator.mediaDevices.getUserMedia({audio: true})
+						.then(function(stream) {
+							window.syllablePermissionGranted = true;
+							stream.getTracks().forEach(function(track) {
+								track.stop();
+							});
+							return true;
+						})
+						.catch(function(error) {
+							console.log('SyllableBuildingModule: Permission denied:', error);
+							window.syllablePermissionGranted = false;
+							return false;
+						});
+				};
+				
+				// Initialize speech recognition using ReadAloudGuided pattern
+				window.initSyllableSpeechRecognition = function() {
+					try {
+						if ('webkitSpeechRecognition' in window) {
+							window.syllableRecognition = new webkitSpeechRecognition();
+						} else if ('SpeechRecognition' in window) {
+							window.syllableRecognition = new SpeechRecognition();
+						} else {
+							console.log('SyllableBuildingModule: Speech recognition not supported');
+							return false;
+						}
 						
-						for (var i = event.resultIndex; i < event.results.length; i++) {
-							var transcript = event.results[i][0].transcript;
-							if (event.results[i].isFinal) {
-								finalTranscript += transcript;
-								console.log('SyllableBuildingModule: Final result:', transcript);
-							} else {
-								interimTranscript += transcript;
+						// Configure recognition for better short word detection
+						window.syllableRecognition.continuous = true;
+						window.syllableRecognition.interimResults = true;
+						window.syllableRecognition.lang = 'en-US';
+						window.syllableRecognition.maxAlternatives = 3; // More alternatives for better accuracy
+						
+						// Enhanced event handlers like ReadAloudGuided
+						window.syllableRecognition.onstart = function() {
+							console.log('SyllableBuildingModule: Recognition started');
+							window.syllableRecognitionActive = true;
+						};
+						
+						window.syllableRecognition.onresult = function(event) {
+							var finalTranscript = '';
+							var interimTranscript = '';
+							
+							for (var i = event.resultIndex; i < event.results.length; i++) {
+								var transcript = event.results[i][0].transcript;
+								if (event.results[i].isFinal) {
+									finalTranscript += transcript;
+									console.log('SyllableBuildingModule: Final result:', transcript);
+								} else {
+									interimTranscript += transcript;
+								}
 							}
-						}
+							
+							if (finalTranscript.trim()) {
+								window.syllableFinalResult = finalTranscript.trim();
+							}
+							
+							if (interimTranscript.trim()) {
+								window.syllableInterimResult = interimTranscript.trim();
+							}
+						};
 						
-						if (finalTranscript.trim()) {
-							window.syllableFinalResult = finalTranscript.trim();
-						}
+						window.syllableRecognition.onerror = function(event) {
+							console.log('SyllableBuildingModule: Recognition error:', event.error);
+							window.syllableRecognitionActive = false;
+							window.syllableRecognitionError = event.error;
+						};
 						
-						if (interimTranscript.trim()) {
-							window.syllableInterimResult = interimTranscript.trim();
-						}
-					};
-					
-					window.syllableRecognition.onerror = function(event) {
-						console.log('SyllableBuildingModule: Recognition error:', event.error);
-						window.syllableRecognitionActive = false;
-						window.syllableRecognitionError = event.error;
-					};
-					
-					window.syllableRecognition.onend = function() {
-						console.log('SyllableBuildingModule: Recognition ended');
-						window.syllableRecognitionActive = false;
-					};
-					
-					return true;
-				} catch (error) {
-					console.log('SyllableBuildingModule: Failed to initialize recognition:', error);
-					return false;
-				}
-			};
-			
-			// Start recognition function with better setup
-			window.startSyllableRecognition = function() {
-				if (!window.syllableRecognition) {
-					if (!window.initSyllableSpeechRecognition()) {
+						window.syllableRecognition.onend = function() {
+							console.log('SyllableBuildingModule: Recognition ended');
+							window.syllableRecognitionActive = false;
+						};
+						
+						return true;
+					} catch (error) {
+						console.log('SyllableBuildingModule: Failed to initialize recognition:', error);
 						return false;
 					}
+				};
+				
+				// Start recognition function with better setup
+				window.startSyllableRecognition = function() {
+					if (!window.syllableRecognition) {
+						if (!window.initSyllableSpeechRecognition()) {
+							return false;
+						}
+					}
+					
+					try {
+						window.syllableFinalResult = '';
+						window.syllableInterimResult = '';
+						window.syllableRecognitionError = '';
+						window.syllableRecognition.start();
+						return true;
+					} catch (error) {
+						console.log('SyllableBuildingModule: Failed to start recognition:', error);
+						return false;
+					}
+				};
+				
+				// Stop recognition function
+				window.stopSyllableRecognition = function() {
+					if (window.syllableRecognition) {
+						try {
+							window.syllableRecognition.stop();
+						} catch (error) {
+							console.log('SyllableBuildingModule: Error stopping recognition:', error);
+						}
+					}
+				};
+				
+				// Initialize everything
+				var initResult = window.initSyllableSpeechRecognition();
+				console.log('SyllableBuildingModule: JavaScript initialization result:', initResult);
+				if (initResult) {
+					window.checkSyllablePermissions();
+					console.log('SyllableBuildingModule: All syllable systems initialized successfully');
 				}
 				
-				try {
-					window.syllableFinalResult = '';
-					window.syllableInterimResult = '';
-					window.syllableRecognitionError = '';
-					window.syllableRecognition.start();
-					return true;
-				} catch (error) {
-					console.log('SyllableBuildingModule: Failed to start recognition:', error);
-					return false;
-				}
-			};
-			
-			// Stop recognition function
-			window.stopSyllableRecognition = function() {
-				if (window.syllableRecognition) {
-					try {
-						window.syllableRecognition.stop();
-					} catch (error) {
-						console.log('SyllableBuildingModule: Error stopping recognition:', error);
-					}
-				}
-			};
-			
-			// Initialize everything
-			var initResult = window.initSyllableSpeechRecognition();
-			console.log('SyllableBuildingModule: JavaScript initialization result:', initResult);
-			if (initResult) {
-				window.checkSyllablePermissions();
-				console.log('SyllableBuildingModule: All syllable systems initialized successfully');
+				return initResult;
 			}
-			
-			return initResult;
-		}
-		return true;
+			return true;
+		})();
 	"""
 	
 	var result = JavaScriptBridge.eval(js_code)
@@ -455,163 +457,167 @@ func _initialize_web_audio_environment():
 	"""Initialize JavaScript environment for web audio - ENHANCED with ReadAloudGuided patterns"""
 	if JavaScriptBridge.has_method("eval"):
 		var js_code = """
-		// Check if functions already exist to avoid redefinition
-		if (typeof window.syllableRecognition === 'undefined') {
-			// Global speech recognition variables
-			window.syllableRecognition = null;
-			window.syllableRecognitionActive = false;
-			window.syllablePermissionGranted = false;
-			window.syllablePermissionChecked = false;
-			window.syllableFinalResult = '';
-			window.syllableInterimResult = '';
-			window.syllableResult = null;
-			
-			// Permission check function
-			window.checkSyllablePermissions = function() {
-				if (navigator.permissions) {
-					navigator.permissions.query({name: 'microphone'}).then(function(result) {
-						window.syllablePermissionGranted = (result.state === 'granted');
-						window.syllablePermissionChecked = true;
-						console.log('SyllableBuildingModule: Permission state:', result.state);
-					}).catch(function(error) {
-						console.log('SyllableBuildingModule: Permission check failed:', error);
-						window.syllablePermissionChecked = true;
-					});
-				} else {
-					// Fallback for browsers without permission API
-					window.syllablePermissionChecked = true;
-				}
-			};
-			
-			// Request microphone permission
-			window.requestSyllableMicPermission = function() {
-				return navigator.mediaDevices.getUserMedia({audio: true})
-					.then(function(stream) {
-						window.syllablePermissionGranted = true;
-						stream.getTracks().forEach(function(track) {
-							track.stop();
+		(function() {
+			// Check if functions already exist to avoid redefinition
+			if (typeof window.syllableRecognition === 'undefined') {
+				// Global speech recognition variables
+				window.syllableRecognition = null;
+				window.syllableRecognitionActive = false;
+				window.syllablePermissionGranted = false;
+				window.syllablePermissionChecked = false;
+				window.syllableFinalResult = '';
+				window.syllableInterimResult = '';
+				window.syllableResult = null;
+				
+				// Permission check function
+				window.checkSyllablePermissions = function() {
+					if (navigator.permissions) {
+						navigator.permissions.query({name: 'microphone'}).then(function(result) {
+							window.syllablePermissionGranted = (result.state === 'granted');
+							window.syllablePermissionChecked = true;
+							console.log('SyllableBuildingModule: Permission state:', result.state);
+						}).catch(function(error) {
+							console.log('SyllableBuildingModule: Permission check failed:', error);
+							window.syllablePermissionChecked = true;
 						});
-						return true;
-					})
-					.catch(function(error) {
-						console.log('SyllableBuildingModule: Permission denied:', error);
-						window.syllablePermissionGranted = false;
-						return false;
-					});
-			};
-			
-			// Initialize speech recognition using ReadAloudGuided pattern
-			window.initSyllableSpeechRecognition = function() {
-				try {
-					if ('webkitSpeechRecognition' in window) {
-						window.syllableRecognition = new webkitSpeechRecognition();
-					} else if ('SpeechRecognition' in window) {
-						window.syllableRecognition = new SpeechRecognition();
 					} else {
-						console.log('SyllableBuildingModule: Speech recognition not supported');
-						return false;
+						// Fallback for browsers without permission API
+						window.syllablePermissionChecked = true;
 					}
-					
-					// Configure recognition for better short word detection
-					window.syllableRecognition.continuous = true;
-					window.syllableRecognition.interimResults = true;
-					window.syllableRecognition.lang = 'en-US';
-					window.syllableRecognition.maxAlternatives = 3; // More alternatives for better accuracy
-					
-					// Enhanced event handlers like ReadAloudGuided
-					window.syllableRecognition.onstart = function() {
-						console.log('SyllableBuildingModule: Recognition started');
-						window.syllableRecognitionActive = true;
-					};
-					
-					window.syllableRecognition.onresult = function(event) {
-						var finalTranscript = '';
-						var interimTranscript = '';
+				};
+				
+				// Request microphone permission
+				window.requestSyllableMicPermission = function() {
+					return navigator.mediaDevices.getUserMedia({audio: true})
+						.then(function(stream) {
+							window.syllablePermissionGranted = true;
+							stream.getTracks().forEach(function(track) {
+								track.stop();
+							});
+							return true;
+						})
+						.catch(function(error) {
+							console.log('SyllableBuildingModule: Permission denied:', error);
+							window.syllablePermissionGranted = false;
+							return false;
+						});
+				};
+				
+				// Initialize speech recognition using ReadAloudGuided pattern
+				window.initSyllableSpeechRecognition = function() {
+					try {
+						if ('webkitSpeechRecognition' in window) {
+							window.syllableRecognition = new webkitSpeechRecognition();
+						} else if ('SpeechRecognition' in window) {
+							window.syllableRecognition = new SpeechRecognition();
+						} else {
+							console.log('SyllableBuildingModule: Speech recognition not supported');
+							return false;
+						}
 						
-						for (var i = event.resultIndex; i < event.results.length; i++) {
-							var transcript = event.results[i][0].transcript;
-							if (event.results[i].isFinal) {
-								finalTranscript += transcript;
-								console.log('SyllableBuildingModule: Final result:', transcript);
-							} else {
-								interimTranscript += transcript;
+						// Configure recognition for better short word detection
+						window.syllableRecognition.continuous = true;
+						window.syllableRecognition.interimResults = true;
+						window.syllableRecognition.lang = 'en-US';
+						window.syllableRecognition.maxAlternatives = 3; // More alternatives for better accuracy
+						
+						// Enhanced event handlers like ReadAloudGuided
+						window.syllableRecognition.onstart = function() {
+							console.log('SyllableBuildingModule: Recognition started');
+							window.syllableRecognitionActive = true;
+						};
+						
+						window.syllableRecognition.onresult = function(event) {
+							var finalTranscript = '';
+							var interimTranscript = '';
+							
+							for (var i = event.resultIndex; i < event.results.length; i++) {
+								var transcript = event.results[i][0].transcript;
+								if (event.results[i].isFinal) {
+									finalTranscript += transcript;
+									console.log('SyllableBuildingModule: Final result:', transcript);
+								} else {
+									interimTranscript += transcript;
+								}
 							}
-						}
+							
+							if (finalTranscript.trim()) {
+								window.syllableFinalResult = finalTranscript.trim();
+							}
+							
+							if (interimTranscript.trim()) {
+								window.syllableInterimResult = interimTranscript.trim();
+							}
+						};
 						
-						if (finalTranscript.trim()) {
-							window.syllableFinalResult = finalTranscript.trim();
-						}
+						window.syllableRecognition.onerror = function(event) {
+							console.log('SyllableBuildingModule: Recognition error:', event.error);
+							window.syllableRecognitionActive = false;
+							window.syllableRecognitionError = event.error;
+						};
 						
-						if (interimTranscript.trim()) {
-							window.syllableInterimResult = interimTranscript.trim();
-						}
-					};
-					
-					window.syllableRecognition.onerror = function(event) {
-						console.log('SyllableBuildingModule: Recognition error:', event.error);
-						window.syllableRecognitionActive = false;
-						window.syllableRecognitionError = event.error;
-					};
-					
-					window.syllableRecognition.onend = function() {
-						console.log('SyllableBuildingModule: Recognition ended');
-						window.syllableRecognitionActive = false;
-					};
-					
-					return true;
-				} catch (error) {
-					console.log('SyllableBuildingModule: Failed to initialize recognition:', error);
-					return false;
-				}
-			};
-			
-			// Start recognition function with better setup
-			window.startSyllableRecognition = function() {
-				if (!window.syllableRecognition) {
-					if (!window.initSyllableSpeechRecognition()) {
+						window.syllableRecognition.onend = function() {
+							console.log('SyllableBuildingModule: Recognition ended');
+							window.syllableRecognitionActive = false;
+						};
+						
+						return true;
+					} catch (error) {
+						console.log('SyllableBuildingModule: Failed to initialize recognition:', error);
 						return false;
 					}
+				};
+				
+				// Start recognition function with better setup
+				window.startSyllableRecognition = function() {
+					if (!window.syllableRecognition) {
+						if (!window.initSyllableSpeechRecognition()) {
+							return false;
+						}
+					}
+					
+					try {
+						window.syllableFinalResult = '';
+						window.syllableInterimResult = '';
+						window.syllableRecognitionError = '';
+						window.syllableRecognition.start();
+						return true;
+					} catch (error) {
+						console.log('SyllableBuildingModule: Failed to start recognition:', error);
+						return false;
+					}
+				};
+				
+				// Stop recognition function
+				window.stopSyllableRecognition = function() {
+					if (window.syllableRecognition) {
+						try {
+							window.syllableRecognition.stop();
+						} catch (error) {
+							console.log('SyllableBuildingModule: Error stopping recognition:', error);
+						}
+					}
+				};
+				
+				// Initialize everything
+				var initResult = window.initSyllableSpeechRecognition();
+				console.log('SyllableBuildingModule: JavaScript initialization result:', initResult);
+				if (initResult) {
+					window.checkSyllablePermissions();
+					console.log('SyllableBuildingModule: All syllable systems initialized successfully');
 				}
 				
-				try {
-					window.syllableFinalResult = '';
-					window.syllableInterimResult = '';
-					window.syllableRecognitionError = '';
-					window.syllableRecognition.start();
-					return true;
-				} catch (error) {
-					console.log('SyllableBuildingModule: Failed to start recognition:', error);
-					return false;
-				}
-			};
-			
-			// Stop recognition function
-			window.stopSyllableRecognition = function() {
-				if (window.syllableRecognition) {
-					try {
-						window.syllableRecognition.stop();
-					} catch (error) {
-						console.log('SyllableBuildingModule: Error stopping recognition:', error);
-					}
-				}
-			};
-			
-			// Initialize everything
-			var initResult = window.initSyllableSpeechRecognition();
-			console.log('SyllableBuildingModule: JavaScript initialization result:', initResult);
-			if (initResult) {
-				window.checkSyllablePermissions();
-				console.log('SyllableBuildingModule: All syllable systems initialized successfully');
+				return initResult;
 			}
-			
-			return initResult;
-		}
-		return true;
+			return true;
+		})();
 		"""
 		
 		var result = JavaScriptBridge.eval(js_code)
 		if result:
 			print("SyllableBuildingModule: JavaScript environment initialized for web speech recognition")
+		else:
+			print("SyllableBuildingModule: Failed to initialize JavaScript environment")
 # Enhanced speech-to-text processing with dyslexia-friendly improvements
 func _process_speech_result(result: String) -> String:
 	"""Process speech recognition result with enhanced accuracy - DYSLEXIA-FRIENDLY"""
@@ -1078,39 +1084,49 @@ func _process_final_result():
 		stt_result_label.text = ""
 
 func _check_syllable_recognition(spoken_text: String):
-	"""Check if spoken text matches target syllables"""
+	"""Check if spoken text matches target word - ENHANCED like ReadAloudGuided"""
+	if result_being_processed:
+		print("SyllableBuildingModule: Already processing result, skipping...")
+		return
+	
+	result_being_processed = true
+	
 	var current_word = syllable_words[current_word_index]["word"]
-	var target_syllables = current_target_syllables
 	
-	print("SyllableBuildingModule: Checking recognition - Spoken: '", spoken_text, "' Target: ", target_syllables)
+	print("SyllableBuildingModule: Checking recognition - Spoken: '", spoken_text, "' Target: '", current_word, "'")
 	
-	# Normalize spoken text
-	var spoken_normalized = spoken_text.to_lower().strip_edges()
+	# Enhanced text processing pipeline like ReadAloudGuided
+	var processed_text = spoken_text
 	
-	# Check various matching patterns
-	var is_correct = false
-	var match_type = ""
+	# Step 1: Clean text (remove non-letters except spaces)
+	processed_text = _clean_text_for_words(processed_text)
 	
-	# 1. Full word match
-	if spoken_normalized == current_word.to_lower():
-		is_correct = true
-		match_type = "full_word"
+	# Step 2: Normalize for comparison
+	var spoken_normalized = processed_text.to_lower().strip_edges()
+	var target_normalized = current_word.to_lower().strip_edges()
 	
-	# 2. Individual syllable matches
-	elif _check_syllable_sequence(spoken_normalized, target_syllables):
-		is_correct = true
-		match_type = "syllable_sequence"
+	print("SyllableBuildingModule: Enhanced processing:")
+	print("  Original: '", spoken_text, "'")
+	print("  After cleaning: '", processed_text, "'")
+	print("  Final normalized: '", spoken_normalized, "'")
+	print("  Target: '", target_normalized, "'")
 	
-	# 3. Partial syllable recognition (dyslexia-friendly)
-	elif _check_partial_syllables(spoken_normalized, target_syllables):
-		is_correct = true
-		match_type = "partial_syllables"
+	# Enhanced similarity calculation like ReadAloudGuided
+	var similarity = _calculate_enhanced_sentence_similarity(spoken_normalized, target_normalized)
+	print("SyllableBuildingModule: Enhanced similarity score: ", similarity)
 	
-	# Provide feedback
-	if is_correct:
-		_handle_correct_response(match_type)
+	# More forgiving thresholds for dyslexic learners (same as ReadAloudGuided)
+	if similarity >= 0.8: # 80% similarity - excellent match
+		_handle_correct_response("excellent_match")
+	elif similarity >= 0.65: # 65% similarity - good attempt
+		_handle_correct_response("good_match")
+	elif similarity >= 0.4: # 40% similarity - partial match, still count as success for encouragement
+		_handle_correct_response("partial_match")
 	else:
 		_handle_incorrect_response(spoken_text)
+	
+	# Reset processing flag
+	result_being_processed = false
 
 func _check_syllable_sequence(spoken: String, target_syllables: Array) -> bool:
 	"""Check if spoken text contains syllables in sequence"""
@@ -1449,24 +1465,59 @@ func _clear_highlighting():
 
 # Live highlighting during speech recognition (word only)
 func _update_live_syllable_highlighting(interim_text: String):
-	"""Update live word highlighting based on STT interim results (simplified)"""
+	"""Update live word highlighting based on STT interim results - ENHANCED like ReadAloudGuided"""
 	if current_target_syllables.is_empty():
 		return
 		
-	# Clean and process interim text
-	var processed_interim = _clean_text_for_syllables(interim_text.to_lower())
+	# Clean and process interim text using ReadAloudGuided methods
+	var processed_interim = _clean_text_for_words(interim_text.to_lower())
 	var current_word = syllable_words[current_word_index]["word"].to_lower()
 	
-	# Check if interim text matches the target word
-	if _is_word_match_for_highlighting(processed_interim, current_word):
+	print("SyllableBuildingModule: Live highlighting check - Interim: '", processed_interim, "' Target: '", current_word, "'")
+	
+	# Check if interim text matches the target word using enhanced similarity
+	var similarity = _calculate_enhanced_sentence_similarity(processed_interim, current_word)
+	print("SyllableBuildingModule: Live similarity score: ", similarity)
+	
+	# Apply highlighting if similarity is excellent (trigger fast success like ReadAloudGuided)
+	if similarity >= 0.85: # 85% similarity for fast success
 		_apply_word_highlighting()
-		print("SyllableBuildingModule: Live highlighted word from: '", processed_interim, "'")
+		print("SyllableBuildingModule: FAST SUCCESS - Live highlighted word from: '", processed_interim, "' (similarity: ", similarity, ")")
+		
+		# Trigger fast success processing like ReadAloudGuided
+		_trigger_fast_success()
+		
+	elif similarity >= 0.7: # 70% similarity for live highlighting
+		_apply_word_highlighting()
+		print("SyllableBuildingModule: Live highlighted word from: '", processed_interim, "' (similarity: ", similarity, ")")
+		
+		# Start highlighting reset timer in case speech stops midway
+		if highlighting_reset_timer:
+			highlighting_reset_timer.start(2.0) # Reset after 2 seconds of no speech
 	else:
 		# Reset to normal display if no match
 		_update_word_display()
 
-func _clean_text_for_syllables(text: String) -> String:
-	"""Clean text for syllable matching"""
+func _trigger_fast_success():
+	"""Trigger fast success when excellent live match is detected - like ReadAloudGuided"""
+	if result_being_processed:
+		return
+	
+	print("SyllableBuildingModule: Triggering fast success processing")
+	
+	# Stop highlighting reset timer since we found a match
+	if highlighting_reset_timer:
+		highlighting_reset_timer.stop()
+	
+	# Stop STT recognition since we got the answer
+	_stop_syllable_recognition()
+	
+	# Process as successful recognition
+	var current_word = syllable_words[current_word_index]["word"]
+	_check_syllable_recognition(current_word) # Use the target word as "recognized" text
+
+func _clean_text_for_words(text: String) -> String:
+	"""Clean text and keep only letters and spaces - COPIED from ReadAloudGuided"""
 	var regex = RegEx.new()
 	regex.compile("[^a-zA-Z ]")
 	var cleaned = regex.sub(text, "", true)
@@ -1477,6 +1528,56 @@ func _clean_text_for_syllables(text: String) -> String:
 	cleaned = space_regex.sub(cleaned, " ", true)
 	
 	return cleaned.strip_edges()
+
+func _calculate_enhanced_sentence_similarity(text1: String, text2: String) -> float:
+	"""Calculate similarity between two strings - COPIED from ReadAloudGuided"""
+	if text1.is_empty() or text2.is_empty():
+		return 0.0
+	
+	if text1 == text2:
+		return 1.0
+	
+	# Split into words
+	var words1 = text1.split(" ")
+	var words2 = text2.split(" ")
+	
+	# For single words (syllable case), use word-level similarity
+	if words1.size() == 1 and words2.size() == 1:
+		return _calculate_word_similarity(words1[0], words2[0])
+	
+	# For multiple words, calculate word-by-word similarity
+	var total_score = 0.0
+	var word_count = max(words1.size(), words2.size())
+	
+	for i in range(word_count):
+		var word1 = words1[i] if i < words1.size() else ""
+		var word2 = words2[i] if i < words2.size() else ""
+		
+		if word1.is_empty() or word2.is_empty():
+			continue
+		
+		total_score += _calculate_word_similarity(word1, word2)
+	
+	return total_score / word_count if word_count > 0 else 0.0
+
+func _calculate_word_similarity(word1: String, word2: String) -> float:
+	"""Calculate similarity between two words - ENHANCED from ReadAloudGuided"""
+	if word1 == word2:
+		return 1.0
+	
+	if word1.is_empty() or word2.is_empty():
+		return 0.0
+	
+	# Calculate Levenshtein similarity using existing function
+	var distance = _levenshtein_distance(word1, word2)
+	var max_length = max(word1.length(), word2.length())
+	var similarity = 1.0 - (float(distance) / float(max_length)) if max_length > 0 else 0.0
+	
+	return similarity
+
+func _clean_text_for_syllables(text: String) -> String:
+	"""Clean text for syllable matching - DEPRECATED, use _clean_text_for_words instead"""
+	return _clean_text_for_words(text)
 
 # Enhanced progress saving with better error handling
 func _save_current_progress():
