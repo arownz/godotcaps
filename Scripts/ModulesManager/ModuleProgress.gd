@@ -224,11 +224,18 @@ func complete_read_aloud_activity(category: String, activity_id: String) -> bool
 		var category_data = read_aloud[category]
 		if not activity_id in category_data["activities_completed"]:
 			category_data["activities_completed"].append(activity_id)
+			print("ModuleProgress: Read aloud activity completed: ", category, " - ", activity_id)
 			
-			# Calculate progress based on guided reading only (5 total activities)
+			# Update overall read aloud progress (average of both categories)
 			var guided_count = read_aloud.get("guided_reading", {}).get("activities_completed", []).size()
-			read_aloud["progress"] = (guided_count / 5.0) * 100 # 5 total activities in guided reading
-			read_aloud["completed"] = guided_count >= 5
+			var syllable_count = read_aloud.get("syllable_workshop", {}).get("activities_completed", []).size()
+			var guided_progress = (float(guided_count) / 4.0) * 100.0 # 4 guided reading activities
+			var syllable_progress = (float(syllable_count) / 10.0) * 100.0 # 10 syllable words
+			var overall_progress = (guided_progress + syllable_progress) / 2.0
+			read_aloud["progress"] = int(overall_progress)
+			read_aloud["completed"] = (overall_progress >= 100.0)
+			
+			print("ModuleProgress: Guided reading progress - ", guided_count, "/4 = ", int(guided_progress), "%")
 		
 		document.add_or_update_field("modules", modules)
 		var updated = await collection.update(document)
@@ -293,12 +300,19 @@ func complete_syllable_workshop_activity(activity_id: String) -> bool:
 			syllable_data["activities_completed"].append(activity_id)
 			print("ModuleProgress: Syllable workshop activity completed: ", activity_id)
 		
-		# Update overall read aloud progress
+		# Update syllable workshop progress only (don't combine with guided reading)
+		var syllable_activities = syllable_data["activities_completed"].size()
+		var total_syllable_activities = 10 # 10 syllable words in SyllableBuildingModule
+		var syllable_progress = (float(syllable_activities) / float(total_syllable_activities)) * 100.0
+		
+		# Update overall read aloud progress (this is mainly for overall tracking, specific categories use their own calculations)
 		var total_guided_activities = read_aloud.get("guided_reading", {}).get("activities_completed", []).size()
-		var total_syllable_activities = syllable_data["activities_completed"].size()
-		var overall_progress = ((total_guided_activities + total_syllable_activities) / 14.0) * 100.0 # 4 guided + 10 syllable activities
+		var guided_progress = (float(total_guided_activities) / 4.0) * 100.0 # 4 guided reading activities
+		var overall_progress = (guided_progress + syllable_progress) / 2.0 # Average of both categories
 		read_aloud["progress"] = int(overall_progress)
 		read_aloud["completed"] = (overall_progress >= 100.0)
+		
+		print("ModuleProgress: Syllable workshop progress - ", syllable_activities, "/", total_syllable_activities, " = ", int(syllable_progress), "%")
 		
 		document.add_or_update_field("modules", modules)
 		var updated = await collection.update(document)

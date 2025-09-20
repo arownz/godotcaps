@@ -27,7 +27,15 @@ shadow_color = Color(0, 0, 0, 0.1)
 shadow_size = 8
 shadow_offset = Vector2(0, 4)
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_wwwj0"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nav_btn"]
+bg_color = Color(0.4, 0.49, 0.92, 1)
+corner_radius_top_left = 25
+corner_radius_top_right = 25
+corner_radius_bottom_right = 25
+corner_radius_bottom_left = 25
+shadow_color = Color(0, 0, 0, 0.2)
+shadow_size = 4
+shadow_offset = Vector2(0, 2)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nav_btn_hover"]
 bg_color = Color(0.35, 0.4, 0.84, 1)
@@ -39,15 +47,7 @@ shadow_color = Color(0, 0, 0, 0.3)
 shadow_size = 6
 shadow_offset = Vector2(0, 4)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nav_btn"]
-bg_color = Color(0.4, 0.49, 0.92, 1)
-corner_radius_top_left = 25
-corner_radius_top_right = 25
-corner_radius_bottom_right = 25
-corner_radius_bottom_left = 25
-shadow_color = Color(0, 0, 0, 0.2)
-shadow_size = 4
-shadow_offset = Vector2(0, 2)
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_wwwj0"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_phonics_card"]
 bg_color = Color(0.85, 0.92, 0.98, 1)
@@ -104,6 +104,16 @@ shadow_color = Color(0, 0, 0, 0.3)
 shadow_size = 4
 shadow_offset = Vector2(0, 2)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_action_btn"]
+bg_color = Color(0.28, 0.73, 0.47, 1)
+corner_radius_top_left = 25
+corner_radius_top_right = 25
+corner_radius_bottom_right = 25
+corner_radius_bottom_left = 25
+shadow_color = Color(0, 0, 0, 0.2)
+shadow_size = 4
+shadow_offset = Vector2(0, 2)
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_action_btn_hover"]
 bg_color = Color(0.22, 0.66, 0.41, 1)
 corner_radius_top_left = 25
@@ -114,13 +124,33 @@ shadow_color = Color(0, 0, 0, 0.3)
 shadow_size = 6
 shadow_offset = Vector2(0, 4)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_action_btn"]
-bg_color = Color(0.28, 0.73, 0.47, 1)
-corner_radius_top_left = 25
-corner_radius_top_right = 25
-corner_radius_bottom_right = 25
-corner_radius_bottom_left = 25
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_reading_card"]
+bg_color = Color(0.87, 0.98, 0.9, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.2, 0.8, 0.4, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
 shadow_color = Color(0, 0, 0, 0.2)
+shadow_size = 8
+shadow_offset = Vector2(0, 4)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_reading_progress"]
+bg_color = Color(0.2, 0.8, 0.4, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+shadow_color = Color(0, 0, 0, 0.3)
 shadow_size = 4
 shadow_offset = Vector2(0, 2)
 
@@ -141,36 +171,6 @@ shadow_offset = Vector2(0, 4)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_quiz_progress"]
 bg_color = Color(0.9, 0.3, 0.3, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0, 0, 0, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-shadow_color = Color(0, 0, 0, 0.3)
-shadow_size = 4
-shadow_offset = Vector2(0, 2)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_reading_card"]
-bg_color = Color(0.87, 0.98, 0.9, 1)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.2, 0.8, 0.4, 1)
-corner_radius_top_left = 20
-corner_radius_top_right = 20
-corner_radius_bottom_right = 20
-corner_radius_bottom_left = 20
-shadow_color = Color(0, 0, 0, 0.2)
-shadow_size = 8
-shadow_offset = Vector2(0, 4)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_reading_progress"]
-bg_color = Color(0.2, 0.8, 0.4, 1)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
@@ -261,10 +261,10 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
 theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold_font")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_wwwj0")
-theme_override_styles/hover = SubResource("StyleBoxFlat_nav_btn_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_nav_btn_hover")
 theme_override_styles/normal = SubResource("StyleBoxFlat_nav_btn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_nav_btn_hover")
+theme_override_styles/hover = SubResource("StyleBoxFlat_nav_btn_hover")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_wwwj0")
 text = "Back"
 icon = ExtResource("4_6atma")
 flat = true
@@ -384,116 +384,11 @@ theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
 theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold_font")
 theme_override_font_sizes/font_size = 18
-theme_override_styles/focus = SubResource("StyleBoxEmpty_wwwj0")
-theme_override_styles/hover = SubResource("StyleBoxFlat_action_btn_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_action_btn_hover")
 theme_override_styles/normal = SubResource("StyleBoxFlat_action_btn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_action_btn_hover")
+theme_override_styles/hover = SubResource("StyleBoxFlat_action_btn_hover")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_wwwj0")
 text = "Enter Phonics"
-icon = ExtResource("6_wwwj0")
-flat = true
-icon_alignment = 1
-expand_icon = true
-
-[node name="FlipQuizCard" type="Panel" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid"]
-custom_minimum_size = Vector2(350, 360)
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_quiz_card")
-
-[node name="CardContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 30.0
-offset_top = 21.0
-offset_right = -30.0
-offset_bottom = -21.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/separation = 15
-
-[node name="Header" type="HBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent"]
-layout_mode = 2
-size_flags_vertical = 0
-theme_override_constants/separation = 20
-
-[node name="IconPanel" type="Panel" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent/Header"]
-custom_minimum_size = Vector2(80, 80)
-layout_mode = 2
-size_flags_horizontal = 0
-theme_override_styles/panel = SubResource("StyleBoxFlat_icon")
-
-[node name="IconTexture" type="TextureRect" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent/Header/IconPanel"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -11.0
-offset_top = -11.0
-offset_right = 409.0
-offset_bottom = 409.0
-grow_horizontal = 2
-grow_vertical = 2
-scale = Vector2(0.202719, 0.202719)
-texture = ExtResource("8_jsrwg")
-
-[node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent/Header"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("4_bold_font")
-theme_override_font_sizes/font_size = 24
-text = "Flip Quiz"
-vertical_alignment = 1
-
-[node name="DescriptionLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent"]
-custom_minimum_size = Vector2(1, 0)
-layout_mode = 2
-size_flags_vertical = 0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_regular_font")
-theme_override_font_sizes/font_size = 16
-text = "Practice vocabulary and comprehension through engaging quiz activities with visual and audio support for diverse learning styles."
-autowrap_mode = 3
-
-[node name="ProgressContainer" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent"]
-layout_mode = 2
-size_flags_vertical = 0
-theme_override_constants/separation = 8
-
-[node name="ProgressBar" type="ProgressBar" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent/ProgressContainer"]
-custom_minimum_size = Vector2(0, 12)
-layout_mode = 2
-theme_override_styles/background = SubResource("StyleBoxFlat_progress_bg")
-theme_override_styles/fill = SubResource("StyleBoxFlat_quiz_progress")
-show_percentage = false
-
-[node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent/ProgressContainer"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_regular_font")
-theme_override_font_sizes/font_size = 14
-text = "0% Complete"
-horizontal_alignment = 2
-
-[node name="ActionButton" type="Button" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent"]
-custom_minimum_size = Vector2(0, 50)
-layout_mode = 2
-size_flags_vertical = 8
-mouse_default_cursor_shape = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
-theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("4_bold_font")
-theme_override_font_sizes/font_size = 18
-theme_override_styles/focus = SubResource("StyleBoxEmpty_wwwj0")
-theme_override_styles/hover = SubResource("StyleBoxFlat_action_btn_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_action_btn_hover")
-theme_override_styles/normal = SubResource("StyleBoxFlat_action_btn")
-text = "Enter Quiz"
 icon = ExtResource("6_wwwj0")
 flat = true
 icon_alignment = 1
@@ -594,11 +489,116 @@ theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
 theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold_font")
 theme_override_font_sizes/font_size = 18
-theme_override_styles/focus = SubResource("StyleBoxEmpty_wwwj0")
-theme_override_styles/hover = SubResource("StyleBoxFlat_action_btn_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_action_btn_hover")
 theme_override_styles/normal = SubResource("StyleBoxFlat_action_btn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_action_btn_hover")
+theme_override_styles/hover = SubResource("StyleBoxFlat_action_btn_hover")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_wwwj0")
 text = "Enter Interactive"
+icon = ExtResource("6_wwwj0")
+flat = true
+icon_alignment = 1
+expand_icon = true
+
+[node name="FlipQuizCard" type="Panel" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid"]
+custom_minimum_size = Vector2(350, 360)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_quiz_card")
+
+[node name="CardContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 30.0
+offset_top = 21.0
+offset_right = -30.0
+offset_bottom = -21.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 15
+
+[node name="Header" type="HBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent"]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_constants/separation = 20
+
+[node name="IconPanel" type="Panel" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent/Header"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_icon")
+
+[node name="IconTexture" type="TextureRect" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent/Header/IconPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -11.0
+offset_top = -11.0
+offset_right = 409.0
+offset_bottom = 409.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.202719, 0.202719)
+texture = ExtResource("8_jsrwg")
+
+[node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold_font")
+theme_override_font_sizes/font_size = 24
+text = "Flip Quiz"
+vertical_alignment = 1
+
+[node name="DescriptionLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent"]
+custom_minimum_size = Vector2(1, 0)
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_regular_font")
+theme_override_font_sizes/font_size = 16
+text = "Practice vocabulary and comprehension through engaging quiz activities with visual and audio support for diverse learning styles."
+autowrap_mode = 3
+
+[node name="ProgressContainer" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent"]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_constants/separation = 8
+
+[node name="ProgressBar" type="ProgressBar" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent/ProgressContainer"]
+custom_minimum_size = Vector2(0, 12)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_progress_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_quiz_progress")
+show_percentage = false
+
+[node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent/ProgressContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_regular_font")
+theme_override_font_sizes/font_size = 14
+text = "0% Complete"
+horizontal_alignment = 2
+
+[node name="ActionButton" type="Button" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+size_flags_vertical = 8
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_bold_font")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxFlat_action_btn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_action_btn_hover")
+theme_override_styles/hover = SubResource("StyleBoxFlat_action_btn_hover")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_wwwj0")
+text = "Enter Quiz"
 icon = ExtResource("6_wwwj0")
 flat = true
 icon_alignment = 1

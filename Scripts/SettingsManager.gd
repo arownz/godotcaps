@@ -11,9 +11,7 @@ const SETTINGS_FILE_PATH = "user://settings.cfg"
 # Current settings data
 var current_settings = {
 	"accessibility": {
-		"font_size": 18,
 		"reading_speed": 1.0,
-		"high_contrast": false,
 		# Added TTS related defaults so retrieval never returns null
 		"tts_voice_id": "default",
 		"tts_rate": 1.0,
@@ -44,9 +42,7 @@ func load_settings():
 		print("SettingsManager: Settings file found, loading saved settings")
 		# Load accessibility settings
 		if config.has_section("accessibility"):
-			current_settings.accessibility.font_size = config.get_value("accessibility", "font_size", 18)
 			current_settings.accessibility.reading_speed = config.get_value("accessibility", "reading_speed", 1.0)
-			current_settings.accessibility.high_contrast = config.get_value("accessibility", "high_contrast", false)
 			current_settings.accessibility.tts_voice_id = config.get_value("accessibility", "tts_voice_id", "default")
 			current_settings.accessibility.tts_rate = config.get_value("accessibility", "tts_rate", 1.0)
 		
@@ -72,9 +68,7 @@ func save_settings():
 	var config = ConfigFile.new()
 	
 	# Save accessibility settings
-	config.set_value("accessibility", "font_size", current_settings.accessibility.font_size)
 	config.set_value("accessibility", "reading_speed", current_settings.accessibility.reading_speed)
-	config.set_value("accessibility", "high_contrast", current_settings.accessibility.high_contrast)
 	config.set_value("accessibility", "tts_voice_id", current_settings.accessibility.tts_voice_id)
 	config.set_value("accessibility", "tts_rate", current_settings.accessibility.tts_rate)
 	
@@ -120,12 +114,8 @@ func apply_setting(category: String, setting: String, value):
 	match category:
 		"accessibility":
 			match setting:
-				"font_size":
-					apply_font_size_globally(value)
 				"reading_speed":
 					apply_reading_speed_globally(value)
-				"high_contrast":
-					apply_high_contrast_globally(value)
 		"audio":
 			match setting:
 				"master_volume":
@@ -140,25 +130,12 @@ func apply_setting(category: String, setting: String, value):
 
 func apply_accessibility_settings():
 	"""Apply all accessibility settings"""
-	apply_font_size_globally(current_settings.accessibility.font_size)
 	apply_reading_speed_globally(current_settings.accessibility.reading_speed)
-	apply_high_contrast_globally(current_settings.accessibility.high_contrast)
-
-func apply_font_size_globally(font_size: int):
-	"""Apply font size setting to current scene"""
-	print("SettingsManager: Applying font size: ", font_size)
-	# This would need to be implemented to update all text elements in the current scene
-	# For now, scenes will need to query this setting manually
 
 func apply_reading_speed_globally(speed: float):
 	"""Apply reading speed setting globally"""
 	print("SettingsManager: Applying reading speed: ", speed)
 	# This affects text animation speeds, typewriter effects, etc.
-
-func apply_high_contrast_globally(enabled: bool):
-	"""Apply high contrast setting globally"""
-	print("SettingsManager: Applying high contrast: ", enabled)
-	# This would modify color schemes throughout the UI
 
 func apply_animation_reduction_globally(enabled: bool):
 	"""Apply animation reduction setting globally"""
@@ -181,10 +158,6 @@ func apply_music_volume(volume: int):
 	print("SettingsManager: Applying music volume: ", volume)
 	# TODO: Implement when audio system is added
 
-# Utility functions for other scenes to check settings
-func is_high_contrast_enabled() -> bool:
-	return current_settings.accessibility.high_contrast
-
 func get_reading_speed() -> float:
 	return current_settings.accessibility.reading_speed
 
@@ -199,9 +172,6 @@ func set_tts_voice_id(voice_id: String):
 
 func set_tts_rate(rate: float):
 	set_setting("accessibility", "tts_rate", rate)
-
-func get_font_size() -> int:
-	return current_settings.accessibility.font_size
 
 func should_show_tutorials() -> bool:
 	return current_settings.gameplay.show_tutorials

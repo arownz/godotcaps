@@ -232,21 +232,6 @@ theme_override_constants/separation = 15
 layout_mode = 2
 theme_override_constants/separation = 15
 
-[node name="HighContrastLabel" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/HighContrastContainer"]
-custom_minimum_size = Vector2(200, 0)
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("2_font_regular")
-theme_override_font_sizes/font_size = 14
-text = "High Contrast Mode:"
-vertical_alignment = 1
-
-[node name="HighContrastToggle" type="CheckBox" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/HighContrastContainer"]
-layout_mode = 2
-theme_override_fonts/font = ExtResource("2_font_regular")
-theme_override_font_sizes/font_size = 14
-
 [node name="ReadingSpeedContainer" type="HBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection"]
 layout_mode = 2
 theme_override_constants/separation = 15
@@ -291,22 +276,8 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_font_regular")
 theme_override_font_sizes/font_size = 14
-text = "Text-to-Speech Settings:"
+text = "Text-to-Speech:"
 vertical_alignment = 1
-
-[node name="TTSSettingsButton" type="Button" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/TTSContainer"]
-custom_minimum_size = Vector2(120, 32)
-layout_mode = 2
-mouse_default_cursor_shape = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("1_font_bold")
-theme_override_font_sizes/font_size = 12
-theme_override_styles/focus = SubResource("StyleBoxEmpty_wwc4u")
-text = "TTS"
-icon = ExtResource("7_l5u2n")
-flat = true
-icon_alignment = 1
-expand_icon = true
 
 [node name="Separator1" type="HSeparator" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox"]
 layout_mode = 2
@@ -446,6 +417,7 @@ vertical_alignment = 1
 
 [node name="TutorialsToggle" type="CheckBox" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/GameplaySection/TutorialsContainer"]
 layout_mode = 2
+mouse_default_cursor_shape = 2
 theme_override_fonts/font = ExtResource("2_font_regular")
 theme_override_font_sizes/font_size = 14
 button_pressed = true
@@ -470,7 +442,10 @@ text = "Data & Privacy"
 custom_minimum_size = Vector2(150, 35)
 layout_mode = 2
 size_flags_horizontal = 0
+mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_font_regular")
 theme_override_font_sizes/font_size = 14
 theme_override_styles/focus = SubResource("StyleBoxEmpty_wwc4u")
@@ -483,6 +458,27 @@ expand_icon = true
 [node name="BottomSpacer" type="Control" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox"]
 custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
+
+[node name="TTSSettingsButton" type="Button" parent="SettingsContainer"]
+custom_minimum_size = Vector2(120, 32)
+layout_mode = 0
+offset_left = 188.0
+offset_top = 199.0
+offset_right = 369.53687
+offset_bottom = 280.0
+scale = Vector2(0.6007763, 0.6007763)
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("1_font_bold")
+theme_override_font_sizes/font_size = 16
+theme_override_styles/focus = SubResource("StyleBoxEmpty_wwc4u")
+text = "Change Voice"
+icon = ExtResource("7_l5u2n")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [node name="TTSSettingsPopup" parent="." instance=ExtResource("11_tts_popup")]
 visible = false
@@ -499,7 +495,7 @@ stream = ExtResource("13_avqid")
 [connection signal="pressed" from="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/BattleSection/BattleButtonContainer/EngageButton" to="." method="_on_engage_button_pressed"]
 [connection signal="mouse_entered" from="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/BattleSection/BattleButtonContainer/LeaveButton" to="." method="_on_quit_button_mouse_entered"]
 [connection signal="pressed" from="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/BattleSection/BattleButtonContainer/LeaveButton" to="." method="_on_quit_button_pressed"]
-[connection signal="mouse_entered" from="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/TTSContainer/TTSSettingsButton" to="." method="_on_tts_settings_button_mouse_entered"]
-[connection signal="pressed" from="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/TTSContainer/TTSSettingsButton" to="." method="_on_tts_settings_button_pressed"]
+[connection signal="mouse_entered" from="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/GameplaySection/TutorialsContainer/TutorialsToggle" to="." method="_on_tutorials_toggle_mouse_entered"]
+[connection signal="pressed" from="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/GameplaySection/TutorialsContainer/TutorialsToggle" to="." method="_on_tutorials_toggled"]
 [connection signal="mouse_entered" from="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/DataSection/ExportDataButton" to="." method="_on_export_data_button_mouse_entered"]
 [connection signal="pressed" from="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/DataSection/ExportDataButton" to="." method="_on_export_data_button_pressed"]

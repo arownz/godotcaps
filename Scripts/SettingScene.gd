@@ -13,12 +13,9 @@ var engage_permanently_hidden: bool = false # Once true, engage button stays hid
 @onready var close_button = $SettingsContainer/CloseButton
 
 # Accessibility Settings  
-@onready var font_size_slider = get_node_or_null("SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/FontSizeContainer/FontSizeSlider")
-@onready var font_size_value = get_node_or_null("SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/FontSizeContainer/FontSizeValue")
 @onready var reading_speed_slider = get_node_or_null("SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/ReadingSpeedContainer/ReadingSpeedSlider")
 @onready var reading_speed_value = get_node_or_null("SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/ReadingSpeedContainer/ReadingSpeedValue")
-@onready var high_contrast_toggle = get_node_or_null("SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/HighContrastContainer/HighContrastToggle")
-@onready var tts_settings_button = get_node_or_null("SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/TTSContainer/TTSSettingsButton")
+@onready var tts_settings_button = get_node_or_null("SettingsContainer/TTSSettingsButton")
 
 # Audio Settings (disabled for now)
 @onready var master_volume_slider = get_node_or_null("SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MasterVolumeContainer/MasterVolumeSlider")
@@ -68,13 +65,9 @@ func _ready():
 		close_button.pressed.connect(_on_close_button_pressed)
 	# Note: DataSection/ExportDataButton is already connected in the .tscn file
     
-	# Connect accessibility settings - check for null first
-	if font_size_slider and not font_size_slider.value_changed.is_connected(_on_font_size_changed):
-		font_size_slider.value_changed.connect(_on_font_size_changed)
+	# Connect accessibility settings - check for null first)
 	if reading_speed_slider and not reading_speed_slider.value_changed.is_connected(_on_reading_speed_changed):
 		reading_speed_slider.value_changed.connect(_on_reading_speed_changed)
-	if high_contrast_toggle and not high_contrast_toggle.toggled.is_connected(_on_high_contrast_toggled):
-		high_contrast_toggle.toggled.connect(_on_high_contrast_toggled)
 	if tts_settings_button and not tts_settings_button.pressed.is_connected(_on_tts_settings_button_pressed):
 		tts_settings_button.pressed.connect(_on_tts_settings_button_pressed)
     
@@ -170,18 +163,10 @@ func update_ui_from_settings():
 	await _load_tts_settings_from_firebase()
 	
 	# Accessibility settings - check for null first
-	if font_size_slider:
-		font_size_slider.value = SettingsManager.get_setting("accessibility", "font_size")
-	if font_size_value:
-		font_size_value.text = str(int(SettingsManager.get_setting("accessibility", "font_size")))
-	
 	if reading_speed_slider:
 		reading_speed_slider.value = SettingsManager.get_setting("accessibility", "reading_speed")
 	if reading_speed_value:
 		reading_speed_value.text = str(SettingsManager.get_setting("accessibility", "reading_speed")) + "x"
-	
-	if high_contrast_toggle:
-		high_contrast_toggle.button_pressed = SettingsManager.get_setting("accessibility", "high_contrast")
 	
 	# Audio settings (disabled) - check for null first
 	if master_volume_slider:
@@ -224,13 +209,6 @@ func _fade_out_and_change_scene(_scene_path: String):
 
 # === Accessibility Settings ===
 
-func _on_font_size_changed(value: float):
-	"""Handle font size slider change"""
-	SettingsManager.set_setting("accessibility", "font_size", int(value))
-	if font_size_value:
-		font_size_value.text = str(int(value))
-	print("SettingScene: Font size changed to: ", int(value))
-
 func _on_reading_speed_changed(value: float):
 	"""Handle reading speed slider change - affects both reading and TTS speed globally"""
 	SettingsManager.set_setting("accessibility", "reading_speed", value)
@@ -239,11 +217,6 @@ func _on_reading_speed_changed(value: float):
 	if reading_speed_value:
 		reading_speed_value.text = str(value) + "x"
 	print("SettingScene: Reading speed changed to: ", value, " (also updated TTS rate)")
-
-func _on_high_contrast_toggled(pressed: bool):
-	"""Handle high contrast mode toggle"""
-	SettingsManager.set_setting("accessibility", "high_contrast", pressed)
-	print("SettingScene: High contrast mode: ", pressed)
 
 func _on_tts_settings_button_pressed():
 	$ButtonClick.play()
@@ -406,6 +379,7 @@ func _on_music_volume_changed(value: float):
 # === Gameplay Settings ===
 
 func _on_tutorials_toggled(pressed: bool):
+	$ButtonClick.play()
 	"""Handle tutorials toggle"""
 	SettingsManager.set_setting("gameplay", "show_tutorials", pressed)
 	print("SettingScene: Show tutorials: ", pressed)

@@ -12,6 +12,22 @@ var current_target_syllables = []
 var stt_listening = false
 var result_being_processed = false
 
+# Enhanced permission variables like ReadAloudGuided
+var mic_permission_granted = false
+var permission_check_complete = false
+
+# Enhanced debouncing for similar-sounding words like ReadAloudGuided
+var last_interim_result = ""
+var interim_change_count = 0
+var last_change_time = 0
+
+# TTS timer fallback like ReadAloudGuided
+var use_timer_fallback_for_tts = false
+var tts_timer: Timer = null
+
+# Highlighting reset timer for partial speech like ReadAloudGuided
+var highlighting_reset_timer: Timer = null
+
 # Yellow highlighting system for successful recognition
 var highlighted_syllables = []
 var highlighted_words = []
@@ -21,21 +37,20 @@ var completion_celebration: CanvasLayer = null
 
 # Syllable breaking words - progressive difficulty
 var syllable_words = [
-	# 1 syllable (easy start)
-	{"word": "cat", "syllables": ["cat"], "difficulty": 1},
-	{"word": "dog", "syllables": ["dog"], "difficulty": 1},
-	{"word": "sun", "syllables": ["sun"], "difficulty": 1},
-	
-	# 2 syllables
-	{"word": "basket", "syllables": ["bas", "ket"], "difficulty": 2},
-	{"word": "water", "syllables": ["wa", "ter"], "difficulty": 2},
-	{"word": "hotdog", "syllables": ["hot", "dog"], "difficulty": 2},
+	# 2 syllables (starting level)
+	{"word": "rabbit", "syllables": ["rab", "bit"], "difficulty": 2},
+	{"word": "carpet", "syllables": ["car", "pet"], "difficulty": 2},
 	{"word": "garden", "syllables": ["gar", "den"], "difficulty": 2},
 	
 	# 3 syllables
-	{"word": "basketball", "syllables": ["bas", "ket", "ball"], "difficulty": 3},
-	{"word": "banana", "syllables": ["ba", "na", "na"], "difficulty": 3},
-	{"word": "vanilla", "syllables": ["va", "nil", "la"], "difficulty": 3}
+	{"word": "umbrella", "syllables": ["um", "brel", "la"], "difficulty": 3},
+	{"word": "computer", "syllables": ["com", "pu", "ter"], "difficulty": 3},
+	{"word": "pentagon", "syllables": ["pen", "ta", "gon"], "difficulty": 3},
+	
+	# 4 syllables (advanced level)
+	{"word": "calculator", "syllables": ["cal", "cu", "la", "tor"], "difficulty": 4},
+	{"word": "motorcycle", "syllables": ["mo", "tor", "cy", "cle"], "difficulty": 4},
+	{"word": "helicopter", "syllables": ["hel", "li", "cop", "ter"], "difficulty": 4}
 ]
 
 # UI References
@@ -142,6 +157,36 @@ func _init_tts():
 		tts.set_voice(voice_id)
 	if rate != null:
 		tts.set_rate(rate)
+	
+	# Connect TTS finished signal like ReadAloudGuided
+	if tts:
+		# Check what signals are available and connect the appropriate one
+		if tts.has_signal("utterance_finished"):
+			tts.utterance_finished.connect(_on_tts_finished)
+			print("SyllableBuildingModule: Connected to utterance_finished signal")
+		elif tts.has_signal("finished"):
+			tts.finished.connect(_on_tts_finished)
+			print("SyllableBuildingModule: Connected to finished signal")
+		elif tts.has_signal("speaking_finished"):
+			tts.speaking_finished.connect(_on_tts_finished)
+			print("SyllableBuildingModule: Connected to speaking_finished signal")
+		else:
+			print("SyllableBuildingModule: No suitable TTS finished signal found")
+			use_timer_fallback_for_tts = true
+	
+	# ALWAYS create a backup timer to ensure TTS resets even if signals fail
+	tts_timer = Timer.new()
+	tts_timer.one_shot = true
+	add_child(tts_timer)
+	tts_timer.timeout.connect(_on_tts_finished)
+	print("SyllableBuildingModule: Created backup TTS timer")
+	
+	# Create highlighting reset timer for partial speech detection like ReadAloudGuided
+	highlighting_reset_timer = Timer.new()
+	highlighting_reset_timer.one_shot = true
+	add_child(highlighting_reset_timer)
+	highlighting_reset_timer.timeout.connect(_on_highlighting_reset_timeout)
+	print("SyllableBuildingModule: Created highlighting reset timer")
 
 func _init_module_progress():
 	if Firebase and Firebase.Auth and Firebase.Auth.auth:
@@ -168,6 +213,8 @@ func _connect_hover_events():
 		$MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton,
 		$MainContainer/WordDisplayPanel/HearWordButton,
 		$MainContainer/WordDisplayPanel/HearSyllablesButton,
+		$MainContainer/HeaderPanel/GuideButton,
+		$MainContainer/HeaderPanel/TTSSettingButton,
 		stt_button,
 		prev_button,
 		next_button
@@ -184,6 +231,63 @@ func _setup_web_speech_recognition():
 	if not JavaScriptBridge.has_method("eval"):
 		print("SyllableBuildingModule: JavaScriptBridge not available")
 		return
+	
+	# Initialize web environment and check permissions like ReadAloudGuided
+	_initialize_web_audio_environment()
+	call_deferred("_check_and_wait_for_permissions")
+
+# Enhanced permission checking like ReadAloudGuided
+func _check_and_wait_for_permissions():
+	"""Check microphone permissions like ReadAloudGuided"""
+	print("SyllableBuildingModule: Checking microphone permissions...")
+	permission_check_complete = false
+	
+	if JavaScriptBridge.has_method("eval"):
+		var js_code = """
+		(function() {
+			if (typeof window.checkSyllablePermissions === 'function') {
+				window.checkSyllablePermissions();
+				
+				// Wait for permission check to complete
+				var checkInterval = setInterval(function() {
+					if (window.syllablePermissionChecked) {
+						clearInterval(checkInterval);
+						console.log('SyllableBuildingModule: Permission granted:', window.syllablePermissionGranted);
+					}
+				}, 50);
+			} else {
+				console.log('SyllableBuildingModule: checkSyllablePermissions function not available');
+			}
+		})();
+		"""
+		JavaScriptBridge.eval(js_code)
+		
+		# Wait for permission check to complete
+		var max_wait_time = 3.0
+		var wait_time = 0.0
+		while not permission_check_complete and wait_time < max_wait_time:
+			await get_tree().process_frame
+			wait_time += 0.016 # Approximate frame time
+			
+			# Check permission status from JavaScript
+			if JavaScriptBridge.has_method("eval"):
+				var permission_status = JavaScriptBridge.eval("window.syllablePermissionChecked || false")
+				if permission_status:
+					var granted = JavaScriptBridge.eval("window.syllablePermissionGranted || false")
+					update_mic_permission_state("granted" if granted else "prompt")
+					break
+		
+		print("SyllableBuildingModule: Permission check completed. Granted: ", mic_permission_granted)
+
+func update_mic_permission_state(state):
+	"""Callback for permission state updates like ReadAloudGuided"""
+	permission_check_complete = true
+	if state == "granted":
+		mic_permission_granted = true
+		print("SyllableBuildingModule: Microphone permission granted")
+	else:
+		mic_permission_granted = false
+		print("SyllableBuildingModule: Microphone permission: ", state)
 	
 	var js_code = """
 		// Check if functions already exist to avoid redefinition
@@ -346,10 +450,360 @@ func _setup_web_speech_recognition():
 	else:
 		print("SyllableBuildingModule: Failed to initialize JavaScript environment")
 
-# Initialize JavaScript environment for web audio - copied from working implementations
+# Initialize JavaScript environment for web audio - enhanced like ReadAloudGuided
 func _initialize_web_audio_environment():
-	# This function is no longer needed as permission handling is now in _setup_web_speech_recognition
-	pass
+	"""Initialize JavaScript environment for web audio - ENHANCED with ReadAloudGuided patterns"""
+	if JavaScriptBridge.has_method("eval"):
+		var js_code = """
+		// Check if functions already exist to avoid redefinition
+		if (typeof window.syllableRecognition === 'undefined') {
+			// Global speech recognition variables
+			window.syllableRecognition = null;
+			window.syllableRecognitionActive = false;
+			window.syllablePermissionGranted = false;
+			window.syllablePermissionChecked = false;
+			window.syllableFinalResult = '';
+			window.syllableInterimResult = '';
+			window.syllableResult = null;
+			
+			// Permission check function
+			window.checkSyllablePermissions = function() {
+				if (navigator.permissions) {
+					navigator.permissions.query({name: 'microphone'}).then(function(result) {
+						window.syllablePermissionGranted = (result.state === 'granted');
+						window.syllablePermissionChecked = true;
+						console.log('SyllableBuildingModule: Permission state:', result.state);
+					}).catch(function(error) {
+						console.log('SyllableBuildingModule: Permission check failed:', error);
+						window.syllablePermissionChecked = true;
+					});
+				} else {
+					// Fallback for browsers without permission API
+					window.syllablePermissionChecked = true;
+				}
+			};
+			
+			// Request microphone permission
+			window.requestSyllableMicPermission = function() {
+				return navigator.mediaDevices.getUserMedia({audio: true})
+					.then(function(stream) {
+						window.syllablePermissionGranted = true;
+						stream.getTracks().forEach(function(track) {
+							track.stop();
+						});
+						return true;
+					})
+					.catch(function(error) {
+						console.log('SyllableBuildingModule: Permission denied:', error);
+						window.syllablePermissionGranted = false;
+						return false;
+					});
+			};
+			
+			// Initialize speech recognition using ReadAloudGuided pattern
+			window.initSyllableSpeechRecognition = function() {
+				try {
+					if ('webkitSpeechRecognition' in window) {
+						window.syllableRecognition = new webkitSpeechRecognition();
+					} else if ('SpeechRecognition' in window) {
+						window.syllableRecognition = new SpeechRecognition();
+					} else {
+						console.log('SyllableBuildingModule: Speech recognition not supported');
+						return false;
+					}
+					
+					// Configure recognition for better short word detection
+					window.syllableRecognition.continuous = true;
+					window.syllableRecognition.interimResults = true;
+					window.syllableRecognition.lang = 'en-US';
+					window.syllableRecognition.maxAlternatives = 3; // More alternatives for better accuracy
+					
+					// Enhanced event handlers like ReadAloudGuided
+					window.syllableRecognition.onstart = function() {
+						console.log('SyllableBuildingModule: Recognition started');
+						window.syllableRecognitionActive = true;
+					};
+					
+					window.syllableRecognition.onresult = function(event) {
+						var finalTranscript = '';
+						var interimTranscript = '';
+						
+						for (var i = event.resultIndex; i < event.results.length; i++) {
+							var transcript = event.results[i][0].transcript;
+							if (event.results[i].isFinal) {
+								finalTranscript += transcript;
+								console.log('SyllableBuildingModule: Final result:', transcript);
+							} else {
+								interimTranscript += transcript;
+							}
+						}
+						
+						if (finalTranscript.trim()) {
+							window.syllableFinalResult = finalTranscript.trim();
+						}
+						
+						if (interimTranscript.trim()) {
+							window.syllableInterimResult = interimTranscript.trim();
+						}
+					};
+					
+					window.syllableRecognition.onerror = function(event) {
+						console.log('SyllableBuildingModule: Recognition error:', event.error);
+						window.syllableRecognitionActive = false;
+						window.syllableRecognitionError = event.error;
+					};
+					
+					window.syllableRecognition.onend = function() {
+						console.log('SyllableBuildingModule: Recognition ended');
+						window.syllableRecognitionActive = false;
+					};
+					
+					return true;
+				} catch (error) {
+					console.log('SyllableBuildingModule: Failed to initialize recognition:', error);
+					return false;
+				}
+			};
+			
+			// Start recognition function with better setup
+			window.startSyllableRecognition = function() {
+				if (!window.syllableRecognition) {
+					if (!window.initSyllableSpeechRecognition()) {
+						return false;
+					}
+				}
+				
+				try {
+					window.syllableFinalResult = '';
+					window.syllableInterimResult = '';
+					window.syllableRecognitionError = '';
+					window.syllableRecognition.start();
+					return true;
+				} catch (error) {
+					console.log('SyllableBuildingModule: Failed to start recognition:', error);
+					return false;
+				}
+			};
+			
+			// Stop recognition function
+			window.stopSyllableRecognition = function() {
+				if (window.syllableRecognition) {
+					try {
+						window.syllableRecognition.stop();
+					} catch (error) {
+						console.log('SyllableBuildingModule: Error stopping recognition:', error);
+					}
+				}
+			};
+			
+			// Initialize everything
+			var initResult = window.initSyllableSpeechRecognition();
+			console.log('SyllableBuildingModule: JavaScript initialization result:', initResult);
+			if (initResult) {
+				window.checkSyllablePermissions();
+				console.log('SyllableBuildingModule: All syllable systems initialized successfully');
+			}
+			
+			return initResult;
+		}
+		return true;
+		"""
+		
+		var result = JavaScriptBridge.eval(js_code)
+		if result:
+			print("SyllableBuildingModule: JavaScript environment initialized for web speech recognition")
+# Enhanced speech-to-text processing with dyslexia-friendly improvements
+func _process_speech_result(result: String) -> String:
+	"""Process speech recognition result with enhanced accuracy - DYSLEXIA-FRIENDLY"""
+	var processed = result.strip_edges().to_lower()
+	
+	# Remove common speech artifacts
+	processed = processed.replace(".", "").replace(",", "").replace("?", "").replace("!", "")
+	
+	# Handle multiple alternatives if JavaScript provided them
+	if "||" in processed: # Multiple alternatives separated by ||
+		var alternatives = processed.split("||")
+		for alt in alternatives:
+			alt = alt.strip_edges()
+			if alt.length() > 0:
+				processed = alt
+				break
+	
+	# Dyslexia-friendly preprocessing
+	processed = _normalize_for_dyslexia(processed)
+	
+	print("SyllableBuildingModule: Processed speech result: '", processed, "'")
+	return processed
+
+# Dyslexia-friendly text normalization
+func _normalize_for_dyslexia(text: String) -> String:
+	"""Normalize text for dyslexia-friendly matching"""
+	var normalized = text.to_lower().strip_edges()
+	
+	# Common phonetic confusions for dyslexic users
+	var phonetic_map = {
+		"ph": "f", # phone → fone
+		"gh": "f", # laugh → laff
+		"ck": "k", # back → bak
+		"qu": "kw", # quick → kwik
+	}
+	
+	# Apply phonetic normalizations
+	for pattern in phonetic_map:
+		normalized = normalized.replace(pattern, phonetic_map[pattern])
+	
+	# Remove doubled letters (common dyslexic pattern)
+	var single_letters = ""
+	var last_char = ""
+	for i in range(normalized.length()):
+		var current_char = normalized[i]
+		if current_char != last_char or current_char in "aeiou": # Keep vowel doubles
+			single_letters += current_char
+		last_char = current_char
+	
+	return single_letters
+
+# Enhanced accuracy checking for syllables
+func _check_syllable_accuracy_enhanced(spoken: String, target: String) -> Dictionary:
+	"""Enhanced accuracy checking with dyslexia-friendly fuzzy matching"""
+	var result = {"accurate": false, "similarity": 0.0, "feedback": ""}
+	
+	if spoken.is_empty():
+		result.feedback = "No speech detected. Try again!"
+		return result
+	
+	# Normalize both for comparison
+	var spoken_norm = _normalize_for_dyslexia(spoken)
+	var target_norm = _normalize_for_dyslexia(target)
+	
+	print("SyllableBuildingModule: Comparing '", spoken_norm, "' with '", target_norm, "'")
+	
+	# Exact match after normalization
+	if spoken_norm == target_norm:
+		result.accurate = true
+		result.similarity = 1.0
+		result.feedback = "Perfect!"
+		return result
+	
+	# Calculate fuzzy similarity
+	var similarity = _calculate_fuzzy_similarity(spoken_norm, target_norm)
+	result.similarity = similarity
+	
+	# Dyslexia-friendly threshold (more forgiving)
+	if similarity >= 0.7: # 70% threshold for dyslexic users
+		result.accurate = true
+		result.feedback = "Great job!"
+	elif similarity >= 0.5: # Partial credit
+		result.accurate = false
+		result.feedback = "Close! Try: " + target
+	else:
+		result.accurate = false
+		result.feedback = "Try saying: " + target
+	
+	print("SyllableBuildingModule: Accuracy result - similarity: ", similarity, ", accurate: ", result.accurate)
+	return result
+
+# Enhanced fuzzy matching algorithm
+func _calculate_fuzzy_similarity(text1: String, text2: String) -> float:
+	"""Calculate fuzzy similarity between two strings using multiple algorithms"""
+	if text1.is_empty() or text2.is_empty():
+		return 0.0
+	
+	if text1 == text2:
+		return 1.0
+	
+	# Levenshtein distance similarity
+	var leven_sim = _levenshtein_similarity(text1, text2)
+	
+	# Phonetic similarity (first/last letter matching for dyslexia)
+	var phonetic_sim = 0.0
+	if text1.length() > 0 and text2.length() > 0:
+		if text1[0] == text2[0]: # Same starting sound
+			phonetic_sim += 0.3
+		if text1[-1] == text2[-1]: # Same ending sound
+			phonetic_sim += 0.2
+	
+	# Combine similarities with weights
+	var combined = (leven_sim * 0.7) + (phonetic_sim * 0.3)
+	return min(combined, 1.0)
+
+# Levenshtein distance similarity
+func _levenshtein_similarity(s1: String, s2: String) -> float:
+	"""Calculate similarity based on Levenshtein distance"""
+	var len1 = s1.length()
+	var len2 = s2.length()
+	
+	if len1 == 0:
+		return 0.0 if len2 > 0 else 1.0
+	if len2 == 0:
+		return 0.0
+	
+	# Create matrix
+	var matrix = []
+	for i in range(len1 + 1):
+		matrix.append([])
+		for j in range(len2 + 1):
+			matrix[i].append(0)
+	
+	# Initialize first row and column
+	for i in range(len1 + 1):
+		matrix[i][0] = i
+	for j in range(len2 + 1):
+		matrix[0][j] = j
+	
+	# Fill matrix
+	for i in range(1, len1 + 1):
+		for j in range(1, len2 + 1):
+			var cost = 0 if s1[i - 1] == s2[j - 1] else 1
+			matrix[i][j] = min(
+				matrix[i - 1][j] + 1, # deletion
+				matrix[i][j - 1] + 1, # insertion
+				matrix[i - 1][j - 1] + cost # substitution
+			)
+	
+	var distance = matrix[len1][len2]
+	var max_len = max(len1, len2)
+	return 1.0 - (float(distance) / float(max_len))
+
+# Force stop speech recognition - CRITICAL for navigation
+func force_stop_speech_recognition():
+	"""Force stop all speech recognition - CRITICAL for clean navigation"""
+	print("SyllableBuildingModule: Force stopping speech recognition")
+	
+	# Stop JavaScript recognition
+	if JavaScriptBridge.has_method("eval"):
+		JavaScriptBridge.eval("if (window.stopSyllableRecognition) window.stopSyllableRecognition();")
+	
+	# Reset all recognition states
+	recognition_active = false
+	
+	# Stop all timers to prevent callbacks
+	if is_instance_valid(tts_timer):
+		tts_timer.stop()
+	if is_instance_valid(highlighting_reset_timer):
+		highlighting_reset_timer.stop()
+	
+	print("SyllableBuildingModule: All speech systems stopped")
+
+# Enhanced cleanup on scene exit - CRITICAL for WebGL
+func _on_tree_exiting():
+	"""Enhanced cleanup when exiting scene - prevents WebGL memory leaks"""
+	print("SyllableBuildingModule: Scene exiting - performing enhanced cleanup")
+	
+	# Force stop all recognition
+	force_stop_speech_recognition()
+	
+	# Stop TTS
+	if is_instance_valid(tts):
+		tts.stop()
+	
+	# Clean up timers
+	if is_instance_valid(tts_timer):
+		tts_timer.queue_free()
+	if is_instance_valid(highlighting_reset_timer):
+		highlighting_reset_timer.queue_free()
+	
+	print("SyllableBuildingModule: Enhanced cleanup completed")
 
 func _update_word_display():
 	"""Update the display with current word and syllables"""
@@ -744,10 +1198,12 @@ func _handle_correct_response(match_type: String):
 		_stop_syllable_recognition()
 		print("SyllableBuildingModule: Automatically stopped STT after correct recognition")
 	
-	# Mark activity as completed
+	# Mark activity as completed AND SAVE IMMEDIATELY
 	if not current_word in completed_activities:
 		completed_activities.append(current_word)
-		_save_progress()
+		# Save completion immediately to Firebase
+		await _save_progress()
+		print("SyllableBuildingModule: Word '", current_word, "' completion saved to Firebase")
 	
 	# Show completion celebration instead of auto-advancing
 	await get_tree().create_timer(1.5).timeout
@@ -827,6 +1283,9 @@ func _show_completion_message():
 
 func _fade_out_and_change_scene(scene_path: String):
 	"""Fade out and change to target scene"""
+	# Stop TTS and STT before changing scenes like ReadAloudGuided
+	_stop_tts()
+	
 	var tween = create_tween()
 	tween.set_parallel(true)
 	tween.tween_property(self, "modulate:a", 0.0, 0.25).set_ease(Tween.EASE_IN)
@@ -838,8 +1297,35 @@ func _exit_tree():
 	"""Clean up when leaving scene"""
 	if recognition_active:
 		_stop_syllable_recognition()
+	_stop_tts()
+
+# Clean up TTS when leaving scene
+func _stop_tts():
+	"""Stop any active TTS speech - copied from ReadAloudGuided pattern"""
+	if tts:
+		tts.stop()
+		print("SyllableBuildingModule: Stopped TTS on scene exit")
+
+# TTS finished handler for syllable workshop flow like ReadAloudGuided
+func _on_tts_finished():
+	"""Called when TTS finishes speaking"""
+	print("SyllableBuildingModule: TTS finished")
+	# Additional TTS completion logic can be added here if needed
+
+# Highlighting reset timeout handler like ReadAloudGuided
+func _on_highlighting_reset_timeout():
+	"""Called when highlighting reset timer expires - clears yellow highlighting for incomplete speech"""
+	print("SyllableBuildingModule: Auto-resetting yellow highlighting due to incomplete speech")
+	_clear_highlighting()
+	
+	# Update status to encourage trying again
+	if stt_status_label:
+		stt_status_label.text = "Try saying the word again"
+	if stt_result_label:
+		stt_result_label.text = "Click Speak to try again"
 
 func _on_guide_button_pressed():
+	$ButtonClick.play()
 	"""Guide button - Provide TTS guidance for syllable building"""
 	if tts:
 		var guide_text = "Welcome to Syllable Workshop! This activity helps you break words into syllables. Listen to each word by clicking 'Hear Word', then hear it broken into syllables with 'Hear Syllables'. Practice saying the syllables yourself using the microphone button. Syllables are the building blocks of words - like clapping out the beats in music!"
@@ -901,7 +1387,7 @@ func _on_celebration_next():
 		current_word_index += 1
 		print("SyllableBuildingModule: Advanced to word ", current_word_index + 1, " (", syllable_words[current_word_index].word, ")")
 		
-		# Save the NEW position to Firebase
+		# Save the NEW position to Firebase (completion already saved in _handle_correct_response)
 		await _save_current_position()
 		
 		# Display new word
@@ -991,6 +1477,35 @@ func _clean_text_for_syllables(text: String) -> String:
 	cleaned = space_regex.sub(cleaned, " ", true)
 	
 	return cleaned.strip_edges()
+
+# Enhanced progress saving with better error handling
+func _save_current_progress():
+	"""Save current progress with enhanced error handling"""
+	if not is_instance_valid(module_progress):
+		print("SyllableBuildingModule: ModuleProgress not available for saving")
+		return
+	
+	print("SyllableBuildingModule: Saving current position: ", current_word_index, " out of ", syllable_words.size(), " words")
+	
+	# Save current position using existing ModuleProgress method
+	var save_success = await module_progress.set_syllable_workshop_current_index(current_word_index)
+	if save_success:
+		print("SyllableBuildingModule: Current position saved successfully")
+	else:
+		print("SyllableBuildingModule: Failed to save current position to Firebase")
+
+# Enhanced initialization completion check
+func _ensure_all_systems_ready():
+	"""Ensure all systems are ready before allowing interactions"""
+	var systems_ready = (
+		is_instance_valid(tts) and
+		is_instance_valid(tts_timer) and
+		is_instance_valid(highlighting_reset_timer) and
+		permission_check_complete
+	)
+	
+	print("SyllableBuildingModule: All systems ready: ", systems_ready)
+	return systems_ready
 
 func _is_word_match_for_highlighting(spoken_text: String, target_word: String) -> bool:
 	"""Check if spoken text matches target word for live highlighting"""

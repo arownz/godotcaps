@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://d36ytiqg31edd"]
+[gd_scene load_steps=23 format=3 uid="uid://d36ytiqg31edd"]
 
 [ext_resource type="Script" uid="uid://datbxxer3mwvc" path="res://Scripts/MainMenu.gd" id="1_tt5f1"]
 [ext_resource type="Texture2D" uid="uid://btkgwisgme2q2" path="res://gui/Update/Backgrounds/Main_menu_Background.png" id="2_pjscj"]
@@ -21,6 +21,7 @@
 [ext_resource type="Script" uid="uid://brblauco221pt" path="res://Scripts/TitleAnimation.gd" id="18_title_anim"]
 [ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="19_pjscj"]
 [ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="20_m7n2d"]
+[ext_resource type="AudioStream" uid="uid://f4rk03hg0ucj" path="res://audio/Lexia Soundtrack.mp3" id="22_65hh5"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -240,7 +241,7 @@ horizontal_alignment = 1
 
 [node name="ModulesIcon" type="TextureRect" parent="BottomButtonsContainer/ModulesButton"]
 custom_minimum_size = Vector2(80, 80)
-layout_mode = 2
+layout_mode = 0
 offset_left = 25.0
 offset_top = 10.0
 offset_right = 105.0
@@ -287,7 +288,7 @@ horizontal_alignment = 1
 
 [node name="CharacterIcon" type="TextureRect" parent="BottomButtonsContainer/CharacterButton"]
 custom_minimum_size = Vector2(80, 80)
-layout_mode = 2
+layout_mode = 0
 offset_left = 25.0
 offset_top = 10.0
 offset_right = 105.0
@@ -394,7 +395,7 @@ horizontal_alignment = 1
 
 [node name="LeaderboardIcon" type="TextureRect" parent="BottomButtonsContainer/LeaderboardButton"]
 custom_minimum_size = Vector2(80, 80)
-layout_mode = 2
+layout_mode = 0
 offset_left = 31.0
 offset_top = 14.0
 offset_right = 111.0
@@ -445,7 +446,7 @@ horizontal_alignment = 1
 
 [node name="SettingsIcon" type="TextureRect" parent="BottomButtonsContainer/SettingsButton"]
 custom_minimum_size = Vector2(60, 60)
-layout_mode = 2
+layout_mode = 0
 offset_left = 29.0
 offset_top = 15.0
 offset_right = 101.0
@@ -508,6 +509,9 @@ stream = ExtResource("19_pjscj")
 
 [node name="ButtonHover" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("20_m7n2d")
+
+[node name="BackgroundSong" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("22_65hh5")
 
 [connection signal="mouse_entered" from="ProfileButton" to="." method="_on_profile_button_mouse_entered"]
 [connection signal="pressed" from="ProfileButton" to="." method="_on_profile_button_pressed"]
