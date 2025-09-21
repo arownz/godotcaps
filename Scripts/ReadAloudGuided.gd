@@ -391,7 +391,13 @@ func _initialize_web_audio_environment():
 						window.guidedFinalResult = finalTranscript;
 						window.guidedInterimResult = interimTranscript;
 						
-						console.log('ReadAloudGuided: Final:', finalTranscript, 'Interim:', interimTranscript);
+						// Enhanced console logging for user feedback
+						if (interimTranscript.trim() !== '') {
+							console.log('ReadAloudGuided: LIVE SPEECH: "' + interimTranscript + '"');
+						}
+						if (finalTranscript.trim() !== '') {
+							console.log('ReadAloudGuided: FINAL RESULT: "' + finalTranscript + '"');
+						}
 					};
 					
 					recognition.onerror = function(event) {
@@ -441,9 +447,13 @@ func _initialize_web_audio_environment():
 			
 			// Start recognition
 			window.startGuidedRecognition = function() {
+				// Ensure recognition is initialized before starting
 				if (!window.guidedRecognition) {
-					console.log('ReadAloudGuided: Recognition not initialized');
-					return false;
+					console.log('ReadAloudGuided: Recognition not initialized, initializing now...');
+					if (!window.initGuidedSpeechRecognition()) {
+						console.log('ReadAloudGuided: Failed to initialize recognition');
+						return false;
+					}
 				}
 				
 				if (window.guidedRecognitionActive) {
@@ -562,6 +572,14 @@ func update_mic_permission_state(state):
 	if state == "granted":
 		mic_permission_granted = true
 		print("ReadAloudGuided: Microphone permission granted")
+		
+		# Initialize speech recognition immediately after permission is granted
+		if JavaScriptBridge.has_method("eval"):
+			var init_result = JavaScriptBridge.eval("window.initGuidedSpeechRecognition && window.initGuidedSpeechRecognition()")
+			if init_result:
+				print("ReadAloudGuided: Speech recognition initialized successfully")
+			else:
+				print("ReadAloudGuided: Failed to initialize speech recognition")
 	else:
 		mic_permission_granted = false
 		print("ReadAloudGuided: Microphone permission: ", state)
@@ -603,20 +621,29 @@ func _force_stop_recognition():
 	print("ReadAloudGuided: Force stopping any active recognition...")
 	
 	if OS.get_name() == "Web" and JavaScriptBridge.has_method("eval"):
-		# Force stop on JavaScript side
-		JavaScriptBridge.eval("""
-		if (window.guidedRecognition) {
-			try {
-				window.guidedRecognition.stop();
-				window.guidedRecognitionActive = false;
-				window.guidedStopRequested = true;
-				window.guidedContinuousMode = false;
-				console.log('ReadAloudGuided: Force stopped recognition');
-			} catch (error) {
-				console.log('ReadAloudGuided: Error in force stop:', error);
+		# Force stop with enhanced cleanup
+		var js_code = """
+		(function() {
+			if (window.guidedRecognition) {
+				try {
+					window.guidedRecognition.stop();
+					window.guidedRecognition.abort(); // Force abort to release microphone
+					window.guidedRecognition = null; // Critical: Set to null
+					console.log('ReadAloudGuided: Force stopped and cleaned up recognition');
+				} catch (error) {
+					console.log('ReadAloudGuided: Error in force stop:', error);
+				}
 			}
-		}
-		""")
+			// Force state reset
+			window.guidedRecognitionActive = false;
+			window.guidedStopRequested = true;
+			window.guidedContinuousMode = false;
+			window.guidedFinalResult = '';
+			window.guidedInterimResult = '';
+			return true;
+		})();
+		"""
+		JavaScriptBridge.eval(js_code)
 	
 	# Reset all local state
 	recognition_active = false
@@ -642,7 +669,33 @@ func _stop_speech_recognition():
 	
 	if OS.get_name() == "Web":
 		if JavaScriptBridge.has_method("eval"):
-			JavaScriptBridge.eval("window.stopGuidedRecognition && window.stopGuidedRecognition()")
+			# Use the same cleanup pattern as WordChallengePanel_STT
+			var js_code = """
+				(function() {
+					if (window.guidedRecognition) {
+						console.log('ReadAloudGuided: Stopping recognition...');
+						window.guidedStopRequested = true; // Prevent auto-restart
+						window.guidedContinuousMode = false; // Disable continuous mode
+						try {
+							window.guidedRecognition.stop();
+							window.guidedRecognition.abort(); // Force abort to release microphone
+						} catch (error) {
+							console.log('ReadAloudGuided: Error stopping recognition:', error);
+						}
+						// Critical: Set to null to allow new recognition instances
+						window.guidedRecognition = null;
+						console.log('ReadAloudGuided: Recognition stopped and cleaned up');
+						return true;
+					}
+					// Force state reset even if no recognition
+					window.guidedRecognitionActive = false;
+					window.guidedFinalResult = '';
+					window.guidedInterimResult = '';
+					console.log('ReadAloudGuided: State reset completed');
+					return false;
+				})();
+			"""
+			var _result = JavaScriptBridge.eval(js_code)
 	
 	# Reset all STT-related state
 	recognition_active = false
@@ -2104,12 +2157,6 @@ func _on_speak_button_pressed():
 				stt_feedback_active = false
 				live_transcription_enabled = false
 				
-				# Update button text to show listening state
-				if speak_button:
-					speak_button.text = "Stop"
-					speak_button.disabled = false
-					speak_button.modulate = Color.ORANGE
-				
 				# Update guide message
 				var guide_panel = $MainContainer/GuidePanel/MarginContainer/GuideContainer/GuideNotes
 				if guide_panel:
@@ -2123,6 +2170,12 @@ func _on_speak_button_pressed():
 				var start_success = await _start_speech_recognition()
 				if start_success:
 					stt_feedback_active = true
+					
+					# Update button state AFTER successful start
+					if speak_button:
+						speak_button.text = "Stop"
+						speak_button.modulate = Color("#ff6b6b") # Red color for stop
+					
 					print("ReadAloudGuided: Speech recognition started for sentence practice")
 					
 					# Update guide to show listening state
@@ -2181,14 +2234,10 @@ func _advance_to_next_sentence():
 			guide_display.modulate = Color.WHITE
 			
 	else:
-		# All sentences completed - advance to next passage
-		print("ReadAloudGuided: All sentences in passage completed! Advancing to next passage...")
+		# All sentences completed - show completion celebration and wait for user choice
+		print("ReadAloudGuided: All sentences in passage completed! Showing completion celebration...")
 		await _complete_current_passage()
-		
-		# For immediate testing - bypass celebration and auto-advance after 2 seconds
-		print("ReadAloudGuided: Auto-advancing to next passage in 2 seconds...")
-		await get_tree().create_timer(2.0).timeout
-		_advance_to_next_passage_or_complete()
+		# Celebration system handles progression - no auto-advance here
 
 func _update_sentence_highlighting():
 	"""Update sentence highlighting with persistent green for completed sentences"""

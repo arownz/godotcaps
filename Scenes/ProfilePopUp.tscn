@@ -87,9 +87,8 @@ script = ExtResource("1_script")
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -48.0
-offset_right = 1525.0
-offset_bottom = 854.0
+offset_right = 1460.0
+offset_bottom = 810.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.6)
@@ -97,17 +96,11 @@ color = Color(0, 0, 0, 0.6)
 [node name="ProfileContainer" type="Control" parent="."]
 custom_minimum_size = Vector2(750, 600)
 layout_mode = 3
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 411.0
-offset_top = 89.0
-offset_right = 1161.0
-offset_bottom = 770.0
-grow_horizontal = 2
-grow_vertical = 2
+anchors_preset = 0
+offset_left = 369.0
+offset_top = 65.0
+offset_right = 1119.0
+offset_bottom = 746.0
 scale = Vector2(0.912511, 0.912511)
 
 [node name="BackgroundTexture" type="TextureRect" parent="ProfileContainer"]
@@ -686,6 +679,10 @@ expand_icon = true
 [node name="ErrorLabel" type="Label" parent="EditUsernamePanel/EditContainer/ContentContainer/VBoxContainer"]
 visible = false
 layout_mode = 0
+offset_left = 53.0
+offset_top = 34.0
+offset_right = 367.0
+offset_bottom = 63.333336
 theme_override_colors/font_color = Color(1, 0.3, 0.3, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_uyv5l")

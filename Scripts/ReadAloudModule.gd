@@ -145,12 +145,16 @@ func _load_category_progress():
 		print("ReadAloudModule: Failed to fetch read aloud progress")
 
 func _update_progress_displays(firebase_modules: Dictionary):
+	# Overall progress calculation (matches ModuleScene.gd approach)
+	var guided_activities = 0
+	var syllable_activities = 0
+	
 	# Guided Reading progress - Enhanced calculation based on actual completion
 	var guided_percent = 0.0
 	if firebase_modules.has("read_aloud"):
 		var read_aloud = firebase_modules["read_aloud"]
 		if typeof(read_aloud) == TYPE_DICTIONARY:
-			var guided_activities = read_aloud.get("guided_reading", {}).get("activities_completed", []).size()
+			guided_activities = read_aloud.get("guided_reading", {}).get("activities_completed", []).size()
 			var total_guided_activities = 4 # Updated to match 4 passages in ReadAloudGuided.gd
 			guided_percent = (float(guided_activities) / float(total_guided_activities)) * 100.0
 			print("ReadAloudModule: Guided Reading - ", guided_activities, "/", total_guided_activities, " activities completed (", int(guided_percent), "%)")
@@ -165,7 +169,7 @@ func _update_progress_displays(firebase_modules: Dictionary):
 	if firebase_modules.has("read_aloud"):
 		var read_aloud = firebase_modules["read_aloud"]
 		if typeof(read_aloud) == TYPE_DICTIONARY:
-			var syllable_activities = read_aloud.get("syllable_workshop", {}).get("activities_completed", []).size()
+			syllable_activities = read_aloud.get("syllable_workshop", {}).get("activities_completed", []).size()
 			var total_syllable_activities = 9 # 9 syllable words in SyllableBuildingModule (matches actual array size)
 			syllable_percent = (float(syllable_activities) / float(total_syllable_activities)) * 100.0
 			print("ReadAloudModule: Syllable Workshop - ", syllable_activities, "/", total_syllable_activities, " activities completed (", int(syllable_percent), "%)")
@@ -175,8 +179,10 @@ func _update_progress_displays(firebase_modules: Dictionary):
 		syllable_label.text = str(int(syllable_percent)) + "% Complete"
 		print("ReadAloudModule: Updated syllable workshop progress label to ", int(syllable_percent), "%")
 
-	# Overall progress is average of both categories
-	var overall_percent = (guided_percent + syllable_percent) / 2.0
+	# Overall progress based on total completed activities (matches ModuleScene.gd calculation)
+	var total_completed = guided_activities + syllable_activities
+	var total_possible = 13 # 4 guided + 9 syllable (matches ModuleScene.gd)
+	var overall_percent = (float(total_completed) / float(total_possible)) * 100.0
 	var overall_bar = $MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressBar
 	if overall_bar:
 		overall_bar.value = overall_percent
@@ -187,7 +193,7 @@ func _update_progress_displays(firebase_modules: Dictionary):
 		overall_label.text = str(int(overall_percent)) + "% Complete"
 		print("ReadAloudModule: Updated overall progress label to ", int(overall_percent), "%")
 	
-	print("ReadAloudModule: All progress displays updated - Guided: ", int(guided_percent), "%, Syllable: ", int(syllable_percent), "%, Overall: ", int(overall_percent), "%")
+	print("ReadAloudModule: All progress displays updated - Guided: ", int(guided_percent), "%, Syllable: ", int(syllable_percent), "%, Overall: ", int(overall_percent), "% (", total_completed, "/", total_possible, " total activities)")
 
 func _on_button_hover():
 	$ButtonHover.play()

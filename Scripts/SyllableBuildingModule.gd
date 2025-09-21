@@ -129,13 +129,38 @@ func _poll_for_interim_results():
 				return
 		
 		# Check for interim results for live highlighting
-		var interim_check = JavaScriptBridge.eval("window.syllableInterimResult")
+		var interim_js = """
+		(function() {
+			if (window.syllableInterimResult) {
+				var result = window.syllableInterimResult;
+				window.syllableInterimResult = '';  // Clear after reading
+				return result;
+			}
+			return '';
+		})();
+		"""
+		var interim_check = JavaScriptBridge.eval(interim_js)
 		if interim_check and str(interim_check) != "null" and str(interim_check) != "":
 			var interim_text = str(interim_check)
-			if stt_result_label:
-				stt_result_label.text = "Hearing: " + interim_text
 			
-			# Apply live highlighting during speech like ReadAloudGuided
+			# Extract only the last word for display like WordChallengePanel_STT
+			var processed_text = _clean_text_for_words(interim_text.to_lower())
+			var words = processed_text.strip_edges().split(" ")
+			var last_word = ""
+			if words.size() > 0:
+				# Get the last non-empty word
+				for i in range(words.size() - 1, -1, -1):
+					if words[i].strip_edges() != "":
+						last_word = words[i].strip_edges()
+						break
+			
+			if stt_result_label:
+				# Show only the last word like WordChallengePanel_STT
+				var display_word = last_word.capitalize()
+				stt_result_label.text = "Hearing: " + display_word
+				print("SyllableBuildingModule: Live interim result: ", display_word)
+			
+			# Apply live highlighting during speech
 			_update_live_syllable_highlighting(interim_text)
 		
 		# Check for errors
@@ -502,114 +527,6 @@ func _initialize_web_audio_environment():
 							return false;
 						});
 				};
-				
-				// Initialize speech recognition using ReadAloudGuided pattern
-				window.initSyllableSpeechRecognition = function() {
-					try {
-						if ('webkitSpeechRecognition' in window) {
-							window.syllableRecognition = new webkitSpeechRecognition();
-						} else if ('SpeechRecognition' in window) {
-							window.syllableRecognition = new SpeechRecognition();
-						} else {
-							console.log('SyllableBuildingModule: Speech recognition not supported');
-							return false;
-						}
-						
-						// Configure recognition for better short word detection
-						window.syllableRecognition.continuous = true;
-						window.syllableRecognition.interimResults = true;
-						window.syllableRecognition.lang = 'en-US';
-						window.syllableRecognition.maxAlternatives = 3; // More alternatives for better accuracy
-						
-						// Enhanced event handlers like ReadAloudGuided
-						window.syllableRecognition.onstart = function() {
-							console.log('SyllableBuildingModule: Recognition started');
-							window.syllableRecognitionActive = true;
-						};
-						
-						window.syllableRecognition.onresult = function(event) {
-							var finalTranscript = '';
-							var interimTranscript = '';
-							
-							for (var i = event.resultIndex; i < event.results.length; i++) {
-								var transcript = event.results[i][0].transcript;
-								if (event.results[i].isFinal) {
-									finalTranscript += transcript;
-									console.log('SyllableBuildingModule: Final result:', transcript);
-								} else {
-									interimTranscript += transcript;
-								}
-							}
-							
-							if (finalTranscript.trim()) {
-								window.syllableFinalResult = finalTranscript.trim();
-							}
-							
-							if (interimTranscript.trim()) {
-								window.syllableInterimResult = interimTranscript.trim();
-							}
-						};
-						
-						window.syllableRecognition.onerror = function(event) {
-							console.log('SyllableBuildingModule: Recognition error:', event.error);
-							window.syllableRecognitionActive = false;
-							window.syllableRecognitionError = event.error;
-						};
-						
-						window.syllableRecognition.onend = function() {
-							console.log('SyllableBuildingModule: Recognition ended');
-							window.syllableRecognitionActive = false;
-						};
-						
-						return true;
-					} catch (error) {
-						console.log('SyllableBuildingModule: Failed to initialize recognition:', error);
-						return false;
-					}
-				};
-				
-				// Start recognition function with better setup
-				window.startSyllableRecognition = function() {
-					if (!window.syllableRecognition) {
-						if (!window.initSyllableSpeechRecognition()) {
-							return false;
-						}
-					}
-					
-					try {
-						window.syllableFinalResult = '';
-						window.syllableInterimResult = '';
-						window.syllableRecognitionError = '';
-						window.syllableRecognition.start();
-						return true;
-					} catch (error) {
-						console.log('SyllableBuildingModule: Failed to start recognition:', error);
-						return false;
-					}
-				};
-				
-				// Stop recognition function
-				window.stopSyllableRecognition = function() {
-					if (window.syllableRecognition) {
-						try {
-							window.syllableRecognition.stop();
-						} catch (error) {
-							console.log('SyllableBuildingModule: Error stopping recognition:', error);
-						}
-					}
-				};
-				
-				// Initialize everything
-				var initResult = window.initSyllableSpeechRecognition();
-				console.log('SyllableBuildingModule: JavaScript initialization result:', initResult);
-				if (initResult) {
-					window.checkSyllablePermissions();
-					console.log('SyllableBuildingModule: All syllable systems initialized successfully');
-				}
-				
-				return initResult;
-			}
-			return true;
 		})();
 		"""
 		
@@ -776,9 +693,27 @@ func force_stop_speech_recognition():
 	"""Force stop all speech recognition - CRITICAL for clean navigation"""
 	print("SyllableBuildingModule: Force stopping speech recognition")
 	
-	# Stop JavaScript recognition
+	# Stop JavaScript recognition with enhanced cleanup
 	if JavaScriptBridge.has_method("eval"):
-		JavaScriptBridge.eval("if (window.stopSyllableRecognition) window.stopSyllableRecognition();")
+		var js_code = """
+		(function() {
+			if (window.syllableRecognition) {
+				try {
+					window.syllableRecognition.stop();
+					window.syllableRecognition.abort(); // Force abort to release microphone
+					window.syllableRecognition = null; // Critical: Set to null
+					console.log('SyllableBuildingModule: Force stopped and cleaned up recognition');
+				} catch (error) {
+					console.log('SyllableBuildingModule: Error in force stop:', error);
+				}
+			}
+			// Force state reset
+			window.syllableRecognitionActive = false;
+			window.syllableRecognitionError = null;
+			return true;
+		})();
+		"""
+		JavaScriptBridge.eval(js_code)
 	
 	# Reset all recognition states
 	recognition_active = false
@@ -1045,9 +980,26 @@ func _start_syllable_recognition() -> bool:
 func _stop_syllable_recognition():
 	if JavaScriptBridge.has_method("eval"):
 		var js_code = """
-			if (window.stopSyllableRecognition) {
-				window.stopSyllableRecognition();
-			}
+			(function() {
+				if (window.syllableRecognition) {
+					console.log('SyllableBuildingModule: Stopping recognition...');
+					try {
+						window.syllableRecognition.stop();
+						window.syllableRecognition.abort(); // Force abort to release microphone
+					} catch (error) {
+						console.log('SyllableBuildingModule: Error stopping recognition:', error);
+					}
+					// Critical: Set to null to allow new recognition instances
+					window.syllableRecognition = null;
+					console.log('SyllableBuildingModule: Recognition stopped and cleaned up');
+					return true;
+				}
+				// Force state reset even if no recognition
+				window.syllableRecognitionActive = false;
+				window.syllableRecognitionError = null;
+				console.log('SyllableBuildingModule: State reset completed');
+				return false;
+			})();
 		"""
 		JavaScriptBridge.eval(js_code)
 	
@@ -1465,31 +1417,44 @@ func _clear_highlighting():
 
 # Live highlighting during speech recognition (word only)
 func _update_live_syllable_highlighting(interim_text: String):
-	"""Update live word highlighting based on STT interim results - ENHANCED like ReadAloudGuided"""
+	"""Update live word highlighting based on STT interim results - SINGLE WORD FOCUS like WordChallengePanel_STT"""
 	if current_target_syllables.is_empty():
 		return
 		
-	# Clean and process interim text using ReadAloudGuided methods
+	# Clean and process interim text
 	var processed_interim = _clean_text_for_words(interim_text.to_lower())
+	
+	# EXTRACT ONLY THE LAST WORD - Focus on single word like WordChallengePanel_STT
+	var words = processed_interim.strip_edges().split(" ")
+	var last_word = ""
+	if words.size() > 0:
+		# Get the last non-empty word
+		for i in range(words.size() - 1, -1, -1):
+			if words[i].strip_edges() != "":
+				last_word = words[i].strip_edges()
+				break
+	
+	# Use only the last word for comparison
+	var display_word = last_word.to_lower().strip_edges()
 	var current_word = syllable_words[current_word_index]["word"].to_lower()
 	
-	print("SyllableBuildingModule: Live highlighting check - Interim: '", processed_interim, "' Target: '", current_word, "'")
+	print("SyllableBuildingModule: Live highlighting check - Last Word: '", display_word, "' Target: '", current_word, "'")
 	
-	# Check if interim text matches the target word using enhanced similarity
-	var similarity = _calculate_enhanced_sentence_similarity(processed_interim, current_word)
+	# Check if last word matches the target word using single word similarity
+	var similarity = _calculate_word_similarity(display_word, current_word)
 	print("SyllableBuildingModule: Live similarity score: ", similarity)
 	
-	# Apply highlighting if similarity is excellent (trigger fast success like ReadAloudGuided)
+	# Apply highlighting if similarity is excellent (trigger fast success)
 	if similarity >= 0.85: # 85% similarity for fast success
 		_apply_word_highlighting()
-		print("SyllableBuildingModule: FAST SUCCESS - Live highlighted word from: '", processed_interim, "' (similarity: ", similarity, ")")
+		print("SyllableBuildingModule: FAST SUCCESS - Live highlighted word from: '", display_word, "' (similarity: ", similarity, ")")
 		
-		# Trigger fast success processing like ReadAloudGuided
+		# Trigger fast success processing
 		_trigger_fast_success()
 		
 	elif similarity >= 0.7: # 70% similarity for live highlighting
 		_apply_word_highlighting()
-		print("SyllableBuildingModule: Live highlighted word from: '", processed_interim, "' (similarity: ", similarity, ")")
+		print("SyllableBuildingModule: Live highlighted word from: '", display_word, "' (similarity: ", similarity, ")")
 		
 		# Start highlighting reset timer in case speech stops midway
 		if highlighting_reset_timer:

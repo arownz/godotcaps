@@ -49,15 +49,14 @@ color = Color(0, 0, 0, 0.6)
 [node name="SettingsContainer" type="Control" parent="."]
 custom_minimum_size = Vector2(580, 420)
 layout_mode = 3
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -290.0
-offset_top = -210.0
-offset_right = 290.0
-offset_bottom = 210.0
+anchor_left = 0.30100003
+anchor_top = 0.24100001
+anchor_right = 0.69900006
+anchor_bottom = 0.75900006
+offset_left = 0.5399475
+offset_top = -0.21000671
+offset_right = -0.5401001
+offset_bottom = 0.20996094
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -247,7 +246,7 @@ text = "Reading Speed:"
 vertical_alignment = 1
 
 [node name="ReadingSpeedSlider" type="HSlider" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/ReadingSpeedContainer"]
-custom_minimum_size = Vector2(150, 30)
+custom_minimum_size = Vector2(130, 30)
 layout_mode = 2
 min_value = 1.0
 max_value = 2.0
@@ -276,7 +275,7 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_font_regular")
 theme_override_font_sizes/font_size = 14
-text = "Change Text-to-Speech:"
+text = "Change Voice Sound:"
 vertical_alignment = 1
 
 [node name="TTSSettingsButton" type="Button" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/TTSContainer"]
@@ -318,7 +317,7 @@ theme_override_constants/separation = 15
 [node name="MasterVolumeLabel" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MasterVolumeContainer"]
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_font_regular")
 theme_override_font_sizes/font_size = 14
@@ -333,7 +332,7 @@ value = 75.0
 [node name="MasterVolumeValue" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MasterVolumeContainer"]
 custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_font_regular")
 theme_override_font_sizes/font_size = 14
@@ -348,7 +347,7 @@ theme_override_constants/separation = 15
 [node name="SFXVolumeLabel" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/SFXVolumeContainer"]
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_font_regular")
 theme_override_font_sizes/font_size = 14
@@ -363,7 +362,7 @@ value = 80.0
 [node name="SFXVolumeValue" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/SFXVolumeContainer"]
 custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_font_regular")
 theme_override_font_sizes/font_size = 14
@@ -378,7 +377,7 @@ theme_override_constants/separation = 15
 [node name="MusicVolumeLabel" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MusicVolumeContainer"]
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_font_regular")
 theme_override_font_sizes/font_size = 14
@@ -393,7 +392,7 @@ value = 60.0
 [node name="MusicVolumeValue" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MusicVolumeContainer"]
 custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_font_regular")
 theme_override_font_sizes/font_size = 14

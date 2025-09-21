@@ -127,12 +127,16 @@ func _load_category_progress():
 		print("PhonicsModule: Failed to fetch phonics progress")
 
 func _update_progress_displays(firebase_modules: Dictionary):
+	# Calculate individual category progress and total progress
+	var letters_completed = 0
+	var sight_words_completed = 0
+	
 	# Letters progress
 	var letters_percent = 0.0
 	if firebase_modules.has("phonics"):
 		var phonics = firebase_modules["phonics"]
 		if typeof(phonics) == TYPE_DICTIONARY:
-			var letters_completed = phonics.get("letters_completed", []).size()
+			letters_completed = phonics.get("letters_completed", []).size()
 			letters_percent = (float(letters_completed) / 26.0) * 100.0
 	var letters_label = get_node_or_null("MainContainer/ScrollContainer/CategoriesGrid/LettersCard/LettersContent/ProgressLabel")
 	if letters_label:
@@ -143,14 +147,16 @@ func _update_progress_displays(firebase_modules: Dictionary):
 	if firebase_modules.has("phonics"):
 		var phonics = firebase_modules["phonics"]
 		if typeof(phonics) == TYPE_DICTIONARY:
-			var words_completed = phonics.get("sight_words_completed", []).size()
-			sight_words_percent = (float(words_completed) / 20.0) * 100.0
+			sight_words_completed = phonics.get("sight_words_completed", []).size()
+			sight_words_percent = (float(sight_words_completed) / 20.0) * 100.0
 	var sight_label = get_node_or_null("MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard/SightWordsContent/ProgressLabel")
 	if sight_label:
 		sight_label.text = str(int(sight_words_percent)) + "% Complete"
 
-	# Overall progress calculation
-	var overall_percent = (letters_percent + sight_words_percent) / 2.0
+	# Overall progress calculation using WEIGHTED method (matches ModuleScene.gd)
+	var total_completed = letters_completed + sight_words_completed
+	var total_possible = 46 # 26 letters + 20 sight words (matches ModuleScene.gd)
+	var overall_percent = (float(total_completed) / float(total_possible)) * 100.0
 	var overall_bar = $MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressBar
 	if overall_bar:
 		overall_bar.value = overall_percent
@@ -158,7 +164,7 @@ func _update_progress_displays(firebase_modules: Dictionary):
 	if overall_label:
 		overall_label.text = str(int(overall_percent)) + "% Complete"
 	
-	print("PhonicsModule: Progress updated - Letters: ", int(letters_percent), "%, Sight Words: ", int(sight_words_percent), "%, Overall: ", int(overall_percent), "%")
+	print("PhonicsModule: Progress updated - Letters: ", int(letters_percent), "%, Sight Words: ", int(sight_words_percent), "%, Overall: ", int(overall_percent), "% (", total_completed, "/", total_possible, " total items)")
 
 func _on_button_hover():
 	$ButtonHover.play()

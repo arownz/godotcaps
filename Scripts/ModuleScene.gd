@@ -188,14 +188,14 @@ func _update_card_progress(module_key: String, card_name: String):
 		if typeof(fm) == TYPE_DICTIONARY:
 			# Calculate overall progress based on module type
 			if module_key == "phonics":
-				# Overall phonics progress: average of letters and sight words
+				# Overall phonics progress: weighted total of letters and sight words
 				var letters_completed = fm.get("letters_completed", []).size()
 				var sight_words_completed = fm.get("sight_words_completed", []).size()
-				var letters_percent = (float(letters_completed) / 26.0) * 100.0
-				var sight_words_percent = (float(sight_words_completed) / 20.0) * 100.0
-				progress_percent = (letters_percent + sight_words_percent) / 2.0
+				var total_completed = letters_completed + sight_words_completed
+				var total_possible = 46 # 26 letters + 20 sight words
+				progress_percent = (float(total_completed) / float(total_possible)) * 100.0
 				completed = (letters_completed >= 26 and sight_words_completed >= 20)
-				print("ModuleScene: Phonics overall - Letters:", letters_completed, "/26, Sight Words:", sight_words_completed, "/20, Overall:", int(progress_percent), "%")
+				print("ModuleScene: Phonics overall - Letters:", letters_completed, "/26, Sight Words:", sight_words_completed, "/20, Total:", total_completed, "/", total_possible, ", Overall:", int(progress_percent), "%")
 			elif module_key == "flip_quiz":
 				# Overall flip quiz progress based on completed sets from both animals and vehicles
 				var total_animals_sets = 0
@@ -230,7 +230,7 @@ func _update_card_progress(module_key: String, card_name: String):
 				if fm.has("syllable_workshop") and typeof(fm["syllable_workshop"]) == TYPE_DICTIONARY:
 					var syllable_data = fm["syllable_workshop"].get("activities_completed", [])
 					syllable_completed = syllable_data.size()
-				
+
 				var total_completed = guided_completed + syllable_completed
 				var total_possible = 13 # 4 guided activities + 9 syllable workshop activities (matches actual SyllableBuildingModule.gd array)
 				progress_percent = (float(total_completed) / float(total_possible)) * 100.0
@@ -240,6 +240,7 @@ func _update_card_progress(module_key: String, card_name: String):
 				# For other modules, use direct progress value
 				progress_percent = float(fm.get("progress", 0))
 				completed = bool(fm.get("completed", false))
+
 	elif user_progress_data.has(module_key) and module_data.has(module_key):
 		# Fallback to local data
 		var progress = user_progress_data[module_key]

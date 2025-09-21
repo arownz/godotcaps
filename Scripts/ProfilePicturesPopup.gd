@@ -9,7 +9,7 @@ var current_equipped_id = ""
 var checkmark_icons = {}
 
 func _ready():
-	# Enhanced fade-in animation matching SettingScene style
+	# Enhanced fade-in animation matching SettingScene.gd pattern
 	modulate.a = 0.0
 	scale = Vector2(0.8, 0.8)
 	var tween = create_tween()
@@ -20,8 +20,10 @@ func _ready():
 	# Initialize UI
 	$PictureContainer/ConfirmButton.disabled = true
 	
-	# Connect background click to close popup
-	$Background.gui_input.connect(_on_background_clicked)
+	# Connect background click to close popup - matching SettingScene.gd pattern
+	var bg = get_node_or_null("Background")
+	if bg and not bg.gui_input.is_connected(_on_background_clicked):
+		bg.gui_input.connect(_on_background_clicked)
 	
 		# Create checkmark icons for all portrait buttons but make them invisible
 	for child in $PictureContainer/ScrollContainer/GridContainer.get_children():
@@ -205,11 +207,15 @@ func _on_close_button_pressed():
 	print("ProfilePicturesPopup: Closing without selection")
 	_fade_out_and_close()
 
-# Helper function to fade out before closing
+# Helper function to fade out before closing - matching SettingScene.gd pattern
 func _fade_out_and_close():
-	# Enhanced fade-out animation matching SettingScene style
 	var tween = create_tween()
 	tween.set_parallel(true)
+	# Fade out background
+	var bg = get_node_or_null("Background")
+	if bg:
+		tween.tween_property(bg, "modulate:a", 0.0, 0.25).set_ease(Tween.EASE_IN)
+	# Panel fade and scale
 	tween.tween_property(self, "modulate:a", 0.0, 0.25).set_ease(Tween.EASE_IN)
 	tween.tween_property(self, "scale", Vector2(0.8, 0.8), 0.25).set_ease(Tween.EASE_IN)
 	await tween.finished
@@ -220,11 +226,10 @@ func _fade_out_and_close():
 	# Self-destruct
 	queue_free()
 
-# Handle background click to close popup
+# Handle background click to close popup - matching SettingScene.gd pattern
 func _on_background_clicked(event):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		print("ProfilePicturesPopup: Background clicked, closing popup")
-		_on_close_button_pressed()
+		_fade_out_and_close()
 
 
 func _on_close_button_mouse_entered():

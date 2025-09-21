@@ -20,14 +20,24 @@ var dungeon_images = {
 }
 
 func _ready():
-	# Enhanced fade-in animation matching SettingScene style
-	modulate.a = 0.0
-	scale = Vector2(0.8, 0.8)
-	var tween = create_tween()
-	tween.set_parallel(true)
-	tween.tween_property(self, "modulate:a", 1.0, 0.35).set_ease(Tween.EASE_OUT)
-	tween.tween_property(self, "scale", Vector2(1.0, 1.0), 0.35).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
-	
+	print("ProfilePopUp: Ready")
+	add_to_group("profile_popup")
+
+	# Background click closes popup
+	var bg = get_node_or_null("Background")
+	if bg and not bg.gui_input.is_connected(_on_background_clicked):
+		bg.gui_input.connect(_on_background_clicked)
+
+	# Center main container and animate with SettingScene.gd pattern
+	var panel: Control = $ProfileContainer
+	if panel:
+		panel.modulate.a = 0.0
+		panel.scale = Vector2(0.8, 0.8)
+		var tween = create_tween()
+		tween.set_parallel(true)
+		tween.tween_property(panel, "modulate:a", 1.0, 0.35).set_ease(Tween.EASE_OUT)
+		tween.tween_property(panel, "scale", Vector2(1.0, 1.0), 0.35).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+
 	# Check signal connections
 	if !$ProfileContainer/CloseButton.is_connected("pressed", Callable(self, "_on_close_button_pressed")):
 		$ProfileContainer/CloseButton.connect("pressed", Callable(self, "_on_close_button_pressed"))
@@ -41,9 +51,6 @@ func _ready():
 	
 	# Connect DungeonArea button for navigation
 	$ProfileContainer/DungeonArea.pressed.connect(_on_dungeon_area_pressed)
-	
-	# Connect background click to close popup
-	$Background.gui_input.connect(_on_background_clicked)
 	
 	# Connect button hover events
 	if $ProfileContainer/CloseButton:
@@ -455,13 +462,19 @@ func _on_close_button_pressed():
 	$ButtonClick.play()
 	_fade_out_and_close()
 
-# Helper function to fade out before closing
+# Helper function to fade out before closing - matching SettingScene.gd pattern
 func _fade_out_and_close():
-	# Enhanced fade-out animation matching SettingScene style
+	var panel: Control = $ProfileContainer
 	var tween = create_tween()
 	tween.set_parallel(true)
-	tween.tween_property(self, "modulate:a", 0.0, 0.25).set_ease(Tween.EASE_IN)
-	tween.tween_property(self, "scale", Vector2(0.8, 0.8), 0.25).set_ease(Tween.EASE_IN)
+	# Fade out background
+	var bg = get_node_or_null("Background")
+	if bg:
+		tween.tween_property(bg, "modulate:a", 0.0, 0.25).set_ease(Tween.EASE_IN)
+	# Panel fade and scale
+	if panel:
+		tween.tween_property(panel, "modulate:a", 0.0, 0.25).set_ease(Tween.EASE_IN)
+		tween.tween_property(panel, "scale", Vector2(0.8, 0.8), 0.25).set_ease(Tween.EASE_IN)
 	await tween.finished
 	emit_signal("closed")
 	queue_free()
@@ -693,9 +706,7 @@ func _on_copy_uid_button_pressed():
 		popup.add_theme_font_override("font", load("res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf"))
 		popup.add_theme_font_size_override("font_size", 16)
 		popup.add_theme_color_override("font_color", Color(0, 0.8, 0.2)) # Green color
-		popup.position = $ProfileContainer/UserInfoArea/CopyUIDButton.position + Vector2(-55, 35)
-		popup.z_index = 100
-		
+		popup.position = $ProfileContainer/UserInfoArea/CopyUIDButton.position + Vector2(-50, 40)
 		$ProfileContainer/UserInfoArea.add_child(popup)
 		
 		# Remove popup after a short delay
@@ -704,18 +715,13 @@ func _on_copy_uid_button_pressed():
 		tween.tween_callback(popup.queue_free)
 
 func _close_popup():
-	var tween = create_tween()
-	tween.parallel().tween_property($PopupPanel, "scale", Vector2(0.5, 0.5), 0.2)
-	tween.parallel().tween_property($PopupPanel, "modulate:a", 0.0, 0.2)
-	tween.parallel().tween_property($Background, "modulate:a", 0.0, 0.2)
-	await tween.finished
-	queue_free()
+	"""Close popup with same pattern as SettingScene.gd"""
+	_fade_out_and_close()
 
-# Handle background click to close popup
+# Handle background click to close popup - matching SettingScene.gd pattern
 func _on_background_clicked(event):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		print("ProfilePopUp: Background clicked, closing popup")
-		_on_close_button_pressed()
+		_fade_out_and_close()
 
 func _on_confirm_button_mouse_entered() -> void:
 	$ButtonHover.play()

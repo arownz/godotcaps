@@ -135,9 +135,10 @@ func _update_layout():
 		target.x = clamp(target.x, min_size.x, max_size.x)
 		target.y = clamp(target.y, min_size.y, max_size.y)
 	
-	container.size = target
-	# Center the container
-	container.position = (vp_size - target) / 2.0
+	# Use set_deferred to avoid anchor conflicts
+	container.set_deferred("size", target)
+	# Center the container (also deferred to happen after size is set)
+	container.set_deferred("position", (vp_size - target) / 2.0)
 
 func _detect_and_apply_context():
 	var scene := get_tree().current_scene

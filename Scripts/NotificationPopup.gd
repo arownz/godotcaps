@@ -12,10 +12,10 @@ func _ready():
 	# Hide popup by default
 	hide()
 	
-	# Set up animation with null checks
+	# Set up animation with null checks - matching SettingScene.gd pattern
 	var popup_container = $PopupContainer
 	if popup_container:
-		popup_container.modulate = Color(1, 1, 1, 0)
+		popup_container.modulate.a = 0.0
 		popup_container.scale = Vector2(0.8, 0.8)
 	
 	# Center the popup with null check
@@ -25,9 +25,9 @@ func _ready():
 	else:
 		print("Warning: PopupBackground not found in notification popup")
 	
-	# Connect background click for closing
+	# Connect background click for closing - matching SettingScene.gd pattern
 	var background = $Background
-	if background:
+	if background and not background.gui_input.is_connected(_on_background_clicked):
 		print("NotificationPopup: Connecting background click to: ", background.name)
 		background.gui_input.connect(_on_background_clicked)
 	else:
@@ -49,7 +49,7 @@ func _on_background_clicked(event):
 		close_notification()
 
 func close_notification():
-	"""Close notification with animation"""
+	"""Close notification with animation - matching SettingScene.gd pattern"""
 	# Try playing sound with error handling
 	var button_click = $ButtonClick
 	if button_click and button_click.has_method("play"):
@@ -62,15 +62,18 @@ func close_notification():
 			button_click.play()
 	
 	var popup_container = $PopupContainer
+	var tween = create_tween()
+	tween.set_parallel(true)
+	# Fade out background
+	var bg = get_node_or_null("Background")
+	if bg:
+		tween.tween_property(bg, "modulate:a", 0.0, 0.25).set_ease(Tween.EASE_IN)
+	# Panel fade and scale
 	if popup_container:
-		# Enhanced fade-out animation matching SettingScene style
-		var tween = create_tween()
-		tween.set_parallel(true)
-		tween.tween_property(popup_container, "modulate", Color(1, 1, 1, 0), 0.25).set_ease(Tween.EASE_IN)
+		tween.tween_property(popup_container, "modulate:a", 0.0, 0.25).set_ease(Tween.EASE_IN)
 		tween.tween_property(popup_container, "scale", Vector2(0.8, 0.8), 0.25).set_ease(Tween.EASE_IN)
-		
-		await tween.finished
 	
+	await tween.finished
 	hide()
 	emit_signal("closed")
 
@@ -112,15 +115,15 @@ func show_notification(title = default_title, message = default_message, button_
 	# Show the popup
 	show()
 	
-	# Enhanced fade-in animation matching SettingScene style
+	# Enhanced fade-in animation matching SettingScene.gd pattern
 	var popup_container = $PopupContainer
 	if popup_container:
-		popup_container.modulate = Color(1, 1, 1, 0)
+		popup_container.modulate.a = 0.0
 		popup_container.scale = Vector2(0.8, 0.8)
 		var tween = create_tween()
 		tween.set_parallel(true)
-		tween.tween_property(popup_container, "modulate", Color(1, 1, 1, 1), 0.35).set_ease(Tween.EASE_OUT)
-		tween.tween_property(popup_container, "scale", Vector2(1, 1), 0.35).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+		tween.tween_property(popup_container, "modulate:a", 1.0, 0.35).set_ease(Tween.EASE_OUT)
+		tween.tween_property(popup_container, "scale", Vector2(1.0, 1.0), 0.35).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
 	else:
 		print("Warning: PopupContainer not found in notification popup")
 
