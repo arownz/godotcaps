@@ -302,9 +302,12 @@ autoplay = "auto_attack"
 
 [node name="snake_skill" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("2_v2rwu")
+bus = &"SFX"
 
 [node name="snake_autoattack" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("2_cdj5w")
+bus = &"SFX"
 
 [node name="snake_hurt" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("4_syvy7")
+bus = &"SFX"

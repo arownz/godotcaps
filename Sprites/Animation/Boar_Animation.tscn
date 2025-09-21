@@ -272,9 +272,12 @@ autoplay = "auto_attack"
 
 [node name="boar_autoattack" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("2_guge8")
+bus = &"SFX"
 
 [node name="boar_skill" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_p8cbs")
+bus = &"SFX"
 
 [node name="boar_hurt" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("4_p8cbs")
+bus = &"SFX"

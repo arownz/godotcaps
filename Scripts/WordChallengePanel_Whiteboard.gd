@@ -44,6 +44,7 @@ func _ready():
 	# Apply saved TTS settings from SettingsManager
 	var saved_voice = SettingsManager.get_setting("accessibility", "tts_voice_id")
 	var saved_rate = SettingsManager.get_setting("accessibility", "tts_rate")
+	var saved_volume = SettingsManager.get_setting("accessibility", "tts_volume")
 	
 	if saved_voice != null and saved_voice != "" and saved_voice != "default":
 		if tts.has_method("set_voice"):
@@ -54,6 +55,11 @@ func _ready():
 		if tts.has_method("set_rate"):
 			tts.set_rate(saved_rate)
 			print("WordChallengePanel_Whiteboard: Applied saved rate: ", saved_rate)
+	
+	if saved_volume != null:
+		if tts.has_method("set_volume"):
+			tts.set_volume(saved_volume / 100.0)
+			print("WordChallengePanel_Whiteboard: Applied saved volume: ", saved_volume, "%")
 	
 	# Hide the built-in TTS panel (will use popup instead)
 	tts_settings_panel.visible = false

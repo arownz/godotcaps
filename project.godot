@@ -29,6 +29,7 @@ general/text_to_speech=true
 Firebase="*res://addons/godot-firebase/firebase/firebase.tscn"
 DungeonGlobals="*res://Scripts/DungeonGlobals.gd"
 SettingsManager="*res://Scripts/SettingsManager.gd"
+BackgroundMusicManager="*res://Scripts/BackgroundMusicManager.gd"
 
 [compression]
 

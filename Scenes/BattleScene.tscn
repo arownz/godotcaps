@@ -962,9 +962,11 @@ expand_icon = true
 
 [node name="ButtonClick" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("14_cja1x")
+bus = &"SFX"
 
 [node name="ButtonHover" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("15_aip7a")
+bus = &"SFX"
 
 [connection signal="mouse_entered" from="MainContainer/RightContainer/MarginContainer/VBoxContainer/ButtonContainer/EngageButton" to="." method="_on_engage_button_mouse_entered"]
 [connection signal="pressed" from="MainContainer/RightContainer/MarginContainer/VBoxContainer/ButtonContainer/EngageButton" to="." method="_on_engage_button_pressed"]

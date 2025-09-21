@@ -15,9 +15,11 @@ var engage_permanently_hidden: bool = false # Once true, engage button stays hid
 # Accessibility Settings  
 @onready var reading_speed_slider = get_node_or_null("SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/ReadingSpeedContainer/ReadingSpeedSlider")
 @onready var reading_speed_value = get_node_or_null("SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/ReadingSpeedContainer/ReadingSpeedValue")
+@onready var tts_volume_slider = get_node_or_null("SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/TTSVolumeContainer/TTSVolumeSlider")
+@onready var tts_volume_value = get_node_or_null("SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/TTSVolumeContainer/TTSVolumeValue")
 @onready var tts_settings_button = get_node_or_null("SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/TTSContainer/TTSSettingsButton")
 
-# Audio Settings (disabled for now)
+# Audio Settings
 @onready var master_volume_slider = get_node_or_null("SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MasterVolumeContainer/MasterVolumeSlider")
 @onready var master_volume_value = get_node_or_null("SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MasterVolumeContainer/MasterVolumeValue")
 @onready var sfx_volume_slider = get_node_or_null("SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/SFXVolumeContainer/SFXVolumeSlider")
@@ -27,9 +29,6 @@ var engage_permanently_hidden: bool = false # Once true, engage button stays hid
 
 # Gameplay Settings
 @onready var tutorials_toggle = get_node_or_null("SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/GameplaySection/TutorialsContainer/TutorialsToggle")
-
-# Data Settings
-@onready var data_section = get_node_or_null("SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/DataSection")
 
 # Battle Section (from TSCN)
 @onready var battle_section = $SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/BattleSection
@@ -63,15 +62,16 @@ func _ready():
 	# Connect button signals (guarded)
 	if close_button and not close_button.pressed.is_connected(_on_close_button_pressed):
 		close_button.pressed.connect(_on_close_button_pressed)
-	# Note: DataSection/ExportDataButton is already connected in the .tscn file
     
 	# Connect accessibility settings - check for null first)
 	if reading_speed_slider and not reading_speed_slider.value_changed.is_connected(_on_reading_speed_changed):
 		reading_speed_slider.value_changed.connect(_on_reading_speed_changed)
+	if tts_volume_slider and not tts_volume_slider.value_changed.is_connected(_on_tts_volume_changed):
+		tts_volume_slider.value_changed.connect(_on_tts_volume_changed)
 	if tts_settings_button and not tts_settings_button.pressed.is_connected(_on_tts_settings_button_pressed):
 		tts_settings_button.pressed.connect(_on_tts_settings_button_pressed)
     
-	# Connect audio settings (future use) - check for null first
+	# Connect audio settings - check for null first
 	if master_volume_slider and not master_volume_slider.value_changed.is_connected(_on_master_volume_changed):
 		master_volume_slider.value_changed.connect(_on_master_volume_changed)
 	if sfx_volume_slider and not sfx_volume_slider.value_changed.is_connected(_on_sfx_volume_changed):
@@ -86,9 +86,6 @@ func _ready():
 	# Build battle buttons at top of SettingsContent
 	# Note: Battle buttons are now designed in TSCN
 	_set_battle_buttons_visible(is_battle_context)
-	# Ensure export data visibility matches context immediately
-	if data_section:
-		data_section.visible = not is_battle_context
     
 	# Update UI from global settings
 	update_ui_from_settings()
@@ -149,13 +146,9 @@ func _detect_and_apply_context():
 		var is_active: bool = scene.has_node(".") and ("battle_active" in scene) and scene.battle_active
 		_set_battle_buttons_visible(true)
 		set_battle_session_state(has_battle, is_active)
-		if data_section:
-			data_section.visible = false
 	else:
 		is_battle_context = false
 		_set_battle_buttons_visible(false)
-		if data_section:
-			data_section.visible = true
 	_context_initialized = true
 
 func update_ui_from_settings():
@@ -169,7 +162,12 @@ func update_ui_from_settings():
 	if reading_speed_value:
 		reading_speed_value.text = str(SettingsManager.get_setting("accessibility", "reading_speed")) + "x"
 	
-	# Audio settings (disabled) - check for null first
+	if tts_volume_slider:
+		tts_volume_slider.value = SettingsManager.get_setting("accessibility", "tts_volume")
+	if tts_volume_value:
+		tts_volume_value.text = str(int(SettingsManager.get_setting("accessibility", "tts_volume"))) + "%"
+	
+	# Audio settings - check for null first
 	if master_volume_slider:
 		master_volume_slider.value = SettingsManager.get_setting("audio", "master_volume")
 	if master_volume_value:
@@ -218,6 +216,17 @@ func _on_reading_speed_changed(value: float):
 	if reading_speed_value:
 		reading_speed_value.text = str(value) + "x"
 	print("SettingScene: Reading speed changed to: ", value, " (also updated TTS rate)")
+	# Apply TTS settings immediately to any existing TTS instance
+	_apply_tts_settings_immediately()
+
+func _on_tts_volume_changed(value: float):
+	"""Handle TTS volume slider change"""
+	SettingsManager.set_setting("accessibility", "tts_volume", int(value))
+	if tts_volume_value:
+		tts_volume_value.text = str(int(value)) + "%"
+	print("SettingScene: TTS volume changed to: ", int(value))
+	# Apply TTS settings immediately to any existing TTS instance
+	_apply_tts_settings_immediately()
 
 func _on_tts_settings_button_pressed():
 	$ButtonClick.play()
@@ -268,13 +277,18 @@ func _on_tts_settings_button_pressed():
 	else:
 		print("SettingScene: Warning - TTSSettingsPopup still not found after dynamic attempt")
 
-func _on_tts_settings_saved(voice_id: String, rate: float):
+func _on_tts_settings_saved(voice_id: String, rate: float, volume: float):
 	"""Handle TTS settings save to store in Firebase/Firestore"""
-	print("SettingScene: Saving TTS preferences - Voice: ", voice_id, " Rate: ", rate)
+	var volume_percent = int(volume * 100) # Convert 0.0-1.0 to 0-100
+	print("SettingScene: Saving TTS preferences - Voice: ", voice_id, " Rate: ", rate, " Volume: ", volume_percent, "%")
 	
 	# Store in SettingsManager for immediate use
 	SettingsManager.set_setting("accessibility", "tts_voice_id", voice_id)
 	SettingsManager.set_setting("accessibility", "tts_rate", rate)
+	SettingsManager.set_setting("accessibility", "tts_volume", volume_percent)
+	
+	# Apply TTS settings immediately to any existing TTS instance
+	_apply_tts_settings_immediately()
 	
 	# Store in Firebase/Firestore for persistence across devices
 	if Engine.has_singleton("Firebase"):
@@ -298,6 +312,7 @@ func _on_tts_settings_saved(voice_id: String, rate: float):
 				# Update TTS settings
 				accessibility["tts_voice_id"] = voice_id
 				accessibility["tts_rate"] = rate
+				accessibility["tts_volume"] = volume
 				accessibility["tts_enabled"] = true
 				
 				current_settings["accessibility"] = accessibility
@@ -340,13 +355,15 @@ func _load_tts_settings_from_firebase():
 				# Update SettingsManager with Firebase values
 				var tts_voice_id = accessibility.get("tts_voice_id", "default")
 				var tts_rate = accessibility.get("tts_rate", 1.0)
+				var tts_volume = accessibility.get("tts_volume", 50)
 				var tts_enabled = accessibility.get("tts_enabled", true)
 				
 				SettingsManager.set_setting("accessibility", "tts_voice_id", tts_voice_id)
 				SettingsManager.set_setting("accessibility", "tts_rate", tts_rate)
+				SettingsManager.set_setting("accessibility", "tts_volume", tts_volume)
 				SettingsManager.set_setting("accessibility", "tts_enabled", tts_enabled)
 				
-				print("SettingScene: Loaded TTS settings from Firebase - Voice: ", tts_voice_id, " Rate: ", tts_rate)
+				print("SettingScene: Loaded TTS settings from Firebase - Voice: ", tts_voice_id, " Rate: ", tts_rate, " Volume: ", tts_volume)
 			else:
 				print("SettingScene: No accessibility settings found in Firebase, using defaults")
 		else:
@@ -354,7 +371,16 @@ func _load_tts_settings_from_firebase():
 	else:
 		print("SettingScene: Failed to load user document from Firebase")
 
-# === Audio Settings (for future implementation) ===
+func _apply_tts_settings_immediately():
+	"""Apply current TTS settings to any existing TTS instances globally"""
+	# Update any global TTS instance (like in TextToSpeech.gd)
+	var tts_nodes = get_tree().get_nodes_in_group("tts_instances")
+	for tts_node in tts_nodes:
+		if tts_node.has_method("update_settings"):
+			tts_node.update_settings()
+	print("SettingScene: Applied TTS settings to ", tts_nodes.size(), " TTS instances")
+
+# === Audio Settings ===
 
 func _on_master_volume_changed(value: float):
 	"""Handle master volume slider change"""
@@ -385,39 +411,10 @@ func _on_tutorials_toggled(pressed: bool):
 	SettingsManager.set_setting("gameplay", "show_tutorials", pressed)
 	print("SettingScene: Show tutorials: ", pressed)
 
-# === Data Management ===
-	
-func _on_export_data_button_pressed():
-	$ButtonClick.play()
-	"""Handle export data button"""
-	print("SettingScene: Export data button pressed")
-	
-	# Show info dialog
-	var dialog = AcceptDialog.new()
-	dialog.dialog_text = "Data export functionality will be available in a future update."
-	dialog.title = "Export Data"
-	add_child(dialog)
-	dialog.popup_centered()
-	
-	await dialog.confirmed
-	dialog.queue_free()
-
-	# TODO: Implement actual data export when needed but for future updates
-
-
-func _on_back_button_mouse_entered() -> void:
-	$ButtonHover.play()
-
-func _on_export_data_button_mouse_entered() -> void:
-	$ButtonHover.play()
-
-# ===== Popup public API and helpers =====
+# === Audio Settings (for future implementation) ===# ===== Popup public API and helpers =====
 func set_context(battle_context: bool, has_battle_occurred: bool = false, battle_currently_active: bool = false) -> void:
 	is_battle_context = battle_context
 	_set_battle_buttons_visible(is_battle_context)
-	# Hide Data Section when opened from BattleScene
-	if is_instance_valid(data_section):
-		data_section.visible = not battle_context
 	if battle_context:
 		set_battle_session_state(has_battle_occurred, battle_currently_active)
 	_context_initialized = true

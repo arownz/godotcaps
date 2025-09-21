@@ -1,6 +1,6 @@
 extends Control
 
-signal settings_saved(voice_id, rate)
+signal settings_saved(voice_id, rate, volume)
 signal settings_closed
 
 # Popup properties
@@ -18,6 +18,10 @@ func _ready():
 	var rate_slider = $Panel/VBoxContainer/RateContainer/RateSlider
 	rate_slider.value = current_rate
 	_update_rate_label(current_rate)
+	
+	var volume_slider = $Panel/VBoxContainer/VolumeContainer/VolumeSlider
+	volume_slider.value = current_volume * 100.0 # Convert 0.0-1.0 to 0-100
+	_update_volume_label(current_volume * 100.0)
 	
 	# Make popup modal
 	set_process_input(true)
@@ -98,6 +102,12 @@ func setup(tts_instance, voice_id, rate, word_sample):
 	current_rate = rate if rate != null else 1.0
 	test_word = word_sample if word_sample != null else "Testing"
 	
+	# Load current volume from SettingsManager
+	if SettingsManager:
+		var saved_volume = SettingsManager.get_setting("accessibility", "tts_volume")
+		if saved_volume != null:
+			current_volume = saved_volume / 100.0 # Convert 0-100 to 0.0-1.0
+	
 	# Connect signals
 	if tts:
 		if tts.is_connected("voices_loaded", Callable(self, "_on_voices_loaded")):
@@ -109,11 +119,17 @@ func setup(tts_instance, voice_id, rate, word_sample):
 			tts.set_voice(current_voice_id)
 		if current_rate != null:
 			tts.set_rate(current_rate)
+		# Also apply current volume
+		tts.set_volume(current_volume)
 		
 		# Update UI
 		var rate_slider = $Panel/VBoxContainer/RateContainer/RateSlider
 		rate_slider.value = current_rate
 		_update_rate_label(current_rate)
+		
+		var volume_slider = $Panel/VBoxContainer/VolumeContainer/VolumeSlider
+		volume_slider.value = current_volume * 100.0
+		_update_volume_label(current_volume * 100.0)
 		
 		# Initialize voice options
 		_initialize_voice_options()
@@ -207,6 +223,20 @@ func _update_rate_label(value):
 	
 	rate_label.text = rate_text
 
+func _on_volume_slider_value_changed(value):
+	# Update current volume
+	current_volume = value / 100.0 # Convert 0-100 to 0.0-1.0
+	if tts:
+		tts.set_volume(current_volume)
+	
+	# Update label
+	_update_volume_label(value)
+
+func _update_volume_label(value):
+	# Update volume display text
+	var volume_label = $Panel/VBoxContainer/VolumeContainer/VolumeValueLabel
+	volume_label.text = "Volume: " + str(int(value)) + "%"
+
 func _on_test_button_pressed():
 	$ButtonClick.play()
 	# Test the current voice and rate with improved feedback
@@ -269,7 +299,7 @@ func _on_test_speech_error(error_msg):
 func _on_close_button_pressed():
 	$ButtonClick.play()
 	# Save settings and close
-	emit_signal("settings_saved", current_voice_id, current_rate)
+	emit_signal("settings_saved", current_voice_id, current_rate, current_volume)
 	emit_signal("settings_closed")
 	queue_free()
 

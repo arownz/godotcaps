@@ -38,15 +38,15 @@ color = Color(0, 0, 0, 0.6)
 [node name="Panel" type="TextureRect" parent="."]
 custom_minimum_size = Vector2(400, 350)
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -277.0
-offset_top = -175.0
-offset_right = 332.0
-offset_bottom = 175.0
+anchors_preset = -1
+anchor_left = 0.31
+anchor_top = 0.24400002
+anchor_right = 0.72700006
+anchor_bottom = 0.735
+offset_left = 0.3999939
+offset_top = -6.6400146
+offset_right = 0.57995605
+offset_bottom = -0.35003662
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_umhyu")
@@ -93,6 +93,29 @@ theme_override_fonts/font = ExtResource("2_m3f5r")
 theme_override_font_sizes/font_size = 16
 theme_override_styles/focus = SubResource("StyleBoxEmpty_jb0wy")
 
+[node name="VolumeContainer" type="VBoxContainer" parent="Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="VolumeLabel" type="Label" parent="Panel/VBoxContainer/VolumeContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_m3f5r")
+theme_override_font_sizes/font_size = 18
+text = "Voice Volume:"
+
+[node name="VolumeSlider" type="HSlider" parent="Panel/VBoxContainer/VolumeContainer"]
+visible = false
+layout_mode = 2
+value = 100.0
+
+[node name="VolumeValueLabel" type="Label" parent="Panel/VBoxContainer/VolumeContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_m3f5r")
+theme_override_font_sizes/font_size = 16
+text = "Volume: 100%"
+horizontal_alignment = 1
+
 [node name="RateContainer" type="VBoxContainer" parent="Panel/VBoxContainer"]
 layout_mode = 2
 
@@ -131,11 +154,11 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="TestButton" type="Button" parent="Panel"]
-layout_mode = 2
-offset_left = 180.0
-offset_top = 279.0
-offset_right = 242.0
-offset_bottom = 303.0
+layout_mode = 0
+offset_left = 178.0
+offset_top = 339.0
+offset_right = 240.0
+offset_bottom = 363.0
 scale = Vector2(2.08295, 2.10011)
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -150,11 +173,11 @@ flat = true
 icon_alignment = 1
 
 [node name="CloseButton" type="Button" parent="Panel"]
-layout_mode = 2
-offset_left = 300.0
-offset_top = 275.0
-offset_right = 362.0
-offset_bottom = 304.0
+layout_mode = 0
+offset_left = 298.0
+offset_top = 335.0
+offset_right = 360.0
+offset_bottom = 364.0
 scale = Vector2(2.25382, 2.0651)
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -177,6 +200,7 @@ stream = ExtResource("8_2s7nq")
 
 [connection signal="item_selected" from="Panel/VBoxContainer/VoiceContainer/VoiceOptionButton" to="." method="_on_voice_option_button_item_selected"]
 [connection signal="mouse_entered" from="Panel/VBoxContainer/VoiceContainer/VoiceOptionButton" to="." method="_on_voice_option_button_mouse_entered"]
+[connection signal="value_changed" from="Panel/VBoxContainer/VolumeContainer/VolumeSlider" to="." method="_on_volume_slider_value_changed"]
 [connection signal="value_changed" from="Panel/VBoxContainer/RateContainer/RateSlider" to="." method="_on_rate_slider_value_changed"]
 [connection signal="mouse_entered" from="Panel/TestButton" to="." method="_on_test_button_mouse_entered"]
 [connection signal="pressed" from="Panel/TestButton" to="." method="_on_test_button_pressed"]

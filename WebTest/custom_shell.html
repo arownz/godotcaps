@@ -3,11 +3,10 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#000000">
 
     <title>$GODOT_PROJECT_NAME</title>
 
@@ -285,8 +284,8 @@
         };
 
         // Text-to-Speech functionality
-        window.speakText = function (text, voiceId, rate) {
-            console.log("Speaking text:", text);
+        window.speakText = function (text, voiceId, rate, volume) {
+            console.log("Speaking text:", text, "with volume:", volume);
 
             let voice = null;
             const voices = window.speechSynthesis.getVoices();
@@ -306,6 +305,7 @@
             utterance.lang = 'en-US';
             utterance.rate = rate || 0.8;
             utterance.pitch = 1.0;
+            utterance.volume = volume !== undefined ? volume : 1.0; // Support volume control
 
             window.speechSynthesis.speak(utterance);
         };

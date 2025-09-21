@@ -21,12 +21,61 @@ var speech_volume = 1.0 # Volume (Range: 0.0 to 1.0)
 var speech_pitch = 1.0 # Pitch (Range: 0.5 to 2.0)
 
 func _ready():
+	# Add to TTS instances group for volume control
+	add_to_group("tts_instances")
+	
+	print("DEBUG: Checking TTS availability...")
+	print("DEBUG: DisplayServer.has_feature(FEATURE_TEXT_TO_SPEECH): ", DisplayServer.has_feature(DisplayServer.FEATURE_TEXT_TO_SPEECH))
+	
 	# Check if TTS is available on this platform
 	if DisplayServer.has_feature(DisplayServer.FEATURE_TEXT_TO_SPEECH):
 		tts_available = true
+		print("DEBUG: TTS feature is available, initializing...")
 		_initialize_tts()
 	else:
-		print("Text-to-speech is not available on this platform")
+		print("ERROR: Text-to-speech is not available on this platform")
+		print("Make sure TTS is enabled in Project Settings > Audio > General > Text to Speech")
+	
+	# Apply all saved TTS settings from SettingsManager
+	update_settings()
+
+func _apply_saved_volume():
+	"""Apply saved TTS volume from SettingsManager"""
+	if SettingsManager:
+		var saved_volume = SettingsManager.get_setting("accessibility", "tts_volume")
+		if saved_volume != null:
+			set_volume(saved_volume / 100.0)
+			print("TextToSpeech: Applied saved volume: ", saved_volume, "%")
+
+func update_settings():
+	"""Update all TTS settings from SettingsManager - called when settings change"""
+	if not SettingsManager:
+		print("TextToSpeech: SettingsManager not available")
+		return
+		
+	# Update volume
+	var saved_volume = SettingsManager.get_setting("accessibility", "tts_volume")
+	print("TextToSpeech: Retrieved volume from SettingsManager: ", saved_volume)
+	if saved_volume != null:
+		var converted_volume = saved_volume / 100.0
+		set_volume(converted_volume)
+		print("TextToSpeech: Updated volume: ", saved_volume, "% -> ", converted_volume)
+	
+	# Update speech rate 
+	var saved_rate = SettingsManager.get_setting("accessibility", "tts_rate")
+	print("TextToSpeech: Retrieved rate from SettingsManager: ", saved_rate)
+	if saved_rate != null:
+		set_rate(saved_rate)
+		print("TextToSpeech: Updated rate: ", saved_rate, "x")
+	
+	# Update voice if available
+	var saved_voice = SettingsManager.get_setting("accessibility", "tts_voice_id")
+	print("TextToSpeech: Retrieved voice from SettingsManager: ", saved_voice)
+	if saved_voice != null and saved_voice != "default" and saved_voice != "":
+		set_voice(saved_voice)
+		print("TextToSpeech: Updated voice: ", saved_voice)
+	
+	print("TextToSpeech: Final settings - Volume: ", speech_volume, ", Rate: ", speech_rate, ", Voice: ", selected_voice_id)
 
 func _initialize_tts():
 	if !tts_available:
@@ -34,6 +83,7 @@ func _initialize_tts():
 		
 	# Get available voices
 	voices = DisplayServer.tts_get_voices()
+	print("DEBUG: Total voices found: ", voices.size())
 	
 	if voices.size() > 0:
 		# Select the first voice by default
@@ -46,10 +96,13 @@ func _initialize_tts():
 		for voice in voices:
 			print("- ", voice["name"], " (", voice["id"], ")")
 	else:
-		print("No TTS voices available")
+		print("ERROR: No TTS voices available! Check if TTS is enabled in Project Settings")
+		print("Go to Project > Project Settings > Audio > General > Enable Text to Speech")
+		return
 		
-	# Alternative: Get English voices if available
+	# Try to get English voices if available
 	var english_voices = DisplayServer.tts_get_voices_for_language("en")
+	print("DEBUG: English voices found: ", english_voices.size())
 	if english_voices.size() > 0:
 		selected_voice_id = english_voices[0]
 		current_voice = selected_voice_id # Set compatibility property
@@ -74,13 +127,25 @@ func speak(text):
 		speech_error.emit("Cannot speak empty text")
 		return false
 	
-	# IMPORTANT: Call with only the required parameters that were working
-	print("Speaking text: ", text, " with voice: ", selected_voice_id)
+	print("Speaking text: ", text, " with voice: ", selected_voice_id, " volume: ", speech_volume, " rate: ", speech_rate)
+	print("DEBUG: Internal TTS settings before speaking - speech_volume: ", speech_volume, ", speech_rate: ", speech_rate, ", speech_pitch: ", speech_pitch)
 	
-	# Try to speak - but don't try to capture return value since it's void
-	DisplayServer.tts_speak(text, selected_voice_id)
+	# For web platforms, use JavaScript TTS with volume support
+	if OS.has_feature("web"):
+		if JavaScriptBridge.has_method("eval"):
+			var js_code = "if (window.speakText) { window.speakText('" + text.replace("'", "\\'") + "', '" + selected_voice_id + "', " + str(speech_rate) + ", " + str(speech_volume) + "); }"
+			JavaScriptBridge.eval(js_code)
+		else:
+			print("JavaScriptBridge not available for web TTS")
+			return false
+	else:
+		# For desktop platforms, use extended TTS call with volume, pitch, and rate
+		print("DEBUG: Using extended TTS call with parameters")
+		var volume_int = int(speech_volume * 100) # Convert 0.0-1.0 to 0-100
+		print("DEBUG: Extended params - volume_int: ", volume_int, ", pitch: ", speech_pitch, ", rate: ", speech_rate)
+		DisplayServer.tts_speak(text, selected_voice_id, volume_int, speech_pitch, speech_rate)
 	
-	print("Speaking text with rate ", speech_rate, ": ", text)
+	print("Speaking text with rate ", speech_rate, " and volume ", speech_volume, ": ", text)
 	speech_started.emit()
 	
 	# Create a more accurate timer based on speech rate and text complexity

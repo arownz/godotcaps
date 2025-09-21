@@ -313,9 +313,12 @@ autoplay = "auto_attack"
 
 [node name="treant_hurt" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_oe6dc")
+bus = &"SFX"
 
 [node name="treant_skill" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_ludm2")
+bus = &"SFX"
 
 [node name="treant_autoattack" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("4_oe6dc")
+bus = &"SFX"
