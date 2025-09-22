@@ -115,6 +115,11 @@ func show_notification(title = default_title, message = default_message, button_
 	# Show the popup
 	show()
 	
+	# Reset background opacity before animation
+	var bg = get_node_or_null("Background")
+	if bg:
+		bg.modulate.a = 1.0 # Reset background opacity
+	
 	# Enhanced fade-in animation matching SettingScene.gd pattern
 	var popup_container = $PopupContainer
 	if popup_container:

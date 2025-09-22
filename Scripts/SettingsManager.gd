@@ -35,6 +35,9 @@ func _ready():
 	
 	# Ensure button audio uses SFX bus after a frame (so scene is loaded)
 	call_deferred("_ensure_button_audio_uses_sfx_bus")
+	
+	# Reapply audio settings after all nodes are ready to ensure proper initialization
+	call_deferred("_reapply_audio_settings_after_initialization")
 
 func load_settings():
 	"""Load settings from config file"""
@@ -228,6 +231,18 @@ func _find_button_audio_recursive(node: Node, result_array: Array):
 	for child in node.get_children():
 		_find_button_audio_recursive(child, result_array)
 
+func _reapply_audio_settings_after_initialization():
+	"""Reapply all audio settings after all components are initialized"""
+	print("SettingsManager: Reapplying audio settings after initialization")
+	apply_audio_settings()
+	
+	# Specifically ensure BackgroundMusicManager gets the current volume
+	var music_manager = get_node_or_null("/root/BackgroundMusicManager")
+	if music_manager and music_manager.has_method("set_music_volume"):
+		var music_volume = current_settings.audio.music_volume
+		music_manager.set_music_volume(music_volume / 100.0)
+		print("SettingsManager: Applied music volume to BackgroundMusicManager: ", music_volume, "%")
+
 func get_reading_speed() -> float:
 	return current_settings.accessibility.reading_speed
 
@@ -251,3 +266,40 @@ func set_tts_volume(volume: int):
 
 func should_show_tutorials() -> bool:
 	return current_settings.gameplay.show_tutorials
+
+func debug_audio_settings():
+	"""Debug function to print current audio settings and bus volumes"""
+	print("=== AUDIO SETTINGS DEBUG ===")
+	print("Settings values:")
+	print("- Master Volume: ", current_settings.audio.master_volume, "%")
+	print("- SFX Volume: ", current_settings.audio.sfx_volume, "%")
+	print("- Music Volume: ", current_settings.audio.music_volume, "%")
+	
+	print("Audio bus volumes:")
+	var master_db = AudioServer.get_bus_volume_db(AudioServer.get_bus_index("Master"))
+	print("- Master Bus: ", db_to_linear(master_db) * 100, "% (", master_db, " dB)")
+	
+	var sfx_index = AudioServer.get_bus_index("SFX")
+	if sfx_index >= 0:
+		var sfx_db = AudioServer.get_bus_volume_db(sfx_index)
+		print("- SFX Bus: ", db_to_linear(sfx_db) * 100, "% (", sfx_db, " dB)")
+	else:
+		print("- SFX Bus: Not found")
+	
+	var music_index = AudioServer.get_bus_index("Music")
+	if music_index >= 0:
+		var music_db = AudioServer.get_bus_volume_db(music_index)
+		print("- Music Bus: ", db_to_linear(music_db) * 100, "% (", music_db, " dB)")
+	else:
+		print("- Music Bus: Not found")
+	
+	var music_manager = get_node_or_null("/root/BackgroundMusicManager")
+	if music_manager:
+		print("- BackgroundMusicManager: Found")
+		if music_manager.has_method("set_music_volume"):
+			print("  - set_music_volume method: Available")
+		else:
+			print("  - set_music_volume method: Not available")
+	else:
+		print("- BackgroundMusicManager: Not found")
+	print("=== END AUDIO DEBUG ===")

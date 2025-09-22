@@ -9,21 +9,23 @@ var current_equipped_id = ""
 var checkmark_icons = {}
 
 func _ready():
-	# Enhanced fade-in animation matching SettingScene.gd pattern
-	modulate.a = 0.0
-	scale = Vector2(0.8, 0.8)
-	var tween = create_tween()
-	tween.set_parallel(true)
-	tween.tween_property(self, "modulate:a", 1.0, 0.35).set_ease(Tween.EASE_OUT)
-	tween.tween_property(self, "scale", Vector2(1.0, 1.0), 0.35).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
-	
-	# Initialize UI
-	$PictureContainer/ConfirmButton.disabled = true
-	
-	# Connect background click to close popup - matching SettingScene.gd pattern
+	# Connect background click to close popup - matching ProfilePopUp.gd pattern
 	var bg = get_node_or_null("Background")
 	if bg and not bg.gui_input.is_connected(_on_background_clicked):
 		bg.gui_input.connect(_on_background_clicked)
+
+	# Center main container and animate with ProfilePopUp.gd pattern
+	var panel: Control = $PictureContainer
+	if panel:
+		panel.modulate.a = 0.0
+		panel.scale = Vector2(0.8, 0.8)
+		var tween = create_tween()
+		tween.set_parallel(true)
+		tween.tween_property(panel, "modulate:a", 1.0, 0.35).set_ease(Tween.EASE_OUT)
+		tween.tween_property(panel, "scale", Vector2(1.0, 1.0), 0.35).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+	
+	# Initialize UI
+	$PictureContainer/ConfirmButton.disabled = true
 	
 		# Create checkmark icons for all portrait buttons but make them invisible
 	for child in $PictureContainer/ScrollContainer/GridContainer.get_children():
@@ -207,8 +209,9 @@ func _on_close_button_pressed():
 	print("ProfilePicturesPopup: Closing without selection")
 	_fade_out_and_close()
 
-# Helper function to fade out before closing - matching SettingScene.gd pattern
+# Helper function to fade out before closing - matching ProfilePopUp.gd pattern
 func _fade_out_and_close():
+	var panel: Control = $PictureContainer
 	var tween = create_tween()
 	tween.set_parallel(true)
 	# Fade out background
@@ -216,8 +219,9 @@ func _fade_out_and_close():
 	if bg:
 		tween.tween_property(bg, "modulate:a", 0.0, 0.25).set_ease(Tween.EASE_IN)
 	# Panel fade and scale
-	tween.tween_property(self, "modulate:a", 0.0, 0.25).set_ease(Tween.EASE_IN)
-	tween.tween_property(self, "scale", Vector2(0.8, 0.8), 0.25).set_ease(Tween.EASE_IN)
+	if panel:
+		tween.tween_property(panel, "modulate:a", 0.0, 0.25).set_ease(Tween.EASE_IN)
+		tween.tween_property(panel, "scale", Vector2(0.8, 0.8), 0.25).set_ease(Tween.EASE_IN)
 	await tween.finished
 	
 	# Emit cancelled signal

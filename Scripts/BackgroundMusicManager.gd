@@ -50,6 +50,13 @@ func _ready():
 		print("BackgroundMusicManager: Failed to load Lexia Soundtrack")
 		return
 	
+	# Apply current music volume from SettingsManager
+	if SettingsManager:
+		var saved_volume = SettingsManager.get_setting("audio", "music_volume")
+		if saved_volume != null:
+			set_music_volume(saved_volume / 100.0)
+			print("BackgroundMusicManager: Applied saved music volume: ", saved_volume, "%")
+	
 	# Connect to scene changes
 	get_tree().node_added.connect(_on_node_added)
 	
