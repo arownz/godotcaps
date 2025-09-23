@@ -24,7 +24,10 @@ var music_excluded_scenes: Array[String] = [
 	"ReadAloudModule",
 	"SyllableBuildingModule",
 	"WhiteboardInterface",
-	
+	"ChallengeResultPanels",
+	"CompletionCelebration",
+	"WordChallengePanel_Whiteboard",
+	"WordChallengePanel_STT",
 ]
 
 func _ready():
@@ -133,10 +136,19 @@ func resume_music():
 		music_player.stream_paused = false
 
 func set_music_volume(volume: float):
-	"""Set the music volume (0.0 to 1.0)"""
+	"""Set the music volume (0.0 to 1.0) with master volume consideration"""
 	if music_player:
-		music_player.volume_db = linear_to_db(volume)
-		print("BackgroundMusicManager: Set music volume to: ", volume)
+		# Get master volume from SettingsManager for proper scaling
+		var master_volume = 1.0
+		if SettingsManager:
+			var master_setting = SettingsManager.get_setting("audio", "master_volume")
+			if master_setting != null:
+				master_volume = master_setting / 100.0
+		
+		# Apply both music volume and master volume
+		var final_volume = volume * master_volume
+		music_player.volume_db = linear_to_db(final_volume)
+		print("BackgroundMusicManager: Set music volume to: ", volume, " * master: ", master_volume, " = ", final_volume)
 
 func is_excluded_scene(scene_name: String) -> bool:
 	"""Check if a scene is excluded from background music"""

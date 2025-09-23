@@ -505,11 +505,9 @@ vertical_alignment = 1
 
 [node name="ButtonClick" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("19_pjscj")
-bus = &"SFX"
 
 [node name="ButtonHover" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("20_m7n2d")
-bus = &"SFX"
 
 [connection signal="mouse_entered" from="ProfileButton" to="." method="_on_profile_button_mouse_entered"]
 [connection signal="pressed" from="ProfileButton" to="." method="_on_profile_button_pressed"]
