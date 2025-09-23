@@ -23,7 +23,8 @@ var music_excluded_scenes: Array[String] = [
 	"ReadAloudStories",
 	"ReadAloudModule",
 	"SyllableBuildingModule",
-	"WhiteboardInterface"
+	"WhiteboardInterface",
+	
 ]
 
 func _ready():

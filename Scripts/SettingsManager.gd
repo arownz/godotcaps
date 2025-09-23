@@ -29,15 +29,23 @@ var current_settings = {
 
 func _ready():
 	print("SettingsManager: Initializing global settings manager")
+	_setup_audio_bus_hierarchy()
 	load_settings()
 	apply_accessibility_settings()
 	apply_audio_settings()
+	
+	# Debug initial state
+	print("SettingsManager: Initial audio setup complete")
+	debug_audio_settings()
 	
 	# Ensure button audio uses SFX bus after a frame (so scene is loaded)
 	call_deferred("_ensure_button_audio_uses_sfx_bus")
 	
 	# Reapply audio settings after all nodes are ready to ensure proper initialization
 	call_deferred("_reapply_audio_settings_after_initialization")
+	
+	# Also force audio check after a longer delay to catch late-loaded nodes
+	call_deferred("_delayed_audio_check")
 
 func load_settings():
 	"""Load settings from config file"""
@@ -96,6 +104,28 @@ func save_settings():
 		print("SettingsManager: Settings saved successfully")
 	else:
 		print("SettingsManager: Error saving settings: ", err)
+
+func _setup_audio_bus_hierarchy():
+	"""Setup audio buses - SFX and Music as independent buses for web compatibility"""
+	print("SettingsManager: Setting up audio bus hierarchy")
+	
+	# Ensure SFX bus exists
+	var sfx_bus_index = AudioServer.get_bus_index("SFX")
+	if sfx_bus_index < 0:
+		AudioServer.add_bus(1)
+		AudioServer.set_bus_name(1, "SFX")
+		sfx_bus_index = 1
+		print("SettingsManager: Created SFX bus at index ", sfx_bus_index)
+	
+	# Ensure Music bus exists
+	var music_bus_index = AudioServer.get_bus_index("Music")
+	if music_bus_index < 0:
+		AudioServer.add_bus(2)
+		AudioServer.set_bus_name(2, "Music")
+		music_bus_index = 2
+		print("SettingsManager: Created Music bus at index ", music_bus_index)
+	
+	print("SettingsManager: Audio bus setup complete - SFX and Music as independent buses")
 
 func get_setting(category: String, setting: String):
 	"""Get a specific setting value"""
@@ -170,46 +200,84 @@ func apply_animation_reduction_globally(enabled: bool):
 	# This would disable or reduce UI animations for users with motion sensitivity
 
 func apply_master_volume(volume: int):
-	"""Apply master volume setting"""
+	"""Apply master volume setting by affecting all audio buses"""
 	print("SettingsManager: Applying master volume: ", volume)
-	var volume_db = linear_to_db(volume / 100.0)
-	AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Master"), volume_db)
+	var master_db = linear_to_db(volume / 100.0)
+	AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Master"), master_db)
+	
+	# For web compatibility, also apply master volume as a multiplier to other buses
+	var master_multiplier = volume / 100.0
+	
+	# Apply to SFX bus
+	var sfx_volume = current_settings.audio.sfx_volume
+	var sfx_final = sfx_volume * master_multiplier
+	var sfx_bus_index = AudioServer.get_bus_index("SFX")
+	if sfx_bus_index >= 0:
+		var sfx_db = linear_to_db(sfx_final / 100.0)
+		AudioServer.set_bus_volume_db(sfx_bus_index, sfx_db)
+		print("SettingsManager: Applied master to SFX - ", sfx_volume, "% * ", volume, "% = ", sfx_final, "%")
+	
+	# Apply to Music bus
+	var music_volume = current_settings.audio.music_volume
+	var music_final = music_volume * master_multiplier
+	var music_bus_index = AudioServer.get_bus_index("Music")
+	if music_bus_index >= 0:
+		var music_db = linear_to_db(music_final / 100.0)
+		AudioServer.set_bus_volume_db(music_bus_index, music_db)
+		print("SettingsManager: Applied master to Music - ", music_volume, "% * ", volume, "% = ", music_final, "%")
 
 func apply_sfx_volume(volume: int):
-	"""Apply SFX volume setting"""
+	"""Apply SFX volume setting with master volume consideration"""
 	print("SettingsManager: Applying SFX volume: ", volume)
 	var sfx_bus_index = AudioServer.get_bus_index("SFX")
 	if sfx_bus_index >= 0:
-		var volume_db = linear_to_db(volume / 100.0)
+		# Apply master volume multiplier for web compatibility
+		var master_volume = current_settings.audio.master_volume
+		var final_volume = volume * (master_volume / 100.0)
+		var volume_db = linear_to_db(final_volume / 100.0)
 		AudioServer.set_bus_volume_db(sfx_bus_index, volume_db)
+		print("SettingsManager: SFX final volume: ", volume, "% * ", master_volume, "% = ", final_volume, "%")
 	else:
 		print("SettingsManager: SFX bus not found, creating it")
 		AudioServer.add_bus(1)
 		AudioServer.set_bus_name(1, "SFX")
-		var volume_db = linear_to_db(volume / 100.0)
+		var master_volume = current_settings.audio.master_volume
+		var final_volume = volume * (master_volume / 100.0)
+		var volume_db = linear_to_db(final_volume / 100.0)
 		AudioServer.set_bus_volume_db(1, volume_db)
 	
 	# Apply SFX bus to all existing button audio players that might not have it set
 	_ensure_button_audio_uses_sfx_bus()
 
 func apply_music_volume(volume: int):
-	"""Apply music volume setting"""
+	"""Apply music volume setting with master volume consideration"""
 	print("SettingsManager: Applying music volume: ", volume)
 	var music_bus_index = AudioServer.get_bus_index("Music")
 	if music_bus_index >= 0:
-		var volume_db = linear_to_db(volume / 100.0)
+		# Apply master volume multiplier for web compatibility
+		var master_volume = current_settings.audio.master_volume
+		var final_volume = volume * (master_volume / 100.0)
+		var volume_db = linear_to_db(final_volume / 100.0)
 		AudioServer.set_bus_volume_db(music_bus_index, volume_db)
+		print("SettingsManager: Music final volume: ", volume, "% * ", master_volume, "% = ", final_volume, "%")
 	else:
 		print("SettingsManager: Music bus not found, creating it")
 		AudioServer.add_bus(2)
 		AudioServer.set_bus_name(2, "Music")
-		var volume_db = linear_to_db(volume / 100.0)
+		var master_volume = current_settings.audio.master_volume
+		var final_volume = volume * (master_volume / 100.0)
+		var volume_db = linear_to_db(final_volume / 100.0)
 		AudioServer.set_bus_volume_db(2, volume_db)
 	
 	# Also notify BackgroundMusicManager if it exists
 	var music_manager = get_node_or_null("/root/BackgroundMusicManager")
 	if music_manager and music_manager.has_method("set_music_volume"):
+		# Send the original volume to BackgroundMusicManager, it will handle master volume separately if needed
 		music_manager.set_music_volume(volume / 100.0)
+	
+	# Music volume change should NOT affect SFX - only reapply SFX volume without changing master
+	# This prevents music volume from interfering with SFX volume
+	print("SettingsManager: Music volume changed - ensuring SFX volume remains independent")
 
 func _ensure_button_audio_uses_sfx_bus():
 	"""Ensure all button audio players use the SFX bus"""
@@ -220,8 +288,53 @@ func _ensure_button_audio_uses_sfx_bus():
 		
 		for audio_node in button_audio_nodes:
 			if audio_node.bus != "SFX":
+				print("SettingsManager: Found ", audio_node.name, " using bus '", audio_node.bus, "', changing to SFX")
 				audio_node.bus = "SFX"
-				print("SettingsManager: Set ", audio_node.name, " to use SFX bus")
+			else:
+				print("SettingsManager: ", audio_node.name, " already using SFX bus")
+	
+	# Also check all canvas layers (like settings popups)
+	var canvas_layers = get_tree().get_nodes_in_group("settings_popups")
+	for layer in canvas_layers:
+		var popup_audio_nodes = []
+		_find_button_audio_recursive(layer, popup_audio_nodes)
+		for audio_node in popup_audio_nodes:
+			if audio_node.bus != "SFX":
+				print("SettingsManager: Found popup ", audio_node.name, " using bus '", audio_node.bus, "', changing to SFX")
+				audio_node.bus = "SFX"
+			else:
+				print("SettingsManager: Popup ", audio_node.name, " already using SFX bus")
+	
+	# Also scan for any other audio players that should use SFX
+	_ensure_all_sfx_audio_uses_correct_bus()
+
+func _ensure_all_sfx_audio_uses_correct_bus():
+	"""Find and fix any AudioStreamPlayer that should be using SFX bus"""
+	var all_audio_players = get_tree().get_nodes_in_group("audio_players")
+	if all_audio_players.is_empty():
+		# If no group exists, scan manually
+		var root = get_tree().current_scene
+		if root:
+			var all_players = []
+			_find_all_audio_players_recursive(root, all_players)
+			for player in all_players:
+				if player is AudioStreamPlayer:
+					# Check if it's likely an SFX sound (not background music)
+					var node_name = player.name.to_lower()
+					if ("button" in node_name or "click" in node_name or "hover" in node_name or
+						"sfx" in node_name or "sound" in node_name or "audio" in node_name or
+						"attack" in node_name or "hurt" in node_name or "skill" in node_name):
+						if player.bus != "SFX":
+							print("SettingsManager: Found SFX audio '", player.name, "' using bus '", player.bus, "', changing to SFX")
+							player.bus = "SFX"
+
+func _find_all_audio_players_recursive(node: Node, result_array: Array):
+	"""Recursively find all AudioStreamPlayer nodes"""
+	if node is AudioStreamPlayer:
+		result_array.append(node)
+	
+	for child in node.get_children():
+		_find_all_audio_players_recursive(child, result_array)
 
 func _find_button_audio_recursive(node: Node, result_array: Array):
 	"""Recursively find ButtonClick and ButtonHover audio nodes"""
@@ -242,6 +355,13 @@ func _reapply_audio_settings_after_initialization():
 		var music_volume = current_settings.audio.music_volume
 		music_manager.set_music_volume(music_volume / 100.0)
 		print("SettingsManager: Applied music volume to BackgroundMusicManager: ", music_volume, "%")
+
+func _delayed_audio_check():
+	"""Delayed audio check to catch any late-loaded audio nodes"""
+	await get_tree().create_timer(1.0).timeout
+	print("SettingsManager: Running delayed audio bus check...")
+	_ensure_button_audio_uses_sfx_bus()
+	debug_audio_settings()
 
 func get_reading_speed() -> float:
 	return current_settings.accessibility.reading_speed

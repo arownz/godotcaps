@@ -44,6 +44,14 @@ func _ready():
 	# Add to settings popups group for battle scene communication
 	add_to_group("settings_popups")
 
+	# Ensure button audio uses SFX bus
+	var button_click = get_node_or_null("ButtonClick")
+	if button_click:
+		button_click.bus = "SFX"
+	var button_hover = get_node_or_null("ButtonHover")
+	if button_hover:
+		button_hover.bus = "SFX"
+
 	# Background click closes popup
 	var bg = get_node_or_null("Background")
 	if bg and not bg.gui_input.is_connected(_on_background_input):

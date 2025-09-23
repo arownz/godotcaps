@@ -95,7 +95,7 @@ var passages = [
         "level": 1
     },
     {
-        "title": "The School Bus Adventure",
+        "title": "The School Bus",
         "text": "Each morning, Lisa waits beside the road for her yellow school bus. The driver, Mr. Joe, waves with a smile. Lisa sits beside her friend Emma. They chat about favorite stories. Once they reach school, both girls feel eager to learn.",
         "sentences": [
             "Each morning, Lisa waits beside the road for her yellow school bus.",
@@ -117,7 +117,7 @@ var passages = [
         "level": 2
     },
     {
-        "title": "The Rainy Day Plan",
+        "title": "The Rainy Plan",
         "text": "Thick clouds filled the sky during Saturday morning. Rain started falling gently. Maria and her brother Carlos stayed indoors. They built one blanket fort using chairs. Inside their fort, both siblings read stories and laughed together.",
         "sentences": [
             "Thick clouds filled the sky during Saturday morning.",
@@ -1820,47 +1820,20 @@ func _show_all_passages_completed():
 	"""Show completion celebration when all passages are completed"""
 	print("ReadAloudGuided: All passages completed!")
 	
-	# Update UI to show completion
-	var title_label = $MainContainer/PassagePanel/MarginContainer/PassageContainer/PassageTitleLabel
-	var text_display = $MainContainer/PassagePanel/MarginContainer/PassageContainer/PassageText
-	var guide_display = $MainContainer/GuidePanel/MarginContainer/GuideContainer/GuideNotes
+	# Create progress data for completion celebration
+	var progress_data = {
+		"activities_completed": completed_activities,
+		"total_passages": passages.size()
+	}
 	
-	if title_label:
-		title_label.text = "All Passages Complete!"
-	
-	if text_display:
-		text_display.clear()
-		text_display.append_text("[center][color=gold][b]CONGRATULATIONS![/b][/color]\n\n")
-		text_display.append_text("You have successfully completed all guided reading passages!\n\n")
-		text_display.append_text("[color=green]✓ The Friendly Cat[/color]\n")
-		text_display.append_text("[color=green]✓ The Garden Surprise[/color]\n")
-		text_display.append_text("[color=green]✓ The School Bus Adventure[/color]\n")
-		text_display.append_text("[color=green]✓ The Rainy Day Plan[/color]\n\n")
-		text_display.append_text("You're becoming an excellent reader![/center]")
-	
-	if guide_display:
-		guide_display.text = "Amazing work! You've completed all guided reading activities. You can review any passage or return to the main menu."
-		guide_display.modulate = Color.GOLD
-	
-	# Disable navigation and reading controls
-	var read_button = $MainContainer/PassagePanel/ReadButton
-	var speak_button = $MainContainer/ControlsContainer/SpeakButton
-	var prev_button = $MainContainer/ControlsContainer/PreviousButton
-	var next_button = $MainContainer/ControlsContainer/NextButton
-	
-	if read_button:
-		read_button.text = "Review"
-		read_button.disabled = false
-	if speak_button:
-		speak_button.disabled = true
-	if prev_button:
-		prev_button.visible = true # Allow reviewing previous passages
-	if next_button:
-		next_button.visible = false # No more passages
-	
-	# Audio celebration
-	if tts:
-		tts.speak("Congratulations! You have completed all guided reading passages! You're doing fantastic work!")
+	# Show completion celebration like other modules
+	if completion_celebration:
+		completion_celebration.show_completion(
+			completion_celebration.CompletionType.READ_ALOUD_PASSAGE,
+			"All Guided Reading Passages",
+			progress_data,
+			"read_aloud"
+		)
 	
 	# Update progress display
 	_update_progress_display()

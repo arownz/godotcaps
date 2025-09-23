@@ -103,7 +103,7 @@ func _ready():
 
 func _process(_delta):
 	# Poll for speech recognition results if active
-	if recognition_active and OS.has_feature("JavaScript") and JavaScriptBridge.has_method("eval"):
+	if recognition_active and OS.has_feature("web") and JavaScriptBridge.has_method("eval"):
 		_poll_for_interim_results()
 
 # Continuous polling for speech results in _process
@@ -254,7 +254,7 @@ func _setup_web_speech_recognition():
 	print("SyllableBuildingModule: Setting up web speech recognition...")
 	
 	if not JavaScriptBridge.has_method("eval"):
-		print("SyllableBuildingModule: JavaScriptBridge not available")
+		print("SyllableBuildingModule: JavaScript bridge not available")
 		return
 	
 	# Initialize web environment and check permissions like ReadAloudGuided
@@ -313,8 +313,12 @@ func update_mic_permission_state(state):
 	else:
 		mic_permission_granted = false
 		print("SyllableBuildingModule: Microphone permission: ", state)
-	
-	var js_code = """
+
+# Initialize JavaScript environment for web audio - enhanced like ReadAloudGuided
+func _initialize_web_audio_environment():
+	"""Initialize JavaScript environment for web audio - ENHANCED with ReadAloudGuided patterns"""
+	if JavaScriptBridge.has_method("eval"):
+		var js_code = """
 		(function() {
 			// Check if functions already exist to avoid redefinition
 			if (typeof window.syllableRecognition === 'undefined') {
@@ -326,6 +330,7 @@ func update_mic_permission_state(state):
 				window.syllableFinalResult = '';
 				window.syllableInterimResult = '';
 				window.syllableResult = null;
+				window.syllableRecognitionError = null;
 				
 				// Permission check function
 				window.checkSyllablePermissions = function() {
@@ -468,65 +473,6 @@ func update_mic_permission_state(state):
 				return initResult;
 			}
 			return true;
-		})();
-	"""
-	
-	var result = JavaScriptBridge.eval(js_code)
-	if result:
-		print("SyllableBuildingModule: JavaScript environment initialized for web speech recognition")
-	else:
-		print("SyllableBuildingModule: Failed to initialize JavaScript environment")
-
-# Initialize JavaScript environment for web audio - enhanced like ReadAloudGuided
-func _initialize_web_audio_environment():
-	"""Initialize JavaScript environment for web audio - ENHANCED with ReadAloudGuided patterns"""
-	if JavaScriptBridge.has_method("eval"):
-		var js_code = """
-		(function() {
-			// Check if functions already exist to avoid redefinition
-			if (typeof window.syllableRecognition === 'undefined') {
-				// Global speech recognition variables
-				window.syllableRecognition = null;
-				window.syllableRecognitionActive = false;
-				window.syllablePermissionGranted = false;
-				window.syllablePermissionChecked = false;
-				window.syllableFinalResult = '';
-				window.syllableInterimResult = '';
-				window.syllableResult = null;
-				
-				// Permission check function
-				window.checkSyllablePermissions = function() {
-					if (navigator.permissions) {
-						navigator.permissions.query({name: 'microphone'}).then(function(result) {
-							window.syllablePermissionGranted = (result.state === 'granted');
-							window.syllablePermissionChecked = true;
-							console.log('SyllableBuildingModule: Permission state:', result.state);
-						}).catch(function(error) {
-							console.log('SyllableBuildingModule: Permission check failed:', error);
-							window.syllablePermissionChecked = true;
-						});
-					} else {
-						// Fallback for browsers without permission API
-						window.syllablePermissionChecked = true;
-					}
-				};
-				
-				// Request microphone permission
-				window.requestSyllableMicPermission = function() {
-					return navigator.mediaDevices.getUserMedia({audio: true})
-						.then(function(stream) {
-							window.syllablePermissionGranted = true;
-							stream.getTracks().forEach(function(track) {
-								track.stop();
-							});
-							return true;
-						})
-						.catch(function(error) {
-							console.log('SyllableBuildingModule: Permission denied:', error);
-							window.syllablePermissionGranted = false;
-							return false;
-						});
-				};
 		})();
 		"""
 		
