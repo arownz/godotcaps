@@ -12,7 +12,6 @@ var last_scene_name: String = ""
 var music_excluded_scenes: Array[String] = [
 	"BattleScene",
 	"ModuleScene",
-	"Authentication",
 	"FlipQuizAnimals",
 	"FlipQuizVehicle",
 	"FlipQuizModule",

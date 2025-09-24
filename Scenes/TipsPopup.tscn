@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://dwbgcm4h51s55"]
+[gd_scene load_steps=10 format=3 uid="uid://dwbgcm4h51s55"]
 
 [ext_resource type="Script" uid="uid://bpilknkrukhr5" path="res://Scripts/NotificationPopup.gd" id="1_sco0o"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="3_uo33e"]
@@ -7,6 +7,8 @@
 [ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="6_3551x"]
 [ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="6_iwvea"]
 [ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="7_uo33e"]
+
+[sub_resource type="VideoStreamTheora" id="VideoStreamTheora_iwvea"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_issni"]
 
@@ -65,6 +67,10 @@ theme_override_fonts/font = ExtResource("3_uo33e")
 theme_override_font_sizes/font_size = 25
 text = "Tips"
 horizontal_alignment = 1
+
+[node name="LoopVid" type="VideoStreamPlayer" parent="PopupContainer/CenterContainer/PopupBackground/VBoxContainer"]
+layout_mode = 2
+stream = SubResource("VideoStreamTheora_iwvea")
 
 [node name="DescriptionLabel" type="Label" parent="PopupContainer/CenterContainer/PopupBackground/VBoxContainer"]
 custom_minimum_size = Vector2(1, 1)

@@ -1315,3 +1315,14 @@ func _on_login_button_mouse_entered() -> void:
 
 func _on_logo_texture_mouse_entered() -> void:
 	pass # Replace with function body.
+
+
+func _on_settings_button_pressed():
+	$ButtonClick.play()
+	print("Authentication: Opening settings popup")
+	var settings_popup_scene = load("res://Scenes/SettingScene.tscn")
+	if settings_popup_scene:
+		var popup = settings_popup_scene.instantiate()
+		add_child(popup)
+		if popup.has_method("set_context"):
+			popup.set_context(false) # normal settings; hide battle buttons

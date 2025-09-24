@@ -364,6 +364,7 @@ func _setup_firestore_listener():
 func _cleanup_firestore_listener():
     # No real-time listener to clean up, just a placeholder for consistency
     print("Energy polling system will stop when scene changes") # Handle session and usage_time tracking for returning users
+    
 func _update_session_tracking():
     var user_id = Firebase.Auth.auth.localid
     if not user_id:
