@@ -7,11 +7,11 @@ var _extended_url
 var _collection_name
 const _separator = "/"
 
-func set_config(config : Dictionary):
+func set_config(config: Dictionary):
 	_extended_url = config.extended_url
 	_collection_name = config.collection_name
 
-func push_back(transform : FieldTransform) -> void:
+func push_back(transform: FieldTransform) -> void:
 	transforms.push_back(transform)
 
 func serialize() -> Dictionary:
@@ -19,8 +19,8 @@ func serialize() -> Dictionary:
 	var writes_array = []
 	for transform in transforms:
 		writes_array.push_back({
-			"currentDocument": { "exists" : transform.document_exists },
-			"transform" : {
+			"currentDocument": {"exists": transform.document_exists},
+			"transform": {
 				"document": _extended_url + _collection_name + _separator + transform.document_name,
 				"fieldTransforms": [
 					{
@@ -30,6 +30,6 @@ func serialize() -> Dictionary:
 				}
 			})
 			
-	body = { "writes": writes_array }
+	body = {"writes": writes_array}
 
 	return body

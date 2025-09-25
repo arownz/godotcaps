@@ -741,12 +741,26 @@ func _start_live_recognition() -> bool:
 							sampleRate: 48000,           // High sample rate for better quality
 							sampleSize: 16,
 							channelCount: 1,
-							// Additional sensitivity settings
+							// Enhanced sensitivity settings for dyslexic learners
 							googEchoCancellation: false,
 							googAutoGainControl: true,
 							googNoiseSuppression: false,
 							googHighpassFilter: false,
-							googAudioMirroring: false
+							googAudioMirroring: false,
+							// Volume and gain settings for quiet speakers
+							volume: 1.0,
+							gain: 2.0,  // Boost gain for better pickup
+							// Advanced microphone settings
+							advanced: [{
+								'name': 'googExperimentalEchoCancellation',
+								'value': 'false'
+							}, {
+								'name': 'googDAEchoCancellation',
+								'value': 'false'
+							}, {
+								'name': 'googExperimentalNoiseSuppression', 
+								'value': 'false'
+							}]
 						}
 					};
 					
@@ -764,7 +778,18 @@ func _start_live_recognition() -> bool:
 					window.currentRecognition.continuous = true;
 					window.currentRecognition.interimResults = true;
 					window.currentRecognition.lang = 'en-US';
-					window.currentRecognition.maxAlternatives = 8;  // More alternatives for better accuracy
+					window.currentRecognition.maxAlternatives = 10;  // More alternatives for better accuracy
+					
+					// Enhanced sensitivity settings for better word recognition
+					if (window.currentRecognition.hasOwnProperty('sensitivity')) {
+						window.currentRecognition.sensitivity = 1.0; // Maximum sensitivity
+					}
+					if (window.currentRecognition.hasOwnProperty('speechTimeout')) {
+						window.currentRecognition.speechTimeout = 10000; // 10 seconds timeout
+					}
+					if (window.currentRecognition.hasOwnProperty('speechStartTimeout')) {
+						window.currentRecognition.speechStartTimeout = 8000; // 8 seconds to start speaking
+					}
 					
 					// ENHANCED SENSITIVITY SETTINGS for better recognition
 					if (window.currentRecognition.serviceURI) {
@@ -802,8 +827,8 @@ func _start_live_recognition() -> bool:
 							
 							console.log('Raw transcript:', transcript, 'Confidence:', confidence, 'Final:', isFinal);
 							
-							// ENHANCED SENSITIVITY: Accept lower confidence for quieter speech
-							let minConfidence = 0.3; // Lowered from 0.5 to 0.3 for better sensitivity
+							// ENHANCED SENSITIVITY: Accept lower confidence for quieter speech and dyslexic speakers
+							let minConfidence = 0.2; // Lowered from 0.5 to 0.2 for maximum sensitivity
 							
 							// Process multiple alternatives for better accuracy (especially for quiet speech)
 							if (result.length > 1) {
@@ -1676,21 +1701,22 @@ func _on_tts_speech_error(error_msg):
 
 func _on_tts_settings_button_pressed():
 	$ButtonClick.play()
-	# Load and show the TTS settings popup
-	var tts_popup = load("res://Scenes/TTSSettingsPopup.tscn").instantiate()
-	add_child(tts_popup)
+	# Open the main settings scene instead of TTS-specific popup
+	var settings_scene = load("res://Scenes/SettingScene.tscn").instantiate()
+	get_tree().root.add_child(settings_scene)
 	
-	# Set up the popup with current settings
-	tts_popup.setup(tts, tts.current_voice, tts.speech_rate, challenge_word)
+	# Connect to handle quit requests from settings popup
+	if settings_scene.has_signal("quit_requested"):
+		settings_scene.quit_requested.connect(_on_settings_quit_requested)
 	
-	# Connect signals
-	tts_popup.settings_saved.connect(_on_tts_settings_saved)
-	tts_popup.settings_closed.connect(_on_tts_settings_closed)
+	# CanvasLayer is already rendered on top, no need to set_as_top_level
 
-func _on_tts_settings_saved(voice_id, rate):
-	# Apply the new settings
+func _on_tts_settings_saved(voice_id, rate, volume):
+	# Apply the new settings including volume
 	tts.set_voice(voice_id)
 	tts.set_rate(rate)
+	if tts.has_method("set_volume"):
+		tts.set_volume(volume)
 
 func _on_tts_settings_closed():
 	# Do any cleanup needed when the popup is closed
@@ -1758,3 +1784,21 @@ func _get_word_length_for_dungeon() -> int:
 
 func _on_cancel_button_mouse_entered() -> void:
 	$ButtonHover.play()
+
+# Handle quit request from settings popup - leave the battle entirely
+func _on_settings_quit_requested():
+	print("WordChallengePanel_STT: Settings quit requested - leaving battle")
+	
+	# Stop any ongoing speech recognition
+	if recognition_active:
+		_stop_live_recognition()
+	
+	# Signal the BattleScene to quit instead of trying to change scenes ourselves
+	var battle_scene = get_node_or_null("/root/BattleScene")
+	if battle_scene and battle_scene.has_method("_on_battle_quit_requested"):
+		print("WordChallengePanel_STT: Calling BattleScene quit function")
+		battle_scene._on_battle_quit_requested()
+	else:
+		print("WordChallengePanel_STT: Could not find BattleScene, canceling challenge instead")
+		# Fallback to canceling the challenge
+		_fade_out_and_signal("challenge_cancelled")

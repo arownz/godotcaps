@@ -375,17 +375,28 @@ func _previous_target():
 func _on_whiteboard_result(text_result: String):
 	print("PhonicsSightWords: Whiteboard result -> ", text_result)
 	
-	# Enhanced recognition with dyslexia-friendly matching
+	# Enhanced recognition with OCR correction and dyslexia-friendly matching
 	var recognized_text = text_result.strip_edges().to_lower()
 	var target_word = current_target.to_lower()
 	
+	# Apply OCR correction for common letter/digit confusions in sight words
+	recognized_text = _apply_sight_word_ocr_correction(recognized_text, target_word)
+	print("PhonicsSightWords: After OCR correction -> ", recognized_text)
+	
 	# Check if recognition matches current target word
 	var is_correct = false
+	var confidence_score = 0.0
+	
+	# Direct match gets highest confidence
 	if recognized_text == target_word:
 		is_correct = true
+		confidence_score = 1.0
 	# Also accept close matches (dyslexia-friendly fuzzy matching)
-	elif _calculate_word_similarity(recognized_text, target_word) >= 0.7:
-		is_correct = true # Accept close matches for dyslexic users
+	else:
+		confidence_score = _calculate_word_similarity(recognized_text, target_word)
+		is_correct = confidence_score >= 0.7 # Accept close matches for dyslexic users
+	
+	print("PhonicsSightWords: Confidence score: ", confidence_score, " | Is correct: ", is_correct)
 	
 	if is_correct:
 		print("PhonicsSightWords: Correct sight word recognized - ", target_word)
@@ -557,3 +568,57 @@ func _toggle_focus_mode():
 			var target_alpha = 0.35 if sight_focus_mode else 1.0
 			tween.tween_property(node, "modulate:a", target_alpha, 0.4)
 	print("PhonicsSightWords: Focus mode = ", sight_focus_mode)
+
+# OCR correction specifically for sight word recognition
+func _apply_sight_word_ocr_correction(recognized: String, target: String) -> String:
+	var corrected = recognized
+	
+	# Common OCR letter/digit confusions that affect sight words
+	var digit_to_letter_map = {
+		"0": "o",
+		"1": "i",
+		"5": "s",
+		"6": "g",
+		"2": "z",
+		"8": "b"
+	}
+	
+	# Apply character-by-character corrections
+	var new_text = ""
+	for i in range(corrected.length()):
+		var character = corrected[i]
+		if digit_to_letter_map.has(character):
+			new_text += digit_to_letter_map[character]
+		else:
+			new_text += character
+	corrected = new_text
+	
+	# Specific sight word OCR corrections based on common recognition errors
+	var sight_word_corrections = {
+		# Common "the" misrecognitions
+		"1he": "the", "tne": "the", "tnr": "the", "th3": "the",
+		# Common "and" misrecognitions  
+		"anc": "and", "an6": "and", "ana": "and",
+		# Common "to" misrecognitions
+		"t0": "to", "1o": "to", "70": "to",
+		# Common "a" misrecognitions
+		"4": "a", "@": "a",
+		# Common "of" misrecognitions
+		"0f": "of", "ol": "of",
+		# Common "in" misrecognitions
+		"1n": "in", "ln": "in",
+		# Common "is" misrecognitions
+		"1s": "is", "ls": "is",
+		# Common "it" misrecognitions
+		"1t": "it", "lt": "it",
+		# Common "I" misrecognitions  
+		"1": "i", "l": "i"
+	}
+	
+	# Apply sight word specific corrections
+	if sight_word_corrections.has(corrected) and sight_word_corrections[corrected] == target:
+		var original = corrected
+		corrected = sight_word_corrections[corrected]
+		print("PhonicsSightWords: Sight word OCR corrected ", original, " → ", corrected)
+	
+	return corrected

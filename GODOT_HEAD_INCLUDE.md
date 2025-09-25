@@ -1,0 +1,563 @@
+# Head Include Content for Godot WebGL Export
+
+Copy and paste this content into your Godot Editor's **Project → Project Settings → Export → Web → Options → Head Include** field:
+
+```html
+<!-- Letter Recognition Enhancement for Google Cloud Vision API -->
+<script src="letter_recognition.js"></script>
+<meta property="og:title" content="Lexia" />
+<meta
+  property="og:description"
+  content="2D Dyslexia Gamification Browser Base"
+/>
+<meta property="og:type" content="website" />
+
+<meta name="mobile-web-app-capable" content="yes" />
+<meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp" />
+<meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin" />
+
+<script>
+  // ===== GLOBAL CONFIGURATION =====
+  window.GOOGLE_CLOUD_API_KEY = ""; // Will be set from Godot environment variables
+
+  // ===== STATE MANAGEMENT =====
+  // Debug and logging functions
+  window.debugLog = function (message) {
+    console.log("GODOT DEBUG:", message);
+    var debugOutput = document.getElementById("debug-output");
+    if (debugOutput) {
+      debugOutput.style.display = "block";
+      debugOutput.innerText += message + "\n";
+      debugOutput.scrollTop = debugOutput.scrollHeight;
+    }
+    return true;
+  };
+
+  // Speech recognition state with enhanced sensitivity
+  window.godot_speech = {
+    mediaRecorder: null,
+    audioChunks: [],
+    audioStream: null,
+    recording: false,
+    permissionState: "prompt",
+    sensitivity: 1.0, // Maximum sensitivity
+
+    // Debug logging function
+    debugLog: function (message) {
+      console.log("Speech Debug:", message);
+      var debugOutput = document.getElementById("debug-output");
+      if (debugOutput) {
+        debugOutput.innerText += "Speech: " + message + "\n";
+        debugOutput.scrollTop = debugOutput.scrollHeight;
+      }
+    },
+  };
+
+  // Challenge word tracking
+  window.currentChallengeWord = "";
+  window.setChallengeWord = function (word) {
+    window.currentChallengeWord = word;
+    window.challengeWord = word; // For compatibility with both versions used
+    console.log("Challenge word set to:", word);
+    window.debugLog("Challenge word set to: " + word);
+  };
+
+  // Enhanced Text-to-Speech functionality
+  window.speakText = function (text, voiceId, rate, volume) {
+    console.log("Speaking text:", text, "with volume:", volume);
+
+    // Default voice settings
+    let voice = null;
+    const voices = window.speechSynthesis.getVoices();
+
+    // Try to find the specific voice if provided
+    if (voiceId) {
+      voice = voices.find((v) => v.voiceURI === voiceId);
+    }
+
+    // If no voice found or specified, use default English voice
+    if (!voice) {
+      voice =
+        voices.find((v) => v.lang.includes("en") && v.default) ||
+        voices.find((v) => v.lang.includes("en")) ||
+        voices[0];
+    }
+
+    if (voice) {
+      console.log("Speaking text with voice:", voice.name);
+    }
+
+    // Create and configure utterance
+    const utterance = new SpeechSynthesisUtterance(text);
+    if (voice) utterance.voice = voice;
+    utterance.lang = "en-US";
+    utterance.rate = rate || 0.8; // Default to slightly slower rate for dyslexic users
+    utterance.pitch = 1.0;
+    utterance.volume = volume !== undefined ? volume : 1.0; // Support volume control
+
+    console.log(
+      "Speaking text with rate",
+      utterance.rate,
+      "and volume",
+      utterance.volume + ":",
+      text
+    );
+
+    // Speak the text
+    window.speechSynthesis.speak(utterance);
+  };
+
+  // Save TTS settings
+  window.saveTTSSettings = function (voiceId, rate) {
+    localStorage.setItem("tts_voice_id", voiceId);
+    localStorage.setItem("tts_rate", rate);
+    console.log("TTS settings saved:", voiceId, rate);
+  };
+
+  // JavaScript bridge test function
+  window.testJavaScriptBridge = function () {
+    console.log("JavaScript bridge test function called successfully");
+    return "JavaScript bridge is working!";
+  };
+
+  // ===== ENHANCED IMAGE PROCESSING (VISION API) =====
+  // Direct function for Godot to process an image through Google Cloud Vision API
+  window.godotProcessImageVision = function (base64Image, width, height) {
+    return new Promise(function (resolve, reject) {
+      try {
+        console.log(
+          "godotProcessImageVision called with image: " + width + "x" + height
+        );
+
+        // First preprocess the image with timeout handling
+        const preprocessPromise = new Promise(
+          (resolvePreprocess, rejectPreprocess) => {
+            // Set a timeout for preprocessing
+            const timeoutId = setTimeout(() => {
+              rejectPreprocess(new Error("Preprocessing timed out"));
+            }, 8000); // Increased timeout for better processing
+
+            window
+              .preprocessHandwritingImage(base64Image, width, height)
+              .then(function (processedImage) {
+                clearTimeout(timeoutId);
+                resolvePreprocess(processedImage);
+              })
+              .catch(function (error) {
+                clearTimeout(timeoutId);
+                rejectPreprocess(error);
+              });
+          }
+        );
+
+        preprocessPromise
+          .then(function (processedImage) {
+            // Then call the Cloud Vision API with timeout handling
+            const apiPromise = new Promise((resolveApi, rejectApi) => {
+              // Set a timeout for API call
+              const timeoutId = setTimeout(() => {
+                rejectApi(new Error("API call timed out"));
+              }, 15000); // Increased timeout for API calls
+
+              window
+                .callGoogleVisionApi(processedImage)
+                .then(function (result) {
+                  clearTimeout(timeoutId);
+                  console.log("Vision API result:", result);
+                  resolve(result);
+                })
+                .catch(function (error) {
+                  clearTimeout(timeoutId);
+                  console.error("Error in Vision API call:", error);
+                  resolve("recognition_error: " + error.message);
+                });
+            });
+
+            return apiPromise;
+          })
+          .catch(function (error) {
+            console.error("Error preprocessing image:", error);
+            resolve("recognition_error: " + error.message);
+          });
+      } catch (error) {
+        console.error("Error in image processing:", error);
+        resolve("recognition_error: " + error.message);
+      }
+    });
+  };
+
+  // Enhanced function to preprocess images before sending to Cloud Vision API
+  window.preprocessHandwritingImage = function (
+    imageBase64,
+    canvasWidth,
+    canvasHeight
+  ) {
+    return new Promise((resolve) => {
+      try {
+        console.log(
+          "Enhanced preprocessing image: " + canvasWidth + "x" + canvasHeight
+        );
+        const img = new Image();
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        // Use higher resolution for better OCR accuracy
+        const maxSize = 1200; // Increased for better recognition
+        let width = canvasWidth;
+        let height = canvasHeight;
+
+        // Resize if too large, but maintain aspect ratio
+        if (width > maxSize || height > maxSize) {
+          const ratio = width / height;
+          if (width > height) {
+            width = maxSize;
+            height = width / ratio;
+          } else {
+            height = maxSize;
+            width = height * ratio;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+        // Add error handling to image loading
+        img.onload = function () {
+          // Draw image on white background
+          ctx.fillStyle = "white";
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+          // Draw the original image
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // Enhanced image processing for better text recognition
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          const data = imageData.data;
+
+          // Multi-pass processing for better text recognition
+
+          // Pass 1: Contrast enhancement with better thresholding
+          for (let i = 0; i < data.length; i += 4) {
+            const r = data[i];
+            const g = data[i + 1];
+            const b = data[i + 2];
+
+            // Calculate luminance
+            const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+
+            // Enhanced contrast with adaptive threshold for handwriting
+            const threshold = 170; // Adjusted for better letter detection
+            const value = luminance < threshold ? 0 : 255;
+
+            data[i] = data[i + 1] = data[i + 2] = value;
+            // Keep alpha channel unchanged
+          }
+
+          ctx.putImageData(imageData, 0, 0);
+
+          // Pass 2: Enhanced noise reduction and stroke strengthening
+          const processedImageData = ctx.getImageData(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+          );
+          const processedData = processedImageData.data;
+
+          // Improved noise reduction - remove isolated pixels but preserve strokes
+          for (let y = 1; y < canvas.height - 1; y++) {
+            for (let x = 1; x < canvas.width - 1; x++) {
+              const idx = (y * canvas.width + x) * 4;
+
+              // If current pixel is black, check neighbors
+              if (processedData[idx] === 0) {
+                let blackNeighbors = 0;
+                let diagonalNeighbors = 0;
+
+                // Check 8 neighbors (including diagonals)
+                for (let dy = -1; dy <= 1; dy++) {
+                  for (let dx = -1; dx <= 1; dx++) {
+                    if (dx === 0 && dy === 0) continue;
+                    const nIdx = ((y + dy) * canvas.width + (x + dx)) * 4;
+                    if (processedData[nIdx] === 0) {
+                      blackNeighbors++;
+                      if (Math.abs(dx) === 1 && Math.abs(dy) === 1) {
+                        diagonalNeighbors++;
+                      }
+                    }
+                  }
+                }
+
+                // More conservative noise removal - only remove truly isolated pixels
+                if (blackNeighbors < 2 && diagonalNeighbors === 0) {
+                  processedData[idx] =
+                    processedData[idx + 1] =
+                    processedData[idx + 2] =
+                      255;
+                }
+              }
+            }
+          }
+
+          ctx.putImageData(processedImageData, 0, 0);
+
+          // Use PNG format for maximum quality
+          try {
+            const pngData = canvas.toDataURL("image/png", 1.0).split(",")[1];
+            console.log(
+              "Enhanced preprocessing complete - High resolution PNG with improved filtering"
+            );
+            resolve(pngData);
+          } catch (e) {
+            console.error("Error converting processed image:", e);
+            resolve(imageBase64); // Fallback to original image
+          }
+        };
+
+        img.onerror = function (e) {
+          console.error("Error loading image for preprocessing:", e);
+          resolve(imageBase64); // Fallback to original image
+        };
+
+        // Set crossOrigin to anonymous
+        img.crossOrigin = "Anonymous";
+        img.src = "data:image/png;base64," + imageBase64;
+      } catch (e) {
+        console.error("Preprocessing error:", e);
+        resolve(imageBase64); // Fallback to original image
+      }
+    });
+  };
+
+  // Enhanced Google Cloud Vision API implementation
+  window.callGoogleVisionApi = async function (base64Image) {
+    try {
+      console.log("Calling Enhanced Google Cloud Vision API...");
+
+      // Use the configured API key
+      const apiKey = window.GOOGLE_CLOUD_API_KEY;
+      if (!apiKey) {
+        throw new Error("API key not found");
+      }
+
+      const url =
+        "https://vision.googleapis.com/v1/images:annotate?key=" + apiKey;
+
+      // Log image size to help with debugging
+      console.log("Image size (bytes):", Math.round(base64Image.length * 0.75));
+
+      // Enhanced request data with letter-optimized settings
+      const requestData = {
+        requests: [
+          {
+            image: {
+              content: base64Image,
+            },
+            features: [
+              {
+                type: "DOCUMENT_TEXT_DETECTION",
+                maxResults: 10,
+              },
+              {
+                type: "TEXT_DETECTION",
+                maxResults: 10,
+              },
+            ],
+            imageContext: {
+              languageHints: ["en"],
+              textDetectionParams: {
+                enableTextDetectionConfidenceScore: true,
+              },
+            },
+          },
+        ],
+      };
+
+      // Send the request with improved error handling
+      console.log("Sending enhanced request to Vision API...");
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(requestData),
+      });
+
+      console.log("Response status:", response.status);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("API error response:", errorText);
+        throw new Error(
+          `API request failed: ${response.status} - ${errorText}`
+        );
+      }
+
+      const result = await response.json();
+      console.log("Enhanced Vision API response:", result);
+
+      // Extract text from response with improved processing
+      if (result.responses && result.responses[0]) {
+        // First try fullTextAnnotation
+        if (result.responses[0].fullTextAnnotation) {
+          const text = result.responses[0].fullTextAnnotation.text.trim();
+          console.log("Using fullTextAnnotation:", text);
+          return text;
+        }
+        // Then try textAnnotations
+        else if (
+          result.responses[0].textAnnotations &&
+          result.responses[0].textAnnotations.length > 0
+        ) {
+          const text =
+            result.responses[0].textAnnotations[0].description.trim();
+          console.log("Using textAnnotations:", text);
+          return text;
+        }
+      }
+
+      return "no_text_detected";
+    } catch (error) {
+      console.error("Error in Enhanced Vision API call:", error);
+      return "recognition_error";
+    }
+  };
+
+  // ===== ENHANCED INITIALIZATION =====
+  document.addEventListener("DOMContentLoaded", function () {
+    console.log("Initializing enhanced web features for dyslexia learning...");
+
+    // 1. Initialize speech synthesis with enhanced settings
+    if ("speechSynthesis" in window) {
+      console.log("Initializing enhanced speech synthesis...");
+
+      // Get available voices immediately
+      window.speechSynthesis.getVoices();
+
+      // Set up voice change event handler
+      if (typeof speechSynthesis.onvoiceschanged !== "undefined") {
+        speechSynthesis.onvoiceschanged = function () {
+          console.log(
+            "Voices loaded:",
+            window.speechSynthesis.getVoices().length
+          );
+        };
+      }
+
+      // Create a silent utterance to initialize the system
+      const silence = new SpeechSynthesisUtterance("");
+      silence.volume = 0; // Silent
+      window.speechSynthesis.speak(silence);
+
+      // Set up user interaction handler for browsers that need it
+      document.addEventListener("click", function initAudio() {
+        if (window.speechSynthesis) {
+          const click = new SpeechSynthesisUtterance(".");
+          click.volume = 0;
+          window.speechSynthesis.speak(click);
+
+          // Only need to do this once
+          document.removeEventListener("click", initAudio);
+          console.log(
+            "Enhanced speech synthesis initialized via user interaction"
+          );
+        }
+      });
+    }
+
+    // 2. Check for existing microphone permissions WITHOUT requesting them
+    if (navigator.permissions && navigator.permissions.query) {
+      navigator.permissions
+        .query({ name: "microphone" })
+        .then(function (permissionStatus) {
+          window.godot_speech.permissionState = permissionStatus.state;
+          console.log(
+            "Initial microphone permission state:",
+            permissionStatus.state
+          );
+
+          // Set up permission change listener
+          permissionStatus.onchange = function () {
+            window.godot_speech.permissionState = this.state;
+            console.log("Microphone permission state changed to:", this.state);
+          };
+        })
+        .catch(function (error) {
+          console.error("Error checking microphone permission:", error);
+        });
+    }
+
+    // 3. Setup enhanced audio permission request helper
+    window.requestAudioPermission = function () {
+      return navigator.mediaDevices
+        .getUserMedia({
+          audio: {
+            echoCancellation: false,
+            noiseSuppression: false,
+            autoGainControl: true,
+            sampleRate: 48000,
+            channelCount: 1,
+          },
+        })
+        .then(function (stream) {
+          // Stop tracks immediately, we just wanted permission
+          stream.getTracks().forEach((track) => track.stop());
+          console.log(
+            "Enhanced audio permission granted with high sensitivity settings"
+          );
+          return true;
+        })
+        .catch(function (err) {
+          console.error("Audio permission denied:", err);
+          return false;
+        });
+    };
+
+    // 4. Tell Godot when engine is ready
+    window.addEventListener("godot-engine-ready", function () {
+      console.log("Notifying Godot the enhanced engine is ready");
+    });
+  });
+
+  // Clean up audio resources when page is unloaded
+  window.addEventListener("beforeunload", function () {
+    if (window.godot_speech && window.godot_speech.audioStream) {
+      window.godot_speech.audioStream
+        .getTracks()
+        .forEach((track) => track.stop());
+    }
+  });
+
+  // ===== OAUTH REDIRECT HANDLING =====
+  // Handle OAuth redirect in same tab
+  window.addEventListener("load", function () {
+    // Check if we're returning from OAuth
+    if (
+      window.location.hash.includes("access_token") ||
+      window.location.hash.includes("state=google_auth")
+    ) {
+      console.log("OAuth redirect detected, processing...");
+      // The Godot game will handle the token processing
+
+      // Optional: Clean up URL hash after processing
+      setTimeout(function () {
+        if (window.history && window.history.replaceState) {
+          window.history.replaceState(null, null, window.location.pathname);
+        }
+      }, 1000);
+    }
+  });
+</script>
+```
+
+## Instructions:
+
+1. Copy the entire content above (from `<!-- Letter Recognition Enhancement...` to `</script>`)
+2. Open Godot Editor
+3. Go to **Project → Project Settings → Export → Web**
+4. Find the **Head Include** field in the Options section
+5. Paste the content there
+6. Export your project
+
+This will ensure that both letter recognition (for whiteboard) and enhanced speech recognition (for STT) work properly in your exported WebGL build.

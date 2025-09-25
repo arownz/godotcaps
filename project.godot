@@ -13,6 +13,7 @@ config_version=5
 config/name="Lexia"
 config/description="2D Dyslexia Gamification Browser Base (Chrome, Edge, Firefox, Brave)"
 config/version="1.0"
+config/tags=PackedStringArray("dyslexia")
 run/main_scene="uid://cbpwvuj8kdyod"
 config/features=PackedStringArray("4.5", "GL Compatibility")
 boot_splash/fullsize=false
@@ -79,7 +80,6 @@ pointing/emulate_touch_from_mouse=true
 
 textures/canvas_textures/default_texture_filter=0
 renderer/rendering_method="gl_compatibility"
-renderer/rendering_method.mobile="gl_compatibility"
 textures/vram_compression/import_etc2_astc=true
 textures/lossless_compression/force_png=true
 textures/webp_compression/lossless_compression_factor=50.0

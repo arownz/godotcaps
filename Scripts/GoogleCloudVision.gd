@@ -46,23 +46,23 @@ func _recognize_handwriting_web():
 		emit_signal("recognition_error", "No image data provided")
 		return
 	
-	# Use JavaScript to preprocess and call the Vision API
-	print("Calling JavaScript Bridge for Cloud Vision API")
+	# Use JavaScript to preprocess and call the Vision API with letter-focused processing
+	print("Calling JavaScript Bridge for Cloud Vision API with letter optimization")
 	var js_code = """
 	(async function() {
 		try {
-			console.log('Processing image for recognition...');
+			console.log('Processing image for letter recognition...');
 			
-			// First preprocess the image (resize, enhance contrast)
-			const preprocessed = await window.preprocessHandwritingImage(%s, 800, 600);
-			console.log('Image preprocessed, sending to Cloud Vision API');
+			// Enhanced preprocessing for letter recognition (larger size, better contrast)
+			const preprocessed = await window.preprocessHandwritingImage(%s, 1200, 900, true);
+			console.log('Image preprocessed for letters, sending to Cloud Vision API');
 			
-			// Then send to Cloud Vision API
-			const result = await window.callGoogleVisionApi(preprocessed);
-			console.log('Recognition result:', result);
+			// Send to Cloud Vision API with letter-focused settings
+			const result = await window.callGoogleVisionApi(preprocessed, 'LETTER_MODE');
+			console.log('Letter recognition result:', result);
 			return result;
 		} catch (e) {
-			console.error('Error in JavaScript recognition:', e);
+			console.error('Error in JavaScript letter recognition:', e);
 			return 'error:' + e.toString();
 		}
 	})();

@@ -229,19 +229,28 @@ func _draw_stroke(stroke):
 	for point in stroke.points:
 		points_array.append(point)
 	
-	# Draw with rounded caps and smooth joints for better appearance
+	# Enhanced smooth drawing with anti-aliasing and better stroke rendering
 	for i in range(1, points_array.size()):
 		var from = points_array[i - 1]
 		var to = points_array[i]
 		
-		# Use the stroke width with rounded caps for smoother appearance
+		# Use anti-aliased lines with rounded caps for smoother appearance
 		$VBoxContainer/DrawingArea.draw_line(from, to, stroke.color, stroke.width, true)
 		
-		# Add rounded caps at the endpoints for professional look
-		if i == 1: # First point
-			$VBoxContainer/DrawingArea.draw_circle(from, stroke.width / 2.0, stroke.color)
+		# Add smooth overlapping circles for better stroke continuity
+		var circle_radius = stroke.width / 2.0
+		$VBoxContainer/DrawingArea.draw_circle(from, circle_radius, stroke.color)
 		if i == points_array.size() - 1: # Last point
-			$VBoxContainer/DrawingArea.draw_circle(to, stroke.width / 2.0, stroke.color)
+			$VBoxContainer/DrawingArea.draw_circle(to, circle_radius, stroke.color)
+		
+		# Add intermediate circles for very smooth strokes on longer segments
+		var distance = from.distance_to(to)
+		if distance > stroke.width * 0.5:
+			var steps = int(distance / (stroke.width * 0.3))
+			for step in range(1, steps):
+				var t = float(step) / float(steps)
+				var intermediate_point = from.lerp(to, t)
+				$VBoxContainer/DrawingArea.draw_circle(intermediate_point, circle_radius * 0.8, stroke.color)
 
 # Undo last stroke
 func _on_undo_button_pressed():
@@ -639,13 +648,13 @@ func setup_drawing():
 # Setup adaptive stroke width based on module mode
 func _setup_stroke_width():
 	if module_mode:
-		# In module mode (letter/word tracing), use thicker stroke for better visibility
-		stroke_width = 8.0
-		debug_log("Module mode: Using thick stroke width for tracing practice")
+		# In module mode (letter/word tracing), use thicker stroke for better visibility and smoother rendering
+		stroke_width = 8.0 # Reduced for smoother curves while maintaining visibility
+		debug_log("Module mode: Using optimized stroke width for letter tracing")
 	else:
 		# In battle mode, use moderate stroke width for general word writing
-		stroke_width = 5.0
-		debug_log("Battle mode: Using standard stroke width for word challenges")
+		stroke_width = 4.0 # Slightly reduced for smoother rendering
+		debug_log("Battle mode: Using optimized stroke width for word challenges")
 
 # UI status messages
 func _show_status_message(text, color = Color(1, 1, 1, 1)):

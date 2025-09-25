@@ -357,31 +357,34 @@ func _previous_target():
 func _on_whiteboard_result(text_result: String):
 	print("PhonicsLetters: Whiteboard result -> ", text_result)
 	
-	# Enhanced recognition with dyslexia-friendly matching
+	# Enhanced recognition with letter-specific OCR correction and dyslexia-friendly matching
 	var recognized_text = text_result.strip_edges().to_upper()
 	var target_letter = current_target.to_upper()
 	
+	# Apply OCR correction for common letter/digit confusions
+	recognized_text = _apply_letter_ocr_correction(recognized_text, target_letter)
+	print("PhonicsLetters: After OCR correction -> ", recognized_text)
+	
 	# Check if recognition matches current target letter
 	var is_correct = false
+	var confidence_score = 0.0
+	
+	# Direct match gets highest confidence
 	if recognized_text == target_letter:
 		is_correct = true
-	# Also accept close matches (dyslexia-friendly fuzzy matching)
+		confidence_score = 1.0
+	# Letter similarity analysis for single characters
 	elif recognized_text.length() == 1 and target_letter.length() == 1:
-		# Allow common letter confusions for dyslexic users
-		var letter_confusions = {
-			"B": ["D", "P"],
-			"D": ["B", "P"],
-			"P": ["B", "D"],
-			"Q": ["G", "O"],
-			"G": ["Q", "O"],
-			"O": ["Q", "G"],
-			"M": ["W", "N"],
-			"W": ["M", "N"],
-			"N": ["M", "W"]
-		}
-		
-		if letter_confusions.has(target_letter) and letter_confusions[target_letter].has(recognized_text):
-			is_correct = true # Accept common reversals/confusions
+		confidence_score = _calculate_letter_similarity(recognized_text, target_letter)
+		is_correct = confidence_score >= 0.7 # Accept with 70% confidence or higher
+	# Multi-character results - extract potential letter
+	elif recognized_text.length() > 1:
+		var extracted_letter = _extract_target_letter(recognized_text, target_letter)
+		if extracted_letter == target_letter:
+			is_correct = true
+			confidence_score = 0.8
+	
+	print("PhonicsLetters: Confidence score: ", confidence_score, " | Is correct: ", is_correct)
 	
 	if is_correct:
 		print("PhonicsLetters: Correct letter recognized - ", target_letter)
@@ -543,3 +546,127 @@ func _on_tts_settings_saved(voice_id: String, rate: float):
 	# Store in SettingsManager for persistence
 	SettingsManager.set_setting("accessibility", "tts_voice_id", voice_id)
 	SettingsManager.set_setting("accessibility", "tts_rate", rate)
+
+# OCR correction specifically for letter recognition (fixes I→1, O→0 confusion)
+func _apply_letter_ocr_correction(recognized: String, target: String) -> String:
+	var corrected = recognized
+	
+	# Common OCR letter/digit confusions
+	var digit_to_letter_map = {
+		"0": "O",
+		"1": "I",
+		"5": "S",
+		"6": "G",
+		"2": "Z",
+		"8": "B"
+	}
+	
+	# Apply corrections for single character results
+	if corrected.length() == 1 and digit_to_letter_map.has(corrected):
+		var potential_letter = digit_to_letter_map[corrected]
+		# Only correct if it matches our target or is a reasonable substitute
+		if potential_letter == target:
+			corrected = potential_letter
+			print("PhonicsLetters: OCR corrected ", recognized, " → ", corrected)
+	
+	# Handle multi-character strings by checking each character
+	elif corrected.length() > 1:
+		var new_text = ""
+		for i in range(corrected.length()):
+			var character = corrected[i]
+			if digit_to_letter_map.has(character):
+				new_text += digit_to_letter_map[character]
+			else:
+				new_text += character
+		corrected = new_text
+	
+	return corrected
+
+# Calculate similarity between letters (considers visual and phonetic similarity)
+func _calculate_letter_similarity(letter1: String, letter2: String) -> float:
+	if letter1 == letter2:
+		return 1.0
+	
+	# Visual similarity groups (letters that look similar)
+	var visual_groups = [
+		["B", "D", "P", "R"], # Similar shapes with loops
+		["C", "G", "O", "Q"], # Circular letters
+		["I", "L", "1"], # Straight lines
+		["M", "N", "W"], # Multiple peaks
+		["U", "V"], # Similar curves
+		["F", "E"], # Similar horizontal lines
+		["H", "N"], # Similar verticals
+		["K", "X"], # Similar crosses
+		["S", "5"], # Similar curves
+		["Z", "2"] # Similar diagonals
+	]
+	
+	# Dyslexic confusion pairs (common reversals)
+	var dyslexic_pairs = [
+		["B", "D"], ["P", "Q"], ["M", "W"], ["N", "U"],
+		["6", "9"], ["21", "12"], ["was", "saw"]
+	]
+	
+	# Check visual similarity
+	for group in visual_groups:
+		if letter1 in group and letter2 in group:
+			return 0.8 # High similarity within visual groups
+	
+	# Check dyslexic reversal patterns (should be accepted)
+	for pair in dyslexic_pairs:
+		if (letter1 == pair[0] and letter2 == pair[1]) or (letter1 == pair[1] and letter2 == pair[0]):
+			return 0.9 # Very high acceptance for dyslexic patterns
+	
+	# Levenshtein-based similarity for everything else
+	return 1.0 - (float(_levenshtein_distance(letter1, letter2)) / float(max(letter1.length(), letter2.length())))
+
+# Extract most likely target letter from multi-character OCR result
+func _extract_target_letter(text: String, target: String) -> String:
+	# If the target letter appears in the text, return it
+	if target in text:
+		return target
+	
+	# Check for corrected digits that might be letters
+	var corrected_text = _apply_letter_ocr_correction(text, target)
+	if target in corrected_text:
+		return target
+	
+	# Look for the most letter-like character in the string
+	for character in text:
+		if character.to_upper() >= "A" and character.to_upper() <= "Z":
+			return character.to_upper()
+	
+	# If no letters found, return the first character
+	return text[0] if text.length() > 0 else ""
+
+# Helper: Calculate Levenshtein distance for fuzzy matching
+func _levenshtein_distance(s1: String, s2: String) -> int:
+	var len1 = s1.length()
+	var len2 = s2.length()
+	
+	if len1 == 0:
+		return len2
+	if len2 == 0:
+		return len1
+	
+	var matrix = []
+	for i in range(len1 + 1):
+		matrix.append([])
+		for j in range(len2 + 1):
+			matrix[i].append(0)
+	
+	for i in range(len1 + 1):
+		matrix[i][0] = i
+	for j in range(len2 + 1):
+		matrix[0][j] = j
+	
+	for i in range(1, len1 + 1):
+		for j in range(1, len2 + 1):
+			var cost = 0 if s1[i - 1] == s2[j - 1] else 1
+			matrix[i][j] = min(
+				matrix[i - 1][j] + 1, # deletion
+				matrix[i][j - 1] + 1, # insertion
+				matrix[i - 1][j - 1] + cost # substitution
+			)
+	
+	return matrix[len1][len2]
