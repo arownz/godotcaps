@@ -58,6 +58,9 @@ func _ready():
     # Start usage time tracking when main menu loads
     _start_usage_time_tracking()
     
+    # Add small delay to allow Firebase operations to complete if returning from another scene
+    await get_tree().create_timer(0.1).timeout
+    
     # Load user data - with await
     await load_user_data()
     
@@ -349,7 +352,8 @@ func _process_energy_recovery():
             energy_label.text = str(new_energy) + "/" + str(max_energy)
             _update_energy_recovery_display()
             
-            print("Energy recovered: " + str(current_energy) + " -> " + str(new_energy))
+            print("Energy recovered and UI updated: " + str(current_energy) + " -> " + str(new_energy))
+            print("MainMenu: Energy label now shows: " + energy_label.text)
 
 # Setup polling-based Firestore listener for user document changes
 func _setup_firestore_listener():
@@ -494,6 +498,8 @@ func update_user_interface():
     
     var current_energy = user_data.get("energy", 0)
     energy_label.text = str(current_energy) + "/" + str(max_energy)
+    
+    print("MainMenu: Updated UI - Energy: " + str(current_energy) + "/" + str(max_energy))
     
     # Update energy recovery display
     _update_energy_recovery_display()
@@ -707,6 +713,20 @@ func _notification(what):
     if what == NOTIFICATION_WM_CLOSE_REQUEST or what == NOTIFICATION_PREDELETE:
         _stop_usage_time_tracking()
         _cleanup_firestore_listener()
+    elif what == NOTIFICATION_WM_WINDOW_FOCUS_IN:
+        # Refresh user data when window gets focus (e.g., returning from battle)
+        print("MainMenu: Window focused, refreshing user data")
+        await load_user_data()
+    elif what == NOTIFICATION_VISIBILITY_CHANGED:
+        # Refresh user data when scene becomes visible
+        if visible:
+            print("MainMenu: Scene became visible, refreshing user data")
+            await load_user_data()
+
+# Public method to force refresh user data - can be called when returning from other scenes
+func refresh_user_data():
+    print("MainMenu: Force refreshing user data")
+    await load_user_data()
 
 # Override _exit_tree to ensure cleanup
 func _exit_tree():

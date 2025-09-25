@@ -410,7 +410,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"counter",
-"speed": 10.0
+"speed": 12.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -468,22 +468,10 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_7imf8")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_sj52a")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_wtlso")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_cxxxf")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_2im5v")
 }],
 "loop": false,
 "name": &"hurt",
-"speed": 10.0
+"speed": 12.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -545,9 +533,9 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_0fpd7")
 }],
-"loop": true,
+"loop": false,
 "name": &"new_counter",
-"speed": 9.0
+"speed": 11.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -574,7 +562,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_xi64v")
 }],
-"loop": false,
+"loop": true,
 "name": &"run",
 "speed": 10.0
 }]
@@ -583,7 +571,7 @@ animations = [{
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_fdt5l")
-animation = &"idle"
+animation = &"hurt"
 autoplay = "idle"
 
 [node name="sfx_counter_swordslash" type="AudioStreamPlayer" parent="."]

@@ -44,7 +44,7 @@ func _ready():
 	add_child(music_player)
 	
 	# Load the main background music
-	var music_stream = load("res://audio/Lexia Soundtrack.mp3")
+	var music_stream = load("res://audio/Lexia Soundtrack 1-[AudioTrimmer.com].mp3")
 	if music_stream:
 		current_music = music_stream
 		music_player.stream = current_music

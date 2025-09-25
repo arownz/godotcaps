@@ -155,20 +155,19 @@ grow_horizontal = 0
 [node name="EnergyIcon" type="TextureRect" parent="EnergyDisplay"]
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 0
-offset_left = -18.0
-offset_top = 5.0
-offset_right = 32.0
-offset_bottom = 55.0
+offset_left = -52.0
+offset_right = -2.0
+offset_bottom = 50.0
 texture = ExtResource("6_7q2f4")
 expand_mode = 1
 stretch_mode = 5
 
 [node name="EnergyLabel" type="Label" parent="EnergyDisplay"]
 layout_mode = 0
-offset_left = 32.0
-offset_top = 6.0
-offset_right = 132.0
-offset_bottom = 65.0
+offset_left = -2.0
+offset_top = 1.0
+offset_right = 180.0
+offset_bottom = 60.0
 theme_override_colors/font_color = Color(0.933333, 0.788235, 0.0352941, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("13_uaqt0")
@@ -179,10 +178,10 @@ vertical_alignment = 1
 
 [node name="EnergyRecoveryTimer" type="Label" parent="EnergyDisplay"]
 layout_mode = 0
-offset_left = -57.0
-offset_top = 55.0
-offset_right = 198.0
-offset_bottom = 81.0
+offset_left = -13.0
+offset_top = 59.0
+offset_right = 182.0
+offset_bottom = 85.0
 theme_override_colors/font_color = Color(0.7, 0.9, 0.3, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/shadow_offset_x = 1
