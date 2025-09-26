@@ -321,12 +321,6 @@ func _advance_target():
 	current_target = letter_set[letter_index]
 	_update_target_display()
 	
-	# Save current position to Firebase
-	if module_progress and module_progress.is_authenticated():
-		var save_success = await module_progress.set_phonics_current_letter_index(letter_index)
-		if save_success:
-			print("PhonicsLetters: Saved current position: ", letter_index)
-	
 	# Clear whiteboard for next target
 	if whiteboard_instance and whiteboard_instance.has_method("_on_clear_button_pressed"):
 		whiteboard_instance._on_clear_button_pressed()
@@ -339,12 +333,6 @@ func _previous_target():
 	letter_index = (letter_index - 1 + letter_set.size()) % letter_set.size()
 	current_target = letter_set[letter_index]
 	_update_target_display()
-	
-	# Save current position to Firebase
-	if module_progress and module_progress.is_authenticated():
-		var save_success = await module_progress.set_phonics_current_letter_index(letter_index)
-		if save_success:
-			print("PhonicsLetters: Saved current position: ", letter_index)
 	
 	# Clear whiteboard for previous target
 	if whiteboard_instance and whiteboard_instance.has_method("_on_clear_button_pressed"):

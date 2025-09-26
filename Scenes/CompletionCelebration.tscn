@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://co41nrvqyx6g8"]
+[gd_scene load_steps=12 format=3 uid="uid://co41nrvqyx6g8"]
 
 [ext_resource type="Script" uid="uid://cwl7hqcbavcop" path="res://Scripts/CompletionCelebration.gd" id="1"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="2"]
@@ -10,6 +10,8 @@
 [ext_resource type="AudioStream" uid="uid://bhn1ijdk0yxbj" path="res://audio/theater-applause-128kbps.mp3" id="8_up78n"]
 [ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="9_xcpe0"]
 [ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="10_pa1k3"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_pa1k3"]
 
 [node name="CompletionCelebration" type="CanvasLayer"]
 layer = 200
@@ -35,7 +37,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 
 [node name="PopupBackground" type="NinePatchRect" parent="PopupContainer/CenterContainer"]
-custom_minimum_size = Vector2(400, 300)
+custom_minimum_size = Vector2(450, 0)
 layout_mode = 2
 texture = ExtResource("2_3id8v")
 region_rect = Rect2(20.7003, 0, 79.7997, 21.5)
@@ -48,11 +50,12 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 30.0
-offset_top = 51.0
+offset_top = 82.0
 offset_right = -30.0
-offset_bottom = -45.0
+offset_bottom = -37.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/separation = 15
 
 [node name="CelebrationIcon" type="TextureRect" parent="PopupContainer/CenterContainer/PopupBackground/MainContainer"]
 custom_minimum_size = Vector2(80, 80)
@@ -75,7 +78,6 @@ horizontal_alignment = 1
 [node name="MessageLabel" type="Label" parent="PopupContainer/CenterContainer/PopupBackground/MainContainer"]
 custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
-size_flags_horizontal = 4
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2")
@@ -106,6 +108,7 @@ show_percentage = false
 [node name="ButtonContainer" type="HBoxContainer" parent="PopupContainer/CenterContainer/PopupBackground/MainContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_constants/separation = 4
 alignment = 1
 
 [node name="TryAgainButton" type="Button" parent="PopupContainer/CenterContainer/PopupBackground/MainContainer/ButtonContainer"]
@@ -115,8 +118,9 @@ mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2")
 theme_override_font_sizes/font_size = 16
+theme_override_styles/focus = SubResource("StyleBoxEmpty_pa1k3")
 text = "Again"
-icon = ExtResource("6_uu2wo")
+icon = ExtResource("7_up78n")
 flat = true
 icon_alignment = 1
 expand_icon = true
@@ -128,8 +132,9 @@ mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2")
 theme_override_font_sizes/font_size = 16
+theme_override_styles/focus = SubResource("StyleBoxEmpty_pa1k3")
 text = "Next"
-icon = ExtResource("7_up78n")
+icon = ExtResource("6_uu2wo")
 flat = true
 icon_alignment = 1
 expand_icon = true

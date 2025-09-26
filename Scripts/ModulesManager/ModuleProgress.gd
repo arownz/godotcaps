@@ -194,7 +194,7 @@ func set_flip_quiz_current_index(category: String, index: int) -> bool:
 func get_read_aloud_progress():
 	"""Get progress for the Read Aloud module"""
 	var modules = await fetch_modules()
-	return modules.get("read_aloud", {}) if modules else null
+	return modules.get("read_aloud", {}) if modules else null	
 
 func complete_read_aloud_activity(category: String, activity_id: String) -> bool:
 	"""Complete a read aloud activity for guided_reading category only"""

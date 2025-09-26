@@ -337,7 +337,7 @@ module_mode = true
 
 [node name="TraceOverlay" type="Label" parent="MainContainer/ContentContainer/WhiteboardPanel/WhiteboardContainer"]
 layout_mode = 1
-anchors_preset = 8
+anchors_preset = -1
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5

@@ -105,16 +105,31 @@ func _load_progress_from_firebase():
 		sets_completed = animals_data.get("sets_completed", [])
 		print("FlipQuizAnimals: Loaded completed animal sets: ", sets_completed)
 		
-		# Set current_set_index to next uncompleted set
-		current_set_index = sets_completed.size()
-		if current_set_index >= total_sets:
-			current_set_index = total_sets - 1
+		# Set current_set_index to next uncompleted set OR find first uncompleted set
+		var resume_set_index = sets_completed.size()
 		
 		# Load saved current position
 		var saved_index = animals_data.get("current_index", 0)
-		if saved_index < animals.size():
-			current_animal_index = saved_index
-			print("FlipQuizAnimals: Resuming at animal index: ", current_animal_index)
+		var saved_set_from_index = saved_index / 4 # Each set has 4 animals
+		
+		# Check if saved position is in a completed set
+		var saved_set_id = "animals_set_" + str(saved_set_from_index + 1)
+		if saved_set_id in sets_completed:
+			print("FlipQuizAnimals: Saved position is in completed set, advancing to next uncompleted")
+			# Use next uncompleted set
+			current_set_index = resume_set_index
+		else:
+			# Resume at saved set position if it's not completed
+			current_set_index = saved_set_from_index
+		
+		# Ensure set index is within bounds
+		if current_set_index >= total_sets:
+			current_set_index = total_sets - 1
+		
+		# Set animal index to start of current set
+		current_animal_index = saved_index if current_set_index == saved_set_from_index else 0
+		
+		print("FlipQuizAnimals: Resuming at set ", current_set_index, ", animal index: ", current_animal_index, " (saved was set ", saved_set_from_index, ", index ", saved_index, ")")
 		
 		# Update progress display
 		_update_progress_display(flip_quiz_data)
@@ -196,32 +211,60 @@ func _initialize_game():
 	_update_score_display()
 
 func _update_instruction():
-	"""Update the instruction text for current animal with dyslexia-friendly formatting"""
-	if current_animal_index < selected_animals.size():
-		var animal = selected_animals[current_animal_index]
-		var instruction_label = $MainContainer/ContentContainer/InstructionPanel/InstructionContainer/TargetLabel
-		if instruction_label:
-			instruction_label.text = "Find pairs for: " + animal.name.capitalize() + "!"
-			# Apply dyslexia-friendly font and larger size
-			instruction_label.add_theme_font_override("font", preload("res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf"))
-			instruction_label.add_theme_font_size_override("font_size", 48)
-			instruction_label.add_theme_color_override("font_color", Color(0.2, 0.2, 0.8, 1)) # Clear blue color
-			instruction_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	"""Update instruction text showing remaining targets with current focus"""
+	var instruction_label = $MainContainer/ContentContainer/InstructionPanel/InstructionContainer/TargetLabel
+	if not instruction_label:
+		return
+	
+	# Get list of remaining (unmatched) animals
+	var remaining_animals = []
+	var matched_animal_names = []
+	
+	# Collect names of matched animals
+	for card in game_cards:
+		if card.get_meta("is_matched", false):
+			var card_data = card.get_meta("card_data")
+			if card_data and not matched_animal_names.has(card_data.animal.name):
+				matched_animal_names.append(card_data.animal.name)
+	
+	# Build remaining animals list
+	for animal in selected_animals:
+		if not matched_animal_names.has(animal.name):
+			remaining_animals.append(animal)
+	
+	if remaining_animals.size() > 0:
+		# Show remaining targets with current focus highlighted in green for dyslexic children  
+		var target_text = "Find: "
+		for i in range(remaining_animals.size()):
+			var animal = remaining_animals[i]
+			if i == current_animal_index and current_animal_index < remaining_animals.size():
+				# Highlight current target in green for visual clarity
+				target_text += "[color=#00AA00]" + animal.name.capitalize() + "[/color]"
+			else:
+				target_text += animal.name.capitalize()
+			
+			if i < remaining_animals.size() - 1:
+				target_text += ", "
+		
+		# Set BBCode text for color highlighting (RichTextLabel)
+		instruction_label.bbcode_text = target_text
+		
+		instruction_label.add_theme_font_override("font", preload("res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf"))
+		instruction_label.add_theme_font_size_override("font_size", 36) # Slightly smaller for longer text
+		instruction_label.add_theme_color_override("font_color", Color.BLACK) # Default black color
+		instruction_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	else:
-		var instruction_label = $MainContainer/ContentContainer/InstructionPanel/InstructionContainer/TargetLabel
-		if instruction_label:
-			instruction_label.text = "Great job! You've seen all animals!"
-			instruction_label.add_theme_color_override("font_color", Color(0.2, 0.6, 0.2, 1)) # Green for completion
+		# All targets completed - show replay message
+		instruction_label.text = "Great job! All animals found!"
+		instruction_label.add_theme_color_override("font_color", Color(0.2, 0.6, 0.2, 1))
 
 func _update_navigation_buttons():
 	"""Update visibility of previous/next buttons"""
 	var prev_btn = $MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/PreviousButton
 	var next_btn = $MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/NextButton
 	
-	# Previous button only visible if not at the beginning
-	prev_btn.visible = current_animal_index > 0
-	
-	# Next button always visible for practice mode
+	# Always show navigation buttons for user freedom
+	prev_btn.visible = true
 	next_btn.visible = true
 
 func _create_flip_cards():
@@ -388,7 +431,14 @@ func _check_match():
 		match_style.corner_radius_bottom_right = 10
 		
 		card1.add_theme_stylebox_override("normal", match_style)
+		card1.add_theme_stylebox_override("hover", match_style)
+		card1.add_theme_stylebox_override("pressed", match_style)
+		card1.mouse_default_cursor_shape = Control.CURSOR_ARROW # Remove pointer cursor
+		
 		card2.add_theme_stylebox_override("normal", match_style)
+		card2.add_theme_stylebox_override("hover", match_style)
+		card2.add_theme_stylebox_override("pressed", match_style)
+		card2.mouse_default_cursor_shape = Control.CURSOR_ARROW # Remove pointer cursor
 		
 		matched_pairs += 1
 		print("FlipQuizAnimals: Match found! ", data1.animal.name)
@@ -400,6 +450,16 @@ func _check_match():
 		
 		# Give encouraging feedback
 		_show_match_feedback(data1.animal.name)
+		
+		# Update instruction to reflect completed target
+		_update_instruction()
+		_update_navigation_buttons()
+		
+		# Auto-advance to next unmatched target if current target was completed
+		if current_animal_index < selected_animals.size():
+			var current_animal_name = selected_animals[current_animal_index].name
+			if current_animal_name == data1.animal.name:
+				_advance_to_next_unmatched_target()
 		
 		# Check if all pairs are matched
 		if matched_pairs >= selected_animals.size():
@@ -524,12 +584,44 @@ func _on_celebration_try_again():
 	_initialize_game()
 
 func _on_celebration_next_set():
-	"""Advance to next set"""
+	"""Advance to next set or cycle back for open-ended play"""
 	if sets_completed.size() < total_sets:
+		# Still have uncompleted sets - advance normally
 		current_set_index = sets_completed.size()
 		_initialize_game()
 	else:
-		print("FlipQuizAnimals: All animal sets completed!")
+		# All sets completed - cycle back to beginning for open-ended practice
+		current_set_index = 0
+		print("FlipQuizAnimals: All sets completed! Starting open-ended practice from Set 1")
+		_initialize_game()
+
+func _advance_to_next_unmatched_target():
+	"""Advance to next unmatched target for focus"""
+	var matched_animal_names = []
+	
+	# Collect matched animal names
+	for card in game_cards:
+		if card.get_meta("is_matched", false):
+			var card_data = card.get_meta("card_data")
+			if card_data and not matched_animal_names.has(card_data.animal.name):
+				matched_animal_names.append(card_data.animal.name)
+	
+	# Find next unmatched animal
+	var found_unmatched = false
+	
+	for i in range(selected_animals.size()):
+		var check_index = (current_animal_index + i + 1) % selected_animals.size()
+		if not matched_animal_names.has(selected_animals[check_index].name):
+			current_animal_index = check_index
+			found_unmatched = true
+			break
+	
+	# If no unmatched found, cycle back to start of remaining
+	if not found_unmatched:
+		for i in range(selected_animals.size()):
+			if not matched_animal_names.has(selected_animals[i].name):
+				current_animal_index = i
+				break
 
 func _update_score_display():
 	"""Update score display with encouraging messages"""
@@ -592,12 +684,6 @@ func _on_previous_button_pressed():
 		_update_instruction()
 		_update_navigation_buttons()
 		
-		# Save current position to Firebase
-		if module_progress and module_progress.is_authenticated():
-			var save_success = await module_progress.set_flip_quiz_current_index("animals", current_animal_index)
-			if save_success:
-				print("FlipQuizAnimals: Saved current position: ", current_animal_index)
-		
 		# Speak the animal name
 		if current_animal_index < selected_animals.size():
 			var animal = selected_animals[current_animal_index]
@@ -638,12 +724,6 @@ func _on_next_button_pressed():
 	
 	_update_instruction()
 	_update_navigation_buttons()
-	
-	# Save current position to Firebase
-	if module_progress and module_progress.is_authenticated():
-		var save_success = await module_progress.set_flip_quiz_current_index("animals", current_animal_index)
-		if save_success:
-			print("FlipQuizAnimals: Saved current position: ", current_animal_index)
 	
 	# Speak the animal name
 	if current_animal_index < selected_animals.size():

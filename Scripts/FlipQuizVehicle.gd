@@ -94,16 +94,31 @@ func _load_progress_from_firebase():
 		sets_completed = vehicles_data.get("sets_completed", [])
 		print("FlipQuizVehicle: Loaded completed vehicle sets: ", sets_completed)
 		
-		# Set current_set_index to next uncompleted set
-		current_set_index = sets_completed.size()
-		if current_set_index >= total_sets:
-			current_set_index = total_sets - 1
+		# Set current_set_index to next uncompleted set OR find first uncompleted set
+		var resume_set_index = sets_completed.size()
 		
 		# Load saved current position
 		var saved_index = vehicles_data.get("current_index", 0)
-		if saved_index < vehicles.size():
-			current_vehicle_index = saved_index
-			print("FlipQuizVehicle: Resuming at vehicle index: ", current_vehicle_index)
+		var saved_set_from_index = saved_index / 4 # Each set has 4 vehicles
+		
+		# Check if saved position is in a completed set
+		var saved_set_id = "vehicles_set_" + str(saved_set_from_index + 1)
+		if saved_set_id in sets_completed:
+			print("FlipQuizVehicle: Saved position is in completed set, advancing to next uncompleted")
+			# Use next uncompleted set
+			current_set_index = resume_set_index
+		else:
+			# Resume at saved set position if it's not completed
+			current_set_index = saved_set_from_index
+		
+		# Ensure set index is within bounds
+		if current_set_index >= total_sets:
+			current_set_index = total_sets - 1
+		
+		# Set vehicle index to start of current set
+		current_vehicle_index = saved_index if current_set_index == saved_set_from_index else 0
+		
+		print("FlipQuizVehicle: Resuming at set ", current_set_index, ", vehicle index: ", current_vehicle_index, " (saved was set ", saved_set_from_index, ", index ", saved_index, ")")
 		
 		# Update progress display
 		_update_progress_display(flip_quiz_data)
@@ -182,28 +197,60 @@ func _initialize_game():
 	_update_score_display()
 
 func _update_instruction():
-	"""Update instruction text for current vehicle"""
-	if current_vehicle_index < selected_vehicles.size():
-		var vehicle = selected_vehicles[current_vehicle_index]
-		var instruction_label = $MainContainer/ContentContainer/InstructionPanel/InstructionContainer/TargetLabel
-		if instruction_label:
-			instruction_label.text = "Find pairs for: " + vehicle.name.capitalize() + "!"
-			instruction_label.add_theme_font_override("font", preload("res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf"))
-			instruction_label.add_theme_font_size_override("font_size", 48)
-			instruction_label.add_theme_color_override("font_color", Color(0.2, 0.6, 0.2, 1)) # Green color for positive feedback
-			instruction_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	"""Update instruction text showing remaining targets with current focus"""
+	var instruction_label = $MainContainer/ContentContainer/InstructionPanel/InstructionContainer/TargetLabel
+	if not instruction_label:
+		return
+	
+	# Get list of remaining (unmatched) vehicles
+	var remaining_vehicles = []
+	var matched_vehicle_names = []
+	
+	# Collect names of matched vehicles
+	for card in game_cards:
+		if card.get_meta("is_matched", false):
+			var card_data = card.get_meta("card_data")
+			if card_data and not matched_vehicle_names.has(card_data.vehicle.name):
+				matched_vehicle_names.append(card_data.vehicle.name)
+	
+	# Build remaining vehicles list
+	for vehicle in selected_vehicles:
+		if not matched_vehicle_names.has(vehicle.name):
+			remaining_vehicles.append(vehicle)
+	
+	if remaining_vehicles.size() > 0:
+		# Show remaining targets with current focus highlighted in green for dyslexic children
+		var target_text = "Find: "
+		for i in range(remaining_vehicles.size()):
+			var vehicle = remaining_vehicles[i]
+			if i == current_vehicle_index and current_vehicle_index < remaining_vehicles.size():
+				# Highlight current target in green for visual clarity
+				target_text += "[color=#00AA00]" + vehicle.name.capitalize() + "[/color]"
+			else:
+				target_text += vehicle.name.capitalize()
+			
+			if i < remaining_vehicles.size() - 1:
+				target_text += ", "
+		
+		# Set BBCode text for color highlighting (RichTextLabel)
+		instruction_label.bbcode_text = target_text
+		
+		instruction_label.add_theme_font_override("font", preload("res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf"))
+		instruction_label.add_theme_font_size_override("font_size", 36) # Slightly smaller for longer text
+		instruction_label.add_theme_color_override("font_color", Color.BLACK) # Default black color
+		instruction_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	else:
-		var instruction_label = $MainContainer/ContentContainer/InstructionPanel/InstructionContainer/TargetLabel
-		if instruction_label:
-			instruction_label.text = "Great job! You've seen all vehicles!"
-			instruction_label.add_theme_color_override("font_color", Color(0.2, 0.6, 0.2, 1))
+		# All targets completed - show replay message
+		instruction_label.text = "Great job! All vehicles found!"
+		instruction_label.add_theme_color_override("font_color", Color(0.2, 0.6, 0.2, 1))
 
 func _update_navigation_buttons():
 	"""Update visibility of previous/next buttons"""
 	var prev_btn = $MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/PreviousButton
 	var next_btn = $MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/NextButton
 	
-	prev_btn.visible = current_vehicle_index > 0
+	# Always show navigation buttons for user freedom
+	prev_btn.visible = true
 	next_btn.visible = true
 
 func _create_flip_cards():
@@ -363,7 +410,14 @@ func _check_match():
 		match_style.corner_radius_bottom_right = 10
 		
 		card1.add_theme_stylebox_override("normal", match_style)
+		card1.add_theme_stylebox_override("hover", match_style)
+		card1.add_theme_stylebox_override("pressed", match_style)
+		card1.mouse_default_cursor_shape = Control.CURSOR_ARROW # Remove pointer cursor
+		
 		card2.add_theme_stylebox_override("normal", match_style)
+		card2.add_theme_stylebox_override("hover", match_style)
+		card2.add_theme_stylebox_override("pressed", match_style)
+		card2.mouse_default_cursor_shape = Control.CURSOR_ARROW # Remove pointer cursor
 		
 		matched_pairs += 1
 		print("FlipQuizVehicle: Match found! ", data1.vehicle.name)
@@ -378,6 +432,16 @@ func _check_match():
 		
 		# Give encouraging feedback
 		_show_match_feedback(data1.vehicle.name)
+		
+		# Update instruction to reflect completed target
+		_update_instruction()
+		_update_navigation_buttons()
+		
+		# Auto-advance to next unmatched target if current target was completed
+		if current_vehicle_index < selected_vehicles.size():
+			var current_vehicle_name = selected_vehicles[current_vehicle_index].name
+			if current_vehicle_name == data1.vehicle.name:
+				_advance_to_next_unmatched_target()
 		
 		# Check if all pairs are matched
 		if matched_pairs >= selected_vehicles.size():
@@ -440,7 +504,7 @@ func _show_match_feedback(vehicle_name: String):
 
 	# TTS feedback for vehicles (no vehicle sound effects)
 	if tts:
-		var feedback_text = "You found the " + vehicle_name + "! Great matching!"
+		var feedback_text = "You found the " + vehicle_name + "!"
 		tts.speak(feedback_text)
 
 func _complete_game():
@@ -484,12 +548,44 @@ func _on_celebration_try_again():
 	_initialize_game()
 
 func _on_celebration_next_set():
-	"""Advance to next set"""
+	"""Advance to next set or cycle back for open-ended play"""
 	if sets_completed.size() < total_sets:
+		# Still have uncompleted sets - advance normally
 		current_set_index = sets_completed.size()
 		_initialize_game()
 	else:
-		print("FlipQuizVehicle: All vehicle sets completed!")
+		# All sets completed - cycle back to beginning for open-ended practice
+		current_set_index = 0
+		print("FlipQuizVehicle: All sets completed! Starting open-ended practice from Set 1")
+		_initialize_game()
+
+func _advance_to_next_unmatched_target():
+	"""Advance to next unmatched target for focus"""
+	var matched_vehicle_names = []
+	
+	# Collect matched vehicle names
+	for card in game_cards:
+		if card.get_meta("is_matched", false):
+			var card_data = card.get_meta("card_data")
+			if card_data and not matched_vehicle_names.has(card_data.vehicle.name):
+				matched_vehicle_names.append(card_data.vehicle.name)
+	
+	# Find next unmatched vehicle
+	var found_unmatched = false
+	
+	for i in range(selected_vehicles.size()):
+		var check_index = (current_vehicle_index + i + 1) % selected_vehicles.size()
+		if not matched_vehicle_names.has(selected_vehicles[check_index].name):
+			current_vehicle_index = check_index
+			found_unmatched = true
+			break
+	
+	# If no unmatched found, cycle back to start of remaining
+	if not found_unmatched:
+		for i in range(selected_vehicles.size()):
+			if not matched_vehicle_names.has(selected_vehicles[i].name):
+				current_vehicle_index = i
+				break
 
 func _update_score_display():
 	"""Update score display"""
@@ -546,12 +642,6 @@ func _on_previous_button_pressed():
 		_update_instruction()
 		_update_navigation_buttons()
 		
-		# Save current position to Firebase
-		if module_progress and module_progress.is_authenticated():
-			var save_success = await module_progress.set_flip_quiz_current_index("vehicles", current_vehicle_index)
-			if save_success:
-				print("FlipQuizVehicle: Saved current position: ", current_vehicle_index)
-		
 		if current_vehicle_index < selected_vehicles.size():
 			var vehicle = selected_vehicles[current_vehicle_index]
 			if tts:
@@ -584,12 +674,6 @@ func _on_next_button_pressed():
 	
 	_update_instruction()
 	_update_navigation_buttons()
-	
-	# Save current position to Firebase
-	if module_progress and module_progress.is_authenticated():
-		var save_success = await module_progress.set_flip_quiz_current_index("vehicles", current_vehicle_index)
-		if save_success:
-			print("FlipQuizVehicle: Saved current position: ", current_vehicle_index)
 	
 	if current_vehicle_index < selected_vehicles.size():
 		var vehicle = selected_vehicles[current_vehicle_index]

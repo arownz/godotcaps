@@ -228,12 +228,15 @@ grow_vertical = 2
 scale = Vector2(0.727786, 0.727786)
 theme_override_constants/separation = 10
 
-[node name="TargetLabel" type="Label" parent="MainContainer/ContentContainer/InstructionPanel/InstructionContainer"]
+[node name="TargetLabel" type="RichTextLabel" parent="MainContainer/ContentContainer/InstructionPanel/InstructionContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("4_bold")
-theme_override_font_sizes/font_size = 48
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_fonts/normal_font = ExtResource("4_bold")
+theme_override_font_sizes/normal_font_size = 48
+bbcode_enabled = true
 text = "Loading..."
+fit_content = true
+scroll_active = false
 horizontal_alignment = 1
 
 [node name="ControlsContainer" type="HBoxContainer" parent="MainContainer/ContentContainer/InstructionPanel/InstructionContainer"]

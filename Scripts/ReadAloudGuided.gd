@@ -1455,11 +1455,11 @@ func _load_progress():
 			
 			# If saved position passage is already completed, find next uncompleted
 			var saved_passage_id = "passage_" + str(resume_index)
-			if saved_passage_id in completed_activities:
+			if completed_activities.has(saved_passage_id):
 				print("ReadAloudGuided: Saved passage '", saved_passage_id, "' already completed, finding next uncompleted")
 				for i in range(passages.size()):
 					var passage_id = "passage_" + str(i)
-					if not passage_id in completed_activities:
+					if not completed_activities.has(passage_id):
 						resume_index = i
 						break
 			
@@ -1756,12 +1756,6 @@ func _on_previous_passage_button_pressed():
 		
 		_display_passage(current_passage_index)
 		_update_navigation_buttons()
-		
-		# Save current position to Firebase
-		if module_progress and module_progress.is_authenticated():
-			var save_success = await module_progress.set_read_aloud_current_index("guided_reading", current_passage_index)
-			if save_success:
-				print("ReadAloudGuided: Saved current position: ", current_passage_index)
 
 func _on_next_passage_button_pressed():
 	$ButtonClick.play()
@@ -1776,12 +1770,6 @@ func _on_next_passage_button_pressed():
 		
 		_display_passage(current_passage_index)
 		_update_navigation_buttons()
-		
-		# Save current position to Firebase
-		if module_progress and module_progress.is_authenticated():
-			var save_success = await module_progress.set_read_aloud_current_index("guided_reading", current_passage_index)
-			if save_success:
-				print("ReadAloudGuided: Saved current position: ", current_passage_index)
 
 func _on_practice_complete_button_pressed():
 	"""Mark current guided reading passage as completed"""

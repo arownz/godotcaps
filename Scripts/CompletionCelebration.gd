@@ -159,7 +159,7 @@ func _update_content(module_key: String = "phonics"):
 			if title_label:
 				title_label.text = "All done!"
 			if message_label:
-				message_label.text = "You finished all " + completed_item + "."
+				message_label.text = "You finished " + completed_item + "!"
 
 			# Show overall module progress
 			if module_key == "flip_quiz":
@@ -190,7 +190,7 @@ func _update_content(module_key: String = "phonics"):
 			if title_label:
 				title_label.text = "All done!"
 			if message_label:
-				message_label.text = "You finished all " + completed_item + "."
+				message_label.text = "You finished " + completed_item + "!"
 
 			# Show overall module progress for vehicles
 			if module_key == "flip_quiz":
