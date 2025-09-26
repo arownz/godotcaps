@@ -3,7 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://cxqd6wyqy8g22" path="res://gui/Update/Backgrounds/battlescene background.png" id="2_ixjr5"]
 [ext_resource type="Texture2D" uid="uid://2jgthsch6pn" path="res://gui/Update/Backgrounds/forestbig.png" id="3_hueq0"]
 [ext_resource type="PackedScene" uid="uid://e6bec84rrthm" path="res://Sprites/Animation/DefaultPlayer_Animation.tscn" id="3_i7srl"]
-[ext_resource type="Script" uid="uid://cnnycoui3l3ef" path="res://Scripts/BattleScene.gd" id="3_vhj2j"]
+[ext_resource type="Script" uid="uid://cnnycoui3l3ef" path="res://Scripts/battlescene.gd" id="3_vhj2j"]
 [ext_resource type="Texture2D" uid="uid://da0r1iefmbl55" path="res://gui/Update/Backgrounds/mountainbig.png" id="4_pwb48"]
 [ext_resource type="Texture2D" uid="uid://bb3yuiy6n0i2" path="res://gui/Update/icons/small settings_hover.png" id="5_47u5s"]
 [ext_resource type="Texture2D" uid="uid://c6clhmrkbmg0u" path="res://gui/UI/ui 4.png" id="6_2tp6q"]
@@ -391,9 +391,9 @@ horizontal_alignment = 1
 
 [node name="EnemyLevelValue" type="Label" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer"]
 layout_mode = 0
-offset_left = 76.0
+offset_left = 80.25098
 offset_top = 32.0
-offset_right = 111.0
+offset_right = 181.25098
 offset_bottom = 66.0
 theme_override_colors/font_color = Color(1, 1, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -493,7 +493,7 @@ size_flags_horizontal = 3
 
 [node name="EnemyIcon" type="TextureRect" parent="MainContainer/BattleAreaContainer/StageProgress/StageSlots/Slot1"]
 custom_minimum_size = Vector2(44, 44)
-layout_mode = 2
+layout_mode = 0
 anchor_left = 1.272
 anchor_top = 0.596
 anchor_right = 1.272
@@ -513,7 +513,7 @@ size_flags_horizontal = 3
 
 [node name="EnemyIcon" type="TextureRect" parent="MainContainer/BattleAreaContainer/StageProgress/StageSlots/Slot2"]
 custom_minimum_size = Vector2(44, 44)
-layout_mode = 2
+layout_mode = 0
 anchor_left = 1.134
 anchor_top = 0.511
 anchor_right = 1.134
@@ -533,7 +533,7 @@ size_flags_horizontal = 3
 
 [node name="EnemyIcon" type="TextureRect" parent="MainContainer/BattleAreaContainer/StageProgress/StageSlots/Slot3"]
 custom_minimum_size = Vector2(44, 44)
-layout_mode = 2
+layout_mode = 0
 anchor_left = 1.0
 anchor_top = 0.511
 anchor_right = 1.0
@@ -553,7 +553,7 @@ size_flags_horizontal = 3
 
 [node name="EnemyIcon" type="TextureRect" parent="MainContainer/BattleAreaContainer/StageProgress/StageSlots/Slot4"]
 custom_minimum_size = Vector2(44, 44)
-layout_mode = 2
+layout_mode = 0
 anchor_left = 0.879
 anchor_top = 0.511
 anchor_right = 0.879
@@ -573,7 +573,7 @@ size_flags_horizontal = 3
 
 [node name="EnemyIcon" type="TextureRect" parent="MainContainer/BattleAreaContainer/StageProgress/StageSlots/Slot5"]
 custom_minimum_size = Vector2(44, 44)
-layout_mode = 2
+layout_mode = 0
 anchor_left = 0.817
 anchor_top = 0.511
 anchor_right = 0.817
@@ -947,10 +947,10 @@ layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 3
 mouse_default_cursor_shape = 2
-theme_override_colors/font_hover_color = Color(0.871619, 0.169487, 0.20025, 1)
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
 theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0.871619, 0.169487, 0.20025, 1)
 theme_override_fonts/font = ExtResource("8_2tp6q")
 theme_override_font_sizes/font_size = 35
 theme_override_styles/focus = SubResource("StyleBoxEmpty_8uoga")
@@ -962,11 +962,9 @@ expand_icon = true
 
 [node name="ButtonClick" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("14_cja1x")
-bus = &"SFX"
 
 [node name="ButtonHover" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("15_aip7a")
-bus = &"SFX"
 
 [connection signal="mouse_entered" from="MainContainer/RightContainer/MarginContainer/VBoxContainer/ButtonContainer/EngageButton" to="." method="_on_engage_button_mouse_entered"]
 [connection signal="pressed" from="MainContainer/RightContainer/MarginContainer/VBoxContainer/ButtonContainer/EngageButton" to="." method="_on_engage_button_pressed"]

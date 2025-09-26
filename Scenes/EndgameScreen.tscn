@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://rgl03eh75egv" path="res://gui/Update/UI/victory UI.png" id="2_frm3f"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="3_3xqox"]
 [ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="4_hehfl"]
-[ext_resource type="Texture2D" uid="uid://bwchhxhbrsql8" path="res://gui/Update/UI/hover white button.png" id="5_3xqox"]
+[ext_resource type="Texture2D" uid="uid://bp53fsaou53ad" path="res://gui/Update/UI/white button.png" id="5_gworm"]
 [ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="7_3xqox"]
 [ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="7_gworm"]
 [ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="8_7m5p6"]
@@ -121,7 +121,7 @@ theme_override_fonts/font = ExtResource("3_3xqox")
 theme_override_font_sizes/font_size = 24
 theme_override_styles/focus = SubResource("StyleBoxEmpty_hehfl")
 text = "Again"
-icon = ExtResource("5_3xqox")
+icon = ExtResource("5_gworm")
 flat = true
 icon_alignment = 1
 expand_icon = true
