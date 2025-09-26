@@ -30,11 +30,11 @@ func _ready():
 	$Panel/VBoxContainer/StatusLabel.text = "Loading voices..."
 	
 	# Connect button hover events
-	if $Panel/TestButton:
-		$Panel/TestButton.mouse_entered.connect(_on_button_hover)
-	if $Panel/CloseButton:
-		$Panel/CloseButton.mouse_entered.connect(_on_button_hover)
-	
+	if $Panel/VBoxContainer/HBoxContainer/TestButton:
+		$Panel/VBoxContainer/HBoxContainer/TestButton.mouse_entered.connect(_on_button_hover)
+	if $Panel/VBoxContainer/HBoxContainer/CloseButton:
+		$Panel/VBoxContainer/HBoxContainer/CloseButton.mouse_entered.connect(_on_button_hover)
+
 	# Initialize TTS if not already set
 	if not tts:
 		_initialize_tts()

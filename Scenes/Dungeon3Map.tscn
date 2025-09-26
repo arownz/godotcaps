@@ -221,7 +221,7 @@ offset_right = 610.0
 offset_bottom = 641.0
 
 [node name="Detail" type="Label" parent="StageDetails/RightContainer"]
-layout_mode = 2
+layout_mode = 0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -241,7 +241,7 @@ text = "DETAILS"
 horizontal_alignment = 1
 
 [node name="Info" type="Label" parent="StageDetails/RightContainer"]
-layout_mode = 2
+layout_mode = 0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -261,7 +261,7 @@ text = "Detail"
 autowrap_mode = 3
 
 [node name="ExpReward" type="Label" parent="StageDetails/RightContainer"]
-layout_mode = 2
+layout_mode = 0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -281,7 +281,7 @@ text = "EXP Reward:"
 autowrap_mode = 3
 
 [node name="ExpRewardValue" type="Label" parent="StageDetails/RightContainer"]
-layout_mode = 2
+layout_mode = 0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -301,7 +301,7 @@ text = "100"
 autowrap_mode = 3
 
 [node name="SkillLabel" type="Label" parent="StageDetails/RightContainer"]
-layout_mode = 2
+layout_mode = 0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -321,7 +321,7 @@ text = "Skill:"
 autowrap_mode = 3
 
 [node name="SkillName" type="Label" parent="StageDetails/RightContainer"]
-layout_mode = 2
+layout_mode = 0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -392,7 +392,7 @@ scale = Vector2(2.79408, 2.76731)
 sprite_frames = SubResource("SpriteFrames_xeiu1")
 
 [node name="MonsterName" type="Label" parent="StageDetails/LeftContainer"]
-layout_mode = 2
+layout_mode = 0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -551,10 +551,10 @@ offset_right = 499.754
 offset_bottom = 787.469
 scale = Vector2(1.05196, 1.15303)
 mouse_default_cursor_shape = 2
-theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
 theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("9_3555f")
 theme_override_font_sizes/font_size = 35
 theme_override_styles/focus = SubResource("StyleBoxEmpty_xeiu1")

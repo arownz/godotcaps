@@ -136,7 +136,7 @@ layout_mode = 2
 alignment = 1
 
 [node name="TTSButton" type="Button" parent="ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer"]
-custom_minimum_size = Vector2(80, 50)
+custom_minimum_size = Vector2(130, 50)
 layout_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -150,7 +150,7 @@ icon_alignment = 1
 expand_icon = true
 
 [node name="TTSSettingsButton" type="Button" parent="ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer"]
-custom_minimum_size = Vector2(0, 50)
+custom_minimum_size = Vector2(130, 50)
 layout_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)

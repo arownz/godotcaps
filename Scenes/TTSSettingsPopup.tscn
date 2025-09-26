@@ -27,10 +27,6 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -362.0
-offset_top = -142.0
-offset_right = 377.0
-offset_bottom = 148.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.6)
@@ -57,9 +53,9 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 15.0
-offset_top = 15.0
+offset_top = 19.0
 offset_right = -15.0
-offset_bottom = -101.0
+offset_bottom = -50.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 10
@@ -81,7 +77,7 @@ layout_mode = 2
 [node name="Label" type="Label" parent="Panel/VBoxContainer/VoiceContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("2_m3f5r")
+theme_override_fonts/font = ExtResource("5_jb0wy")
 theme_override_font_sizes/font_size = 18
 text = "Voice:"
 horizontal_alignment = 1
@@ -99,7 +95,7 @@ layout_mode = 2
 [node name="VolumeLabel" type="Label" parent="Panel/VBoxContainer/VolumeContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("2_m3f5r")
+theme_override_fonts/font = ExtResource("5_jb0wy")
 theme_override_font_sizes/font_size = 18
 text = "Voice Volume:"
 
@@ -122,7 +118,7 @@ layout_mode = 2
 [node name="Label" type="Label" parent="Panel/VBoxContainer/RateContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("2_m3f5r")
+theme_override_fonts/font = ExtResource("5_jb0wy")
 theme_override_font_sizes/font_size = 18
 text = "Speech Rate:"
 
@@ -147,44 +143,42 @@ horizontal_alignment = 1
 [node name="StatusLabel" type="Label" parent="Panel/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("2_m3f5r")
+theme_override_fonts/font = ExtResource("5_jb0wy")
 theme_override_font_sizes/font_size = 14
 text = "Loading voices..."
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="TestButton" type="Button" parent="Panel"]
-layout_mode = 0
-offset_left = 260.0
-offset_top = 356.0
-offset_right = 322.0
-offset_bottom = 380.0
-scale = Vector2(2.08295, 2.10011)
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+alignment = 1
+
+[node name="TestButton" type="Button" parent="Panel/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
 theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("5_jb0wy")
-theme_override_font_sizes/font_size = 5
+theme_override_font_sizes/font_size = 11
 theme_override_styles/focus = SubResource("StyleBoxEmpty_7wrw6")
 text = "Test Button"
 icon = ExtResource("4_7wrw6")
 flat = true
 icon_alignment = 1
+expand_icon = true
 
-[node name="CloseButton" type="Button" parent="Panel"]
-layout_mode = 0
-offset_left = 380.0
-offset_top = 352.0
-offset_right = 442.0
-offset_bottom = 381.0
-scale = Vector2(2.25382, 2.0651)
+[node name="CloseButton" type="Button" parent="Panel/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
 theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("5_jb0wy")
-theme_override_font_sizes/font_size = 5
+theme_override_font_sizes/font_size = 11
 theme_override_styles/focus = SubResource("StyleBoxEmpty_7wrw6")
 text = "Save & Close"
 icon = ExtResource("6_e2f2d")
@@ -202,7 +196,7 @@ stream = ExtResource("8_2s7nq")
 [connection signal="mouse_entered" from="Panel/VBoxContainer/VoiceContainer/VoiceOptionButton" to="." method="_on_voice_option_button_mouse_entered"]
 [connection signal="value_changed" from="Panel/VBoxContainer/VolumeContainer/VolumeSlider" to="." method="_on_volume_slider_value_changed"]
 [connection signal="value_changed" from="Panel/VBoxContainer/RateContainer/RateSlider" to="." method="_on_rate_slider_value_changed"]
-[connection signal="mouse_entered" from="Panel/TestButton" to="." method="_on_test_button_mouse_entered"]
-[connection signal="pressed" from="Panel/TestButton" to="." method="_on_test_button_pressed"]
-[connection signal="mouse_entered" from="Panel/CloseButton" to="." method="_on_close_button_mouse_entered"]
-[connection signal="pressed" from="Panel/CloseButton" to="." method="_on_close_button_pressed"]
+[connection signal="mouse_entered" from="Panel/VBoxContainer/HBoxContainer/TestButton" to="." method="_on_test_button_mouse_entered"]
+[connection signal="pressed" from="Panel/VBoxContainer/HBoxContainer/TestButton" to="." method="_on_test_button_pressed"]
+[connection signal="mouse_entered" from="Panel/VBoxContainer/HBoxContainer/CloseButton" to="." method="_on_close_button_mouse_entered"]
+[connection signal="pressed" from="Panel/VBoxContainer/HBoxContainer/CloseButton" to="." method="_on_close_button_pressed"]

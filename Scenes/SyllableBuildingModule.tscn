@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://b3nujqyc1ufpy"]
+[gd_scene load_steps=19 format=3 uid="uid://b3nujqyc1ufpy"]
 
 [ext_resource type="Script" uid="uid://clrq6w71538i1" path="res://Scripts/SyllableBuildingModule.gd" id="1_h3m2v"]
 [ext_resource type="Texture2D" uid="uid://0con8ixqofpr" path="res://gui/Update/UI/ui 8.png" id="2_bg"]
@@ -8,7 +8,6 @@
 [ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="6_click"]
 [ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="7_hover"]
 [ext_resource type="Texture2D" uid="uid://qmmpx3uab5h7" path="res://gui/Update/UI/next button.png" id="8_next"]
-[ext_resource type="Texture2D" uid="uid://bmjd8nkagj08e" path="res://gui/Update/UI/long uncolored button.png" id="9_button"]
 [ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="10_green"]
 [ext_resource type="Texture2D" uid="uid://c8vnqmxwy0lsw" path="res://gui/Update/icons/small settings.png" id="11_settings"]
 [ext_resource type="Texture2D" uid="uid://bb3yuiy6n0i2" path="res://gui/Update/icons/small settings_hover.png" id="12_settings_hover"]
@@ -378,7 +377,7 @@ theme_override_fonts/font = ExtResource("4_bold")
 theme_override_font_sizes/font_size = 16
 theme_override_styles/focus = SubResource("StyleBoxEmpty_focus")
 text = "Speak"
-icon = ExtResource("9_button")
+icon = ExtResource("10_green")
 flat = true
 icon_alignment = 1
 expand_icon = true

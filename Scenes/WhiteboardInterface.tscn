@@ -1,10 +1,12 @@
-[gd_scene load_steps=9 format=3 uid="uid://cvv1bpkfdvqjw"]
+[gd_scene load_steps=11 format=3 uid="uid://cvv1bpkfdvqjw"]
 
 [ext_resource type="Script" uid="uid://tupwtis13uye" path="res://Scripts/WhiteboardInterface.gd" id="1_e3gsa"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="2_vuw0y"]
-[ext_resource type="Texture2D" uid="uid://b71mx2j075d48" path="res://gui/Update/UI/hover gray short button.png" id="3_vuw0y"]
+[ext_resource type="Texture2D" uid="uid://daiet4mkwgjaq" path="res://gui/Update/UI/uncolored button.png" id="3_lurvb"]
 [ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="4_jliia"]
+[ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="4_lurvb"]
 [ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="5_46aw1"]
+[ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="5_vh6m3"]
 [ext_resource type="AudioStream" uid="uid://c17a47pkswdvw" path="res://audio/whiteboard sound effect/whiteboard_swiping.ogg" id="6_46aw1"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7wk35"]
@@ -44,7 +46,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 0
 
 [node name="DrawingArea" type="Panel" parent="VBoxContainer"]
 layout_mode = 2
@@ -57,7 +59,7 @@ size_flags_horizontal = 4
 theme_override_constants/separation = 0
 
 [node name="UndoButton" type="Button" parent="VBoxContainer/ButtonsContainer"]
-custom_minimum_size = Vector2(100, 50)
+custom_minimum_size = Vector2(110, 50)
 layout_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -67,13 +69,13 @@ theme_override_fonts/font = ExtResource("2_vuw0y")
 theme_override_font_sizes/font_size = 20
 theme_override_styles/focus = SubResource("StyleBoxEmpty_vuw0y")
 text = "Undo"
-icon = ExtResource("3_vuw0y")
+icon = ExtResource("3_lurvb")
 flat = true
 icon_alignment = 1
 expand_icon = true
 
 [node name="RedoButton" type="Button" parent="VBoxContainer/ButtonsContainer"]
-custom_minimum_size = Vector2(100, 50)
+custom_minimum_size = Vector2(110, 50)
 layout_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -83,13 +85,13 @@ theme_override_fonts/font = ExtResource("2_vuw0y")
 theme_override_font_sizes/font_size = 20
 theme_override_styles/focus = SubResource("StyleBoxEmpty_vuw0y")
 text = "Redo"
-icon = ExtResource("3_vuw0y")
+icon = ExtResource("3_lurvb")
 flat = true
 icon_alignment = 1
 expand_icon = true
 
 [node name="ClearButton" type="Button" parent="VBoxContainer/ButtonsContainer"]
-custom_minimum_size = Vector2(100, 50)
+custom_minimum_size = Vector2(110, 50)
 layout_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -99,7 +101,7 @@ theme_override_fonts/font = ExtResource("2_vuw0y")
 theme_override_font_sizes/font_size = 20
 theme_override_styles/focus = SubResource("StyleBoxEmpty_vuw0y")
 text = "Clear"
-icon = ExtResource("3_vuw0y")
+icon = ExtResource("3_lurvb")
 flat = true
 icon_alignment = 1
 expand_icon = true
@@ -115,7 +117,7 @@ theme_override_fonts/font = ExtResource("2_vuw0y")
 theme_override_font_sizes/font_size = 20
 theme_override_styles/focus = SubResource("StyleBoxEmpty_vuw0y")
 text = "Cancel"
-icon = ExtResource("3_vuw0y")
+icon = ExtResource("4_lurvb")
 flat = true
 icon_alignment = 1
 expand_icon = true
@@ -131,7 +133,7 @@ theme_override_fonts/font = ExtResource("2_vuw0y")
 theme_override_font_sizes/font_size = 20
 theme_override_styles/focus = SubResource("StyleBoxEmpty_vuw0y")
 text = "Done"
-icon = ExtResource("3_vuw0y")
+icon = ExtResource("5_vh6m3")
 flat = true
 icon_alignment = 1
 expand_icon = true

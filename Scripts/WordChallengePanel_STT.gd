@@ -129,8 +129,8 @@ func _ready():
 	
 	# Initialize UI state - Always enable button for permission requests
 	speak_button.disabled = false
-	speak_button.text = "Start Speaking"
-	permission_status_label.text = "Click Start Speaking to begin"
+	speak_button.text = "Speak"
+	permission_status_label.text = "Click Speak to begin"
 	permission_status_label.modulate = Color.WHITE
 	status_label.text = "Say the word shown above when ready"
 	
@@ -383,15 +383,15 @@ func update_mic_permission_state(state):
 		mic_permission_granted = true
 		permission_status_label.text = "✓ Microphone permission granted"
 		permission_status_label.modulate = Color.GREEN
-		status_label.text = "Ready to record - Click Start Speaking"
+		status_label.text = "Ready to record - Click Speak"
 		speak_button.disabled = false
-		speak_button.text = "Start Speaking"
+		speak_button.text = "Speak"
 	elif state == "denied":
 		# Permission denied, but keep button enabled for retry
 		mic_permission_granted = false
 		permission_status_label.text = "X Microphone access denied"
 		permission_status_label.modulate = Color.RED
-		status_label.text = "Permission denied. Click Start Speaking to try again."
+		status_label.text = "Permission denied. Click Speak to try again."
 		speak_button.disabled = false # Keep enabled for retry
 		speak_button.text = "Try Again"
 	else:
@@ -399,9 +399,9 @@ func update_mic_permission_state(state):
 		mic_permission_granted = false
 		permission_status_label.text = "! Need permission - click Start to grant"
 		permission_status_label.modulate = Color.YELLOW
-		status_label.text = "Click Start Speaking to grant microphone permission"
+		status_label.text = "Click Speak to grant microphone permission"
 		speak_button.disabled = false
-		speak_button.text = "Start Speaking"
+		speak_button.text = "Speak"
 
 # Initialize JavaScript environment for web audio - FIXED ENGINE DETECTION
 func _initialize_web_audio_environment():
@@ -655,7 +655,7 @@ func _on_speak_button_pressed():
 		else:
 			# No result found, reset UI
 			recognition_active = false
-			speak_button.text = "Start Speaking"
+			speak_button.text = "Speak"
 			speak_button.disabled = false
 			speak_button.modulate = Color.ORANGE
 			status_label.text = "No speech detected. Try again."
@@ -784,7 +784,7 @@ func _start_live_recognition() -> bool:
 					if (window.currentRecognition.hasOwnProperty('sensitivity')) {
 						window.currentRecognition.sensitivity = 1.0; // Maximum sensitivity
 					}
-					if (window.currentRecognition.hasOwnProperty('speechTimeout')) {
+					if (window.currentRecognition.hasOwnProperty('speechTime	out')) {
 						window.currentRecognition.speechTimeout = 10000; // 10 seconds timeout
 					}
 					if (window.currentRecognition.hasOwnProperty('speechStartTimeout')) {
@@ -1010,10 +1010,10 @@ func recognition_ended_callback():
 func _stop_recognition_completely():
 	recognition_active = false
 	live_transcription_enabled = false
-	speak_button.text = "Start Speaking"
+	speak_button.text = "Speak"
 	speak_button.disabled = false
-	status_label.text = "Recognition stopped. Click Start Speaking to try again."
-	permission_status_label.text = "Click Start Speaking to begin"
+	status_label.text = "Recognition stopped. Click Speak to try again."
+	permission_status_label.text = "Click Speak to begin"
 	permission_status_label.modulate = Color.WHITE
 
 # Callback function for speech recognition result from JavaScript
@@ -1026,7 +1026,7 @@ func speech_result_callback(text):
 	else:
 		print("EMPTY RECOGNITION RESULT")
 		status_label.text = "Could not understand speech"
-		speak_button.text = "Start Speaking"
+		speak_button.text = "Speak"
 		speak_button.disabled = false
 		recognition_active = false
 
@@ -1390,7 +1390,7 @@ func _restart_recognition_after_error():
 		# If all attempts failed, fall back to manual restart
 		print("All restart attempts failed - requiring manual restart")
 		_stop_recognition_completely()
-		status_label.text = "Microphone recovery failed. Click 'Start Speaking' to try again."
+		status_label.text = "Microphone recovery failed. Click 'Speak' to try again."
 		speak_button.text = "Try Again"
 		permission_status_label.text = "X Recognition error"
 		permission_status_label.modulate = Color.RED

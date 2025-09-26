@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://c4s0f4n6pxn6o"]
+[gd_scene load_steps=17 format=3 uid="uid://c4s0f4n6pxn6o"]
 
 [ext_resource type="Script" uid="uid://h4w722tfbmr7" path="res://Scripts/ReadAloudGuided.gd" id="1_guided"]
 [ext_resource type="Texture2D" uid="uid://0con8ixqofpr" path="res://gui/Update/UI/ui 8.png" id="2_background"]
@@ -9,7 +9,6 @@
 [ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="5_hover"]
 [ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="6_green"]
 [ext_resource type="Texture2D" uid="uid://qmmpx3uab5h7" path="res://gui/Update/UI/next button.png" id="6_next"]
-[ext_resource type="Texture2D" uid="uid://bp53fsaou53ad" path="res://gui/Update/UI/white button.png" id="7_ely31"]
 [ext_resource type="Texture2D" uid="uid://c8vnqmxwy0lsw" path="res://gui/Update/icons/small settings.png" id="7_sp5qi"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_header"]
@@ -359,7 +358,7 @@ theme_override_fonts/font = ExtResource("3_bold")
 theme_override_font_sizes/font_size = 16
 theme_override_styles/focus = SubResource("StyleBoxEmpty_focus")
 text = "Speak"
-icon = ExtResource("7_ely31")
+icon = ExtResource("6_green")
 flat = true
 icon_alignment = 1
 expand_icon = true
@@ -382,11 +381,9 @@ expand_icon = true
 
 [node name="ButtonClick" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("4_click")
-bus = &"SFX"
 
 [node name="ButtonHover" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("5_hover")
-bus = &"SFX"
 
 [connection signal="pressed" from="MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton" to="." method="_on_back_button_pressed"]
 [connection signal="pressed" from="MainContainer/HeaderPanel/GuideButton" to="." method="_on_guide_button_pressed"]
