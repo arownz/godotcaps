@@ -352,13 +352,6 @@ theme_override_font_sizes/font_size = 24
 text = "Attempts: 0"
 horizontal_alignment = 1
 
-[node name="EncouragementLabel" type="Label" parent="MainContainer/ContentContainer/GamePanel/GameContainer/ScoreContainer"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.2, 0.6, 0.2, 1)
-theme_override_fonts/font = ExtResource("3_ma1yg")
-theme_override_font_sizes/font_size = 20
-horizontal_alignment = 1
-
 [node name="CardsContainer" type="GridContainer" parent="MainContainer/ContentContainer/GamePanel/GameContainer"]
 layout_mode = 2
 size_flags_horizontal = 4

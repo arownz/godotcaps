@@ -430,9 +430,6 @@ func _check_match():
 		else:
 			print("FlipQuizVehicle: Sound node not found for ", data1.vehicle.sound_node)
 		
-		# Give encouraging feedback
-		_show_match_feedback(data1.vehicle.name)
-		
 		# Update instruction to reflect completed target
 		_update_instruction()
 		_update_navigation_buttons()
@@ -480,32 +477,6 @@ func _check_match():
 	flipped_cards.clear()
 	is_checking_match = false
 	_update_score_display()
-
-func _show_match_feedback(vehicle_name: String):
-	"""Show encouraging feedback for matches"""
-	var encouragement_label = $MainContainer/ContentContainer/GamePanel/GameContainer/ScoreContainer/EncouragementLabel
-	if encouragement_label:
-		encouragement_label.text = "Great! " + vehicle_name.capitalize() + " found!"
-		encouragement_label.add_theme_font_override("font", preload("res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf"))
-		encouragement_label.add_theme_font_size_override("font_size", 20)
-		encouragement_label.add_theme_color_override("font_color", Color(0.2, 0.6, 0.2, 1))
-		
-		encouragement_label.modulate.a = 0.0
-		encouragement_label.scale = Vector2(0.8, 0.8)
-		var tween = create_tween()
-		tween.set_parallel(true)
-		tween.tween_property(encouragement_label, "modulate:a", 1.0, 0.5).set_ease(Tween.EASE_OUT)
-		tween.tween_property(encouragement_label, "scale", Vector2(1.0, 1.0), 0.5).set_ease(Tween.EASE_OUT)
-		
-		await get_tree().create_timer(3.0).timeout
-		if encouragement_label:
-			var fade_tween = create_tween()
-			fade_tween.tween_property(encouragement_label, "modulate:a", 0.0, 1.0)
-
-	# TTS feedback for vehicles (no vehicle sound effects)
-	if tts:
-		var feedback_text = "You found the " + vehicle_name + "!"
-		tts.speak(feedback_text)
 
 func _complete_game():
 	"""Handle game completion"""

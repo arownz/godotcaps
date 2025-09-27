@@ -4,11 +4,3 @@
 
 [resource]
 script = ExtResource("1_1")
-player_name = "Player"
-player_health = 100
-player_damage = 10
-player_durability = 5
-player_level = 1
-player_exp = 0
-player_max_exp = 100
-player_animation_path = "res://Sprites/Animation/DefaultPlayer_Animation.tscn"

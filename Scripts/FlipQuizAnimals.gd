@@ -448,9 +448,6 @@ func _check_match():
 		if sound_node:
 			sound_node.play()
 		
-		# Give encouraging feedback
-		_show_match_feedback(data1.animal.name)
-		
 		# Update instruction to reflect completed target
 		_update_instruction()
 		_update_navigation_buttons()
@@ -499,49 +496,6 @@ func _check_match():
 	flipped_cards.clear()
 	is_checking_match = false
 	_update_score_display()
-
-func _show_match_feedback(animal_name: String):
-	"""Show encouraging feedback for matches with dyslexia-friendly design"""
-	var encouragement_label = get_node_or_null("MainContainer/ContentContainer/GamePanel/GameContainer/ScoreContainer/EncouragementLabel")
-	if encouragement_label:
-		# Clear, simple positive feedback
-		encouragement_label.text = "Great! " + animal_name.capitalize() + " found!"
-		
-		# Make text larger and easier to read for dyslexic children
-		encouragement_label.add_theme_font_override("font", preload("res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf"))
-		encouragement_label.add_theme_font_size_override("font_size", 20)
-		encouragement_label.add_theme_color_override("font_color", Color(0.2, 0.6, 0.2, 1)) # Green color for positive feedback
-		
-		# Animate the feedback for better visual impact
-		encouragement_label.modulate.a = 0.0
-		encouragement_label.scale = Vector2(0.8, 0.8)
-		var tween = create_tween()
-		tween.set_parallel(true)
-		tween.tween_property(encouragement_label, "modulate:a", 1.0, 0.5).set_ease(Tween.EASE_OUT)
-		tween.tween_property(encouragement_label, "scale", Vector2(1.0, 1.0), 0.5).set_ease(Tween.EASE_OUT)
-		
-		# Clear the message after some time
-		await get_tree().create_timer(3.0).timeout
-		if encouragement_label:
-			var fade_tween = create_tween()
-			fade_tween.tween_property(encouragement_label, "modulate:a", 0.0, 1.0)
-	else:
-		print("FlipQuizAnimals: EncouragementLabel not found, feedback shown via console")
-
-	# Play narrator guide first, then animal sound (no overlap)
-	if tts:
-		var feedback_text = "You found the " + animal_name + "!"
-		tts.speak(feedback_text)
-		# Wait for TTS to finish using a timer (approximate duration)
-		var timer = Timer.new()
-		timer.wait_time = 1.5
-		timer.one_shot = true
-		add_child(timer)
-		await timer.timeout
-		timer.queue_free()
-		var sound_node = get_node_or_null(animal_name + "_sfx")
-		if sound_node:
-			sound_node.play()
 
 func _complete_game():
 	"""Handle game completion"""
