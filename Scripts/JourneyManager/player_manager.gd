@@ -26,7 +26,7 @@ var player_skin = "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
 var player_animation_scene = "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
 
 # Available player skins
-var available_skins = ["default", "magi", "ragnar"]
+var available_skins = ["default", "ragna", "magi"]
 var current_skin = "default"
 
 # Player data loaded from Firebase

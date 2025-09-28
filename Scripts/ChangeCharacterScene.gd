@@ -11,7 +11,7 @@ const CENTER_POSITION = 430.0 # X position for centered character (730 - 300 for
 # Character Properties
 var current_character = 0 # 0-based index (0 = Character 1)
 var unlocked_characters = 1 # How many characters are unlocked (at least 1)
-var character_names = ["Lexia", "Magi", "Ragnar"]
+var character_names = ["Lexia", "Ragna", "Magi"]
 var character_textures = {
 	"unlocked": [],
 	"locked": []
@@ -43,8 +43,9 @@ func _ready():
 	# Preload character textures
 	character_textures.unlocked = [
 		preload("res://gui/Update/UI/Character Select Unlocked.png"),
+		null, # Will add Ragna unlocked texture when available
 		null, # Will add Magi unlocked texture when available
-		null # Will add Ragnar unlocked texture when available
+
 	]
 	character_textures.locked = [
 		null, # Character 1 is always unlocked
