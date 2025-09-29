@@ -587,10 +587,10 @@ stretch_mode = 4
 
 [node name="PlayerIcon" type="TextureRect" parent="MainContainer/BattleAreaContainer/StageProgress"]
 layout_mode = 0
-offset_left = 1.0
-offset_top = 5.0
-offset_right = 501.0
-offset_bottom = 395.67194
+offset_left = 2.0
+offset_top = 6.0
+offset_right = 502.0
+offset_bottom = 506.0
 scale = Vector2(0.122865245, 0.122865245)
 texture = ExtResource("16_player")
 stretch_mode = 4

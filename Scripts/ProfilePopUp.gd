@@ -270,8 +270,6 @@ func _create_user_document(user_id):
 		"profile": {
 			"username": display_name,
 			"email": email,
-			"birth_date": "",
-			"age": 0,
 			"profile_picture": "default",
 			"rank": "bronze",
 			"created_at": current_time,
@@ -290,7 +288,7 @@ func _create_user_document(user_id):
 				"base_damage": 10,
 				"base_durability": 5,
 				"energy": 20,
-				"skin": "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
+				"current_character": "lexia"
 			}
 		},
 		"word_challenges": {
@@ -311,9 +309,40 @@ func _create_user_document(user_id):
 			},
 			"progress": {
 				"enemies_defeated": 0,
-				"current_dungeon": 1,
-				"current_stage": 1
+				"current_dungeon": 1
 			}
+		},
+		"modules": {
+			"phonics": {
+				"completed": false,
+				"progress": 0,
+				"letters_completed": [],
+				"sight_words_completed": [],
+				"current_letter_index": 0,
+				"current_sight_word_index": 0
+			},
+			"flip_quiz": {
+				"completed": false,
+				"progress": 0,
+				"animals": {"sets_completed": [], "current_index": 0},
+				"vehicles": {"sets_completed": [], "current_index": 0}
+			},
+			"read_aloud": {
+				"completed": false,
+				"progress": 0,
+				"guided_reading": {"activities_completed": [], "current_index": 0},
+				"syllable_workshop": {"activities_completed": [], "current_word_index": 0}
+			}
+		},
+		"stage_times": {
+			"dungeon_1": {},
+			"dungeon_2": {},
+			"dungeon_3": {}
+		},
+		"characters": {
+			"unlocked_count": 1,
+			"selected_character": 0,
+			"unlock_notifications_shown": []
 		}
 	}
 	
@@ -817,15 +846,27 @@ func _update_character_bonuses(data):
 			bonus_drb_label.text = ""
 			bonus_drb_label.visible = false
 
+# Helper function to get character animation path from character name
+func _get_character_animation_path(character_name: String) -> String:
+	match character_name.to_lower():
+		"lexia":
+			return "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
+		"ragna":
+			return "res://Sprites/Animation/Ragna_Animation.tscn"
+		"magi":
+			return "res://Sprites/Animation/Magi_Animation.tscn"
+		_:
+			return "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
+
 # Update character animation in profile popup
 func _update_character_animation(data):
 	var stats = data.get("stats", {})
 	if stats.has("player"):
 		var player_data = stats["player"]
-		var character_skin = player_data.get("skin", "res://Sprites/Animation/DefaultPlayer_Animation.tscn")
 		var current_character = player_data.get("current_character", "lexia")
+		var character_skin = _get_character_animation_path(current_character)
 		
-		print("ProfilePopUp: Loading character animation - Character: " + current_character + ", Skin: " + character_skin)
+		print("ProfilePopUp: Loading character animation - Character: " + current_character + ", Animation: " + character_skin)
 		
 		# Get the CharacterContainer node
 		var character_container = $ProfileContainer/CharacterContainer

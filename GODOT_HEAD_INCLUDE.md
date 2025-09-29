@@ -1,4 +1,4 @@
-# Head Include Content for Godot WebGL Export
+# Current Head Include Content for Godot WebGL Export
 
 Copy and paste this content into your Godot Editor's **Project → Project Settings → Export → Web → Options → Head Include** field:
 

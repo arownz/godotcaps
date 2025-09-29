@@ -193,13 +193,10 @@ func _update_stage_progress():
 	if !_player_icon_pos_captured:
 		_player_icon_initial_pos = (player_icon as Control).position
 		_player_icon_pos_captured = true
-    
-	# Update player icon based on currently selected character
-	_update_player_icon_texture(player_icon)
-    
+	
 	var dungeon_num = battle_scene.dungeon_manager.dungeon_num
 	var stage_num = battle_scene.dungeon_manager.stage_num # 1..5
-    
+	
 	# Set enemy head icons per dungeon: 1-4 dungeon-specific, 5 is treant boss
 	var enemy_tex: Texture2D = null
 	match dungeon_num:
@@ -213,7 +210,7 @@ func _update_stage_progress():
 			enemy_tex = load("res://gui/Update/icons/slaym enemeh.png")
 	var boss_tex: Texture2D = load("res://gui/Update/icons/treant enemeh.png")
 	var lock_tex: Texture2D = load("res://gui/Update/icons/lock icon.png")
-    
+	
 	var slot_count = min(5, slots.get_child_count())
 	var covered_index := -1
 	if stage_num >= 2:
@@ -321,7 +318,7 @@ func _update_player_icon_texture(player_icon: TextureRect):
 	# Get the current character from player manager
 	var current_character = "lexia" # Default fallback
 	if battle_scene and battle_scene.player_manager:
-		# Get current character from current_skin variable (populated from Firebase)
+		# Get current character from current_skin variable (populated from Firebase current_character field)
 		if battle_scene.player_manager.current_skin != null and battle_scene.player_manager.current_skin != "":
 			current_character = battle_scene.player_manager.current_skin
 		# Fallback: check player animation scene path for character detection
@@ -337,7 +334,7 @@ func _update_player_icon_texture(player_icon: TextureRect):
 	# Load the appropriate head texture based on character
 	var head_texture: Texture2D = null
 	match current_character.to_lower():
-		"lexia", "default":
+		"lexia":
 			head_texture = load("res://gui/Update/icons/lexia_head.png")
 		"ragna":
 			head_texture = load("res://gui/Update/icons/ragna_head.png")
@@ -356,4 +353,31 @@ func _update_player_icon_texture(player_icon: TextureRect):
 		player_icon.texture = head_texture
 		print("UIManager: Updated player icon to " + current_character + " head")
 	else:
-		print("UIManager: Failed to load head texture for character: " + current_character)
+		print("UIManager: Failed to load head texture for character: " + current_character) # Apply the texture to the player icon
+	print("UIManager: Selected character: ", current_character)
+	print("UIManager: Head texture loaded: ", head_texture != null)
+	print("UIManager: Current player_icon.texture before setting: ", player_icon.texture)
+	
+	if head_texture:
+		# Force set the texture
+		player_icon.texture = head_texture
+		
+		# Force update the UI
+		player_icon.queue_redraw()
+		
+		print("UIManager: Successfully applied texture to player icon")
+		print("UIManager: Player icon properties after texture set:")
+		print("  - visible: ", player_icon.visible)
+		print("  - modulate: ", player_icon.modulate)
+		print("  - size: ", player_icon.size)
+		print("  - position: ", player_icon.position)
+		print("  - texture: ", player_icon.texture != null)
+		print("  - texture path (if available): ", player_icon.texture.resource_path if player_icon.texture else "null")
+		
+		# Wait a frame and check again to see if something is overriding it
+		await get_tree().process_frame
+		print("UIManager: After one frame - texture still set: ", player_icon.texture != null)
+		if player_icon.texture:
+			print("UIManager: After one frame - texture path: ", player_icon.texture.resource_path)
+	else:
+		print("UIManager: ERROR - Failed to load head texture for character: " + current_character)

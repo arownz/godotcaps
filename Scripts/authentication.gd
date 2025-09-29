@@ -699,8 +699,11 @@ func _create_user_document(collection, user_id: String, auth):
 				"health": 100,
 				"damage": 10,
 				"durability": 5,
+				"base_health": 100,
+				"base_damage": 10,
+				"base_durability": 5,
 				"energy": 20,
-				"skin": "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
+				"current_character": "lexia"
 			}
 		},
 		"word_challenges": {
@@ -750,6 +753,11 @@ func _create_user_document(collection, user_id: String, auth):
 			"dungeon_1": {},
 			"dungeon_2": {},
 			"dungeon_3": {}
+		},
+		"characters": {
+			"unlocked_count": 1,
+			"selected_character": 0,
+			"unlock_notifications_shown": []
 		}
 	}
 

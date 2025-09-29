@@ -59,7 +59,7 @@ func player_attack():
 	
 	# Return to original position
 	var return_tween = create_tween()
-	return_tween.tween_property(player_node, "position", original_position, 0.2)
+	return_tween.tween_property(player_node, "position", original_position, 0.3)
 	await return_tween.finished
 		
 	emit_signal("player_attack_performed", battle_scene.player_manager.player_damage)
@@ -84,8 +84,8 @@ func enemy_attack():
 	var original_position = enemy_node.position
 	
 	var enemy_attack_tween = create_tween()
-	enemy_attack_tween.tween_property(enemy_node, "position", original_position - Vector2(60, 0), 0.3) # Move left - reduced to prevent overlap
-	enemy_attack_tween.tween_property(enemy_node, "position", original_position, 0.2) # Return to original position
+	enemy_attack_tween.tween_property(enemy_node, "position", original_position - Vector2(64, 0), 0.3) # Move left - reduced to prevent overlap
+	enemy_attack_tween.tween_property(enemy_node, "position", original_position, 0.3) # Return to original position
 	
 	# Play attack animation
 	var sprite = enemy_node.get_node_or_null("AnimatedSprite2D")
@@ -142,10 +142,10 @@ func handle_victory():
 	# Show victory screen immediately - don't wait for Firebase
 	show_endgame_screen("Victory", exp_reward, completed_dungeon, completed_stage, enemy_name)
 	
-	# Update Firebase with victory data in the background (non-blocking)
+	# FIXED: Update Firebase synchronously to prevent race conditions
 	# Note: Player stats (exp, level, health, damage, durability) are updated by player_manager.gd
 	# We only update progression and enemy count here
-	_update_firebase_after_victory_async(exp_reward, completed_dungeon, completed_stage)
+	await _update_firebase_after_victory(exp_reward, completed_dungeon, completed_stage)
 	
 	# Show notification if dungeon was completed (boss defeated) - check later
 	await get_tree().create_timer(0.5).timeout
@@ -374,23 +374,37 @@ func _on_continue_battle():
 	var max_stages = 5
 	
 	if current_stage < max_stages:
-		# NOW advance to next stage (only when continuing)
-		battle_scene.dungeon_manager.advance_stage()
+		# CRITICAL FIX: Advance stage and save to Firebase SYNCHRONOUSLY
+		print("BattleManager: Starting stage advancement process...")
+		await battle_scene.dungeon_manager.advance_stage()
+		print("BattleManager: Stage advancement completed - Now at stage ", battle_scene.dungeon_manager.stage_num)
 		
 		# IMPORTANT: Update DungeonGlobals with the new stage info before reloading
 		DungeonGlobals.set_battle_progress(battle_scene.dungeon_manager.dungeon_num, battle_scene.dungeon_manager.stage_num)
+		print("BattleManager: DungeonGlobals updated - Dungeon: ", battle_scene.dungeon_manager.dungeon_num, ", Stage: ", battle_scene.dungeon_manager.stage_num)
 		
-		# Update current stage in Firebase to track progress
-		_update_current_stage_in_firebase(battle_scene.dungeon_manager.stage_num)
+		# Add extra delay to ensure Firebase operations complete
+		await get_tree().create_timer(0.5).timeout
+		print("BattleManager: Firebase sync delay completed")
 		
-		# Reset battle state and setup new enemy
+		# Reset battle state
 		battle_scene.battle_active = false
 		
-		# Setup enemy for new stage before reloading scene
-		print("Setting up enemy for new stage: ", battle_scene.dungeon_manager.stage_num)
+		print("BattleManager: Returning to dungeon map for dungeon ", battle_scene.dungeon_manager.dungeon_num)
 		
-		# Reload battle scene with new stage
-		battle_scene.get_tree().reload_current_scene()
+		# Go back to dungeon map to show updated progression
+		var dungeon_scene_path = ""
+		match battle_scene.dungeon_manager.dungeon_num:
+			1:
+				dungeon_scene_path = "res://Scenes/Dungeon1Map.tscn"
+			2:
+				dungeon_scene_path = "res://Scenes/Dungeon2Map.tscn"
+			3:
+				dungeon_scene_path = "res://Scenes/Dungeon3Map.tscn"
+			_:
+				dungeon_scene_path = "res://Scenes/DungeonSelection.tscn"
+		
+		battle_scene.get_tree().change_scene_to_file(dungeon_scene_path)
 	else:
 		# Completed all stages (defeated boss), go to dungeon selection to show unlocked dungeons
 		print("BattleManager: Dungeon " + str(battle_scene.dungeon_manager.dungeon_num) + " completed! Going to DungeonSelection")
@@ -552,7 +566,7 @@ func _show_dungeon_completion_notification(completed_dungeon_num: int):
 	var notification_popup = battle_scene.get_node_or_null("NotificationPopUp")
 	if notification_popup:
 		print("BattleManager: Showing unified dungeon completion notification")
-		var button_text = "Amazing!" if character_unlock_info.unlocked else "Continue"
+		var button_text = "Ok" if character_unlock_info.unlocked else "Continue"
 		notification_popup.show_notification(title, message, button_text)
 	else:
 		print("BattleManager: Warning - notification popup not found")
@@ -620,5 +634,3 @@ func _check_character_unlock(completed_dungeon_num: int) -> Dictionary:
 					print("BattleManager: Magi coming soon message shown!")
 	
 	return unlock_info
-
-# Remove the old _check_character_unlocks function as it's been replaced

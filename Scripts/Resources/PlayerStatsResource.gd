@@ -11,7 +11,6 @@ class_name PlayerStatsResource
 @export var base_damage: int = 10
 @export var base_durability: int = 5
 @export var energy: int = 20
-@export var skin: String = "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
 @export var current_character: String = "lexia"
 
 # Getter methods
@@ -34,7 +33,19 @@ func get_energy():
 	return energy
 
 func get_skin():
-	return skin
+	return get_character_animation_path(current_character)
+
+# Helper function to get character animation path from character name
+func get_character_animation_path(character_name: String) -> String:
+	match character_name.to_lower():
+		"lexia", "default":
+			return "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
+		"ragna":
+			return "res://Sprites/Animation/Ragna_Animation.tscn"
+		"magi":
+			return "res://Sprites/Animation/Magi_Animation.tscn"
+		_:
+			return "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
 
 func get_base_health():
 	return base_health

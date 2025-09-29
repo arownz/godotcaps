@@ -29,7 +29,7 @@ var character_data = {
 			"durability": 2 # Slight durability bonus
 		},
 		"animation_scene": "res://Sprites/Animation/DefaultPlayer_Animation.tscn",
-		"unlock_requirement": {"type": "default", "value": 0}, # Always unlocked
+		"unlock_requirement": {"type": "lexia", "value": 0}, # Always unlocked
 		"description": "A dyslexic balanced sword master wielding a trusty sword."
 	},
 	"ragna": {
@@ -47,8 +47,8 @@ var character_data = {
 	},
 	"magi": {
 		"display_name": "Magi",
-		"weapon": "Staff",
-		"counter_name": "Arcane Blast",
+		"weapon": "Buster",
+		"counter_name": "Ambatakam",
 		"stat_bonuses": {
 			"health": 20, # More health
 			"damage": - 5, # Less damage
@@ -56,7 +56,7 @@ var character_data = {
 		},
 		"animation_scene": "res://Sprites/Animation/Magi_Animation.tscn", # To be created
 		"unlock_requirement": {"type": "dungeon_unlock", "value": 2}, # Unlocked when Dungeon 2 is completed (Dungeon 3 becomes available)
-		"description": "A dyslexic spellcaster with a trusty staff and high durability and health."
+		"description": "A dyslexic tanker with a trusty buster and high durability and health."
 	}
 }
 

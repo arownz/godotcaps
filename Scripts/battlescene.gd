@@ -155,7 +155,7 @@ func _setup_battle():
 	
 	# Update stage info
 	_update_stage_info()
-	
+
 	print("Battle setup complete")
 
 func _connect_signals():

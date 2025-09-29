@@ -74,8 +74,8 @@ func advance_stage():
 	# Emit signal for stage advancement
 	emit_signal("stage_advanced", dungeon_num, stage_num)
 	
-	# Save progress to Firebase
-	save_progress_to_firebase()
+	# Save progress to Firebase - FIXED: Use await to prevent race conditions
+	await save_progress_to_firebase()
 	
 	return true
 
@@ -88,11 +88,12 @@ func reset():
 	# Emit reset signal
 	emit_signal("dungeon_reset")
 	
-	# Save progress to Firebase (resetting progress)
-	save_progress_to_firebase()
+	# Save progress to Firebase (resetting progress) - FIXED: Use await to prevent race conditions
+	await save_progress_to_firebase()
 	
 	return true
 
+# FIXED: Synchronous Firebase update to prevent race conditions
 func save_progress_to_firebase():
 	if testing_mode or !Firebase.Auth.auth:
 		print("DungeonManager: Progress not saved (testing mode or not authenticated)")
@@ -101,40 +102,57 @@ func save_progress_to_firebase():
 	var user_id = Firebase.Auth.auth.localid
 	var collection = Firebase.Firestore.collection("dyslexia_users")
 	
+	print("DungeonManager: Saving progression - Dungeon: ", dungeon_num, ", Stage: ", stage_num)
+	
 	# Get current document first to preserve other fields
-	var task = await collection.get_doc(user_id)
-	if task:
-		var document = await task
-		if document and document.has_method("doc_fields"):
-			var current_data = document.doc_fields
+	var document = await collection.get_doc(user_id)
+	if document and !("error" in document.keys() and document.get_value("error")):
+		# Ensure nested structure exists
+		var dungeons = document.get_value("dungeons")
+		if not dungeons:
+			dungeons = {}
+		
+		if not dungeons.has("progress"):
+			dungeons["progress"] = {}
+		if not dungeons.has("completed"):
+			dungeons["completed"] = {}
 			
-			# Ensure nested structure exists
-			if !current_data.has("dungeons"):
-				current_data["dungeons"] = {}
-			if !current_data.dungeons.has("progress"):
-				current_data.dungeons["progress"] = {}
-				
-			# Update progress
-			current_data.dungeons.progress.current_dungeon = dungeon_num
-			current_data.dungeons.progress.current_stage = stage_num
+		# Update current progression
+		dungeons["progress"]["current_dungeon"] = dungeon_num
+		dungeons["progress"]["current_stage"] = stage_num
+		
+		# Track stage completion - FIXED: Use proper stage completion tracking
+		var dungeon_key = str(dungeon_num)
+		if not dungeons["completed"].has(dungeon_key):
+			dungeons["completed"][dungeon_key] = {"completed": false, "stages_completed": 0}
+		
+		# CRITICAL FIX: Update stages_completed with the CURRENT stage number when it's completed
+		# When we advance from stage 3 to stage 4, stage 3 is now completed
+		var completed_stage = stage_num - 1
+		if completed_stage > 0:
+			var current_completed = dungeons["completed"][dungeon_key].get("stages_completed", 0)
+			dungeons["completed"][dungeon_key]["stages_completed"] = max(current_completed, completed_stage)
 			
-			# Track stage completion
-			if !current_data.dungeons.has("completed"):
-				current_data.dungeons["completed"] = {}
-			
-			var dungeon_key = str(previous_dungeon)
-			if !current_data.dungeons.completed.has(dungeon_key):
-				current_data.dungeons.completed[dungeon_key] = {"completed": false, "stages_completed": []}
-			
-			# Add completed stage to array if not already there
-			var previous_stage = stage_num - 1
-			if previous_stage > 0: # Only track completed stages
-				if !current_data.dungeons.completed[dungeon_key].stages_completed.has(previous_stage):
-					current_data.dungeons.completed[dungeon_key].stages_completed.append(previous_stage)
-			
-			# Save back to Firestore
-			collection.add(user_id, current_data)
-			print("DungeonManager: Saved progress - Dungeon: ", dungeon_num, ", Stage: ", stage_num)
+			# Mark dungeon as completed if all 5 stages are done
+			if completed_stage >= 5:
+				dungeons["completed"][dungeon_key]["completed"] = true
+		
+		# Ensure enemies_defeated counter exists
+		var progress = dungeons.get("progress", {})
+		if not progress.has("enemies_defeated"):
+			progress["enemies_defeated"] = 0
+		dungeons["progress"] = progress
+		
+		# SYNCHRONOUS UPDATE: Use document update pattern to avoid race conditions
+		document.add_or_update_field("dungeons", dungeons)
+		var result = await collection.update(document)
+		
+		if result and !("error" in result.keys()):
+			print("DungeonManager: Successfully saved progression - Dungeon: ", dungeon_num, ", Stage: ", stage_num)
+		else:
+			print("DungeonManager: Failed to save progression - ", result.get("error", "Unknown error"))
+	else:
+		print("DungeonManager: Failed to get user document for progression save")
 
 # Check if we just advanced to a new dungeon
 func is_new_dungeon():

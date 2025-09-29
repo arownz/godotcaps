@@ -26,8 +26,8 @@ var player_skin = "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
 var player_animation_scene = "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
 
 # Available player skins
-var available_skins = ["default", "ragna", "magi"]
-var current_skin = "default"
+var available_skins = ["lexia", "ragna", "magi"]
+var current_skin = "lexia"
 
 # Character bonuses (applied on top of base stats)
 var character_bonuses = {
@@ -59,6 +59,18 @@ func initialize(scene_ref):
 	load_player_animation()
 	
 	print("PlayerManager: Player initialization complete - Level " + str(player_level) + " with " + str(player_damage) + " damage")
+
+# Helper function to get character animation path from character name
+func _get_character_animation_path(character_name: String) -> String:
+	match character_name.to_lower():
+		"lexia":
+			return "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
+		"ragna":
+			return "res://Sprites/Animation/Ragna_Animation.tscn"
+		"magi":
+			return "res://Sprites/Animation/Magi_Animation.tscn"
+		_:
+			return "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
 
 func load_player_data_from_firebase():
 	if not Firebase.Auth.auth:
@@ -110,15 +122,15 @@ func load_player_data_from_firebase():
 			player_damage = player_data.get("damage", base_damage)
 			player_durability = player_data.get("durability", base_durability)
 			player_energy = player_data.get("energy", 20)
-			player_animation_scene = player_data.get("skin", "res://Sprites/Animation/DefaultPlayer_Animation.tscn")
+			
+			# Get current character info and derive animation path
+			current_skin = player_data.get("current_character", "lexia")
+			player_animation_scene = _get_character_animation_path(current_skin)
 			
 			# Calculate current character bonuses
 			character_bonuses["health"] = player_max_health - base_health
 			character_bonuses["damage"] = player_damage - base_damage
 			character_bonuses["durability"] = player_durability - base_durability
-			
-			# Get current character info
-			current_skin = player_data.get("current_character", "lexia") # Also populate player_firebase_data for backward compatibility
 			player_firebase_data = {
 				"username": player_name,
 				"level": player_level,
@@ -465,11 +477,11 @@ func _update_player_stats_in_firebase(leveled_up: bool = false):
 			player_stats["base_health"] = base_health
 			player_stats["base_damage"] = base_damage
 			player_stats["base_durability"] = base_durability
-			# Preserve existing energy and last_energy_update fields
+			# Preserve existing energy and character fields
 			if !player_stats.has("energy"):
 				player_stats["energy"] = 20
-			if !player_stats.has("skin"):
-				player_stats["skin"] = "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
+			if !player_stats.has("current_character"):
+				player_stats["current_character"] = "lexia"
 				
 			# Update the stats structure - exact same pattern as mainmenu.gd
 			stats["player"] = player_stats
@@ -525,7 +537,7 @@ func change_player_skin(skin_name):
 		current_skin = skin_name
 		
 		# Update skin path based on the skin name
-		if skin_name == "default":
+		if skin_name == "lexia":
 			player_skin = "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
 		else:
 			# Try to load animation scene first, fall back to texture

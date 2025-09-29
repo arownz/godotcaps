@@ -61,16 +61,19 @@ func _ready():
     # Add small delay to allow Firebase operations to complete if returning from another scene
     await get_tree().create_timer(0.1).timeout
     
-    # Load user data - with await
+    # Load user data first - with await
     await load_user_data()
     
     # Setup real-time listener for user document changes
     _setup_firestore_listener()
     
-    # Ensure default character animation plays idle
-    _setup_default_character_animation()
+    # Wait one frame to ensure UI is fully loaded before updating character animation
+    await get_tree().process_frame
+    
+    # Update character animation AFTER data is loaded and UI is ready
+    update_character_animation(user_data)
 
-# Setup default character animation to play idle
+# Setup default character animation to play idle - IMPROVED for stability
 func _setup_default_character_animation():
     var character_area = $CharacterArea
     if character_area:
@@ -247,7 +250,6 @@ func _process_document(document):
                     # Create default stats structure for character animation
                     user_data["stats"] = {
                         "player": {
-                            "skin": "res://Sprites/Animation/DefaultPlayer_Animation.tscn",
                             "current_character": "lexia"
                         }
                     }
@@ -273,70 +275,84 @@ func _create_default_user_document(user_id):
     
     # Create document with the new structure
     var user_doc = {
-        "profile": {
-            "username": display_name,
-            "email": email,
-            "birth_date": "",
-            "age": 0,
-            "profile_picture": "default",
-            "rank": "bronze",
-            "created_at": current_time,
-            "usage_time": 0,
-            "session": 1,
-            "last_session_date": Time.get_date_string_from_system()
-        },
-        "stats": {
-            "player": {
-                "level": 1,
-                "exp": 0,
-                "health": 100,
-                "damage": 10,
-                "durability": 5,
-                "energy": 20,
-                "skin": "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
-            }
-        },
-        "word_challenges": {
-            "completed": {
-                "stt": 0,
-                "whiteboard": 0
-            },
-            "failed": {
-                "stt": 0,
-                "whiteboard": 0
-            }
-        },
-        "dungeons": {
-            "completed": {
-                "1": {"completed": false, "stages_completed": 0},
-                "2": {"completed": false, "stages_completed": 0},
-                "3": {"completed": false, "stages_completed": 0}
-            },
-            "progress": {
-                "enemies_defeated": 0,
-                "current_dungeon": 1,
-            }
-        }, # temporary structures for modules for future update
-        "modules": {
+		"profile": {
+			"username": display_name,
+			"email": email,
+			"profile_picture": "default",
+			"rank": "bronze",
+			"created_at": current_time,
+			"usage_time": 0,
+			"session": 1,
+			"last_session_date": Time.get_date_string_from_system()
+		},
+		"stats": {
+			"player": {
+				"level": 1,
+				"exp": 0,
+				"health": 100,
+				"damage": 10,
+				"durability": 5,
+				"base_health": 100,
+				"base_damage": 10,
+				"base_durability": 5,
+				"energy": 20,
+				"current_character": "lexia"
+			}
+		},
+		"word_challenges": {
+			"completed": {
+				"stt": 0,
+				"whiteboard": 0
+			},
+			"failed": {
+				"stt": 0,
+				"whiteboard": 0
+			}
+		},
+		"dungeons": {
+			"completed": {
+				"1": {"completed": false, "stages_completed": 0},
+				"2": {"completed": false, "stages_completed": 0},
+				"3": {"completed": false, "stages_completed": 0}
+			},
+			"progress": {
+				"enemies_defeated": 0,
+				"current_dungeon": 1
+			}
+		},
+		"modules": {
 			"phonics": {
 				"completed": false,
-				"progress": 0
+				"progress": 0,
+				"letters_completed": [],
+				"sight_words_completed": [],
+				"current_letter_index": 0,
+				"current_sight_word_index": 0
 			},
 			"flip_quiz": {
 				"completed": false,
-				"progress": 0
+				"progress": 0,
+				"animals": {"sets_completed": [], "current_index": 0},
+				"vehicles": {"sets_completed": [], "current_index": 0}
 			},
 			"read_aloud": {
 				"completed": false,
-				"progress": 0
+				"progress": 0,
+				"guided_reading": {"activities_completed": [], "current_index": 0},
+				"syllable_workshop": {"activities_completed": [], "current_word_index": 0}
 			}
+		},
+		"stage_times": {
+			"dungeon_1": {},
+			"dungeon_2": {},
+			"dungeon_3": {}
 		},
 		"characters": {
 			"unlocked_count": 1,
 			"selected_character": 0,
 			"unlock_notifications_shown": []
 		}
-    }
+	}
     
     # Add document to Firestore
     var task = collection.add(user_id, user_doc)
@@ -533,7 +549,7 @@ func _update_energy_recovery_display():
     energy_timer_label.text = "Next energy in: %d:%02d" % [minutes, seconds]
     energy_timer_label.visible = true
 
-# Update UI with user data - UPDATED for energy recovery
+# Update UI with user data - UPDATED for energy recovery and stable character loading
 func update_user_interface():
     # Access data using dictionary syntax since we're storing it that way
     name_label.text = user_data.get("username", "Player")
@@ -550,9 +566,8 @@ func update_user_interface():
     # Update profile avatar
     update_profile_picture(user_data.get("profile_picture", "default"))
     
-    # Update character animation
-    print("MainMenu: About to update character animation with user_data keys: " + str(user_data.keys()))
-    update_character_animation(user_data)
+    # Character animation will be updated separately in _ready() after UI is fully loaded
+    print("MainMenu: Basic UI updated, character animation will be handled separately")
 
 # Update profile avatar with the given image ID
 func update_profile_picture(profile_id):
@@ -671,6 +686,12 @@ func _on_profile_popup_closed():
     # Force reload user data from Firestore
     await load_user_data()
     
+    # Wait one frame to ensure UI is stable before updating animations
+    await get_tree().process_frame
+    
+    # Update character animation after data reload (in case character was changed)
+    update_character_animation(user_data)
+    
     # Additional debug to verify the update
     if "profile_picture" in user_data:
         print("MainMenu: After popup closed - profile picture is now: " + user_data.get("profile_picture", "default"))
@@ -775,58 +796,95 @@ func refresh_user_data():
     print("MainMenu: Force refreshing user data")
     await load_user_data()
 
+# Helper function to get character animation path from character name
+func _get_character_animation_path(character_name: String) -> String:
+    match character_name.to_lower():
+        "lexia":
+            return "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
+        "ragna":
+            return "res://Sprites/Animation/Ragna_Animation.tscn"
+        "magi":
+            return "res://Sprites/Animation/Magi_Animation.tscn"
+        _:
+            return "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
+
 # Override _exit_tree to ensure cleanup
 func _exit_tree():
     _cleanup_firestore_listener()
     _stop_usage_time_tracking()
 
-# Update character animation based on selected character
+# Update character animation based on selected character - FIXED to prevent loading corruption
 func update_character_animation(data):
+    # Ensure we have valid data before proceeding
+    if not data or data.is_empty():
+        print("MainMenu: No data available for character animation, using default")
+        _setup_default_character_animation()
+        return
+    
     var stats = data.get("stats", {})
     if stats.has("player"):
         var player_data = stats["player"]
-        var character_skin = player_data.get("skin", "res://Sprites/Animation/DefaultPlayer_Animation.tscn")
         var current_character = player_data.get("current_character", "lexia")
+        var character_skin = _get_character_animation_path(current_character)
         
-        print("MainMenu: Loading character animation - Character: " + current_character + ", Skin: " + character_skin)
+        print("MainMenu: Loading character animation - Character: " + current_character + ", Animation: " + character_skin)
         
         # Get the CharacterArea node
         var character_area = $CharacterArea
         if character_area:
-            # Remove existing character animation
+            # Check if we already have the correct animation loaded to avoid unnecessary reloading
             var existing_animation = character_area.get_node_or_null("DefaultPlayerAnimation")
             if existing_animation:
+                # Check if this is already the correct character animation
+                var current_scene_path = existing_animation.scene_file_path
+                if current_scene_path == character_skin:
+                    print("MainMenu: Character animation already loaded correctly, just ensuring idle plays")
+                    var sprite = existing_animation.get_node_or_null("AnimatedSprite2D")
+                    if sprite and sprite.sprite_frames:
+                        if sprite.sprite_frames.has_animation("idle"):
+                            sprite.play("idle")
+                        elif sprite.sprite_frames.has_animation("battle_idle"):
+                            sprite.play("battle_idle")
+                    return
+                
+                # Different animation needed, remove the old one safely
                 existing_animation.queue_free()
                 await get_tree().process_frame # Wait for node to be freed
             
-            # Load the new character animation
-            var animation_scene = load(character_skin)
-            if animation_scene:
-                var new_animation = animation_scene.instantiate()
-                new_animation.name = "DefaultPlayerAnimation"
-                character_area.add_child(new_animation)
-                
-                # Don't override position and scale - use CharacterArea's transform
-                # The CharacterArea already has position and scale set in the TSCN
-                
-                # Play idle animation - check for idle first, then battle_idle
-                var sprite = new_animation.get_node_or_null("AnimatedSprite2D")
-                if sprite and sprite.sprite_frames:
-                    if sprite.sprite_frames.has_animation("idle"):
-                        sprite.play("idle")
-                        print("MainMenu: Playing 'idle' animation")
-                    elif sprite.sprite_frames.has_animation("battle_idle"):
-                        sprite.play("battle_idle")
-                        print("MainMenu: Playing 'battle_idle' animation")
+            # Load the new character animation with error handling
+            if ResourceLoader.exists(character_skin):
+                var animation_scene = load(character_skin)
+                if animation_scene:
+                    var new_animation = animation_scene.instantiate()
+                    new_animation.name = "DefaultPlayerAnimation"
+                    character_area.add_child(new_animation)
+                    
+                    # Wait one frame for the node to be fully added
+                    await get_tree().process_frame
+                    
+                    # Play idle animation - check for idle first, then battle_idle
+                    var sprite = new_animation.get_node_or_null("AnimatedSprite2D")
+                    if sprite and sprite.sprite_frames:
+                        if sprite.sprite_frames.has_animation("idle"):
+                            sprite.play("idle")
+                            print("MainMenu: Playing 'idle' animation")
+                        elif sprite.sprite_frames.has_animation("battle_idle"):
+                            sprite.play("battle_idle")
+                            print("MainMenu: Playing 'battle_idle' animation")
+                        else:
+                            print("MainMenu: No idle animations found, available animations: " + str(sprite.sprite_frames.get_animation_names()))
                     else:
-                        print("MainMenu: No idle animations found, available animations: " + str(sprite.sprite_frames.get_animation_names()))
+                        print("MainMenu: AnimatedSprite2D node or sprite_frames not found")
+                    
+                    print("MainMenu: Character animation updated successfully - " + current_character)
                 else:
-                    print("MainMenu: AnimatedSprite2D node or sprite_frames not found")
-                
-                print("MainMenu: Character animation updated successfully - " + current_character)
+                    print("MainMenu: Failed to instantiate character animation scene: " + character_skin)
+                    _setup_default_character_animation()
             else:
-                print("MainMenu: Failed to load character animation: " + character_skin)
+                print("MainMenu: Character animation file does not exist: " + character_skin)
+                _setup_default_character_animation()
         else:
             print("MainMenu: CharacterArea not found")
     else:
-        print("MainMenu: No player stats found for character animation update")
+        print("MainMenu: No player stats found, using default character animation")
+        _setup_default_character_animation()
