@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://beu8uw5oqkvxd"]
+[gd_scene load_steps=20 format=3 uid="uid://beu8uw5oqkvxd"]
 
 [ext_resource type="Script" uid="uid://liwnmmbqa706" path="res://Scripts/ChangeCharacterScene.gd" id="1_rnq7s"]
 [ext_resource type="Texture2D" uid="uid://n08ji1i2co16" path="res://gui/Update/UI/small button.png" id="2_6nemp"]
@@ -15,8 +15,12 @@
 [ext_resource type="Texture2D" uid="uid://cpt6gmnwq7v0o" path="res://gui/Update/UI/next button_hover.png" id="9_hnmjh"]
 [ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="13_8uolc"]
 [ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="14_ccovg"]
+[ext_resource type="Texture2D" uid="uid://bedyjdu5rblv8" path="res://gui/Update/UI/ui (1).png" id="14_ns5we"]
+[ext_resource type="FontFile" uid="uid://bgln2wf0h6j6e" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.woff" id="15_solvw"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bu21u"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_wve8j"]
 
 [node name="ChangeCharacterScene" type="Control"]
 layout_mode = 3
@@ -325,18 +329,19 @@ horizontal_alignment = 1
 
 [node name="SelectButton" type="Button" parent="."]
 physics_interpolation_mode = 0
+custom_minimum_size = Vector2(250, 0)
 layout_mode = 0
-offset_left = 603.0
-offset_top = 669.0
-offset_right = 810.0
-offset_bottom = 766.0
+offset_left = 574.0
+offset_top = 667.0
+offset_right = 824.0
+offset_bottom = 764.0
 scale = Vector2(1.24648, 1.24648)
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
 theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("8_8uolc")
-theme_override_font_sizes/font_size = 15
+theme_override_font_sizes/font_size = 17
 theme_override_styles/focus = SubResource("StyleBoxEmpty_bu21u")
 text = "Select Character"
 icon = ExtResource("9_ccovg")
@@ -382,6 +387,189 @@ theme_override_font_sizes/font_size = 24
 text = "Back"
 horizontal_alignment = 1
 
+[node name="CharacterStatsPopup" type="CanvasLayer" parent="."]
+layer = 12
+visible = false
+
+[node name="PopupBackground" type="ColorRect" parent="CharacterStatsPopup"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0.7)
+
+[node name="PopupContainer" type="Control" parent="CharacterStatsPopup"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="CharacterStatsPopup/PopupContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="StatsPanel" type="NinePatchRect" parent="CharacterStatsPopup/PopupContainer/CenterContainer"]
+custom_minimum_size = Vector2(600, 630)
+layout_mode = 2
+texture = ExtResource("14_ns5we")
+
+[node name="StatsContent" type="VBoxContainer" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 30.0
+offset_top = 30.0
+offset_right = -30.0
+offset_bottom = -30.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+
+[node name="CharacterTitle" type="Label" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("8_8uolc")
+theme_override_font_sizes/font_size = 36
+text = "Lexia"
+horizontal_alignment = 1
+
+[node name="WeaponContainer" type="VBoxContainer" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="WeaponLabel" type="Label" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent/WeaponContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("5_hnmjh")
+theme_override_font_sizes/font_size = 20
+text = "Weapon: Sword"
+horizontal_alignment = 1
+
+[node name="CounterLabel" type="Label" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent/WeaponContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("5_hnmjh")
+theme_override_font_sizes/font_size = 20
+text = "Counter: Blade Beam"
+horizontal_alignment = 1
+
+[node name="StatsTitle" type="Label" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("8_8uolc")
+theme_override_font_sizes/font_size = 24
+text = "Stat Bonuses:"
+horizontal_alignment = 1
+
+[node name="StatsContainer" type="VBoxContainer" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="HealthStat" type="HBoxContainer" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent/StatsContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="HealthIcon" type="Label" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent/StatsContainer/HealthStat"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.101960786, 0.7882353, 0.23921569, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("8_8uolc")
+theme_override_font_sizes/font_size = 22
+text = "~ Health:"
+
+[node name="HealthValue" type="Label" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent/StatsContainer/HealthStat"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("8_8uolc")
+theme_override_font_sizes/font_size = 22
+text = " +5"
+
+[node name="AttackStat" type="HBoxContainer" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent/StatsContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="AttackIcon" type="Label" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent/StatsContainer/AttackStat"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9098039, 0.53333336, 0.23137255, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("8_8uolc")
+theme_override_font_sizes/font_size = 22
+text = "~ Attack:"
+
+[node name="AttackValue" type="Label" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent/StatsContainer/AttackStat"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("8_8uolc")
+theme_override_font_sizes/font_size = 22
+text = " +3"
+
+[node name="DurabilityStat" type="HBoxContainer" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent/StatsContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="DurabilityIcon" type="Label" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent/StatsContainer/DurabilityStat"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.32156864, 0.43137255, 0.78431374, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("8_8uolc")
+theme_override_font_sizes/font_size = 22
+text = "~ Durability:"
+
+[node name="DurabilityValue" type="Label" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent/StatsContainer/DurabilityStat"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("8_8uolc")
+theme_override_font_sizes/font_size = 22
+text = " +2"
+
+[node name="Description" type="Label" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent"]
+custom_minimum_size = Vector2(1, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.85, 0.85, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("5_hnmjh")
+theme_override_font_sizes/font_size = 18
+text = "A dyslexic sword master wielding a trusty sword."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="CloseButton" type="Button" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent"]
+custom_minimum_size = Vector2(120, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 8
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("15_solvw")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/focus = SubResource("StyleBoxEmpty_wve8j")
+text = "Ok"
+icon = ExtResource("9_ccovg")
+flat = true
+icon_alignment = 1
+expand_icon = true
+
 [node name="ButtonClick" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("13_8uolc")
 
@@ -393,5 +581,6 @@ stream = ExtResource("14_ccovg")
 [connection signal="pressed" from="CharacterContainer/CharacterCarousel/Character3/TextureButton" to="." method="_on_character3_pressed"]
 [connection signal="pressed" from="NextButton" to="." method="_on_next_button_pressed"]
 [connection signal="pressed" from="PreviousButton" to="." method="_on_previous_button_pressed"]
+[connection signal="mouse_entered" from="SelectButton" to="." method="_on_select_button_hover_exited"]
 [connection signal="pressed" from="SelectButton" to="." method="_on_select_button_pressed"]
 [connection signal="pressed" from="BackButton" to="." method="_on_back_button_pressed"]

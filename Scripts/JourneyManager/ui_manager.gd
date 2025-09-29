@@ -18,6 +18,13 @@ func initialize_ui():
 	# Initialize PLAYER power and durability bars with actual player data
 	update_power_bar(battle_scene.player_manager.player_damage)
 	update_durability_bar(battle_scene.player_manager.player_durability)
+	
+	# Initialize player icon in stage progress with correct character
+	var progress_root = battle_scene.get_node_or_null("MainContainer/BattleAreaContainer/StageProgress")
+	if progress_root:
+		var player_icon = progress_root.get_node_or_null("PlayerIcon") as TextureRect
+		if player_icon:
+			_update_player_icon_texture(player_icon)
 
 func initialize_player_ui():
 	# Set player name
@@ -187,6 +194,9 @@ func _update_stage_progress():
 		_player_icon_initial_pos = (player_icon as Control).position
 		_player_icon_pos_captured = true
     
+	# Update player icon based on currently selected character
+	_update_player_icon_texture(player_icon)
+    
 	var dungeon_num = battle_scene.dungeon_manager.dungeon_num
 	var stage_num = battle_scene.dungeon_manager.stage_num # 1..5
     
@@ -302,3 +312,48 @@ func update_background(dungeon_num: int):
 			print("UIManager: Unknown dungeon ", dungeon_num, ", defaulting to dungeon 1 background")
 	
 	print("UIManager: Background switch completed for dungeon ", dungeon_num)
+
+# Update the player icon texture based on currently selected character
+func _update_player_icon_texture(player_icon: TextureRect):
+	if !player_icon:
+		return
+		
+	# Get the current character from player manager
+	var current_character = "lexia" # Default fallback
+	if battle_scene and battle_scene.player_manager:
+		# Get current character from current_skin variable (populated from Firebase)
+		if battle_scene.player_manager.current_skin != null and battle_scene.player_manager.current_skin != "":
+			current_character = battle_scene.player_manager.current_skin
+		# Fallback: check player animation scene path for character detection
+		elif battle_scene.player_manager.player_animation_scene != null:
+			var animation_path = battle_scene.player_manager.player_animation_scene
+			if "Ragna" in animation_path:
+				current_character = "ragna"
+			elif "Magi" in animation_path:
+				current_character = "magi"
+			else:
+				current_character = "lexia"
+	
+	# Load the appropriate head texture based on character
+	var head_texture: Texture2D = null
+	match current_character.to_lower():
+		"lexia", "default":
+			head_texture = load("res://gui/Update/icons/lexia_head.png")
+		"ragna":
+			head_texture = load("res://gui/Update/icons/ragna_head.png")
+		"magi":
+			# TODO: Add magi_head.png when Magi character is fully implemented
+			# For now, fallback to lexia head
+			head_texture = load("res://gui/Update/icons/lexia_head.png")
+			print("UIManager: Magi head icon not yet available, using Lexia head as fallback")
+		_:
+			# Default fallback for any unknown character
+			head_texture = load("res://gui/Update/icons/lexia_head.png")
+			print("UIManager: Unknown character '" + str(current_character) + "', using Lexia head as fallback")
+	
+	# Apply the texture to the player icon
+	if head_texture:
+		player_icon.texture = head_texture
+		print("UIManager: Updated player icon to " + current_character + " head")
+	else:
+		print("UIManager: Failed to load head texture for character: " + current_character)

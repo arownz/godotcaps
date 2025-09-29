@@ -136,18 +136,42 @@ func add_cancellation_message():
 func add_challenge_result_log(recognized_text: String, target_word: String, success: bool, bonus_damage: int = 0, player_base_damage: int = 0):
 	var log_message = ""
 	
+	# Get current character's counter name
+	var counter_name = _get_current_character_counter_name()
+	
 	if success:
-		log_message = "[color=#000000]Challenge successful! You recognized: \"" + recognized_text + "\"[/color]"
+		log_message = "[color=#4CAF50]" + counter_name + " successful![/color] [color=#000000]You recognized: \"" + recognized_text + "\"[/color]"
 		if bonus_damage > 0 and player_base_damage > 0:
 			var total_damage = player_base_damage + bonus_damage
 			log_message += "[color=#000000] (Damage: " + str(player_base_damage) + " + " + str(bonus_damage) + " = " + str(total_damage) + ")[/color]"
 		elif bonus_damage > 0:
 			log_message += "[color=#000000] (Bonus damage: +" + str(bonus_damage) + ")[/color]"
 	else:
-		log_message = "[color=#000000]Challenge failed. You recognized: \"" + recognized_text + "\". The word was: \"" + target_word + "\"[/color]"
+		log_message = "[color=#FF0000]" + counter_name + " failed.[/color] [color=#000000]You recognized: \"" + recognized_text + "\". The word was: \"" + target_word + "\"[/color]"
 	
 	# Use the existing add_log_entry function with a challenge type
 	add_log_entry(log_message, "challenge")
+
+# Get the current character's counter name from character data
+func _get_current_character_counter_name() -> String:
+	# Try to get character info from player manager or battle scene
+	if battle_scene and battle_scene.has_method("get") and battle_scene.player_manager:
+		var player_stats = battle_scene.player_manager.player_firebase_data
+		if player_stats and player_stats.has("current_character"):
+			var character_key = player_stats["current_character"]
+			return _get_counter_name_for_character(character_key)
+	
+	# Fallback to default
+	return "Blade Beam"
+
+# Map character keys to their counter names
+func _get_counter_name_for_character(character_key: String) -> String:
+	var character_counters = {
+		"lexia": "Blade Beam",
+		"ragna": "Swift Pierce",
+		"magi": "Arcane Blast"
+	}
+	return character_counters.get(character_key, "Blade Beam")
 
 func _scroll_to_bottom():
 	# Wait for the next frame to ensure UI has updated

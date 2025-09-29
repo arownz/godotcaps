@@ -574,10 +574,10 @@ sprite_frames = SubResource("SpriteFrames_fdt5l")
 animation = &"counter"
 autoplay = "idle"
 
-[node name="sfx_counter_swordslash" type="AudioStreamPlayer" parent="."]
+[node name="sfx_counter" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("2_81ctd")
 
-[node name="sfx_autoattack_swordslash" type="AudioStreamPlayer" parent="."]
+[node name="sfx_autoattack" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_0var5")
 
 [node name="player_hurt" type="AudioStreamPlayer" parent="."]

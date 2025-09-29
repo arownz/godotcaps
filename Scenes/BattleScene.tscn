@@ -20,7 +20,7 @@
 [ext_resource type="Texture2D" uid="uid://cgo0fsh46bqj3" path="res://gui/Update/UI/defense bar icon.png" id="12_cja1x"]
 [ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="14_cja1x"]
 [ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="15_aip7a"]
-[ext_resource type="Texture2D" uid="uid://clkh35ycdmutp" path="res://gui/Update/icons/player progress icon.png" id="16_player"]
+[ext_resource type="Texture2D" uid="uid://clkh35ycdmutp" path="res://gui/Update/icons/lexia_head.png" id="16_player"]
 [ext_resource type="Texture2D" uid="uid://caaebspp4lxk4" path="res://gui/Update/icons/slaym enemeh.png" id="17_slaym"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_e13ox"]
@@ -249,7 +249,6 @@ theme_override_constants/outline_size = 5
 theme_override_fonts/font = ExtResource("8_2tp6q")
 theme_override_font_sizes/font_size = 18
 text = "loading.."
-horizontal_alignment = 1
 
 [node name="EnemyContainer" type="Control" parent="MainContainer/BattleAreaContainer/BattleContainer"]
 layout_mode = 1
@@ -400,8 +399,7 @@ theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 5
 theme_override_fonts/font = ExtResource("8_2tp6q")
 theme_override_font_sizes/font_size = 18
-text = "loading.."
-horizontal_alignment = 1
+text = "loading..."
 
 [node name="FightLabel" type="Label" parent="MainContainer/BattleAreaContainer"]
 visible = false
@@ -589,10 +587,11 @@ stretch_mode = 4
 
 [node name="PlayerIcon" type="TextureRect" parent="MainContainer/BattleAreaContainer/StageProgress"]
 layout_mode = 0
-offset_left = 2.0
-offset_top = 17.0
-offset_right = 51.0
-offset_bottom = 66.0
+offset_left = 1.0
+offset_top = 5.0
+offset_right = 501.0
+offset_bottom = 395.67194
+scale = Vector2(0.122865245, 0.122865245)
 texture = ExtResource("16_player")
 stretch_mode = 4
 

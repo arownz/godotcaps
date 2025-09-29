@@ -66,6 +66,33 @@ func _ready():
     
     # Setup real-time listener for user document changes
     _setup_firestore_listener()
+    
+    # Ensure default character animation plays idle
+    _setup_default_character_animation()
+
+# Setup default character animation to play idle
+func _setup_default_character_animation():
+    var character_area = $CharacterArea
+    if character_area:
+        var default_animation = character_area.get_node_or_null("DefaultPlayerAnimation")
+        if default_animation:
+            # Find the AnimatedSprite2D and play idle animation
+            var sprite = default_animation.get_node_or_null("AnimatedSprite2D")
+            if sprite and sprite.sprite_frames:
+                if sprite.sprite_frames.has_animation("idle"):
+                    sprite.play("idle")
+                    print("MainMenu: Default character playing 'idle' animation")
+                elif sprite.sprite_frames.has_animation("battle_idle"):
+                    sprite.play("battle_idle")
+                    print("MainMenu: Default character playing 'battle_idle' animation")
+                else:
+                    print("MainMenu: No idle animations found for default character")
+            else:
+                print("MainMenu: Default character AnimatedSprite2D not found")
+        else:
+            print("MainMenu: DefaultPlayerAnimation not found in CharacterArea")
+    else:
+        print("MainMenu: CharacterArea not found")
 
 # Setup hover buttons for improved UI interaction
 func _setup_hover_buttons():
@@ -209,10 +236,21 @@ func _process_document(document):
                     user_data["level"] = player_stats.get("level", 1)
                     user_data["energy"] = player_stats.get("energy", 20)
                     user_data["last_energy_update"] = player_stats.get("last_energy_update", 0)
+                    
+                    # Store full stats structure for character animation
+                    user_data["stats"] = stats
                 else:
                     user_data["level"] = 1
                     user_data["energy"] = 20
                     user_data["last_energy_update"] = 0
+                    
+                    # Create default stats structure for character animation
+                    user_data["stats"] = {
+                        "player": {
+                            "skin": "res://Sprites/Animation/DefaultPlayer_Animation.tscn",
+                            "current_character": "lexia"
+                        }
+                    }
                 
                 # Process energy recovery based on time passed
                 _process_energy_recovery()
@@ -292,6 +330,11 @@ func _create_default_user_document(user_id):
 				"completed": false,
 				"progress": 0
 			}
+		},
+		"characters": {
+			"unlocked_count": 1,
+			"selected_character": 0,
+			"unlock_notifications_shown": []
 		}
     }
     
@@ -506,6 +549,10 @@ func update_user_interface():
     
     # Update profile avatar
     update_profile_picture(user_data.get("profile_picture", "default"))
+    
+    # Update character animation
+    print("MainMenu: About to update character animation with user_data keys: " + str(user_data.keys()))
+    update_character_animation(user_data)
 
 # Update profile avatar with the given image ID
 func update_profile_picture(profile_id):
@@ -714,13 +761,13 @@ func _notification(what):
         _stop_usage_time_tracking()
         _cleanup_firestore_listener()
     elif what == NOTIFICATION_WM_WINDOW_FOCUS_IN:
-        # Refresh user data when window gets focus (e.g., returning from battle)
-        print("MainMenu: Window focused, refreshing user data")
+        # Refresh user data when window gets focus (e.g., returning from battle or character selection)
+        print("MainMenu: Window focused, refreshing user data and character animation")
         await load_user_data()
     elif what == NOTIFICATION_VISIBILITY_CHANGED:
-        # Refresh user data when scene becomes visible
+        # Refresh user data when scene becomes visible (including character animation)
         if visible:
-            print("MainMenu: Scene became visible, refreshing user data")
+            print("MainMenu: Scene became visible, refreshing user data and character animation")
             await load_user_data()
 
 # Public method to force refresh user data - can be called when returning from other scenes
@@ -732,3 +779,54 @@ func refresh_user_data():
 func _exit_tree():
     _cleanup_firestore_listener()
     _stop_usage_time_tracking()
+
+# Update character animation based on selected character
+func update_character_animation(data):
+    var stats = data.get("stats", {})
+    if stats.has("player"):
+        var player_data = stats["player"]
+        var character_skin = player_data.get("skin", "res://Sprites/Animation/DefaultPlayer_Animation.tscn")
+        var current_character = player_data.get("current_character", "lexia")
+        
+        print("MainMenu: Loading character animation - Character: " + current_character + ", Skin: " + character_skin)
+        
+        # Get the CharacterArea node
+        var character_area = $CharacterArea
+        if character_area:
+            # Remove existing character animation
+            var existing_animation = character_area.get_node_or_null("DefaultPlayerAnimation")
+            if existing_animation:
+                existing_animation.queue_free()
+                await get_tree().process_frame # Wait for node to be freed
+            
+            # Load the new character animation
+            var animation_scene = load(character_skin)
+            if animation_scene:
+                var new_animation = animation_scene.instantiate()
+                new_animation.name = "DefaultPlayerAnimation"
+                character_area.add_child(new_animation)
+                
+                # Don't override position and scale - use CharacterArea's transform
+                # The CharacterArea already has position and scale set in the TSCN
+                
+                # Play idle animation - check for idle first, then battle_idle
+                var sprite = new_animation.get_node_or_null("AnimatedSprite2D")
+                if sprite and sprite.sprite_frames:
+                    if sprite.sprite_frames.has_animation("idle"):
+                        sprite.play("idle")
+                        print("MainMenu: Playing 'idle' animation")
+                    elif sprite.sprite_frames.has_animation("battle_idle"):
+                        sprite.play("battle_idle")
+                        print("MainMenu: Playing 'battle_idle' animation")
+                    else:
+                        print("MainMenu: No idle animations found, available animations: " + str(sprite.sprite_frames.get_animation_names()))
+                else:
+                    print("MainMenu: AnimatedSprite2D node or sprite_frames not found")
+                
+                print("MainMenu: Character animation updated successfully - " + current_character)
+            else:
+                print("MainMenu: Failed to load character animation: " + character_skin)
+        else:
+            print("MainMenu: CharacterArea not found")
+    else:
+        print("MainMenu: No player stats found for character animation update")

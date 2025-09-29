@@ -521,7 +521,7 @@ func _on_challenge_cancelled():
 	battle_scene.challenge_manager.handle_challenge_cancelled()
 	# Enemy movement and return is handled in challenge_manager
 
-# Show notification when a dungeon is completed
+# Show unified dungeon completion and character unlock notification
 func _show_dungeon_completion_notification(completed_dungeon_num: int):
 	var next_dungeon = completed_dungeon_num + 1
 	var next_word_length = ""
@@ -532,18 +532,93 @@ func _show_dungeon_completion_notification(completed_dungeon_num: int):
 		3: next_word_length = "5-letter"
 		_: next_word_length = "advanced"
 	
-	var title = "Dungeon Completed!"
+	# Check for character unlock first
+	var character_unlock_info = await _check_character_unlock(completed_dungeon_num)
+	
+	var title = "Dungeon " + str(completed_dungeon_num) + " Completed!"
 	var message = ""
 	
+	# Create unified message
 	if next_dungeon <= 3:
-		message = "Congratulations! You have unlocked Dungeon " + str(next_dungeon) + "! Word challenges now become " + next_word_length + " words."
+		message = "Dungeon " + str(next_dungeon) + " unlocked with " + next_word_length + " words!"
+		
+		# Add character unlock message if applicable
+		if character_unlock_info.unlocked:
+			message += "\n\n" + character_unlock_info.message
 	else:
-		message = "Congratulations! You have completed all dungeons! You are now a master reader!"
+		message = "All dungeons completed! You are now a master reader!"
 	
 	# Get notification popup from battle scene (should exist)
 	var notification_popup = battle_scene.get_node_or_null("NotificationPopUp")
 	if notification_popup:
-		print("BattleManager: Showing dungeon completion notification")
-		notification_popup.show_notification(title, message, "Ok")
+		print("BattleManager: Showing unified dungeon completion notification")
+		var button_text = "Amazing!" if character_unlock_info.unlocked else "Continue"
+		notification_popup.show_notification(title, message, button_text)
 	else:
 		print("BattleManager: Warning - notification popup not found")
+
+# Check for character unlocks after dungeon completion - returns unlock info
+func _check_character_unlock(completed_dungeon_num: int) -> Dictionary:
+	var unlock_info = {"unlocked": false, "character_name": "", "message": ""}
+	
+	if !Firebase.Auth.auth:
+		return unlock_info
+		
+	var user_id = Firebase.Auth.auth.localid
+	var collection = Firebase.Firestore.collection("dyslexia_users")
+	
+	# Get current document
+	var document = await collection.get_doc(user_id)
+	if document and !("error" in document.keys() and document.get_value("error")):
+		var characters = document.get_value("characters")
+		if not characters:
+			characters = {
+				"unlocked_count": 1,
+				"selected_character": 0,
+				"unlock_notifications_shown": []
+			}
+		
+		var unlock_notifications_shown = characters.get("unlock_notifications_shown", [])
+		var current_unlocked = characters.get("unlocked_count", 1)
+		
+		# Ragna unlocks after completing dungeon 1 (when Dungeon 2 becomes available)
+		if completed_dungeon_num == 1 and current_unlocked < 2:
+			if not unlock_notifications_shown.has("ragna"):
+				unlock_info.unlocked = true
+				unlock_info.character_name = "Ragna"
+				unlock_info.message = "New Character Unlocked: Ragna!\nA swift duelist with high damage but lower defenses."
+				
+				# Update character data
+				characters["unlocked_count"] = 2
+				unlock_notifications_shown.append("ragna")
+				
+				# Update Firebase with new character data
+				document.add_or_update_field("characters", characters)
+				var updated_doc = await collection.update(document)
+				
+				if updated_doc:
+					print("BattleManager: Character Ragna unlocked!")
+				else:
+					print("BattleManager: Failed to update character unlock in Firebase")
+		
+		# Magi unlocks after completing dungeon 2 (when Dungeon 3 becomes available)
+		elif completed_dungeon_num == 2 and current_unlocked < 3:
+			if not unlock_notifications_shown.has("magi"):
+				unlock_info.unlocked = true
+				unlock_info.character_name = "Magi"
+				unlock_info.message = "New Character: Magi is coming soon!\nStay tuned for updates."
+				
+				# Don't actually unlock Magi - just mark notification as shown
+				unlock_notifications_shown.append("magi")
+				characters["unlock_notifications_shown"] = unlock_notifications_shown
+				
+				# Update Firebase
+				document.add_or_update_field("characters", characters)
+				var updated_doc = await collection.update(document)
+				
+				if updated_doc:
+					print("BattleManager: Magi coming soon message shown!")
+	
+	return unlock_info
+
+# Remove the old _check_character_unlocks function as it's been replaced

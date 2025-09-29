@@ -84,7 +84,6 @@ position = Vector2(608, 457)
 scale = Vector2(5.53805, 5.53805)
 
 [node name="DefaultPlayerAnimation" parent="CharacterArea" instance=ExtResource("4_8e205")]
-position = Vector2(5.72205e-06, -7.15256e-07)
 
 [node name="ProfileButton" type="TextureButton" parent="."]
 layout_mode = 1

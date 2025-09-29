@@ -52,6 +52,9 @@ func _ready():
 	# Connect DungeonArea button for navigation
 	$ProfileContainer/DungeonArea.pressed.connect(_on_dungeon_area_pressed)
 	
+	# Connect CharacterContainer button for navigation
+	$ProfileContainer/CharacterContainer.pressed.connect(_on_character_container_pressed)
+	
 	# Connect button hover events
 	if $ProfileContainer/CloseButton:
 		$ProfileContainer/CloseButton.mouse_entered.connect(_on_button_hover)
@@ -63,6 +66,8 @@ func _ready():
 		$ProfileContainer/UserInfoArea/CopyUIDButton.mouse_entered.connect(_on_button_hover)
 	if $ProfileContainer/DungeonArea:
 		$ProfileContainer/DungeonArea.mouse_entered.connect(_on_button_hover)
+	if $ProfileContainer/CharacterContainer:
+		$ProfileContainer/CharacterContainer.mouse_entered.connect(_on_button_hover)
 	
 	# Load user data from Firestore
 	await load_user_data()
@@ -141,6 +146,12 @@ func load_user_data():
 						user_data["health"] = player_stats.get("health", 100)
 						user_data["attack"] = player_stats.get("damage", 10)
 						user_data["durability"] = player_stats.get("durability", 5)
+						# Store base stats for bonus calculation
+						user_data["base_health"] = player_stats.get("base_health", 100)
+						user_data["base_damage"] = player_stats.get("base_damage", 10)
+						user_data["base_durability"] = player_stats.get("base_durability", 5)
+						# Store the full stats data for character animation
+						user_data["stats"] = stats
 					
 					# Extract dungeon progress
 					var dungeons = document.get_value("dungeons")
@@ -223,6 +234,12 @@ func load_user_data():
 							user_data["rank"] = "bronze"
 						else:
 							user_data["rank"] = "bronze"
+					
+					# Extract character data
+					var characters = document.get_value("characters")
+					if characters != null and typeof(characters) == TYPE_DICTIONARY:
+						user_data["selected_character"] = characters.get("selected_character", 0)
+						user_data["unlocked_characters"] = characters.get("unlocked_count", 1)
 						
 						# Ensure valid values
 						user_data["current_stage"] = max(1, min(5, user_data.get("current_stage", 1)))
@@ -269,6 +286,9 @@ func _create_user_document(user_id):
 				"health": 100,
 				"damage": 10,
 				"durability": 5,
+				"base_health": 100,
+				"base_damage": 10,
+				"base_durability": 5,
 				"energy": 20,
 				"skin": "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
 			}
@@ -328,18 +348,24 @@ func update_ui():
 		var level = user_data.get("level", 1)
 		$ProfileContainer/StatsArea/Level2.text = str(level)
 	
-	# Update player stats
+	# Update base player stats (these increase with level up)
 	if has_node("ProfileContainer/StatsArea/HealthValue"):
-		var health = user_data.get("health", 100)
-		$ProfileContainer/StatsArea/HealthValue.text = str(health)
+		var base_health = user_data.get("base_health", user_data.get("health", 100))
+		$ProfileContainer/StatsArea/HealthValue.text = str(base_health)
 
 	if has_node("ProfileContainer/StatsArea/AttackValue"):
-		var attack = user_data.get("attack", 10)
-		$ProfileContainer/StatsArea/AttackValue.text = str(attack)
+		var base_attack = user_data.get("base_damage", user_data.get("attack", 10))
+		$ProfileContainer/StatsArea/AttackValue.text = str(base_attack)
 	
 	if has_node("ProfileContainer/StatsArea/DurabilityValue"):
-		var durability = user_data.get("durability", 5)
-		$ProfileContainer/StatsArea/DurabilityValue.text = str(durability)
+		var base_durability = user_data.get("base_durability", user_data.get("durability", 5))
+		$ProfileContainer/StatsArea/DurabilityValue.text = str(base_durability)
+	
+	# Update character bonuses
+	_update_character_bonuses(user_data)
+	
+	# Update character animation
+	_update_character_animation(user_data)
 	
 	if has_node("ProfileContainer/StatsArea/LevelValue"):
 		var level = user_data.get("level", 1)
@@ -456,6 +482,18 @@ func _on_dungeon_area_pressed():
 	
 	# Navigate to the dungeon map
 	get_tree().change_scene_to_file(dungeon_scene_path)
+
+# Handle character container button press for navigation
+func _on_character_container_pressed():
+	$ButtonClick.play()
+	print("ProfilePopUp: Character container pressed, navigating to character selection")
+	
+	# Close the popup first
+	emit_signal("closed")
+	queue_free()
+	
+	# Navigate to the character selection scene
+	get_tree().change_scene_to_file("res://Scenes/ChangeCharacterScene.tscn")
 
 # Button handlers - keeping just what we need
 func _on_close_button_pressed():
@@ -728,3 +766,95 @@ func _on_confirm_button_mouse_entered() -> void:
 
 func _on_cancel_button_mouse_entered() -> void:
 	$ButtonHover.play()
+
+# Update character bonus displays
+func _update_character_bonuses(data):
+	# Calculate character bonuses from current stats vs base stats
+	var base_health = data.get("base_health", 100)
+	var base_attack = data.get("base_damage", 10)
+	var base_durability = data.get("base_durability", 5)
+	
+	# Current stats include both base stats + character bonuses
+	var current_health = data.get("health", base_health)
+	var current_attack = data.get("attack", data.get("damage", base_attack)) # handle both 'attack' and 'damage' keys
+	var current_durability = data.get("durability", base_durability)
+	
+	# Character bonuses are the difference between current (base + bonus) and base stats
+	var health_bonus = current_health - base_health
+	var attack_bonus = current_attack - base_attack
+	var durability_bonus = current_durability - base_durability
+	
+	# Update bonus HP display
+	if has_node("ProfileContainer/StatsArea/bonus_hp"):
+		var bonus_hp_label = $ProfileContainer/StatsArea/bonus_hp
+		if health_bonus != 0:
+			bonus_hp_label.text = ("+" if health_bonus > 0 else "") + str(health_bonus)
+			bonus_hp_label.add_theme_color_override("font_color", Color.GREEN if health_bonus > 0 else Color.RED)
+			bonus_hp_label.visible = true
+		else:
+			bonus_hp_label.text = ""
+			bonus_hp_label.visible = false
+	
+	# Update bonus Attack display
+	if has_node("ProfileContainer/StatsArea/bonus_atk"):
+		var bonus_atk_label = $ProfileContainer/StatsArea/bonus_atk
+		if attack_bonus != 0:
+			bonus_atk_label.text = ("+" if attack_bonus > 0 else "") + str(attack_bonus)
+			bonus_atk_label.add_theme_color_override("font_color", Color.GREEN if attack_bonus > 0 else Color.RED)
+			bonus_atk_label.visible = true
+		else:
+			bonus_atk_label.text = ""
+			bonus_atk_label.visible = false
+	
+	# Update bonus Durability display
+	if has_node("ProfileContainer/StatsArea/bonus_drb"):
+		var bonus_drb_label = $ProfileContainer/StatsArea/bonus_drb
+		if durability_bonus != 0:
+			bonus_drb_label.text = ("+" if durability_bonus > 0 else "") + str(durability_bonus)
+			bonus_drb_label.add_theme_color_override("font_color", Color.GREEN if durability_bonus > 0 else Color.RED)
+			bonus_drb_label.visible = true
+		else:
+			bonus_drb_label.text = ""
+			bonus_drb_label.visible = false
+
+# Update character animation in profile popup
+func _update_character_animation(data):
+	var stats = data.get("stats", {})
+	if stats.has("player"):
+		var player_data = stats["player"]
+		var character_skin = player_data.get("skin", "res://Sprites/Animation/DefaultPlayer_Animation.tscn")
+		var current_character = player_data.get("current_character", "lexia")
+		
+		print("ProfilePopUp: Loading character animation - Character: " + current_character + ", Skin: " + character_skin)
+		
+		# Get the CharacterContainer node
+		var character_container = $ProfileContainer/CharacterContainer
+		if character_container:
+			# Remove existing character animation
+			var existing_animation = character_container.get_node_or_null("DefaultPlayerAnimation")
+			if existing_animation:
+				existing_animation.queue_free()
+			
+			# Load the new character animation
+			var animation_scene = load(character_skin)
+			if animation_scene:
+				var new_animation = animation_scene.instantiate()
+				new_animation.name = "DefaultPlayerAnimation"
+				character_container.add_child(new_animation)
+				
+				# Set position and scale to match original ProfilePopUp layout
+				new_animation.position = Vector2(110, 161)
+				new_animation.scale = Vector2(4.19841, 4.19841)
+				
+				# Play battle_idle animation for profile display
+				var sprite = new_animation.get_node_or_null("AnimatedSprite2D")
+				if sprite and sprite.sprite_frames and sprite.sprite_frames.has_animation("battle_idle"):
+					sprite.play("battle_idle")
+				elif sprite and sprite.sprite_frames and sprite.sprite_frames.has_animation("idle"):
+					sprite.play("idle")
+				
+				print("ProfilePopUp: Character animation updated successfully")
+			else:
+				print("ProfilePopUp: Failed to load character animation: " + character_skin)
+		else:
+			print("ProfilePopUp: CharacterContainer not found")

@@ -13,7 +13,6 @@
 [ext_resource type="Texture2D" uid="uid://dpejfssp2t44k" path="res://gui/Update/icons/edit name.png" id="7_rwnca"]
 [ext_resource type="Texture2D" uid="uid://d1y2su33nhh8p" path="res://gui/Update/icons/copy UID.png" id="8_ampbo"]
 [ext_resource type="Texture2D" uid="uid://dkccpks7klx5p" path="res://gui/ProfileScene/Profile/portrait13.png" id="8_fe476"]
-[ext_resource type="PackedScene" uid="uid://e6bec84rrthm" path="res://Sprites/Animation/DefaultPlayer_Animation.tscn" id="10_ampbo"]
 [ext_resource type="Texture2D" uid="uid://0elvpx33cd3o" path="res://gui/Update/icons/edit name_hover.png" id="11_6o1ar"]
 [ext_resource type="Texture2D" uid="uid://rgl03eh75egv" path="res://gui/Update/UI/victory UI.png" id="11_tilb2"]
 [ext_resource type="Texture2D" uid="uid://cib18me7jfbqj" path="res://gui/Update/UI/victory UI_hover.png" id="12_82scp"]
@@ -22,6 +21,7 @@
 [ext_resource type="Texture2D" uid="uid://2ck0j4rkkc1i" path="res://gui/Update/icons/copy UID_hover.png" id="13_q75ak"]
 [ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="13_r1smr"]
 [ext_resource type="Texture2D" uid="uid://b2qy87ktakwus" path="res://gui/Update/icons/mountaintransplant.png" id="13_tilb2"]
+[ext_resource type="PackedScene" uid="uid://e6bec84rrthm" path="res://Sprites/Animation/DefaultPlayer_Animation.tscn" id="18_q75ak"]
 [ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="22_6o1ar"]
 [ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="23_q75ak"]
 
@@ -375,7 +375,43 @@ theme_override_colors/font_color = Color(0.99, 0.99, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_uyv5l")
 theme_override_font_sizes/font_size = 20
-text = "10000"
+text = "100"
+
+[node name="bonus_hp" type="Label" parent="ProfileContainer/StatsArea"]
+layout_mode = 0
+offset_left = 194.06322
+offset_top = 56.858055
+offset_right = 220.06322
+offset_bottom = 93.85805
+theme_override_colors/font_color = Color(0.101960786, 0.7882353, 0.23921569, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_73kok")
+theme_override_font_sizes/font_size = 20
+text = "+"
+
+[node name="bonus_atk" type="Label" parent="ProfileContainer/StatsArea"]
+layout_mode = 0
+offset_left = 194.0632
+offset_top = 96.30964
+offset_right = 276.06317
+offset_bottom = 133.30963
+theme_override_colors/font_color = Color(0.101960786, 0.7882353, 0.23921569, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_73kok")
+theme_override_font_sizes/font_size = 20
+text = "+"
+
+[node name="bonus_drb" type="Label" parent="ProfileContainer/StatsArea"]
+layout_mode = 0
+offset_left = 194.06328
+offset_top = 133.56946
+offset_right = 276.0632
+offset_bottom = 170.56944
+theme_override_colors/font_color = Color(0.101960786, 0.7882353, 0.23921569, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_73kok")
+theme_override_font_sizes/font_size = 20
+text = "+"
 
 [node name="AttackLabel" type="Label" parent="ProfileContainer/StatsArea"]
 layout_mode = 0
@@ -398,7 +434,7 @@ theme_override_colors/font_color = Color(0.99, 0.99, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_uyv5l")
 theme_override_font_sizes/font_size = 20
-text = "1000"
+text = "100"
 
 [node name="DurabilityLabel" type="Label" parent="ProfileContainer/StatsArea"]
 layout_mode = 0
@@ -421,7 +457,7 @@ theme_override_colors/font_color = Color(0.99, 0.99, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_uyv5l")
 theme_override_font_sizes/font_size = 20
-text = "1000"
+text = "100"
 
 [node name="Level" type="Label" parent="ProfileContainer/StatsArea"]
 layout_mode = 0
@@ -452,13 +488,14 @@ offset_left = 5.0
 offset_top = 345.0
 offset_right = 214.0
 offset_bottom = 621.0
+mouse_default_cursor_shape = 2
 texture_normal = ExtResource("11_tilb2")
 texture_hover = ExtResource("12_82scp")
 stretch_mode = 0
 
-[node name="DefaultPlayerAnimation" parent="ProfileContainer/CharacterContainer" instance=ExtResource("10_ampbo")]
-position = Vector2(110, 161)
-scale = Vector2(4.19841, 4.19841)
+[node name="DefaultPlayerAnimation" parent="ProfileContainer/CharacterContainer" instance=ExtResource("18_q75ak")]
+position = Vector2(105.6836, 159.10353)
+scale = Vector2(4.4540334, 4.4540334)
 
 [node name="DungeonArea" type="Button" parent="ProfileContainer"]
 layout_mode = 1

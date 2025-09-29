@@ -7,8 +7,12 @@ class_name PlayerStatsResource
 @export var health: int = 100
 @export var damage: int = 10
 @export var durability: int = 5
+@export var base_health: int = 100
+@export var base_damage: int = 10
+@export var base_durability: int = 5
 @export var energy: int = 20
 @export var skin: String = "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
+@export var current_character: String = "lexia"
 
 # Getter methods
 func get_level():
@@ -31,3 +35,15 @@ func get_energy():
 
 func get_skin():
 	return skin
+
+func get_base_health():
+	return base_health
+
+func get_base_damage():
+	return base_damage
+
+func get_base_durability():
+	return base_durability
+
+func get_current_character():
+	return current_character

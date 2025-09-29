@@ -176,9 +176,10 @@ func handle_challenge_completed(bonus_damage):
 		# Show counter damage indicator (different color for counters)
 		battle_scene._show_counter_damage_indicator(total_damage, "enemy", bonus_damage)
 		
-		# Add battle log messages with detailed damage breakdown
-		battle_log_manager.add_message("[color=#006400]You successfully countered the " + enemy_manager.enemy_name + "'s special attack![/color]")
-		battle_log_manager.add_message("[color=#000000]Counter Attack: " + str(player_base_damage) + " base damage + " + str(bonus_damage) + " bonus = " + str(total_damage) + " total damage![/color]")
+		# Add battle log messages with detailed damage breakdown using character's counter name
+		var counter_name = battle_log_manager._get_current_character_counter_name()
+		battle_log_manager.add_message("[color=#006400]" + counter_name + " successful! You countered " + enemy_manager.enemy_name + "'s attack![/color]")
+		battle_log_manager.add_message("[color=#000000]" + counter_name + ": " + str(player_base_damage) + " base + " + str(bonus_damage) + " bonus = " + str(total_damage) + " total damage![/color]")
 		
 		# Reset enemy skill meter
 		enemy_manager.enemy_skill_meter = 0
@@ -293,7 +294,8 @@ func handle_challenge_failed():
 	var skill_damage = int(enemy_manager.enemy_damage * enemy_manager.enemy_skill_damage_multiplier)
 	
 	print("ChallengeManager: Processing challenge failure - enemy will perform skill attack")
-	battle_log_manager.add_message("[color=#8B0000]You failed to counter the " + enemy_manager.enemy_name + "'s special attack![/color]")
+	var counter_name = battle_log_manager._get_current_character_counter_name()
+	battle_log_manager.add_message("[color=#8B0000]" + counter_name + " failed! " + enemy_manager.enemy_name + " attacks with full power![/color]")
 	
 	# ENEMY SKILL ANIMATION WITH PROPER TIMING
 	if enemy_manager and enemy_manager.enemy_animation:
@@ -375,7 +377,8 @@ func handle_challenge_cancelled():
 	print("ChallengeManager: Processing challenge cancellation - enemy will perform skill attack")
 	
 	# Add cancellation message to battle log
-	battle_log_manager.add_message("[color=#FFA500]You chose to cancel countering the enemy skill.[/color]")
+	var counter_name = battle_log_manager._get_current_character_counter_name()
+	battle_log_manager.add_message("[color=#FFA500]You cancelled " + counter_name + ". Enemy attacks![/color]")
 	
 	# ENEMY SKILL ATTACK WITH ANIMATION
 	if enemy_manager and enemy_manager.enemy_animation:

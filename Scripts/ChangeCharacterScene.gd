@@ -17,6 +17,49 @@ var character_textures = {
 	"locked": []
 }
 
+# Character data with stats, bonuses, and unlock requirements
+var character_data = {
+	"lexia": {
+		"display_name": "Lexia",
+		"weapon": "Sword",
+		"counter_name": "Blade Beam",
+		"stat_bonuses": {
+			"health": 5, # Slight health bonus
+			"damage": 3, # Slight damage bonus
+			"durability": 2 # Slight durability bonus
+		},
+		"animation_scene": "res://Sprites/Animation/DefaultPlayer_Animation.tscn",
+		"unlock_requirement": {"type": "default", "value": 0}, # Always unlocked
+		"description": "A dyslexic balanced sword master wielding a trusty sword."
+	},
+	"ragna": {
+		"display_name": "Ragna",
+		"weapon": "Rapier",
+		"counter_name": "Swift Pierce",
+		"stat_bonuses": {
+			"health": - 10, # Less health
+			"damage": 15, # More damage
+			"durability": - 2 # Less durability
+		},
+		"animation_scene": "res://Sprites/Animation/Ragna_Animation.tscn",
+		"unlock_requirement": {"type": "dungeon_unlock", "value": 1}, # Unlocked when Dungeon 1 is completed (Dungeon 2 becomes available)
+		"description": "A dyslexic swift duelist with high damage but lower defenses."
+	},
+	"magi": {
+		"display_name": "Magi",
+		"weapon": "Staff",
+		"counter_name": "Arcane Blast",
+		"stat_bonuses": {
+			"health": 20, # More health
+			"damage": - 5, # Less damage
+			"durability": 8 # Much more durability
+		},
+		"animation_scene": "res://Sprites/Animation/Magi_Animation.tscn", # To be created
+		"unlock_requirement": {"type": "dungeon_unlock", "value": 2}, # Unlocked when Dungeon 2 is completed (Dungeon 3 becomes available)
+		"description": "A dyslexic spellcaster with a trusty staff and high durability and health."
+	}
+}
+
 # References to UI elements
 @onready var character_carousel = $CharacterContainer/CharacterCarousel
 @onready var next_button = $NextButton
@@ -30,6 +73,9 @@ var selection_indicators = []
 
 # Add notification popup reference
 var notification_popup: CanvasLayer
+# Custom character stats popup reference
+var character_stats_popup: CanvasLayer
+
 
 func _ready():
 	# Enhanced fade-in animation matching SettingScene style
@@ -42,10 +88,9 @@ func _ready():
 	
 	# Preload character textures
 	character_textures.unlocked = [
-		preload("res://gui/Update/UI/Character Select Unlocked.png"),
-		null, # Will add Ragna unlocked texture when available
-		null, # Will add Magi unlocked texture when available
-
+		preload("res://gui/Update/UI/Character Select Unlocked.png"), # Lexia
+		preload("res://gui/Update/UI/Character Select Unlocked.png"), # Ragna (using same texture for now)
+		preload("res://gui/Update/UI/Character Select Unlocked.png"), # Magi (using same texture for now)
 	]
 	character_textures.locked = [
 		null, # Character 1 is always unlocked
@@ -107,6 +152,19 @@ func _ready():
 	add_child(notification_popup)
 	notification_popup.closed.connect(_on_notification_closed)
 	
+	# Get reference to custom character stats popup
+	character_stats_popup = $CharacterStatsPopup
+	
+	# Connect close button for character stats popup
+	var close_button = character_stats_popup.get_node("PopupContainer/CenterContainer/StatsPanel/StatsContent/CloseButton")
+	if close_button:
+		close_button.pressed.connect(_on_character_stats_popup_close)
+	
+	# Connect background click to close popup
+	var popup_bg = character_stats_popup.get_node("PopupBackground")
+	if popup_bg:
+		popup_bg.gui_input.connect(_on_character_stats_background_clicked)
+	
 	# Setup hover functionality for navigation buttons
 	_setup_hover_functionality()
 	
@@ -127,6 +185,86 @@ func _setup_hover_functionality():
 	$PreviousButton.mouse_entered.connect(_on_previous_button_hover_entered)
 	$PreviousButton.mouse_exited.connect(_on_previous_button_hover_exited)
 
+	$SelectButton.mouse_entered.connect(_on_select_button_hover_entered)
+
+# Show character stats in custom popup
+func _show_character_stats_popup(character_index: int):
+	var character_key = character_names[character_index].to_lower()
+	var character_info = character_data[character_key]
+	var bonuses = character_info["stat_bonuses"]
+	
+	# Update character title
+	var title_label = character_stats_popup.get_node("PopupContainer/CenterContainer/StatsPanel/StatsContent/CharacterTitle")
+	if title_label:
+		title_label.text = character_info["display_name"]
+	
+	# Update weapon info
+	var weapon_label = character_stats_popup.get_node("PopupContainer/CenterContainer/StatsPanel/StatsContent/WeaponContainer/WeaponLabel")
+	if weapon_label:
+		weapon_label.text = "Weapon: " + character_info["weapon"]
+	
+	var counter_label = character_stats_popup.get_node("PopupContainer/CenterContainer/StatsPanel/StatsContent/WeaponContainer/CounterLabel")
+	if counter_label:
+		counter_label.text = "Counter: " + character_info["counter_name"]
+	
+	# Update health bonus
+	var health_value = character_stats_popup.get_node("PopupContainer/CenterContainer/StatsPanel/StatsContent/StatsContainer/HealthStat/HealthValue")
+	if health_value:
+		var health_bonus = bonuses["health"]
+		health_value.text = " " + ("+" if health_bonus > 0 else "") + str(health_bonus)
+		health_value.add_theme_color_override("font_color", Color.GREEN if health_bonus > 0 else (Color.RED if health_bonus < 0 else Color.WHITE))
+	
+	# Update attack bonus
+	var attack_value = character_stats_popup.get_node("PopupContainer/CenterContainer/StatsPanel/StatsContent/StatsContainer/AttackStat/AttackValue")
+	if attack_value:
+		var attack_bonus = bonuses["damage"]
+		attack_value.text = " " + ("+" if attack_bonus > 0 else "") + str(attack_bonus)
+		attack_value.add_theme_color_override("font_color", Color.GREEN if attack_bonus > 0 else (Color.RED if attack_bonus < 0 else Color.WHITE))
+	
+	# Update durability bonus
+	var durability_value = character_stats_popup.get_node("PopupContainer/CenterContainer/StatsPanel/StatsContent/StatsContainer/DurabilityStat/DurabilityValue")
+	if durability_value:
+		var durability_bonus = bonuses["durability"]
+		durability_value.text = " " + ("+" if durability_bonus > 0 else "") + str(durability_bonus)
+		durability_value.add_theme_color_override("font_color", Color.GREEN if durability_bonus > 0 else (Color.RED if durability_bonus < 0 else Color.WHITE))
+	
+	# Update description
+	var description_label = character_stats_popup.get_node("PopupContainer/CenterContainer/StatsPanel/StatsContent/Description")
+	if description_label:
+		description_label.text = character_info["description"]
+	
+	# Show the popup with animation
+	character_stats_popup.visible = true
+	var popup_container = character_stats_popup.get_node("PopupContainer")
+	if popup_container:
+		popup_container.modulate.a = 0.0
+		popup_container.scale = Vector2(0.8, 0.8)
+		var tween = create_tween()
+		tween.set_parallel(true)
+		tween.tween_property(popup_container, "modulate:a", 1.0, 0.35).set_ease(Tween.EASE_OUT)
+		tween.tween_property(popup_container, "scale", Vector2(1.0, 1.0), 0.35).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+
+# Close character stats popup
+func _close_character_stats_popup():
+	var popup_container = character_stats_popup.get_node("PopupContainer")
+	if popup_container:
+		var tween = create_tween()
+		tween.set_parallel(true)
+		tween.tween_property(popup_container, "modulate:a", 0.0, 0.25).set_ease(Tween.EASE_IN)
+		tween.tween_property(popup_container, "scale", Vector2(0.8, 0.8), 0.25).set_ease(Tween.EASE_IN)
+		await tween.finished
+	character_stats_popup.visible = false
+
+# Event handlers for character stats popup
+func _on_character_stats_popup_close():
+	$ButtonClick.play()
+	_close_character_stats_popup()
+
+func _on_character_stats_background_clicked(event):
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		_close_character_stats_popup()
+
+
 # Load user data from Firebase
 func _load_user_data():
 	if Firebase.Auth.auth:
@@ -140,8 +278,30 @@ func _load_user_data():
 			if characters:
 				# Load unlocked characters from Firebase
 				unlocked_characters = characters.get("unlocked_count", 1)
+				current_character = characters.get("selected_character", 0)
+			else:
+				# Initialize characters data in Firebase if not exists
+				await _initialize_character_data_in_firebase()
+			
+			# Also check dungeon progression to determine unlocked characters
+			var dungeons = document.get_value("dungeons")
+			if dungeons:
+				var completed = dungeons.get("completed", {})
+				
+				# Check if dungeon 1 is completed to unlock Ragna (Dungeon 2 becomes available)
+				if completed.has("1"):
+					var dungeon1_data = completed["1"]
+					if dungeon1_data.get("completed", false) or dungeon1_data.get("stages_completed", 0) >= 5:
+						unlocked_characters = max(unlocked_characters, 2) # Ragna unlocked when Dungeon 2 becomes available
+				
+				# Check if dungeon 2 is completed to unlock Magi (Dungeon 3 becomes available)
+				if completed.has("2"):
+					var dungeon2_data = completed["2"]
+					if dungeon2_data.get("completed", false) or dungeon2_data.get("stages_completed", 0) >= 5:
+						unlocked_characters = max(unlocked_characters, 3) # Magi unlocked when Dungeon 3 becomes available
 		else:
 			print("Demo mode: Only Lexia available")
+			await _initialize_character_data_in_firebase()
 	else:
 		# Demo mode - only Lexia available
 		unlocked_characters = 1
@@ -287,9 +447,13 @@ func _on_previous_button_pressed():
 	_animate_carousel_to_position(current_character)
 	update_character_display()
 
-# Handle character selection with circular behavior
+# Handle character selection with circular behavior and stats display
 func _on_character1_pressed():
 	if unlocked_characters >= 1: # Character 1 is always unlocked
+		# Show character stats in custom popup
+		_show_character_stats_popup(0)
+		
+		# Update selection if different character
 		if current_character != 0:
 			current_character = 0
 			_animate_carousel_to_position(current_character)
@@ -298,23 +462,31 @@ func _on_character1_pressed():
 
 func _on_character2_pressed():
 	if unlocked_characters >= 2:
+		# Show character stats in custom popup
+		_show_character_stats_popup(1)
+		
+		# Update selection if different character
 		if current_character != 1:
 			current_character = 1
 			_animate_carousel_to_position(current_character)
 			update_character_display()
 	else:
-		# Show notification for locked character
-		notification_popup.show_notification("Character Locked!", "Coming Soon.", "OK")
+		# Show notification for locked character - Ragna requires completing Dungeon 1
+		notification_popup.show_notification("Character Locked!", "Complete Dungeon 1 to unlock Ragna.", "OK")
 
 func _on_character3_pressed():
 	if unlocked_characters >= 3:
+		# Show character stats in custom popup
+		_show_character_stats_popup(2)
+		
+		# Update selection if different character
 		if current_character != 2:
 			current_character = 2
 			_animate_carousel_to_position(current_character)
 			update_character_display()
 	else:
-		# Show notification for locked character
-		notification_popup.show_notification("Character Locked!", "Coming Soon.", "OK")
+		# Show notification for locked character - Magi is coming soon
+		notification_popup.show_notification("Character Locked!", "Magi is coming soon!", "OK")
 
 # Animation function for smooth circular carousel movement
 func _animate_carousel_to_position(character_index):
@@ -379,7 +551,9 @@ func _on_previous_button_hover_exited():
 	if previous_label:
 		previous_label.visible = false
 
-# Handle navigation and select buttons
+func _on_select_button_hover_entered():
+	$ButtonHover.play()
+
 func _on_back_button_pressed():
 	$ButtonClick.play()
 	_fade_out_and_change_scene("res://Scenes/MainMenu.tscn")
@@ -409,16 +583,73 @@ func _on_select_button_pressed():
 		if get_task:
 			var user_doc = get_task
 			
-			# Update selected character
-			user_doc.add_or_update_field("selected_character", current_character)
+			# Update selected character in characters data
+			var characters = user_doc.get_value("characters")
+			if not characters:
+				characters = {}
+			characters["selected_character"] = current_character
+			
+			# Also update player stats with character bonuses
+			var character_key = character_names[current_character].to_lower()
+			var character_info = character_data[character_key]
+			var bonuses = character_info["stat_bonuses"]
+			
+			# Get current stats and apply bonuses while preserving base stats from leveling
+			var stats = user_doc.get_value("stats")
+			if stats and stats.has("player"):
+				var player_stats = stats["player"]
+				
+				# PRESERVE base stats from leveling - these should never change when switching characters
+				var base_health = player_stats.get("base_health", 100)
+				var base_damage = player_stats.get("base_damage", 10)
+				var base_durability = player_stats.get("base_durability", 5)
+				
+				# Apply NEW character bonuses to the SAME base stats
+				player_stats["health"] = base_health + bonuses["health"]
+				player_stats["damage"] = base_damage + bonuses["damage"]
+				player_stats["durability"] = base_durability + bonuses["durability"]
+				player_stats["skin"] = character_info["animation_scene"]
+				
+				# Store current character info
+				player_stats["current_character"] = character_key
+				
+				stats["player"] = player_stats
+				user_doc.add_or_update_field("stats", stats)
+			
+			user_doc.add_or_update_field("characters", characters)
 			
 			# Save the updated document
 			var save_task = await collection.update(user_doc)
 			if save_task and !("error" in save_task.keys()):
 				print("Character selection saved: " + character_names[current_character])
+				print("Applied stat bonuses: ", bonuses)
 			else:
 				print("Failed to save character selection")
 	
 	# For now, just print and go back to main menu
 	print("Selected character: " + character_names[current_character])
 	_fade_out_and_change_scene("res://Scenes/MainMenu.tscn")
+
+# Initialize character data in Firebase
+func _initialize_character_data_in_firebase():
+	if not Firebase.Auth.auth:
+		return
+		
+	var user_id = Firebase.Auth.auth.localid
+	var collection = Firebase.Firestore.collection("dyslexia_users")
+	
+	var document = await collection.get_doc(user_id)
+	if document and !("error" in document.keys() and document.get_value("error")):
+		var characters = document.get_value("characters")
+		if not characters:
+			# Initialize character data
+			characters = {
+				"unlocked_count": 1,
+				"selected_character": 0,
+				"unlock_notifications_shown": []
+			}
+			
+			document.add_or_update_field("characters", characters)
+			var updated_doc = await collection.update(document)
+			if updated_doc:
+				print("Character data initialized in Firebase")

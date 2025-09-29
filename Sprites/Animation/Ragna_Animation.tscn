@@ -1,8 +1,8 @@
 [gd_scene load_steps=70 format=3 uid="uid://xs5u2wmna405"]
 
 [ext_resource type="Texture2D" uid="uid://u5tr14p25cn8" path="res://Sprites/Frame Sprites/Ragna.png" id="1_gumrm"]
-[ext_resource type="AudioStream" uid="uid://dmsn7fibj384u" path="res://audio/player/sword slash.ogg" id="2_l8wov"]
-[ext_resource type="AudioStream" uid="uid://cd2rjq6g5gd7h" path="res://audio/player/Sword swing metal heavy.ogg" id="3_svqnf"]
+[ext_resource type="AudioStream" uid="uid://b1og6okkq7lma" path="res://audio/player/ragna/ragna_counter.mp3" id="2_gumrm"]
+[ext_resource type="AudioStream" uid="uid://bs42rjmlsclva" path="res://audio/player/ragna/rapier slash 1.mp3" id="3_l8wov"]
 [ext_resource type="AudioStream" uid="uid://c356nfeervb4c" path="res://audio/player/player hit 2.ogg" id="4_xg8h6"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_cp4yr"]
@@ -495,16 +495,14 @@ animations = [{
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_fdt5l")
-animation = &"hurt"
+animation = &"auto_attack"
 autoplay = "idle"
-frame = 7
-frame_progress = 1.0
 
-[node name="sfx_counter_swordslash" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("2_l8wov")
+[node name="sfx_counter" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_gumrm")
 
-[node name="sfx_autoattack_swordslash" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("3_svqnf")
+[node name="sfx_autoattack" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_l8wov")
 
 [node name="player_hurt" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("4_xg8h6")
