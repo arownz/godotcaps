@@ -89,12 +89,12 @@ func _ready():
 	# Preload character textures
 	character_textures.unlocked = [
 		preload("res://gui/Update/UI/Character Select Unlocked.png"), # Lexia
-		preload("res://gui/Update/UI/Character Select Unlocked.png"), # Ragna (using same texture for now)
+		preload("res://gui/Update/UI/ragna_unlock.jpg"), # Ragna (using same texture for now)
 		preload("res://gui/Update/UI/Character Select Unlocked.png"), # Magi (using same texture for now)
 	]
 	character_textures.locked = [
 		null, # Character 1 is always unlocked
-		preload("res://gui/Update/UI/Character Locked.png"),
+		preload("res://gui/Update/UI/ragna_lock.jpg"),
 		preload("res://gui/Update/UI/Character Locked.png")
 	]
 	

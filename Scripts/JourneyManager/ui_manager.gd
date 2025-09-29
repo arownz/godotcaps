@@ -3,9 +3,9 @@ extends Node
 
 var battle_scene # Reference to the main battle scene
 
-# Cache the PlayerIcon's default position to restore on stage 1
-var _player_icon_initial_pos: Vector2
-var _player_icon_pos_captured := false
+# Stage progress constraints for consistent UI design
+const STAGE_ICON_SIZE = Vector2(44, 44)
+const STAGE_BAR_HEIGHT = 68.0
 
 func _init(scene):
 	battle_scene = scene
@@ -179,23 +179,29 @@ func _update_stage_progress():
 	var progress_root = battle_scene.get_node_or_null("MainContainer/BattleAreaContainer/StageProgress")
 	if progress_root == null:
 		return
+	
 	# Ensure StageProgress sits globally behind overlay panels (Whiteboard/STT)
 	(progress_root as Control).z_as_relative = false
 	(progress_root as Control).z_index = -100
+	
 	var slots = progress_root.get_node_or_null("StageSlots")
 	var player_icon := progress_root.get_node_or_null("PlayerIcon") as TextureRect
 	var bar_bg = progress_root.get_node_or_null("BarBg")
 	var bar_fill = progress_root.get_node_or_null("BarFill")
+	
 	if slots == null or player_icon == null:
 		return
 
-	# Capture the PlayerIcon's original position once
-	if !_player_icon_pos_captured:
-		_player_icon_initial_pos = (player_icon as Control).position
-		_player_icon_pos_captured = true
+	# Update player icon texture first
+	_update_player_icon_texture(player_icon)
 	
 	var dungeon_num = battle_scene.dungeon_manager.dungeon_num
 	var stage_num = battle_scene.dungeon_manager.stage_num # 1..5
+	
+	# CONSTRAINT: Standard icon size for all elements (44x44 pixels)
+	const ICON_SIZE = Vector2(44, 44)
+	const PROGRESS_BAR_Y = 17.0 # Y position to align with slots
+	const TOTAL_WIDTH = 440.0 # Total progress bar width
 	
 	# Set enemy head icons per dungeon: 1-4 dungeon-specific, 5 is treant boss
 	var enemy_tex: Texture2D = null
@@ -212,60 +218,66 @@ func _update_stage_progress():
 	var lock_tex: Texture2D = load("res://gui/Update/icons/lock icon.png")
 	
 	var slot_count = min(5, slots.get_child_count())
-	var covered_index := -1
-	if stage_num >= 2:
-		covered_index = clamp(stage_num - 2, 0, slot_count - 1)
+	
+	# REDESIGNED: Clean stage visualization with consistent sizing
 	for i in range(slot_count):
 		var slot = slots.get_child(i)
 		var icon = slot.get_node_or_null("EnemyIcon") as TextureRect
 		if icon:
 			var is_boss = (i == 4)
-			var is_unlocked = (i < stage_num)
-			# Assign icon: unlocked -> enemy/boss; locked -> lock icon
-			icon.texture = (boss_tex if is_boss else enemy_tex) if is_unlocked else lock_tex
-			# Make already-completed stages semi-transparent for clarity
-			# Completed stages are strictly before the current stage index (stage_num - 1)
-			# Example: at Stage 3 (stage_num=3), indices 0..1 are completed; index 1 is hidden by PlayerIcon
-			var alpha := 1.0
-			if i < (stage_num - 1):
-				alpha = 0.35
-			icon.modulate = Color(1, 1, 1, alpha)
-			# Hide the icon currently covered by the player's head (previous stage)
-			icon.visible = (i != covered_index)
-
-	# Position PlayerIcon:
-	# - Stage 1: keep original position (designer placement)
-	# - Stage >= 2: move to cover the previous stage's enemy icon (Slot[stage-2])
-	if stage_num <= 1:
-		(player_icon as Control).position = _player_icon_initial_pos
-	else:
-		var target_index = clamp(stage_num - 2, 0, slot_count - 1)
-		var target_slot = slots.get_child(target_index) as Control
-		if target_slot:
-			var root_rect = (progress_root as Control).get_global_rect()
-			var enemy_icon_node = target_slot.get_node_or_null("EnemyIcon") as Control
-			if enemy_icon_node:
-				var icon_rect = enemy_icon_node.get_global_rect()
-				# Match size to ensure perfect coverage, then align top-left exactly
-				(player_icon as Control).size = (enemy_icon_node as Control).size
-				(player_icon as Control).position = icon_rect.position - root_rect.position
+			var is_completed = (i < (stage_num - 1)) # Stages before current are completed
+			var is_current = (i == (stage_num - 1)) # Current stage player is on
+			var is_locked = (i >= stage_num) # Stages after current are locked
+			
+			# CONSTRAINT: Force consistent icon sizing
+			icon.size = ICON_SIZE
+			icon.custom_minimum_size = ICON_SIZE
+			
+			# Set appropriate texture
+			if is_locked:
+				icon.texture = lock_tex
+			elif is_boss:
+				icon.texture = boss_tex
 			else:
-				# Fallback to slot center if icon missing
-				var slot_rect = target_slot.get_global_rect()
-				var slot_center = slot_rect.position + slot_rect.size / 2.0
-				var size = (player_icon as Control).size
-				(player_icon as Control).position = slot_center - root_rect.position - size / 2.0
-			# Draw PlayerIcon above bar/icons within StageProgress but globally below overlays
-			(player_icon as Control).z_as_relative = false
-			(player_icon as Control).z_index = -99
-
-	# Update bar fill to reflect progress across 5 stages
+				icon.texture = enemy_tex
+			
+			# Set visual state with proper contrast
+			if is_completed:
+				icon.modulate = Color(0.5, 0.5, 0.5, 0.7) # Dimmed completed stages
+			elif is_current:
+				icon.modulate = Color(1.3, 1.3, 1.1, 1.0) # Highlighted current stage
+			else:
+				icon.modulate = Color(1.0, 1.0, 1.0, 1.0) # Normal upcoming stages
+			
+			icon.visible = true # Always show all enemy icons
+	
+	# REDESIGNED: Player icon positioning with consistent sizing and proper spacing
+	# Calculate player position based on stage progress (0-4 for stages 1-5)
+	var progress_step = float(stage_num - 1) / float(slot_count - 1) # 0.0 to 1.0
+	var available_width = TOTAL_WIDTH - ICON_SIZE.x # Leave space for icon width
+	var player_x = progress_step * available_width
+	
+	# CONSTRAINT: Force consistent player icon sizing
+	player_icon.size = ICON_SIZE
+	player_icon.custom_minimum_size = ICON_SIZE
+	player_icon.position = Vector2(player_x, PROGRESS_BAR_Y)
+	player_icon.visible = true
+	player_icon.modulate = Color(1.0, 1.0, 1.0, 1.0) # Always fully visible
+	
+	# CONSTRAINT: Ensure player icon stays above other elements but below overlays
+	(player_icon as Control).z_as_relative = false
+	(player_icon as Control).z_index = -99
+	
+	print("UIManager: Stage progress updated - Stage: ", stage_num, "/", slot_count,
+		  " Player icon at: (", player_x, ", ", PROGRESS_BAR_Y, ") Size: ", ICON_SIZE)
+	
+	# Update progress bar fill to reflect completion
 	if bar_bg and bar_fill:
 		var bg_rect = (bar_bg as Control).get_rect()
-		# Percentage: 0 at stage 1 start, 1.0 at stage 5 start
-		var stage_num_f = float(stage_num - 1) / 4.0
-		var fill_width = max(0.0, bg_rect.size.x * stage_num_f)
-		# Maintain left and vertical offsets, adjust right to left + width
+		var stage_progress = float(stage_num - 1) / 4.0 # 0.0 to 1.0 for stages 1-5
+		var fill_width = max(0.0, bg_rect.size.x * stage_progress)
+		
+		# Maintain proper bar positioning
 		(bar_fill as Control).offset_left = (bar_bg as Control).offset_left
 		(bar_fill as Control).offset_top = (bar_bg as Control).offset_top
 		(bar_fill as Control).offset_bottom = (bar_bg as Control).offset_bottom
@@ -348,36 +360,14 @@ func _update_player_icon_texture(player_icon: TextureRect):
 			head_texture = load("res://gui/Update/icons/lexia_head.png")
 			print("UIManager: Unknown character '" + str(current_character) + "', using Lexia head as fallback")
 	
-	# Apply the texture to the player icon
+	# Apply the texture with constraint-based sizing
 	if head_texture:
 		player_icon.texture = head_texture
-		print("UIManager: Updated player icon to " + current_character + " head")
-	else:
-		print("UIManager: Failed to load head texture for character: " + current_character) # Apply the texture to the player icon
-	print("UIManager: Selected character: ", current_character)
-	print("UIManager: Head texture loaded: ", head_texture != null)
-	print("UIManager: Current player_icon.texture before setting: ", player_icon.texture)
-	
-	if head_texture:
-		# Force set the texture
-		player_icon.texture = head_texture
-		
-		# Force update the UI
-		player_icon.queue_redraw()
-		
-		print("UIManager: Successfully applied texture to player icon")
-		print("UIManager: Player icon properties after texture set:")
-		print("  - visible: ", player_icon.visible)
-		print("  - modulate: ", player_icon.modulate)
-		print("  - size: ", player_icon.size)
-		print("  - position: ", player_icon.position)
-		print("  - texture: ", player_icon.texture != null)
-		print("  - texture path (if available): ", player_icon.texture.resource_path if player_icon.texture else "null")
-		
-		# Wait a frame and check again to see if something is overriding it
-		await get_tree().process_frame
-		print("UIManager: After one frame - texture still set: ", player_icon.texture != null)
-		if player_icon.texture:
-			print("UIManager: After one frame - texture path: ", player_icon.texture.resource_path)
+		# CONSTRAINT: Ensure consistent sizing regardless of original texture size
+		player_icon.size = STAGE_ICON_SIZE
+		player_icon.custom_minimum_size = STAGE_ICON_SIZE
+		player_icon.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+		player_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		print("UIManager: Updated player icon to " + current_character + " head with constrained size: ", STAGE_ICON_SIZE)
 	else:
 		print("UIManager: ERROR - Failed to load head texture for character: " + current_character)

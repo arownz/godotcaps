@@ -481,7 +481,7 @@ color = Color(0.529412, 0.909804, 0.172549, 1)
 [node name="StageSlots" type="HBoxContainer" parent="MainContainer/BattleAreaContainer/StageProgress"]
 layout_mode = 0
 offset_top = 11.0
-offset_right = 440.0
+offset_right = 438.0
 offset_bottom = 58.0
 theme_override_constants/separation = 8
 
@@ -491,18 +491,22 @@ size_flags_horizontal = 3
 
 [node name="EnemyIcon" type="TextureRect" parent="MainContainer/BattleAreaContainer/StageProgress/StageSlots/Slot1"]
 custom_minimum_size = Vector2(44, 44)
-layout_mode = 0
-anchor_left = 1.272
-anchor_top = 0.596
-anchor_right = 1.272
-anchor_bottom = 0.596
-offset_left = -22.032
-offset_top = -22.012
-offset_right = 21.968
-offset_bottom = 21.988
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -22.0
+offset_top = -22.0
+offset_right = 22.0
+offset_bottom = 22.0
+grow_horizontal = 2
+grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 texture = ExtResource("17_slaym")
+expand_mode = 1
 stretch_mode = 4
 
 [node name="Slot2" type="Control" parent="MainContainer/BattleAreaContainer/StageProgress/StageSlots"]
@@ -511,18 +515,22 @@ size_flags_horizontal = 3
 
 [node name="EnemyIcon" type="TextureRect" parent="MainContainer/BattleAreaContainer/StageProgress/StageSlots/Slot2"]
 custom_minimum_size = Vector2(44, 44)
-layout_mode = 0
-anchor_left = 1.134
-anchor_top = 0.511
-anchor_right = 1.134
-anchor_bottom = 0.511
-offset_left = -21.988
-offset_top = -18.017
-offset_right = 22.012
-offset_bottom = 25.983
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -22.0
+offset_top = -22.0
+offset_right = 22.0
+offset_bottom = 22.0
+grow_horizontal = 2
+grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 texture = ExtResource("10_ksqd2")
+expand_mode = 1
 stretch_mode = 4
 
 [node name="Slot3" type="Control" parent="MainContainer/BattleAreaContainer/StageProgress/StageSlots"]
@@ -531,18 +539,22 @@ size_flags_horizontal = 3
 
 [node name="EnemyIcon" type="TextureRect" parent="MainContainer/BattleAreaContainer/StageProgress/StageSlots/Slot3"]
 custom_minimum_size = Vector2(44, 44)
-layout_mode = 0
-anchor_left = 1.0
-anchor_top = 0.511
-anchor_right = 1.0
-anchor_bottom = 0.511
-offset_left = -21.0
-offset_top = -18.017
-offset_right = 23.0
-offset_bottom = 25.983
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -22.0
+offset_top = -22.0
+offset_right = 22.0
+offset_bottom = 22.0
+grow_horizontal = 2
+grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 texture = ExtResource("10_ksqd2")
+expand_mode = 1
 stretch_mode = 4
 
 [node name="Slot4" type="Control" parent="MainContainer/BattleAreaContainer/StageProgress/StageSlots"]
@@ -551,18 +563,22 @@ size_flags_horizontal = 3
 
 [node name="EnemyIcon" type="TextureRect" parent="MainContainer/BattleAreaContainer/StageProgress/StageSlots/Slot4"]
 custom_minimum_size = Vector2(44, 44)
-layout_mode = 0
-anchor_left = 0.879
-anchor_top = 0.511
-anchor_right = 0.879
-anchor_bottom = 0.511
-offset_left = -19.078
-offset_top = -18.017
-offset_right = 24.922
-offset_bottom = 25.983
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -22.0
+offset_top = -22.0
+offset_right = 22.0
+offset_bottom = 22.0
+grow_horizontal = 2
+grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 texture = ExtResource("10_ksqd2")
+expand_mode = 1
 stretch_mode = 4
 
 [node name="Slot5" type="Control" parent="MainContainer/BattleAreaContainer/StageProgress/StageSlots"]
@@ -571,28 +587,33 @@ size_flags_horizontal = 3
 
 [node name="EnemyIcon" type="TextureRect" parent="MainContainer/BattleAreaContainer/StageProgress/StageSlots/Slot5"]
 custom_minimum_size = Vector2(44, 44)
-layout_mode = 0
-anchor_left = 0.817
-anchor_top = 0.511
-anchor_right = 0.817
-anchor_bottom = 0.511
-offset_left = -24.994
-offset_top = -18.017
-offset_right = 19.006
-offset_bottom = 25.983
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -22.0
+offset_top = -22.0
+offset_right = 22.0
+offset_bottom = 22.0
+grow_horizontal = 2
+grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 texture = ExtResource("10_ksqd2")
+expand_mode = 1
 stretch_mode = 4
 
 [node name="PlayerIcon" type="TextureRect" parent="MainContainer/BattleAreaContainer/StageProgress"]
+custom_minimum_size = Vector2(44, 44)
 layout_mode = 0
 offset_left = 2.0
-offset_top = 6.0
-offset_right = 502.0
-offset_bottom = 506.0
-scale = Vector2(0.122865245, 0.122865245)
+offset_top = 17.0
+offset_right = 46.0
+offset_bottom = 61.0
 texture = ExtResource("16_player")
+expand_mode = 1
 stretch_mode = 4
 
 [node name="StageTimer" type="Label" parent="MainContainer/BattleAreaContainer"]
