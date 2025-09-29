@@ -187,6 +187,16 @@ func _setup_hover_functionality():
 
 	$SelectButton.mouse_entered.connect(_on_select_button_hover_entered)
 
+	# Connect hover sounds for each character texture button
+	for i in range(CHARACTER_COUNT):
+		var character_node = character_carousel.get_child(i)
+		var texture_button = character_node.get_node("TextureButton")
+		if texture_button and !texture_button.is_connected("mouse_entered", _on_character_texture_hover):
+			texture_button.mouse_entered.connect(_on_character_texture_hover)
+		# (Optional) play sound on focus via keyboard navigation
+		if texture_button and !texture_button.is_connected("focus_entered", _on_character_texture_hover):
+			texture_button.focus_entered.connect(_on_character_texture_hover)
+
 # Show character stats in custom popup
 func _show_character_stats_popup(character_index: int):
 	var character_key = character_names[character_index].to_lower()
@@ -552,6 +562,9 @@ func _on_previous_button_hover_exited():
 		previous_label.visible = false
 
 func _on_select_button_hover_entered():
+	$ButtonHover.play()
+
+func _on_character_texture_hover():
 	$ButtonHover.play()
 
 func _on_back_button_pressed():
