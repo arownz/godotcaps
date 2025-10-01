@@ -6,9 +6,8 @@
 [resource]
 script = ExtResource("1_1")
 enemy_name = "Plain Guardian"
-health = 130
-damage = 25
-durability = 10
+health = 90
+damage = 20
 exp_reward = 55
 skill_name = "Root Strike"
 description = "A massive ancient tree guardian with crushing strength"

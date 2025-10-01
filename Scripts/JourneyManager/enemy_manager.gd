@@ -271,11 +271,11 @@ func _get_stage_multiplier() -> float:
     var stage_num = battle_scene.dungeon_manager.stage_num
     var dungeon_num = battle_scene.dungeon_manager.dungeon_num
     
-    # MUCH GENTLER progression for dyslexic children (same as dungeon maps)
-    var stage_multiplier = 1.0 + (stage_num - 1) * 0.15 # 1.0, 1.15, 1.3, 1.45, 1.6
+    # Balanced progression for dyslexic children - matches dungeon maps
+    var stage_multiplier = 1.0 + (stage_num - 1) * 0.12 # 1.0, 1.12, 1.24, 1.36, 1.48
     
-    # MINIMAL dungeon scaling to keep game accessible (same as dungeon maps)
-    var dungeon_multiplier = 1.0 + (dungeon_num - 1) * 0.25 # 1.0, 1.25, 1.5
+    # Gentle dungeon scaling to maintain accessibility while providing progression
+    var dungeon_multiplier = 1.0 + (dungeon_num - 1) * 0.20 # 1.0, 1.20, 1.40
     
     return stage_multiplier * dungeon_multiplier
 

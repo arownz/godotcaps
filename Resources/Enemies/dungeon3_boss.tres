@@ -6,9 +6,9 @@
 [resource]
 script = ExtResource("1_1")
 enemy_name = "Mountain Guardian"
-health = 180
-damage = 35
-durability = 15
+health = 120
+damage = 30
+durability = 10
 exp_reward = 100
 skill_name = "Root Storm"
 description = "The ultimate tree guardian with devastating nature magic"

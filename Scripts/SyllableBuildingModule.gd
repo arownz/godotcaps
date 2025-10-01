@@ -16,6 +16,10 @@ var result_being_processed = false
 var mic_permission_granted = false
 var permission_check_complete = false
 
+# TTS/STT synchronization flags
+var tts_speaking = false
+var permission_request_pending = false
+
 # Enhanced debouncing for similar-sounding words like ReadAloudGuided
 var last_interim_result = ""
 var interim_change_count = 0
@@ -307,11 +311,17 @@ func _check_and_wait_for_permissions():
 func update_mic_permission_state(state):
 	"""Callback for permission state updates like ReadAloudGuided"""
 	permission_check_complete = true
+	permission_request_pending = false
+	
 	if state == "granted":
 		mic_permission_granted = true
+		if stt_button:
+			stt_button.text = "Speak"
 		print("SyllableBuildingModule: Microphone permission granted")
 	else:
 		mic_permission_granted = false
+		if stt_button:
+			stt_button.text = "Again"
 		print("SyllableBuildingModule: Microphone permission: ", state)
 
 # Initialize JavaScript environment for web audio - enhanced like ReadAloudGuided
@@ -787,7 +797,7 @@ func _update_progress_display():
 	var progress_percent = (float(completed_count) / float(total_words)) * 100.0
 	
 	if progress_label:
-		progress_label.text = str(current_position) + "/" + str(total_words) + " Words (" + str(completed_count) + " completed)"
+		progress_label.text = str(current_position) + "/" + str(total_words) + " Words"
 	if progress_bar:
 		progress_bar.value = progress_percent
 		print("SyllableBuildingModule: Progress updated to ", progress_percent, "% (", completed_count, "/", total_words, " words completed, on word ", current_position, ")")
@@ -802,16 +812,37 @@ func _on_back_button_pressed():
 
 func _on_hear_word_button_pressed():
 	$ButtonClick.play()
+	
+	var hear_word_button = $MainContainer/WordDisplayPanel/HearWordButton
+	
+	# Block TTS if STT is active to prevent feedback loop
+	if recognition_active:
+		if stt_status_label:
+			stt_status_label.text = "Stop speaking detection first"
+		
+		
 	if tts and current_word_index < syllable_words.size():
 		var word = syllable_words[current_word_index]["word"]
 		print("SyllableBuildingModule: Speaking full word: ", word)
+		tts_speaking = true
+
+			
 		tts.speak(word)
 
 func _on_hear_syllables_button_pressed():
 	$ButtonClick.play()
+	
+	var hear_syllables_button = $MainContainer/WordDisplayPanel/HearSyllablesButton
+	
+	# Block TTS if STT is active to prevent feedback loop
+	if recognition_active:
+		if stt_status_label:
+			stt_status_label.text = "Stop speaking detection first"
+		
 	if tts and current_word_index < syllable_words.size():
 		var syllables = syllable_words[current_word_index]["syllables"]
 		print("SyllableBuildingModule: Speaking syllables separately: ", syllables)
+		tts_speaking = true
 		
 		# Speak each syllable with pauses
 		_speak_syllables_separately(syllables)
@@ -836,23 +867,34 @@ func _on_stt_button_pressed():
 	
 	print("SyllableBuildingModule: STT button pressed, recognition_active: ", recognition_active)
 	
+	# Block if TTS is speaking to prevent audio feedback
+	if tts_speaking:
+		if stt_status_label:
+			stt_status_label.text = "Wait for TTS to finish speaking"
+	
 	if recognition_active:
 		print("SyllableBuildingModule: Stopping current recognition...")
 		_stop_syllable_recognition()
 	else:
+		# Handle permission request state
+		if permission_request_pending:
+			if stt_status_label:
+				stt_status_label.text = "Please allow microphone permission in browser"
+		
 		print("SyllableBuildingModule: Starting new recognition session...")
+		
 		# Clear previous results
 		if stt_result_label:
 			stt_result_label.text = "Preparing to listen..."
 		
-		# Start new recognition session
+		# Start new recognition session with visual feedback
 		stt_button.text = "Requesting..."
 		stt_button.disabled = true
 		if stt_status_label:
 			stt_status_label.text = "Please allow microphone access..."
 		
-		# Try to start recognition
-		var success = await _start_syllable_recognition()
+		# Request permission and try to start recognition
+		var success = await _request_permission_and_start_recognition()
 		
 		if success:
 			print("SyllableBuildingModule: Recognition started successfully")
@@ -860,13 +902,14 @@ func _on_stt_button_pressed():
 			recognition_active = true
 			stt_listening = true
 			stt_button.text = "Stop"
-			stt_button.modulate = Color.ORANGE
 			stt_button.disabled = false
 			if stt_status_label:
 				stt_status_label.text = "Listening... speak the word clearly"
 			
 			if stt_result_label:
 				stt_result_label.text = "Listening..."
+
+
 		else:
 			print("SyllableBuildingModule: Failed to start recognition")
 			# Failed to start
@@ -875,6 +918,65 @@ func _on_stt_button_pressed():
 			stt_button.disabled = false
 			if stt_status_label:
 				stt_status_label.text = "Failed to start - try again"
+
+func _request_permission_and_start_recognition() -> bool:
+	"""Request microphone permission and start recognition - like ReadAloudGuided approach"""
+	if not JavaScriptBridge.has_method("eval"):
+		print("SyllableBuildingModule: JavaScript bridge not available")
+		return false
+	
+	print("SyllableBuildingModule: Requesting microphone permission...")
+	
+	# Setup environment if not already done
+	_setup_web_speech_recognition()
+	
+	# Request permission directly via getUserMedia - this triggers browser permission dialog
+	var js_code = """
+		(async function() {
+			try {
+				console.log('SyllableBuildingModule: Requesting microphone permission...');
+				
+				// This will trigger the browser permission dialog if not already granted
+				const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+				console.log('SyllableBuildingModule: Permission granted, stopping stream');
+				
+				// Stop the stream immediately - we just needed permission
+				stream.getTracks().forEach(track => track.stop());
+				
+				// Set permission state
+				window.syllablePermissionGranted = true;
+				window.syllablePermissionChecked = true;
+				
+				// Now start the actual speech recognition
+				return window.startSyllableRecognition();
+				
+			} catch (error) {
+				console.error('SyllableBuildingModule: Permission denied or error:', error);
+				window.syllablePermissionGranted = false;
+				window.syllablePermissionChecked = true;
+				return false;
+			}
+		})();
+	"""
+	
+	JavaScriptBridge.eval(js_code)
+	
+	# Wait for permission dialog and setup
+	await get_tree().create_timer(1.0).timeout
+	
+	# Check if permission was granted and recognition started
+	var permission_granted = JavaScriptBridge.eval("window.syllablePermissionGranted || false")
+	var is_active = JavaScriptBridge.eval("window.syllableRecognitionActive === true")
+	
+	print("SyllableBuildingModule: Permission granted: ", permission_granted, ", Recognition active: ", is_active)
+	
+	# Update UI based on result
+	if permission_granted and is_active:
+		update_mic_permission_state("granted")
+		return true
+	else:
+		update_mic_permission_state("denied")
+		return false
 
 func _start_syllable_recognition() -> bool:
 	if not JavaScriptBridge.has_method("eval"):
@@ -956,7 +1058,6 @@ func _stop_syllable_recognition():
 	if stt_button:
 		stt_button.text = "Speak"
 		stt_button.disabled = false
-		stt_button.modulate = Color.WHITE
 	
 	print("SyllableBuildingModule: Speech recognition stopped")
 
@@ -1223,8 +1324,8 @@ func _stop_tts():
 # TTS finished handler for syllable workshop flow like ReadAloudGuided
 func _on_tts_finished():
 	"""Called when TTS finishes speaking"""
-	print("SyllableBuildingModule: TTS finished")
-	# Additional TTS completion logic can be added here if needed
+	print("SyllableBuildingModule: TTS finished - re-enabling STT")
+	tts_speaking = false
 
 # Highlighting reset timeout handler like ReadAloudGuided
 func _on_highlighting_reset_timeout():

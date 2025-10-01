@@ -89,6 +89,7 @@ func _ready():
 func _notification(what):
 	if what == NOTIFICATION_WM_CLOSE_REQUEST or what == NOTIFICATION_PREDELETE:
 		_cleanup_stage_timer()
+		_cleanup_battle_session()
 
 func _cleanup_stage_timer():
 	# Stop and clean up stage timer
@@ -97,6 +98,12 @@ func _cleanup_stage_timer():
 	if live_timer:
 		live_timer.stop()
 		live_timer.queue_free()
+
+func _cleanup_battle_session():
+	# Reset engage button session flag when leaving battle scene entirely
+	if typeof(DungeonGlobals) != TYPE_NIL:
+		DungeonGlobals.engage_button_hidden_session = false
+		print("BattleScene: Cleaned up battle session - engage button available for new battles")
 
 func _initialize_managers():
 	print("Initializing battle scene managers")
@@ -337,13 +344,15 @@ func _show_battle_settings_popup():
 		_start_battle()
 		return
 	var popup = settings_popup_scene.instantiate()
-	# Configure as battle context and session state
+	# Configure as battle context - allow multiple battles unless explicitly hidden
 	if popup.has_method("set_energy_cost"):
 		popup.set_energy_cost(2)
 	if popup.has_method("set_context"):
-		popup.set_context(true, battle_session_started, battle_active)
+		# Don't pass battle_session_started - allow repeated battles unless permanently hidden
+		popup.set_context(true, false, battle_active)
 	elif popup.has_method("set_battle_session_state"):
-		popup.set_battle_session_state(battle_session_started, battle_active)
+		# Don't hide engage button based on session - allow repeated battles
+		popup.set_battle_session_state(false, battle_active)
 	# Connect signals if available
 	if popup.has_signal("engage_confirmed"):
 		popup.engage_confirmed.connect(_on_engage_confirmed)
@@ -371,6 +380,11 @@ func _on_engage_confirmed():
 func _on_battle_quit_requested():
 	# Player chose not to engage, return to dungeon map
 	print("Player quit battle engagement, returning to dungeon")
+	
+	# Reset engage button session flag to allow future battles
+	if typeof(DungeonGlobals) != TYPE_NIL:
+		DungeonGlobals.engage_button_hidden_session = false
+		print("BattleScene: Reset engage button session flag - user can engage in new battles")
 	
 	# Get the current dungeon from dungeon_manager instead of using hardcoded dungeon_id
 	var current_dungeon = dungeon_manager.dungeon_num
@@ -434,7 +448,6 @@ func _start_battle():
 
 func _start_auto_battle():
 	fight_label.visible = false
-	fight_label.modulate = Color(1, 1, 1, 1)
 	
 	# Add battle log message
 	battle_log_manager.add_message("[color=#000000]The turn-based battle begins![/color]")

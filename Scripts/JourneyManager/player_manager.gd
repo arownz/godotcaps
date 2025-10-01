@@ -199,8 +199,18 @@ func _load_player_stats():
 		print("PlayerManager: No cached data available, stats should be loaded from Firebase directly")
 
 func _calculate_exp_for_level(level: int) -> int:
-	# Simple exp calculation: level * 100
-	return level * 100
+	# Pokemon-like exp curve for dyslexic children - balanced progression
+	# Early levels are quick to build confidence, later levels require more commitment
+	if level <= 3:
+		return 80 # Quick early levels: 80 exp each (levels 1-3)
+	elif level <= 7:
+		return 100 # Steady progression: 100 exp each (levels 4-7)
+	elif level <= 12:
+		return 120 # Moderate increase: 120 exp each (levels 8-12)
+	elif level <= 18:
+		return 150 # Challenging but achievable: 150 exp each (levels 13-18)
+	else:
+		return 180 # High level commitment: 180 exp each (levels 19+)
 
 # Load player animation (fixed implementation)
 func load_player_animation():
@@ -371,11 +381,32 @@ func add_experience(exp_amount):
 		player_exp -= max_exp
 		player_level += 1
 		
-		# More balanced stats on level up for dyslexic children
-		# Smaller, more gradual increases
-		var health_increase = randi_range(8, 15) # Random 8-15 health per level
-		var damage_increase = randi_range(3, 6) # Random 3-6 damage per level
-		var durability_increase = randi_range(2, 4) # Random 2-4 durability per level
+		# Pokemon-like stat growth for dyslexic children - randomized but balanced
+		# Different growth patterns based on level ranges for variety
+		var health_increase = 0
+		var damage_increase = 0
+		var durability_increase = 0
+		
+		if player_level <= 5:
+			# Early game - steady growth to build confidence
+			health_increase = randi_range(12, 18) # 12-18 health
+			damage_increase = randi_range(4, 7) # 4-7 damage
+			durability_increase = randi_range(2, 4) # 2-4 durability
+		elif player_level <= 10:
+			# Mid-early game - moderate growth
+			health_increase = randi_range(10, 16) # 10-16 health
+			damage_increase = randi_range(3, 6) # 3-6 damage
+			durability_increase = randi_range(2, 5) # 2-5 durability
+		elif player_level <= 15:
+			# Mid game - balanced growth with occasional bursts
+			health_increase = randi_range(8, 15) # 8-15 health
+			damage_increase = randi_range(3, 7) # 3-7 damage
+			durability_increase = randi_range(1, 4) # 1-4 durability
+		else:
+			# Late game - slower but meaningful growth
+			health_increase = randi_range(6, 12) # 6-12 health
+			damage_increase = randi_range(2, 5) # 2-5 damage
+			durability_increase = randi_range(1, 3) # 1-3 durability
 		
 		# Apply stat increases to BASE stats (these are what level up affects)
 		base_health += health_increase
@@ -400,8 +431,8 @@ func add_experience(exp_amount):
 		# Emit level up signal
 		emit_signal("player_level_up", player_level)
 		
-		print("PlayerManager: ✓ PLAYER LEVELED UP! New level: ", player_level)
-		print("PlayerManager: ✓ New stats - Health: ", player_max_health, ", Damage: ", player_damage, ", Durability: ", player_durability)
+		print("PlayerManager: PLAYER LEVELED UP! New level: ", player_level)
+		print("PlayerManager: New stats - Health: ", player_max_health, ", Damage: ", player_damage, ", Durability: ", player_durability)
 		
 		# Update all UI elements that depend on level up
 		if battle_scene and battle_scene.ui_manager:
@@ -412,16 +443,16 @@ func add_experience(exp_amount):
 			battle_scene.ui_manager.update_player_info() # Update player level display
 		
 		# Update Firebase stats - using same pattern as _update_player_stats_in_firebase method
-		print("PlayerManager: ✓ Updating Firebase after level up...")
+		print("PlayerManager: Updating Firebase after level up...")
 		await _update_player_stats_in_firebase(true)
-		print("PlayerManager: ✓ Firebase update completed")
+		print("PlayerManager: Firebase update completed")
 	else:
 		print("PlayerManager: Experience added, no level up. Current exp: ", player_exp, "/", get_max_exp())
 		
 		# Update Firebase even without level up to save current exp progress
-		print("PlayerManager: ✓ Updating Firebase with current exp progress...")
+		print("PlayerManager: Updating Firebase with current exp progress...")
 		await _update_player_stats_in_firebase(false)
-		print("PlayerManager: ✓ Firebase exp update completed")
+		print("PlayerManager: Firebase exp update completed")
 
 # Heal player to full health
 func heal_to_full():
@@ -494,12 +525,12 @@ func _update_player_stats_in_firebase(leveled_up: bool = false):
 			# Save the updated document - exact same pattern as energy update
 			var updated_document = await collection.update(document)
 			if updated_document:
-				print("PlayerManager: ✓ Player stats updated in Firebase successfully!")
+				print("PlayerManager: Player stats updated in Firebase successfully!")
 				if leveled_up:
-					print("PlayerManager: ✓ LEVEL UP SAVED! New level: " + str(player_level))
-					print("PlayerManager: ✓ New stats saved - Health: " + str(player_max_health) + ", Damage: " + str(player_damage) + ", Durability: " + str(player_durability))
+					print("PlayerManager: LEVEL UP SAVED! New level: " + str(player_level))
+					print("PlayerManager: New stats saved - Health: " + str(player_max_health) + ", Damage: " + str(player_damage) + ", Durability: " + str(player_durability))
 			else:
-				print("PlayerManager: ✗ Failed to update player stats in Firebase")
+				print("PlayerManager: Failed to update player stats in Firebase")
 		else:
 			print("PlayerManager: Stats structure not found in document")
 	else:
@@ -648,13 +679,13 @@ func _verify_firebase_update():
 			)
 			
 			if local_matches_firebase:
-				print("✓ SUCCESS: Local player stats match Firebase data!")
+				print("SUCCESS: Local player stats match Firebase data!")
 			else:
-				print("✗ MISMATCH: Local and Firebase data don't match!")
+				print("MISMATCH: Local and Firebase data don't match!")
 		else:
-			print("✗ ERROR: No player stats found in Firebase document")
+			print("ERROR: No player stats found in Firebase document")
 	else:
-		print("✗ ERROR: Could not retrieve document from Firebase")
+		print("ERROR: Could not retrieve document from Firebase")
 	
 	print("=== FIREBASE VERIFICATION COMPLETE ===")
 

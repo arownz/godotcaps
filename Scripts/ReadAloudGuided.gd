@@ -33,6 +33,9 @@ var result_panel_active = false
 # Flag to track if result is being processed
 var result_being_processed = false
 
+# TTS/STT synchronization flags
+var permission_request_pending = false
+
 # Live word highlighting for STT feedback
 var highlighted_words = []
 var current_spoken_words = []
@@ -301,7 +304,6 @@ func _check_tts_button_state():
 			tts_speaking = false
 			read_button.text = "Read"
 			read_button.disabled = false
-			read_button.modulate = Color.WHITE
 
 func _initialize_web_audio_environment():
 	"""Initialize JavaScript environment for web audio - FIXED ENGINE DETECTION"""
@@ -569,8 +571,14 @@ func _check_and_wait_for_permissions():
 func update_mic_permission_state(state):
 	"""Callback for permission state updates"""
 	permission_check_complete = true
+	permission_request_pending = false
+	
+	var speak_button = $MainContainer/ControlsContainer/SpeakButton
+	
 	if state == "granted":
 		mic_permission_granted = true
+		if speak_button:
+			speak_button.text = "Speak"
 		print("ReadAloudGuided: Microphone permission granted")
 		
 		# Initialize speech recognition immediately after permission is granted
@@ -582,6 +590,8 @@ func update_mic_permission_state(state):
 				print("ReadAloudGuided: Failed to initialize speech recognition")
 	else:
 		mic_permission_granted = false
+		if speak_button:
+			speak_button.text = "Again"
 		print("ReadAloudGuided: Microphone permission: ", state)
 
 func _start_speech_recognition():
@@ -599,6 +609,7 @@ func _start_speech_recognition():
 	
 	if not mic_permission_granted:
 		print("ReadAloudGuided: Requesting microphone permission...")
+		permission_request_pending = true
 		_request_microphone_permission()
 		return false
 	
@@ -1088,15 +1099,15 @@ func levenshtein_distance(s1: String, s2: String) -> int:
 
 # TTS finished handler for guided reading flow
 func _on_tts_finished():
-	"""Called when TTS finishes reading a sentence"""
-	print("ReadAloudGuided: TTS finished, prompting user to speak")
+	"""Called when TTS finishes reading a sentence - re-enable STT"""
+	print("ReadAloudGuided: TTS finished - re-enabling STT, prompting user to speak")
 	
 	# Prevent multiple calls if both signal and timer fire
 	if not tts_speaking:
 		print("ReadAloudGuided: TTS already finished, ignoring duplicate call")
 		return
 	
-	# Reset TTS speaking flag
+	# Reset TTS speaking flag - this re-enables STT functionality
 	tts_speaking = false
 	
 	# Stop the backup timer if it's running
@@ -1109,7 +1120,6 @@ func _on_tts_finished():
 	if read_button:
 		read_button.text = "Read"
 		read_button.disabled = false
-		read_button.modulate = Color.WHITE
 		print("ReadAloudGuided: Read button reset to 'Read' state")
 	
 	# Update guide to prompt user to speak
@@ -1122,7 +1132,6 @@ func _on_tts_finished():
 	var speak_button = $MainContainer/ControlsContainer/SpeakButton
 	if speak_button:
 		speak_button.disabled = false
-		speak_button.modulate = Color.LIGHT_GREEN # Highlight the button
 		speak_button.text = "Speak"
 		
 	# Remove automatic audio prompt - user controls when to hear instructions
@@ -1301,7 +1310,6 @@ func _show_success_feedback(_recognized_text: String):
 	if speak_button:
 		speak_button.text = "Speak"
 		speak_button.disabled = false
-		speak_button.modulate = Color.WHITE
 	
 	# Show success message
 	var guide_display = $MainContainer/GuidePanel/MarginContainer/GuideContainer/GuideNotes
@@ -1355,7 +1363,6 @@ func _show_encouragement_feedback(_recognized_text: String, target_text: String)
 	if speak_button:
 		speak_button.text = "Speak"
 		speak_button.disabled = false
-		speak_button.modulate = Color.WHITE
 	
 	var guide_display = $MainContainer/GuidePanel/MarginContainer/GuideContainer/GuideNotes
 	if guide_display:
@@ -1381,7 +1388,6 @@ func _show_partial_match_feedback(_recognized_text: String, target_text: String)
 	if speak_button:
 		speak_button.text = "Speak"
 		speak_button.disabled = false
-		speak_button.modulate = Color.WHITE
 	
 	var guide_display = $MainContainer/GuidePanel/MarginContainer/GuideContainer/GuideNotes
 	if guide_display:
@@ -1415,7 +1421,6 @@ func _show_try_again_feedback(_recognized_text: String, target_text: String):
 	if speak_button:
 		speak_button.text = "Speak"
 		speak_button.disabled = false
-		speak_button.modulate = Color.WHITE
 	
 	var guide_display = $MainContainer/GuidePanel/MarginContainer/GuideContainer/GuideNotes
 	if guide_display:
@@ -1754,6 +1759,11 @@ func _on_previous_passage_button_pressed():
 		completed_sentences.clear()
 		print("ReadAloudGuided: Reset completed sentences for previous passage ", current_passage_index)
 		
+		# Save current index to Firebase for proper resuming
+		if module_progress and module_progress.is_authenticated():
+			await module_progress.set_read_aloud_current_index("guided_reading", current_passage_index)
+			print("ReadAloudGuided: Saved current passage index ", current_passage_index, " to Firebase")
+		
 		_display_passage(current_passage_index)
 		_update_navigation_buttons()
 
@@ -1767,6 +1777,11 @@ func _on_next_passage_button_pressed():
 		# Reset completed sentences for new passage
 		completed_sentences.clear()
 		print("ReadAloudGuided: Reset completed sentences for next passage ", current_passage_index)
+		
+		# Save current index to Firebase for proper resuming
+		if module_progress and module_progress.is_authenticated():
+			await module_progress.set_read_aloud_current_index("guided_reading", current_passage_index)
+			print("ReadAloudGuided: Saved current passage index ", current_passage_index, " to Firebase")
 		
 		_display_passage(current_passage_index)
 		_update_navigation_buttons()
@@ -1864,11 +1879,9 @@ func _update_listen_button():
 		if stt_listening:
 			listen_button.text = "Stop"
 			listen_button.disabled = false # Keep button enabled so user can stop
-			listen_button.modulate = Color.ORANGE
 		else:
 			listen_button.text = "Speak"
 			listen_button.disabled = false
-			listen_button.modulate = Color.WHITE
 
 func _handle_stt_error(error: String):
 	"""Handle speech recognition errors"""
@@ -1990,6 +2003,11 @@ func _on_read_button_pressed():
 
 	var read_button = $MainContainer/PassagePanel/ReadButton
 	
+	# Block TTS if STT is active to prevent feedback loop
+	if stt_listening:
+		print("ReadAloudGuided: TTS blocked - STT is active")
+		return
+	
 	# Check if TTS is currently speaking (allow stop functionality)
 	# Note: Godot's TTS doesn't have is_speaking(), so we track state manually
 	if tts_speaking:
@@ -2009,7 +2027,6 @@ func _on_read_button_pressed():
 		if read_button:
 			read_button.text = "Read"
 			read_button.disabled = false
-			read_button.modulate = Color.WHITE
 		print("ReadAloudGuided: TTS stopped by user")
 		return
 
@@ -2028,7 +2045,6 @@ func _on_read_button_pressed():
 				if read_button:
 					read_button.text = "Stop"
 					read_button.disabled = false
-					read_button.modulate = Color.ORANGE
 				
 				# Use TTS to read this sentence (will trigger _on_tts_finished when done)
 				if tts:
@@ -2047,7 +2063,6 @@ func _on_read_button_pressed():
 					print("ReadAloudGuided: TTS not available")
 					if read_button:
 						read_button.text = "Read"
-						read_button.modulate = Color.WHITE
 					
 					# If using timer fallback, estimate reading time and start timer
 					if use_timer_fallback_for_tts and tts_timer:
@@ -2081,7 +2096,6 @@ func _on_speak_button_pressed():
 		if speak_button:
 			speak_button.text = "Speak"
 			speak_button.disabled = false
-			speak_button.modulate = Color.WHITE
 		
 		# Reset guide message
 		var guide_display = $MainContainer/GuidePanel/MarginContainer/GuideContainer/GuideNotes
@@ -2135,7 +2149,6 @@ func _on_speak_button_pressed():
 					# Update button state AFTER successful start
 					if speak_button:
 						speak_button.text = "Stop"
-						speak_button.modulate = Color("#ff6b6b") # Red color for stop
 					
 					print("ReadAloudGuided: Speech recognition started for sentence practice")
 					
@@ -2149,7 +2162,6 @@ func _on_speak_button_pressed():
 					# Reset button if failed to start
 					if speak_button:
 						speak_button.text = "Speak"
-						speak_button.modulate = Color.WHITE
 			else:
 				print("ReadAloudGuided: No sentence to practice")
 
@@ -2248,7 +2260,6 @@ func _update_sentence_highlighting():
 		var speak_button = $MainContainer/ControlsContainer/SpeakButton
 		if speak_button:
 			speak_button.disabled = false
-			speak_button.modulate = Color.WHITE
 			speak_button.text = "Speak"
 		
 		# Clear any previous highlighting
@@ -2278,6 +2289,11 @@ func _complete_current_passage():
 		var success = await module_progress.complete_read_aloud_activity("guided_reading", firebase_passage_id)
 		if success:
 			print("ReadAloudGuided: Passage completion saved to Firebase")
+			# Also save the current index for proper resuming
+			var next_index = current_passage_index + 1
+			if next_index < passages.size():
+				await module_progress.set_read_aloud_current_index("guided_reading", next_index)
+				print("ReadAloudGuided: Saved next passage index ", next_index, " to Firebase")
 		else:
 			print("ReadAloudGuided: Failed to save passage completion")
 	
@@ -2301,7 +2317,6 @@ func _complete_current_passage():
 	if read_button:
 		read_button.text = "Read"
 		read_button.disabled = false
-		read_button.modulate = Color.WHITE
 	
 	var speak_btn = $MainContainer/ControlsContainer/SpeakButton
 	if speak_btn:
@@ -2349,6 +2364,11 @@ func _advance_to_next_passage_or_complete():
 		# Reset completed sentences for new passage
 		completed_sentences.clear()
 		print("ReadAloudGuided: Advanced to passage ", current_passage_index + 1)
+		
+		# Save current index to Firebase for proper resuming
+		if module_progress and module_progress.is_authenticated():
+			await module_progress.set_read_aloud_current_index("guided_reading", current_passage_index)
+			print("ReadAloudGuided: Saved advanced passage index ", current_passage_index, " to Firebase")
 		
 		_setup_initial_display()
 		

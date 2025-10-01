@@ -451,11 +451,11 @@ func _on_notification_closed():
 
 # Get stage-based multiplier for enemy stats - BALANCED FOR DYSLEXIC CHILDREN
 func _get_stage_multiplier(stage_num: int) -> float:
-	# MUCH GENTLER progression for dyslexic children (slow, steady growth)
-	var stage_multiplier = 1.0 + (stage_num - 1) * 0.15 # 1.0, 1.15, 1.3, 1.45, 1.6
+	# Balanced progression for dyslexic children - rewarding but not overwhelming
+	var stage_multiplier = 1.0 + (stage_num - 1) * 0.12 # 1.0, 1.12, 1.24, 1.36, 1.48
 	
-	# MINIMAL dungeon scaling to keep game accessible 
-	var dungeon_multiplier = 1.0 + (dungeon_num - 1) * 0.25 # 1.0, 1.25, 1.5
+	# Gentle dungeon scaling to maintain accessibility while providing progression
+	var dungeon_multiplier = 1.0 + (dungeon_num - 1) * 0.20 # 1.0, 1.20, 1.40
 	
 	return stage_multiplier * dungeon_multiplier
 
