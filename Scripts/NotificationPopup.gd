@@ -75,7 +75,17 @@ func close_notification():
 	
 	await tween.finished
 	hide()
+	
+	# Notify background music manager that notification is closed
+	var bg_manager = get_node_or_null("/root/BackgroundMusicManager")
+	if bg_manager and bg_manager.has_method("_check_current_scene_and_play"):
+		bg_manager._check_current_scene_and_play()
+		print("NotificationPopup: Notified BackgroundMusicManager to resume music")
+	
 	emit_signal("closed")
+	
+	# Remove from tree to prevent duplicates and memory leaks
+	call_deferred("queue_free")
 
 func show_notification(title = default_title, message = default_message, button_text = default_button_text):
 	# Add null checks before setting text

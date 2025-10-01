@@ -288,7 +288,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_oltpx")
 }],
-"loop": true,
+"loop": false,
 "name": &"skill",
 "speed": 10.0
 }]
@@ -297,17 +297,14 @@ animations = [{
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_06me7")
-animation = &"auto_attack"
+animation = &"skill"
 autoplay = "auto_attack"
 
 [node name="snake_skill" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("2_v2rwu")
-bus = &"SFX"
 
 [node name="snake_autoattack" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("2_cdj5w")
-bus = &"SFX"
 
 [node name="snake_hurt" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("4_syvy7")
-bus = &"SFX"

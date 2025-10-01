@@ -298,7 +298,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_hc7j1")
 }],
-"loop": true,
+"loop": false,
 "name": &"skill",
 "speed": 7.0
 }]
@@ -308,7 +308,7 @@ position = Vector2(-2, -23)
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_j63xv")
-animation = &"idle"
+animation = &"auto_attack"
 autoplay = "auto_attack"
 
 [node name="treant_hurt" type="AudioStreamPlayer" parent="."]

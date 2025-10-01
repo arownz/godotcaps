@@ -241,12 +241,6 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_trsto")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_trsto")
-}, {
-"duration": 1.0,
 "texture": SubResource("AtlasTexture_ykal7")
 }, {
 "duration": 1.0,
@@ -263,8 +257,14 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_vbqwn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_trsto")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_trsto")
 }],
-"loop": true,
+"loop": false,
 "name": &"skill",
 "speed": 10.0
 }]
@@ -273,7 +273,7 @@ animations = [{
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_ovbb4")
-animation = &"auto_attack"
+animation = &"hurt"
 autoplay = "auto_attack"
 
 [node name="slime_autoattack" type="AudioStreamPlayer" parent="."]
