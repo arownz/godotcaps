@@ -23,7 +23,15 @@ shadow_color = Color(0, 0, 0, 0.1)
 shadow_size = 8
 shadow_offset = Vector2(0, 4)
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_button"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nav_btn"]
+bg_color = Color(0.4, 0.49, 0.92, 1)
+corner_radius_top_left = 25
+corner_radius_top_right = 25
+corner_radius_bottom_right = 25
+corner_radius_bottom_left = 25
+shadow_color = Color(0, 0, 0, 0.2)
+shadow_size = 4
+shadow_offset = Vector2(0, 2)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nav_btn_hover"]
 bg_color = Color(0.35, 0.4, 0.84, 1)
@@ -35,17 +43,7 @@ shadow_color = Color(0, 0, 0, 0.3)
 shadow_size = 6
 shadow_offset = Vector2(0, 4)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nav_btn"]
-bg_color = Color(0.4, 0.49, 0.92, 1)
-corner_radius_top_left = 25
-corner_radius_top_right = 25
-corner_radius_bottom_right = 25
-corner_radius_bottom_left = 25
-shadow_color = Color(0, 0, 0, 0.2)
-shadow_size = 4
-shadow_offset = Vector2(0, 2)
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_67k4m"]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_button"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tab_container"]
 bg_color = Color(0.95, 0.95, 0.95, 1)
@@ -56,6 +54,8 @@ corner_radius_bottom_left = 10
 shadow_color = Color(0, 0, 0, 0.1)
 shadow_size = 4
 shadow_offset = Vector2(0, 2)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_67k4m"]
 
 [node name="Leaderboard" type="Control"]
 layout_mode = 3
@@ -98,7 +98,7 @@ size_flags_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_header")
 
 [node name="TextureRect" type="TextureRect" parent="MainContainer/HeaderPanel"]
-layout_mode = 2
+layout_mode = 0
 offset_left = 364.0
 offset_top = 29.0
 offset_right = 555.0
@@ -144,10 +144,10 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
 theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_font")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_button")
-theme_override_styles/hover = SubResource("StyleBoxFlat_nav_btn_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_nav_btn_hover")
 theme_override_styles/normal = SubResource("StyleBoxFlat_nav_btn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_nav_btn_hover")
+theme_override_styles/hover = SubResource("StyleBoxFlat_nav_btn_hover")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_button")
 text = "Back"
 icon = ExtResource("4_ldouh")
 flat = true
@@ -164,8 +164,8 @@ layout_mode = 2
 size_flags_vertical = 3
 theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 18
-theme_override_styles/tab_focus = SubResource("StyleBoxEmpty_67k4m")
 theme_override_styles/panel = SubResource("StyleBoxFlat_tab_container")
+theme_override_styles/tab_focus = SubResource("StyleBoxEmpty_67k4m")
 current_tab = 0
 
 [node name="Dungeon Rankings" type="Control" parent="MainContainer/ContentContainer/TabContainer"]

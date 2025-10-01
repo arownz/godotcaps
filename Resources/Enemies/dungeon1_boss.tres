@@ -6,7 +6,7 @@
 [resource]
 script = ExtResource("1_1")
 enemy_name = "Plain Guardian"
-health = 200
+health = 130
 damage = 25
 durability = 10
 exp_reward = 50

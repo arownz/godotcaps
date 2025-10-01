@@ -692,7 +692,7 @@ func _on_speak_button_pressed():
 			# Successfully started
 			recognition_active = true
 			live_transcription_enabled = true
-			speak_button.text = "Stop Recording"
+			speak_button.text = "Stop"
 			speak_button.disabled = false
 			status_label.text = "Listening... Say the word clearly, then click Stop Recording"
 			

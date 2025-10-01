@@ -1,7 +1,7 @@
 [gd_scene load_steps=70 format=3 uid="uid://xs5u2wmna405"]
 
 [ext_resource type="Texture2D" uid="uid://u5tr14p25cn8" path="res://Sprites/Frame Sprites/Ragna.png" id="1_gumrm"]
-[ext_resource type="AudioStream" uid="uid://b1og6okkq7lma" path="res://audio/player/ragna/ragna_counter.mp3" id="2_gumrm"]
+[ext_resource type="AudioStream" uid="uid://hxux3ukc5gjm" path="res://audio/player/ragna/ragna_cut2.mp3" id="2_gumrm"]
 [ext_resource type="AudioStream" uid="uid://bs42rjmlsclva" path="res://audio/player/ragna/rapier slash 1.mp3" id="3_l8wov"]
 [ext_resource type="AudioStream" uid="uid://c356nfeervb4c" path="res://audio/player/player hit 2.ogg" id="4_xg8h6"]
 
@@ -433,6 +433,12 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_cxkrf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_l0gf4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cp4yr")
 }],
 "loop": false,
 "name": &"hurt",

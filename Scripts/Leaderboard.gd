@@ -108,7 +108,7 @@ func _create_simple_dungeon_header() -> Control:
 	
 	# Player
 	var name_label = _create_simple_label("PLAYER", 16, Color(0.9, 0.95, 1))
-	var name_container = _create_bordered_container(name_label, Vector2(240, 50), Color(0.15, 0.25, 0.35, 0.8))
+	var name_container = _create_bordered_container(name_label, Vector2(280, 50), Color(0.15, 0.25, 0.35, 0.8))
 	header.add_child(name_container)
 	
 	# Medal
@@ -116,15 +116,20 @@ func _create_simple_dungeon_header() -> Control:
 	var medal_container = _create_bordered_container(medal_label, Vector2(100, 50), Color(0.15, 0.25, 0.35, 0.8))
 	header.add_child(medal_container)
 	
-	# Highest Dungeon
+	# Current Dungeon
 	var dungeon_label = _create_simple_label("DUNGEON", 16, Color(0.7, 0.9, 0.7))
-	var dungeon_container = _create_bordered_container(dungeon_label, Vector2(180, 50), Color(0.15, 0.25, 0.35, 0.8))
+	var dungeon_container = _create_bordered_container(dungeon_label, Vector2(140, 50), Color(0.15, 0.25, 0.35, 0.8))
 	header.add_child(dungeon_container)
 	
-	# Stages
+	# Current Stage
 	var stages_label = _create_simple_label("STAGE", 16, Color(0.9, 0.7, 0.9))
 	var stages_container = _create_bordered_container(stages_label, Vector2(90, 50), Color(0.15, 0.25, 0.35, 0.8))
 	header.add_child(stages_container)
+	
+	# Enemies Defeated
+	var enemies_label = _create_simple_label("KILLS", 16, Color(1, 0.4, 0.4))
+	var enemies_container = _create_bordered_container(enemies_label, Vector2(90, 50), Color(0.15, 0.25, 0.35, 0.8))
+	header.add_child(enemies_container)
 	
 	return header
 
@@ -147,7 +152,7 @@ func _create_simple_power_header() -> Control:
 	
 	# Player
 	var name_label = _create_simple_label("PLAYER", 16, Color(0.9, 0.95, 1))
-	var name_container = _create_bordered_container(name_label, Vector2(200, 50), Color(0.15, 0.25, 0.35, 0.8))
+	var name_container = _create_bordered_container(name_label, Vector2(250, 50), Color(0.15, 0.25, 0.35, 0.8))
 	header.add_child(name_container)
 	
 	# Level
@@ -196,7 +201,7 @@ func _create_simple_word_recognize_header() -> Control:
 	
 	# Player
 	var name_label = _create_simple_label("PLAYER", 16, Color(0.9, 0.95, 1))
-	var name_container = _create_bordered_container(name_label, Vector2(220, 50), Color(0.15, 0.25, 0.35, 0.8))
+	var name_container = _create_bordered_container(name_label, Vector2(280, 50), Color(0.15, 0.25, 0.35, 0.8))
 	header.add_child(name_container)
 	
 	# STT Completed (blue-green color)
@@ -206,7 +211,7 @@ func _create_simple_word_recognize_header() -> Control:
 	
 	# Whiteboard Completed (green-blue color)
 	var wb_label = _create_simple_label("BOARD", 14, Color(0.3, 1, 0.8))
-	var wb_container = _create_bordered_container(wb_label, Vector2(140, 50), Color(0.15, 0.25, 0.35, 0.8))
+	var wb_container = _create_bordered_container(wb_label, Vector2(120, 50), Color(0.15, 0.25, 0.35, 0.8))
 	header.add_child(wb_container)
 	
 	# Total WordRecognize (bright green color)
@@ -233,6 +238,32 @@ func _create_simple_label(text: String, font_size: int = 16, color: Color = Colo
 	# Ensure text fits within bounds
 	label.clip_contents = true
 	label.autowrap_mode = TextServer.AUTOWRAP_OFF
+	
+	return label
+
+# Helper function to create a responsive label that truncates long text
+func _create_responsive_label(text: String, max_chars: int, font_size: int = 16, color: Color = Color(1, 1, 1), alignment: HorizontalAlignment = HORIZONTAL_ALIGNMENT_LEFT) -> Label:
+	var label = Label.new()
+	label.horizontal_alignment = alignment
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.add_theme_font_override("font", load("res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf"))
+	label.add_theme_font_size_override("font_size", font_size)
+	label.add_theme_color_override("font_color", color)
+	
+	# Set basic sizing
+	label.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	
+	# Enable text clipping
+	label.clip_contents = true
+	label.autowrap_mode = TextServer.AUTOWRAP_OFF
+	
+	# Truncate text if too long
+	var display_text = text
+	if text.length() > max_chars:
+		display_text = text.substr(0, max_chars - 3) + "..."
+	
+	label.text = display_text
 	
 	return label
 
@@ -406,7 +437,12 @@ func _extract_user_data(document) -> Dictionary:
 		var completed = dungeons.get("completed", {})
 		var progress = dungeons.get("progress", {})
 		
-		# Calculate highest completed dungeon and total stages
+		# Get current dungeon and stage from progress
+		var current_dungeon = progress.get("current_dungeon", 1)
+		var current_stage = progress.get("current_stage", 1)
+		var enemies_defeated = progress.get("enemies_defeated", 0)
+		
+		# Calculate highest completed dungeon and total stages for ranking purposes
 		var highest_dungeon = 0
 		var total_stages_completed = 0
 		
@@ -422,13 +458,18 @@ func _extract_user_data(document) -> Dictionary:
 					# Partially completed dungeon
 					highest_dungeon = max(highest_dungeon, int(dungeon_id))
 		
+		# Use current dungeon/stage for display, but highest completed for ranking
+		user_data["current_dungeon"] = current_dungeon
+		user_data["current_stage"] = current_stage
 		user_data["highest_dungeon"] = highest_dungeon
 		user_data["total_stages_completed"] = total_stages_completed
-		user_data["enemies_defeated"] = progress.get("enemies_defeated", 0)
+		user_data["enemies_defeated"] = enemies_defeated
 		
 		# Update rank based on progress
 		user_data["rank"] = _calculate_rank_from_progress(highest_dungeon, total_stages_completed)
 	else:
+		user_data["current_dungeon"] = 1
+		user_data["current_stage"] = 1
 		user_data["highest_dungeon"] = 0
 		user_data["total_stages_completed"] = 0
 		user_data["enemies_defeated"] = 0
@@ -466,13 +507,15 @@ func _populate_dungeon_rankings():
 	for child in dungeon_list.get_children():
 		child.queue_free()
 	
-	# Sort users by dungeon progress (highest dungeon first, then total stages)
+	# Sort users by dungeon progress (current dungeon first, then current stage, then enemies defeated)
 	var sorted_users = all_users_data.duplicate()
 	sorted_users.sort_custom(func(a, b):
-		if a["highest_dungeon"] != b["highest_dungeon"]:
-			return a["highest_dungeon"] > b["highest_dungeon"]
-		if a["total_stages_completed"] != b["total_stages_completed"]:
-			return a["total_stages_completed"] > b["total_stages_completed"]
+		if a["current_dungeon"] != b["current_dungeon"]:
+			return a["current_dungeon"] > b["current_dungeon"]
+		if a["current_stage"] != b["current_stage"]:
+			return a["current_stage"] > b["current_stage"]
+		if a["enemies_defeated"] != b["enemies_defeated"]:
+			return a["enemies_defeated"] > b["enemies_defeated"]
 		return a["level"] > b["level"]
 	)
 		# Add header
@@ -606,8 +649,8 @@ func _create_dungeon_entry(user_data: Dictionary, rank: int) -> Control:
 		name_bg_color = Color(0.3, 0.25, 0.1, 0.5)
 		player_name = "* " + player_name + " (You)"
 	
-	var name_label = _create_simple_label(player_name, 16, name_color, HORIZONTAL_ALIGNMENT_LEFT)
-	var name_container = _create_bordered_container(name_label, Vector2(240, 55), name_bg_color)
+	var name_label = _create_responsive_label(player_name, 25, 16, name_color, HORIZONTAL_ALIGNMENT_LEFT)
+	var name_container = _create_bordered_container(name_label, Vector2(280, 55), name_bg_color)
 	entry.add_child(name_container)
 	
 	# Medal with glow effect
@@ -626,47 +669,68 @@ func _create_dungeon_entry(user_data: Dictionary, rank: int) -> Control:
 	var medal_container = _create_bordered_container(medal_center, Vector2(100, 55), Color(0.05, 0.05, 0.05, 0.3))
 	entry.add_child(medal_container)
 	
-	# Highest dungeon with color coding
+	# Current dungeon with color coding
 	var dungeon_text = ""
 	var dungeon_color = Color(0.8, 0.8, 0.8)
-	var highest_dungeon = user_data.get("highest_dungeon", 0)
-	if highest_dungeon > 0:
-		dungeon_text = dungeon_names.get(highest_dungeon, "Unknown")
+	var current_dungeon = user_data.get("current_dungeon", 1)
+	if current_dungeon > 0:
+		dungeon_text = dungeon_names.get(current_dungeon, "Unknown")
 		# Color code dungeons
-		if highest_dungeon == 1:
+		if current_dungeon == 1:
 			dungeon_color = Color(0.6, 0.9, 0.6) # Green for Plains
-		elif highest_dungeon == 2:
+		elif current_dungeon == 2:
 			dungeon_color = Color(0.6, 0.8, 0.4) # Forest Green
-		elif highest_dungeon == 3:
+		elif current_dungeon == 3:
 			dungeon_color = Color(0.7, 0.7, 0.9) # Mountain Blue
 	else:
 		dungeon_text = "Not Started"
 		dungeon_color = Color(0.6, 0.6, 0.6)
 	
 	var dungeon_label = _create_simple_label(dungeon_text, 16, dungeon_color)
-	var dungeon_container = _create_bordered_container(dungeon_label, Vector2(180, 55), Color(0.05, 0.05, 0.05, 0.3))
+	var dungeon_container = _create_bordered_container(dungeon_label, Vector2(140, 55), Color(0.05, 0.05, 0.05, 0.3))
 	entry.add_child(dungeon_container)
 	
-	# Total stages completed with progress indication
-	var stages_completed = user_data.get("total_stages_completed", 0)
-	var stages_text = str(stages_completed)
+	# Current stage with progress indication
+	var current_stage = user_data.get("current_stage", 1)
+	var stages_text = str(current_stage)
 	var stages_color = Color(1, 1, 1)
 	
-	# Color code based on progress
-	if stages_completed >= 15:
-		stages_color = Color(0.2, 1, 0.2) # Green for high progress
-	elif stages_completed >= 10:
-		stages_color = Color(1, 1, 0.2) # Yellow for medium progress
-	elif stages_completed >= 5:
-		stages_color = Color(1, 0.7, 0.2) # Orange for some progress
-	elif stages_completed > 0:
-		stages_color = Color(0.8, 0.8, 0.8) # Light gray for started
+	# Color code based on stage progress within dungeon
+	if current_stage >= 5:
+		stages_color = Color(0.2, 1, 0.2) # Green for boss stage
+	elif current_stage >= 4:
+		stages_color = Color(1, 1, 0.2) # Yellow for high stages
+	elif current_stage >= 3:
+		stages_color = Color(1, 0.7, 0.2) # Orange for mid stages
+	elif current_stage >= 2:
+		stages_color = Color(0.8, 0.8, 0.8) # Light gray for early stages
 	else:
-		stages_color = Color(0.5, 0.5, 0.5) # Dark gray for not started
+		stages_color = Color(0.9, 0.9, 0.9) # White for first stage
 	
 	var stages_label = _create_simple_label(stages_text, 16, stages_color)
 	var stages_container = _create_bordered_container(stages_label, Vector2(90, 55), Color(0.05, 0.05, 0.05, 0.3))
 	entry.add_child(stages_container)
+	
+	# Enemies defeated with color coding
+	var enemies_defeated = user_data.get("enemies_defeated", 0)
+	var enemies_text = str(enemies_defeated)
+	var enemies_color = Color(1, 1, 1)
+	
+	# Color code based on enemies defeated
+	if enemies_defeated >= 50:
+		enemies_color = Color(1, 0.2, 0.2) # Red for high kill count
+	elif enemies_defeated >= 25:
+		enemies_color = Color(1, 0.6, 0.2) # Orange for medium kill count
+	elif enemies_defeated >= 10:
+		enemies_color = Color(1, 1, 0.2) # Yellow for some kills
+	elif enemies_defeated > 0:
+		enemies_color = Color(0.8, 0.8, 0.8) # Light gray for few kills
+	else:
+		enemies_color = Color(0.5, 0.5, 0.5) # Dark gray for no kills
+	
+	var enemies_label = _create_simple_label(enemies_text, 16, enemies_color)
+	var enemies_container = _create_bordered_container(enemies_label, Vector2(90, 55), Color(0.05, 0.05, 0.05, 0.3))
+	entry.add_child(enemies_container)
 	
 	return entry
 
@@ -739,8 +803,8 @@ func _create_power_entry(user_data: Dictionary, rank: int) -> Control:
 		name_bg_color = Color(0.3, 0.25, 0.1, 0.5)
 		player_name = "* " + player_name + " (You)"
 	
-	var name_label = _create_simple_label(player_name, 16, name_color, HORIZONTAL_ALIGNMENT_LEFT)
-	var name_container = _create_bordered_container(name_label, Vector2(200, 55), name_bg_color)
+	var name_label = _create_responsive_label(player_name, 22, 16, name_color, HORIZONTAL_ALIGNMENT_LEFT)
+	var name_container = _create_bordered_container(name_label, Vector2(250, 55), name_bg_color)
 	entry.add_child(name_container)
 	
 	# Level with color coding
@@ -861,8 +925,8 @@ func _create_word_recognize_entry(user_data: Dictionary, rank: int) -> Control:
 		name_bg_color = Color(0.3, 0.25, 0.1, 0.5)
 		player_name = "* " + player_name + " (You)"
 	
-	var name_label = _create_simple_label(player_name, 16, name_color, HORIZONTAL_ALIGNMENT_LEFT)
-	var name_container = _create_bordered_container(name_label, Vector2(220, 55), name_bg_color)
+	var name_label = _create_responsive_label(player_name, 25, 16, name_color, HORIZONTAL_ALIGNMENT_LEFT)
+	var name_container = _create_bordered_container(name_label, Vector2(280, 55), name_bg_color)
 	entry.add_child(name_container)
 	
 	# STT challenges completed with icons
@@ -880,7 +944,7 @@ func _create_word_recognize_entry(user_data: Dictionary, rank: int) -> Control:
 		stt_color = Color(0.7, 1, 0.7)
 	
 	var stt_label = _create_simple_label(stt_text, 16, stt_color)
-	var stt_container = _create_bordered_container(stt_label, Vector2(110, 55), Color(0.05, 0.05, 0.05, 0.3))
+	var stt_container = _create_bordered_container(stt_label, Vector2(100, 55), Color(0.05, 0.05, 0.05, 0.3))
 	entry.add_child(stt_container)
 	
 	# Whiteboard challenges completed with icons
@@ -898,7 +962,7 @@ func _create_word_recognize_entry(user_data: Dictionary, rank: int) -> Control:
 		whiteboard_color = Color(0.6, 0.8, 1)
 	
 	var whiteboard_label = _create_simple_label(whiteboard_text, 16, whiteboard_color)
-	var whiteboard_container = _create_bordered_container(whiteboard_label, Vector2(110, 55), Color(0.05, 0.05, 0.05, 0.3))
+	var whiteboard_container = _create_bordered_container(whiteboard_label, Vector2(120, 55), Color(0.05, 0.05, 0.05, 0.3))
 	entry.add_child(whiteboard_container)
 	
 	# Total word challenges with special styling

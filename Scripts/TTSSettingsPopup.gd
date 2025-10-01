@@ -1,6 +1,7 @@
 extends Control
 
 signal settings_saved(voice_id, rate, volume)
+signal settings_changed(voice_id, rate, volume)
 signal settings_closed
 
 # Popup properties
@@ -14,12 +15,15 @@ var current_pitch = 1.0
 var test_word = "testing"
 
 func _ready():
+	# Constrain popup to screen bounds
+	_constrain_popup_to_screen()
+	
 	# Set initial values
-	var rate_slider = $Panel/VBoxContainer/RateContainer/RateSlider
+	var rate_slider = $Panel/ScrollContainer/VBoxContainer/RateContainer/RateSlider
 	rate_slider.value = current_rate
 	_update_rate_label(current_rate)
 	
-	var volume_slider = $Panel/VBoxContainer/VolumeContainer/VolumeSlider
+	var volume_slider = $Panel/ScrollContainer/VBoxContainer/VolumeContainer/VolumeSlider
 	volume_slider.value = current_volume * 100.0 # Convert 0.0-1.0 to 0-100
 	_update_volume_label(current_volume * 100.0)
 	
@@ -27,17 +31,60 @@ func _ready():
 	set_process_input(true)
 	
 	# Show loading indicator
-	$Panel/VBoxContainer/StatusLabel.text = "Loading voices..."
+	$Panel/ScrollContainer/VBoxContainer/StatusLabel.text = "Loading voices..."
 	
 	# Connect button hover events
-	if $Panel/VBoxContainer/HBoxContainer/TestButton:
-		$Panel/VBoxContainer/HBoxContainer/TestButton.mouse_entered.connect(_on_button_hover)
-	if $Panel/VBoxContainer/HBoxContainer/CloseButton:
-		$Panel/VBoxContainer/HBoxContainer/CloseButton.mouse_entered.connect(_on_button_hover)
+	if $Panel/ScrollContainer/VBoxContainer/HBoxContainer/TestButton:
+		$Panel/ScrollContainer/VBoxContainer/HBoxContainer/TestButton.mouse_entered.connect(_on_button_hover)
+	if $Panel/ScrollContainer/VBoxContainer/HBoxContainer/CloseButton:
+		$Panel/ScrollContainer/VBoxContainer/HBoxContainer/CloseButton.mouse_entered.connect(_on_button_hover)
 
 	# Initialize TTS if not already set
 	if not tts:
 		_initialize_tts()
+
+func _constrain_popup_to_screen():
+	"""Ensure popup panel stays within screen bounds"""
+	var panel = $Panel
+	var viewport_size = get_viewport().get_visible_rect().size
+	var panel_size = panel.size
+	
+	# Calculate bounds
+	var max_x = viewport_size.x - panel_size.x
+	var max_y = viewport_size.y - panel_size.y
+	
+	# Clamp position to stay within bounds
+	var current_pos = panel.position
+	current_pos.x = clamp(current_pos.x, 0, max_x)
+	current_pos.y = clamp(current_pos.y, 0, max_y)
+	
+	panel.position = current_pos
+
+func _constrain_option_button_popup(option_button: OptionButton):
+	"""Configure OptionButton to prevent dropdown overflow"""
+	# Set up style to constrain dropdown size
+	option_button.fit_to_longest_item = false
+	option_button.clip_contents = true
+	
+	# Connect to popup_show to further constrain if needed
+	if not option_button.is_connected("pressed", _on_voice_option_pressed):
+		option_button.connect("pressed", _on_voice_option_pressed)
+
+func _on_voice_option_pressed():
+	"""Handle OptionButton press to ensure popup stays in bounds"""
+	# Wait a frame for popup to appear
+	await get_tree().process_frame
+	
+	# Find and constrain the popup if it exists
+	var option_button = $Panel/ScrollContainer/VBoxContainer/VoiceContainer/VoiceOptionButton
+	var popup = option_button.get_popup()
+	if popup:
+		var panel_rect = $Panel.get_global_rect()
+		
+		# Constrain popup height to fit within panel bounds
+		var max_height = panel_rect.size.y - 100 # Leave some margin
+		if popup.size.y > max_height:
+			popup.size.y = max_height
 
 func _on_button_hover():
 	$ButtonHover.play()
@@ -96,14 +143,16 @@ func _input(event):
 			get_viewport().set_input_as_handled()
 
 # Set the popup with initial values
-func setup(tts_instance, voice_id, rate, word_sample):
+func setup(tts_instance, voice_id, rate, word_sample, volume_percent = null):
 	tts = tts_instance
 	current_voice_id = voice_id if voice_id != null else "default"
 	current_rate = rate if rate != null else 1.0
 	test_word = word_sample if word_sample != null else "Testing"
 	
-	# Load current volume from SettingsManager
-	if SettingsManager:
+	# Use provided volume or load from SettingsManager
+	if volume_percent != null:
+		current_volume = volume_percent / 100.0 # Convert 0-100 to 0.0-1.0
+	elif SettingsManager:
 		var saved_volume = SettingsManager.get_setting("accessibility", "tts_volume")
 		if saved_volume != null:
 			current_volume = saved_volume / 100.0 # Convert 0-100 to 0.0-1.0
@@ -123,25 +172,25 @@ func setup(tts_instance, voice_id, rate, word_sample):
 		tts.set_volume(current_volume)
 		
 		# Update UI
-		var rate_slider = $Panel/VBoxContainer/RateContainer/RateSlider
+		var rate_slider = $Panel/ScrollContainer/VBoxContainer/RateContainer/RateSlider
 		rate_slider.value = current_rate
 		_update_rate_label(current_rate)
 		
-		var volume_slider = $Panel/VBoxContainer/VolumeContainer/VolumeSlider
+		var volume_slider = $Panel/ScrollContainer/VBoxContainer/VolumeContainer/VolumeSlider
 		volume_slider.value = current_volume * 100.0
 		_update_volume_label(current_volume * 100.0)
 		
 		# Initialize voice options
 		_initialize_voice_options()
 	else:
-		$Panel/VBoxContainer/StatusLabel.text = "ERROR: No TTS instance provided"
+		$Panel/ScrollContainer/VBoxContainer/StatusLabel.text = "ERROR: No TTS instance provided"
 
 func _initialize_voice_options():
-	var voice_select = $Panel/VBoxContainer/VoiceContainer/VoiceOptionButton
+	var voice_select = $Panel/ScrollContainer/VBoxContainer/VoiceContainer/VoiceOptionButton
 	voice_select.clear()
 	
 	if not tts:
-		$Panel/VBoxContainer/StatusLabel.text = "No TTS instance available"
+		$Panel/ScrollContainer/VBoxContainer/StatusLabel.text = "No TTS instance available"
 		return
 	
 	# Get available voices
@@ -154,33 +203,41 @@ func _initialize_voice_options():
 	
 	if voice_dict.size() == 0:
 		# No voices available yet, show message and try again after delay
-		$Panel/VBoxContainer/StatusLabel.text = "Waiting for voices to load..."
+		$Panel/ScrollContainer/VBoxContainer/StatusLabel.text = "Waiting for voices to load..."
 		await get_tree().create_timer(1.0).timeout
 		_initialize_voice_options()
 		return
 	
-	# Convert to option array
+	# Convert to option array and truncate long names for display
 	for voice_id in voice_dict:
+		var voice_name = voice_dict[voice_id]
+		# Truncate very long voice names to prevent UI overflow
+		if voice_name.length() > 40:
+			voice_name = voice_name.substr(0, 37) + "..."
+		
 		voice_options.append({
 			"id": voice_id,
-			"name": voice_dict[voice_id]
+			"name": voice_name
 		})
 	
-	# Add to dropdown
+	# Add to dropdown with constraint
 	for voice in voice_options:
 		voice_select.add_item(voice.name)
+	
+	# Constrain OptionButton popup size to prevent overflow
+	_constrain_option_button_popup(voice_select)
 	
 	# Mark as loaded
 	voices_loaded = true
 	
 	# Update status
-	$Panel/VBoxContainer/StatusLabel.text = "Voices loaded successfully"
+	$Panel/ScrollContainer/VBoxContainer/StatusLabel.text = "Voices loaded successfully"
 	
 	# Select the current voice
 	_select_current_voice()
 
 func _select_current_voice():
-	var voice_select = $Panel/VBoxContainer/VoiceContainer/VoiceOptionButton
+	var voice_select = $Panel/ScrollContainer/VBoxContainer/VoiceContainer/VoiceOptionButton
 	
 	# Find and select the current voice
 	for i in range(voice_options.size()):
@@ -199,6 +256,9 @@ func _on_voice_option_button_item_selected(index):
 		current_voice_id = voice_options[index].id
 		if tts:
 			tts.set_voice(current_voice_id)
+		
+		# Emit settings changed for real-time sync
+		emit_signal("settings_changed", current_voice_id, current_rate, current_volume)
 
 func _on_rate_slider_value_changed(value):
 	# Update current rate
@@ -208,10 +268,13 @@ func _on_rate_slider_value_changed(value):
 	
 	# Update label
 	_update_rate_label(value)
+	
+	# Emit settings changed for real-time sync
+	emit_signal("settings_changed", current_voice_id, current_rate, current_volume)
 
 func _update_rate_label(value):
 	# Update rate display text
-	var rate_label = $Panel/VBoxContainer/RateContainer/RateValueLabel
+	var rate_label = $Panel/ScrollContainer/VBoxContainer/RateContainer/RateValueLabel
 	var rate_text = "Rate: " + str(value)
 	
 	if value < 0.8:
@@ -231,17 +294,20 @@ func _on_volume_slider_value_changed(value):
 	
 	# Update label
 	_update_volume_label(value)
+	
+	# Emit settings changed for real-time sync
+	emit_signal("settings_changed", current_voice_id, current_rate, current_volume)
 
 func _update_volume_label(value):
 	# Update volume display text
-	var volume_label = $Panel/VBoxContainer/VolumeContainer/VolumeValueLabel
+	var volume_label = $Panel/ScrollContainer/VBoxContainer/VolumeContainer/VolumeValueLabel
 	volume_label.text = "Volume: " + str(int(value)) + "%"
 
 func _on_test_button_pressed():
 	$ButtonClick.play()
 	# Test the current voice and rate with improved feedback
 	if tts:
-		$Panel/VBoxContainer/StatusLabel.text = "Testing voice with: " + test_word + "..."
+		$Panel/ScrollContainer/VBoxContainer/StatusLabel.text = "Testing voice with: " + test_word + "..."
 		
 		print("Test button pressed, trying to speak: ", test_word)
 		
@@ -261,17 +327,17 @@ func _on_test_button_pressed():
 		# Attempt to speak
 		var result = tts.speak(test_word)
 		if !result:
-			$Panel/VBoxContainer/StatusLabel.text = "Failed to start speech test"
+			$Panel/ScrollContainer/VBoxContainer/StatusLabel.text = "Failed to start speech test"
 			print("Test speech failed - check if TTS is enabled in Project Settings")
 	else:
-		$Panel/VBoxContainer/StatusLabel.text = "ERROR: No TTS instance available"
+		$Panel/ScrollContainer/VBoxContainer/StatusLabel.text = "ERROR: No TTS instance available"
 
 # Feedback handlers for speech test
 func _on_test_speech_started():
-	$Panel/VBoxContainer/StatusLabel.text = "Speaking..."
+	$Panel/ScrollContainer/VBoxContainer/StatusLabel.text = "Speaking..."
 
 func _on_test_speech_ended():
-	$Panel/VBoxContainer/StatusLabel.text = "Test complete"
+	$Panel/ScrollContainer/VBoxContainer/StatusLabel.text = "Test complete"
 	
 	# Disconnect the temporary signals
 	if tts and tts.is_connected("speech_started", Callable(self, "_on_test_speech_started")):
@@ -284,7 +350,7 @@ func _on_test_speech_ended():
 		tts.disconnect("speech_error", Callable(self, "_on_test_speech_error"))
 
 func _on_test_speech_error(error_msg):
-	$Panel/VBoxContainer/StatusLabel.text = "Error: " + error_msg
+	$Panel/ScrollContainer/VBoxContainer/StatusLabel.text = "Error: " + error_msg
 	
 	# Disconnect the temporary signals
 	if tts and tts.is_connected("speech_started", Callable(self, "_on_test_speech_started")):
@@ -295,6 +361,28 @@ func _on_test_speech_error(error_msg):
 	
 	if tts and tts.is_connected("speech_error", Callable(self, "_on_test_speech_error")):
 		tts.disconnect("speech_error", Callable(self, "_on_test_speech_error"))
+
+func sync_from_external(voice_id: String, rate: float, volume_percent: int):
+	"""Sync popup UI with external settings changes"""
+	if voice_id != null and voice_id != "":
+		current_voice_id = voice_id
+	if rate != null:
+		current_rate = rate
+		var rate_slider = $Panel/ScrollContainer/VBoxContainer/RateContainer/RateSlider
+		rate_slider.value = current_rate
+		_update_rate_label(current_rate)
+	if volume_percent != null:
+		current_volume = volume_percent / 100.0
+		var volume_slider = $Panel/ScrollContainer/VBoxContainer/VolumeContainer/VolumeSlider
+		volume_slider.value = volume_percent
+		_update_volume_label(volume_percent)
+	
+	# Apply to TTS instance if available
+	if tts:
+		if current_voice_id != null and current_voice_id != "":
+			tts.set_voice(current_voice_id)
+		tts.set_rate(current_rate)
+		tts.set_volume(current_volume)
 
 func _on_close_button_pressed():
 	$ButtonClick.play()

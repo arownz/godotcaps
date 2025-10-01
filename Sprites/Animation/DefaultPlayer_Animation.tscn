@@ -468,6 +468,15 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_7imf8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wtlso")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_letsh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_63kd3")
 }],
 "loop": false,
 "name": &"hurt",
@@ -571,7 +580,7 @@ animations = [{
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_fdt5l")
-animation = &"counter"
+animation = &"battle_idle"
 autoplay = "idle"
 
 [node name="sfx_counter" type="AudioStreamPlayer" parent="."]

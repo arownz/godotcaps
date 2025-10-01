@@ -226,6 +226,9 @@ func _on_reading_speed_changed(value: float):
 	print("SettingScene: Reading speed changed to: ", value, " (also updated TTS rate)")
 	# Apply TTS settings immediately to any existing TTS instance
 	_apply_tts_settings_immediately()
+	
+	# Update any open TTS Settings popup
+	_sync_to_tts_popup()
 
 func _on_tts_volume_changed(value: float):
 	"""Handle TTS volume slider change"""
@@ -235,6 +238,9 @@ func _on_tts_volume_changed(value: float):
 	print("SettingScene: TTS volume changed to: ", int(value))
 	# Apply TTS settings immediately to any existing TTS instance
 	_apply_tts_settings_immediately()
+	
+	# Update any open TTS Settings popup
+	_sync_to_tts_popup()
 
 func _on_tts_settings_button_pressed():
 	$ButtonClick.play()
@@ -263,27 +269,58 @@ func _on_tts_settings_button_pressed():
 		if tts_popup.has_method("set_tts_instance"):
 			tts_popup.set_tts_instance(temp_tts)
 		
-		# Setup popup with current settings
+		# Setup popup with current settings - sync with main settings UI
 		var current_voice = SettingsManager.get_setting("accessibility", "tts_voice_id")
 		var current_rate = SettingsManager.get_setting("accessibility", "tts_rate")
+		var current_volume = SettingsManager.get_setting("accessibility", "tts_volume")
 		
 		# Provide safe defaults
 		if current_voice == null or current_voice == "":
 			current_voice = "default"
 		if current_rate == null:
 			current_rate = 1.0
+		if current_volume == null:
+			current_volume = 100
 		
 		if tts_popup.has_method("setup"):
-			tts_popup.setup(temp_tts, current_voice, current_rate, "Hello, this is a test.")
+			tts_popup.setup(temp_tts, current_voice, current_rate, "Hello, this is a test.", current_volume)
 		
 		# Connect to save signal to handle voice preference storage
 		if not tts_popup.settings_saved.is_connected(_on_tts_settings_saved):
 			tts_popup.settings_saved.connect(_on_tts_settings_saved)
 		
+		# Connect to settings changed signal for real-time sync
+		if tts_popup.has_signal("settings_changed") and not tts_popup.settings_changed.is_connected(_on_tts_settings_changed):
+			tts_popup.settings_changed.connect(_on_tts_settings_changed)
+		
 		tts_popup.visible = true
 		print("SettingScene: TTS Settings popup opened successfully")
 	else:
 		print("SettingScene: Warning - TTSSettingsPopup still not found after dynamic attempt")
+
+func _on_tts_settings_changed(voice_id: String, rate: float, volume: float):
+	"""Handle real-time TTS settings changes (without save) for immediate sync"""
+	var volume_percent = int(volume * 100) # Convert 0.0-1.0 to 0-100
+	print("SettingScene: Syncing TTS settings - Voice: ", voice_id, " Rate: ", rate, " Volume: ", volume_percent, "%")
+	
+	# Update main settings UI immediately
+	if reading_speed_slider:
+		reading_speed_slider.value = rate
+	if reading_speed_value:
+		reading_speed_value.text = str(rate) + "x"
+	
+	if tts_volume_slider:
+		tts_volume_slider.value = volume_percent
+	if tts_volume_value:
+		tts_volume_value.text = str(volume_percent) + "%"
+	
+	# Update SettingsManager for immediate use
+	SettingsManager.set_setting("accessibility", "tts_voice_id", voice_id)
+	SettingsManager.set_setting("accessibility", "tts_rate", rate)
+	SettingsManager.set_setting("accessibility", "tts_volume", volume_percent)
+	
+	# Apply TTS settings immediately to any existing TTS instance
+	_apply_tts_settings_immediately()
 
 func _on_tts_settings_saved(voice_id: String, rate: float, volume: float):
 	"""Handle TTS settings save to store in Firebase/Firestore"""
@@ -294,6 +331,17 @@ func _on_tts_settings_saved(voice_id: String, rate: float, volume: float):
 	SettingsManager.set_setting("accessibility", "tts_voice_id", voice_id)
 	SettingsManager.set_setting("accessibility", "tts_rate", rate)
 	SettingsManager.set_setting("accessibility", "tts_volume", volume_percent)
+	
+	# Update main settings UI to match
+	if reading_speed_slider:
+		reading_speed_slider.value = rate
+	if reading_speed_value:
+		reading_speed_value.text = str(rate) + "x"
+	
+	if tts_volume_slider:
+		tts_volume_slider.value = volume_percent
+	if tts_volume_value:
+		tts_volume_value.text = str(volume_percent) + "%"
 	
 	# Apply TTS settings immediately to any existing TTS instance
 	_apply_tts_settings_immediately()
@@ -378,6 +426,18 @@ func _load_tts_settings_from_firebase():
 			print("SettingScene: No settings found in Firebase user document")
 	else:
 		print("SettingScene: Failed to load user document from Firebase")
+
+func _sync_to_tts_popup():
+	"""Sync current settings to any open TTS Settings popup"""
+	var tts_popup = find_child("TTSSettingsPopup", true, false)
+	if tts_popup and tts_popup.visible:
+		var voice_id = SettingsManager.get_setting("accessibility", "tts_voice_id")
+		var rate = SettingsManager.get_setting("accessibility", "tts_rate")
+		var volume = SettingsManager.get_setting("accessibility", "tts_volume")
+		
+		# Update the popup's UI directly
+		if tts_popup.has_method("sync_from_external"):
+			tts_popup.sync_from_external(voice_id, rate, volume)
 
 func _apply_tts_settings_immediately():
 	"""Apply current TTS settings to any existing TTS instances globally"""
