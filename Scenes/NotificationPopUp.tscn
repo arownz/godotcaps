@@ -48,7 +48,6 @@ layout_mode = 2
 texture = ExtResource("1_8cacn")
 
 [node name="CloseXButton" type="TextureButton" parent="PopupContainer/CenterContainer/PopupBackground"]
-visible = false
 custom_minimum_size = Vector2(30, 30)
 layout_mode = 0
 anchor_left = 0.99

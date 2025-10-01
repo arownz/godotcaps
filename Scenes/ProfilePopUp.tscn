@@ -224,10 +224,10 @@ text = "Loading..."
 
 [node name="EditNameButton" type="TextureButton" parent="ProfileContainer/UserInfoArea"]
 layout_mode = 0
-offset_left = 489.0
-offset_top = 11.0
-offset_right = 497.0
-offset_bottom = 19.0
+offset_left = 525.6078
+offset_top = 12.477468
+offset_right = 533.6078
+offset_bottom = 20.477467
 scale = Vector2(2.89615, 3.31034)
 tooltip_text = "Edit Username"
 mouse_default_cursor_shape = 2
@@ -281,10 +281,10 @@ text = "Loading..."
 
 [node name="CopyUIDButton" type="TextureButton" parent="ProfileContainer/UserInfoArea"]
 layout_mode = 0
-offset_left = 489.444
-offset_top = 45.35377
-offset_right = 497.444
-offset_bottom = 53.35378
+offset_left = 526.0518
+offset_top = 46.831238
+offset_right = 534.0518
+offset_bottom = 54.831245
 scale = Vector2(2.92016, 3.53089)
 tooltip_text = "Copy UID to Clipboard"
 mouse_default_cursor_shape = 2

@@ -59,7 +59,7 @@ func player_attack():
 	
 	# Return to original position
 	var return_tween = create_tween()
-	return_tween.tween_property(player_node, "position", original_position, 0.4)
+	return_tween.tween_property(player_node, "position", original_position, 0.3)
 	await return_tween.finished
 		
 	emit_signal("player_attack_performed", battle_scene.player_manager.player_damage)
@@ -85,7 +85,7 @@ func enemy_attack():
 	
 	var enemy_attack_tween = create_tween()
 	enemy_attack_tween.tween_property(enemy_node, "position", original_position - Vector2(64, 0), 0.3) # Move left - reduced to prevent overlap
-	enemy_attack_tween.tween_property(enemy_node, "position", original_position, 0.4) # Return to original position
+	enemy_attack_tween.tween_property(enemy_node, "position", original_position, 0.3) # Return to original position
 	
 	# Play attack animation
 	var sprite = enemy_node.get_node_or_null("AnimatedSprite2D")

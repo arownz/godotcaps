@@ -475,8 +475,8 @@ func _on_character2_pressed():
 			_animate_carousel_to_position(current_character)
 			update_character_display()
 	else:
-		# Show notification for locked character - Ragna requires completing Dungeon 1
-		notification_popup.show_notification("Character Locked!", "Complete Dungeon 1 to unlock Ragna.", "OK")
+		# Show notification for locked character - Ragna requires completing dungeon 1 to unlock Dungeon 2
+		notification_popup.show_notification("Character Locked!", "Unlock Dungeon 2 to unlock Ragna.", "OK")
 
 func _on_character3_pressed():
 	if unlocked_characters >= 3:

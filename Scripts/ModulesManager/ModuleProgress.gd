@@ -194,7 +194,7 @@ func set_flip_quiz_current_index(category: String, index: int) -> bool:
 func get_read_aloud_progress():
 	"""Get progress for the Read Aloud module"""
 	var modules = await fetch_modules()
-	return modules.get("read_aloud", {}) if modules else null	
+	return modules.get("read_aloud", {}) if modules else null
 
 func complete_read_aloud_activity(category: String, activity_id: String) -> bool:
 	"""Complete a read aloud activity for guided_reading category only"""
@@ -230,10 +230,10 @@ func complete_read_aloud_activity(category: String, activity_id: String) -> bool
 			var guided_count = read_aloud.get("guided_reading", {}).get("activities_completed", []).size()
 			var syllable_count = read_aloud.get("syllable_workshop", {}).get("activities_completed", []).size()
 			var guided_progress = (float(guided_count) / 4.0) * 100.0 # 4 guided reading activities
-			var syllable_progress = (float(syllable_count) / 10.0) * 100.0 # 10 syllable words
+			var syllable_progress = (float(syllable_count) / 9.0) * 100.0 # 9 syllable words (corrected)
 			var overall_progress = (guided_progress + syllable_progress) / 2.0
 			read_aloud["progress"] = int(overall_progress)
-			read_aloud["completed"] = (overall_progress >= 100.0)
+			read_aloud["completed"] = (guided_progress >= 100.0 and syllable_progress >= 100.0)
 			
 			print("ModuleProgress: Guided reading progress - ", guided_count, "/4 = ", int(guided_progress), "%")
 		
@@ -310,7 +310,7 @@ func complete_syllable_workshop_activity(activity_id: String) -> bool:
 		var guided_progress = (float(total_guided_activities) / 4.0) * 100.0 # 4 guided reading activities
 		var overall_progress = (guided_progress + syllable_progress) / 2.0 # Average of both categories
 		read_aloud["progress"] = int(overall_progress)
-		read_aloud["completed"] = (overall_progress >= 100.0)
+		read_aloud["completed"] = (guided_progress >= 100.0 and syllable_progress >= 100.0)
 		
 		print("ModuleProgress: Syllable workshop progress - ", syllable_activities, "/", total_syllable_activities, " = ", int(syllable_progress), "%")
 		

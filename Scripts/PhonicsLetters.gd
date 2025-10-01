@@ -499,13 +499,8 @@ func _on_celebration_next():
 func _on_celebration_closed():
 	"""Handle celebration popup closed"""
 	print("PhonicsLetters: Celebration popup closed")
-	# Also ensure whiteboard is ready if user dismissed popup
-	if whiteboard_instance and whiteboard_instance.has_method("reset_for_retry"):
-		whiteboard_instance.reset_for_retry()
-	
-	# Ensure buttons are enabled after celebration popup closes
-	if whiteboard_instance and whiteboard_instance.has_method("_re_enable_buttons"):
-		whiteboard_instance._re_enable_buttons()
+	# No automatic actions when popup is simply closed - wait for user input
+	# Only "Try Again" and "Next" buttons should trigger specific actions
 
 func _toggle_focus_mode():
 	letter_focus_mode = !letter_focus_mode

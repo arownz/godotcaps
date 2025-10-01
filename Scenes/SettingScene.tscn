@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://cjrrrf0p4lr7q"]
+[gd_scene load_steps=16 format=3 uid="uid://cjrrrf0p4lr7q"]
 
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="1_font_bold"]
 [ext_resource type="Texture2D" uid="uid://0con8ixqofpr" path="res://gui/Update/UI/ui 8.png" id="2_ch0ic"]
@@ -10,7 +10,6 @@
 [ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="7_button_click"]
 [ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="7_l5u2n"]
 [ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="8_green_button"]
-[ext_resource type="PackedScene" uid="uid://7wtij707stht" path="res://Scenes/TTSSettingsPopup.tscn" id="11_tts_popup"]
 [ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="13_avqid"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_header"]
@@ -158,7 +157,6 @@ size_flags_vertical = 3
 color = Color(0.05, 0.05, 0.15, 0.8)
 
 [node name="BattleSection" type="VBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox"]
-visible = false
 layout_mode = 2
 theme_override_constants/separation = 8
 
@@ -206,7 +204,6 @@ icon_alignment = 1
 expand_icon = true
 
 [node name="BattleSeparator" type="HSeparator" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox"]
-visible = false
 layout_mode = 2
 theme_override_constants/separation = 2
 
@@ -472,9 +469,6 @@ button_pressed = true
 [node name="BottomSpacer" type="Control" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox"]
 custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
-
-[node name="TTSSettingsPopup" parent="." instance=ExtResource("11_tts_popup")]
-visible = false
 
 [node name="ButtonClick" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("7_button_click")

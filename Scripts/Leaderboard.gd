@@ -108,7 +108,7 @@ func _create_simple_dungeon_header() -> Control:
 	
 	# Player
 	var name_label = _create_simple_label("PLAYER", 16, Color(0.9, 0.95, 1))
-	var name_container = _create_bordered_container(name_label, Vector2(280, 50), Color(0.15, 0.25, 0.35, 0.8))
+	var name_container = _create_bordered_container(name_label, Vector2(300, 50), Color(0.15, 0.25, 0.35, 0.8))
 	header.add_child(name_container)
 	
 	# Medal
@@ -118,7 +118,7 @@ func _create_simple_dungeon_header() -> Control:
 	
 	# Current Dungeon
 	var dungeon_label = _create_simple_label("DUNGEON", 16, Color(0.7, 0.9, 0.7))
-	var dungeon_container = _create_bordered_container(dungeon_label, Vector2(140, 50), Color(0.15, 0.25, 0.35, 0.8))
+	var dungeon_container = _create_bordered_container(dungeon_label, Vector2(170, 50), Color(0.15, 0.25, 0.35, 0.8))
 	header.add_child(dungeon_container)
 	
 	# Current Stage
@@ -152,7 +152,7 @@ func _create_simple_power_header() -> Control:
 	
 	# Player
 	var name_label = _create_simple_label("PLAYER", 16, Color(0.9, 0.95, 1))
-	var name_container = _create_bordered_container(name_label, Vector2(250, 50), Color(0.15, 0.25, 0.35, 0.8))
+	var name_container = _create_bordered_container(name_label, Vector2(300, 50), Color(0.15, 0.25, 0.35, 0.8))
 	header.add_child(name_container)
 	
 	# Level
@@ -201,7 +201,7 @@ func _create_simple_word_recognize_header() -> Control:
 	
 	# Player
 	var name_label = _create_simple_label("PLAYER", 16, Color(0.9, 0.95, 1))
-	var name_container = _create_bordered_container(name_label, Vector2(280, 50), Color(0.15, 0.25, 0.35, 0.8))
+	var name_container = _create_bordered_container(name_label, Vector2(300, 50), Color(0.15, 0.25, 0.35, 0.8))
 	header.add_child(name_container)
 	
 	# STT Completed (blue-green color)
@@ -650,7 +650,7 @@ func _create_dungeon_entry(user_data: Dictionary, rank: int) -> Control:
 		player_name = "* " + player_name + " (You)"
 	
 	var name_label = _create_responsive_label(player_name, 25, 16, name_color, HORIZONTAL_ALIGNMENT_LEFT)
-	var name_container = _create_bordered_container(name_label, Vector2(280, 55), name_bg_color)
+	var name_container = _create_bordered_container(name_label, Vector2(300, 55), name_bg_color)
 	entry.add_child(name_container)
 	
 	# Medal with glow effect
@@ -686,8 +686,8 @@ func _create_dungeon_entry(user_data: Dictionary, rank: int) -> Control:
 		dungeon_text = "Not Started"
 		dungeon_color = Color(0.6, 0.6, 0.6)
 	
-	var dungeon_label = _create_simple_label(dungeon_text, 16, dungeon_color)
-	var dungeon_container = _create_bordered_container(dungeon_label, Vector2(140, 55), Color(0.05, 0.05, 0.05, 0.3))
+	var dungeon_label = _create_simple_label(dungeon_text, 16, dungeon_color, HORIZONTAL_ALIGNMENT_LEFT)
+	var dungeon_container = _create_bordered_container(dungeon_label, Vector2(170, 55), Color(0.05, 0.05, 0.05, 0.3))
 	entry.add_child(dungeon_container)
 	
 	# Current stage with progress indication
@@ -804,7 +804,7 @@ func _create_power_entry(user_data: Dictionary, rank: int) -> Control:
 		player_name = "* " + player_name + " (You)"
 	
 	var name_label = _create_responsive_label(player_name, 22, 16, name_color, HORIZONTAL_ALIGNMENT_LEFT)
-	var name_container = _create_bordered_container(name_label, Vector2(250, 55), name_bg_color)
+	var name_container = _create_bordered_container(name_label, Vector2(300, 55), name_bg_color)
 	entry.add_child(name_container)
 	
 	# Level with color coding
@@ -926,7 +926,7 @@ func _create_word_recognize_entry(user_data: Dictionary, rank: int) -> Control:
 		player_name = "* " + player_name + " (You)"
 	
 	var name_label = _create_responsive_label(player_name, 25, 16, name_color, HORIZONTAL_ALIGNMENT_LEFT)
-	var name_container = _create_bordered_container(name_label, Vector2(280, 55), name_bg_color)
+	var name_container = _create_bordered_container(name_label, Vector2(300, 55), name_bg_color)
 	entry.add_child(name_container)
 	
 	# STT challenges completed with icons

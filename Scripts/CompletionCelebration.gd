@@ -103,7 +103,7 @@ func _update_content(module_key: String = "phonics"):
 			if title_label:
 				title_label.text = "Nice tracing!"
 			if message_label:
-				message_label.text = "You traced '" + completed_item.to_upper() + "'."
+				message_label.text = "You trace completely '" + completed_item.to_upper() + "'."
 			
 			# Update progress for letters (26 total)
 			var letters_completed = progress_data.get("letters_completed", []).size()
@@ -131,7 +131,7 @@ func _update_content(module_key: String = "phonics"):
 			if title_label:
 				title_label.text = "Well done!"
 			if message_label:
-				message_label.text = "You wrote '" + completed_item.to_lower() + "'"
+				message_label.text = "You write completely '" + completed_item.to_lower() + "'"
 			
 			# Update progress for sight words (20 total)
 			var words_completed = progress_data.get("sight_words_completed", []).size()

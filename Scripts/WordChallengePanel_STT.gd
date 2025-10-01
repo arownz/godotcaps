@@ -381,7 +381,7 @@ func update_mic_permission_state(state):
 	if state == "granted":
 		# Permission already granted, update UI to show this
 		mic_permission_granted = true
-		permission_status_label.text = "✓ Microphone permission granted"
+		permission_status_label.text = "Microphone permission granted"
 		permission_status_label.modulate = Color.GREEN
 		status_label.text = "Ready to record - Click Speak"
 		speak_button.disabled = false
@@ -389,11 +389,11 @@ func update_mic_permission_state(state):
 	elif state == "denied":
 		# Permission denied, but keep button enabled for retry
 		mic_permission_granted = false
-		permission_status_label.text = "X Microphone access denied"
+		permission_status_label.text = "Microphone access denied"
 		permission_status_label.modulate = Color.RED
 		status_label.text = "Permission denied. Click Speak to try again."
 		speak_button.disabled = false # Keep enabled for retry
-		speak_button.text = "Try Again"
+		speak_button.text = "Again"
 	else:
 		# Permission not determined yet, will be requested when button is clicked
 		mic_permission_granted = false
@@ -657,7 +657,6 @@ func _on_speak_button_pressed():
 			recognition_active = false
 			speak_button.text = "Speak"
 			speak_button.disabled = false
-			speak_button.modulate = Color.ORANGE
 			status_label.text = "No speech detected. Try again."
 			
 			# Clear the live transcription display
@@ -704,7 +703,7 @@ func _on_speak_button_pressed():
 		else:
 			print("Failed to start recognition")
 			# Failed to start (permission denied or error)
-			speak_button.text = "Try Again"
+			speak_button.text = "Again"
 			speak_button.disabled = false
 			status_label.text = "Microphone access needed. Click 'Try Again' to retry."
 			permission_status_label.text = "X Microphone access required"
@@ -1330,8 +1329,8 @@ func speech_error_callback(error):
 		# Stop current recognition for permission issues
 		recognition_active = false
 		live_transcription_enabled = false
-		status_label.text = "Microphone permission denied. Click 'Try Again' to retry."
-		speak_button.text = "Try Again"
+		status_label.text = "Microphone permission denied. Click 'Again' to retry."
+		speak_button.text = "Again"
 		permission_status_label.text = "X Permission denied"
 		permission_status_label.modulate = Color.RED
 		speak_button.disabled = false
@@ -1381,7 +1380,7 @@ func _restart_recognition_after_error():
 			if restart_success:
 				print("Speech recognition successfully restarted on attempt " + str(attempt + 1))
 				status_label.text = "Listening... (recovered from error)"
-				permission_status_label.text = "✓ Microphone recovered"
+				permission_status_label.text = "Microphone recovered"
 				permission_status_label.modulate = Color.GREEN
 				return # Success, exit early
 			else:
@@ -1390,9 +1389,9 @@ func _restart_recognition_after_error():
 		# If all attempts failed, fall back to manual restart
 		print("All restart attempts failed - requiring manual restart")
 		_stop_recognition_completely()
-		status_label.text = "Microphone recovery failed. Click 'Speak' to try again."
-		speak_button.text = "Try Again"
-		permission_status_label.text = "X Recognition error"
+		status_label.text = "Microphone recovery failed. Click 'Again' to try again."
+		speak_button.text = "Again"
+		permission_status_label.text = "Recognition error"
 		permission_status_label.modulate = Color.RED
 		speak_button.disabled = false
 

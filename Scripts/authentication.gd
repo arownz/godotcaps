@@ -703,6 +703,7 @@ func _create_user_document(collection, user_id: String, auth):
 				"base_damage": 10,
 				"base_durability": 5,
 				"energy": 20,
+				"last_energy_update": 0,
 				"current_character": "lexia"
 			}
 		},
@@ -724,7 +725,8 @@ func _create_user_document(collection, user_id: String, auth):
 			},
 			"progress": {
 				"enemies_defeated": 0,
-				"current_dungeon": 1
+				"current_dungeon": 1,
+				"current_stage": 1
 			}
 		},
 		"modules": {

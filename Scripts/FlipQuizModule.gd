@@ -153,7 +153,7 @@ func _update_progress_displays(firebase_modules: Dictionary):
 	# Update Animals card progress
 	var animals_progress_label = get_node_or_null("MainContainer/ScrollContainer/CategoriesGrid/AnimalsCard/AnimalsContent/ProgressLabel")
 	if animals_progress_label:
-		animals_progress_label.text = str(animals_sets_completed) + "/" + str(total_sets_per_category) + " sets (" + str(int(animals_percent)) + "%) Complete"
+		animals_progress_label.text = str(int(animals_percent)) + "% Complete"
 		print("FlipQuizModule: Updated animals progress label: ", animals_progress_label.text)
 	else:
 		print("FlipQuizModule: Animals progress label not found")
@@ -172,7 +172,7 @@ func _update_progress_displays(firebase_modules: Dictionary):
 	# Update Vehicles card progress
 	var vehicles_progress_label = get_node_or_null("MainContainer/ScrollContainer/CategoriesGrid/VehiclesCard/VehiclesContent/ProgressLabel")
 	if vehicles_progress_label:
-		vehicles_progress_label.text = str(vehicles_sets_completed) + "/" + str(total_sets_per_category) + " sets (" + str(int(vehicles_percent)) + "%) Complete"
+		vehicles_progress_label.text = str(int(vehicles_percent)) + "% Complete"
 		print("FlipQuizModule: Updated vehicles progress label: ", vehicles_progress_label.text)
 	else:
 		print("FlipQuizModule: Vehicles progress label not found")

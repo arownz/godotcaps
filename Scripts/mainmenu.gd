@@ -14,7 +14,7 @@ var hover_buttons = []
 
 # Add energy recovery system variables
 var max_energy = 20
-var energy_recovery_rate = 240 # 4 minutes = 240 seconds
+var energy_recovery_rate = 300 # 5 minutes = 300 seconds
 var energy_recovery_amount = 4 # Amount of energy recovered per interval
 var last_energy_update_time = 0
 var energy_recovery_timer = null
@@ -296,6 +296,7 @@ func _create_default_user_document(user_id):
 				"base_damage": 10,
 				"base_durability": 5,
 				"energy": 20,
+				"last_energy_update": 0,
 				"current_character": "lexia"
 			}
 		},
@@ -317,7 +318,8 @@ func _create_default_user_document(user_id):
 			},
 			"progress": {
 				"enemies_defeated": 0,
-				"current_dungeon": 1
+				"current_dungeon": 1,
+				"current_stage": 1
 			}
 		},
 		"modules": {
