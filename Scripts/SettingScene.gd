@@ -520,20 +520,25 @@ func _set_battle_buttons_visible(visible_in_battle: bool) -> void:
 func set_battle_session_state(has_battle_occurred: bool, _battle_currently_active: bool = false) -> void:
 	if not engage_button or not leave_button:
 		return
-	# If battle occurred OR permanently hidden flag set, keep engage hidden
+	
+	print("SettingScene: Setting battle session state - has_battle_occurred:", has_battle_occurred, ", engage_permanently_hidden:", engage_permanently_hidden)
+	
+	# Check if engage button should be globally hidden for the session
 	var global_hidden := false
 	if typeof(DungeonGlobals) != TYPE_NIL:
 		global_hidden = DungeonGlobals.engage_button_hidden_session
-	if has_battle_occurred or engage_permanently_hidden or global_hidden:
-		# Ensure button is physically removed so future instantiations can't show it
+	
+	# Only permanently hide if explicitly set to permanently hidden
+	if engage_permanently_hidden or global_hidden:
+		print("SettingScene: Engage button permanently hidden - removing from UI")
 		_hard_remove_engage_button()
 		leave_button.visible = true
 		leave_button.disabled = false
 	else:
-		# Only show if not permanently hidden
-		if not engage_permanently_hidden and not global_hidden:
-			engage_button.visible = true
-			engage_button.disabled = false
+		# Show engage button - battles can be repeated unless permanently hidden
+		print("SettingScene: Showing engage button - battles can be repeated")
+		engage_button.visible = true
+		engage_button.disabled = false
 		leave_button.visible = true
 		leave_button.disabled = false
 
@@ -554,6 +559,13 @@ func _on_engage_button_pressed():
 # NEW: Show confirmation notification before starting battle
 func _show_energy_confirmation_notification():
 	print("SettingScene: Showing energy confirmation notification")
+	
+	# Check if there's already a notification popup to prevent duplicates
+	var existing_popup = get_tree().root.get_node_or_null("NotificationPopUp")
+	if existing_popup:
+		print("SettingScene: Notification popup already exists, not creating another one")
+		return
+	
 	var notification_popup_scene = load("res://Scenes/NotificationPopUp.tscn")
 	if notification_popup_scene:
 		var notification_popup = notification_popup_scene.instantiate()
@@ -571,11 +583,11 @@ func _show_energy_confirmation_notification():
 		
 		# Connect to the notification's button_pressed signal (only when user actually clicks engage)
 		if notification_popup.has_signal("button_pressed"):
-			notification_popup.button_pressed.connect(_on_energy_confirmation_engage_clicked)
+			notification_popup.button_pressed.connect(_on_energy_confirmation_engage_clicked, CONNECT_ONE_SHOT)
 		
 		# Also connect to closed signal to reset button state if notification is just closed
 		if notification_popup.has_signal("closed"):
-			notification_popup.closed.connect(_on_energy_confirmation_popup_closed)
+			notification_popup.closed.connect(_on_energy_confirmation_popup_closed, CONNECT_ONE_SHOT)
 	else:
 		print("Error: Could not load NotificationPopUp scene")
 
@@ -599,8 +611,9 @@ func _on_energy_confirmation_popup_closed():
 	print("SettingScene: Energy confirmation popup closed - resetting engage button state")
 	
 	# Reset engage button state since user didn't actually confirm
-	if engage_button:
+	if engage_button and not engage_permanently_hidden:
 		engage_button.disabled = false
+		engage_button.visible = true
 		engage_button.text = "Engage"
 
 func _on_quit_button_pressed():
