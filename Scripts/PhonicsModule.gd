@@ -177,8 +177,9 @@ func _on_guide_button_pressed():
 		# Stop TTS
 		if tts:
 			tts.stop()
+		# Immediately reset button text
 		guide_button.text = "Guide"
-		print("PhonicsModule: Guide TTS stopped by user")
+		print("PhonicsModule: Guide TTS stopped by user - button reset")
 		return
 	
 	if tts:
@@ -201,9 +202,11 @@ func _on_guide_button_pressed():
 
 func _on_guide_tts_finished():
 	"""Reset guide button when TTS finishes"""
+	print("PhonicsModule: _on_guide_tts_finished called - resetting button")
 	var guide_button = $MainContainer/HeaderPanel/GuideButton
 	if guide_button:
 		guide_button.text = "Guide"
+		print("PhonicsModule: Button text reset to 'Guide'")
 
 func _on_tts_setting_button_pressed():
 	"""TTS Settings button - Open settings as popup overlay"""

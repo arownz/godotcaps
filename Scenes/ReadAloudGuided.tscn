@@ -152,7 +152,7 @@ size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_bold")
 theme_override_font_sizes/font_size = 36
-text = "    GUIDED READING"
+text = "    GUIDED PASSAGE"
 horizontal_alignment = 1
 vertical_alignment = 1
 

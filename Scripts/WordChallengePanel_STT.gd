@@ -1671,10 +1671,11 @@ func _on_tts_button_pressed():
 		# Stop TTS
 		if tts and is_instance_valid(tts):
 			tts.stop()
+		# Immediately reset button text
 		tts_button.text = "Read"
 		if api_status_label:
 			api_status_label.text = "Word reading stopped"
-		print("WordChallengePanel_STT: TTS stopped by user")
+		print("WordChallengePanel_STT: TTS stopped by user - button reset to Read")
 		return
 	
 	# Block TTS if STT is active to prevent feedback loop
@@ -1721,12 +1722,14 @@ func _on_tts_button_pressed():
 
 func _on_tts_finished():
 	"""Reset TTS button when TTS finishes"""
+	print("WordChallengePanel_STT: _on_tts_finished called - resetting button")
 	var tts_button = get_node_or_null("ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer/TTSButton")
 	if not tts_button:
 		tts_button = get_node_or_null("ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer/TTSButton")
 	
 	if tts_button:
 		tts_button.text = "Read"
+		print("WordChallengePanel_STT: Button text reset to 'Read'")
 	if api_status_label:
 		api_status_label.text = "Word reading complete"
 

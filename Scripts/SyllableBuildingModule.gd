@@ -827,8 +827,9 @@ func _on_hear_word_button_pressed():
 		if tts:
 			tts.stop()
 		tts_speaking = false
+		# Immediately reset button text
 		hear_word_button.text = "Hear Word"
-		print("SyllableBuildingModule: Hear Word TTS stopped by user")
+		print("SyllableBuildingModule: Hear Word TTS stopped by user - button reset")
 		return
 	
 	# Block TTS if STT is active to prevent feedback loop
@@ -859,9 +860,11 @@ func _on_hear_word_button_pressed():
 
 func _on_hear_word_tts_finished():
 	"""Reset hear word button when TTS finishes"""
+	print("SyllableBuildingModule: _on_hear_word_tts_finished called - resetting button")
 	var hear_word_button = $MainContainer/WordDisplayPanel/HearWordButton
 	if hear_word_button:
 		hear_word_button.text = "Hear Word"
+		print("SyllableBuildingModule: Button text reset to 'Hear Word'")
 	tts_speaking = false
 
 func _on_hear_syllables_button_pressed():
@@ -881,8 +884,9 @@ func _on_hear_syllables_button_pressed():
 		if tts:
 			tts.stop()
 		tts_speaking = false
+		# Immediately reset button text
 		hear_syllables_button.text = "Hear Syllables"
-		print("SyllableBuildingModule: Hear Syllables TTS stopped by user")
+		print("SyllableBuildingModule: Hear Syllables TTS stopped by user - button reset")
 		return
 	
 	# Block TTS if STT is active to prevent feedback loop
@@ -914,9 +918,11 @@ func _on_hear_syllables_button_pressed():
 
 func _on_hear_syllables_tts_finished():
 	"""Reset hear syllables button when TTS finishes"""
+	print("SyllableBuildingModule: _on_hear_syllables_tts_finished called - resetting button")
 	var hear_syllables_button = $MainContainer/WordDisplayPanel/HearSyllablesButton
 	if hear_syllables_button:
 		hear_syllables_button.text = "Hear Syllables"
+		print("SyllableBuildingModule: Button text reset to 'Hear Syllables'")
 	tts_speaking = false
 
 func _speak_syllables_separately(syllables: Array):
@@ -1425,8 +1431,9 @@ func _on_guide_button_pressed():
 		# Stop TTS
 		if tts:
 			tts.stop()
+		# Immediately reset button text
 		guide_button.text = "Guide"
-		print("SyllableBuildingModule: Guide TTS stopped by user")
+		print("SyllableBuildingModule: Guide TTS stopped by user - button reset")
 		return
 	
 	"""Guide button - Provide TTS guidance for syllable building"""
@@ -1448,9 +1455,11 @@ func _on_guide_button_pressed():
 
 func _on_guide_tts_finished():
 	"""Reset guide button when TTS finishes"""
+	print("SyllableBuildingModule: _on_guide_tts_finished called - resetting button")
 	var guide_button = $MainContainer/HeaderPanel/GuideButton
 	if guide_button:
 		guide_button.text = "Guide"
+		print("SyllableBuildingModule: Button text reset to 'Guide'")
 
 func _on_tts_setting_button_pressed():
 	"""TTS Settings button - Open settings as popup overlay"""

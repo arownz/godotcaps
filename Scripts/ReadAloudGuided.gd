@@ -1437,22 +1437,7 @@ func _show_try_again_feedback(_recognized_text: String, target_text: String):
 	if guide_display:
 		guide_display.text = "Let's practice together. I'll read it slowly: \"" + target_text + "\""
 		guide_display.modulate = Color.LIGHT_CORAL
-	
-	# Faster patient support for dyslexic learners
-	if tts:
-		tts.speak("Let's try again!")
-		await get_tree().create_timer(0.5).timeout
 		
-		# Set slower rate for struggling readers (but shorter wait)
-		var original_rate = tts.get_rate()
-		tts.set_rate(0.7) # Slightly slower but not too slow
-		tts.speak(target_text)
-		await get_tree().create_timer(1.0).timeout # Shorter wait
-		
-		# Restore original rate
-		tts.set_rate(original_rate)
-		tts.speak("Now you try!")
-
 func _load_progress():
 	if module_progress and module_progress.is_authenticated():
 		print("ReadAloudGuided: Loading guided reading progress")

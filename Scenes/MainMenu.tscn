@@ -172,15 +172,14 @@ theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("13_uaqt0")
 theme_override_font_sizes/font_size = 32
 text = "Loading."
-horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="EnergyRecoveryTimer" type="Label" parent="EnergyDisplay"]
 layout_mode = 0
-offset_left = -13.0
-offset_top = 59.0
-offset_right = 182.0
-offset_bottom = 85.0
+offset_left = -68.0
+offset_top = 60.0
+offset_right = 127.0
+offset_bottom = 86.0
 theme_override_colors/font_color = Color(0.7, 0.9, 0.3, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/shadow_offset_x = 1
@@ -188,7 +187,6 @@ theme_override_constants/shadow_offset_y = 1
 theme_override_fonts/font = ExtResource("11_qm2o7")
 theme_override_font_sizes/font_size = 14
 text = "Next energy in: 4:00"
-horizontal_alignment = 1
 
 [node name="BottomButtonsContainer" type="Control" parent="."]
 layout_mode = 1

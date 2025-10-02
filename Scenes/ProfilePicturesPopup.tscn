@@ -254,4 +254,5 @@ stream = ExtResource("19_00j4d")
 [connection signal="pressed" from="PictureContainer/ScrollContainer/GridContainer/Portrait22" to="." method="_on_portrait_button_pressed" binds= ["22"]]
 [connection signal="pressed" from="PictureContainer/ScrollContainer/GridContainer/Portrait23" to="." method="_on_portrait_button_pressed" binds= ["23"]]
 [connection signal="pressed" from="PictureContainer/ScrollContainer/GridContainer/Portrait24" to="." method="_on_portrait_button_pressed" binds= ["24"]]
+[connection signal="mouse_entered" from="PictureContainer/ConfirmButton" to="." method="_on_confirm_button_mouse_entered"]
 [connection signal="pressed" from="PictureContainer/ConfirmButton" to="." method="_on_confirm_button_pressed"]

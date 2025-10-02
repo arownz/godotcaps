@@ -731,7 +731,7 @@ func _get_energy_recovery_info() -> Dictionary:
 			print("SettingScene: Energy info from Firestore - Current: ", current_energy, " Time until next: ", result["next_energy_time"])
 	return result
 
-func _start_energy_countdown_for_notification(notification_popup: CanvasLayer, current_energy: int, _max_energy: int, base_message: String):
+func _start_energy_countdown_for_notification(notification_popup: CanvasLayer, _initial_energy: int, _initial_max_energy: int, _initial_base_message: String):
 	"""Start live countdown timer for energy notification popup"""
 	if not notification_popup:
 		return
@@ -748,20 +748,34 @@ func _start_energy_countdown_for_notification(notification_popup: CanvasLayer, c
 			countdown_timer.queue_free()
 			return
 		
+		# Fetch fresh energy data from Firestore every second
 		var energy_info = await _get_energy_recovery_info()
 		var recovery_text = "\n\nNext energy in: Calculating..."
+		var base_message = ""
+		var max_energy = 20
 		
-		if energy_info.has("time_until_next"):
-			var time_until_next = energy_info["time_until_next"]
-			var minutes = int(time_until_next / 60)
-			var seconds = int(time_until_next) % 60
-			recovery_text = "\n\nNext energy in: %d:%02d" % [minutes, seconds]
+		# Get CURRENT energy from fresh Firestore data
+		var current_energy = energy_info.get("current_energy", 0)
+		
+		# Check if energy is sufficient now
+		if current_energy >= energy_cost:
+			base_message = "Energy recovered! You now have " + str(current_energy) + "/" + str(max_energy) + " energy.\n\nYou can now start a battle!"
+			recovery_text = ""
+		else:
+			# Build message with CURRENT energy from Firestore
+			if current_energy == 0:
+				base_message = "You have no energy remaining (" + str(current_energy) + "/" + str(max_energy) + ").\n\nEnergy is required to engage in battles. Wait for energy to recover over time."
+			else:
+				base_message = "You need " + str(energy_cost) + " energy to start a battle, but you only have " + str(current_energy) + ".\n\nWait for energy to recover over time."
 			
-			# Check if energy has been recovered
-			if energy_info.has("current_energy") and energy_info["current_energy"] > current_energy:
-				recovery_text = "\n\nEnergy recovered! Check your energy status."
+			# Calculate recovery time
+			if energy_info.has("time_until_next"):
+				var time_until_next = energy_info["time_until_next"]
+				var minutes = int(time_until_next / 60)
+				var seconds = int(time_until_next) % 60
+				recovery_text = "\n\nNext energy in: %d:%02d" % [minutes, seconds]
 		
-		# Update notification message
+		# Update notification message with LIVE energy data
 		var updated_message = base_message + recovery_text
 		var message_label = notification_popup.get_node_or_null("PopupContainer/CenterContainer/PopupBackground/VBoxContainer/MessageLabel")
 		

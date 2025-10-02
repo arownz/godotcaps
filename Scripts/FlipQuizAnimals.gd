@@ -598,8 +598,9 @@ func _on_guide_button_pressed():
 		# Stop TTS
 		if tts:
 			tts.stop()
+		# Immediately reset button text
 		guide_button.text = "Guide"
-		print("FlipQuizAnimals: Guide TTS stopped by user")
+		print("FlipQuizAnimals: Guide TTS stopped by user - button reset")
 		return
 	
 	if tts:
@@ -621,9 +622,11 @@ func _on_guide_button_pressed():
 
 func _on_guide_tts_finished():
 	"""Reset guide button when TTS finishes"""
+	print("FlipQuizAnimals: _on_guide_tts_finished called - resetting button")
 	var guide_button = $MainContainer/ContentContainer/InstructionPanel/GuideButton
 	if guide_button:
 		guide_button.text = "Guide"
+		print("FlipQuizAnimals: Button text reset to 'Guide'")
 
 func _on_tts_setting_button_pressed():
 	"""TTS Settings button - Open settings as popup overlay"""
@@ -680,8 +683,9 @@ func _on_hear_button_pressed():
 		# Stop TTS and any playing sounds
 		if tts:
 			tts.stop()
+		# Immediately reset button text
 		hear_button.text = "Hear"
-		print("FlipQuizAnimals: Hear TTS stopped by user")
+		print("FlipQuizAnimals: Hear TTS stopped by user - button reset")
 		return
 	
 	if current_animal_index < selected_animals.size():
@@ -716,9 +720,11 @@ func _on_hear_button_pressed():
 
 func _on_hear_tts_finished():
 	"""Reset hear button when TTS finishes"""
+	print("FlipQuizAnimals: _on_hear_tts_finished called - resetting button")
 	var hear_button = $MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/HearButton
 	if hear_button:
 		hear_button.text = "Hear"
+		print("FlipQuizAnimals: Button text reset to 'Hear'")
 		
 		# Visual hint: briefly highlight the target animal name in the instruction
 		var instruction_label = $MainContainer/ContentContainer/InstructionPanel/InstructionContainer/TargetLabel

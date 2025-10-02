@@ -261,8 +261,9 @@ func _on_HearButton_pressed():
 		# Stop TTS
 		if tts:
 			tts.stop()
+		# Immediately reset button text
 		hear_button.text = "Hear"
-		print("PhonicsLetters: TTS stopped by user")
+		print("PhonicsLetters: TTS stopped by user - button reset")
 		return
 	
 	if tts:
@@ -284,9 +285,11 @@ func _on_HearButton_pressed():
 
 func _on_hear_tts_finished():
 	"""Reset hear button when TTS finishes"""
+	print("PhonicsLetters: _on_hear_tts_finished called - resetting button")
 	var hear_button = $MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/HearButton
 	if hear_button:
 		hear_button.text = "Hear"
+		print("PhonicsLetters: Button text reset to 'Hear'")
 
 func _on_guide_button_pressed():
 	$ButtonClick.play()
@@ -296,8 +299,9 @@ func _on_guide_button_pressed():
 		# Stop TTS
 		if tts:
 			tts.stop()
+		# Immediately reset button text
 		guide_button.text = "Guide"
-		print("PhonicsLetters: Guide TTS stopped by user")
+		print("PhonicsLetters: Guide TTS stopped by user - button reset")
 		return
 	
 	if tts:
@@ -318,9 +322,11 @@ func _on_guide_button_pressed():
 
 func _on_guide_tts_finished():
 	"""Reset guide button when TTS finishes"""
+	print("PhonicsLetters: _on_guide_tts_finished called - resetting button")
 	var guide_button = $MainContainer/ContentContainer/InstructionPanel/GuideButton
 	if guide_button:
 		guide_button.text = "Guide"
+		print("PhonicsLetters: Button text reset to 'Guide'")
 
 func _on_tts_setting_button_pressed():
 	"""TTS Settings button - Open settings as popup overlay"""
@@ -413,6 +419,13 @@ func _on_whiteboard_result(text_result: String):
 	var is_correct = false
 	var confidence_score = 0.0
 	
+	# CRITICAL FIX: Check for orientation-ambiguous letters FIRST
+	# This handles cases where Google Cloud Vision detects rotated/flipped letters
+	if _is_orientation_pair(recognized_text, target_letter):
+		print("PhonicsLetters: Orientation-ambiguous pair detected (", recognized_text, " vs ", target_letter, ") -> ACCEPTING as CORRECT")
+		is_correct = true
+		confidence_score = 1.0
+	
 	# Direct match gets highest confidence
 	if recognized_text == target_letter:
 		is_correct = true
@@ -427,6 +440,11 @@ func _on_whiteboard_result(text_result: String):
 		if extracted_letter == target_letter:
 			is_correct = true
 			confidence_score = 0.8
+		# Also check if extracted letter is an orientation pair
+		elif _is_orientation_pair(extracted_letter, target_letter):
+			print("PhonicsLetters: Extracted orientation pair from multi-char (", extracted_letter, " vs ", target_letter, ") -> ACCEPTING")
+			is_correct = true
+			confidence_score = 1.0
 	
 	print("PhonicsLetters: Confidence score: ", confidence_score, " | Is correct: ", is_correct)
 	
@@ -597,7 +615,12 @@ func _apply_letter_ocr_correction(recognized: String, target: String) -> String:
 		"5": "S",
 		"6": "G",
 		"2": "Z",
-		"8": "B"
+		"8": "B",
+		"3": "E",
+		"4": "A",
+		"7": "T",
+		"9": "P"
+		# Add more as needed
 	}
 	
 	# Apply corrections for single character results
@@ -621,29 +644,66 @@ func _apply_letter_ocr_correction(recognized: String, target: String) -> String:
 	
 	return corrected
 
+# Helper: Check if two letters form an orientation-ambiguous pair
+# Returns true if the letters can be confused due to rotation/flipping
+func _is_orientation_pair(letter1: String, letter2: String) -> bool:
+	if letter1 == letter2:
+		return false
+	
+	# Comprehensive orientation-ambiguous pairs
+	# These letters look identical when rotated or flipped
+	var orientation_pairs = [
+		["N", "Z"], # N rotated 90° clockwise or flipped horizontally → Z
+		["M", "W"], # M flipped upside down → W
+		["U", "N"], # U rotated 180° → N (less common but possible)
+		["S", "2"] # S can look like 2 when rotated (OCR confusion)
+	]
+	
+	# Check if the pair exists in either order
+	for pair in orientation_pairs:
+		if (letter1 == pair[0] and letter2 == pair[1]) or (letter1 == pair[1] and letter2 == pair[0]):
+			return true
+	
+	return false
+
 # Calculate similarity between letters (considers visual and phonetic similarity)
 func _calculate_letter_similarity(letter1: String, letter2: String) -> float:
 	if letter1 == letter2:
 		return 1.0
+	
+	# CRITICAL: Orientation-ambiguous pairs (letters confused due to rotation/flip)
+	# These should be accepted as CORRECT since OCR can't determine orientation reliably
+	var orientation_pairs = [
+		["N", "Z"], # N rotated 90° or flipped looks like Z
+		["M", "W"], # M flipped upside down is W
+		["U", "N"], # U rotated can look like N
+	]
+	
+	# Check orientation-ambiguous pairs FIRST with highest confidence
+	for pair in orientation_pairs:
+		if (letter1 == pair[0] and letter2 == pair[1]) or (letter1 == pair[1] and letter2 == pair[0]):
+			print("PhonicsLetters: Orientation pair detected - ", letter1, " vs ", letter2, " -> ACCEPTING as correct")
+			return 1.0 # FULL acceptance for orientation confusion
 	
 	# Visual similarity groups (letters that look similar)
 	var visual_groups = [
 		["B", "D", "P", "R"], # Similar shapes with loops
 		["C", "G", "O", "Q"], # Circular letters
 		["I", "L", "1"], # Straight lines
-		["M", "N", "W"], # Multiple peaks
+		["M", "N", "W"], # Multiple peaks (also in orientation pairs)
 		["U", "V"], # Similar curves
 		["F", "E"], # Similar horizontal lines
 		["H", "N"], # Similar verticals
 		["K", "X"], # Similar crosses
 		["S", "5"], # Similar curves
-		["Z", "2"] # Similar diagonals
+		["Z", "2"], # Similar diagonals
+		["A", "V"] # Similar triangular shapes
 	]
 	
-	# Dyslexic confusion pairs (common reversals)
+	# Dyslexic confusion pairs (common reversals - accept with high confidence)
 	var dyslexic_pairs = [
-		["B", "D"], ["P", "Q"], ["M", "W"], ["N", "U"],
-		["6", "9"], ["21", "12"], ["was", "saw"]
+		["B", "D"], ["P", "Q"],
+		["21", "12"], ["was", "saw"]
 	]
 	
 	# Check visual similarity
@@ -669,6 +729,14 @@ func _extract_target_letter(text: String, target: String) -> String:
 	var corrected_text = _apply_letter_ocr_correction(text, target)
 	if target in corrected_text:
 		return target
+	
+	# CRITICAL: Check for orientation-ambiguous pairs in multi-char results
+	# Example: target is "N", text is "Z123" → extract "Z" and recognize as orientation pair
+	for character in text:
+		var char_upper = character.to_upper()
+		if _is_orientation_pair(char_upper, target):
+			print("PhonicsLetters: Found orientation pair in multi-char: ", char_upper, " matches target ", target)
+			return char_upper
 	
 	# Look for the most letter-like character in the string
 	for character in text:

@@ -32,6 +32,10 @@ func _ready():
 		if child is TextureButton:
 			var portrait_id = child.name.replace("Portrait", "")
 			
+			# Connect hover event for button hover sound
+			if not child.mouse_entered.is_connected(_on_portrait_button_hover):
+				child.mouse_entered.connect(_on_portrait_button_hover)
+			
 			# Create checkmark icon as a child of the button
 			var checkmark = TextureRect.new()
 			checkmark.texture = load("res://gui/ProfileScene/Profile/Done 1.png")
@@ -143,6 +147,7 @@ func _on_portrait_button_pressed(picture_id):
 	$PictureContainer/ConfirmButton.disabled = false
 
 func _on_confirm_button_pressed():
+	$ButtonClick.play()
 	print("ProfilePicturesPopup: Confirming selection " + selected_picture_id)
 	
 	# Update Firebase with the new profile picture - FIXED
@@ -237,4 +242,10 @@ func _on_background_clicked(event):
 
 
 func _on_close_button_mouse_entered():
+	$ButtonHover.play()
+
+func _on_portrait_button_hover():
+	$ButtonHover.play()
+
+func _on_confirm_button_mouse_entered():
 	$ButtonHover.play()

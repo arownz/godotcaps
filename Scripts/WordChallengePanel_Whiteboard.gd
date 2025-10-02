@@ -344,9 +344,10 @@ func _on_tts_button_pressed():
 		# Stop TTS
 		if tts:
 			tts.stop()
+		# Immediately reset button text
 		tts_button.text = "Read"
 		api_status_label.text = "Word reading stopped"
-		print("WordChallengePanel_Whiteboard: TTS stopped by user")
+		print("WordChallengePanel_Whiteboard: TTS stopped by user - button reset to Read")
 		return
 	
 	# Change button to Stop
@@ -376,6 +377,7 @@ func _on_tts_button_pressed():
 
 # Handle TTS feedback
 func _on_tts_speech_ended():
+	print("WordChallengePanel_Whiteboard: _on_tts_speech_ended called - resetting button")
 	api_status_label.text = ""
 	
 	# Reset TTS button
@@ -385,6 +387,7 @@ func _on_tts_speech_ended():
 	
 	if tts_button:
 		tts_button.text = "Read"
+		print("WordChallengePanel_Whiteboard: Button text reset to 'Read'")
 	
 	# Disconnect the temporary signals
 	if tts.is_connected("speech_ended", Callable(self, "_on_tts_speech_ended")):
