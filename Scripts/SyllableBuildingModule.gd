@@ -811,41 +811,113 @@ func _on_back_button_pressed():
 	_fade_out_and_change_scene("res://Scenes/ReadAloudModule.tscn")
 
 func _on_hear_word_button_pressed():
+	# Check if button is disabled (STT is active)
+	var hear_word_button = $MainContainer/WordDisplayPanel/HearWordButton
+	if hear_word_button and hear_word_button.disabled:
+		print("SyllableBuildingModule: Hear Word button clicked but disabled (STT active)")
+		if stt_status_label:
+			stt_status_label.text = "Stop speaking detection first to hear word"
+		return
+	
 	$ButtonClick.play()
 	
-	var hear_word_button = $MainContainer/WordDisplayPanel/HearWordButton
+	# Check if button is in Stop mode
+	if hear_word_button and hear_word_button.text == "Stop":
+		# Stop TTS
+		if tts:
+			tts.stop()
+		tts_speaking = false
+		hear_word_button.text = "Hear Word"
+		print("SyllableBuildingModule: Hear Word TTS stopped by user")
+		return
 	
 	# Block TTS if STT is active to prevent feedback loop
 	if recognition_active:
+		print("SyllableBuildingModule: TTS blocked - STT is active")
 		if stt_status_label:
 			stt_status_label.text = "Stop speaking detection first"
-		
+		return
 		
 	if tts and current_word_index < syllable_words.size():
 		var word = syllable_words[current_word_index]["word"]
 		print("SyllableBuildingModule: Speaking full word: ", word)
 		tts_speaking = true
-
-			
+		
+		# Change button to Stop
+		if hear_word_button:
+			hear_word_button.text = "Stop"
+		
 		tts.speak(word)
+		
+		# Connect to TTS finished signal to reset button
+		if tts.has_signal("utterance_finished"):
+			if not tts.utterance_finished.is_connected(_on_hear_word_tts_finished):
+				tts.utterance_finished.connect(_on_hear_word_tts_finished)
+		elif tts.has_signal("finished"):
+			if not tts.finished.is_connected(_on_hear_word_tts_finished):
+				tts.finished.connect(_on_hear_word_tts_finished)
+
+func _on_hear_word_tts_finished():
+	"""Reset hear word button when TTS finishes"""
+	var hear_word_button = $MainContainer/WordDisplayPanel/HearWordButton
+	if hear_word_button:
+		hear_word_button.text = "Hear Word"
+	tts_speaking = false
 
 func _on_hear_syllables_button_pressed():
+	# Check if button is disabled (STT is active)
+	var hear_syllables_button = $MainContainer/WordDisplayPanel/HearSyllablesButton
+	if hear_syllables_button and hear_syllables_button.disabled:
+		print("SyllableBuildingModule: Hear Syllables button clicked but disabled (STT active)")
+		if stt_status_label:
+			stt_status_label.text = "Stop speaking detection first to hear syllables"
+		return
+	
 	$ButtonClick.play()
 	
-	var hear_syllables_button = $MainContainer/WordDisplayPanel/HearSyllablesButton
+	# Check if button is in Stop mode
+	if hear_syllables_button and hear_syllables_button.text == "Stop":
+		# Stop TTS
+		if tts:
+			tts.stop()
+		tts_speaking = false
+		hear_syllables_button.text = "Hear Syllables"
+		print("SyllableBuildingModule: Hear Syllables TTS stopped by user")
+		return
 	
 	# Block TTS if STT is active to prevent feedback loop
 	if recognition_active:
+		print("SyllableBuildingModule: TTS blocked - STT is active")
 		if stt_status_label:
 			stt_status_label.text = "Stop speaking detection first"
+		return
 		
 	if tts and current_word_index < syllable_words.size():
 		var syllables = syllable_words[current_word_index]["syllables"]
 		print("SyllableBuildingModule: Speaking syllables separately: ", syllables)
 		tts_speaking = true
 		
+		# Change button to Stop
+		if hear_syllables_button:
+			hear_syllables_button.text = "Stop"
+		
 		# Speak each syllable with pauses
 		_speak_syllables_separately(syllables)
+		
+		# Connect to TTS finished signal to reset button
+		if tts.has_signal("utterance_finished"):
+			if not tts.utterance_finished.is_connected(_on_hear_syllables_tts_finished):
+				tts.utterance_finished.connect(_on_hear_syllables_tts_finished)
+		elif tts.has_signal("finished"):
+			if not tts.finished.is_connected(_on_hear_syllables_tts_finished):
+				tts.finished.connect(_on_hear_syllables_tts_finished)
+
+func _on_hear_syllables_tts_finished():
+	"""Reset hear syllables button when TTS finishes"""
+	var hear_syllables_button = $MainContainer/WordDisplayPanel/HearSyllablesButton
+	if hear_syllables_button:
+		hear_syllables_button.text = "Hear Syllables"
+	tts_speaking = false
 
 func _speak_syllables_separately(syllables: Array):
 	"""Speak each syllable with pauses for better learning"""
@@ -908,6 +980,9 @@ func _on_stt_button_pressed():
 			
 			if stt_result_label:
 				stt_result_label.text = "Listening..."
+			
+			# Disable TTS buttons while STT is active
+			_update_tts_buttons_state()
 
 
 		else:
@@ -1053,6 +1128,9 @@ func _stop_syllable_recognition():
 	
 	recognition_active = false
 	stt_listening = false
+	
+	# Re-enable TTS buttons when STT stops
+	_update_tts_buttons_state()
 	
 	# Reset button state like ReadAloudGuided
 	if stt_button:
@@ -1274,7 +1352,7 @@ func _on_prev_button_pressed():
 		
 		# Clear STT results
 		stt_result_label.text = ""
-		stt_status_label.text = "Click to start recording"
+		stt_status_label.text = "Click Speak to start recording"
 
 func _on_next_button_pressed():
 	$ButtonClick.play()
@@ -1285,7 +1363,7 @@ func _on_next_button_pressed():
 		
 		# Clear STT results
 		stt_result_label.text = ""
-		stt_status_label.text = "Click to start recording"
+		stt_status_label.text = "Click Speak to start recording"
 	else:
 		# Completed all words
 		_show_completion_message()
@@ -1341,10 +1419,38 @@ func _on_highlighting_reset_timeout():
 
 func _on_guide_button_pressed():
 	$ButtonClick.play()
+	var guide_button = $MainContainer/HeaderPanel/GuideButton
+	
+	if guide_button and guide_button.text == "Stop":
+		# Stop TTS
+		if tts:
+			tts.stop()
+		guide_button.text = "Guide"
+		print("SyllableBuildingModule: Guide TTS stopped by user")
+		return
+	
 	"""Guide button - Provide TTS guidance for syllable building"""
 	if tts:
+		# Change button to Stop
+		if guide_button:
+			guide_button.text = "Stop"
+		
 		var guide_text = "Welcome to Syllable Workshop! This activity helps you break words into syllables. Listen to each word by clicking 'Hear Word', then hear it broken into syllables with 'Hear Syllables'. Practice saying the syllables yourself using the microphone button. Syllables are the building blocks of words - like clapping out the beats in music!"
 		tts.speak(guide_text)
+		
+		# Connect to TTS finished signal to reset button
+		if tts.has_signal("utterance_finished"):
+			if not tts.utterance_finished.is_connected(_on_guide_tts_finished):
+				tts.utterance_finished.connect(_on_guide_tts_finished)
+		elif tts.has_signal("finished"):
+			if not tts.finished.is_connected(_on_guide_tts_finished):
+				tts.finished.connect(_on_guide_tts_finished)
+
+func _on_guide_tts_finished():
+	"""Reset guide button when TTS finishes"""
+	var guide_button = $MainContainer/HeaderPanel/GuideButton
+	if guide_button:
+		guide_button.text = "Guide"
 
 func _on_tts_setting_button_pressed():
 	"""TTS Settings button - Open settings as popup overlay"""
@@ -1619,6 +1725,40 @@ func _ensure_all_systems_ready():
 	
 	print("SyllableBuildingModule: All systems ready: ", systems_ready)
 	return systems_ready
+
+# Update TTS buttons state based on STT activity
+func _update_tts_buttons_state():
+	"""Update TTS button states - disable when STT is active, enable when inactive"""
+	var hear_word_button = $MainContainer/WordDisplayPanel/HearWordButton
+	var hear_syllables_button = $MainContainer/WordDisplayPanel/HearSyllablesButton
+	
+	if hear_word_button:
+		if recognition_active:
+			# Disable Hear Word button when STT is active
+			hear_word_button.disabled = true
+			hear_word_button.modulate = Color(0.5, 0.5, 0.5, 0.7) # Gray out the button
+			hear_word_button.mouse_default_cursor_shape = Control.CURSOR_ARROW
+			print("SyllableBuildingModule: Hear Word button disabled and grayed out (STT active)")
+		else:
+			# Re-enable Hear Word button when STT is not active
+			hear_word_button.disabled = false
+			hear_word_button.modulate = Color(1, 1, 1, 1) # Restore normal color
+			hear_word_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+			print("SyllableBuildingModule: Hear Word button enabled and restored (STT inactive)")
+	
+	if hear_syllables_button:
+		if recognition_active:
+			# Disable Hear Syllables button when STT is active
+			hear_syllables_button.disabled = true
+			hear_syllables_button.modulate = Color(0.5, 0.5, 0.5, 0.7) # Gray out the button
+			hear_syllables_button.mouse_default_cursor_shape = Control.CURSOR_ARROW
+			print("SyllableBuildingModule: Hear Syllables button disabled and grayed out (STT active)")
+		else:
+			# Re-enable Hear Syllables button when STT is not active
+			hear_syllables_button.disabled = false
+			hear_syllables_button.modulate = Color(1, 1, 1, 1) # Restore normal color
+			hear_syllables_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+			print("SyllableBuildingModule: Hear Syllables button enabled and restored (STT inactive)")
 
 func _is_word_match_for_highlighting(spoken_text: String, target_word: String) -> bool:
 	"""Check if spoken text matches target word for live highlighting"""

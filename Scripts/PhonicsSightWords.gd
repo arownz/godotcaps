@@ -254,10 +254,38 @@ func _exit_tree():
 
 func _on_HearButton_pressed():
 	$ButtonClick.play()
+	var hear_button = $MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/HearButton
+	
+	if hear_button and hear_button.text == "Stop":
+		# Stop TTS
+		if tts:
+			tts.stop()
+		hear_button.text = "Hear"
+		print("PhonicsSightWords: TTS stopped by user")
+		return
+	
 	if tts:
-		# Enhanced TTS guide with instructions for sight words
-		var guide_text = "Listen and repeat: " + current_target + ". This is a sight word. " + current_target + ". Now write it on the whiteboard: " + _spell_out_word(current_target) + "."
-		_speak_text_simple(guide_text)
+		# Start TTS and change button to Stop
+		if hear_button:
+			hear_button.text = "Stop"
+		
+		# Spell out the word clearly and provide meaning
+		var spell_text = "Listen: " + current_target + ". This is spelled " + _spell_out_word(current_target) + ". " + current_target + "."
+		_speak_text_simple(spell_text)
+		
+		# Connect to TTS finished signal to reset button
+		if tts.has_signal("utterance_finished"):
+			if not tts.utterance_finished.is_connected(_on_hear_tts_finished):
+				tts.utterance_finished.connect(_on_hear_tts_finished)
+		elif tts.has_signal("finished"):
+			if not tts.finished.is_connected(_on_hear_tts_finished):
+				tts.finished.connect(_on_hear_tts_finished)
+
+func _on_hear_tts_finished():
+	"""Reset hear button when TTS finishes"""
+	var hear_button = $MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/HearButton
+	if hear_button:
+		hear_button.text = "Hear"
 
 # Helper function to spell out words letter by letter for guidance
 func _spell_out_word(word: String) -> String:
@@ -302,9 +330,37 @@ func _on_sight_word_done_button_pressed():
 
 func _on_guide_button_pressed():
 	$ButtonClick.play()
+	var guide_button = $MainContainer/ContentContainer/InstructionPanel/GuideButton
+	
+	if guide_button and guide_button.text == "Stop":
+		# Stop TTS
+		if tts:
+			tts.stop()
+		guide_button.text = "Guide"
+		print("PhonicsSightWords: Guide TTS stopped by user")
+		return
+	
 	if tts:
+		# Start TTS and change button to Stop
+		if guide_button:
+			guide_button.text = "Stop"
+		
 		var guide_text = "Welcome to Sight Words Practice! Sight words are common words you'll see often when reading. Look at the word shown above - these are words like 'the', 'and', 'to' that you should recognize quickly. Practice writing each word on the whiteboard below. Press 'Hear' to listen to the word and how to spell it, then trace or write it carefully. When ready, press 'Next' to continue!"
 		_speak_text_simple(guide_text)
+		
+		# Connect to TTS finished signal to reset button
+		if tts.has_signal("utterance_finished"):
+			if not tts.utterance_finished.is_connected(_on_guide_tts_finished):
+				tts.utterance_finished.connect(_on_guide_tts_finished)
+		elif tts.has_signal("finished"):
+			if not tts.finished.is_connected(_on_guide_tts_finished):
+				tts.finished.connect(_on_guide_tts_finished)
+
+func _on_guide_tts_finished():
+	"""Reset guide button when TTS finishes"""
+	var guide_button = $MainContainer/ContentContainer/InstructionPanel/GuideButton
+	if guide_button:
+		guide_button.text = "Guide"
 
 func _on_tts_setting_button_pressed():
 	"""TTS Settings button - Open settings as popup overlay"""

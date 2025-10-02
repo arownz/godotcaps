@@ -573,9 +573,37 @@ func _on_button_hover():
 
 func _on_guide_button_pressed():
 	$ButtonClick.play()
+	var guide_button = $MainContainer/ContentContainer/InstructionPanel/GuideButton
+	
+	if guide_button and guide_button.text == "Stop":
+		# Stop TTS
+		if tts:
+			tts.stop()
+		guide_button.text = "Guide"
+		print("FlipQuizVehicle: Guide TTS stopped by user")
+		return
+	
 	if tts:
+		# Change button to Stop
+		if guide_button:
+			guide_button.text = "Stop"
+		
 		var guide_text = "This is a vehicle memory game! Find two cards that match. One card has a picture of a vehicle. The other card has the vehicle's name. Match them all to complete the set!"
 		_speak_text_simple(guide_text)
+		
+		# Connect to TTS finished signal to reset button
+		if tts.has_signal("utterance_finished"):
+			if not tts.utterance_finished.is_connected(_on_guide_tts_finished):
+				tts.utterance_finished.connect(_on_guide_tts_finished)
+		elif tts.has_signal("finished"):
+			if not tts.finished.is_connected(_on_guide_tts_finished):
+				tts.finished.connect(_on_guide_tts_finished)
+
+func _on_guide_tts_finished():
+	"""Reset guide button when TTS finishes"""
+	var guide_button = $MainContainer/ContentContainer/InstructionPanel/GuideButton
+	if guide_button:
+		guide_button.text = "Guide"
 
 func _on_tts_setting_button_pressed():
 	"""TTS Settings button - Open settings as popup overlay"""
@@ -620,13 +648,41 @@ func _on_previous_button_pressed():
 
 func _on_hear_button_pressed():
 	$ButtonClick.play()
+	var hear_button = $MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/HearButton
+	
+	if hear_button and hear_button.text == "Stop":
+		# Stop TTS
+		if tts:
+			tts.stop()
+		hear_button.text = "Hear"
+		print("FlipQuizVehicle: Hear TTS stopped by user")
+		return
+	
 	if current_vehicle_index < selected_vehicles.size():
 		var vehicle = selected_vehicles[current_vehicle_index]
+		
+		# Change button to Stop
+		if hear_button:
+			hear_button.text = "Stop"
 		
 		# TTS pronunciation and hint for vehicles
 		if tts:
 			var hint_text = vehicle.name.capitalize() + ". Find the picture and the word!"
 			_speak_text_simple(hint_text)
+			
+			# Connect to TTS finished signal to reset button
+			if tts.has_signal("utterance_finished"):
+				if not tts.utterance_finished.is_connected(_on_hear_tts_finished):
+					tts.utterance_finished.connect(_on_hear_tts_finished)
+			elif tts.has_signal("finished"):
+				if not tts.finished.is_connected(_on_hear_tts_finished):
+					tts.finished.connect(_on_hear_tts_finished)
+
+func _on_hear_tts_finished():
+	"""Reset hear button when TTS finishes"""
+	var hear_button = $MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/HearButton
+	if hear_button:
+		hear_button.text = "Hear"
 		
 		# Visual hint: highlight the target vehicle name
 		var instruction_label = $MainContainer/ContentContainer/InstructionPanel/InstructionContainer/TargetLabel

@@ -305,8 +305,24 @@ func _update_volume_label(value):
 
 func _on_test_button_pressed():
 	$ButtonClick.play()
+	var test_button = $Panel/ScrollContainer/VBoxContainer/HBoxContainer/TestButton
+	
+	# Check if button is in Stop mode
+	if test_button and test_button.text == "Stop":
+		# Stop TTS
+		if tts:
+			tts.stop()
+		test_button.text = "Test"
+		$Panel/ScrollContainer/VBoxContainer/StatusLabel.text = "Test stopped"
+		print("TTSSettingsPopup: Test TTS stopped by user")
+		return
+	
 	# Test the current voice and rate with improved feedback
 	if tts:
+		# Change button to Stop
+		if test_button:
+			test_button.text = "Stop"
+		
 		$Panel/ScrollContainer/VBoxContainer/StatusLabel.text = "Testing voice with: " + test_word + "..."
 		
 		print("Test button pressed, trying to speak: ", test_word)
@@ -328,6 +344,8 @@ func _on_test_button_pressed():
 		var result = tts.speak(test_word)
 		if !result:
 			$Panel/ScrollContainer/VBoxContainer/StatusLabel.text = "Failed to start speech test"
+			if test_button:
+				test_button.text = "Test"
 			print("Test speech failed - check if TTS is enabled in Project Settings")
 	else:
 		$Panel/ScrollContainer/VBoxContainer/StatusLabel.text = "ERROR: No TTS instance available"
@@ -338,6 +356,11 @@ func _on_test_speech_started():
 
 func _on_test_speech_ended():
 	$Panel/ScrollContainer/VBoxContainer/StatusLabel.text = "Test complete"
+	
+	# Reset test button
+	var test_button = $Panel/ScrollContainer/VBoxContainer/HBoxContainer/TestButton
+	if test_button:
+		test_button.text = "Test"
 	
 	# Disconnect the temporary signals
 	if tts and tts.is_connected("speech_started", Callable(self, "_on_test_speech_started")):
@@ -351,6 +374,11 @@ func _on_test_speech_ended():
 
 func _on_test_speech_error(error_msg):
 	$Panel/ScrollContainer/VBoxContainer/StatusLabel.text = "Error: " + error_msg
+	
+	# Reset test button
+	var test_button = $Panel/ScrollContainer/VBoxContainer/HBoxContainer/TestButton
+	if test_button:
+		test_button.text = "Test"
 	
 	# Disconnect the temporary signals
 	if tts and tts.is_connected("speech_started", Callable(self, "_on_test_speech_started")):

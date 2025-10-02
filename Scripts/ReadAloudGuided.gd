@@ -620,6 +620,10 @@ func _start_speech_recognition():
 				recognition_active = true
 				stt_listening = true
 				_update_listen_button()
+				
+				# Disable TTS button while STT is active
+				_update_tts_button_state()
+				
 				print("ReadAloudGuided: Speech recognition started successfully")
 				return true
 			else:
@@ -661,6 +665,9 @@ func _force_stop_recognition():
 	stt_listening = false
 	stt_feedback_active = false
 	result_being_processed = false
+	
+	# Re-enable TTS button when STT stops
+	_update_tts_button_state()
 	
 	# Stop timers
 	if highlighting_reset_timer and not highlighting_reset_timer.is_stopped():
@@ -718,6 +725,9 @@ func _stop_speech_recognition():
 	# Clear interim results
 	current_interim_result = ""
 	last_interim_result = ""
+	
+	# Re-enable TTS button when STT stops
+	_update_tts_button_state()
 	
 	_update_listen_button()
 	print("ReadAloudGuided: Speech recognition stopped and state reset")
@@ -1122,17 +1132,18 @@ func _on_tts_finished():
 		read_button.disabled = false
 		print("ReadAloudGuided: Read button reset to 'Read' state")
 	
-	# Update guide to prompt user to speak
+	# Update guide back to the original instruction
 	var guide_display = $MainContainer/GuidePanel/MarginContainer/GuideContainer/GuideNotes
 	if guide_display:
-		guide_display.text = "Now click the 'Speak' button to repeat what I said: \"" + current_target_sentence + "\""
-		guide_display.modulate = Color.ORANGE # Make it stand out
+		guide_display.text = "Click 'Read' to hear the first sentence, then click 'Speak' to practice reading it yourself!"
+		guide_display.modulate = Color.CYAN # Reset to original color
 	
 	# Enable speak button and make it prominent
 	var speak_button = $MainContainer/ControlsContainer/SpeakButton
 	if speak_button:
 		speak_button.disabled = false
 		speak_button.text = "Speak"
+		speak_button.modulate = Color.WHITE # Reset modulation
 		
 	# Remove automatic audio prompt - user controls when to hear instructions
 	print("ReadAloudGuided: TTS finished, waiting for user to click Speak button")
@@ -1998,10 +2009,19 @@ func _on_button_hover():
 
 func _on_read_button_pressed():
 	"""Read button - TTS reads current sentence with start/stop control"""
+	var read_button = $MainContainer/PassagePanel/ReadButton
+	
+	# Check if button is disabled (STT is active)
+	if read_button and read_button.disabled:
+		print("ReadAloudGuided: Read button clicked but disabled (STT active)")
+		var guide_display = $MainContainer/GuidePanel/MarginContainer/GuideContainer/GuideNotes
+		if guide_display:
+			guide_display.text = "Stop speaking detection first to use Read button"
+			guide_display.modulate = Color.ORANGE
+		return
+	
 	$ButtonClick.play()
 	print("ReadAloudGuided: Read button pressed")
-
-	var read_button = $MainContainer/PassagePanel/ReadButton
 	
 	# Block TTS if STT is active to prevent feedback loop
 	if stt_listening:
@@ -2435,6 +2455,27 @@ func _on_celebration_next():
 	else:
 		# All passages completed - return to module selection
 		_show_all_passages_completed()
+
+# Update TTS button state based on STT activity
+func _update_tts_button_state():
+	"""Update TTS button state - disable when STT is active, enable when inactive"""
+	var read_button = $MainContainer/PassagePanel/ReadButton
+	
+	if read_button:
+		if stt_listening:
+			# Disable Read button when STT is active
+			read_button.disabled = true
+			read_button.modulate = Color(0.5, 0.5, 0.5, 0.7) # Gray out the button
+			read_button.mouse_default_cursor_shape = Control.CURSOR_ARROW
+			print("ReadAloudGuided: Read button disabled and grayed out (STT active)")
+		else:
+			# Re-enable Read button when STT is not active
+			read_button.disabled = false
+			read_button.modulate = Color(1, 1, 1, 1) # Restore normal color
+			read_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+			print("ReadAloudGuided: Read button enabled and restored (STT inactive)")
+	else:
+		print("ReadAloudGuided: Read button not found for state update")
 
 func _on_celebration_closed():
 	"""Handle celebration popup being closed"""

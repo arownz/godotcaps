@@ -255,16 +255,72 @@ func _exit_tree():
 
 func _on_HearButton_pressed():
 	$ButtonClick.play()
+	var hear_button = $MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/HearButton
+	
+	if hear_button and hear_button.text == "Stop":
+		# Stop TTS
+		if tts:
+			tts.stop()
+		hear_button.text = "Hear"
+		print("PhonicsLetters: TTS stopped by user")
+		return
+	
 	if tts:
+		# Start TTS and change button to Stop
+		if hear_button:
+			hear_button.text = "Stop"
+		
 		# Enhanced TTS guide with instructions
 		var guide_text = "Listen carefully: Letter " + current_target + ". Now trace this letter on the whiteboard. " + current_target + " sounds like " + _get_letter_sound(current_target) + "."
 		_speak_text_simple(guide_text)
+		
+		# Connect to TTS finished signal to reset button
+		if tts.has_signal("utterance_finished"):
+			if not tts.utterance_finished.is_connected(_on_hear_tts_finished):
+				tts.utterance_finished.connect(_on_hear_tts_finished)
+		elif tts.has_signal("finished"):
+			if not tts.finished.is_connected(_on_hear_tts_finished):
+				tts.finished.connect(_on_hear_tts_finished)
+
+func _on_hear_tts_finished():
+	"""Reset hear button when TTS finishes"""
+	var hear_button = $MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/HearButton
+	if hear_button:
+		hear_button.text = "Hear"
 
 func _on_guide_button_pressed():
 	$ButtonClick.play()
+	var guide_button = $MainContainer/ContentContainer/InstructionPanel/GuideButton
+	
+	if guide_button and guide_button.text == "Stop":
+		# Stop TTS
+		if tts:
+			tts.stop()
+		guide_button.text = "Guide"
+		print("PhonicsLetters: Guide TTS stopped by user")
+		return
+	
 	if tts:
+		# Start TTS and change button to Stop
+		if guide_button:
+			guide_button.text = "Stop"
+		
 		var guide_text = "Welcome to Letters Practice! Here you will learn to trace letters from A to Z. Look at the letter shown above, then use your finger or mouse to trace it carefully on the whiteboard below. Listen to the letter sound by pressing 'Hear', and when you're ready to move on, press 'Next'."
 		_speak_text_simple(guide_text)
+		
+		# Connect to TTS finished signal to reset button
+		if tts.has_signal("utterance_finished"):
+			if not tts.utterance_finished.is_connected(_on_guide_tts_finished):
+				tts.utterance_finished.connect(_on_guide_tts_finished)
+		elif tts.has_signal("finished"):
+			if not tts.finished.is_connected(_on_guide_tts_finished):
+				tts.finished.connect(_on_guide_tts_finished)
+
+func _on_guide_tts_finished():
+	"""Reset guide button when TTS finishes"""
+	var guide_button = $MainContainer/ContentContainer/InstructionPanel/GuideButton
+	if guide_button:
+		guide_button.text = "Guide"
 
 func _on_tts_setting_button_pressed():
 	"""TTS Settings button - Open settings as popup overlay"""

@@ -335,6 +335,24 @@ func calculate_word_similarity(word1, word2):
 # Handle TTS button press
 func _on_tts_button_pressed():
 	$ButtonClick.play()
+	var tts_button = get_node_or_null("ChallengePanel/VBoxContainer/WordContainer/TTSButton")
+	if not tts_button:
+		tts_button = get_node_or_null("ChallengePanel/VBoxContainer/TTSButton")
+	
+	# Check if button is in Stop mode
+	if tts_button and tts_button.text == "Stop":
+		# Stop TTS
+		if tts:
+			tts.stop()
+		tts_button.text = "Read"
+		api_status_label.text = "Word reading stopped"
+		print("WordChallengePanel_Whiteboard: TTS stopped by user")
+		return
+	
+	# Change button to Stop
+	if tts_button:
+		tts_button.text = "Stop"
+	
 	# Speak the challenge word with improved feedback
 	api_status_label.text = "Reading word..."
 	
@@ -344,6 +362,8 @@ func _on_tts_button_pressed():
 	
 	if !result:
 		api_status_label.text = "Failed to read word"
+		if tts_button:
+			tts_button.text = "Read"
 		print("TTS speak returned false")
 		return
 	
@@ -357,6 +377,14 @@ func _on_tts_button_pressed():
 # Handle TTS feedback
 func _on_tts_speech_ended():
 	api_status_label.text = ""
+	
+	# Reset TTS button
+	var tts_button = get_node_or_null("ChallengePanel/VBoxContainer/WordContainer/TTSButton")
+	if not tts_button:
+		tts_button = get_node_or_null("ChallengePanel/VBoxContainer/TTSButton")
+	
+	if tts_button:
+		tts_button.text = "Read"
 	
 	# Disconnect the temporary signals
 	if tts.is_connected("speech_ended", Callable(self, "_on_tts_speech_ended")):

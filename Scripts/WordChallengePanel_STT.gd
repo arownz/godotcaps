@@ -695,10 +695,13 @@ func _on_speak_button_pressed():
 			speak_button.disabled = false
 			status_label.text = "Listening... Say the word clearly, then click Stop Recording"
 			
+			# Disable TTS button while STT is active
+			_update_tts_button_state()
+			
 			if live_transcription_text:
 				live_transcription_text.text = "Listening..."
 			
-			permission_status_label.text = "✓ Recording active"
+			permission_status_label.text = "Recording active"
 			permission_status_label.modulate = Color.GREEN
 		else:
 			print("Failed to start recognition")
@@ -706,7 +709,7 @@ func _on_speak_button_pressed():
 			speak_button.text = "Again"
 			speak_button.disabled = false
 			status_label.text = "Microphone access needed. Click 'Try Again' to retry."
-			permission_status_label.text = "X Microphone access required"
+			permission_status_label.text = "Microphone access required"
 			permission_status_label.modulate = Color.RED
 
 # Start live speech recognition using Web Speech API
@@ -1014,6 +1017,9 @@ func _stop_recognition_completely():
 	status_label.text = "Recognition stopped. Click Speak to try again."
 	permission_status_label.text = "Click Speak to begin"
 	permission_status_label.modulate = Color.WHITE
+	
+	# Re-enable TTS button when STT stops
+	_update_tts_button_state()
 
 # Callback function for speech recognition result from JavaScript
 func speech_result_callback(text):
@@ -1331,7 +1337,7 @@ func speech_error_callback(error):
 		live_transcription_enabled = false
 		status_label.text = "Microphone permission denied. Click 'Again' to retry."
 		speak_button.text = "Again"
-		permission_status_label.text = "X Permission denied"
+		permission_status_label.text = "Permission denied"
 		permission_status_label.modulate = Color.RED
 		speak_button.disabled = false
 	elif error == "no-speech":
@@ -1647,7 +1653,36 @@ func levenshtein_distance(s1, s2):
 	return d[m][n]
 
 func _on_tts_button_pressed():
+	# Check if button is disabled (STT is active)
+	var tts_button = get_node_or_null("ChallengePanel/VBoxContainer/WordContainer/TTSButton")
+	if not tts_button:
+		tts_button = get_node_or_null("ChallengePanel/VBoxContainer/TTSButton")
+	
+	if tts_button and tts_button.disabled:
+		print("WordChallengePanel_STT: TTS button clicked but disabled (STT active)")
+		if api_status_label:
+			api_status_label.text = "Stop speaking detection first to use TTS"
+		return
+	
 	$ButtonClick.play()
+	
+	# Check if button is in Stop mode
+	if tts_button and tts_button.text == "Stop":
+		# Stop TTS
+		if tts and is_instance_valid(tts):
+			tts.stop()
+		tts_button.text = "Read"
+		if api_status_label:
+			api_status_label.text = "Word reading stopped"
+		print("WordChallengePanel_STT: TTS stopped by user")
+		return
+	
+	# Block TTS if STT is active to prevent feedback loop
+	if recognition_active:
+		print("WordChallengePanel_STT: TTS blocked - STT is active")
+		if api_status_label:
+			api_status_label.text = "Stop speaking detection first"
+		return
 	
 	# Validate TTS instance first
 	if not tts or not is_instance_valid(tts):
@@ -1655,6 +1690,10 @@ func _on_tts_button_pressed():
 		if api_status_label:
 			api_status_label.text = "TTS not available"
 		return
+	
+	# Change button to Stop
+	if tts_button:
+		tts_button.text = "Stop"
 	
 	# Speak the challenge word with improved feedback
 	if api_status_label:
@@ -1667,8 +1706,29 @@ func _on_tts_button_pressed():
 	if !result:
 		if api_status_label:
 			api_status_label.text = "Failed to read word"
+		if tts_button:
+			tts_button.text = "Read"
 		print("TTS speak returned false")
 		return
+	
+	# Connect to TTS finished signal to reset button
+	if tts.has_signal("utterance_finished"):
+		if not tts.utterance_finished.is_connected(_on_tts_finished):
+			tts.utterance_finished.connect(_on_tts_finished)
+	elif tts.has_signal("finished"):
+		if not tts.finished.is_connected(_on_tts_finished):
+			tts.finished.connect(_on_tts_finished)
+
+func _on_tts_finished():
+	"""Reset TTS button when TTS finishes"""
+	var tts_button = get_node_or_null("ChallengePanel/VBoxContainer/WordContainer/TTSButton")
+	if not tts_button:
+		tts_button = get_node_or_null("ChallengePanel/VBoxContainer/TTSButton")
+	
+	if tts_button:
+		tts_button.text = "Read"
+	if api_status_label:
+		api_status_label.text = "Word reading complete"
 
 	# Connect to signals for this specific request if not already connected
 	if !tts.is_connected("speech_ended", Callable(self, "_on_tts_speech_ended")):
@@ -1801,3 +1861,27 @@ func _on_settings_quit_requested():
 		print("WordChallengePanel_STT: Could not find BattleScene, canceling challenge instead")
 		# Fallback to canceling the challenge
 		_fade_out_and_signal("challenge_cancelled")
+
+# Update TTS button state based on STT activity
+func _update_tts_button_state():
+	"""Update TTS button state - disable when STT is active, enable when inactive"""
+	var tts_button = get_node_or_null("ChallengePanel/VBoxContainer/WordContainer/TTSButton")
+	if not tts_button:
+		# Try alternative path
+		tts_button = get_node_or_null("ChallengePanel/VBoxContainer/TTSButton")
+	
+	if tts_button:
+		if recognition_active:
+			# Disable TTS button when STT is active
+			tts_button.disabled = true
+			tts_button.modulate = Color(0.5, 0.5, 0.5, 0.7) # Gray out the button
+			tts_button.mouse_default_cursor_shape = Control.CURSOR_ARROW
+			print("WordChallengePanel_STT: TTS button disabled and grayed out (STT active)")
+		else:
+			# Re-enable TTS button when STT is not active
+			tts_button.disabled = false
+			tts_button.modulate = Color(1, 1, 1, 1) # Restore normal color
+			tts_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+			print("WordChallengePanel_STT: TTS button enabled and restored (STT inactive)")
+	else:
+		print("WordChallengePanel_STT: TTS button not found for state update")

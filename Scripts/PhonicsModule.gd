@@ -171,11 +171,39 @@ func _on_button_hover():
 
 func _on_guide_button_pressed():
 	$ButtonClick.play()
+	var guide_button = $MainContainer/HeaderPanel/GuideButton
+	
+	if guide_button and guide_button.text == "Stop":
+		# Stop TTS
+		if tts:
+			tts.stop()
+		guide_button.text = "Guide"
+		print("PhonicsModule: Guide TTS stopped by user")
+		return
+	
 	if tts:
+		# Change button to Stop
+		if guide_button:
+			guide_button.text = "Stop"
+		
 		var guide_text = "Welcome to Phonics Learning! Here you can practice two important skills. Choose 'Letters' to trace the alphabet from A to Z and learn letter sounds. Choose 'Sight Words' to practice common words like 'the', 'and', and 'to' that appear frequently in reading. Both activities will help improve your reading and writing skills!"
 		
 		# Simplified: just TTS without captions
 		_speak_text_simple(guide_text)
+		
+		# Connect to TTS finished signal to reset button
+		if tts.has_signal("utterance_finished"):
+			if not tts.utterance_finished.is_connected(_on_guide_tts_finished):
+				tts.utterance_finished.connect(_on_guide_tts_finished)
+		elif tts.has_signal("finished"):
+			if not tts.finished.is_connected(_on_guide_tts_finished):
+				tts.finished.connect(_on_guide_tts_finished)
+
+func _on_guide_tts_finished():
+	"""Reset guide button when TTS finishes"""
+	var guide_button = $MainContainer/HeaderPanel/GuideButton
+	if guide_button:
+		guide_button.text = "Guide"
 
 func _on_tts_setting_button_pressed():
 	"""TTS Settings button - Open settings as popup overlay"""

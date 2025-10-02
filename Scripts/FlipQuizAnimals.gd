@@ -592,10 +592,38 @@ func _on_button_hover():
 
 func _on_guide_button_pressed():
 	$ButtonClick.play()
+	var guide_button = $MainContainer/ContentContainer/InstructionPanel/GuideButton
+	
+	if guide_button and guide_button.text == "Stop":
+		# Stop TTS
+		if tts:
+			tts.stop()
+		guide_button.text = "Guide"
+		print("FlipQuizAnimals: Guide TTS stopped by user")
+		return
+	
 	if tts:
+		# Change button to Stop
+		if guide_button:
+			guide_button.text = "Stop"
+		
 		# Simpler, clearer instructions for dyslexic children
 		var guide_text = "This is a memory game! Find two cards that match. One card has a picture of an animal. The other card has the animal's name. When you find a match, you'll hear the animal sound!"
 		_speak_text_simple(guide_text)
+		
+		# Connect to TTS finished signal to reset button
+		if tts.has_signal("utterance_finished"):
+			if not tts.utterance_finished.is_connected(_on_guide_tts_finished):
+				tts.utterance_finished.connect(_on_guide_tts_finished)
+		elif tts.has_signal("finished"):
+			if not tts.finished.is_connected(_on_guide_tts_finished):
+				tts.finished.connect(_on_guide_tts_finished)
+
+func _on_guide_tts_finished():
+	"""Reset guide button when TTS finishes"""
+	var guide_button = $MainContainer/ContentContainer/InstructionPanel/GuideButton
+	if guide_button:
+		guide_button.text = "Guide"
 
 func _on_tts_setting_button_pressed():
 	"""TTS Settings button - Open settings as popup overlay"""
@@ -646,8 +674,22 @@ func _on_previous_button_pressed():
 
 func _on_hear_button_pressed():
 	$ButtonClick.play()
+	var hear_button = $MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/HearButton
+	
+	if hear_button and hear_button.text == "Stop":
+		# Stop TTS and any playing sounds
+		if tts:
+			tts.stop()
+		hear_button.text = "Hear"
+		print("FlipQuizAnimals: Hear TTS stopped by user")
+		return
+	
 	if current_animal_index < selected_animals.size():
 		var animal = selected_animals[current_animal_index]
+		
+		# Change button to Stop
+		if hear_button:
+			hear_button.text = "Stop"
 		
 		# Play animal sound first (primary hint)
 		var sound_node = get_node_or_null(animal.sound_node)
@@ -656,9 +698,27 @@ func _on_hear_button_pressed():
 		
 		# Wait a moment, then speak the animal name clearly (secondary hint)
 		await get_tree().create_timer(2.0).timeout
-		if tts:
+		if tts and hear_button and hear_button.text == "Stop": # Check if still in Stop mode
 			var hint_text = animal.name.capitalize() + ". Find the picture and the word!"
 			_speak_text_simple(hint_text)
+			
+			# Connect to TTS finished signal to reset button
+			if tts.has_signal("utterance_finished"):
+				if not tts.utterance_finished.is_connected(_on_hear_tts_finished):
+					tts.utterance_finished.connect(_on_hear_tts_finished)
+			elif tts.has_signal("finished"):
+				if not tts.finished.is_connected(_on_hear_tts_finished):
+					tts.finished.connect(_on_hear_tts_finished)
+		else:
+			# Reset button if interrupted
+			if hear_button:
+				hear_button.text = "Hear"
+
+func _on_hear_tts_finished():
+	"""Reset hear button when TTS finishes"""
+	var hear_button = $MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/HearButton
+	if hear_button:
+		hear_button.text = "Hear"
 		
 		# Visual hint: briefly highlight the target animal name in the instruction
 		var instruction_label = $MainContainer/ContentContainer/InstructionPanel/InstructionContainer/TargetLabel
