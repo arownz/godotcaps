@@ -335,9 +335,9 @@ func calculate_word_similarity(word1, word2):
 # Handle TTS button press
 func _on_tts_button_pressed():
 	$ButtonClick.play()
-	var tts_button = get_node_or_null("ChallengePanel/VBoxContainer/WordContainer/TTSButton")
+	var tts_button = get_node_or_null("ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer/TTSButton")
 	if not tts_button:
-		tts_button = get_node_or_null("ChallengePanel/VBoxContainer/TTSButton")
+		tts_button = get_node_or_null("ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer/TTSButton")
 	
 	# Check if button is in Stop mode
 	if tts_button and tts_button.text == "Stop":
@@ -379,9 +379,9 @@ func _on_tts_speech_ended():
 	api_status_label.text = ""
 	
 	# Reset TTS button
-	var tts_button = get_node_or_null("ChallengePanel/VBoxContainer/WordContainer/TTSButton")
+	var tts_button = get_node_or_null("ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer/TTSButton")
 	if not tts_button:
-		tts_button = get_node_or_null("ChallengePanel/VBoxContainer/TTSButton")
+		tts_button = get_node_or_null("ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer/TTSButton")
 	
 	if tts_button:
 		tts_button.text = "Read"

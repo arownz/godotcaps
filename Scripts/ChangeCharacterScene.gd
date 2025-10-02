@@ -155,8 +155,16 @@ func _ready():
 	# Get reference to custom character stats popup
 	character_stats_popup = $CharacterStatsPopup
 	
-	# Connect close button for character stats popup
-	var close_button = character_stats_popup.get_node("PopupContainer/CenterContainer/StatsPanel/StatsContent/CloseButton")
+	# Connect close button for character stats popup (top-right X button)
+	var close_x_button = character_stats_popup.get_node_or_null("PopupContainer/CenterContainer/StatsPanel/CloseButton")
+	if close_x_button:
+		if not close_x_button.pressed.is_connected(_on_character_stats_popup_close):
+			close_x_button.pressed.connect(_on_character_stats_popup_close)
+		if not close_x_button.mouse_entered.is_connected(_on_close_button_hover):
+			close_x_button.mouse_entered.connect(_on_close_button_hover)
+	
+	# Connect close button for character stats popup (bottom close button if exists)
+	var close_button = character_stats_popup.get_node_or_null("PopupContainer/CenterContainer/StatsPanel/StatsContent/CloseButton")
 	if close_button:
 		close_button.pressed.connect(_on_character_stats_popup_close)
 	
@@ -559,6 +567,9 @@ func _on_select_button_hover_entered():
 	$ButtonHover.play()
 
 func _on_character_texture_hover():
+	$ButtonHover.play()
+
+func _on_close_button_hover():
 	$ButtonHover.play()
 
 func _on_back_button_pressed():

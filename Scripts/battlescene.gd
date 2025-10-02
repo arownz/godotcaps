@@ -705,25 +705,20 @@ func _show_energy_notification(current_energy: int, max_energy: int):
 	var notification_popup = get_node_or_null("NotificationPopUp")
 	if notification_popup:
 		var title = "Not Enough Energy"
-		var message = ""
-		
-		# Calculate energy recovery time information
-		var energy_recovery_info = await _get_energy_recovery_info()
-		var recovery_text = ""
-		if energy_recovery_info.has("next_energy_time"):
-			recovery_text = "\n\nNext energy in: " + energy_recovery_info["next_energy_time"]
-		else:
-			recovery_text = "\n\nEnergy recovers every 4 minutes."
+		var base_message = ""
 		
 		if current_energy == 0:
-			message = "You have no energy remaining (" + str(current_energy) + "/" + str(max_energy) + ").\n\nEnergy is required to engage in battles. Wait for energy to recover over time." + recovery_text
+			base_message = "You have no energy remaining (" + str(current_energy) + "/" + str(max_energy) + ").\n\nEnergy is required to engage in battles. Wait for energy to recover over time."
 		else:
-			message = "You need 2 energy to start a battle, but you only have " + str(current_energy) + " energy remaining.\n\nWait for battle energy to recover over time." + recovery_text
+			base_message = "You need 2 energy to start a battle, but you only have " + str(current_energy) + " energy remaining.\n\nWait for battle energy to recover over time."
 		
 		var button_text = "OK"
 		
-		# Show the notification
-		notification_popup.show_notification(title, message, button_text)
+		# Show notification with initial message
+		notification_popup.show_notification(title, base_message + "\n\nNext energy in: Calculating...", button_text)
+		
+		# Start live countdown timer update
+		_start_energy_countdown_for_battle_notification(notification_popup, current_energy, base_message)
 	else:
 		print("Error: NotificationPopUp not found in scene tree")
 
@@ -737,20 +732,27 @@ func _get_energy_recovery_info() -> Dictionary:
 	var user_id = Firebase.Auth.auth.localid
 	var collection = Firebase.Firestore.collection("dyslexia_users")
 	
-	# Get user document (don't use await here to avoid blocking)
+	# Get user document - FETCH FRESH DATA FROM FIRESTORE
 	var user_doc = await collection.get_doc(user_id)
 	if user_doc and !("error" in user_doc.keys() and user_doc.get_value("error")):
+		# Get stats.player data (matching MainMenu.gd pattern)
 		var stats_data = user_doc.get_value("stats")
 		if stats_data != null and "player" in stats_data:
 			var player_data = stats_data["player"]
+			
+			# Get current energy and last update from Firestore
 			var current_energy = player_data.get("energy", 0)
 			var max_energy = 20
-			var energy_recovery_rate = 240 # 4 minutes in seconds
+			var energy_recovery_rate = 300 # 5 minutes in seconds
 			
 			# If at max energy, no recovery needed
 			if current_energy >= max_energy:
+				result["current_energy"] = current_energy
+				result["max_energy"] = max_energy
+				result["at_max"] = true
 				return result
 			
+			# Calculate time until next energy based on FRESH Firestore data
 			var current_time = Time.get_unix_time_from_system()
 			var last_update = player_data.get("last_energy_update", current_time)
 			var time_since_last_recovery = current_time - last_update
@@ -762,8 +764,62 @@ func _get_energy_recovery_info() -> Dictionary:
 			result["next_energy_time"] = "%d:%02d" % [minutes, seconds]
 			result["current_energy"] = current_energy
 			result["max_energy"] = max_energy
+			result["time_until_next"] = time_until_next_energy
+			result["last_update"] = last_update
+			result["recovery_rate"] = energy_recovery_rate
+			result["at_max"] = false
+			
+			print("BattleScene: Energy info from Firestore - Current: ", current_energy, " Time until next: ", result["next_energy_time"])
 	
-	return result # ===== Stage Timer Functions (Live Timer System) =====
+	return result
+
+func _start_energy_countdown_for_battle_notification(notification_popup: CanvasLayer, current_energy: int, base_message: String):
+	"""Start live countdown timer for battle energy notification popup"""
+	if not notification_popup:
+		return
+	
+	# Create countdown timer
+	var countdown_timer = Timer.new()
+	countdown_timer.wait_time = 1.0 # Update every second
+	countdown_timer.autostart = true
+	notification_popup.add_child(countdown_timer)
+	
+	# Update function that will run every second
+	var update_countdown = func():
+		if not is_instance_valid(notification_popup) or not notification_popup.visible:
+			countdown_timer.queue_free()
+			return
+		
+		var energy_info = await _get_energy_recovery_info()
+		var recovery_text = "\n\nNext energy in: Calculating..."
+		
+		if energy_info.has("time_until_next"):
+			var time_until_next = energy_info["time_until_next"]
+			var minutes = int(time_until_next / 60)
+			var seconds = int(time_until_next) % 60
+			recovery_text = "\n\nNext energy in: %d:%02d" % [minutes, seconds]
+			
+			# Check if energy has been recovered
+			if energy_info.has("current_energy") and energy_info["current_energy"] > current_energy:
+				recovery_text = "\n\nEnergy recovered! Check your energy status."
+		
+		# Update notification message
+		var updated_message = base_message + recovery_text
+		var message_label = notification_popup.get_node_or_null("PopupContainer/CenterContainer/PopupBackground/VBoxContainer/MessageLabel")
+		
+		if message_label:
+			message_label.text = updated_message
+	
+	# Connect timer to update function
+	countdown_timer.timeout.connect(update_countdown)
+	
+	# Clean up timer when notification is closed
+	var cleanup_on_close = func():
+		if is_instance_valid(countdown_timer):
+			countdown_timer.queue_free()
+	
+	if notification_popup.has_signal("closed"):
+		notification_popup.closed.connect(cleanup_on_close, CONNECT_ONE_SHOT) # ===== Stage Timer Functions (Live Timer System) =====
 func _start_stage_timer():
 	print("BattleScene: Starting stage timer for Dungeon ", dungeon_manager.dungeon_num, " Stage ", dungeon_manager.stage_num)
 	

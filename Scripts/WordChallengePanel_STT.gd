@@ -1654,9 +1654,9 @@ func levenshtein_distance(s1, s2):
 
 func _on_tts_button_pressed():
 	# Check if button is disabled (STT is active)
-	var tts_button = get_node_or_null("ChallengePanel/VBoxContainer/WordContainer/TTSButton")
+	var tts_button = get_node_or_null("ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer/TTSButton")
 	if not tts_button:
-		tts_button = get_node_or_null("ChallengePanel/VBoxContainer/TTSButton")
+		tts_button = get_node_or_null("ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer/TTSButton")
 	
 	if tts_button and tts_button.disabled:
 		print("WordChallengePanel_STT: TTS button clicked but disabled (STT active)")
@@ -1721,9 +1721,9 @@ func _on_tts_button_pressed():
 
 func _on_tts_finished():
 	"""Reset TTS button when TTS finishes"""
-	var tts_button = get_node_or_null("ChallengePanel/VBoxContainer/WordContainer/TTSButton")
+	var tts_button = get_node_or_null("ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer/TTSButton")
 	if not tts_button:
-		tts_button = get_node_or_null("ChallengePanel/VBoxContainer/TTSButton")
+		tts_button = get_node_or_null("ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer/TTSButton")
 	
 	if tts_button:
 		tts_button.text = "Read"
@@ -1865,10 +1865,10 @@ func _on_settings_quit_requested():
 # Update TTS button state based on STT activity
 func _update_tts_button_state():
 	"""Update TTS button state - disable when STT is active, enable when inactive"""
-	var tts_button = get_node_or_null("ChallengePanel/VBoxContainer/WordContainer/TTSButton")
+	var tts_button = get_node_or_null("ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer/TTSButton")
 	if not tts_button:
 		# Try alternative path
-		tts_button = get_node_or_null("ChallengePanel/VBoxContainer/TTSButton")
+		tts_button = get_node_or_null("ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer/TTSButton")
 	
 	if tts_button:
 		if recognition_active:

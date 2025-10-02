@@ -84,8 +84,8 @@ func close_notification():
 	
 	emit_signal("closed")
 	
-	# Remove from tree to prevent duplicates and memory leaks
-	call_deferred("queue_free")
+	# Don't queue_free - keep popup alive for reuse
+	# The parent scene will manage the popup's lifecycle
 
 func show_notification(title = default_title, message = default_message, button_text = default_button_text):
 	# Add null checks before setting text

@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://beu8uw5oqkvxd"]
+[gd_scene load_steps=22 format=3 uid="uid://beu8uw5oqkvxd"]
 
 [ext_resource type="Script" uid="uid://liwnmmbqa706" path="res://Scripts/ChangeCharacterScene.gd" id="1_rnq7s"]
 [ext_resource type="Texture2D" uid="uid://n08ji1i2co16" path="res://gui/Update/UI/small button.png" id="2_6nemp"]
@@ -17,6 +17,8 @@
 [ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="14_ccovg"]
 [ext_resource type="Texture2D" uid="uid://bedyjdu5rblv8" path="res://gui/Update/UI/ui (1).png" id="14_ns5we"]
 [ext_resource type="FontFile" uid="uid://bgln2wf0h6j6e" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.woff" id="15_solvw"]
+[ext_resource type="Texture2D" uid="uid://cmvfv5h4u7j6e" path="res://gui/Update/icons/close icon.png" id="16_close"]
+[ext_resource type="Texture2D" uid="uid://c5cpf575pv2ee" path="res://gui/Update/icons/close icon_hover.png" id="17_close_hover"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bu21u"]
 
@@ -366,6 +368,17 @@ grow_vertical = 2
 custom_minimum_size = Vector2(600, 630)
 layout_mode = 2
 texture = ExtResource("14_ns5we")
+
+[node name="CloseButton" type="TextureButton" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel"]
+layout_mode = 0
+offset_left = 564.0
+offset_top = -14.0
+offset_right = 573.0
+offset_bottom = -5.0
+scale = Vector2(5.594796, 5.594796)
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("16_close")
+texture_hover = ExtResource("17_close_hover")
 
 [node name="StatsContent" type="VBoxContainer" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel"]
 layout_mode = 1

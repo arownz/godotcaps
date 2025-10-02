@@ -560,36 +560,36 @@ func _on_engage_button_pressed():
 func _show_energy_confirmation_notification():
 	print("SettingScene: Showing energy confirmation notification")
 	
-	# Check if there's already a notification popup to prevent duplicates
-	var existing_popup = get_tree().root.get_node_or_null("NotificationPopUp")
-	if existing_popup:
-		print("SettingScene: Notification popup already exists, not creating another one")
-		return
-	
-	var notification_popup_scene = load("res://Scenes/NotificationPopUp.tscn")
-	if notification_popup_scene:
-		var notification_popup = notification_popup_scene.instantiate()
-		
-		# Add to root with high layer to ensure it appears on top of everything
-		get_tree().root.add_child(notification_popup)
-		notification_popup.layer = 200 # Higher than settings popup layer (100)
-
-		var title = "Engage Battle"
-		var message = "Starting this battle will consume " + str(energy_cost) + " energy. Are you ready to engage?"
-		var button_text = "Engage"
-		
-		# Show the confirmation notification
-		notification_popup.show_notification(title, message, button_text)
-		
-		# Connect to the notification's button_pressed signal (only when user actually clicks engage)
-		if notification_popup.has_signal("button_pressed"):
-			notification_popup.button_pressed.connect(_on_energy_confirmation_engage_clicked, CONNECT_ONE_SHOT)
-		
-		# Also connect to closed signal to reset button state if notification is just closed
-		if notification_popup.has_signal("closed"):
-			notification_popup.closed.connect(_on_energy_confirmation_popup_closed, CONNECT_ONE_SHOT)
+	# Use instance-based popup management instead of singleton pattern
+	var notification_popup = get_node_or_null("EnergyConfirmationPopup")
+	if not notification_popup:
+		print("SettingScene: Creating new energy confirmation popup")
+		var notification_popup_scene = load("res://Scenes/NotificationPopUp.tscn")
+		if notification_popup_scene:
+			notification_popup = notification_popup_scene.instantiate()
+			notification_popup.name = "EnergyConfirmationPopup"
+			add_child(notification_popup)
+			notification_popup.layer = 200 # Higher than settings popup layer (100)
+			
+			# Connect signals only once when creating
+			if notification_popup.has_signal("button_pressed"):
+				notification_popup.button_pressed.connect(_on_energy_confirmation_engage_clicked)
+			if notification_popup.has_signal("closed"):
+				notification_popup.closed.connect(_on_energy_confirmation_popup_closed)
+			
+			print("SettingScene: Energy confirmation popup created and connected")
+		else:
+			print("Error: Could not load NotificationPopUp scene")
+			return
 	else:
-		print("Error: Could not load NotificationPopUp scene")
+		print("SettingScene: Reusing existing energy confirmation popup")
+
+	var title = "Engage Battle"
+	var message = "Starting this battle will consume " + str(energy_cost) + " energy. Are you ready to engage?"
+	var button_text = "Engage"
+	
+	# Show the confirmation notification
+	notification_popup.show_notification(title, message, button_text)
 
 # NEW: Handle when user actually clicks the engage button in the notification
 func _on_energy_confirmation_engage_clicked():
@@ -652,28 +652,38 @@ func _check_energy_and_show_notification() -> bool:
 
 func _show_energy_notification(current_energy: int, max_energy: int):
 	print("SettingScene: Showing energy notification: " + str(current_energy) + "/" + str(max_energy))
-	var notification_popup_scene = load("res://Scenes/NotificationPopUp.tscn")
-	if notification_popup_scene:
-		var notification_popup = notification_popup_scene.instantiate()
-		
-		# Add to root with high layer to ensure it appears on top of everything
-		get_tree().root.add_child(notification_popup)
-		notification_popup.layer = 200 # Higher than settings popup layer (100)
-		
-		var title = "Not Enough Energy"
-		var message = ""
-		var energy_recovery_info = await _get_energy_recovery_info()
-		var recovery_text = ""
-		if energy_recovery_info.has("next_energy_time"):
-			recovery_text = "\n\nNext energy in: " + energy_recovery_info["next_energy_time"]
-		if current_energy == 0:
-			message = "You have no energy remaining (" + str(current_energy) + "/" + str(max_energy) + ").\n\nEnergy is required to engage in battles. Wait for energy to recover over time." + recovery_text
+	
+	# Use instance-based popup management
+	var notification_popup = get_node_or_null("EnergyNotificationPopup")
+	if not notification_popup:
+		print("SettingScene: Creating new energy notification popup")
+		var notification_popup_scene = load("res://Scenes/NotificationPopUp.tscn")
+		if notification_popup_scene:
+			notification_popup = notification_popup_scene.instantiate()
+			notification_popup.name = "EnergyNotificationPopup"
+			add_child(notification_popup)
+			notification_popup.layer = 200 # Higher than settings popup layer (100)
+			print("SettingScene: Energy notification popup created")
 		else:
-			message = "You need " + str(energy_cost) + " energy to start a battle, but you only have " + str(current_energy) + ".\n\nWait for energy to recover over time." + recovery_text
-		var button_text = "OK"
-		notification_popup.show_notification(title, message, button_text)
+			print("Error: Could not load NotificationPopUp scene")
+			return
 	else:
-		print("Error: Could not load NotificationPopUp scene")
+		print("SettingScene: Reusing existing energy notification popup")
+	
+	var title = "Not Enough Energy"
+	var base_message = ""
+	if current_energy == 0:
+		base_message = "You have no energy remaining (" + str(current_energy) + "/" + str(max_energy) + ").\n\nEnergy is required to engage in battles. Wait for energy to recover over time."
+	else:
+		base_message = "You need " + str(energy_cost) + " energy to start a battle, but you only have " + str(current_energy) + ".\n\nWait for energy to recover over time."
+	
+	var button_text = "OK"
+	
+	# Show notification with initial message
+	notification_popup.show_notification(title, base_message + "\n\nNext energy in: Calculating...", button_text)
+	
+	# Start live countdown timer update
+	_start_energy_countdown_for_notification(notification_popup, current_energy, max_energy, base_message)
 
 func _get_energy_recovery_info() -> Dictionary:
 	var result: Dictionary = {}
@@ -681,24 +691,93 @@ func _get_energy_recovery_info() -> Dictionary:
 		return result
 	var user_id = Firebase.Auth.auth.localid
 	var collection = Firebase.Firestore.collection("dyslexia_users")
+	
+	# FETCH FRESH DATA FROM FIRESTORE (matching MainMenu.gd pattern)
 	var user_doc = await collection.get_doc(user_id)
 	if user_doc and !("error" in user_doc.keys() and user_doc.get_value("error")):
+		# Get stats.player data
 		var stats_data = user_doc.get_value("stats")
 		if stats_data != null and "player" in stats_data:
 			var player_data = stats_data["player"]
+			
+			# Get current energy and last update from Firestore
 			var current_energy = player_data.get("energy", 0)
 			var max_energy = 20
-			var energy_recovery_rate = 240.0
+			var energy_recovery_rate = 300 # 5 minutes in seconds
+			
+			# If at max energy, no recovery needed
 			if current_energy >= max_energy:
+				result["current_energy"] = current_energy
+				result["max_energy"] = max_energy
+				result["at_max"] = true
 				return result
+			
+			# Calculate time until next energy based on FRESH Firestore data
 			var current_time = Time.get_unix_time_from_system()
 			var last_update = player_data.get("last_energy_update", current_time)
 			var time_since_last_recovery = current_time - last_update
 			var time_until_next_energy = energy_recovery_rate - fmod(time_since_last_recovery, energy_recovery_rate)
+			
 			var minutes = int(time_until_next_energy / 60)
 			var seconds = int(time_until_next_energy) % 60
+			
 			result["next_energy_time"] = "%d:%02d" % [minutes, seconds]
+			result["current_energy"] = current_energy
+			result["time_until_next"] = time_until_next_energy
+			result["last_update"] = last_update
+			result["recovery_rate"] = energy_recovery_rate
+			result["at_max"] = false
+			
+			print("SettingScene: Energy info from Firestore - Current: ", current_energy, " Time until next: ", result["next_energy_time"])
 	return result
+
+func _start_energy_countdown_for_notification(notification_popup: CanvasLayer, current_energy: int, _max_energy: int, base_message: String):
+	"""Start live countdown timer for energy notification popup"""
+	if not notification_popup:
+		return
+	
+	# Create countdown timer
+	var countdown_timer = Timer.new()
+	countdown_timer.wait_time = 1.0 # Update every second
+	countdown_timer.autostart = true
+	notification_popup.add_child(countdown_timer)
+	
+	# Update function that will run every second
+	var update_countdown = func():
+		if not is_instance_valid(notification_popup) or not notification_popup.visible:
+			countdown_timer.queue_free()
+			return
+		
+		var energy_info = await _get_energy_recovery_info()
+		var recovery_text = "\n\nNext energy in: Calculating..."
+		
+		if energy_info.has("time_until_next"):
+			var time_until_next = energy_info["time_until_next"]
+			var minutes = int(time_until_next / 60)
+			var seconds = int(time_until_next) % 60
+			recovery_text = "\n\nNext energy in: %d:%02d" % [minutes, seconds]
+			
+			# Check if energy has been recovered
+			if energy_info.has("current_energy") and energy_info["current_energy"] > current_energy:
+				recovery_text = "\n\nEnergy recovered! Check your energy status."
+		
+		# Update notification message
+		var updated_message = base_message + recovery_text
+		var message_label = notification_popup.get_node_or_null("PopupContainer/CenterContainer/PopupBackground/VBoxContainer/MessageLabel")
+		
+		if message_label:
+			message_label.text = updated_message
+	
+	# Connect timer to update function
+	countdown_timer.timeout.connect(update_countdown)
+	
+	# Clean up timer when notification is closed
+	var cleanup_on_close = func():
+		if is_instance_valid(countdown_timer):
+			countdown_timer.queue_free()
+	
+	if notification_popup.has_signal("closed"):
+		notification_popup.closed.connect(cleanup_on_close, CONNECT_ONE_SHOT)
 
 # New function to control engage button visibility from battle scene
 func set_engage_button_visibility(button_visible: bool):
