@@ -64,9 +64,7 @@ func _ready():
 	if not api_status_label:
 		print("ERROR: Could not find APIStatusLabel node")
 		return
-	
-	# Note: BonusDamageCalculator is now a static class, no instance needed
-	
+		
 	# Enhanced fade-in animation matching SettingScene style
 	modulate.a = 0.0
 	scale = Vector2(0.8, 0.8)
@@ -130,6 +128,7 @@ func _ready():
 	# Initialize UI state - Always enable button for permission requests
 	speak_button.disabled = false
 	speak_button.text = "Speak"
+	_update_speak_button_color() # Set initial color
 	permission_status_label.text = "Click Speak to begin"
 	permission_status_label.modulate = Color.WHITE
 	status_label.text = "Say the word shown above when ready"
@@ -386,6 +385,7 @@ func update_mic_permission_state(state):
 		status_label.text = "Ready to record - Click Speak"
 		speak_button.disabled = false
 		speak_button.text = "Speak"
+		_update_speak_button_color()
 	elif state == "denied":
 		# Permission denied, but keep button enabled for retry
 		mic_permission_granted = false
@@ -504,9 +504,6 @@ func _initialize_web_audio_environment():
 							return _engine;
 						} else if (window.Godot && window.Godot.engine) {
 							return window.Godot.engine;
-						} else if (window.unityInstance && window.unityInstance.SendMessage) {
-							// This is actually for Unity, but some people confuse the two
-							return null;
 						}
 						
 						// More aggressive search - look for any object with a 'call' method
@@ -604,6 +601,7 @@ func _on_speak_button_pressed():
 		print("Stopping current recognition...")
 		# Stop current recognition and process the final result
 		speak_button.text = "Processing..."
+		_update_speak_button_color()
 		speak_button.disabled = true
 		status_label.text = "Processing what you said..."
 		live_transcription_enabled = false
@@ -680,6 +678,7 @@ func _on_speak_button_pressed():
 		
 		# Start new recognition session
 		speak_button.text = "Requesting..."
+		_update_speak_button_color()
 		speak_button.disabled = false
 		status_label.text = "Please allow microphone access..."
 		
@@ -692,6 +691,7 @@ func _on_speak_button_pressed():
 			recognition_active = true
 			live_transcription_enabled = true
 			speak_button.text = "Stop"
+			_update_speak_button_color()
 			speak_button.disabled = false
 			status_label.text = "Listening... Say the word clearly, then click Stop Recording"
 			
@@ -713,8 +713,63 @@ func _on_speak_button_pressed():
 			permission_status_label.modulate = Color.RED
 
 # Start live speech recognition using Web Speech API
+# ENHANCED: Force complete reinitialization of speech recognition for better sensitivity
+func _force_reinitialize_speech_recognition():
+	"""Completely reinitialize speech recognition to fix sensitivity issues after first use"""
+	print("WordChallengePanel_STT: Force reinitializing speech recognition...")
+	
+	if JavaScriptBridge.has_method("eval"):
+		var cleanup_js = """
+			(function() {
+				console.log('Force cleaning up speech recognition...');
+				
+				// Complete cleanup of existing recognition
+				if (window.currentRecognition) {
+					try {
+						window.currentRecognition.abort();
+						window.currentRecognition.stop();
+						window.currentRecognition = null;
+						console.log('Cleaned up old recognition object');
+					} catch (e) {
+						console.log('Error cleaning up recognition:', e);
+					}
+				}
+				
+				// Clean up global speech state
+				if (window.godot_speech) {
+					window.godot_speech.recognition = null;
+					window.godot_speech.isListening = false;
+					window.godot_speech.engineReady = false;
+				}
+				
+				// Force garbage collection if available
+				if (window.gc) window.gc();
+				
+				// Clear stored results
+				window.latestFinalResult = null;
+				window.latestInterimResult = null;
+				
+				console.log('Speech recognition force cleanup completed');
+				return true;
+			})();
+		"""
+		JavaScriptBridge.eval(cleanup_js)
+		
+		# Wait a moment for cleanup
+		await get_tree().create_timer(0.1).timeout
+		
+		# Reinitialize the web environment
+		_initialize_web_audio_environment()
+		
+		print("WordChallengePanel_STT: Speech recognition reinitialization completed")
+
 func _start_live_recognition() -> bool:
 	print("Starting live speech recognition...")
+	
+	# ENHANCED: Force reinitialize if recognition was used before (improves sensitivity)
+	if recognition_active or live_transcription_enabled:
+		print("WordChallengePanel_STT: Previous recognition detected, force reinitializing...")
+		await _force_reinitialize_speech_recognition()
 	
 	if JavaScriptBridge.has_method("eval"):
 		var js_code = """
@@ -1864,6 +1919,15 @@ func _on_settings_quit_requested():
 		print("WordChallengePanel_STT: Could not find BattleScene, canceling challenge instead")
 		# Fallback to canceling the challenge
 		_fade_out_and_signal("challenge_cancelled")
+
+# Helper function to update speak button text (color modulation removed as button uses green button.png)
+func _update_speak_button_color():
+	if not speak_button:
+		return
+	
+	var button_text = speak_button.text
+	# Only update button text, no color modulation since button uses green button.png texture
+	print("WordChallengePanel_STT: Speak button state: ", button_text)
 
 # Update TTS button state based on STT activity
 func _update_tts_button_state():

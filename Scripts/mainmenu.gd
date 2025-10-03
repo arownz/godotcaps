@@ -67,14 +67,20 @@ func _ready():
     # Setup real-time listener for user document changes
     _setup_firestore_listener()
     
-    # Wait one frame to ensure UI is fully loaded before updating character animation
-    await get_tree().process_frame
+    # Wait one frame to ensure UI is fully loaded before updating character animation - with null check
+    if is_inside_tree() and get_tree():
+        await get_tree().process_frame
     
     # Update character animation AFTER data is loaded and UI is ready
     update_character_animation(user_data)
 
 # Setup default character animation to play idle - IMPROVED for stability
 func _setup_default_character_animation():
+    # Ensure the node is still in the tree and valid
+    if not is_inside_tree() or not get_tree():
+        print("MainMenu: Node not in tree, skipping default character animation setup")
+        return
+        
     var character_area = $CharacterArea
     if character_area:
         var default_animation = character_area.get_node_or_null("DefaultPlayerAnimation")
@@ -688,8 +694,9 @@ func _on_profile_popup_closed():
     # Force reload user data from Firestore
     await load_user_data()
     
-    # Wait one frame to ensure UI is stable before updating animations
-    await get_tree().process_frame
+    # Wait one frame to ensure UI is stable before updating animations - with null check
+    if is_inside_tree() and get_tree():
+        await get_tree().process_frame
     
     # Update character animation after data reload (in case character was changed)
     update_character_animation(user_data)
@@ -785,30 +792,32 @@ func _notification(what):
         _cleanup_firestore_listener()
     elif what == NOTIFICATION_WM_WINDOW_FOCUS_IN:
         # Refresh user data when window gets focus (e.g., returning from battle or character selection)
-        print("MainMenu: Window focused, refreshing user data and character animation")
-        await load_user_data()
+        if is_inside_tree() and get_tree():
+            print("MainMenu: Window focused, refreshing user data and character animation")
+            await load_user_data()
     elif what == NOTIFICATION_VISIBILITY_CHANGED:
         # Refresh user data when scene becomes visible (including character animation)
-        if visible:
+        if visible and is_inside_tree() and get_tree():
             print("MainMenu: Scene became visible, refreshing user data and character animation")
             await load_user_data()
 
 # Public method to force refresh user data - can be called when returning from other scenes
 func refresh_user_data():
-    print("MainMenu: Force refreshing user data")
-    await load_user_data()
+    if is_inside_tree() and get_tree():
+        print("MainMenu: Force refreshing user data")
+        await load_user_data()
+    else:
+        print("MainMenu: Cannot refresh user data - node not in tree")
 
 # Helper function to get character animation path from character name
 func _get_character_animation_path(character_name: String) -> String:
     match character_name.to_lower():
         "lexia":
-            return "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
+            return "res://Sprites/Animation/Lexia_Animation.tscn"
         "ragna":
             return "res://Sprites/Animation/Ragna_Animation.tscn"
-        "magi":
-            return "res://Sprites/Animation/Magi_Animation.tscn"
         _:
-            return "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
+            return "res://Sprites/Animation/Lexia_Animation.tscn"
 
 # Override _exit_tree to ensure cleanup
 func _exit_tree():
@@ -817,6 +826,11 @@ func _exit_tree():
 
 # Update character animation based on selected character - FIXED to prevent loading corruption
 func update_character_animation(data):
+    # Ensure the node is still in the tree and valid
+    if not is_inside_tree() or not get_tree():
+        print("MainMenu: Node not in tree, skipping character animation update")
+        return
+        
     # Ensure we have valid data before proceeding
     if not data or data.is_empty():
         print("MainMenu: No data available for character animation, using default")
@@ -851,7 +865,8 @@ func update_character_animation(data):
                 
                 # Different animation needed, remove the old one safely
                 existing_animation.queue_free()
-                await get_tree().process_frame # Wait for node to be freed
+                if is_inside_tree() and get_tree():
+                    await get_tree().process_frame # Wait for node to be freed
             
             # Load the new character animation with error handling
             if ResourceLoader.exists(character_skin):
@@ -861,8 +876,9 @@ func update_character_animation(data):
                     new_animation.name = "DefaultPlayerAnimation"
                     character_area.add_child(new_animation)
                     
-                    # Wait one frame for the node to be fully added
-                    await get_tree().process_frame
+                    # Wait one frame for the node to be fully added - with null check
+                    if is_inside_tree() and get_tree():
+                        await get_tree().process_frame
                     
                     # Play idle animation - check for idle first, then battle_idle
                     var sprite = new_animation.get_node_or_null("AnimatedSprite2D")

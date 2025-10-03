@@ -39,13 +39,11 @@ func get_skin():
 func get_character_animation_path(character_name: String) -> String:
 	match character_name.to_lower():
 		"lexia", "default":
-			return "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
+			return "res://Sprites/Animation/Lexia_Animation.tscn.tscn"
 		"ragna":
 			return "res://Sprites/Animation/Ragna_Animation.tscn"
-		"magi":
-			return "res://Sprites/Animation/Magi_Animation.tscn"
 		_:
-			return "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
+			return "res://Sprites/Animation/Lexia_Animation.tscn.tscn"
 
 func get_base_health():
 	return base_health

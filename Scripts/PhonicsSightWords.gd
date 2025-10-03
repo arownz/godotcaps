@@ -7,7 +7,7 @@ var completion_celebration: CanvasLayer = null
 var module_progress = null # ModuleProgress.gd instance for centralized Firebase operations
 
 var current_target: String = "the"
-var sight_words := ["the", "and", "to", "a", "of", "in", "is", "you", "that", "it", "he", "was", "for", "on", "are", "as", "with", "his", "they", "I"]
+var sight_words := ["the", "and", "to", "will", "of", "in", "is", "you", "that", "it", "he", "was", "for", "on", "are", "as", "with", "his", "they", "at"]
 var word_index := 0
 var session_completed_words: Array = [] # Fallback local tracking when Firebase/module_progress unavailable
 var fade_trace_on_success := true

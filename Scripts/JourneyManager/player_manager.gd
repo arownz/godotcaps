@@ -22,11 +22,11 @@ var player_max_exp = 100 # Max exp needed for leveling up
 var player_level = 1
 var player_durability = 5
 var player_energy = 20
-var player_skin = "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
-var player_animation_scene = "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
+var player_skin = "res://Sprites/Animation/Lexia_Animation.tscn"
+var player_animation_scene = "res://Sprites/Animation/Lexia_Animation.tscn"
 
 # Available player skins
-var available_skins = ["lexia", "ragna", "magi"]
+var available_skins = ["lexia", "ragna"]
 var current_skin = "lexia"
 
 # Character bonuses (applied on top of base stats)
@@ -40,6 +40,11 @@ var character_bonuses = {
 var base_health = 100
 var base_damage = 10
 var base_durability = 5
+
+# Track last level up stat increases for UI display (dyslexia-friendly progression)
+var last_health_increase = 0
+var last_damage_increase = 0
+var last_durability_increase = 0
 
 # Player data loaded from Firebase
 var player_firebase_data = {}
@@ -64,13 +69,11 @@ func initialize(scene_ref):
 func _get_character_animation_path(character_name: String) -> String:
 	match character_name.to_lower():
 		"lexia":
-			return "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
+			return "res://Sprites/Animation/Lexia_Animation.tscn"
 		"ragna":
 			return "res://Sprites/Animation/Ragna_Animation.tscn"
-		"magi":
-			return "res://Sprites/Animation/Magi_Animation.tscn"
 		_:
-			return "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
+			return "res://Sprites/Animation/Lexia_Animation.tscn"
 
 func load_player_data_from_firebase():
 	if not Firebase.Auth.auth:
@@ -176,7 +179,7 @@ func _set_default_stats():
 	player_damage = 10
 	player_durability = 5
 	player_energy = 20
-	player_animation_scene = "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
+	player_animation_scene = "res://Sprites/Animation/Lexia_Animation.tscn"
 
 func _load_player_stats():
 	# This function is kept for backward compatibility
@@ -199,18 +202,14 @@ func _load_player_stats():
 		print("PlayerManager: No cached data available, stats should be loaded from Firebase directly")
 
 func _calculate_exp_for_level(level: int) -> int:
-	# Pokemon-like exp curve for dyslexic children - balanced progression
-	# Early levels are quick to build confidence, later levels require more commitment
-	if level <= 3:
-		return 80 # Quick early levels: 80 exp each (levels 1-3)
-	elif level <= 7:
-		return 100 # Steady progression: 100 exp each (levels 4-7)
-	elif level <= 12:
-		return 120 # Moderate increase: 120 exp each (levels 8-12)
-	elif level <= 18:
-		return 150 # Challenging but achievable: 150 exp each (levels 13-18)
+	# Flat 100 exp per level for dyslexic learners - consistent and predictable
+	# This creates steady progression that's easy to understand and track
+	# Since stat bonuses are now low, consistent exp requirements help motivation
+	if level == 1:
+		return 0 # Level 1 requires 0 exp
 	else:
-		return 180 # High level commitment: 180 exp each (levels 19+)
+		# Flat 100 exp needed for every level up - simple and dyslexia-friendly
+		return 100
 
 # Load player animation (fixed implementation)
 func load_player_animation():
@@ -253,7 +252,7 @@ func load_player_animation():
 
 func _load_default_animation():
 	# Load default player animation as fallback
-	var default_scene = load("res://Sprites/Animation/DefaultPlayer_Animation.tscn")
+	var default_scene = load("res://Sprites/Animation/Lexia_Animation.tscn")
 	if default_scene:
 		var player_sprite = default_scene.instantiate()
 		var player_position = battle_scene.get_node("MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer/PlayerPosition")
@@ -319,8 +318,8 @@ func perform_auto_attack():
 		var sprite = player_animation.get_node("AnimatedSprite2D")
 		sprite.play("auto_attack")
 		
-		# Play sword slash sound effect for auto attack
-		_play_attack_sound("sfx_autoattack")
+		# Play auto attack sound effect
+		_play_attack_sound("player_autoattack")
 		
 		# Wait for animation to finish, then return to idle
 		await sprite.animation_finished
@@ -343,7 +342,7 @@ func perform_counter_attack(damage_callback = null):
 		
 		# Wait for the strike moment, then play sound and trigger damage
 		await delay_timer.timeout
-		_play_attack_sound("sfx_counter")
+		_play_attack_sound("player_counter")
 		
 		# Call damage callback at the exact moment of impact
 		if damage_callback:
@@ -381,32 +380,43 @@ func add_experience(exp_amount):
 		player_exp -= max_exp
 		player_level += 1
 		
-		# Pokemon-like stat growth for dyslexic children - randomized but balanced
-		# Different growth patterns based on level ranges for variety
+		# Balanced stat growth for dyslexic children with STAT CAPS for balance
+		# Randomized increases with maximum limits to prevent overpowered progression
 		var health_increase = 0
 		var damage_increase = 0
 		var durability_increase = 0
 		
-		if player_level <= 5:
-			# Early game - steady growth to build confidence
-			health_increase = randi_range(12, 18) # 12-18 health
-			damage_increase = randi_range(4, 7) # 4-7 damage
-			durability_increase = randi_range(2, 4) # 2-4 durability
-		elif player_level <= 10:
-			# Mid-early game - moderate growth
-			health_increase = randi_range(10, 16) # 10-16 health
-			damage_increase = randi_range(3, 6) # 3-6 damage
-			durability_increase = randi_range(2, 5) # 2-5 durability
-		elif player_level <= 15:
-			# Mid game - balanced growth with occasional bursts
-			health_increase = randi_range(8, 15) # 8-15 health
-			damage_increase = randi_range(3, 7) # 3-7 damage
-			durability_increase = randi_range(1, 4) # 1-4 durability
+		# Define maximum base stats (before character bonuses are applied)
+		var max_base_health = 115 # From starting 100 + max 15
+		var max_base_damage = 18 # From starting 10 + max 8
+		var max_base_durability = 11 # From starting 5 + max 6
+		
+		# Calculate potential increases with stat caps
+		var health_room = max(0, max_base_health - base_health)
+		var damage_room = max(0, max_base_damage - base_damage)
+		var durability_room = max(0, max_base_durability - base_durability)
+		
+		# Determine actual increases based on available room and level ranges
+		if player_level <= 10:
+			# Early-mid game - moderate growth with caps
+			health_increase = min(health_room, randi_range(2, 4)) # 2-4 health (capped)
+			damage_increase = min(damage_room, randi_range(0, 1)) # 0-1 damage (capped)
+			durability_increase = min(durability_room, randi_range(0, 1)) # 0-1 durability (capped)
+		elif player_level <= 20:
+			# Mid-late game - minimal growth with caps
+			health_increase = min(health_room, randi_range(1, 3)) # 1-3 health (capped)
+			damage_increase = min(damage_room, randi_range(0, 1)) # 0-1 damage (capped)
+			durability_increase = min(durability_room, randi_range(0, 1)) # 0-1 durability (capped)
 		else:
-			# Late game - slower but meaningful growth
-			health_increase = randi_range(6, 12) # 6-12 health
-			damage_increase = randi_range(2, 5) # 2-5 damage
-			durability_increase = randi_range(1, 3) # 1-3 durability
+			# Late game - barely any growth with caps
+			health_increase = min(health_room, randi_range(1, 2)) # 1-2 health (capped)
+			damage_increase = min(damage_room, randi_range(0, 1)) # 0-1 damage (capped)
+			durability_increase = min(durability_room, randi_range(0, 1)) # 0-1 durability (capped)
+		
+		# Store stat increases for UI display
+		last_health_increase = health_increase
+		last_damage_increase = damage_increase
+		last_durability_increase = durability_increase
 		
 		# Apply stat increases to BASE stats (these are what level up affects)
 		base_health += health_increase
@@ -419,7 +429,10 @@ func add_experience(exp_amount):
 		player_damage = base_damage + character_bonuses["damage"]
 		player_durability = base_durability + character_bonuses["durability"]
 		
+		# Log stat increases with cap information
 		print("PlayerManager: Level up stat increases - Health: +", health_increase, ", Damage: +", damage_increase, ", Durability: +", durability_increase)
+		print("PlayerManager: Current base stats - Health: ", base_health, "/", max_base_health, ", Damage: ", base_damage, "/", max_base_damage, ", Durability: ", base_durability, "/", max_base_durability)
+		print("PlayerManager: Final stats (with character bonuses) - Health: ", player_max_health, ", Damage: ", player_damage, ", Durability: ", player_durability)
 		
 		# Recalculate max_exp for next level
 		max_exp = get_max_exp()
@@ -542,8 +555,8 @@ func get_max_health():
 
 # Calculate max experience needed for level up
 func get_max_exp():
-	# Simple 100 exp per level for easy leveling
-	return 100
+	# Use Pokemon-like scaling system
+	return _calculate_exp_for_level(player_level + 1)
 
 # Update health bar UI
 func update_health_bar():
@@ -569,7 +582,7 @@ func change_player_skin(skin_name):
 		
 		# Update skin path based on the skin name
 		if skin_name == "lexia":
-			player_skin = "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
+			player_skin = "res://Sprites/Animation/Lexia_Animation.tscn"
 		else:
 			# Try to load animation scene first, fall back to texture
 			var animation_path = "res://Sprites/Animation/" + skin_name + "_Animation.tscn"

@@ -169,8 +169,11 @@ func update_stage_info():
 		var stage_num = battle_scene.dungeon_manager.stage_num
 		var stage_type = "Boss" if stage_num == 5 else "Stage"
 		
-		# Use the actual stage number (1-5) for each dungeon
-		stage_info_label.text = "Dungeon " + str(dungeon_num) + " - " + stage_type + " " + str(stage_num)
+		# Enhanced stage info for dyslexic children with word length hint
+		var word_length = 3 + (dungeon_num - 1)
+		var word_hint = "[color=e8883b]" + str(word_length) + " - letter words [/color]"
+		
+		stage_info_label.text = "Dungeon " + str(dungeon_num) + " - " + stage_type + " " + str(stage_num) + " | " + word_hint
 		print("UIManager: Updated stage info to: ", stage_info_label.text)
     
 	_update_stage_progress()
@@ -198,10 +201,11 @@ func _update_stage_progress():
 	var dungeon_num = battle_scene.dungeon_manager.dungeon_num
 	var stage_num = battle_scene.dungeon_manager.stage_num # 1..5
 	
-	# CONSTRAINT: Standard icon size for all elements (44x44 pixels)
+	# CONSTRAINT: Standard icon size for all elements (44x44 pixels base, with scene scaling)
 	const ICON_SIZE = Vector2(44, 44)
-	const PROGRESS_BAR_Y = 17.0 # Y position to align with slots
-	const TOTAL_WIDTH = 440.0 # Total progress bar width
+	
+	# Note: Player positioning is now based on current enemy icon position
+	# Player icon will be positioned directly below the current stage's enemy icon
 	
 	# Set enemy head icons per dungeon: 1-4 dungeon-specific, 5 is treant boss
 	var enemy_tex: Texture2D = null
@@ -251,16 +255,36 @@ func _update_stage_progress():
 			
 			icon.visible = true # Always show all enemy icons
 	
-	# REDESIGNED: Player icon positioning with consistent sizing and proper spacing
-	# Calculate player position based on stage progress (0-4 for stages 1-5)
-	var progress_step = float(stage_num - 1) / float(slot_count - 1) # 0.0 to 1.0
-	var available_width = TOTAL_WIDTH - ICON_SIZE.x # Leave space for icon width
-	var player_x = progress_step * available_width
+	# REDESIGNED: Player icon positioning directly below current enemy head
+	# Position player icon below the current stage enemy icon (not progress-based)
+	var current_stage_index = stage_num - 1 # Convert to 0-based index
+	var current_slot = slots.get_child(current_stage_index)
+	var current_enemy_icon = current_slot.get_node_or_null("EnemyIcon") as TextureRect
 	
-	# CONSTRAINT: Force consistent player icon sizing
+	# Get the horizontal center position of the current enemy icon
+	var player_x = 0.0
+	if current_enemy_icon:
+		# Calculate the center X position of the current enemy icon relative to StageProgress
+		var slot_rect = (current_slot as Control).get_rect()
+		var enemy_icon_center_x = slot_rect.position.x + (slot_rect.size.x / 2.0)
+		player_x = enemy_icon_center_x
+	else:
+		# Fallback: use scene design position for stage 1
+		player_x = 17.0 + (ICON_SIZE.x / 2.0) # Center of original PlayerIcon position
+	
+	# Position player icon directly below the current enemy icon
+	# StageSlots: Y=11-58, so place PlayerIcon below at Y=64+ to avoid overlap  
+	var player_y = 60.0 # Position below enemy icons (StageSlots bottom is at Y=58, add margin)
+	
+	# Use offset positioning to match scene design exactly (not position property)
+	player_icon.offset_left = player_x - (ICON_SIZE.x / 2.0) # Center icon horizontally below enemy
+	player_icon.offset_top = player_y
+	player_icon.offset_right = player_icon.offset_left + ICON_SIZE.x
+	player_icon.offset_bottom = player_icon.offset_top + ICON_SIZE.y
+	
+	# CONSTRAINT: Force consistent player icon sizing to match scene design
 	player_icon.size = ICON_SIZE
 	player_icon.custom_minimum_size = ICON_SIZE
-	player_icon.position = Vector2(player_x, PROGRESS_BAR_Y)
 	player_icon.visible = true
 	player_icon.modulate = Color(1.0, 1.0, 1.0, 1.0) # Always fully visible
 	
@@ -269,7 +293,7 @@ func _update_stage_progress():
 	(player_icon as Control).z_index = -99
 	
 	print("UIManager: Stage progress updated - Stage: ", stage_num, "/", slot_count,
-		  " Player icon at: (", player_x, ", ", PROGRESS_BAR_Y, ") Size: ", ICON_SIZE)
+		  " Player icon positioned below current enemy at: (", player_icon.offset_left, ", ", player_icon.offset_top, ") Size: ", ICON_SIZE)
 	
 	# Update progress bar fill to reflect completion
 	if bar_bg and bar_fill:
@@ -338,8 +362,6 @@ func _update_player_icon_texture(player_icon: TextureRect):
 			var animation_path = battle_scene.player_manager.player_animation_scene
 			if "Ragna" in animation_path:
 				current_character = "ragna"
-			elif "Magi" in animation_path:
-				current_character = "magi"
 			else:
 				current_character = "lexia"
 	
@@ -350,24 +372,35 @@ func _update_player_icon_texture(player_icon: TextureRect):
 			head_texture = load("res://gui/Update/icons/lexia_head.png")
 		"ragna":
 			head_texture = load("res://gui/Update/icons/ragna_head.png")
-		"magi":
-			# TODO: Add magi_head.png when Magi character is fully implemented
-			# For now, fallback to lexia head
-			head_texture = load("res://gui/Update/icons/lexia_head.png")
-			print("UIManager: Magi head icon not yet available, using Lexia head as fallback")
 		_:
 			# Default fallback for any unknown character
 			head_texture = load("res://gui/Update/icons/lexia_head.png")
 			print("UIManager: Unknown character '" + str(current_character) + "', using Lexia head as fallback")
 	
-	# Apply the texture with constraint-based sizing
+	# Apply the texture with constraint-based sizing and character scaling
 	if head_texture:
 		player_icon.texture = head_texture
+		
+		# CHARACTER SCALING: Normalize different character head sizes
+		# Based on scene design: PlayerIcon scale=1.1035504, but different textures need normalization
+		var base_scale = 1.0
+		match current_character.to_lower():
+			"lexia":
+				# Lexia head is larger, needs slight scaling down for consistency
+				base_scale = 0.9
+			"ragna":
+				# Ragna head is smaller, use normal scale
+				base_scale = 1.1
+		
+		# Apply character-specific scaling while maintaining scene design scale
+		var scene_scale = 1.1035504 # From BattleScene.tscn PlayerIcon design
+		player_icon.scale = Vector2(base_scale * scene_scale, base_scale * scene_scale)
+		
 		# CONSTRAINT: Ensure consistent sizing regardless of original texture size
 		player_icon.size = STAGE_ICON_SIZE
 		player_icon.custom_minimum_size = STAGE_ICON_SIZE
 		player_icon.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
 		player_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		print("UIManager: Updated player icon to " + current_character + " head with constrained size: ", STAGE_ICON_SIZE)
+		print("UIManager: Updated player icon to " + current_character + " head with scale " + str(base_scale * scene_scale) + " and size: ", STAGE_ICON_SIZE)
 	else:
 		print("UIManager: ERROR - Failed to load head texture for character: " + current_character)

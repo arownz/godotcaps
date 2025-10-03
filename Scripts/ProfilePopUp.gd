@@ -852,13 +852,11 @@ func _update_character_bonuses(data):
 func _get_character_animation_path(character_name: String) -> String:
 	match character_name.to_lower():
 		"lexia":
-			return "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
+			return "res://Sprites/Animation/Lexia_Animation.tscn"
 		"ragna":
 			return "res://Sprites/Animation/Ragna_Animation.tscn"
-		"magi":
-			return "res://Sprites/Animation/Magi_Animation.tscn"
 		_:
-			return "res://Sprites/Animation/DefaultPlayer_Animation.tscn"
+			return "res://Sprites/Animation/Lexia_Animation.tscn"
 
 # Update character animation in profile popup
 func _update_character_animation(data):

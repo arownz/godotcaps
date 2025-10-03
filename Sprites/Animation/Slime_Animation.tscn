@@ -276,11 +276,11 @@ sprite_frames = SubResource("SpriteFrames_ovbb4")
 animation = &"hurt"
 autoplay = "auto_attack"
 
-[node name="slime_autoattack" type="AudioStreamPlayer" parent="."]
+[node name="enemy_autoattack" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("2_r1exb")
 
-[node name="slime_skill" type="AudioStreamPlayer" parent="."]
+[node name="enemy_skill" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_xluus")
 
-[node name="slime_hurt" type="AudioStreamPlayer" parent="."]
+[node name="enemy_hurt" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("2_r1exb")

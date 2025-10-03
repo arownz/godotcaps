@@ -618,7 +618,7 @@ func _apply_letter_ocr_correction(recognized: String, target: String) -> String:
 		"8": "B",
 		"3": "E",
 		"4": "A",
-		"7": "T",
+		"7": {"T": "F"},
 		"9": "P"
 		# Add more as needed
 	}
@@ -702,8 +702,7 @@ func _calculate_letter_similarity(letter1: String, letter2: String) -> float:
 	
 	# Dyslexic confusion pairs (common reversals - accept with high confidence)
 	var dyslexic_pairs = [
-		["B", "D"], ["P", "Q"],
-		["21", "12"], ["was", "saw"]
+		["B", "D"], ["P", "Q"], ["E", "F"], ["M", "W"], ["N", "Z"]
 	]
 	
 	# Check visual similarity

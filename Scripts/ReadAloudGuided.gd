@@ -594,9 +594,55 @@ func update_mic_permission_state(state):
 			speak_button.text = "Again"
 		print("ReadAloudGuided: Microphone permission: ", state)
 
+# ENHANCED: Force complete reinitialization of speech recognition for better sensitivity
+func _force_reinitialize_speech_recognition():
+	"""Completely reinitialize speech recognition to fix sensitivity issues after first use"""
+	print("ReadAloudGuided: Force reinitializing speech recognition...")
+	
+	if JavaScriptBridge.has_method("eval"):
+		var cleanup_js = """
+			(function() {
+				console.log('ReadAloudGuided: Force cleaning up speech recognition...');
+				
+				// Complete cleanup of existing recognition
+				if (window.guidedRecognition) {
+					try {
+						window.guidedRecognition.abort();
+						window.guidedRecognition.stop();
+						window.guidedRecognition = null;
+						console.log('Cleaned up guided recognition object');
+					} catch (e) {
+						console.log('Error cleaning up guided recognition:', e);
+					}
+				}
+				
+				// Reset all guided recognition state
+				window.guidedRecognitionActive = false;
+				window.guidedInterimResult = null;
+				window.guidedFinalResult = null;
+				
+				console.log('ReadAloudGuided: Speech recognition force cleanup completed');
+				return true;
+			})();
+		"""
+		JavaScriptBridge.eval(cleanup_js)
+		
+		# Wait a moment for cleanup
+		await get_tree().create_timer(0.1).timeout
+		
+		# Reinitialize the web environment
+		_initialize_web_audio_environment()
+		
+		print("ReadAloudGuided: Speech recognition reinitialization completed")
+
 func _start_speech_recognition():
 	"""Start speech recognition with enhanced conflict prevention"""
 	print("ReadAloudGuided: Starting speech recognition...")
+	
+	# ENHANCED: Force reinitialize if recognition was used before (improves sensitivity)
+	if recognition_active or stt_listening or stt_feedback_active:
+		print("ReadAloudGuided: Previous recognition detected, force reinitializing...")
+		await _force_reinitialize_speech_recognition()
 	
 	# Enhanced check: Force stop any existing recognition first
 	if OS.get_name() == "Web" and JavaScriptBridge.has_method("eval"):
@@ -830,12 +876,12 @@ func _process_speech_result(recognized_text: String, confidence: float):
 	var similarity = _calculate_enhanced_sentence_similarity(recognized_normalized, target_normalized)
 	print("ReadAloudGuided: Enhanced similarity score: ", similarity)
 	
-	# More forgiving thresholds for dyslexic learners
-	if similarity >= 0.8: # 80% similarity - excellent match
+	# Stricter thresholds for sentence-based reading to require more complete sentences
+	if similarity >= 0.9: # 90% similarity - excellent match (require nearly complete sentence)
 		_show_success_feedback(recognized_text)
-	elif similarity >= 0.65: # 65% similarity - good attempt, encourage
+	elif similarity >= 0.75: # 75% similarity - good attempt, but need more words
 		_show_encouragement_feedback(recognized_text, current_target_sentence)
-	elif similarity >= 0.4: # 40% similarity - partial match, guide them
+	elif similarity >= 0.5: # 50% similarity - partial match, guide them to complete sentence
 		_show_partial_match_feedback(recognized_text, current_target_sentence)
 	else:
 		_show_try_again_feedback(recognized_text, current_target_sentence)
@@ -1051,16 +1097,26 @@ func _calculate_enhanced_sentence_similarity(text1: String, text2: String) -> fl
 	
 	var total_similarity = exact_score + phonetic_score + partial_score
 	
-	# Bonus for length similarity (STT often gets word count right)
+	# STRICT: Require minimum word coverage for sentence-based reading
+	var words_spoken = words1.size()
+	var words_required = words2.size()
+	var word_coverage = float(words_spoken) / float(words_required)
+	
+	# If user spoke less than 70% of required words, penalize heavily
+	if word_coverage < 0.7:
+		total_similarity *= 0.3 # Heavy penalty for incomplete sentences
+		print("ReadAloudGuided: PENALTY applied - only spoke ", words_spoken, "/", words_required, " words (", word_coverage * 100, "%)")
+	
+	# Bonus for good length similarity
 	var length_bonus = 0.0
 	var length_ratio = min(words1.size(), words2.size()) / float(max(words1.size(), words2.size()))
-	if length_ratio >= 0.8: # 80% or more words present
-		length_bonus = 0.1 # 10% bonus
+	if length_ratio >= 0.85: # 85% or more words present
+		length_bonus = 0.05 # Small 5% bonus
 	
-	# Final forgiveness: if user got most of the content, be very generous
+	# Final score with stricter requirements for sentence completion
 	var final_score = min(total_similarity + length_bonus, 1.0)
 	
-	print("ReadAloudGuided: Similarity breakdown - Exact:", exact_matches, " Phonetic:", phonetic_matches, " Partial:", partial_matches, " Final:", final_score)
+	print("ReadAloudGuided: Similarity breakdown - Exact:", exact_matches, " Phonetic:", phonetic_matches, " Partial:", partial_matches, " Word coverage:", word_coverage * 100, "% Final:", final_score)
 	
 	return final_score
 
@@ -1143,7 +1199,7 @@ func _on_tts_finished():
 	if speak_button:
 		speak_button.disabled = false
 		speak_button.text = "Speak"
-		speak_button.modulate = Color.WHITE # Reset modulation
+		_update_speak_button_color() # Use centralized color management
 		
 	# Remove automatic audio prompt - user controls when to hear instructions
 	print("ReadAloudGuided: TTS finished, waiting for user to click Speak button")
@@ -1363,7 +1419,7 @@ func _check_passage_completion():
 
 func _show_encouragement_feedback(_recognized_text: String, target_text: String):
 	"""Show encouragement feedback for close matches"""
-	print("ReadAloudGuided: Close match, encouraging user to try again.")
+	print("ReadAloudGuided: Close match, encouraging user to complete the full sentence.")
 	
 	# Stop STT to reset state
 	if stt_listening:
@@ -1377,18 +1433,18 @@ func _show_encouragement_feedback(_recognized_text: String, target_text: String)
 	
 	var guide_display = $MainContainer/GuidePanel/MarginContainer/GuideContainer/GuideNotes
 	if guide_display:
-		guide_display.text = "Good try! Very close! Let's try again: \"" + target_text + "\""
+		guide_display.text = "Almost there! Please read the complete sentence: \"" + target_text + "\""
 		guide_display.modulate = Color.ORANGE
 	
 	# Shorter audio encouragement for faster feedback
 	if tts:
-		tts.speak("Close! Try again.")
+		tts.speak("Almost there! Please read the complete sentence.")
 		await get_tree().create_timer(0.3).timeout
 		tts.speak(target_text)
 
 func _show_partial_match_feedback(_recognized_text: String, target_text: String):
 	"""Show partial match feedback with extra help for dyslexic learners"""
-	print("ReadAloudGuided: Partial match, providing extra guidance.")
+	print("ReadAloudGuided: Partial match, providing extra guidance for complete sentence.")
 	
 	# Stop STT to reset state
 	if stt_listening:
@@ -1402,22 +1458,8 @@ func _show_partial_match_feedback(_recognized_text: String, target_text: String)
 	
 	var guide_display = $MainContainer/GuidePanel/MarginContainer/GuideContainer/GuideNotes
 	if guide_display:
-		guide_display.text = "Good effort! Let's break it down: \"" + target_text + "\""
-		guide_display.modulate = Color.CYAN
-	
-	# Break down sentence for dyslexic learners
-	if tts:
-		tts.speak("Let me help you!")
-		await get_tree().create_timer(0.5).timeout
-		
-		# Read slowly word by word (faster pace)
-		var words = target_text.split(" ")
-		for word in words:
-			tts.speak(word)
-			await get_tree().create_timer(0.4).timeout # Shorter pause between words
-		
-		await get_tree().create_timer(0.3).timeout
-		tts.speak("Now try the whole sentence: " + target_text)
+		guide_display.text = "Good start! Please read the complete sentence: \"" + target_text + "\""
+		guide_display.modulate = Color.YELLOW
 
 func _show_try_again_feedback(_recognized_text: String, target_text: String):
 	"""Show try again feedback with patient encouragement for dyslexic learners"""
@@ -1476,10 +1518,14 @@ func _update_progress_display(_progress_percentage: float = 0.0):
 	var progress_bar = $MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressBar
 	var progress_label = $MainContainer/HeaderPanel/HeaderContainer/ProgressContainer/ProgressLabel
 	
-	# Calculate passage-specific progress
+	# Calculate passage-specific progress with maximum cap to prevent exceeding 100%
 	var completed_count = completed_activities.size()
 	var total_passages = passages.size()
+	# Ensure completed count never exceeds total passages (prevents 125% issue)
+	completed_count = min(completed_count, total_passages)
 	var passages_percent = (float(completed_count) / float(total_passages)) * 100.0
+	
+	print("ReadAloudGuided: Progress calculation - Completed:", completed_count, " Total:", total_passages, " Percent:", passages_percent)
 	
 	if progress_label:
 		progress_label.text = str(completed_count) + "/" + str(total_passages) + " Passages"
@@ -2302,11 +2348,13 @@ func _complete_current_passage():
 		else:
 			print("ReadAloudGuided: Failed to save passage completion")
 	
-	# Update local completed activities
+	# Update local completed activities only if not already completed
 	var passage_id = "passage_" + str(current_passage_index)
 	if passage_id not in completed_activities:
 		completed_activities.append(passage_id)
 		print("ReadAloudGuided: Added passage to local completed activities: ", passage_id)
+	else:
+		print("ReadAloudGuided: Passage already completed, skipping duplicate: ", passage_id)
 	
 	# Update progress display immediately
 	_update_progress_display()
@@ -2461,6 +2509,16 @@ func _update_tts_button_state():
 			print("ReadAloudGuided: Read button enabled and restored (STT inactive)")
 	else:
 		print("ReadAloudGuided: Read button not found for state update")
+
+# Helper function to update speak button text (color modulation removed as button uses green button.png)
+func _update_speak_button_color():
+	var speak_button = $MainContainer/ControlsContainer/SpeakButton
+	if not speak_button:
+		return
+	
+	var button_text = speak_button.text
+	# Only update button text, no color modulation since button uses green button.png texture
+	print("ReadAloudGuided: Speak button state: ", button_text)
 
 func _on_celebration_closed():
 	"""Handle celebration popup being closed"""

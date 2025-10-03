@@ -12,38 +12,38 @@ static func calculate_bonus_damage(challenge_type: String, match_quality: String
 	if battle_scene and battle_scene.has_method("get") and battle_scene.player_manager:
 		var player_base_damage = battle_scene.player_manager.player_damage
 		
-		# Tiered bonus system based on match quality
+		# Balanced bonus system for dyslexic children - challenges should feel rewarding but not overpowering
 		var bonus_percent = 0.0
 		match match_quality:
 			"perfect":
-				# Perfect match - full bonus range
+				# Perfect match - meaningful but balanced bonus
 				match challenge_type:
 					"stt":
 						bonus_percent = randf_range(0.50, 0.75) # Higher for perfect STT
 					"whiteboard":
-						bonus_percent = randf_range(0.45, 0.70) # Higher for perfect whiteboard
+						bonus_percent = randf_range(0.50, 0.75) # Higher for perfect whiteboard
 					_:
-						bonus_percent = randf_range(0.45, 0.70)
+						bonus_percent = randf_range(0.50, 0.75)
 			"close":
-				# Close match - reduced but still meaningful bonus
+				# Close match - still rewarding to encourage effort
 				match challenge_type:
 					"stt":
-						bonus_percent = randf_range(0.25, 0.40) # Moderate for close STT
+						bonus_percent = randf_range(0.25, 0.35) # Small for close STT
 					"whiteboard":
-						bonus_percent = randf_range(0.20, 0.35) # Moderate for close whiteboard
+						bonus_percent = randf_range(0.25, 0.35) # Small for close whiteboard
 					_:
-						bonus_percent = randf_range(0.20, 0.35)
+						bonus_percent = randf_range(0.25, 0.35)
 			_:
-				# Default fallback
-				bonus_percent = randf_range(0.30, 0.60)
+				# Default fallback - balanced
+				bonus_percent = randf_range(0.15, 0.25)
 		
 		var bonus_amount = int(player_base_damage * bonus_percent)
 		
-		# Ensure minimum bonus and reasonable maximum based on match quality
+		# Ensure reasonable bonus ranges that don't trivialize combat
 		if match_quality == "perfect":
-			bonus_amount = max(5, min(bonus_amount, int(player_base_damage * 0.80)))
+			bonus_amount = max(3, min(bonus_amount, int(player_base_damage * 0.50))) # Max 50% bonus
 		else: # close match
-			bonus_amount = max(3, min(bonus_amount, int(player_base_damage * 0.50)))
+			bonus_amount = max(2, min(bonus_amount, int(player_base_damage * 0.25))) # Max 25% bonus
 		
 		print("BonusDamageCalculator: %s Challenge (%s match) - Base: %d, Bonus: %d, Total: %d" % [
 			challenge_type.capitalize(), match_quality, player_base_damage, bonus_amount, player_base_damage + bonus_amount

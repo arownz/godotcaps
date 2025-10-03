@@ -504,10 +504,10 @@ sprite_frames = SubResource("SpriteFrames_fdt5l")
 animation = &"auto_attack"
 autoplay = "idle"
 
-[node name="sfx_counter" type="AudioStreamPlayer" parent="."]
+[node name="player_counter" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("2_gumrm")
 
-[node name="sfx_autoattack" type="AudioStreamPlayer" parent="."]
+[node name="player_autoattack" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_l8wov")
 
 [node name="player_hurt" type="AudioStreamPlayer" parent="."]

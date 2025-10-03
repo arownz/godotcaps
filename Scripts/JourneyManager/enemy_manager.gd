@@ -101,9 +101,12 @@ func _find_audio_player_for_action(action: String) -> AudioStreamPlayer:
         return null
     var action_l := action.to_lower()
     var action_compact := action_l.replace("_", "") # handle auto_attack vs autoattack
+    
     # breadth-first search for AudioStreamPlayer nodes
     var queue: Array = [enemy_animation]
-    var candidates: Array[AudioStreamPlayer] = []
+    var exact_matches: Array[AudioStreamPlayer] = []
+    var partial_matches: Array[AudioStreamPlayer] = []
+    
     while queue.size() > 0:
         var node: Node = queue.pop_front()
         for child in node.get_children():
@@ -111,14 +114,22 @@ func _find_audio_player_for_action(action: String) -> AudioStreamPlayer:
             var asp := child as AudioStreamPlayer
             if asp:
                 var nm := asp.name.to_lower()
-                # Prefer exact suffix match: *_<action> or *<action_compact>
-                if nm.ends_with("_" + action_l) or nm.ends_with(action_compact) or nm == action_l:
-                    return asp
-                # keep loose candidates containing the action
-                if nm.find(action_compact) != -1 or nm.find(action_l) != -1:
-                    candidates.append(asp)
-    if candidates.size() > 0:
-        return candidates[0]
+                
+                # Check for exact matches first
+                if nm.ends_with("_" + action_l) or nm.ends_with("_" + action_compact) or nm == action_l or nm == action_compact:
+                    exact_matches.append(asp)
+                # Check for partial matches (contains the action)
+                elif nm.find(action_compact) != -1 or nm.find(action_l) != -1:
+                    partial_matches.append(asp)
+    
+    # Prioritize exact matches
+    if exact_matches.size() > 0:
+        print("EnemyManager: Found exact match for '" + action + "': " + exact_matches[0].name)
+        return exact_matches[0]
+    elif partial_matches.size() > 0:
+        print("EnemyManager: Found partial match for '" + action + "': " + partial_matches[0].name)
+        return partial_matches[0]
+    
     return null
 
 # Helper: play enemy SFX for a given action if an AudioStreamPlayer exists under the animation tree
@@ -128,7 +139,21 @@ func _play_enemy_sfx(action: String) -> void:
         player.play()
         print("EnemyManager: playing sfx -> ", player.name)
     else:
-        print("EnemyManager: sfx not found -> ", action)
+        # Try alternative patterns if first search fails
+        if action == "enemy_autoattack":
+            player = _find_audio_player_for_action("autoattack")
+        elif action == "enemy_hurt":
+            player = _find_audio_player_for_action("hurt")
+        elif action == "enemy_skill":
+            player = _find_audio_player_for_action("skill")
+        elif action == "enemy_dead":
+            player = _find_audio_player_for_action("dead")
+        
+        if player and player.has_method("play"):
+            player.play()
+            print("EnemyManager: playing sfx (alt pattern) -> ", player.name)
+        else:
+            print("EnemyManager: sfx not found -> ", action)
 
 func setup_enemy_sprite():
     print("EnemyManager: Setting up enemy sprite")
@@ -185,21 +210,32 @@ func _load_default_enemy_animation():
         print("EnemyManager: Could not load default enemy animation")
 
 func get_exp_reward():
-    # Calculate experience based on enemy type and stats
-    var base_exp = 10
-    var level_multiplier = (enemy_level / 5.0) + 1.0
-    var type_multiplier = 1.0
+    # Calculate experience based on enemy stats and scaling to match new player leveling system
+    var dungeon_num = battle_scene.dungeon_manager.dungeon_num
+    var stage_num = battle_scene.dungeon_manager.stage_num
     
+    # Base exp scales with dungeon and stage to match player leveling curve
+    var base_exp = 15 + (dungeon_num - 1) * 10 + (stage_num - 1) * 3 # 15-45 range
+    
+    # Stage multiplier for within-dungeon progression
+    var stage_multiplier = 1.0 + (stage_num - 1) * 0.15 # 1.0 to 1.6x
+    
+    # Enemy type multiplier
+    var type_multiplier = 1.0
     match enemy_type:
         "normal":
             type_multiplier = 1.0
         "boss":
-            type_multiplier = 3.0
+            type_multiplier = 2.5 # Bosses give significant exp but not overwhelming
         _:
             type_multiplier = 1.0
     
-    var total_exp = int(base_exp * level_multiplier * type_multiplier)
-    return max(total_exp, 5) # Minimum 5 exp
+    # Calculate final exp reward
+    var total_exp = int(base_exp * stage_multiplier * type_multiplier)
+    
+    print("EnemyManager: Exp calculation - Base: ", base_exp, ", Stage mult: ", stage_multiplier, ", Type mult: ", type_multiplier, ", Total: ", total_exp)
+    
+    return max(total_exp, 8) # Minimum 8 exp to ensure progress
 
 # Get enemy level
 func get_enemy_level():
@@ -495,8 +531,8 @@ func take_damage(damage_amount):
         # Play death animation
         _play_enemy_anim("dead")
         # Also play hurt SFX on lethal hit (requested), then dead SFX if present
-        _play_enemy_sfx("hurt")
-        _play_enemy_sfx("dead")
+        _play_enemy_sfx("enemy_hurt")
+        _play_enemy_sfx("enemy_dead")
     else:
         # CRITICAL FIX: Only increase skill meter if battle is still active
         if is_battle_active:
@@ -507,7 +543,7 @@ func take_damage(damage_amount):
         
         # Play hurt animation
         _play_enemy_anim("hurt")
-        _play_enemy_sfx("hurt")
+        _play_enemy_sfx("enemy_hurt")
     
     return reduced_damage
 
@@ -554,9 +590,9 @@ func attack(player_manager):
     if enemy_skill_meter >= enemy_skill_threshold:
         return use_special_skill(player_manager)
     
-    # Play attack animation
+    # Play attack animation and SFX
     _play_enemy_anim("auto_attack")
-    _play_enemy_sfx("auto_attack")
+    _play_enemy_sfx("enemy_autoattack") # Use consistent enemy naming convention
     
     print("Enemy " + enemy_name + " attacking with damage: " + str(enemy_damage))
     
@@ -574,7 +610,7 @@ func use_special_skill(player_manager):
         return 0
     # Play skill animation
     _play_enemy_anim("skill")
-    _play_enemy_sfx("skill")
+    _play_enemy_sfx("enemy_skill")
     
     # Reset skill meter
     enemy_skill_meter = 0

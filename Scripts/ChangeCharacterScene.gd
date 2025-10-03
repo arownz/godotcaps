@@ -1,7 +1,7 @@
 extends Control
 
 # Constants
-const CHARACTER_COUNT = 3
+const CHARACTER_COUNT = 2 # Only Lexia and Ragna available for now, Magi coming in future update
 const ANIMATION_DURATION = 0.5
 const ANIMATION_EASE = Tween.EASE_OUT_IN
 const SCREEN_CENTER_X = 730.0 # Center of 1460px viewport
@@ -11,7 +11,7 @@ const CENTER_POSITION = 430.0 # X position for centered character (730 - 300 for
 # Character Properties
 var current_character = 0 # 0-based index (0 = Character 1)
 var unlocked_characters = 1 # How many characters are unlocked (at least 1)
-var character_names = ["Lexia", "Ragna", "Magi"]
+var character_names = ["Lexia", "Ragna"] # Magi will be added in future update
 var character_textures = {
 	"unlocked": [],
 	"locked": []
@@ -28,7 +28,7 @@ var character_data = {
 			"damage": 3, # Slight damage bonus
 			"durability": 2 # Slight durability bonus
 		},
-		"animation_scene": "res://Sprites/Animation/DefaultPlayer_Animation.tscn",
+		"animation_scene": "res://Sprites/Animation/Lexia_Animation.tscn",
 		"unlock_requirement": {"type": "lexia", "value": 0}, # Always unlocked
 		"description": "A dyslexic balanced sword master wielding a trusty sword."
 	},
@@ -44,19 +44,6 @@ var character_data = {
 		"animation_scene": "res://Sprites/Animation/Ragna_Animation.tscn",
 		"unlock_requirement": {"type": "dungeon_unlock", "value": 1}, # Unlocked when Dungeon 1 is completed (Dungeon 2 becomes available)
 		"description": "A dyslexic swift duelist with high damage but lower defenses."
-	},
-	"magi": {
-		"display_name": "Magi",
-		"weapon": "Buster",
-		"counter_name": "Ambatakam",
-		"stat_bonuses": {
-			"health": 20, # More health
-			"damage": - 5, # Less damage
-			"durability": 8 # Much more durability
-		},
-		"animation_scene": "res://Sprites/Animation/Magi_Animation.tscn", # To be created
-		"unlock_requirement": {"type": "dungeon_unlock", "value": 2}, # Unlocked when Dungeon 2 is completed (Dungeon 3 becomes available)
-		"description": "A dyslexic tanker with a trusty buster and high durability and health."
 	}
 }
 
@@ -86,16 +73,14 @@ func _ready():
 	tween.tween_property(self, "modulate:a", 1.0, 0.35).set_ease(Tween.EASE_OUT)
 	tween.tween_property(self, "scale", Vector2(1.0, 1.0), 0.35).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
 	
-	# Preload character textures
+	# Preload character textures (only available characters)
 	character_textures.unlocked = [
 		preload("res://gui/Update/UI/lexia_card.png"), # Lexia
-		preload("res://gui/Update/UI/Rani_Card5.png"), # Ragna (using same texture for now)
-		preload("res://gui/Update/UI/lexia_card.png"), # Magi (using same texture for now)
+		preload("res://gui/Update/UI/Rani_Card5.png"), # Ragna
 	]
 	character_textures.locked = [
 		null, # Character 1 is always unlocked
 		preload("res://gui/Update/UI/Ragna_Card_Locked.png"),
-		preload("res://gui/Update/UI/Lexia_Card_Locked.png")
 	]
 	
 	# Setup selection indicators for each character
@@ -312,11 +297,9 @@ func _load_user_data():
 					if dungeon1_data.get("completed", false) or dungeon1_data.get("stages_completed", 0) >= 5:
 						unlocked_characters = max(unlocked_characters, 2) # Ragna unlocked when Dungeon 2 becomes available
 				
-				# Check if dungeon 2 is completed to unlock Magi (Dungeon 3 becomes available)
-				if completed.has("2"):
-					var dungeon2_data = completed["2"]
-					if dungeon2_data.get("completed", false) or dungeon2_data.get("stages_completed", 0) >= 5:
-						unlocked_characters = max(unlocked_characters, 3) # Magi unlocked when Dungeon 3 becomes available
+				
+				# TEMPORARY: Magi (Character 3) remains locked until future update
+				unlocked_characters = min(unlocked_characters, 2) # Cap at Ragna (Character 2)
 		else:
 			print("Demo mode: Only Lexia available")
 			await _initialize_character_data_in_firebase()
@@ -379,17 +362,17 @@ func _position_all_characters_for_selection(selected_index):
 		var new_x: float
 		var position_desc: String
 		
-		# Position based on circular arrangement
+		# Position based on 2-character layout
 		match relative_position:
 			0: # This is the selected character - CENTER
 				new_x = CENTER_POSITION
 				position_desc = "CENTER"
-			1: # Next character in sequence - RIGHT
-				new_x = CENTER_POSITION + CHARACTER_SPACING
-				position_desc = "RIGHT"
-			2: # Previous character in sequence - LEFT
-				new_x = CENTER_POSITION - CHARACTER_SPACING
-				position_desc = "LEFT"
+			1: # Other character - place to the side based on which is selected
+				if selected_index == 0:
+					new_x = CENTER_POSITION + CHARACTER_SPACING # Ragna to the right of Lexia
+				else:
+					new_x = CENTER_POSITION - CHARACTER_SPACING # Lexia to the left of Ragna
+				position_desc = "SIDE"
 		
 		# Apply the position
 		character_node.position.x = new_x
@@ -486,19 +469,7 @@ func _on_character2_pressed():
 		# Show notification for locked character - Ragna requires completing dungeon 1 to unlock Dungeon 2
 		notification_popup.show_notification("Character Locked!", "Unlock Dungeon 2 to unlock Ragna.", "OK")
 
-func _on_character3_pressed():
-	if unlocked_characters >= 3:
-		# Show character stats in custom popup
-		_show_character_stats_popup(2)
-		
-		# Update selection if different character
-		if current_character != 2:
-			current_character = 2
-			_animate_carousel_to_position(current_character)
-			update_character_display()
-	else:
-		# Show notification for locked character - Magi is coming soon
-		notification_popup.show_notification("Character Locked!", "Magi is coming soon!", "OK")
+# Character 3 (Magi) removed - coming in future update
 
 # Animation function for smooth circular carousel movement
 func _animate_carousel_to_position(character_index):
@@ -506,21 +477,22 @@ func _animate_carousel_to_position(character_index):
 	tween.set_ease(ANIMATION_EASE)
 	tween.set_trans(Tween.TRANS_CUBIC)
 	
-	# Animate all characters to their new circular positions
+	# Animate all characters to their new 2-character positions
 	for i in range(CHARACTER_COUNT):
 		var character_node = character_carousel.get_child(i)
 		
-		# Calculate circular position (same logic as positioning function)
+		# Calculate 2-character position (same logic as positioning function)
 		var relative_position = (i - character_index + CHARACTER_COUNT) % CHARACTER_COUNT
 		
 		var target_x: float
 		match relative_position:
 			0: # Center
 				target_x = CENTER_POSITION
-			1: # Right
-				target_x = CENTER_POSITION + CHARACTER_SPACING
-			2: # Left
-				target_x = CENTER_POSITION - CHARACTER_SPACING
+			1: # Side
+				if character_index == 0:
+					target_x = CENTER_POSITION + CHARACTER_SPACING # Ragna to the right of Lexia
+				else:
+					target_x = CENTER_POSITION - CHARACTER_SPACING # Lexia to the left of Ragna
 		
 		tween.parallel().tween_property(character_node, "position:x", target_x, ANIMATION_DURATION)
 

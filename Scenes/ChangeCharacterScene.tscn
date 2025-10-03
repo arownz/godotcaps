@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://beu8uw5oqkvxd"]
+[gd_scene load_steps=21 format=3 uid="uid://beu8uw5oqkvxd"]
 
 [ext_resource type="Script" uid="uid://liwnmmbqa706" path="res://Scripts/ChangeCharacterScene.gd" id="1_rnq7s"]
 [ext_resource type="Texture2D" uid="uid://n08ji1i2co16" path="res://gui/Update/UI/small button.png" id="2_6nemp"]
@@ -9,7 +9,6 @@
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="5_hnmjh"]
 [ext_resource type="Texture2D" uid="uid://buaye0xl5gc5n" path="res://gui/Update/UI/Ragna_Card_Locked.png" id="6_solvw"]
 [ext_resource type="Texture2D" uid="uid://qmmpx3uab5h7" path="res://gui/Update/UI/next button.png" id="7_tc6no"]
-[ext_resource type="Texture2D" uid="uid://ddm6hncbk10fm" path="res://gui/Update/UI/Lexia_Card_Locked.png" id="7_wve8j"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="8_8uolc"]
 [ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="9_ccovg"]
 [ext_resource type="Texture2D" uid="uid://cpt6gmnwq7v0o" path="res://gui/Update/UI/next button_hover.png" id="9_hnmjh"]
@@ -166,44 +165,6 @@ theme_override_constants/shadow_offset_y = 2
 theme_override_fonts/font = ExtResource("8_8uolc")
 theme_override_font_sizes/font_size = 30
 text = "Ragna"
-horizontal_alignment = 1
-
-[node name="Character3" type="Control" parent="CharacterContainer/CharacterCarousel"]
-custom_minimum_size = Vector2(600, 500)
-anchors_preset = 0
-offset_left = -270.0
-offset_top = 45.0
-offset_right = 330.0
-offset_bottom = 545.0
-
-[node name="TextureButton" type="TextureButton" parent="CharacterContainer/CharacterCarousel/Character3"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_default_cursor_shape = 2
-texture_normal = ExtResource("7_wve8j")
-ignore_texture_size = true
-stretch_mode = 5
-
-[node name="NameLabel" type="Label" parent="CharacterContainer/CharacterCarousel/Character3"]
-layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = -60.0
-grow_horizontal = 2
-grow_vertical = 0
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_constants/shadow_offset_x = 2
-theme_override_constants/shadow_offset_y = 2
-theme_override_fonts/font = ExtResource("8_8uolc")
-theme_override_font_sizes/font_size = 30
-text = "Magi"
 horizontal_alignment = 1
 
 [node name="NextButton" type="TextureButton" parent="."]
@@ -536,7 +497,6 @@ stream = ExtResource("14_ccovg")
 
 [connection signal="pressed" from="CharacterContainer/CharacterCarousel/Character1/TextureButton" to="." method="_on_character1_pressed"]
 [connection signal="pressed" from="CharacterContainer/CharacterCarousel/Character2/TextureButton" to="." method="_on_character2_pressed"]
-[connection signal="pressed" from="CharacterContainer/CharacterCarousel/Character3/TextureButton" to="." method="_on_character3_pressed"]
 [connection signal="pressed" from="NextButton" to="." method="_on_next_button_pressed"]
 [connection signal="pressed" from="PreviousButton" to="." method="_on_previous_button_pressed"]
 [connection signal="mouse_entered" from="SelectButton" to="." method="_on_select_button_hover_exited"]

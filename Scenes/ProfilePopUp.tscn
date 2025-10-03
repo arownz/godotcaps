@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=3 uid="uid://bysyq46j6ycis"]
+[gd_scene load_steps=30 format=3 uid="uid://bysyq46j6ycis"]
 
 [ext_resource type="Script" uid="uid://caa84ntbsorb8" path="res://Scripts/ProfilePopUp.gd" id="1_script"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="2_73kok"]
@@ -21,7 +21,6 @@
 [ext_resource type="Texture2D" uid="uid://2ck0j4rkkc1i" path="res://gui/Update/icons/copy UID_hover.png" id="13_q75ak"]
 [ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="13_r1smr"]
 [ext_resource type="Texture2D" uid="uid://b2qy87ktakwus" path="res://gui/Update/icons/mountaintransplant.png" id="13_tilb2"]
-[ext_resource type="PackedScene" uid="uid://e6bec84rrthm" path="res://Sprites/Animation/DefaultPlayer_Animation.tscn" id="18_q75ak"]
 [ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="22_6o1ar"]
 [ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="23_q75ak"]
 
@@ -492,10 +491,6 @@ mouse_default_cursor_shape = 2
 texture_normal = ExtResource("11_tilb2")
 texture_hover = ExtResource("12_82scp")
 stretch_mode = 0
-
-[node name="DefaultPlayerAnimation" parent="ProfileContainer/CharacterContainer" instance=ExtResource("18_q75ak")]
-position = Vector2(105.6836, 159.10353)
-scale = Vector2(4.4540334, 4.4540334)
 
 [node name="DungeonArea" type="Button" parent="ProfileContainer"]
 layout_mode = 1

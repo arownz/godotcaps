@@ -351,20 +351,20 @@ theme_override_fonts/font = ExtResource("9_3555f")
 theme_override_font_sizes/font_size = 20
 text = "100"
 horizontal_alignment = 1
-autowrap_mode = 3
+autowrap_mode = 2
 
 [node name="Attack" type="Label" parent="StageDetails/RightContainer"]
 layout_mode = 0
 offset_left = 147.0
 offset_top = 342.0
-offset_right = 209.0
+offset_right = 209.00002
 offset_bottom = 379.0
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("9_3555f")
 theme_override_font_sizes/font_size = 20
 text = "100"
 horizontal_alignment = 1
-autowrap_mode = 3
+autowrap_mode = 2
 
 [node name="Durability" type="Label" parent="StageDetails/RightContainer"]
 layout_mode = 0
@@ -377,7 +377,7 @@ theme_override_fonts/font = ExtResource("9_3555f")
 theme_override_font_sizes/font_size = 20
 text = "100"
 horizontal_alignment = 1
-autowrap_mode = 3
+autowrap_mode = 2
 
 [node name="LeftContainer" type="Control" parent="StageDetails"]
 anchors_preset = 0

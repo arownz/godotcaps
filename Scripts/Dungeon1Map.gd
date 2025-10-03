@@ -327,18 +327,21 @@ func _update_stage_details(stage_num):
 		print("Error: Could not get enemy data for stage ", stage_num)
 		return
 	
-	# Update enemy information using scaled data
+	# Update enemy information with dyslexia-friendly formatting
 	$StageDetails/LeftContainer/MonsterName.text = enemy_data["name"].to_upper()
 	$StageDetails/RightContainer/Info.text = enemy_data["description"]
-	$StageDetails/RightContainer/Health.text = str(enemy_data["health"])
-	$StageDetails/RightContainer/Attack.text = str(enemy_data["attack"])
-	$StageDetails/RightContainer/Durability.text = str(enemy_data["durability"])
+	
+	# Display stats with clear visual context for dyslexic children
+	$StageDetails/RightContainer/Health.text = str(enemy_data["health"]) + " HP"
+	$StageDetails/RightContainer/Attack.text = str(enemy_data["attack"]) + " DMG"
+	$StageDetails/RightContainer/Durability.text = str(enemy_data["durability"]) + " DEF"
 	$StageDetails/RightContainer/SkillName.text = enemy_data["skill"]
 	
-	# Update experience reward if ExpRewardValue node exists
+	# Update experience reward with clear formatting
 	var exp_reward_node = $StageDetails/RightContainer.get_node_or_null("ExpRewardValue")
 	if exp_reward_node:
-		exp_reward_node.text = str(enemy_data["exp_reward"]) + " EXP"
+		exp_reward_node.text = "+" + str(enemy_data["exp_reward"]) + " EXP"
+
 	
 	# Set level based on calculated level
 	$StageDetails/LeftContainer/LVLabel2.text = str(enemy_data["level"])

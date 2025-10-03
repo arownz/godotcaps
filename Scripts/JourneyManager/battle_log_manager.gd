@@ -168,8 +168,7 @@ func _get_current_character_counter_name() -> String:
 func _get_counter_name_for_character(character_key: String) -> String:
 	var character_counters = {
 		"lexia": "Blade Beam",
-		"ragna": "Swift Pierce",
-		"magi": "Arcane Blast"
+		"ragna": "Swift Pierce"
 	}
 	return character_counters.get(character_key, "Blade Beam")
 
@@ -343,13 +342,17 @@ func add_level_up_message(new_level: int, health_increase: int, damage_increase:
 	# Main level-up announcement
 	add_message("[color=#B8860B]LEVEL UP! You reached level " + str(new_level) + "![/color]")
 	
-	# Show stat increases with high contrast colors
+	# Show stat increases with high contrast colors (deliberately low for dyslexic balance)
 	add_message("[color=#006400]Health increased by +" + str(health_increase) + " (now " + str(new_health) + ")[/color]")
 	add_message("[color=#8B0000]Damage increased by +" + str(damage_increase) + " (now " + str(new_damage) + ")[/color]")
 	add_message("[color=#000080]Durability increased by +" + str(durability_increase) + " (now " + str(new_durability) + ")[/color]")
 
-# Add a motivational message for player growth
-	add_message("[color=#B8860B]You are growing stronger! Keep fighting![/color]")
+# Add motivational message encouraging word challenges for dyslexic learners
+	# Check if near stat caps and provide appropriate encouragement
+	if health_increase == 0 and damage_increase == 0 and durability_increase == 0:
+		add_message("[color=#B8860B]Stats at maximum! Word challenges are your key to power![/color]")
+	else:
+		add_message("[color=#B8860B]Practice word challenges to grow even stronger![/color]")
 
 # Clear all log entries
 func clear_log() -> void:

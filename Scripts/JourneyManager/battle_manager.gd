@@ -91,13 +91,13 @@ func enemy_attack():
 	var sprite = enemy_node.get_node_or_null("AnimatedSprite2D")
 	if sprite:
 		sprite.play("auto_attack")
-		# Play enemy auto-attack SFX using EnemyManager's flexible lookup (supports *_autoattack)
+		# Play enemy auto-attack SFX using EnemyManager's flexible lookup (supports enemy_autoattack)
 		if battle_scene.enemy_manager and battle_scene.enemy_manager.has_method("play_enemy_sfx"):
-			battle_scene.enemy_manager.play_enemy_sfx("auto_attack")
+			battle_scene.enemy_manager.play_enemy_sfx("enemy_autoattack") # Use consistent enemy naming convention
 	else:
 		# Even if no sprite is found, still try to play the auto-attack SFX
 		if battle_scene.enemy_manager and battle_scene.enemy_manager.has_method("play_enemy_sfx"):
-			battle_scene.enemy_manager.play_enemy_sfx("auto_attack")
+			battle_scene.enemy_manager.play_enemy_sfx("enemy_autoattack") # Use consistent enemy naming convention
 	
 	await enemy_attack_tween.finished
 	
@@ -614,23 +614,5 @@ func _check_character_unlock(completed_dungeon_num: int) -> Dictionary:
 					print("BattleManager: Character Ragna unlocked!")
 				else:
 					print("BattleManager: Failed to update character unlock in Firebase")
-		
-		# Magi unlocks after completing dungeon 2 (when Dungeon 3 becomes available)
-		elif completed_dungeon_num == 2 and current_unlocked < 3:
-			if not unlock_notifications_shown.has("magi"):
-				unlock_info.unlocked = true
-				unlock_info.character_name = "Magi"
-				unlock_info.message = "New Character: Magi is coming soon!\nStay tuned for updates."
-				
-				# Don't actually unlock Magi - just mark notification as shown
-				unlock_notifications_shown.append("magi")
-				characters["unlock_notifications_shown"] = unlock_notifications_shown
-				
-				# Update Firebase
-				document.add_or_update_field("characters", characters)
-				var updated_doc = await collection.update(document)
-				
-				if updated_doc:
-					print("BattleManager: Magi coming soon message shown!")
 	
 	return unlock_info

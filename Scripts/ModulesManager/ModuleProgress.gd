@@ -236,6 +236,10 @@ func complete_read_aloud_activity(category: String, activity_id: String) -> bool
 			read_aloud["completed"] = (guided_progress >= 100.0 and syllable_progress >= 100.0)
 			
 			print("ModuleProgress: Guided reading progress - ", guided_count, "/4 = ", int(guided_progress), "%")
+		else:
+			print("ModuleProgress: DUPLICATE ATTEMPT - Activity '", activity_id, "' already completed for ", category)
+			var current_activities = category_data["activities_completed"]
+			print("ModuleProgress: Current completed activities: ", current_activities)
 		
 		document.add_or_update_field("modules", modules)
 		var updated = await collection.update(document)

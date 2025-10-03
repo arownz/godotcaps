@@ -92,6 +92,7 @@ func _ready():
 	# Initialize STT button state
 	if stt_button:
 		stt_button.text = "Speak"
+		_update_stt_button_color()
 		stt_button.disabled = false
 	if stt_status_label:
 		stt_status_label.text = "Click Speak to begin"
@@ -967,6 +968,7 @@ func _on_stt_button_pressed():
 		
 		# Start new recognition session with visual feedback
 		stt_button.text = "Requesting..."
+		_update_stt_button_color()
 		stt_button.disabled = true
 		if stt_status_label:
 			stt_status_label.text = "Please allow microphone access..."
@@ -980,6 +982,7 @@ func _on_stt_button_pressed():
 			recognition_active = true
 			stt_listening = true
 			stt_button.text = "Stop"
+			_update_stt_button_color()
 			stt_button.disabled = false
 			if stt_status_label:
 				stt_status_label.text = "Listening... speak the word clearly"
@@ -1059,12 +1062,58 @@ func _request_permission_and_start_recognition() -> bool:
 		update_mic_permission_state("denied")
 		return false
 
+# ENHANCED: Force complete reinitialization of speech recognition for better sensitivity
+func _force_reinitialize_speech_recognition():
+	"""Completely reinitialize speech recognition to fix sensitivity issues after first use"""
+	print("SyllableBuildingModule: Force reinitializing speech recognition...")
+	
+	if JavaScriptBridge.has_method("eval"):
+		var cleanup_js = """
+			(function() {
+				console.log('SyllableBuildingModule: Force cleaning up speech recognition...');
+				
+				// Complete cleanup of existing recognition
+				if (window.syllableRecognition) {
+					try {
+						window.syllableRecognition.abort();
+						window.syllableRecognition.stop();
+						window.syllableRecognition = null;
+						console.log('Cleaned up syllable recognition object');
+					} catch (e) {
+						console.log('Error cleaning up syllable recognition:', e);
+					}
+				}
+				
+				// Reset all syllable recognition state
+				window.syllableRecognitionActive = false;
+				window.syllableInterimResult = null;
+				window.syllableFinalResult = null;
+				
+				console.log('SyllableBuildingModule: Speech recognition force cleanup completed');
+				return true;
+			})();
+		"""
+		JavaScriptBridge.eval(cleanup_js)
+		
+		# Wait a moment for cleanup
+		await get_tree().create_timer(0.1).timeout
+		
+		# Reinitialize the web environment
+		_initialize_web_audio_environment()
+		
+		print("SyllableBuildingModule: Speech recognition reinitialization completed")
+
 func _start_syllable_recognition() -> bool:
 	if not JavaScriptBridge.has_method("eval"):
 		print("SyllableBuildingModule: JavaScript bridge not available")
 		return false
 		
 	print("SyllableBuildingModule: Starting speech recognition...")
+	
+	# ENHANCED: Force reinitialize if recognition was used before (improves sensitivity)
+	if recognition_active or stt_listening:
+		print("SyllableBuildingModule: Previous recognition detected, force reinitializing...")
+		await _force_reinitialize_speech_recognition()
 	
 	# Setup environment if not already done
 	_setup_web_speech_recognition()
@@ -1558,17 +1607,61 @@ func _on_celebration_closed():
 	print("SyllableBuildingModule: Celebration popup closed")
 
 func _apply_word_highlighting():
-	"""Apply yellow highlighting to the whole word when fully completed"""
+	"""Apply yellow highlighting to both the whole word AND syllable breakdown when fully completed"""
+	_apply_full_word_highlighting()
+
+func _apply_full_word_highlighting():
+	"""Apply yellow highlighting to the complete word and all syllables"""
 	if not current_word_label:
 		return
 	
 	var current_data = syllable_words[current_word_index]
 	var word = current_data["word"]
+	var syllables = current_data["syllables"]
 	
 	# RichTextLabel with BBCode enabled in scene
 	# Highlight the whole word with yellow background
 	current_word_label.text = "[center][bgcolor=yellow][color=black]" + word + "[/color][/bgcolor][/center]"
-	print("SyllableBuildingModule: Applied yellow highlighting to word: ", word)
+	
+	# ENHANCED: Also highlight ALL syllables with yellow background
+	if syllable_display_label:
+		var highlighted_syllable_parts = []
+		for syllable in syllables:
+			highlighted_syllable_parts.append("[bgcolor=yellow][color=black]" + syllable + "[/color][/bgcolor]")
+		syllable_display_label.text = " • ".join(highlighted_syllable_parts)
+		print("SyllableBuildingModule: Applied yellow highlighting to all syllables: ", syllables)
+	
+	print("SyllableBuildingModule: Applied yellow highlighting to complete word: ", word, " and all syllables")
+
+func _apply_syllable_highlighting(matched_indices: Array):
+	"""Apply yellow highlighting to specific syllables that have been detected"""
+	if not current_word_label or not syllable_display_label:
+		return
+	
+	var current_data = syllable_words[current_word_index]
+	var word = current_data["word"]
+	var syllables = current_data["syllables"]
+	
+	# Keep the main word normal (not highlighted until complete)
+	current_word_label.text = "[center]" + word + "[/center]"
+	
+	# Highlight only the matched syllables
+	var highlighted_syllable_parts = []
+	for i in range(syllables.size()):
+		var syllable = syllables[i]
+		if i in matched_indices:
+			# Yellow highlight for matched syllables
+			highlighted_syllable_parts.append("[bgcolor=yellow][color=black]" + syllable + "[/color][/bgcolor]")
+		else:
+			# Normal display for unmatched syllables
+			highlighted_syllable_parts.append(syllable)
+	
+	syllable_display_label.text = " • ".join(highlighted_syllable_parts)
+	# Build matched syllables array for logging
+	var matched_syllables = []
+	for index in matched_indices:
+		matched_syllables.append(syllables[index])
+	print("SyllableBuildingModule: Applied syllable highlighting to indices: ", matched_indices, " syllables: ", matched_syllables)
 
 func _clear_highlighting():
 	"""Clear all highlighting and reset to normal display"""
@@ -1577,9 +1670,9 @@ func _clear_highlighting():
 	_update_word_display() # Reset to normal display
 	print("SyllableBuildingModule: Cleared all highlighting")
 
-# Live highlighting during speech recognition (word only)
+# Live highlighting during speech recognition - ENHANCED FOR SYLLABLE-BY-SYLLABLE HIGHLIGHTING
 func _update_live_syllable_highlighting(interim_text: String):
-	"""Update live word highlighting based on STT interim results - SINGLE WORD FOCUS like WordChallengePanel_STT"""
+	"""Update live syllable highlighting based on STT interim results - highlights individual syllables as spoken"""
 	if current_target_syllables.is_empty():
 		return
 		
@@ -1599,28 +1692,90 @@ func _update_live_syllable_highlighting(interim_text: String):
 	# Use only the last word for comparison
 	var display_word = last_word.to_lower().strip_edges()
 	var current_word = syllable_words[current_word_index]["word"].to_lower()
+	var syllables = current_target_syllables
 	
-	print("SyllableBuildingModule: Live highlighting check - Last Word: '", display_word, "' Target: '", current_word, "'")
+	print("SyllableBuildingModule: Live syllable check - Spoken: '", display_word, "' Target: '", current_word, "' Syllables: ", syllables)
 	
-	# Check if last word matches the target word using single word similarity
-	var similarity = _calculate_word_similarity(display_word, current_word)
-	print("SyllableBuildingModule: Live similarity score: ", similarity)
+	# NEW: Check individual syllables for highlighting
+	var matched_syllables = []
 	
-	# Apply highlighting if similarity is excellent (trigger fast success)
-	if similarity >= 0.85: # 85% similarity for fast success
-		_apply_word_highlighting()
-		print("SyllableBuildingModule: FAST SUCCESS - Live highlighted word from: '", display_word, "' (similarity: ", similarity, ")")
+	# Method A: Check for sequential syllable building (e.g., "rab" then "rabbit")
+	var cumulative_syllables = ""
+	for i in range(syllables.size()):
+		cumulative_syllables += syllables[i].to_lower()
+		var cumulative_similarity = _calculate_word_similarity(display_word, cumulative_syllables)
+		if cumulative_similarity >= 0.8: # High similarity for cumulative match
+			# Mark all syllables up to this point as matched
+			for j in range(i + 1):
+				if j not in matched_syllables:
+					matched_syllables.append(j)
+			print("SyllableBuildingModule: Found cumulative syllable match up to index ", i, ": '", cumulative_syllables, "' (", cumulative_similarity, ")")
+			break
+	
+	# Method B: Check each syllable individually for matches
+	for i in range(syllables.size()):
+		var syllable = syllables[i].to_lower()
+		var syllable_matched = (i in matched_syllables) # Skip if already matched by cumulative
+		
+		if not syllable_matched:
+			# Method 1: Exact substring match
+			if display_word.find(syllable) != -1:
+				matched_syllables.append(i)
+				syllable_matched = true
+				print("SyllableBuildingModule: Found exact syllable match: '", syllable, "' at index ", i)
+		
+		# Method 2: Start/end matching for sequential syllables
+		if not syllable_matched:
+			if i == 0 and display_word.begins_with(syllable): # First syllable
+				matched_syllables.append(i)
+				syllable_matched = true
+				print("SyllableBuildingModule: Found starting syllable match: '", syllable, "' at index ", i)
+			elif i == syllables.size() - 1 and display_word.ends_with(syllable): # Last syllable
+				matched_syllables.append(i)
+				syllable_matched = true
+				print("SyllableBuildingModule: Found ending syllable match: '", syllable, "' at index ", i)
+		
+		# Method 3: Fuzzy matching for dyslexia-friendly recognition
+		if not syllable_matched:
+			var syllable_similarity = _calculate_word_similarity(display_word, syllable)
+			if syllable_similarity >= 0.75: # 75% similarity for syllable matching
+				matched_syllables.append(i)
+				syllable_matched = true
+				print("SyllableBuildingModule: Found fuzzy syllable match: '", syllable, "' (", syllable_similarity, ")")
+		
+		# Method 4: Check if spoken word exactly matches this syllable (for single syllable recognition)
+		if not syllable_matched and display_word == syllable:
+			matched_syllables.append(i)
+			syllable_matched = true
+			print("SyllableBuildingModule: Found exact syllable-only match: '", syllable, "' at index ", i)
+	
+	# Check if spoken word matches the complete word
+	var word_similarity = _calculate_word_similarity(display_word, current_word)
+	
+	# Determine highlighting strategy
+	if word_similarity >= 0.85: # 85% similarity - full word match (fast success)
+		_apply_full_word_highlighting()
+		print("SyllableBuildingModule: FAST SUCCESS - Full word matched: '", display_word, "' (similarity: ", word_similarity, ")")
 		
 		# Trigger fast success processing
 		_trigger_fast_success()
 		
-	elif similarity >= 0.7: # 70% similarity for live highlighting
-		_apply_word_highlighting()
-		print("SyllableBuildingModule: Live highlighted word from: '", display_word, "' (similarity: ", similarity, ")")
+	elif word_similarity >= 0.7: # 70% similarity - likely full word
+		_apply_full_word_highlighting()
+		print("SyllableBuildingModule: Full word highlighted: '", display_word, "' (similarity: ", word_similarity, ")")
 		
 		# Start highlighting reset timer in case speech stops midway
 		if highlighting_reset_timer:
 			highlighting_reset_timer.start(2.0) # Reset after 2 seconds of no speech
+			
+	elif matched_syllables.size() > 0: # Individual syllables detected
+		_apply_syllable_highlighting(matched_syllables)
+		print("SyllableBuildingModule: Syllables highlighted: ", matched_syllables)
+		
+		# Start highlighting reset timer for partial matches
+		if highlighting_reset_timer:
+			highlighting_reset_timer.start(1.5) # Reset after 1.5 seconds for syllables
+			
 	else:
 		# Reset to normal display if no match
 		_update_word_display()
@@ -1781,3 +1936,12 @@ func _is_word_match_for_highlighting(spoken_text: String, target_word: String) -
 	
 	# 70% similarity for live highlighting (same as ReadAloudGuided)
 	return similarity >= 0.7
+
+# Helper function to update STT button text (color modulation removed as button uses green button.png)
+func _update_stt_button_color():
+	if not stt_button:
+		return
+	
+	var button_text = stt_button.text
+	# Only update button text, no color modulation since button uses green button.png texture
+	print("SyllableBuildingModule: STT button state: ", button_text)

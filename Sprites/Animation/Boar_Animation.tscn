@@ -267,11 +267,11 @@ sprite_frames = SubResource("SpriteFrames_3qtp5")
 animation = &"auto_attack"
 autoplay = "auto_attack"
 
-[node name="boar_autoattack" type="AudioStreamPlayer" parent="."]
+[node name="sfx_autoattack" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("2_guge8")
 
-[node name="boar_skill" type="AudioStreamPlayer" parent="."]
+[node name="sfx_skill" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_p8cbs")
 
-[node name="boar_hurt" type="AudioStreamPlayer" parent="."]
+[node name="sfx_hurt" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("4_p8cbs")

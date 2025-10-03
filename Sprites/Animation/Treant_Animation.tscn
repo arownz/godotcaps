@@ -311,11 +311,11 @@ sprite_frames = SubResource("SpriteFrames_j63xv")
 animation = &"auto_attack"
 autoplay = "auto_attack"
 
-[node name="treant_hurt" type="AudioStreamPlayer" parent="."]
+[node name="enemy_hurt" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_oe6dc")
 
-[node name="treant_skill" type="AudioStreamPlayer" parent="."]
+[node name="enemy_skill" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_ludm2")
 
-[node name="treant_autoattack" type="AudioStreamPlayer" parent="."]
+[node name="enemy_autoattack" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("4_oe6dc")

@@ -1,14 +1,12 @@
-[gd_scene load_steps=31 format=3 uid="uid://cfead7bcuslp4"]
+[gd_scene load_steps=29 format=3 uid="uid://cfead7bcuslp4"]
 
 [ext_resource type="Texture2D" uid="uid://cxqd6wyqy8g22" path="res://gui/Update/Backgrounds/battlescene background.png" id="2_ixjr5"]
 [ext_resource type="Texture2D" uid="uid://2jgthsch6pn" path="res://gui/Update/Backgrounds/forestbig.png" id="3_hueq0"]
-[ext_resource type="PackedScene" uid="uid://e6bec84rrthm" path="res://Sprites/Animation/DefaultPlayer_Animation.tscn" id="3_i7srl"]
 [ext_resource type="Script" uid="uid://cnnycoui3l3ef" path="res://Scripts/battlescene.gd" id="3_vhj2j"]
 [ext_resource type="Texture2D" uid="uid://da0r1iefmbl55" path="res://gui/Update/Backgrounds/mountainbig.png" id="4_pwb48"]
 [ext_resource type="Texture2D" uid="uid://bb3yuiy6n0i2" path="res://gui/Update/icons/small settings_hover.png" id="5_47u5s"]
 [ext_resource type="Texture2D" uid="uid://c6clhmrkbmg0u" path="res://gui/UI/ui 4.png" id="6_2tp6q"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="6_cja1x"]
-[ext_resource type="PackedScene" uid="uid://d4gnmb7y5laks" path="res://Sprites/Animation/Treant_Animation.tscn" id="6_iin7j"]
 [ext_resource type="Texture2D" uid="uid://bmjd8nkagj08e" path="res://gui/Update/UI/long uncolored button.png" id="7_2tp6q"]
 [ext_resource type="Texture2D" uid="uid://c3jmmbnxol7mb" path="res://gui/Update/UI/active skill bar icon.png" id="7_cja1x"]
 [ext_resource type="Texture2D" uid="uid://c8vnqmxwy0lsw" path="res://gui/Update/icons/small settings.png" id="7_ixjr5"]
@@ -163,8 +161,6 @@ grow_vertical = 2
 position = Vector2(-47, -184)
 scale = Vector2(4.57468, 4.51523)
 
-[node name="DefaultPlayerAnimation" parent="MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer/PlayerPosition" instance=ExtResource("3_i7srl")]
-
 [node name="PlayerHealthBar" type="ProgressBar" parent="MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer"]
 custom_minimum_size = Vector2(180, 15)
 layout_mode = 0
@@ -266,8 +262,6 @@ grow_vertical = 2
 [node name="EnemyPosition" type="Node2D" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer"]
 position = Vector2(48, -137)
 scale = Vector2(3.52051, 3.76243)
-
-[node name="TreantAnimation" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer/EnemyPosition" instance=ExtResource("6_iin7j")]
 
 [node name="EnemyHealthBar" type="ProgressBar" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer"]
 custom_minimum_size = Vector2(180, 15)
@@ -423,7 +417,7 @@ theme_override_font_sizes/font_size = 85
 text = "FIGHT!"
 horizontal_alignment = 1
 
-[node name="StageInfoLabel" type="Label" parent="MainContainer/BattleAreaContainer"]
+[node name="StageInfoLabel" type="RichTextLabel" parent="MainContainer/BattleAreaContainer"]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.503
@@ -432,15 +426,19 @@ anchor_right = 0.503
 anchor_bottom = 0.086
 offset_left = -231.688
 offset_top = -22.66
-offset_right = 231.312
-offset_bottom = 23.34
+offset_right = 231.31198
+offset_bottom = 23.339996
 grow_horizontal = 2
-theme_override_colors/font_color = Color(0.930647, 0.755799, 0, 1)
+theme_override_colors/default_color = Color(0.92941177, 0.75686276, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 5
-theme_override_fonts/font = ExtResource("8_2tp6q")
-theme_override_font_sizes/font_size = 25
+theme_override_fonts/normal_font = ExtResource("8_2tp6q")
+theme_override_font_sizes/normal_font_size = 19
+bbcode_enabled = true
 text = "Loading"
+fit_content = true
+scroll_active = false
+autowrap_mode = 0
 horizontal_alignment = 1
 
 [node name="StageProgress" type="Control" parent="MainContainer/BattleAreaContainer"]
@@ -608,10 +606,11 @@ stretch_mode = 4
 [node name="PlayerIcon" type="TextureRect" parent="MainContainer/BattleAreaContainer/StageProgress"]
 custom_minimum_size = Vector2(44, 44)
 layout_mode = 0
-offset_left = 2.0
-offset_top = 17.0
-offset_right = 46.0
-offset_bottom = 61.0
+offset_left = 17.0
+offset_top = 56.0
+offset_right = 61.0
+offset_bottom = 100.0
+scale = Vector2(1.1035504, 1.1035504)
 texture = ExtResource("16_player")
 expand_mode = 1
 stretch_mode = 4
@@ -828,7 +827,7 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("8_2tp6q")
 theme_override_font_sizes/font_size = 16
-text = "Attack"
+text = "Damage"
 horizontal_alignment = 1
 
 [node name="PowerBar" type="ProgressBar" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/PowerContainer"]

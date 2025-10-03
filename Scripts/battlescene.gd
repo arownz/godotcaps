@@ -274,10 +274,10 @@ func _on_player_experience_changed(_current_exp, _max_exp):
 	ui_manager.update_player_exp()
 
 func _on_player_level_up(new_level):
-	# Get the stat increases from player_manager
-	var health_increase = 20 # Based on get_max_health() calculation
-	var damage_increase = 11 # Based on player_manager level up logic
-	var durability_increase = 8 # Based on player_manager level up logic
+	# Get the actual stat increases from player_manager (will be randomly low for dyslexic balance)
+	var health_increase = player_manager.last_health_increase
+	var damage_increase = player_manager.last_damage_increase
+	var durability_increase = player_manager.last_durability_increase
 	
 	# Get current stats
 	var new_health = player_manager.player_max_health
