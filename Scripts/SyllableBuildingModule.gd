@@ -1349,6 +1349,13 @@ func _handle_correct_response(match_type: String):
 	# Mark activity as completed AND SAVE IMMEDIATELY
 	if not current_word in completed_activities:
 		completed_activities.append(current_word)
+		
+		# Track STT success for leaderboard analytics
+		if module_progress and module_progress.is_authenticated():
+			var stt_track_success = await module_progress.track_read_aloud_stt_attempt("syllable_workshop", current_word, true)
+			if not stt_track_success:
+				print("SyllableBuildingModule: Failed to track STT success")
+		
 		# Save completion immediately to Firebase
 		await _save_progress()
 		print("SyllableBuildingModule: Word '", current_word, "' completion saved to Firebase")
@@ -1376,6 +1383,13 @@ func _handle_incorrect_response(spoken_text: String):
 	stt_status_label.text = "Try again"
 	stt_result_label.text = "Heard: '" + spoken_text + "' - Listen to the syllables and try again"
 	stt_result_label.modulate = Color.ORANGE
+	
+	# Track STT failure for leaderboard analytics
+	var current_word = syllable_words[current_word_index]["word"]
+	if module_progress and module_progress.is_authenticated():
+		var stt_track_success = await module_progress.track_read_aloud_stt_attempt("syllable_workshop", current_word, false)
+		if not stt_track_success:
+			print("SyllableBuildingModule: Failed to track STT failure")
 	
 	# Automatically replay syllables for guidance
 	await get_tree().create_timer(1.0).timeout

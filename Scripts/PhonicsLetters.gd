@@ -462,6 +462,12 @@ func _on_whiteboard_result(text_result: String):
 		
 		var progress_data: Dictionary = {"letters_completed": session_completed_letters, "percentage": float(session_completed_letters.size()) / 26.0 * 100.0}
 		
+		# Track whiteboard success for leaderboard analytics
+		if module_progress and module_progress.is_authenticated():
+			var whiteboard_track_success = await module_progress.track_phonics_whiteboard_attempt(target_letter, true)
+			if not whiteboard_track_success:
+				print("PhonicsLetters: Failed to track whiteboard success")
+		
 		# Try to persist progress using ModuleProgress
 		if module_progress and module_progress.is_authenticated():
 			var save_success = await module_progress.set_phonics_letter_completed(target_letter)
@@ -480,6 +486,13 @@ func _on_whiteboard_result(text_result: String):
 		_show_completion_celebration(target_letter, progress_data)
 	elif not text_result.begins_with("recognition_error"):
 		print("PhonicsLetters: Letter not recognized correctly. Expected: ", target_letter, ", Got: ", recognized_text)
+		
+		# Track whiteboard failure for leaderboard analytics
+		if module_progress and module_progress.is_authenticated():
+			var whiteboard_track_success = await module_progress.track_phonics_whiteboard_attempt(target_letter, false)
+			if not whiteboard_track_success:
+				print("PhonicsLetters: Failed to track whiteboard failure")
+		
 		_show_encouragement_message(recognized_text, target_letter)
 		if not recent_errors.has(target_letter):
 			recent_errors.append(target_letter)

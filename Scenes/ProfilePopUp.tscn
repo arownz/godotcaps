@@ -12,7 +12,7 @@
 [ext_resource type="Texture2D" uid="uid://bky3s7o7g08k8" path="res://gui/Update/icons/bronze medal.png" id="7_medal"]
 [ext_resource type="Texture2D" uid="uid://dpejfssp2t44k" path="res://gui/Update/icons/edit name.png" id="7_rwnca"]
 [ext_resource type="Texture2D" uid="uid://d1y2su33nhh8p" path="res://gui/Update/icons/copy UID.png" id="8_ampbo"]
-[ext_resource type="Texture2D" uid="uid://dkccpks7klx5p" path="res://gui/ProfileScene/Profile/portrait13.png" id="8_fe476"]
+[ext_resource type="Texture2D" uid="uid://d1cl5g1wmpkbe" path="res://gui/Update/icons/profile icon.png" id="9_6o1ar"]
 [ext_resource type="Texture2D" uid="uid://0elvpx33cd3o" path="res://gui/Update/icons/edit name_hover.png" id="11_6o1ar"]
 [ext_resource type="Texture2D" uid="uid://rgl03eh75egv" path="res://gui/Update/UI/victory UI.png" id="11_tilb2"]
 [ext_resource type="Texture2D" uid="uid://cib18me7jfbqj" path="res://gui/Update/UI/victory UI_hover.png" id="12_82scp"]
@@ -187,7 +187,7 @@ offset_top = 17.0
 offset_right = 150.0
 offset_bottom = 157.0
 mouse_default_cursor_shape = 2
-texture = ExtResource("8_fe476")
+texture = ExtResource("9_6o1ar")
 expand_mode = 1
 stretch_mode = 5
 

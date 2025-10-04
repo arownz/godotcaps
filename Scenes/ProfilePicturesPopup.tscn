@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://b16uc2y8w57k1"]
+[gd_scene load_steps=34 format=3 uid="uid://b16uc2y8w57k1"]
 
 [ext_resource type="Script" uid="uid://dysw762c4jib3" path="res://Scripts/ProfilePicturesPopup.gd" id="1_popup_script"]
 [ext_resource type="Texture2D" uid="uid://clo1votqbo4bs" path="res://gui/Update/UI/ui 13.png" id="2_kxfne"]
@@ -8,18 +8,30 @@
 [ext_resource type="Texture2D" uid="uid://c5cpf575pv2ee" path="res://gui/Update/icons/close icon_hover.png" id="4_00j4d"]
 [ext_resource type="Texture2D" uid="uid://dr3do7cagamyh" path="res://gui/ProfileScene/Profile/portrait15.png" id="4_portrait15"]
 [ext_resource type="Texture2D" uid="uid://bvjr3trvmqhfh" path="res://gui/ProfileScene/Profile/portrait14.png" id="6_mg4gf"]
+[ext_resource type="Texture2D" uid="uid://3ab3jjua1apm" path="res://gui/ProfileScene/Profile/portrait13_hover.png" id="7_ijhip"]
 [ext_resource type="Texture2D" uid="uid://byl5kwwejfev1" path="res://gui/ProfileScene/Profile/portrait16.png" id="7_kxfne"]
 [ext_resource type="Texture2D" uid="uid://cxe7eswe4tydw" path="res://gui/ProfileScene/Profile/portrait17.png" id="8_yxql3"]
 [ext_resource type="Texture2D" uid="uid://ce61ch2pmlaaa" path="res://gui/ProfileScene/Profile/portrait18.png" id="9_h1a42"]
+[ext_resource type="Texture2D" uid="uid://c47ckmui8ha1h" path="res://gui/ProfileScene/Profile/portrait14_hover.png" id="9_le1vt"]
 [ext_resource type="Texture2D" uid="uid://b4fu51nwjti0g" path="res://gui/ProfileScene/Profile/portrait19.png" id="10_v70ae"]
 [ext_resource type="Texture2D" uid="uid://da4ei78q8uwfn" path="res://gui/ProfileScene/Profile/portrait20.png" id="11_00j4d"]
+[ext_resource type="Texture2D" uid="uid://bxtwwwldn5oqs" path="res://gui/ProfileScene/Profile/portrait15_hover.png" id="11_n5yux"]
 [ext_resource type="Texture2D" uid="uid://bjf64am65ot8s" path="res://gui/ProfileScene/Profile/portrait21.png" id="12_5fqu5"]
+[ext_resource type="Texture2D" uid="uid://c8u28xetvrmtr" path="res://gui/ProfileScene/Profile/portrait16_hover.png" id="13_6mciq"]
 [ext_resource type="Texture2D" uid="uid://bqn15k8rwnsxf" path="res://gui/ProfileScene/Profile/portrait22.png" id="13_pwh4d"]
 [ext_resource type="Texture2D" uid="uid://5o1l1bijp3ey" path="res://gui/ProfileScene/Profile/portrait23.png" id="14_almhk"]
 [ext_resource type="Texture2D" uid="uid://dyj20er5r25q" path="res://gui/ProfileScene/Profile/portrait24.png" id="15_u6s02"]
+[ext_resource type="Texture2D" uid="uid://dukkk2nf3n1uh" path="res://gui/ProfileScene/Profile/portrait17_hover.png" id="15_w0ekn"]
+[ext_resource type="Texture2D" uid="uid://bftjam11aj55j" path="res://gui/ProfileScene/Profile/portrait18_hover.png" id="17_hsgj8"]
 [ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="17_yxql3"]
 [ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="18_v70ae"]
 [ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="19_00j4d"]
+[ext_resource type="Texture2D" uid="uid://bj30ugrpccepo" path="res://gui/ProfileScene/Profile/portrait19_hover.png" id="19_hcpdp"]
+[ext_resource type="Texture2D" uid="uid://d4an24at1fvom" path="res://gui/ProfileScene/Profile/portrait20_hover.png" id="21_g6pap"]
+[ext_resource type="Texture2D" uid="uid://bvr6nv43akkc3" path="res://gui/ProfileScene/Profile/portrait21_hover.png" id="23_3g4pc"]
+[ext_resource type="Texture2D" uid="uid://bldsu2o5etrcd" path="res://gui/ProfileScene/Profile/portrait22_hover.png" id="25_f0fw5"]
+[ext_resource type="Texture2D" uid="uid://3jo5flhrob8g" path="res://gui/ProfileScene/Profile/portrait23_hover.png" id="27_js0qt"]
+[ext_resource type="Texture2D" uid="uid://3l152u0b2yg0" path="res://gui/ProfileScene/Profile/portrait24_hover.png" id="29_8djvh"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_yxql3"]
 
@@ -117,6 +129,7 @@ custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("3_portrait14")
+texture_hover = ExtResource("7_ijhip")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -125,6 +138,7 @@ custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("6_mg4gf")
+texture_hover = ExtResource("9_le1vt")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -133,6 +147,7 @@ custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("4_portrait15")
+texture_hover = ExtResource("11_n5yux")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -141,6 +156,7 @@ custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("7_kxfne")
+texture_hover = ExtResource("13_6mciq")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -149,6 +165,7 @@ custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("8_yxql3")
+texture_hover = ExtResource("15_w0ekn")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -157,6 +174,7 @@ custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("9_h1a42")
+texture_hover = ExtResource("17_hsgj8")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -165,6 +183,7 @@ custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("10_v70ae")
+texture_hover = ExtResource("19_hcpdp")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -173,6 +192,7 @@ custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("11_00j4d")
+texture_hover = ExtResource("21_g6pap")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -181,6 +201,7 @@ custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("12_5fqu5")
+texture_hover = ExtResource("23_3g4pc")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -189,6 +210,7 @@ custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("13_pwh4d")
+texture_hover = ExtResource("25_f0fw5")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -197,6 +219,7 @@ custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("14_almhk")
+texture_hover = ExtResource("27_js0qt")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -205,6 +228,7 @@ custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("15_u6s02")
+texture_hover = ExtResource("29_8djvh")
 ignore_texture_size = true
 stretch_mode = 5
 

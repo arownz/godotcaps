@@ -1364,6 +1364,13 @@ func _show_success_feedback(_recognized_text: String):
 	if current_sentence_index not in completed_sentences:
 		completed_sentences.append(current_sentence_index)
 		print("ReadAloudGuided: Marked sentence ", current_sentence_index, " as completed")
+		
+		# Track STT success for leaderboard analytics
+		if module_progress and module_progress.is_authenticated():
+			var sentence_content = current_target_sentence if current_target_sentence else "sentence_" + str(current_sentence_index)
+			var stt_track_success = await module_progress.track_read_aloud_stt_attempt("guided_reading", sentence_content, true)
+			if not stt_track_success:
+				print("ReadAloudGuided: Failed to track STT success")
 	
 	# Update display to show completed sentence with permanent green highlighting
 	_update_sentence_highlighting()
@@ -1464,6 +1471,13 @@ func _show_partial_match_feedback(_recognized_text: String, target_text: String)
 func _show_try_again_feedback(_recognized_text: String, target_text: String):
 	"""Show try again feedback with patient encouragement for dyslexic learners"""
 	print("ReadAloudGuided: Low similarity, asking user to try again with extra help.")
+	
+	# Track STT failure for leaderboard analytics
+	if module_progress and module_progress.is_authenticated():
+		var sentence_content = target_text if target_text else "sentence_" + str(current_sentence_index)
+		var stt_track_success = await module_progress.track_read_aloud_stt_attempt("guided_reading", sentence_content, false)
+		if not stt_track_success:
+			print("ReadAloudGuided: Failed to track STT failure")
 	
 	# Stop STT to reset state
 	if stt_listening:

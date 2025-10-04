@@ -177,6 +177,7 @@ layout_mode = 2
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 16
 placeholder_text = "Enter your email"
+max_length = 100
 clear_button_enabled = true
 
 [node name="EmailErrorLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login"]
@@ -204,6 +205,7 @@ size_flags_horizontal = 3
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 16
 placeholder_text = "Enter your password"
+max_length = 128
 clear_button_enabled = true
 secret = true
 
@@ -329,7 +331,8 @@ text = "Username"
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 16
-placeholder_text = "Choose a username"
+placeholder_text = "Enter your username (25 max characters)"
+max_length = 25
 clear_button_enabled = true
 
 [node name="UsernameErrorLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
@@ -397,6 +400,7 @@ layout_mode = 2
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 16
 placeholder_text = "Enter your email"
+max_length = 100
 clear_button_enabled = true
 
 [node name="RegEmailErrorLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
@@ -424,6 +428,7 @@ size_flags_horizontal = 3
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 16
 placeholder_text = "Create a password"
+max_length = 128
 clear_button_enabled = true
 secret = true
 
@@ -459,6 +464,7 @@ size_flags_horizontal = 3
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 16
 placeholder_text = "Confirm your password"
+max_length = 128
 clear_button_enabled = true
 secret = true
 
@@ -538,6 +544,7 @@ layout_mode = 2
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 16
 placeholder_text = "Enter your email"
+max_length = 100
 clear_button_enabled = true
 
 [node name="ResetEmailErrorLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword"]
@@ -652,20 +659,25 @@ stretch_mode = 5
 [connection signal="pressed" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/LoginButton" to="." method="_on_login_button_pressed"]
 [connection signal="mouse_entered" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/SignInGoogleButton" to="." method="_on_sign_in_google_button_mouse_entered"]
 [connection signal="pressed" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/SignInGoogleButton" to="." method="_on_sign_in_google_button_pressed"]
+[connection signal="text_changed" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/UsernameLineEdit" to="." method="_on_username_text_changed"]
 [connection signal="mouse_entered" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/BirthDateContainer/DayOptionButton" to="." method="_on_day_option_button_mouse_entered"]
 [connection signal="pressed" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/BirthDateContainer/DayOptionButton" to="." method="_on_day_option_button_pressed"]
 [connection signal="mouse_entered" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/BirthDateContainer/MonthOptionButton" to="." method="_on_month_option_button_mouse_entered"]
 [connection signal="pressed" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/BirthDateContainer/MonthOptionButton" to="." method="_on_month_option_button_pressed"]
 [connection signal="mouse_entered" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/BirthDateContainer/YearOptionButton" to="." method="_on_year_option_button_mouse_entered"]
 [connection signal="pressed" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/BirthDateContainer/YearOptionButton" to="." method="_on_year_option_button_pressed"]
+[connection signal="text_changed" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegEmailLineEdit" to="." method="_on_reg_email_text_changed"]
+[connection signal="text_changed" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegPasswordContainer/RegPasswordLineEdit" to="." method="_on_reg_password_text_changed"]
 [connection signal="mouse_entered" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegPasswordContainer/ShowRegPasswordButton" to="." method="_on_show_reg_password_button_mouse_entered"]
 [connection signal="pressed" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegPasswordContainer/ShowRegPasswordButton" to="." method="_on_show_reg_password_button_pressed"]
+[connection signal="text_changed" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/ConfirmPasswordContainer/ConfirmPasswordLineEdit" to="." method="_on_confirm_password_text_changed"]
 [connection signal="mouse_entered" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/ConfirmPasswordContainer/ShowConfirmPasswordButton" to="." method="_on_show_confirm_password_button_mouse_entered"]
 [connection signal="pressed" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/ConfirmPasswordContainer/ShowConfirmPasswordButton" to="." method="_on_show_confirm_password_button_pressed"]
 [connection signal="mouse_entered" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegisterButton" to="." method="_on_register_button_mouse_entered"]
 [connection signal="pressed" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegisterButton" to="." method="_on_register_button_pressed"]
 [connection signal="mouse_entered" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword/BackToLoginButton" to="." method="_on_back_to_login_button_mouse_entered"]
 [connection signal="pressed" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword/BackToLoginButton" to="." method="_on_back_to_login_button_pressed"]
+[connection signal="text_changed" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword/ResetEmailLineEdit" to="." method="_on_reset_email_text_changed"]
 [connection signal="pressed" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword/ResetButton" to="." method="_on_reset_password_button_pressed"]
 [connection signal="mouse_entered" from="AdminButton" to="." method="_on_admin_button_mouse_entered"]
 [connection signal="pressed" from="AdminButton" to="." method="_on_admin_button_pressed"]

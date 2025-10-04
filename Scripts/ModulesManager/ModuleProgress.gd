@@ -349,3 +349,139 @@ func set_syllable_workshop_current_index(index: int) -> bool:
 		var updated = await collection.update(document)
 		return !("error" in updated.keys())
 	return false
+
+# STT/Whiteboard tracking methods for educational modules
+func track_phonics_stt_attempt(letter_or_word: String, success: bool) -> bool:
+	"""Track STT attempt for phonics (letters or sight words)"""
+	if not is_authenticated():
+		return false
+	
+	var user_id = Firebase.Auth.auth.localid
+	var document = await collection.get_doc(user_id)
+	if document and !("error" in document.keys()):
+		var modules = document.get_value("modules")
+		if not modules:
+			modules = {}
+		if not modules.has("phonics"):
+			modules["phonics"] = {
+				"completed": false,
+				"progress": 0,
+				"letters_completed": [],
+				"sight_words_completed": [],
+				"current_letter_index": 0,
+				"current_sight_word_index": 0,
+				"stt_stats": {"attempts": 0, "successes": 0}
+			}
+		
+		var phonics = modules["phonics"]
+		if not phonics.has("stt_stats"):
+			phonics["stt_stats"] = {"attempts": 0, "successes": 0}
+		
+		phonics["stt_stats"]["attempts"] += 1
+		if success:
+			phonics["stt_stats"]["successes"] += 1
+		
+		print("ModuleProgress: Phonics STT tracked - ", letter_or_word, " success: ", success,
+			" (", phonics["stt_stats"]["successes"], "/", phonics["stt_stats"]["attempts"], ")")
+		
+		document.add_or_update_field("modules", modules)
+		var updated = await collection.update(document)
+		return !("error" in updated.keys())
+	return false
+
+func track_phonics_whiteboard_attempt(letter_or_word: String, success: bool) -> bool:
+	"""Track whiteboard attempt for phonics (letters or sight words)"""
+	if not is_authenticated():
+		return false
+	
+	var user_id = Firebase.Auth.auth.localid
+	var document = await collection.get_doc(user_id)
+	if document and !("error" in document.keys()):
+		var modules = document.get_value("modules")
+		if not modules:
+			modules = {}
+		if not modules.has("phonics"):
+			modules["phonics"] = {
+				"completed": false,
+				"progress": 0,
+				"letters_completed": [],
+				"sight_words_completed": [],
+				"current_letter_index": 0,
+				"current_sight_word_index": 0,
+				"whiteboard_stats": {"attempts": 0, "successes": 0}
+			}
+		
+		var phonics = modules["phonics"]
+		if not phonics.has("whiteboard_stats"):
+			phonics["whiteboard_stats"] = {"attempts": 0, "successes": 0}
+		
+		phonics["whiteboard_stats"]["attempts"] += 1
+		if success:
+			phonics["whiteboard_stats"]["successes"] += 1
+		
+		print("ModuleProgress: Phonics Whiteboard tracked - ", letter_or_word, " success: ", success,
+			" (", phonics["whiteboard_stats"]["successes"], "/", phonics["whiteboard_stats"]["attempts"], ")")
+		
+		document.add_or_update_field("modules", modules)
+		var updated = await collection.update(document)
+		return !("error" in updated.keys())
+	return false
+
+func track_read_aloud_stt_attempt(activity_type: String, content: String, success: bool) -> bool:
+	"""Track STT attempt for read aloud (guided or syllable)"""
+	if not is_authenticated():
+		return false
+	
+	var user_id = Firebase.Auth.auth.localid
+	var document = await collection.get_doc(user_id)
+	if document and !("error" in document.keys()):
+		var modules = document.get_value("modules")
+		if not modules:
+			modules = {}
+		if not modules.has("read_aloud"):
+			modules["read_aloud"] = {
+				"completed": false,
+				"progress": 0,
+				"guided_reading": {"activities_completed": [], "current_index": 0},
+				"syllable_workshop": {"activities_completed": [], "current_word_index": 0},
+				"stt_stats": {"attempts": 0, "successes": 0}
+			}
+		
+		var read_aloud = modules["read_aloud"]
+		if not read_aloud.has("stt_stats"):
+			read_aloud["stt_stats"] = {"attempts": 0, "successes": 0}
+		
+		read_aloud["stt_stats"]["attempts"] += 1
+		if success:
+			read_aloud["stt_stats"]["successes"] += 1
+		
+		print("ModuleProgress: Read Aloud STT tracked - ", activity_type, " (", content, ") success: ", success,
+			" (", read_aloud["stt_stats"]["successes"], "/", read_aloud["stt_stats"]["attempts"], ")")
+		
+		document.add_or_update_field("modules", modules)
+		var updated = await collection.update(document)
+		return !("error" in updated.keys())
+	return false
+
+func get_phonics_stt_stats() -> Dictionary:
+	"""Get phonics STT success statistics"""
+	var phonics_data = await get_phonics_progress()
+	if phonics_data and typeof(phonics_data) == TYPE_DICTIONARY and phonics_data.has("stt_stats"):
+		return phonics_data["stt_stats"]
+	return {"attempts": 0, "successes": 0}
+
+func get_phonics_whiteboard_stats() -> Dictionary:
+	"""Get phonics whiteboard success statistics"""
+	var phonics_data = await get_phonics_progress()
+	if phonics_data and typeof(phonics_data) == TYPE_DICTIONARY and phonics_data.has("whiteboard_stats"):
+		return phonics_data["whiteboard_stats"]
+	return {"attempts": 0, "successes": 0}
+
+func get_read_aloud_stt_stats() -> Dictionary:
+	"""Get read aloud STT success statistics"""
+	var modules = await fetch_modules()
+	if modules and typeof(modules) == TYPE_DICTIONARY and modules.has("read_aloud"):
+		var read_aloud = modules.get("read_aloud")
+		if read_aloud and typeof(read_aloud) == TYPE_DICTIONARY and read_aloud.has("stt_stats"):
+			return read_aloud.get("stt_stats", {"attempts": 0, "successes": 0})
+	return {"attempts": 0, "successes": 0}

@@ -461,6 +461,12 @@ func _on_whiteboard_result(text_result: String):
 		
 		var progress_data: Dictionary = {"sight_words_completed": session_completed_words, "percentage": float(session_completed_words.size()) / 20.0 * 100.0}
 		
+		# Track whiteboard success for leaderboard analytics
+		if module_progress and module_progress.is_authenticated():
+			var whiteboard_track_success = await module_progress.track_phonics_whiteboard_attempt(target_word, true)
+			if not whiteboard_track_success:
+				print("PhonicsSightWords: Failed to track whiteboard success")
+		
 		# Save progress using ModuleProgress system
 		if module_progress and module_progress.is_authenticated():
 			var save_success = await module_progress.set_sight_word_completed(target_word)
@@ -476,6 +482,13 @@ func _on_whiteboard_result(text_result: String):
 		_show_completion_celebration(target_word, progress_data)
 	elif not text_result.begins_with("recognition_error"):
 		print("PhonicsSightWords: Sight word not recognized correctly. Expected: ", target_word, ", Got: ", recognized_text)
+		
+		# Track whiteboard failure for leaderboard analytics
+		if module_progress and module_progress.is_authenticated():
+			var whiteboard_track_success = await module_progress.track_phonics_whiteboard_attempt(target_word, false)
+			if not whiteboard_track_success:
+				print("PhonicsSightWords: Failed to track whiteboard failure")
+		
 		_show_encouragement_message(recognized_text, target_word)
 		if not recent_word_errors.has(target_word):
 			recent_word_errors.append(target_word)
