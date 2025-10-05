@@ -800,20 +800,31 @@ func _on_cancel_button_mouse_entered() -> void:
 
 # Update character bonus displays
 func _update_character_bonuses(data):
-	# Calculate character bonuses from current stats vs base stats
-	var base_health = data.get("base_health", 100)
-	var base_attack = data.get("base_damage", 10)
-	var base_durability = data.get("base_durability", 5)
+	print("ProfilePopUp: Updating character bonuses with data:", data)
 	
-	# Current stats include both base stats + character bonuses
-	var current_health = data.get("health", base_health)
-	var current_attack = data.get("attack", data.get("damage", base_attack)) # handle both 'attack' and 'damage' keys
-	var current_durability = data.get("durability", base_durability)
+	# Get stats from the nested structure
+	var stats = data.get("stats", {})
+	var player_stats = stats.get("player", {}) if typeof(stats) == TYPE_DICTIONARY else {}
+	
+	# Get base stats
+	var base_health = data.get("base_health", player_stats.get("base_health", 100))
+	var base_attack = data.get("base_damage", player_stats.get("base_damage", 10))
+	var base_durability = data.get("base_durability", player_stats.get("base_durability", 5))
+	
+	# Get current stats (which include base + character bonuses)
+	var current_health = data.get("health", player_stats.get("health", base_health))
+	var current_attack = data.get("attack", player_stats.get("damage", base_attack))
+	var current_durability = data.get("durability", player_stats.get("durability", base_durability))
+	
+	print("ProfilePopUp: Base stats - HP:", base_health, " ATK:", base_attack, " DRB:", base_durability)
+	print("ProfilePopUp: Current stats - HP:", current_health, " ATK:", current_attack, " DRB:", current_durability)
 	
 	# Character bonuses are the difference between current (base + bonus) and base stats
 	var health_bonus = current_health - base_health
 	var attack_bonus = current_attack - base_attack
 	var durability_bonus = current_durability - base_durability
+	
+	print("ProfilePopUp: Calculated bonuses - HP:", health_bonus, " ATK:", attack_bonus, " DRB:", durability_bonus)
 	
 	# Update bonus HP display
 	if has_node("ProfileContainer/StatsArea/bonus_hp"):

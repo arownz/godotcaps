@@ -48,14 +48,10 @@ func player_attack():
 	var player_sprite = player_node.get_node_or_null("AnimatedSprite2D")
 	var original_position = player_node.position
 	
-	# Set player Z-index below enemy during attack (player appears at bottom)
-	var enemy_node = battle_scene.enemy_manager.enemy_animation
-	if enemy_node:
-		player_node.z_index = enemy_node.z_index - 1
-	
+	# Move player toward enemy - SPEED: Reduce from 0.3s to 0.2s for faster approach
 	var player_attack_tween = create_tween()
-	player_attack_tween.tween_property(player_node, "position", original_position + Vector2(50, 0), 0.3) # Move right
-
+	player_attack_tween.tween_property(player_node, "position", original_position + Vector2(50, 0), 0.2) # Move right
+	
 	# Wait for movement to finish
 	await player_attack_tween.finished
 	
@@ -80,14 +76,10 @@ func player_attack():
 		# Fallback timing if no sprite found
 		await battle_scene.get_tree().create_timer(0.5).timeout
 	
+	# Return to original position - SPEED: Reduce from 0.3s to 0.2s for faster return
 	var return_tween = create_tween()
-	return_tween.tween_property(player_node, "position", original_position, 0.3)
-	return_tween.tween_callback(func():
-		if player_sprite:
-			player_sprite.play("battle_idle")
-		# Reset Z-index to default after returning
-		player_node.z_index = 0
-	)
+	return_tween.tween_property(player_node, "position", original_position, 0.2)
+	return_tween.tween_callback(func(): if player_sprite: player_sprite.play("battle_idle"))
 	await return_tween.finished
 
 func enemy_attack():
@@ -110,13 +102,9 @@ func enemy_attack():
 	var enemy_sprite = enemy_node.get_node_or_null("AnimatedSprite2D")
 	var original_position = enemy_node.position
 	
-	# Set enemy Z-index below player during attack (enemy appears at bottom)
-	var player_node = battle_scene.player_manager.player_animation
-	if player_node:
-		enemy_node.z_index = player_node.z_index - 1
-	
+	# Move enemy toward player - SPEED: Reduce from 0.3s to 0.2s for faster approach
 	var enemy_attack_tween = create_tween()
-	enemy_attack_tween.tween_property(enemy_node, "position", original_position - Vector2(64, 0), 0.3) # Move left
+	enemy_attack_tween.tween_property(enemy_node, "position", original_position - Vector2(64, 0), 0.2) # Move left
 	
 	# Wait for movement to finish
 	await enemy_attack_tween.finished
@@ -153,14 +141,10 @@ func enemy_attack():
 		# Fallback timing if no animation available
 		await battle_scene.get_tree().create_timer(0.3).timeout
 	
+	# Return to original position - SPEED: Reduce from 0.3s to 0.2s for faster return
 	var return_tween = create_tween()
-	return_tween.tween_property(enemy_node, "position", original_position, 0.3) # Return to original position
-	return_tween.tween_callback(func():
-		if enemy_sprite:
-			enemy_sprite.play("idle")
-		# Reset Z-index to default after returning
-		enemy_node.z_index = 0
-	)
+	return_tween.tween_property(enemy_node, "position", original_position, 0.2) # Return to original position
+	return_tween.tween_callback(func(): if enemy_sprite: enemy_sprite.play("idle"))
 	await return_tween.finished
 
 # Centralize all endgame handling here
@@ -430,26 +414,37 @@ func _on_continue_battle():
 	var max_stages = 5
 	
 	if current_stage < max_stages:
-		# IMPROVED: Advance stage and directly start next battle
+		# CRITICAL FIX: Advance stage and save to Firebase SYNCHRONOUSLY
 		print("BattleManager: Starting stage advancement process...")
 		await battle_scene.dungeon_manager.advance_stage()
 		print("BattleManager: Stage advancement completed - Now at stage ", battle_scene.dungeon_manager.stage_num)
 		
-		# Update DungeonGlobals with the new stage info
+		# IMPORTANT: Update DungeonGlobals with the new stage info before reloading
 		DungeonGlobals.set_battle_progress(battle_scene.dungeon_manager.dungeon_num, battle_scene.dungeon_manager.stage_num)
 		print("BattleManager: DungeonGlobals updated - Dungeon: ", battle_scene.dungeon_manager.dungeon_num, ", Stage: ", battle_scene.dungeon_manager.stage_num)
 		
-		# Add delay to ensure Firebase operations complete
-		await get_tree().create_timer(0.1).timeout
+		# Add extra delay to ensure Firebase operations complete
+		await get_tree().create_timer(0.5).timeout
 		print("BattleManager: Firebase sync delay completed")
 		
 		# Reset battle state
 		battle_scene.battle_active = false
-		battle_scene.battle_session_started = false
 		
-		# CRITICAL: Reload the entire battle scene to get fresh enemy for next stage
-		print("BattleManager: Reloading battle scene for next stage enemy")
-		battle_scene.get_tree().change_scene_to_file("res://Scenes/BattleScene.tscn")
+		print("BattleManager: Returning to dungeon map for dungeon ", battle_scene.dungeon_manager.dungeon_num)
+		
+		# Go back to dungeon map to show updated progression
+		var dungeon_scene_path = ""
+		match battle_scene.dungeon_manager.dungeon_num:
+			1:
+				dungeon_scene_path = "res://Scenes/Dungeon1Map.tscn"
+			2:
+				dungeon_scene_path = "res://Scenes/Dungeon2Map.tscn"
+			3:
+				dungeon_scene_path = "res://Scenes/Dungeon3Map.tscn"
+			_:
+				dungeon_scene_path = "res://Scenes/DungeonSelection.tscn"
+		
+		battle_scene.get_tree().change_scene_to_file(dungeon_scene_path)
 	else:
 		# Completed all stages (defeated boss), go to dungeon selection to show unlocked dungeons
 		print("BattleManager: Dungeon " + str(battle_scene.dungeon_manager.dungeon_num) + " completed! Going to DungeonSelection")

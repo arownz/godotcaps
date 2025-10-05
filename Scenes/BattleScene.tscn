@@ -1,16 +1,18 @@
-[gd_scene load_steps=29 format=3 uid="uid://cfead7bcuslp4"]
+[gd_scene load_steps=30 format=3 uid="uid://cfead7bcuslp4"]
 
 [ext_resource type="Texture2D" uid="uid://cxqd6wyqy8g22" path="res://gui/Update/Backgrounds/battlescene background.png" id="2_ixjr5"]
 [ext_resource type="Texture2D" uid="uid://2jgthsch6pn" path="res://gui/Update/Backgrounds/forestbig.png" id="3_hueq0"]
 [ext_resource type="Script" uid="uid://cnnycoui3l3ef" path="res://Scripts/battlescene.gd" id="3_vhj2j"]
 [ext_resource type="Texture2D" uid="uid://da0r1iefmbl55" path="res://gui/Update/Backgrounds/mountainbig.png" id="4_pwb48"]
 [ext_resource type="Texture2D" uid="uid://bb3yuiy6n0i2" path="res://gui/Update/icons/small settings_hover.png" id="5_47u5s"]
+[ext_resource type="PackedScene" uid="uid://e6bec84rrthm" path="res://Sprites/Animation/Lexia_Animation.tscn" id="5_hueq0"]
 [ext_resource type="Texture2D" uid="uid://c6clhmrkbmg0u" path="res://gui/UI/ui 4.png" id="6_2tp6q"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="6_cja1x"]
 [ext_resource type="Texture2D" uid="uid://bmjd8nkagj08e" path="res://gui/Update/UI/long uncolored button.png" id="7_2tp6q"]
 [ext_resource type="Texture2D" uid="uid://c3jmmbnxol7mb" path="res://gui/Update/UI/active skill bar icon.png" id="7_cja1x"]
 [ext_resource type="Texture2D" uid="uid://c8vnqmxwy0lsw" path="res://gui/Update/icons/small settings.png" id="7_ixjr5"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="8_2tp6q"]
+[ext_resource type="PackedScene" uid="uid://d4gnmb7y5laks" path="res://Sprites/Animation/Treant_Animation.tscn" id="8_pwb48"]
 [ext_resource type="Texture2D" uid="uid://v6kvgpaeyimy" path="res://gui/Update/UI/hp_icon.png" id="9_ixjr5"]
 [ext_resource type="Texture2D" uid="uid://bmjpxe8wculxv" path="res://gui/Update/UI/exp4.png" id="10_1yevk"]
 [ext_resource type="Texture2D" uid="uid://ca1vrebej7etf" path="res://gui/Update/icons/lock icon.png" id="10_ksqd2"]
@@ -18,7 +20,6 @@
 [ext_resource type="Texture2D" uid="uid://cgo0fsh46bqj3" path="res://gui/Update/UI/defense bar icon.png" id="12_cja1x"]
 [ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="14_cja1x"]
 [ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="15_aip7a"]
-[ext_resource type="Texture2D" uid="uid://clkh35ycdmutp" path="res://gui/Update/icons/lexia_head.png" id="16_player"]
 [ext_resource type="Texture2D" uid="uid://caaebspp4lxk4" path="res://gui/Update/icons/slaym enemeh.png" id="17_slaym"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_e13ox"]
@@ -161,6 +162,8 @@ grow_vertical = 2
 position = Vector2(-47, -184)
 scale = Vector2(4.57468, 4.51523)
 
+[node name="DefaultPlayerAnimation" parent="MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer/PlayerPosition" instance=ExtResource("5_hueq0")]
+
 [node name="PlayerHealthBar" type="ProgressBar" parent="MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer"]
 custom_minimum_size = Vector2(180, 15)
 layout_mode = 0
@@ -262,6 +265,8 @@ grow_vertical = 2
 [node name="EnemyPosition" type="Node2D" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer"]
 position = Vector2(48, -137)
 scale = Vector2(3.52051, 3.76243)
+
+[node name="DefaultPlayerAnimation" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer/EnemyPosition" instance=ExtResource("8_pwb48")]
 
 [node name="EnemyHealthBar" type="ProgressBar" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer"]
 custom_minimum_size = Vector2(180, 15)
@@ -611,7 +616,6 @@ offset_top = 56.0
 offset_right = 61.0
 offset_bottom = 100.0
 scale = Vector2(1.1035504, 1.1035504)
-texture = ExtResource("16_player")
 expand_mode = 1
 stretch_mode = 4
 

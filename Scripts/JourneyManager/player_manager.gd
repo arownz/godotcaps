@@ -103,37 +103,63 @@ func load_player_data_from_firebase():
 		if stats_data and stats_data.has("player"):
 			var player_data = stats_data["player"]
 			
-			# Load base stats first - these are the stats that increase with leveling up
-			base_health = player_data.get("base_health", player_data.get("health", 100))
-			base_damage = player_data.get("base_damage", player_data.get("damage", 10))
-			base_durability = player_data.get("base_durability", player_data.get("durability", 5))
-			
-			# If base stats don't exist yet, calculate them from current stats and character bonuses
-			if not player_data.has("base_health") or not player_data.has("base_damage") or not player_data.has("base_durability"):
-				print("PlayerManager: Base stats not found, need to calculate from current character setup")
-				# For now, use current stats as base if no character bonuses are applied
-				# This handles upgrading existing saves that don't have base stats
-				base_health = player_data.get("health", 100)
-				base_damage = player_data.get("damage", 10)
-				base_durability = player_data.get("durability", 5)
-			
-			# Update player stats directly from Firebase data (these include character bonuses)
-			player_level = player_data.get("level", 1)
-			player_exp = player_data.get("exp", 0)
-			player_max_health = player_data.get("health", base_health)
-			player_health = player_max_health
-			player_damage = player_data.get("damage", base_damage)
-			player_durability = player_data.get("durability", base_durability)
-			player_energy = player_data.get("energy", 20)
-			
-			# Get current character info and derive animation path
+			# Get current character first to determine bonuses
 			current_skin = player_data.get("current_character", "lexia")
 			player_animation_scene = _get_character_animation_path(current_skin)
 			
-			# Calculate current character bonuses
-			character_bonuses["health"] = player_max_health - base_health
-			character_bonuses["damage"] = player_damage - base_damage
-			character_bonuses["durability"] = player_durability - base_durability
+			# Get character bonuses from character data
+			var character_stat_bonuses = _get_character_bonuses(current_skin)
+			
+			# Load base stats first - these are the stats that increase with leveling up
+			base_health = player_data.get("base_health", 100)
+			base_damage = player_data.get("base_damage", 10)
+			base_durability = player_data.get("base_durability", 5)
+			
+			# Check if base stats exist in Firebase
+			var base_stats_exist = player_data.has("base_health") and player_data.has("base_damage") and player_data.has("base_durability")
+			
+			if not base_stats_exist:
+				# For NEW accounts or OLD saves without base stats
+				print("PlayerManager: Base stats not found in Firebase - initializing with character bonuses")
+				
+				# Get current health/damage/durability from Firebase (may or may not have bonuses)
+				var current_health = player_data.get("health", 100)
+				var current_damage = player_data.get("damage", 10)
+				var current_durability = player_data.get("durability", 5)
+				
+				# CRITICAL FIX: For new accounts, stats are stored WITHOUT bonuses
+				# So we need to ADD the character bonuses now
+				base_health = current_health
+				base_damage = current_damage
+				base_durability = current_durability
+				
+				# Apply character bonuses on top of base stats
+				player_max_health = base_health + character_stat_bonuses["health"]
+				player_damage = base_damage + character_stat_bonuses["damage"]
+				player_durability = base_durability + character_stat_bonuses["durability"]
+				
+				print("PlayerManager: Applying ", current_skin, " bonuses (+", character_stat_bonuses["health"], " HP, +", character_stat_bonuses["damage"], " DMG, +", character_stat_bonuses["durability"], " DUR)")
+				
+				# Save base stats to Firebase for future loads
+				await _save_base_stats_to_firebase(base_health, base_damage, base_durability)
+			else:
+				# Base stats exist - use them and apply bonuses correctly
+				print("PlayerManager: Loading with base stats and character bonuses")
+				player_max_health = base_health + character_stat_bonuses["health"]
+				player_damage = base_damage + character_stat_bonuses["damage"]
+				player_durability = base_durability + character_stat_bonuses["durability"]
+			
+			# Update player stats
+			player_level = player_data.get("level", 1)
+			player_exp = player_data.get("exp", 0)
+			player_health = player_max_health
+			player_energy = player_data.get("energy", 20)
+			
+			# Store current character bonuses
+			character_bonuses["health"] = character_stat_bonuses["health"]
+			character_bonuses["damage"] = character_stat_bonuses["damage"]
+			character_bonuses["durability"] = character_stat_bonuses["durability"]
+			
 			player_firebase_data = {
 				"username": player_name,
 				"level": player_level,
@@ -148,6 +174,11 @@ func load_player_data_from_firebase():
 			print("- Username: ", player_name)
 			print("- Level: ", player_level)
 			print("- Health: ", player_health, "/", player_max_health)
+			print("- Damage: ", player_damage)
+			print("- Durability: ", player_durability)
+			print("- Character: ", current_skin, " (Bonuses: ", character_bonuses, ")")
+			print("- Energy: ", player_energy)
+			print("- Skin: ", player_animation_scene)
 			print("- Damage: ", player_damage)
 			print("- Durability: ", player_durability)
 			print("- Energy: ", player_energy)
@@ -309,8 +340,8 @@ func take_damage(damage_amount):
 	
 	return reduced_damage
 
-# Play auto attack animation and sound effect
-func perform_auto_attack():
+# Play auto attack animation and sound effect - with damage timing callback
+func perform_auto_attack(damage_callback = null):
 	print("PlayerManager: Performing auto attack")
 	
 	# Play auto attack animation
@@ -318,8 +349,22 @@ func perform_auto_attack():
 		var sprite = player_animation.get_node("AnimatedSprite2D")
 		sprite.play("auto_attack")
 		
-		# Play auto attack sound effect
+		# Create timer to sync damage with impact moment (adjusted for 12 FPS)
+		var delay_timer = Timer.new()
+		add_child(delay_timer)
+		delay_timer.wait_time = 0.25 # Impact at ~3rd frame of 6-frame animation at 12 FPS
+		delay_timer.one_shot = true
+		delay_timer.start()
+		
+		# Wait for the strike moment, then play sound and trigger damage
+		await delay_timer.timeout
 		_play_attack_sound("player_autoattack")
+		
+		# Call damage callback at the exact moment of impact
+		if damage_callback:
+			damage_callback.call()
+		
+		delay_timer.queue_free()
 		
 		# Wait for animation to finish, then return to idle
 		await sprite.animation_finished
@@ -703,6 +748,67 @@ func _verify_firebase_update():
 	print("=== FIREBASE VERIFICATION COMPLETE ===")
 
 # Temporary test function to verify Firebase level-up updates work
+
+# Helper function to get character bonuses from character name
+func _get_character_bonuses(character_name: String) -> Dictionary:
+	"""Get stat bonuses for a specific character"""
+	var character_data = {
+		"lexia": {
+			"health": 5,
+			"damage": 3,
+			"durability": 2
+		},
+		"ragna": {
+			"health": - 10,
+			"damage": 15,
+			"durability": - 2
+		}
+	}
+	
+	var char_key = character_name.to_lower()
+	if character_data.has(char_key):
+		return character_data[char_key]
+	else:
+		# Return default bonuses (none) for unknown characters
+		return {"health": 0, "damage": 0, "durability": 0}
+
+# Helper function to save base stats to Firebase
+func _save_base_stats_to_firebase(health: int, damage: int, durability: int):
+	"""Save base stats to Firebase for persistence"""
+	if not Firebase.Auth.auth:
+		print("PlayerManager: Cannot save base stats - no authentication")
+		return
+	
+	var user_id = Firebase.Auth.auth.localid
+	var collection = Firebase.Firestore.collection("dyslexia_users")
+	
+	# Get current document
+	var document = await collection.get_doc(user_id)
+	if document and not ("error" in document.keys() and document.get_value("error")):
+		var stats = document.get_value("stats")
+		if stats and typeof(stats) == TYPE_DICTIONARY:
+			var player_stats = stats.get("player", {})
+			
+			# Add base stats
+			player_stats["base_health"] = health
+			player_stats["base_damage"] = damage
+			player_stats["base_durability"] = durability
+			
+			# Update current stats with bonuses applied
+			player_stats["health"] = player_max_health
+			player_stats["damage"] = player_damage
+			player_stats["durability"] = player_durability
+			
+			# Save back
+			stats["player"] = player_stats
+			document.add_or_update_field("stats", stats)
+			
+			var updated_doc = await collection.update(document)
+			if updated_doc:
+				print("PlayerManager: Base stats saved to Firebase")
+			else:
+				print("PlayerManager: Failed to save base stats to Firebase")
+
 func test_firebase_level_up():
 	print("=== TESTING FIREBASE LEVEL-UP UPDATE ===")
 	print("Before: Level " + str(player_level) + ", Exp " + str(player_exp) + ", Health " + str(player_max_health) + ", Damage " + str(player_damage) + ", Durability " + str(player_durability))

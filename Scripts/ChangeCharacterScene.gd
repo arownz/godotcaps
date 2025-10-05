@@ -405,6 +405,8 @@ func update_character_display():
 	for i in range(CHARACTER_COUNT):
 		var character_node = character_carousel.get_child(i)
 		var texture_button = character_node.get_node("TextureButton")
+		var status_label = character_node.get_node("StatusLabel")
+		
 		# Check if character is unlocked
 		var is_unlocked = i < unlocked_characters
 		
@@ -412,9 +414,21 @@ func update_character_display():
 		if is_unlocked:
 			if character_textures.unlocked[i] != null:
 				texture_button.texture_normal = character_textures.unlocked[i]
+			# Update status label for unlocked characters
+			if i == current_character:
+				# This is the selected character
+				status_label.text = "Selected"
+				status_label.add_theme_color_override("font_color", Color(0.5, 1.0, 0.5)) # Green
+			else:
+				# Unlocked but not selected
+				status_label.text = "Unlocked"
+				status_label.add_theme_color_override("font_color", Color(0.5, 1.0, 0.5)) # Green
 		else:
 			if character_textures.locked[i] != null:
 				texture_button.texture_normal = character_textures.locked[i]
+			# Update status label for locked characters
+			status_label.text = "Not Unlocked"
+			status_label.add_theme_color_override("font_color", Color(1.0, 0.4, 0.4)) # Red
 		
 		# Show selection indicator only on the current character
 		if i < selection_indicators.size():

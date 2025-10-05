@@ -163,9 +163,9 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_w7gar")
 }],
-"loop": true,
+"loop": false,
 "name": &"auto_attack",
-"speed": 10.0
+"speed": 12.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -266,15 +266,15 @@ animations = [{
 }],
 "loop": false,
 "name": &"skill",
-"speed": 10.0
+"speed": 12.0
 }]
 
 [node name="Slime" type="Node2D"]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_ovbb4")
-animation = &"hurt"
-autoplay = "auto_attack"
+animation = &"auto_attack"
+autoplay = "idle"
 
 [node name="enemy_autoattack" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("2_r1exb")

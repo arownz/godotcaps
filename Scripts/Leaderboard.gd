@@ -103,7 +103,8 @@ func _setup_tab_styling():
 	tabs.add_theme_color_override("font_selected_color", Color(1, 1, 1, 1))
 
 # Helper function to create a simple, reliable bordered container
-func _create_bordered_container(content: Control, min_size: Vector2, bg_color: Color = Color(0.1, 0.1, 0.1, 0.8)) -> Control:
+# alignment: "center" for centered content, "left" for left-aligned content
+func _create_bordered_container(content: Control, min_size: Vector2, bg_color: Color = Color(0.1, 0.1, 0.1, 0.8), alignment: String = "center") -> Control:
 	var container = Panel.new()
 	container.custom_minimum_size = min_size
 	container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -120,20 +121,37 @@ func _create_bordered_container(content: Control, min_size: Vector2, bg_color: C
 	style_box.corner_radius_top_right = 5
 	style_box.corner_radius_bottom_left = 5
 	style_box.corner_radius_bottom_right = 5
-	
-	# Consistent padding for all containers
 	style_box.content_margin_left = 10
 	style_box.content_margin_right = 10
 	style_box.content_margin_top = 8
 	style_box.content_margin_bottom = 8
 	
 	container.add_theme_stylebox_override("panel", style_box)
-	container.add_child(content)
+	
+	# Wrap content based on alignment to achieve centering inside the panel
+	if alignment == "center":
+		# Use CenterContainer to center the label inside the panel
+		var center_container = CenterContainer.new()
+		center_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		center_container.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		center_container.add_child(content)
+		container.add_child(center_container)
+	elif alignment == "left":
+		# Use HBoxContainer with left alignment
+		var hbox = HBoxContainer.new()
+		hbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		hbox.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		hbox.alignment = BoxContainer.ALIGNMENT_BEGIN
+		hbox.add_child(content)
+		container.add_child(hbox)
+	else:
+		# Default: add content directly
+		container.add_child(content)
 	
 	return container
 
 # Helper function to create a reliable label with guaranteed visibility
-func _create_reliable_label(text: String, font_size: int = 16, color: Color = Color(1, 1, 1), alignment: HorizontalAlignment = HORIZONTAL_ALIGNMENT_CENTER, max_chars: int = 25) -> Label:
+func _create_reliable_label(text: String, font_size: int = 16, color: Color = Color(1, 1, 1), max_chars: int = 25) -> Label:
 	var label = Label.new()
 	
 	# Set text with truncation for long names
@@ -143,7 +161,7 @@ func _create_reliable_label(text: String, font_size: int = 16, color: Color = Co
 		label.tooltip_text = text # Show full text on hover
 	
 	label.text = display_text
-	label.horizontal_alignment = alignment
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	
 	# Use dyslexia-friendly font
@@ -151,13 +169,9 @@ func _create_reliable_label(text: String, font_size: int = 16, color: Color = Co
 	label.add_theme_font_size_override("font_size", font_size)
 	label.add_theme_color_override("font_color", color)
 	
-	# Ensure label expands to container size
+	# Expand to fill available space so padding creates centering effect
 	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	label.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	
-	# Enable text clipping to prevent overflow
-	label.clip_contents = true
-	label.autowrap_mode = TextServer.AUTOWRAP_OFF
 	
 	return label
 
@@ -177,7 +191,7 @@ func _create_leaderboard_row(user_data: Dictionary, rank: int, columns: Array, t
 	# Create rank column
 	var rank_text = "#" + str(rank) if rank <= 3 else str(rank)
 	var rank_label = _create_reliable_label(rank_text, 16, rank_color)
-	var rank_container = _create_bordered_container(rank_label, Vector2(80, 50), rank_bg_color)
+	var rank_container = _create_bordered_container(rank_label, Vector2(80, 50), rank_bg_color, "center")
 	row.add_child(rank_container)
 	
 	# Create profile picture column
@@ -196,7 +210,7 @@ func _create_leaderboard_row(user_data: Dictionary, rank: int, columns: Array, t
 	profile_center.custom_minimum_size = Vector2(100, 50)
 	profile_center.add_child(profile_rect)
 	profile_rect.position = Vector2(30, 5)
-	var profile_container = _create_bordered_container(profile_center, Vector2(100, 50), theme_color)
+	var profile_container = _create_bordered_container(profile_center, Vector2(100, 50), theme_color, "center")
 	row.add_child(profile_container)
 	
 	# Create player name column
@@ -209,8 +223,8 @@ func _create_leaderboard_row(user_data: Dictionary, rank: int, columns: Array, t
 		name_bg_color = Color(0.3, 0.25, 0.1, 0.8)
 		player_name = "* " + player_name + " (You)"
 	
-	var name_label = _create_reliable_label(player_name, 16, name_color, HORIZONTAL_ALIGNMENT_LEFT, 25)
-	var name_container = _create_bordered_container(name_label, Vector2(300, 50), name_bg_color)
+	var name_label = _create_reliable_label(player_name, 16, name_color, 25)
+	var name_container = _create_bordered_container(name_label, Vector2(300, 50), name_bg_color, "left")
 	row.add_child(name_container)
 	
 	# Add additional columns based on leaderboard type
@@ -226,8 +240,8 @@ func _create_leaderboard_row(user_data: Dictionary, rank: int, columns: Array, t
 		var column_color = column_data.get("color", Color(1, 1, 1))
 		var column_width = column_data.get("width", 100)
 		
-		var column_label = _create_reliable_label(value_text, 16, column_color, HORIZONTAL_ALIGNMENT_CENTER)
-		var column_container = _create_bordered_container(column_label, Vector2(column_width, 50), theme_color)
+		var column_label = _create_reliable_label(value_text, 16, column_color)
+		var column_container = _create_bordered_container(column_label, Vector2(column_width, 50), theme_color, "center")
 		row.add_child(column_container)
 	
 	return row
@@ -468,27 +482,27 @@ func _create_dungeon_header() -> Control:
 	header.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	
 	var rank_label = _create_reliable_label("RANK", 16, Color(1, 0.9, 0.3))
-	var rank_container = _create_bordered_container(rank_label, Vector2(80, 50), theme_colors["default"])
+	var rank_container = _create_bordered_container(rank_label, Vector2(80, 50), theme_colors["default"], "center")
 	header.add_child(rank_container)
 	
 	var pic_label = _create_reliable_label("AVATAR", 14, Color(0.8, 0.9, 1))
-	var pic_container = _create_bordered_container(pic_label, Vector2(80, 50), theme_colors["default"])
+	var pic_container = _create_bordered_container(pic_label, Vector2(80, 50), theme_colors["default"], "center")
 	header.add_child(pic_container)
 	
 	var name_label = _create_reliable_label("PLAYER", 16, Color(0.9, 0.95, 1))
-	var name_container = _create_bordered_container(name_label, Vector2(300, 50), theme_colors["default"])
+	var name_container = _create_bordered_container(name_label, Vector2(300, 50), theme_colors["default"], "center")
 	header.add_child(name_container)
 	
 	var dungeon_label = _create_reliable_label("DUNGEON", 16, Color(0.7, 0.9, 0.7))
-	var dungeon_container = _create_bordered_container(dungeon_label, Vector2(100, 50), theme_colors["default"])
+	var dungeon_container = _create_bordered_container(dungeon_label, Vector2(100, 50), theme_colors["default"], "center")
 	header.add_child(dungeon_container)
 	
 	var stage_label = _create_reliable_label("STAGE", 16, Color(0.9, 0.7, 0.9))
-	var stage_container = _create_bordered_container(stage_label, Vector2(80, 50), theme_colors["default"])
+	var stage_container = _create_bordered_container(stage_label, Vector2(80, 50), theme_colors["default"], "center")
 	header.add_child(stage_container)
 	
-	var kills_label = _create_reliable_label("Enemy Defeated", 16, Color(1, 0.4, 0.4))
-	var kills_container = _create_bordered_container(kills_label, Vector2(80, 50), theme_colors["default"])
+	var kills_label = _create_reliable_label("SLAIN ENEMY", 16, Color(1, 0.4, 0.4))
+	var kills_container = _create_bordered_container(kills_label, Vector2(80, 50), theme_colors["default"], "center")
 	header.add_child(kills_container)
 	
 	return header
@@ -509,7 +523,7 @@ func _create_dungeon_row(user_data: Dictionary, rank: int) -> Control:
 	# Create rank column
 	var rank_text = "#" + str(rank) if rank <= 3 else str(rank)
 	var rank_label = _create_reliable_label(rank_text, 16, rank_color)
-	var rank_container = _create_bordered_container(rank_label, Vector2(80, 50), rank_bg_color)
+	var rank_container = _create_bordered_container(rank_label, Vector2(80, 50), rank_bg_color, "center")
 	row.add_child(rank_container)
 	
 	# Create profile picture column
@@ -528,7 +542,7 @@ func _create_dungeon_row(user_data: Dictionary, rank: int) -> Control:
 	profile_center.custom_minimum_size = Vector2(100, 50)
 	profile_center.add_child(profile_rect)
 	profile_rect.position = Vector2(30, 5)
-	var profile_container = _create_bordered_container(profile_center, Vector2(100, 50), theme_colors["default"])
+	var profile_container = _create_bordered_container(profile_center, Vector2(100, 50), theme_colors["default"], "center")
 	row.add_child(profile_container)
 	
 	# Create player name column
@@ -541,27 +555,27 @@ func _create_dungeon_row(user_data: Dictionary, rank: int) -> Control:
 		name_bg_color = Color(0.3, 0.25, 0.1, 0.8)
 		player_name = "* " + player_name + " (You)"
 	
-	var name_label = _create_reliable_label(player_name, 16, name_color, HORIZONTAL_ALIGNMENT_LEFT, 25)
-	var name_container = _create_bordered_container(name_label, Vector2(300, 50), name_bg_color)
+	var name_label = _create_reliable_label(player_name, 16, name_color, 25)
+	var name_container = _create_bordered_container(name_label, Vector2(300, 50), name_bg_color, "left")
 	row.add_child(name_container)
 	
 	# Dungeon name instead of number
 	var current_dungeon = user_data.get("current_dungeon", 1)
 	var dungeon_name = dungeon_names.get(current_dungeon, "Unknown")
-	var dungeon_label = _create_reliable_label(dungeon_name, 16, Color(0.7, 0.9, 0.7), HORIZONTAL_ALIGNMENT_CENTER)
-	var dungeon_container = _create_bordered_container(dungeon_label, Vector2(100, 50), theme_colors["default"])
+	var dungeon_label = _create_reliable_label(dungeon_name, 16, Color(0.7, 0.9, 0.7))
+	var dungeon_container = _create_bordered_container(dungeon_label, Vector2(100, 50), theme_colors["default"], "center")
 	row.add_child(dungeon_container)
 	
 	# Stage
 	var stage_text = str(user_data.get("current_stage", 1))
-	var stage_label = _create_reliable_label(stage_text, 16, Color(0.9, 0.7, 0.9), HORIZONTAL_ALIGNMENT_CENTER)
-	var stage_container = _create_bordered_container(stage_label, Vector2(80, 50), theme_colors["default"])
+	var stage_label = _create_reliable_label(stage_text, 16, Color(0.9, 0.7, 0.9))
+	var stage_container = _create_bordered_container(stage_label, Vector2(80, 50), theme_colors["default"], "center")
 	row.add_child(stage_container)
 	
 	# Kills
 	var kills_text = str(user_data.get("enemies_defeated", 0))
-	var kills_label = _create_reliable_label(kills_text, 16, Color(1, 0.4, 0.4), HORIZONTAL_ALIGNMENT_CENTER)
-	var kills_container = _create_bordered_container(kills_label, Vector2(80, 50), theme_colors["default"])
+	var kills_label = _create_reliable_label(kills_text, 16, Color(1, 0.4, 0.4))
+	var kills_container = _create_bordered_container(kills_label, Vector2(80, 50), theme_colors["default"], "center")
 	row.add_child(kills_container)
 	
 	return row
@@ -611,35 +625,35 @@ func _create_power_header() -> Control:
 	header.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	
 	var rank_label = _create_reliable_label("RANK", 16, Color(1, 0.9, 0.3))
-	var rank_container = _create_bordered_container(rank_label, Vector2(80, 50), theme_colors["default"])
+	var rank_container = _create_bordered_container(rank_label, Vector2(80, 50), theme_colors["default"], "center")
 	header.add_child(rank_container)
 	
 	var pic_label = _create_reliable_label("AVATAR", 14, Color(0.8, 0.9, 1))
-	var pic_container = _create_bordered_container(pic_label, Vector2(80, 50), theme_colors["default"])
+	var pic_container = _create_bordered_container(pic_label, Vector2(80, 50), theme_colors["default"], "center")
 	header.add_child(pic_container)
 	
 	var name_label = _create_reliable_label("PLAYER", 16, Color(0.9, 0.95, 1))
-	var name_container = _create_bordered_container(name_label, Vector2(300, 50), theme_colors["default"])
+	var name_container = _create_bordered_container(name_label, Vector2(300, 50), theme_colors["default"], "center")
 	header.add_child(name_container)
 	
 	var level_label = _create_reliable_label("LEVEL", 16, Color(1, 1, 0.3))
-	var level_container = _create_bordered_container(level_label, Vector2(80, 50), theme_colors["default"])
+	var level_container = _create_bordered_container(level_label, Vector2(80, 50), theme_colors["default"], "center")
 	header.add_child(level_container)
 	
 	var health_label = _create_reliable_label("HEALTH", 15, Color(0.3, 1, 0.3))
-	var health_container = _create_bordered_container(health_label, Vector2(100, 50), theme_colors["default"])
+	var health_container = _create_bordered_container(health_label, Vector2(100, 50), theme_colors["default"], "center")
 	header.add_child(health_container)
 	
 	var damage_label = _create_reliable_label("DAMAGE", 15, Color(1, 0.3, 0.3))
-	var damage_container = _create_bordered_container(damage_label, Vector2(100, 50), theme_colors["default"])
+	var damage_container = _create_bordered_container(damage_label, Vector2(100, 50), theme_colors["default"], "center")
 	header.add_child(damage_container)
 	
 	var def_label = _create_reliable_label("DEF", 16, Color(0.3, 0.7, 1))
-	var def_container = _create_bordered_container(def_label, Vector2(80, 50), theme_colors["default"])
+	var def_container = _create_bordered_container(def_label, Vector2(80, 50), theme_colors["default"], "center")
 	header.add_child(def_container)
 	
 	var power_label = _create_reliable_label("POWER", 16, Color(1, 0.8, 0.2))
-	var power_container = _create_bordered_container(power_label, Vector2(100, 50), theme_colors["default"])
+	var power_container = _create_bordered_container(power_label, Vector2(100, 50), theme_colors["default"], "center")
 	header.add_child(power_container)
 	
 	return header
@@ -687,27 +701,27 @@ func _create_word_header() -> Control:
 	header.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	
 	var rank_label = _create_reliable_label("RANK", 16, Color(1, 0.9, 0.3))
-	var rank_container = _create_bordered_container(rank_label, Vector2(80, 50), theme_colors["default"])
+	var rank_container = _create_bordered_container(rank_label, Vector2(80, 50), theme_colors["default"], "center")
 	header.add_child(rank_container)
 	
 	var pic_label = _create_reliable_label("AVATAR", 14, Color(0.8, 0.9, 1))
-	var pic_container = _create_bordered_container(pic_label, Vector2(80, 50), theme_colors["default"])
+	var pic_container = _create_bordered_container(pic_label, Vector2(80, 50), theme_colors["default"], "center")
 	header.add_child(pic_container)
 	
 	var name_label = _create_reliable_label("PLAYER", 16, Color(0.9, 0.95, 1))
-	var name_container = _create_bordered_container(name_label, Vector2(300, 50), theme_colors["default"])
+	var name_container = _create_bordered_container(name_label, Vector2(300, 50), theme_colors["default"], "center")
 	header.add_child(name_container)
 	
 	var speech_label = _create_reliable_label("SPEECH", 15, Color(0.3, 0.8, 1))
-	var speech_container = _create_bordered_container(speech_label, Vector2(100, 50), theme_colors["default"])
+	var speech_container = _create_bordered_container(speech_label, Vector2(100, 50), theme_colors["default"], "center")
 	header.add_child(speech_container)
 	
 	var board_label = _create_reliable_label("BOARD", 15, Color(0.3, 1, 0.8))
-	var board_container = _create_bordered_container(board_label, Vector2(100, 50), theme_colors["default"])
+	var board_container = _create_bordered_container(board_label, Vector2(100, 50), theme_colors["default"], "center")
 	header.add_child(board_container)
 	
 	var total_label = _create_reliable_label("TOTAL", 16, Color(0.5, 1, 0.5))
-	var total_container = _create_bordered_container(total_label, Vector2(100, 50), theme_colors["default"])
+	var total_container = _create_bordered_container(total_label, Vector2(100, 50), theme_colors["default"], "center")
 	header.add_child(total_container)
 	
 	return header
@@ -755,27 +769,27 @@ func _create_phonics_header() -> Control:
 	header.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	
 	var rank_label = _create_reliable_label("RANK", 16, Color(1, 0.9, 0.3))
-	var rank_container = _create_bordered_container(rank_label, Vector2(80, 50), theme_colors["default"])
+	var rank_container = _create_bordered_container(rank_label, Vector2(80, 50), theme_colors["default"], "center")
 	header.add_child(rank_container)
 	
 	var pic_label = _create_reliable_label("AVATAR", 14, Color(0.8, 0.9, 1))
-	var pic_container = _create_bordered_container(pic_label, Vector2(80, 50), theme_colors["default"])
+	var pic_container = _create_bordered_container(pic_label, Vector2(80, 50), theme_colors["default"], "center")
 	header.add_child(pic_container)
 	
 	var name_label = _create_reliable_label("PLAYER", 16, Color(0.9, 0.95, 1))
-	var name_container = _create_bordered_container(name_label, Vector2(300, 50), theme_colors["default"])
+	var name_container = _create_bordered_container(name_label, Vector2(300, 50), theme_colors["default"], "center")
 	header.add_child(name_container)
 	
 	var letters_label = _create_reliable_label("LETTERS", 15, Color(0.3, 1, 0.3))
-	var letters_container = _create_bordered_container(letters_label, Vector2(100, 50), theme_colors["default"])
+	var letters_container = _create_bordered_container(letters_label, Vector2(100, 50), theme_colors["default"], "center")
 	header.add_child(letters_container)
 	
 	var words_label = _create_reliable_label("WORDS", 15, Color(0.3, 0.7, 1))
-	var words_container = _create_bordered_container(words_label, Vector2(100, 50), theme_colors["default"])
+	var words_container = _create_bordered_container(words_label, Vector2(100, 50), theme_colors["default"], "center")
 	header.add_child(words_container)
 	
 	var progress_label = _create_reliable_label("PROGRESS", 14, Color(1, 1, 0.3))
-	var progress_container = _create_bordered_container(progress_label, Vector2(120, 50), theme_colors["default"])
+	var progress_container = _create_bordered_container(progress_label, Vector2(120, 50), theme_colors["default"], "center")
 	header.add_child(progress_container)
 	
 	return header
@@ -823,27 +837,27 @@ func _create_read_aloud_header() -> Control:
 	header.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	
 	var rank_label = _create_reliable_label("RANK", 16, Color(1, 0.9, 0.3))
-	var rank_container = _create_bordered_container(rank_label, Vector2(80, 50), theme_colors["default"])
+	var rank_container = _create_bordered_container(rank_label, Vector2(80, 50), theme_colors["default"], "center")
 	header.add_child(rank_container)
 	
 	var pic_label = _create_reliable_label("AVATAR", 14, Color(0.8, 0.9, 1))
-	var pic_container = _create_bordered_container(pic_label, Vector2(80, 50), theme_colors["default"])
+	var pic_container = _create_bordered_container(pic_label, Vector2(80, 50), theme_colors["default"], "center")
 	header.add_child(pic_container)
 	
 	var name_label = _create_reliable_label("PLAYER", 16, Color(0.9, 0.95, 1))
-	var name_container = _create_bordered_container(name_label, Vector2(300, 50), theme_colors["default"])
+	var name_container = _create_bordered_container(name_label, Vector2(300, 50), theme_colors["default"], "center")
 	header.add_child(name_container)
 	
 	var guided_label = _create_reliable_label("GUIDED", 15, Color(0.3, 1, 0.3))
-	var guided_container = _create_bordered_container(guided_label, Vector2(100, 50), theme_colors["default"])
+	var guided_container = _create_bordered_container(guided_label, Vector2(100, 50), theme_colors["default"], "center")
 	header.add_child(guided_container)
 	
 	var syllable_label = _create_reliable_label("SYLLABLE", 14, Color(0.8, 0.3, 1))
-	var syllable_container = _create_bordered_container(syllable_label, Vector2(100, 50), theme_colors["default"])
+	var syllable_container = _create_bordered_container(syllable_label, Vector2(100, 50), theme_colors["default"], "center")
 	header.add_child(syllable_container)
 	
 	var progress_label = _create_reliable_label("PROGRESS", 14, Color(1, 1, 0.3))
-	var progress_container = _create_bordered_container(progress_label, Vector2(120, 50), theme_colors["default"])
+	var progress_container = _create_bordered_container(progress_label, Vector2(120, 50), theme_colors["default"], "center")
 	header.add_child(progress_container)
 	
 	return header
@@ -891,27 +905,27 @@ func _create_flip_quiz_header() -> Control:
 	header.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	
 	var rank_label = _create_reliable_label("RANK", 16, Color(1, 0.9, 0.3))
-	var rank_container = _create_bordered_container(rank_label, Vector2(80, 50), theme_colors["default"])
+	var rank_container = _create_bordered_container(rank_label, Vector2(80, 50), theme_colors["default"], "center")
 	header.add_child(rank_container)
 	
 	var pic_label = _create_reliable_label("AVATAR", 14, Color(0.8, 0.9, 1))
-	var pic_container = _create_bordered_container(pic_label, Vector2(80, 50), theme_colors["default"])
+	var pic_container = _create_bordered_container(pic_label, Vector2(80, 50), theme_colors["default"], "center")
 	header.add_child(pic_container)
 	
 	var name_label = _create_reliable_label("PLAYER", 16, Color(0.9, 0.95, 1))
-	var name_container = _create_bordered_container(name_label, Vector2(300, 50), theme_colors["default"])
+	var name_container = _create_bordered_container(name_label, Vector2(300, 50), theme_colors["default"], "center")
 	header.add_child(name_container)
 	
 	var animals_label = _create_reliable_label("ANIMALS", 15, Color(1, 0.6, 0.3))
-	var animals_container = _create_bordered_container(animals_label, Vector2(100, 50), theme_colors["default"])
+	var animals_container = _create_bordered_container(animals_label, Vector2(100, 50), theme_colors["default"], "center")
 	header.add_child(animals_container)
 	
 	var vehicles_label = _create_reliable_label("VEHICLES", 14, Color(0.3, 0.8, 1))
-	var vehicles_container = _create_bordered_container(vehicles_label, Vector2(100, 50), theme_colors["default"])
+	var vehicles_container = _create_bordered_container(vehicles_label, Vector2(100, 50), theme_colors["default"], "center")
 	header.add_child(vehicles_container)
 	
 	var progress_label = _create_reliable_label("PROGRESS", 14, Color(1, 1, 0.3))
-	var progress_container = _create_bordered_container(progress_label, Vector2(120, 50), theme_colors["default"])
+	var progress_container = _create_bordered_container(progress_label, Vector2(120, 50), theme_colors["default"], "center")
 	header.add_child(progress_container)
 	
 	return header

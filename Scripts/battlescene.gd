@@ -483,11 +483,12 @@ func _auto_battle_turn():
 	if !battle_active or player_manager.player_health <= 0:
 		print("BattleScene: Skipping player attack - battle not active or player defeated")
 		return
-		
-	battle_manager.player_attack()
 	
-	# Give a brief pause for animation (player attack resolution)
-	await get_tree().create_timer(_speed_time(0.8)).timeout
+	# AWAIT player attack to finish completely (movement + attack + return)
+	await battle_manager.player_attack()
+	
+	# Small pause after player attack finishes - SPEED: Reduce from 0.5s to 0.2s
+	await get_tree().create_timer(_speed_time(0.3)).timeout
 	
 	# Check if enemy is defeated - the enemy_defeated signal will handle victory automatically
 	if enemy_manager.enemy_health <= 0:
@@ -497,14 +498,16 @@ func _auto_battle_turn():
 	
 	# After a small delay, enemy attacks
 	print("Enemy attacking with damage: " + str(enemy_manager.enemy_damage))
-	battle_manager.enemy_attack()
 	
-	# Give a brief pause for animation (enemy attack resolution)
-	await get_tree().create_timer(_speed_time(0.8)).timeout
-	
+	# AWAIT enemy attack to finish completely (movement + attack + return)
+	await battle_manager.enemy_attack()
+
+	# Small pause after enemy attack finishes - SPEED: Reduce from 0.5s to 0.3s
+	await get_tree().create_timer(_speed_time(0.3)).timeout
+
 	# Check if enemy skill is ready and battle is still active
 	if battle_active and enemy_manager.enemy_skill_meter >= enemy_manager.enemy_skill_threshold:
-		await get_tree().create_timer(_speed_time(0.5)).timeout
+		await get_tree().create_timer(_speed_time(0.3)).timeout # SPEED: Reduce from 0.5s to 0.3s
 		# Double-check battle is still active before triggering skill
 		if battle_active:
 			battle_manager.trigger_enemy_skill()
@@ -513,8 +516,8 @@ func _auto_battle_turn():
 		print("BattleScene: Skipping enemy skill - battle has ended")
 		return
 	
-	# Continue battle after delay - make it a shorter delay for faster battles
-	auto_battle_timer.wait_time = _speed_time(1.0)
+	# Continue battle after delay - SPEED: Reduce from 1.0s to 0.5s for faster turn transitions
+	auto_battle_timer.wait_time = _speed_time(0.3)
 	auto_battle_timer.start()
 
 # Auto battle timer timeout (replaced from original code)

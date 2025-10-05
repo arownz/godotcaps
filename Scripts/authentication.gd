@@ -787,6 +787,21 @@ func _create_user_document(collection, user_id: String, auth):
 	
 	var current_time = Time.get_datetime_string_from_system(false, true)
 	
+	# Default character is Lexia with bonuses: +5 HP, +3 DMG, +2 DUR
+	var base_health = 100
+	var base_damage = 10
+	var base_durability = 5
+	
+	var lexia_health_bonus = 5
+	var lexia_damage_bonus = 3
+	var lexia_durability_bonus = 2
+	
+	var current_health = base_health + lexia_health_bonus # 105
+	var current_damage = base_damage + lexia_damage_bonus # 13
+	var current_durability = base_durability + lexia_durability_bonus # 7
+	
+	print("DEBUG: Creating user with Lexia bonuses - HP:", current_health, " DMG:", current_damage, " DUR:", current_durability)
+	
 	var user_doc = {
 		"profile": {
 			"username": display_name,
@@ -804,12 +819,12 @@ func _create_user_document(collection, user_id: String, auth):
 			"player": {
 				"level": 1,
 				"exp": 0,
-				"health": 100,
-				"damage": 10,
-				"durability": 5,
-				"base_health": 100,
-				"base_damage": 10,
-				"base_durability": 5,
+				"health": current_health, # 105 (100 base + 5 Lexia bonus)
+				"damage": current_damage, # 13 (10 base + 3 Lexia bonus)
+				"durability": current_durability, # 7 (5 base + 2 Lexia bonus)
+				"base_health": base_health, # 100
+				"base_damage": base_damage, # 10
+				"base_durability": base_durability, # 5
 				"energy": 20,
 				"last_energy_update": 0,
 				"current_character": "lexia"

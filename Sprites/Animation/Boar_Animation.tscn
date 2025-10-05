@@ -154,9 +154,9 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_ljejr")
 }],
-"loop": true,
+"loop": false,
 "name": &"auto_attack",
-"speed": 10.0
+"speed": 12.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -257,7 +257,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"skill",
-"speed": 10.0
+"speed": 12.0
 }]
 
 [node name="BoarAnimation" type="Node2D"]
@@ -265,7 +265,7 @@ animations = [{
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_3qtp5")
 animation = &"auto_attack"
-autoplay = "auto_attack"
+autoplay = "idle"
 
 [node name="sfx_autoattack" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("2_guge8")

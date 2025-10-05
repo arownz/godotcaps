@@ -284,7 +284,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"auto_attack",
-"speed": 10.0
+"speed": 12.0
 }, {
 "frames": [{
 "duration": 1.0,

@@ -38,7 +38,7 @@ func get_skin():
 # Helper function to get character animation path from character name
 func get_character_animation_path(character_name: String) -> String:
 	match character_name.to_lower():
-		"lexia", "default":
+		"lexia":
 			return "res://Sprites/Animation/Lexia_Animation.tscn.tscn"
 		"ragna":
 			return "res://Sprites/Animation/Ragna_Animation.tscn"
