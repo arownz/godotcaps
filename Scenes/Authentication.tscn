@@ -89,17 +89,18 @@ custom_minimum_size = Vector2(200, 180)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_stretch_ratio = 0.0
-mouse_default_cursor_shape = 2
 texture_normal = ExtResource("3_3ev2f")
 ignore_texture_size = true
 stretch_mode = 5
 
 [node name="Subtitle" type="Label" parent="MarginContainer/ContentContainer/LeftPanel/BrandContainer"]
 layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 1
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_4bnr5")
-theme_override_font_sizes/font_size = 23
+theme_override_font_sizes/font_size = 30
 text = "Dyslexia
 Gamification
 Version 1.0"
@@ -578,9 +579,6 @@ offset_bottom = 790.0
 scale = Vector2(1.23082, 1.23082)
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
-theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_4bnr5")
 theme_override_font_sizes/font_size = 15
 theme_override_styles/focus = SubResource("StyleBoxEmpty_6oq4l")
@@ -589,12 +587,6 @@ icon = ExtResource("8_6oq4l")
 flat = true
 icon_alignment = 1
 expand_icon = true
-
-[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("9_c45f6")
-
-[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("10_c45f6")
 
 [node name="SettingsButton" type="TextureButton" parent="."]
 layout_mode = 1
@@ -646,6 +638,12 @@ texture = ExtResource("13_hu7sp")
 expand_mode = 1
 stretch_mode = 5
 
+[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("9_c45f6")
+
+[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("10_c45f6")
+
 [connection signal="pressed" from="MarginContainer/ContentContainer/LeftPanel/BrandContainer/LogoTexture" to="." method="_on_logo_button_pressed"]
 [connection signal="tab_clicked" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer" to="." method="_on_tab_container_tab_clicked"]
 [connection signal="tab_hovered" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer" to="." method="_on_tab_container_tab_hovered"]
@@ -681,4 +679,5 @@ stretch_mode = 5
 [connection signal="pressed" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword/ResetButton" to="." method="_on_reset_password_button_pressed"]
 [connection signal="mouse_entered" from="AdminButton" to="." method="_on_admin_button_mouse_entered"]
 [connection signal="pressed" from="AdminButton" to="." method="_on_admin_button_pressed"]
+[connection signal="mouse_entered" from="SettingsButton" to="." method="_on_settings_button_mouse_entered"]
 [connection signal="pressed" from="SettingsButton" to="." method="_on_settings_button_pressed"]

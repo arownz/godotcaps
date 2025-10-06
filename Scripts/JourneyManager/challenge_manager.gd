@@ -312,10 +312,12 @@ func handle_challenge_failed():
 		# Wait for movement to complete
 		await move_tween.finished
 		
-		# Play skill animation and apply damage at the RIGHT moment
+		# Play skill animation and SFX, then apply damage at the RIGHT moment
 		var enemy_sprite = enemy_node.get_node_or_null("AnimatedSprite2D")
 		if enemy_sprite and enemy_sprite.sprite_frames and enemy_sprite.sprite_frames.has_animation("skill"):
 			enemy_sprite.play("skill")
+			# Play skill SFX when animation starts
+			enemy_manager.play_enemy_sfx("enemy_skill")
 			
 			# Wait for animation to progress before applying damage
 			await battle_scene.get_tree().create_timer(0.5).timeout
@@ -328,6 +330,8 @@ func handle_challenge_failed():
 			battle_scene._show_skill_damage_indicator(skill_damage, "player")
 		else:
 			# Fallback: apply damage after pause even without skill animation
+			# Play skill SFX even if animation not found
+			enemy_manager.play_enemy_sfx("enemy_skill")
 			await battle_scene.get_tree().create_timer(0.5).timeout
 			player_manager.take_damage(skill_damage)
 			battle_log_manager.add_message("[color=#000000]The " + enemy_manager.enemy_name + " dealt " + str(skill_damage) + " critical damage![/color]")
@@ -399,6 +403,8 @@ func handle_challenge_cancelled():
 		var enemy_sprite = enemy_node.get_node_or_null("AnimatedSprite2D")
 		if enemy_sprite and enemy_sprite.sprite_frames and enemy_sprite.sprite_frames.has_animation("skill"):
 			enemy_sprite.play("skill")
+			# Play skill SFX when animation starts
+			enemy_manager.play_enemy_sfx("enemy_skill")
 			# Wait slightly longer to align with skill impact
 			await battle_scene.get_tree().create_timer(0.5).timeout
 			# Apply skill damage
@@ -407,15 +413,17 @@ func handle_challenge_cancelled():
 			# Show skill damage indicator for consistency
 			battle_scene._show_skill_damage_indicator(cancellation_damage, "player")
 		elif enemy_sprite and enemy_sprite.sprite_frames and enemy_sprite.sprite_frames.has_animation("auto_attack"):
-			# Fallback: if no 'skill' animation, try auto_attack
+			# Fallback: if no 'skill' animation, try auto_attack but still play skill SFX
 			enemy_sprite.play("auto_attack")
+			enemy_manager.play_enemy_sfx("enemy_skill") # Try skill SFX first
 			await battle_scene.get_tree().create_timer(0.4).timeout
 			player_manager.take_damage(cancellation_damage)
 			battle_log_manager.add_message("[color=#000000]The " + enemy_manager.enemy_name + " dealt " + str(cancellation_damage) + " critical damage![/color]")
 			# Use standard indicator as fallback
 			battle_scene._show_damage_indicator(cancellation_damage, "player")
 		else:
-			# Fallback: apply damage without animation
+			# Fallback: apply damage without animation but still play skill SFX
+			enemy_manager.play_enemy_sfx("enemy_skill")
 			await battle_scene.get_tree().create_timer(0.4).timeout
 			player_manager.take_damage(cancellation_damage)
 			battle_log_manager.add_message("[color=#000000]The " + enemy_manager.enemy_name + " dealt " + str(cancellation_damage) + " critical damage![/color]")

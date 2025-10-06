@@ -1459,3 +1459,6 @@ func _on_settings_button_pressed():
 		add_child(popup)
 		if popup.has_method("set_context"):
 			popup.set_context(false) # normal settings; hide battle buttons
+
+func _on_settings_button_mouse_entered():
+	$ButtonHover.play()

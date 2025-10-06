@@ -169,7 +169,7 @@ size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold")
 theme_override_font_sizes/font_size = 32
-text = "Letters Phonic"
+text = "Letters Phonic (Path Trace)"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -342,16 +342,17 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -100.0
-offset_top = -60.0
-offset_right = 100.0
-offset_bottom = 60.0
+offset_left = -133.5
+offset_top = -112.000015
+offset_right = 66.5
+offset_bottom = 71.33331
 grow_horizontal = 2
 grow_vertical = 2
+scale = Vector2(1.3210202, 1.3210202)
 theme_override_colors/font_color = Color(0.2, 0.6, 0.902, 0.525)
 theme_override_fonts/font = ExtResource("4_bold")
-theme_override_font_sizes/font_size = 120
-text = "A"
+theme_override_font_sizes/font_size = 90
+text = "U"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -363,6 +364,7 @@ stream = ExtResource("9_hover")
 
 [connection signal="pressed" from="MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton" to="." method="_on_back_button_pressed"]
 [connection signal="mouse_entered" from="MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/PreviousButton" to="." method="_on_button_hover"]
+[connection signal="pressed" from="MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/PreviousButton" to="." method="_on_previous_button_pressed"]
 [connection signal="mouse_entered" from="MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/HearButton" to="." method="_on_button_hover"]
 [connection signal="pressed" from="MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/HearButton" to="." method="_on_HearButton_pressed"]
 [connection signal="mouse_entered" from="MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/NextButton" to="." method="_on_button_hover"]

@@ -226,7 +226,6 @@ size_flags_vertical = 3
 alignment = 1
 
 [node name="PreviousButton" type="Button" parent="MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer"]
-visible = false
 custom_minimum_size = Vector2(150, 40)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -364,7 +363,7 @@ stream = ExtResource("9_hover")
 [connection signal="mouse_entered" from="MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/HearButton" to="." method="_on_button_hover"]
 [connection signal="pressed" from="MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/HearButton" to="." method="_on_HearButton_pressed"]
 [connection signal="mouse_entered" from="MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/NextButton" to="." method="_on_button_hover"]
-[connection signal="pressed" from="MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/NextButton" to="." method="_on_NextTargetButton_pressed"]
+[connection signal="pressed" from="MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/NextButton" to="." method="_on_NextButton_pressed"]
 [connection signal="pressed" from="MainContainer/ContentContainer/InstructionPanel/GuideButton" to="." method="_on_guide_button_pressed"]
 [connection signal="mouse_entered" from="MainContainer/ContentContainer/InstructionPanel/TTSSettingButton" to="." method="_on_button_hover"]
 [connection signal="pressed" from="MainContainer/ContentContainer/InstructionPanel/TTSSettingButton" to="." method="_on_tts_setting_button_pressed"]

@@ -440,7 +440,7 @@ func _on_continue_battle():
 		print("BattleManager: DungeonGlobals updated - Dungeon: ", battle_scene.dungeon_manager.dungeon_num, ", Stage: ", battle_scene.dungeon_manager.stage_num)
 		
 		# Add delay to ensure Firebase operations complete
-		await get_tree().create_timer(0.1).timeout
+		await get_tree().create_timer(0.2).timeout
 		print("BattleManager: Firebase sync delay completed")
 		
 		# Reset battle state

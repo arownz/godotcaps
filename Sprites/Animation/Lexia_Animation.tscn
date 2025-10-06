@@ -580,7 +580,7 @@ animations = [{
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_fdt5l")
-animation = &"idle"
+animation = &"dead"
 autoplay = "idle"
 
 [node name="player_counter" type="AudioStreamPlayer" parent="."]

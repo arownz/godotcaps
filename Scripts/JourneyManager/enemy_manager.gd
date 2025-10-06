@@ -146,8 +146,6 @@ func _play_enemy_sfx(action: String) -> void:
             player = _find_audio_player_for_action("hurt")
         elif action == "enemy_skill":
             player = _find_audio_player_for_action("skill")
-        elif action == "enemy_dead":
-            player = _find_audio_player_for_action("dead")
         
         if player and player.has_method("play"):
             player.play()
@@ -530,9 +528,7 @@ func take_damage(damage_amount):
         
         # Play death animation
         _play_enemy_anim("dead")
-        # Also play hurt SFX on lethal hit (requested), then dead SFX if present
         _play_enemy_sfx("enemy_hurt")
-        _play_enemy_sfx("enemy_dead")
     else:
         # CRITICAL FIX: Only increase skill meter if battle is still active
         if is_battle_active:

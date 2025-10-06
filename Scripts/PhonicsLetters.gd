@@ -14,6 +14,13 @@ var fade_trace_on_success := true
 var letter_focus_mode := false # Dims non-essential UI for reduced visual load
 var recent_errors: Array = [] # Track recently missed letters for adaptive revisit
 
+# Guided tracing system variables
+var guided_arrows: Array = [] # Array of CurvedArrow2D nodes for multi-stroke letters
+var guided_labels: Array = [] # Array of Label nodes for step numbers
+var guide_animation_tween: Tween = null
+var is_guide_playing := false
+var guide_container: Control = null # Container for arrow overlays
+
 func _speak_text_simple(text: String):
 	"""Simple TTS without captions"""
 	if tts:
@@ -33,6 +40,9 @@ func _ready():
 	# Initialize helpers
 	_init_tts()
 	_init_module_progress()
+	
+	# Initialize guided tracing system
+	_init_guide_container()
 	
 	# Connect hover events
 	_connect_hover_events()
@@ -69,7 +79,29 @@ func _init_module_progress():
 		module_progress = ModuleProgress.new()
 		print("PhonicsLetters: ModuleProgress initialized")
 	else:
-		print("PhonicsLetters: Firebase not available, using local tracking")
+		print("PhonicsLetters: Firebase not available, usin	g local tracking")
+
+func _init_guide_container():
+	"""Initialize the container for guided tracing arrows"""
+	print("PhonicsLetters: Initializing guided tracing system")
+	
+	# Create a control container for arrows above the TraceOverlay
+	guide_container = Control.new()
+	guide_container.name = "GuideContainer"
+	guide_container.mouse_filter = Control.MOUSE_FILTER_IGNORE # Don't block input
+	
+	# Add to whiteboard container, above TraceOverlay
+	var whiteboard_container = $MainContainer/ContentContainer/WhiteboardPanel/WhiteboardContainer
+	if whiteboard_container:
+		whiteboard_container.add_child(guide_container)
+		# Move to top of z-order
+		whiteboard_container.move_child(guide_container, whiteboard_container.get_child_count() - 1)
+		
+		# Set to fill parent
+		guide_container.set_anchors_preset(Control.PRESET_FULL_RECT)
+		print("PhonicsLetters: Guide container created and positioned")
+	else:
+		print("PhonicsLetters: ERROR - Whiteboard container not found")
 
 func _connect_hover_events():
 	var back_btn = $MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton
@@ -139,6 +171,407 @@ func _update_button_visibility():
 	if next_btn:
 		next_btn.visible = (letter_index < letter_set.size() - 1)
 
+# ============================================================================
+# GUIDED TRACING SYSTEM
+# ============================================================================
+
+func play_guided_trace(letter: String):
+	"""
+	Play animated stroke guidance for the specified letter.
+	Strokes are animated with looping arrows showing proper letter formation.
+	Accessible for dyslexic users with smooth, clear motion.
+	"""
+	print("PhonicsLetters: Starting guided trace for letter: ", letter)
+	
+	# Stop any existing animation
+	stop_guided_trace()
+	
+	if not guide_container:
+		print("PhonicsLetters: ERROR - Guide container not initialized")
+		return
+	
+	# Get stroke paths for the letter
+	var strokes = _get_letter_strokes(letter)
+	if strokes.is_empty():
+		print("PhonicsLetters: No stroke data for letter: ", letter)
+		return
+	
+	is_guide_playing = true
+	
+	# Create arrow for each stroke with numbered labels
+	for i in range(strokes.size()):
+		var stroke = strokes[i]
+		var arrow = CurvedArrow2D.new()
+		arrow.name = "GuideArrow_" + str(i)
+		
+		# Position arrow at stroke start
+		arrow.position = stroke.start
+		arrow.global_end_position = guide_container.global_position + stroke.end
+		
+		# Dyslexia-friendly styling
+		arrow.color = Color(1.0, 0.9, 0.2, 0.85) # Yellow (dyslexia-friendly)
+		arrow.transparency = 0.85
+		arrow.width = 8.0 # Visible but not overwhelming
+		arrow.arrowhead_height = 20.0
+		arrow.arrowhead_width = 24.0
+		arrow.curve_height_factor = stroke.get("curve", 0.3) # Slight curve for natural feel
+		arrow.outline_thickness = 2
+		arrow.outline_color = Color(1.0, 1.0, 1.0, 0.9)
+		
+		# Set initial animation progress to 0
+		arrow.animation_progress = 0.0
+		
+		guide_container.add_child(arrow)
+		guided_arrows.append(arrow)
+		
+		# Add numbered step label at stroke start
+		var step_label = Label.new()
+		step_label.name = "StepLabel_" + str(i)
+		step_label.text = str(i + 1) # 1-indexed for user
+		step_label.add_theme_font_size_override("font_size", 24)
+		step_label.add_theme_color_override("font_color", Color(0, 0, 0, 1)) # Black text
+		step_label.add_theme_color_override("font_outline_color", Color(1, 1, 1, 1)) # White outline
+		step_label.add_theme_constant_override("outline_size", 3)
+		
+		# Position label slightly offset from stroke start (top-left)
+		step_label.position = stroke.start - Vector2(20, 25)
+		step_label.z_index = 10 # Above arrows
+		
+		guide_container.add_child(step_label)
+		guided_labels.append(step_label) # Track separately from arrows
+	
+	# Start looping animation
+	_animate_guide_strokes()
+
+func stop_guided_trace():
+	"""
+	Stop and clear all guided tracing animations.
+	"""
+	print("PhonicsLetters: Stopping guided trace")
+	
+	is_guide_playing = false
+	
+	# Kill existing tween
+	if guide_animation_tween:
+		guide_animation_tween.kill()
+		guide_animation_tween = null
+	
+	# Remove all arrow nodes
+	for arrow in guided_arrows:
+		if is_instance_valid(arrow):
+			arrow.queue_free()
+	guided_arrows.clear()
+	
+	# Remove all label nodes
+	for label in guided_labels:
+		if is_instance_valid(label):
+			label.queue_free()
+	guided_labels.clear()
+
+func _animate_guide_strokes():
+	"""
+	Animate all stroke arrows in sequence with looping.
+	Uses dyslexia-friendly pacing: smooth, predictable, not too fast.
+	Clear arrows between loops for visual clarity.
+	"""
+	if not is_guide_playing or guided_arrows.is_empty():
+		return
+	
+	# Create tween for animation
+	guide_animation_tween = create_tween()
+	
+	# Animate each stroke in sequence (only arrows, not labels)
+	for i in range(guided_arrows.size()):
+		var arrow = guided_arrows[i]
+		if not is_instance_valid(arrow):
+			continue
+		
+		# Dyslexia-friendly timing: 1.2 seconds per stroke (not too fast)
+		var stroke_duration = 1.2
+		
+		# Animate from 0 to 1 (full stroke)
+		guide_animation_tween.tween_property(arrow, "animation_progress", 1.0, stroke_duration).from(0.0).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC)
+		
+		# Small pause at end of stroke (0.3s) for clarity
+		guide_animation_tween.tween_property(arrow, "animation_progress", 1.0, 0.3)
+	
+	# Brief pause before fade-out (0.5s)
+	guide_animation_tween.tween_callback(func(): pass ).set_delay(0.5)
+	
+	# Fade out all arrows and labels for visual clarity
+	for arrow in guided_arrows:
+		if is_instance_valid(arrow):
+			guide_animation_tween.tween_property(arrow, "modulate:a", 0.0, 0.5).set_ease(Tween.EASE_IN_OUT)
+	
+	for label in guided_labels:
+		if is_instance_valid(label):
+			guide_animation_tween.tween_property(label, "modulate:a", 0.0, 0.5).set_ease(Tween.EASE_IN_OUT)
+	
+	# Clear arrows and prepare for next loop
+	guide_animation_tween.tween_callback(func():
+		# Clean up current arrows and labels
+		for arrow in guided_arrows:
+			if is_instance_valid(arrow):
+				arrow.queue_free()
+		guided_arrows.clear()
+		
+		for label in guided_labels:
+			if is_instance_valid(label):
+				label.queue_free()
+		guided_labels.clear()
+		
+		# Brief pause before recreating (0.3s)
+		await get_tree().create_timer(0.3).timeout
+		
+		# Check if guide is still active
+		if not is_guide_playing:
+			return
+		
+		# Recreate arrows for next loop
+		var current_letter = letter_set[letter_index].to_upper()
+		var strokes = _get_letter_strokes(current_letter)
+		if strokes.is_empty():
+			return
+		
+		# Recreate arrows using the transformed stroke data
+		for i in range(strokes.size()):
+			var stroke = strokes[i]
+			var arrow = CurvedArrow2D.new()
+			arrow.name = "GuideArrow_" + str(i)
+			
+			# Position arrow using transformed coordinates from _get_letter_strokes
+			arrow.position = stroke.start
+			arrow.global_end_position = guide_container.global_position + stroke.end
+			
+			# Dyslexia-friendly styling
+			arrow.color = Color(1.0, 0.9, 0.2, 0.85) # Yellow (dyslexia-friendly)
+			arrow.transparency = 0.85
+			arrow.width = 8.0
+			arrow.arrowhead_height = 20.0
+			arrow.arrowhead_width = 24.0
+			arrow.curve_height_factor = stroke.get("curve", 0.3)
+			arrow.outline_thickness = 2
+			arrow.outline_color = Color(1.0, 1.0, 1.0, 0.9)
+			arrow.animation_progress = 0.0
+			arrow.modulate.a = 0.0 # Start invisible for fade-in
+			
+			guide_container.add_child(arrow)
+			guided_arrows.append(arrow)
+			
+			# Recreate numbered step label
+			var step_label = Label.new()
+			step_label.name = "StepLabel_" + str(i)
+			step_label.text = str(i + 1) # 1-indexed for user
+			step_label.add_theme_font_size_override("font_size", 24)
+			step_label.add_theme_color_override("font_color", Color(0, 0, 0, 1)) # Black text
+			step_label.add_theme_color_override("font_outline_color", Color(1, 1, 1, 1)) # White outline
+			step_label.add_theme_constant_override("outline_size", 3)
+			
+			# Position label slightly offset from stroke start
+			step_label.position = stroke.start - Vector2(20, 25)
+			step_label.z_index = 10 # Above arrows
+			step_label.modulate.a = 0.0 # Start invisible for fade-in
+			
+			guide_container.add_child(step_label)
+			guided_labels.append(step_label) # Track separately
+		
+		# Fade in new arrows and labels
+		var fade_tween = create_tween()
+		for arrow in guided_arrows:
+			if is_instance_valid(arrow):
+				fade_tween.tween_property(arrow, "modulate:a", 1.0, 0.5).set_ease(Tween.EASE_IN_OUT)
+		
+		for label in guided_labels:
+			if is_instance_valid(label):
+				fade_tween.tween_property(label, "modulate:a", 1.0, 0.5).set_ease(Tween.EASE_IN_OUT)
+		
+		# Wait for fade-in to complete, then start next loop
+		await fade_tween.finished
+		if is_guide_playing:
+			_animate_guide_strokes()
+	)
+	
+	print("PhonicsLetters: Guide animation started with ", guided_arrows.size(), " strokes")
+
+func _get_letter_strokes(letter: String) -> Array:
+	"""
+	Returns an array of stroke definitions for the given letter.
+	Each stroke is a Dictionary with: {start: Vector2, end: Vector2, curve: float}
+	
+	Strokes are designed for clarity and match common handwriting order.
+	Coordinates are relative to the whiteboard container center.
+	Scale matches the TraceOverlay label (font size 90 * scale 1.3210202 ≈ 119px)
+	"""
+	
+	# Get whiteboard container size for relative positioning
+	var container = $MainContainer/ContentContainer/WhiteboardPanel/WhiteboardContainer
+	if not container:
+		return []
+	
+	var center = container.size / 2
+	# Match TraceOverlay: font_size=90, scale=1.3210202
+	# Effective height ≈ 119px, use 60px as half-height for vertical range
+	var scale_factor = 60.0 # Adjusted to match TraceOverlay visual size
+	
+	# Letter stroke definitions (normalized then scaled)
+	var stroke_data = {
+		"A": [
+			{"start": Vector2(-0.5, 0.8), "end": Vector2(0, -0.8), "curve": 0.0}, # Left diagonal up
+			{"start": Vector2(0, -0.8), "end": Vector2(0.5, 0.8), "curve": 0.0}, # Right diagonal down
+			{"start": Vector2(-0.25, 0.1), "end": Vector2(0.25, 0.1), "curve": 0.0} # Horizontal bar
+		],
+		"B": [
+			{"start": Vector2(-0.3, -0.8), "end": Vector2(-0.3, 0.8), "curve": 0.0}, # Vertical line
+			{"start": Vector2(-0.3, -0.8), "end": Vector2(0.3, -0.4), "curve": 0.8}, # Top curve (increased)
+			{"start": Vector2(0.3, -0.4), "end": Vector2(-0.3, 0.0), "curve": 0.8}, # Middle (increased)
+			{"start": Vector2(-0.3, 0.0), "end": Vector2(0.4, 0.4), "curve": 0.9}, # Bottom curve (increased)
+			{"start": Vector2(0.4, 0.4), "end": Vector2(-0.3, 0.8), "curve": 0.9} # Close bottom (increased)
+		],
+		"C": [
+			{"start": Vector2(0.6, -0.3), "end": Vector2(-0.5, 0.0), "curve": 1.5}, # Top arc (clockwise from right)
+			{"start": Vector2(-0.5, 0.0), "end": Vector2(0.6, 0.3), "curve": 1.5} # Bottom arc (complete the C)
+		],
+		"D": [
+			{"start": Vector2(-0.3, -0.8), "end": Vector2(-0.3, 0.8), "curve": 0.0}, # Vertical line
+			{"start": Vector2(-0.3, -0.8), "end": Vector2(0.3, 0.0), "curve": 1.0}, # Top curve (increased)
+			{"start": Vector2(0.3, 0.0), "end": Vector2(-0.3, 0.8), "curve": 1.0} # Bottom curve (increased)
+		],
+		"E": [
+			{"start": Vector2(0.4, -0.8), "end": Vector2(-0.4, -0.8), "curve": 0.0}, # Top horizontal
+			{"start": Vector2(-0.4, -0.8), "end": Vector2(-0.4, 0.8), "curve": 0.0}, # Vertical line
+			{"start": Vector2(-0.4, 0.0), "end": Vector2(0.3, 0.0), "curve": 0.0}, # Middle horizontal
+			{"start": Vector2(-0.4, 0.8), "end": Vector2(0.4, 0.8), "curve": 0.0} # Bottom horizontal
+		],
+		"F": [
+			{"start": Vector2(-0.4, -0.8), "end": Vector2(-0.4, 0.8), "curve": 0.0}, # Vertical line
+			{"start": Vector2(-0.4, -0.8), "end": Vector2(0.4, -0.8), "curve": 0.0}, # Top horizontal
+			{"start": Vector2(-0.4, 0.0), "end": Vector2(0.3, 0.0), "curve": 0.0} # Middle horizontal
+		],
+		"G": [
+			{"start": Vector2(0.5, -0.6), "end": Vector2(-0.4, -0.6), "curve": 1.2}, # Top curve
+			{"start": Vector2(-0.4, -0.6), "end": Vector2(-0.4, 0.6), "curve": 0.0}, # Left side
+			{"start": Vector2(-0.4, 0.6), "end": Vector2(0.5, 0.6), "curve": 1.2}, # Bottom curve
+			{"start": Vector2(0.5, 0.6), "end": Vector2(0.5, 0.0), "curve": 0.0}, # Right side up
+			{"start": Vector2(0.5, 0.0), "end": Vector2(0.0, 0.0), "curve": 0.0} # Horizontal bar
+		],
+		"H": [
+			{"start": Vector2(-0.4, -0.8), "end": Vector2(-0.4, 0.8), "curve": 0.0}, # Left vertical
+			{"start": Vector2(-0.4, 0.0), "end": Vector2(0.4, 0.0), "curve": 0.0}, # Horizontal bar
+			{"start": Vector2(0.4, -0.8), "end": Vector2(0.4, 0.8), "curve": 0.0} # Right vertical
+		],
+		"I": [
+			{"start": Vector2(0, -0.8), "end": Vector2(0, 0.8), "curve": 0.0} # Vertical line
+		],
+		"J": [
+			{"start": Vector2(0.3, -0.8), "end": Vector2(0.3, 0.5), "curve": 0.0}, # Vertical line
+			{"start": Vector2(0.3, 0.5), "end": Vector2(-0.3, 0.7), "curve": 1.0} # Bottom curve/hook (increased)
+		],
+		"K": [
+			{"start": Vector2(-0.4, -0.8), "end": Vector2(-0.4, 0.8), "curve": 0.0}, # Vertical line
+			{"start": Vector2(0.5, -0.8), "end": Vector2(-0.4, 0.0), "curve": 0.0}, # Top diagonal
+			{"start": Vector2(-0.4, 0.0), "end": Vector2(0.5, 0.8), "curve": 0.0} # Bottom diagonal
+		],
+		"L": [
+			{"start": Vector2(-0.3, -0.8), "end": Vector2(-0.3, 0.8), "curve": 0.0}, # Vertical line
+			{"start": Vector2(-0.3, 0.8), "end": Vector2(0.4, 0.8), "curve": 0.0} # Bottom horizontal
+		],
+		"M": [
+			{"start": Vector2(-0.5, 0.8), "end": Vector2(-0.5, -0.8), "curve": 0.0}, # Left vertical
+			{"start": Vector2(-0.5, -0.8), "end": Vector2(0.0, 0.0), "curve": 0.0}, # Left diagonal down
+			{"start": Vector2(0.0, 0.0), "end": Vector2(0.5, -0.8), "curve": 0.0}, # Right diagonal up
+			{"start": Vector2(0.5, -0.8), "end": Vector2(0.5, 0.8), "curve": 0.0} # Right vertical
+		],
+		"N": [
+			{"start": Vector2(-0.4, 0.8), "end": Vector2(-0.4, -0.8), "curve": 0.0}, # Left vertical
+			{"start": Vector2(-0.4, -0.8), "end": Vector2(0.4, 0.8), "curve": 0.0}, # Diagonal
+			{"start": Vector2(0.4, 0.8), "end": Vector2(0.4, -0.8), "curve": 0.0} # Right vertical
+		],
+		"O": [
+			{"start": Vector2(0, -0.7), "end": Vector2(-0.55, 0), "curve": 1.8}, # Top-left quarter
+			{"start": Vector2(-0.55, 0), "end": Vector2(0, 0.7), "curve": 1.8}, # Bottom-left quarter
+			{"start": Vector2(0, 0.7), "end": Vector2(0.55, 0), "curve": 1.8}, # Bottom-right quarter
+			{"start": Vector2(0.55, 0), "end": Vector2(0, -0.7), "curve": 1.8} # Top-right quarter (close circle)
+		],
+		"P": [
+			{"start": Vector2(-0.3, 0.8), "end": Vector2(-0.3, -0.8), "curve": 0.0}, # Vertical line
+			{"start": Vector2(-0.3, -0.8), "end": Vector2(0.4, -0.4), "curve": 0.9}, # Top curve (increased)
+			{"start": Vector2(0.4, -0.4), "end": Vector2(-0.3, 0.0), "curve": 0.9} # Close top loop (increased)
+		],
+		"Q": [
+			{"start": Vector2(0, -0.7), "end": Vector2(-0.55, 0), "curve": 1.8}, # Top-left quarter
+			{"start": Vector2(-0.55, 0), "end": Vector2(0, 0.7), "curve": 1.8}, # Bottom-left quarter
+			{"start": Vector2(0, 0.7), "end": Vector2(0.55, 0), "curve": 1.8}, # Bottom-right quarter
+			{"start": Vector2(0.55, 0), "end": Vector2(0, -0.7), "curve": 1.8}, # Top-right quarter (close circle)
+			{"start": Vector2(0.2, 0.4), "end": Vector2(0.65, 0.85), "curve": 0.0} # Tail diagonal
+		],
+		"R": [
+			{"start": Vector2(-0.3, 0.8), "end": Vector2(-0.3, -0.8), "curve": 0.0}, # Vertical line
+			{"start": Vector2(-0.3, -0.8), "end": Vector2(0.4, -0.4), "curve": 0.9}, # Top curve (increased)
+			{"start": Vector2(0.4, -0.4), "end": Vector2(-0.3, 0.0), "curve": 0.9}, # Close top loop (increased)
+			{"start": Vector2(-0.3, 0.0), "end": Vector2(0.4, 0.8), "curve": 0.0} # Leg diagonal
+		],
+		"S": [
+			{"start": Vector2(0.5, -0.5), "end": Vector2(-0.3, -0.2), "curve": 1.6}, # Top curve (right to left-center)
+			{"start": Vector2(-0.3, -0.2), "end": Vector2(0.3, 0.2), "curve": 1.4}, # Middle S-curve (left to right)
+			{"start": Vector2(0.3, 0.2), "end": Vector2(-0.5, 0.5), "curve": 1.6} # Bottom curve (right to left)
+		],
+		"T": [
+			{"start": Vector2(-0.5, -0.8), "end": Vector2(0.5, -0.8), "curve": 0.0}, # Top horizontal
+			{"start": Vector2(0, -0.8), "end": Vector2(0, 0.8), "curve": 0.0} # Vertical line
+		],
+		"U": [
+			{"start": Vector2(-0.45, -0.7), "end": Vector2(-0.45, 0.3), "curve": 0.0}, # Left side down
+			{"start": Vector2(-0.45, 0.3), "end": Vector2(0.0, 0.65), "curve": 1.5}, # Bottom-left curve
+			{"start": Vector2(0.0, 0.65), "end": Vector2(0.45, 0.3), "curve": 1.5}, # Bottom-right curve
+			{"start": Vector2(0.45, 0.3), "end": Vector2(0.45, -0.7), "curve": 0.0} # Right side up
+		],
+		"V": [
+			{"start": Vector2(-0.5, -0.8), "end": Vector2(0.0, 0.8), "curve": 0.0}, # Left diagonal down
+			{"start": Vector2(0.0, 0.8), "end": Vector2(0.5, -0.8), "curve": 0.0} # Right diagonal up
+		],
+		"W": [
+			{"start": Vector2(-0.6, -0.8), "end": Vector2(-0.3, 0.8), "curve": 0.0}, # Left diagonal down
+			{"start": Vector2(-0.3, 0.8), "end": Vector2(0.0, 0.0), "curve": 0.0}, # Up to middle
+			{"start": Vector2(0.0, 0.0), "end": Vector2(0.3, 0.8), "curve": 0.0}, # Down to middle-right
+			{"start": Vector2(0.3, 0.8), "end": Vector2(0.6, -0.8), "curve": 0.0} # Right diagonal up
+		],
+		"X": [
+			{"start": Vector2(-0.5, -0.8), "end": Vector2(0.5, 0.8), "curve": 0.0}, # Diagonal top-left to bottom-right
+			{"start": Vector2(0.5, -0.8), "end": Vector2(-0.5, 0.8), "curve": 0.0} # Diagonal top-right to bottom-left
+		],
+		"Y": [
+			{"start": Vector2(-0.5, -0.8), "end": Vector2(0.0, 0.0), "curve": 0.0}, # Left diagonal to center
+			{"start": Vector2(0.5, -0.8), "end": Vector2(0.0, 0.0), "curve": 0.0}, # Right diagonal to center
+			{"start": Vector2(0.0, 0.0), "end": Vector2(0.0, 0.8), "curve": 0.0} # Vertical line down
+		],
+		"Z": [
+			{"start": Vector2(-0.5, -0.8), "end": Vector2(0.5, -0.8), "curve": 0.0}, # Top horizontal
+			{"start": Vector2(0.5, -0.8), "end": Vector2(-0.5, 0.8), "curve": 0.0}, # Diagonal
+			{"start": Vector2(-0.5, 0.8), "end": Vector2(0.5, 0.8), "curve": 0.0} # Bottom horizontal
+		],
+	}
+	
+	var letter_upper = letter.to_upper()
+	if not stroke_data.has(letter_upper):
+		print("PhonicsLetters: No stroke definition for letter: ", letter_upper)
+		return [] # Return empty if letter not defined yet
+	
+	# Scale and position strokes
+	var scaled_strokes = []
+	for stroke in stroke_data[letter_upper]:
+		var scaled_stroke = {
+			"start": center + (stroke.start * scale_factor),
+			"end": center + (stroke.end * scale_factor),
+			"curve": stroke.get("curve", 0.3)
+		}
+		scaled_strokes.append(scaled_stroke)
+	
+	return scaled_strokes
+
+# ============================================================================
+# END GUIDED TRACING SYSTEM
+# ============================================================================
+
 func _load_whiteboard():
 	var whiteboard_interface = $MainContainer/ContentContainer/WhiteboardPanel/WhiteboardContainer/WhiteboardInterface
 	if whiteboard_interface:
@@ -186,6 +619,14 @@ func _load_progress():
 			letter_index = resume_index
 			current_target = letter_set[letter_index]
 			print("PhonicsLetters: Resuming at letter: ", current_target, " (index: ", letter_index, ", saved index was: ", saved_index, ")")
+			
+			# Auto-stop guide if it's playing (prevents showing wrong letter)
+			if is_guide_playing:
+				print("PhonicsLetters: Auto-stopping guide due to progress load")
+				stop_guided_trace()
+				var guide_button = $MainContainer/ContentContainer/InstructionPanel/GuideButton
+				if guide_button:
+					guide_button.text = "Guide"
 			
 			# Update UI with loaded progress and current position
 			_update_progress_ui(progress_percent)
@@ -252,6 +693,7 @@ func _stop_tts():
 # Ensure TTS cleanup on scene exit
 func _exit_tree():
 	_stop_tts()
+	stop_guided_trace() # Clean up animated arrows
 
 func _on_HearButton_pressed():
 	$ButtonClick.play()
@@ -295,33 +737,22 @@ func _on_guide_button_pressed():
 	$ButtonClick.play()
 	var guide_button = $MainContainer/ContentContainer/InstructionPanel/GuideButton
 	
-	if guide_button and guide_button.text == "Stop":
-		# Stop TTS
-		if tts:
-			tts.stop()
-		# Immediately reset button text
-		guide_button.text = "Guide"
-		print("PhonicsLetters: Guide TTS stopped by user - button reset")
-		return
-	
-	if tts:
-		# Start TTS and change button to Stop
+	# Toggle between showing/hiding animated guide
+	if is_guide_playing:
+		# Stop the animated guide
+		stop_guided_trace()
+		if guide_button:
+			guide_button.text = "Guide"
+		print("PhonicsLetters: Animated guide stopped by user")
+	else:
+		# Start the animated guide for current letter
+		play_guided_trace(current_target)
 		if guide_button:
 			guide_button.text = "Stop"
-		
-		var guide_text = "Welcome to Letters Practice! Here you will learn to trace letters from A to Z. Look at the letter shown above, then use your finger or mouse to trace it carefully on the whiteboard below. Listen to the letter sound by pressing 'Hear', and when you're ready to move on, press 'Next'."
-		_speak_text_simple(guide_text)
-		
-		# Connect to TTS finished signal to reset button
-		if tts.has_signal("utterance_finished"):
-			if not tts.utterance_finished.is_connected(_on_guide_tts_finished):
-				tts.utterance_finished.connect(_on_guide_tts_finished)
-		elif tts.has_signal("finished"):
-			if not tts.finished.is_connected(_on_guide_tts_finished):
-				tts.finished.connect(_on_guide_tts_finished)
+		print("PhonicsLetters: Animated guide started for letter: ", current_target)
 
 func _on_guide_tts_finished():
-	"""Reset guide button when TTS finishes"""
+	"""Reset guide button when TTS finishes (kept for compatibility)"""
 	print("PhonicsLetters: _on_guide_tts_finished called - resetting button")
 	var guide_button = $MainContainer/ContentContainer/InstructionPanel/GuideButton
 	if guide_button:
@@ -381,6 +812,14 @@ func _on_letter_done_button_pressed():
 func _advance_target():
 	letter_index = (letter_index + 1) % letter_set.size()
 	current_target = letter_set[letter_index]
+	
+	# Stop guided trace when changing letters
+	if is_guide_playing:
+		stop_guided_trace()
+		var guide_button = $MainContainer/ContentContainer/InstructionPanel/GuideButton
+		if guide_button:
+			guide_button.text = "Guide"
+	
 	_update_target_display()
 	
 	# Clear whiteboard for next target
@@ -394,6 +833,14 @@ func _advance_target():
 func _previous_target():
 	letter_index = (letter_index - 1 + letter_set.size()) % letter_set.size()
 	current_target = letter_set[letter_index]
+	
+	# Stop guided trace when changing letters
+	if is_guide_playing:
+		stop_guided_trace()
+		var guide_button = $MainContainer/ContentContainer/InstructionPanel/GuideButton
+		if guide_button:
+			guide_button.text = "Guide"
+	
 	_update_target_display()
 	
 	# Clear whiteboard for previous target

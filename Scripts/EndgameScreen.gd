@@ -17,6 +17,11 @@ func _ready():
 func set_result(result, _dungeon_num: int = 1, _stage_num: int = 1, exp_reward: int = 0, enemy_name: String = ""):
 	# Load appropriate UI texture based on result
 	if result == "Victory":
+		# Play victory SFX
+		var victory_sfx = get_node_or_null("VictorySFX")
+		if victory_sfx:
+			victory_sfx.play()
+		
 		$ResultPanel.texture = load("res://gui/Update/UI/victory UI.png")
 		$ResultPanel/VBoxContainer/ResultLabel.text = "Victory!"
 		var message = ""
@@ -30,6 +35,11 @@ func set_result(result, _dungeon_num: int = 1, _stage_num: int = 1, exp_reward: 
 		$ResultPanel/VBoxContainer/MessageLabel.text = message
 		$ResultPanel/VBoxContainer/ResultLabel.add_theme_color_override("font_color", Color(0.2, 0.8, 0.2))
 	else:
+		# Play defeat SFX
+		var defeat_sfx = get_node_or_null("DefeatSFX")
+		if defeat_sfx:
+			defeat_sfx.play()
+		
 		$ResultPanel.texture = load("res://gui/Update/UI/defeat UI.png")
 		$ResultPanel/VBoxContainer/ResultLabel.text = "Defeat"
 		var message = ""

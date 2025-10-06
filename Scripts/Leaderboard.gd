@@ -151,7 +151,9 @@ func _create_bordered_container(content: Control, min_size: Vector2, bg_color: C
 	return container
 
 # Helper function to create a reliable label with guaranteed visibility
-func _create_reliable_label(text: String, font_size: int = 16, color: Color = Color(1, 1, 1), max_chars: int = 25) -> Label:
+# For centered labels, do NOT use SIZE_EXPAND_FILL - let the label size naturally
+# For left-aligned labels (like player name), use SIZE_EXPAND_FILL
+func _create_reliable_label(text: String, font_size: int = 16, color: Color = Color(1, 1, 1), max_chars: int = 25, expand: bool = false) -> Label:
 	var label = Label.new()
 	
 	# Set text with truncation for long names
@@ -169,17 +171,53 @@ func _create_reliable_label(text: String, font_size: int = 16, color: Color = Co
 	label.add_theme_font_size_override("font_size", font_size)
 	label.add_theme_color_override("font_color", color)
 	
-	# Expand to fill available space so padding creates centering effect
-	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	label.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	# Only expand if explicitly requested (for left-aligned name columns)
+	if expand:
+		label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		label.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	
 	return label
 
+# Helper function to create a properly centered avatar/profile picture column
+# Uses manual positioning for precise control - adjust Vector2 values to center
+func _create_avatar_column(user_data: Dictionary, container_size: Vector2 = Vector2(100, 50), avatar_size: Vector2 = Vector2(50, 100), bg_color: Color = Color(0.15, 0.2, 0.3)) -> Control:
+	# Create texture rect for the portrait
+	var profile_rect = TextureRect.new()
+	# 🎯 CUSTOMIZE: Change avatar size here (width, height)
+	profile_rect.custom_minimum_size = avatar_size # Default: Vector2(150, 100)
+	profile_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	profile_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	
+	# Load the profile picture
+	var profile_id = user_data.get("profile_picture", "13")
+	if profile_id == "default":
+		profile_id = "13"
+	var profile_texture = load("res://gui/ProfileScene/Profile/portrait" + profile_id + ".png")
+	if profile_texture:
+		profile_rect.texture = profile_texture
+	
+	# Create container for manual positioning
+	var profile_center = Control.new()
+	# 🎯 CUSTOMIZE: Change container size here (width, height)
+	profile_center.custom_minimum_size = container_size # Default: Vector2(100, 50)
+	profile_center.add_child(profile_rect)
+	
+	# 🎯 CUSTOMIZE: Change avatar position to center it (x_offset, y_offset)
+	# Formula: x = (container_width - avatar_width) / 2, y = (container_height - avatar_height) / 2
+	# Example: (100 - 40) / 2 = 30, (50 - 40) / 2 = 5
+	profile_rect.position = Vector2(50, 10) # Adjust these numbers to center the avatar
+	
+	var avatar_container = _create_bordered_container(profile_center, container_size, bg_color, "center")
+	
+	return avatar_container
+
 # Create consistent leaderboard row
+# Used by: Power Scale, Word Masters, Phonics, Read Aloud, Flip Quiz tabs
 func _create_leaderboard_row(user_data: Dictionary, rank: int, columns: Array, theme_color: Color = Color(0.15, 0.2, 0.3)) -> Control:
 	var row = HBoxContainer.new()
 	row.add_theme_constant_override("separation", 5)
-	row.custom_minimum_size = Vector2(0, 60)
+	# 🎯 CUSTOMIZE ROW HEIGHT: Change the Y value (currently 60)
+	row.custom_minimum_size = Vector2(0, 60) # Vector2(0, HEIGHT)
 	row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	
 	# Determine rank color
@@ -188,31 +226,22 @@ func _create_leaderboard_row(user_data: Dictionary, rank: int, columns: Array, t
 	if rank <= 3:
 		rank_bg_color = Color(rank_color.r * 0.3, rank_color.g * 0.3, rank_color.b * 0.3, 0.8)
 	
+	# 🎯 CUSTOMIZE RANK COLUMN: Change Vector2(80, 50) for width/height
 	# Create rank column
 	var rank_text = "#" + str(rank) if rank <= 3 else str(rank)
 	var rank_label = _create_reliable_label(rank_text, 16, rank_color)
-	var rank_container = _create_bordered_container(rank_label, Vector2(80, 50), rank_bg_color, "center")
+	var rank_container = _create_bordered_container(rank_label, Vector2(10, 10), rank_bg_color, "center")
 	row.add_child(rank_container)
 	
-	# Create profile picture column
-	var profile_rect = TextureRect.new()
-	profile_rect.custom_minimum_size = Vector2(40, 40)
-	profile_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	profile_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	var profile_id = user_data.get("profile_picture", "13")
-	if profile_id == "default":
-		profile_id = "13"
-	var profile_texture = load("res://gui/ProfileScene/Profile/portrait" + profile_id + ".png")
-	if profile_texture:
-		profile_rect.texture = profile_texture
-	
-	var profile_center = Control.new()
-	profile_center.custom_minimum_size = Vector2(100, 50)
-	profile_center.add_child(profile_rect)
-	profile_rect.position = Vector2(30, 5)
-	var profile_container = _create_bordered_container(profile_center, Vector2(100, 50), theme_color, "center")
+	# 🎯 CUSTOMIZE AVATAR COLUMN: Modify _create_avatar_column() parameters
+	# _create_avatar_column(user_data, container_size, avatar_size, bg_color)
+	# container_size = Vector2(width, height) of the bordered box
+	# avatar_size = Vector2(width, height) of the actual portrait image
+	# Create profile picture column using the helper for proper centering
+	var profile_container = _create_avatar_column(user_data, Vector2(5, 5), Vector2(40, 40), theme_color)
 	row.add_child(profile_container)
 	
+	# 🎯 CUSTOMIZE NAME COLUMN: Change Vector2(300, 50) for width/height
 	# Create player name column
 	var player_name = user_data.get("username", "Unknown")
 	var name_color = Color(1, 1, 1)
@@ -223,10 +252,13 @@ func _create_leaderboard_row(user_data: Dictionary, rank: int, columns: Array, t
 		name_bg_color = Color(0.3, 0.25, 0.1, 0.8)
 		player_name = "* " + player_name + " (You)"
 	
-	var name_label = _create_reliable_label(player_name, 16, name_color, 25)
+	var name_label = _create_reliable_label(player_name, 16, name_color, 25, true) # expand=true for left-aligned name
 	var name_container = _create_bordered_container(name_label, Vector2(300, 50), name_bg_color, "left")
 	row.add_child(name_container)
 	
+	# 🎯 CUSTOMIZE DYNAMIC COLUMNS: Column widths/colors are defined in the populate functions
+	# See: _populate_power_scale_rankings(), _populate_word_recognize_rankings(), etc.
+	# Each column array entry: {"key": "stat_name", "width": 100, "color": Color(...)}
 	# Add additional columns based on leaderboard type
 	for i in range(columns.size()):
 		var column_data = columns[i]
@@ -489,7 +521,7 @@ func _create_dungeon_header() -> Control:
 	var pic_container = _create_bordered_container(pic_label, Vector2(80, 50), theme_colors["default"], "center")
 	header.add_child(pic_container)
 	
-	var name_label = _create_reliable_label("PLAYER", 16, Color(0.9, 0.95, 1))
+	var name_label = _create_reliable_label("PLAYER NAME", 16, Color(0.9, 0.95, 1))
 	var name_container = _create_bordered_container(name_label, Vector2(300, 50), theme_colors["default"], "center")
 	header.add_child(name_container)
 	
@@ -508,10 +540,12 @@ func _create_dungeon_header() -> Control:
 	return header
 
 # Create special dungeon entry with dungeon name display
+# Used by: Dungeon Rankings tab ONLY (has custom columns)
 func _create_dungeon_row(user_data: Dictionary, rank: int) -> Control:
 	var row = HBoxContainer.new()
 	row.add_theme_constant_override("separation", 5)
-	row.custom_minimum_size = Vector2(0, 60)
+	# 🎯 CUSTOMIZE ROW HEIGHT: Change the Y value (currently 60)
+	row.custom_minimum_size = Vector2(0, 60) # Vector2(0, HEIGHT)
 	row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	
 	# Determine rank color
@@ -520,31 +554,49 @@ func _create_dungeon_row(user_data: Dictionary, rank: int) -> Control:
 	if rank <= 3:
 		rank_bg_color = Color(rank_color.r * 0.3, rank_color.g * 0.3, rank_color.b * 0.3, 0.8)
 	
-	# Create rank column
+	# Get current dungeon early for both medal and dungeon column
+	var current_dungeon = user_data.get("current_dungeon", 1)
+	
+	# 🎯 CUSTOMIZE RANK COLUMN: Change Vector2(80, 50) for width/height
+	# Create rank column with medal based on dungeon level
 	var rank_text = "#" + str(rank) if rank <= 3 else str(rank)
 	var rank_label = _create_reliable_label(rank_text, 16, rank_color)
-	var rank_container = _create_bordered_container(rank_label, Vector2(80, 50), rank_bg_color, "center")
+	
+	# Create HBox to hold rank text and medal
+	var rank_hbox = HBoxContainer.new()
+	rank_hbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	rank_hbox.add_theme_constant_override("separation", 5) # Space between rank and medal
+	rank_hbox.add_child(rank_label)
+	
+	# Add medal based on user's dungeon level (1-3)
+	if current_dungeon >= 1 and current_dungeon <= 3:
+		var medal_texture: Texture2D = null
+		match current_dungeon:
+			1:
+				medal_texture = load("res://gui/Update/icons/bronze medal.png")
+			2:
+				medal_texture = load("res://gui/Update/icons/silver medal.png")
+			3:
+				medal_texture = load("res://gui/Update/icons/gold medal.png")
+		
+		if medal_texture:
+			var medal_rect = TextureRect.new()
+			medal_rect.texture = medal_texture
+			medal_rect.custom_minimum_size = Vector2(24, 24) # 🎯 CUSTOMIZE: Medal icon size
+			medal_rect.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+			medal_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+			rank_hbox.add_child(medal_rect)
+	
+	var rank_container = _create_bordered_container(rank_hbox, Vector2(80, 50), rank_bg_color, "center")
 	row.add_child(rank_container)
 	
-	# Create profile picture column
-	var profile_rect = TextureRect.new()
-	profile_rect.custom_minimum_size = Vector2(40, 40)
-	profile_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	profile_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	var profile_id = user_data.get("profile_picture", "13")
-	if profile_id == "default":
-		profile_id = "13"
-	var profile_texture = load("res://gui/ProfileScene/Profile/portrait" + profile_id + ".png")
-	if profile_texture:
-		profile_rect.texture = profile_texture
-	
-	var profile_center = Control.new()
-	profile_center.custom_minimum_size = Vector2(100, 50)
-	profile_center.add_child(profile_rect)
-	profile_rect.position = Vector2(30, 5)
-	var profile_container = _create_bordered_container(profile_center, Vector2(100, 50), theme_colors["default"], "center")
+	# 🎯 CUSTOMIZE AVATAR COLUMN: Modify _create_avatar_column() parameters
+	# _create_avatar_column(user_data, container_size, avatar_size, bg_color)
+	# Create profile picture column using the helper for proper centering
+	var profile_container = _create_avatar_column(user_data, Vector2(100, 50), Vector2(40, 40), theme_colors["default"])
 	row.add_child(profile_container)
 	
+	# 🎯 CUSTOMIZE NAME COLUMN: Change Vector2(300, 50) for width/height
 	# Create player name column
 	var player_name = user_data.get("username", "Unknown")
 	var name_color = Color(1, 1, 1)
@@ -555,23 +607,25 @@ func _create_dungeon_row(user_data: Dictionary, rank: int) -> Control:
 		name_bg_color = Color(0.3, 0.25, 0.1, 0.8)
 		player_name = "* " + player_name + " (You)"
 	
-	var name_label = _create_reliable_label(player_name, 16, name_color, 25)
+	var name_label = _create_reliable_label(player_name, 16, name_color, 25, true) # expand=true for left-aligned name
 	var name_container = _create_bordered_container(name_label, Vector2(300, 50), name_bg_color, "left")
 	row.add_child(name_container)
 	
+	# 🎯 CUSTOMIZE DUNGEON COLUMN: Change Vector2(100, 50) for width/height
 	# Dungeon name instead of number
-	var current_dungeon = user_data.get("current_dungeon", 1)
 	var dungeon_name = dungeon_names.get(current_dungeon, "Unknown")
 	var dungeon_label = _create_reliable_label(dungeon_name, 16, Color(0.7, 0.9, 0.7))
 	var dungeon_container = _create_bordered_container(dungeon_label, Vector2(100, 50), theme_colors["default"], "center")
 	row.add_child(dungeon_container)
 	
+	# 🎯 CUSTOMIZE STAGE COLUMN: Change Vector2(80, 50) for width/height
 	# Stage
 	var stage_text = str(user_data.get("current_stage", 1))
 	var stage_label = _create_reliable_label(stage_text, 16, Color(0.9, 0.7, 0.9))
 	var stage_container = _create_bordered_container(stage_label, Vector2(80, 50), theme_colors["default"], "center")
 	row.add_child(stage_container)
 	
+	# 🎯 CUSTOMIZE KILLS COLUMN: Change Vector2(80, 50) for width/height
 	# Kills
 	var kills_text = str(user_data.get("enemies_defeated", 0))
 	var kills_label = _create_reliable_label(kills_text, 16, Color(1, 0.4, 0.4))
@@ -606,12 +660,14 @@ func _populate_power_scale_rankings():
 	# Add user entries
 	for i in range(sorted_users.size()):
 		var user = sorted_users[i]
+		# 🎯 CUSTOMIZE POWER SCALE COLUMNS: Change width/color for each column
+		# Each entry: {"key": "data_field_name", "width": pixels, "color": Color(...)}
 		var columns = [
-			{"key": "level", "width": 80, "color": Color(1, 1, 0.3)},
-			{"key": "health", "width": 100, "color": Color(0.3, 1, 0.3)},
-			{"key": "damage", "width": 100, "color": Color(1, 0.3, 0.3)},
-			{"key": "durability", "width": 80, "color": Color(0.3, 0.7, 1)},
-			{"key": "power_score", "width": 100, "color": Color(1, 0.8, 0.2)}
+			{"key": "level", "width": 80, "color": Color(1, 1, 0.3)}, # Level column
+			{"key": "health", "width": 100, "color": Color(0.3, 1, 0.3)}, # Health column
+			{"key": "damage", "width": 100, "color": Color(1, 0.3, 0.3)}, # Damage column
+			{"key": "durability", "width": 80, "color": Color(0.3, 0.7, 1)}, # Durability column
+			{"key": "power_score", "width": 100, "color": Color(1, 0.8, 0.2)} # Power Score column
 		]
 		
 		var entry = _create_leaderboard_row(user, i + 1, columns, theme_colors["default"])
@@ -631,8 +687,8 @@ func _create_power_header() -> Control:
 	var pic_label = _create_reliable_label("AVATAR", 14, Color(0.8, 0.9, 1))
 	var pic_container = _create_bordered_container(pic_label, Vector2(80, 50), theme_colors["default"], "center")
 	header.add_child(pic_container)
-	
-	var name_label = _create_reliable_label("PLAYER", 16, Color(0.9, 0.95, 1))
+
+	var name_label = _create_reliable_label("PLAYER NAME", 16, Color(0.9, 0.95, 1))
 	var name_container = _create_bordered_container(name_label, Vector2(300, 50), theme_colors["default"], "center")
 	header.add_child(name_container)
 	
@@ -708,7 +764,7 @@ func _create_word_header() -> Control:
 	var pic_container = _create_bordered_container(pic_label, Vector2(80, 50), theme_colors["default"], "center")
 	header.add_child(pic_container)
 	
-	var name_label = _create_reliable_label("PLAYER", 16, Color(0.9, 0.95, 1))
+	var name_label = _create_reliable_label("PLAYER NAME", 16, Color(0.9, 0.95, 1))
 	var name_container = _create_bordered_container(name_label, Vector2(300, 50), theme_colors["default"], "center")
 	header.add_child(name_container)
 	
@@ -716,7 +772,7 @@ func _create_word_header() -> Control:
 	var speech_container = _create_bordered_container(speech_label, Vector2(100, 50), theme_colors["default"], "center")
 	header.add_child(speech_container)
 	
-	var board_label = _create_reliable_label("BOARD", 15, Color(0.3, 1, 0.8))
+	var board_label = _create_reliable_label("WHITEBOARD", 15, Color(0.3, 1, 0.8))
 	var board_container = _create_bordered_container(board_label, Vector2(100, 50), theme_colors["default"], "center")
 	header.add_child(board_container)
 	
@@ -776,7 +832,7 @@ func _create_phonics_header() -> Control:
 	var pic_container = _create_bordered_container(pic_label, Vector2(80, 50), theme_colors["default"], "center")
 	header.add_child(pic_container)
 	
-	var name_label = _create_reliable_label("PLAYER", 16, Color(0.9, 0.95, 1))
+	var name_label = _create_reliable_label("PLAYER NAME", 16, Color(0.9, 0.95, 1))
 	var name_container = _create_bordered_container(name_label, Vector2(300, 50), theme_colors["default"], "center")
 	header.add_child(name_container)
 	
@@ -844,7 +900,7 @@ func _create_read_aloud_header() -> Control:
 	var pic_container = _create_bordered_container(pic_label, Vector2(80, 50), theme_colors["default"], "center")
 	header.add_child(pic_container)
 	
-	var name_label = _create_reliable_label("PLAYER", 16, Color(0.9, 0.95, 1))
+	var name_label = _create_reliable_label("PLAYER NAME", 16, Color(0.9, 0.95, 1))
 	var name_container = _create_bordered_container(name_label, Vector2(300, 50), theme_colors["default"], "center")
 	header.add_child(name_container)
 	
@@ -912,7 +968,7 @@ func _create_flip_quiz_header() -> Control:
 	var pic_container = _create_bordered_container(pic_label, Vector2(80, 50), theme_colors["default"], "center")
 	header.add_child(pic_container)
 	
-	var name_label = _create_reliable_label("PLAYER", 16, Color(0.9, 0.95, 1))
+	var name_label = _create_reliable_label("PLAYER NAME", 16, Color(0.9, 0.95, 1))
 	var name_container = _create_bordered_container(name_label, Vector2(300, 50), theme_colors["default"], "center")
 	header.add_child(name_container)
 	

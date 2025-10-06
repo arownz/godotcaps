@@ -94,7 +94,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="TitleLabel" type="Label" parent="ResultPanel/ContentContainer"]
-layout_mode = 2
+layout_mode = 0
 offset_right = 560.0
 offset_bottom = 59.0
 theme_override_colors/font_color = Color(0, 0.81197, 0.296865, 1)
@@ -108,14 +108,13 @@ text = "Challenge Result"
 horizontal_alignment = 1
 
 [node name="ResultContainer" type="Control" parent="ResultPanel/ContentContainer"]
-layout_mode = 2
 anchors_preset = 0
 offset_top = 79.0
 offset_right = 560.0
 offset_bottom = 307.0
 
 [node name="InputLabel" type="Label" parent="ResultPanel/ContentContainer/ResultContainer"]
-layout_mode = 2
+layout_mode = 0
 offset_left = 1.00278
 offset_top = 10.6933
 offset_right = 561.003
@@ -130,7 +129,7 @@ text = "You stated:"
 horizontal_alignment = 1
 
 [node name="WordLabel" type="Label" parent="ResultPanel/ContentContainer/ResultContainer"]
-layout_mode = 2
+layout_mode = 0
 offset_top = 53.0
 offset_right = 560.0
 offset_bottom = 108.0
@@ -144,7 +143,7 @@ text = "Hat = Close! "
 horizontal_alignment = 1
 
 [node name="ExpectedLabel" type="Label" parent="ResultPanel/ContentContainer/ResultContainer"]
-layout_mode = 2
+layout_mode = 0
 offset_top = 120.0
 offset_right = 560.0
 offset_bottom = 161.0
@@ -158,7 +157,7 @@ text = "The word was:"
 horizontal_alignment = 1
 
 [node name="TargetWordLabel" type="Label" parent="ResultPanel/ContentContainer/ResultContainer"]
-layout_mode = 2
+layout_mode = 0
 offset_top = 173.0
 offset_right = 560.0
 offset_bottom = 228.0
@@ -172,7 +171,7 @@ text = "Hot"
 horizontal_alignment = 1
 
 [node name="StatusContainer" type="VBoxContainer" parent="ResultPanel/ContentContainer"]
-layout_mode = 2
+layout_mode = 0
 offset_top = 327.0
 offset_right = 560.0
 offset_bottom = 423.0

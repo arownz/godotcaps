@@ -52,7 +52,7 @@ version_control/autoload_on_startup=true
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/godot-firebase/plugin.cfg")
+enabled=PackedStringArray("res://addons/2d_curved_arrow/plugin.cfg", "res://addons/godot-firebase/plugin.cfg")
 
 [file_customization]
 

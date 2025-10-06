@@ -456,7 +456,7 @@ anchor_right = 1.0
 anchor_bottom = 0.5
 offset_left = -1228.0
 offset_top = -369.0
-offset_right = -979.0
+offset_right = -696.0
 offset_bottom = -269.0
 grow_horizontal = 0
 grow_vertical = 2
@@ -465,12 +465,12 @@ theme_override_constants/separation = 8
 
 [node name="NameLabel" type="Label" parent="InfoContainer"]
 layout_mode = 2
+size_flags_vertical = 6
 theme_override_colors/font_color = Color(0.933333, 0.788235, 0.0352941, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("11_qm2o7")
 theme_override_font_sizes/font_size = 25
 text = "Loading..."
-vertical_alignment = 1
 clip_text = true
 
 [node name="LevelContainer" type="HBoxContainer" parent="InfoContainer"]

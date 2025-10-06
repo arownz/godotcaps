@@ -219,37 +219,35 @@ theme_override_fonts/font = ExtResource("1_font_bold")
 theme_override_font_sizes/font_size = 18
 text = "Accessibility"
 
-[node name="TTSVolumeContainer" type="HBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection"]
+[node name="TTSContainer" type="HBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection"]
 layout_mode = 2
 theme_override_constants/separation = 15
 
-[node name="TTSVolumeLabel" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/TTSVolumeContainer"]
-custom_minimum_size = Vector2(140, 0)
+[node name="TTSLabel" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/TTSContainer"]
+custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_font_regular")
 theme_override_font_sizes/font_size = 14
-text = "Voice Volume:"
+text = "Change Voice Sound:"
 vertical_alignment = 1
 
-[node name="TTSVolumeSlider" type="HSlider" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/TTSVolumeContainer"]
-custom_minimum_size = Vector2(130, 30)
+[node name="TTSSettingsButton" type="Button" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/TTSContainer"]
+custom_minimum_size = Vector2(120, 32)
 layout_mode = 2
-value = 100.0
-tick_count = 10
-ticks_on_borders = true
-
-[node name="TTSVolumeValue" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/TTSVolumeContainer"]
-custom_minimum_size = Vector2(40, 0)
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("2_font_regular")
-theme_override_font_sizes/font_size = 14
-text = "100%"
-horizontal_alignment = 1
-vertical_alignment = 1
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("1_font_bold")
+theme_override_font_sizes/font_size = 16
+theme_override_styles/focus = SubResource("StyleBoxEmpty_wwc4u")
+text = "Voice"
+icon = ExtResource("7_l5u2n")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [node name="ReadingSpeedContainer" type="HBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection"]
 layout_mode = 2
@@ -286,35 +284,37 @@ text = "1.0x"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="TTSContainer" type="HBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection"]
+[node name="TTSVolumeContainer" type="HBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection"]
 layout_mode = 2
 theme_override_constants/separation = 15
 
-[node name="TTSLabel" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/TTSContainer"]
-custom_minimum_size = Vector2(200, 0)
+[node name="TTSVolumeLabel" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/TTSVolumeContainer"]
+custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_font_regular")
 theme_override_font_sizes/font_size = 14
-text = "Change Voice Sound:"
+text = "Voice Volume:"
 vertical_alignment = 1
 
-[node name="TTSSettingsButton" type="Button" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/TTSContainer"]
-custom_minimum_size = Vector2(120, 32)
+[node name="TTSVolumeSlider" type="HSlider" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/TTSVolumeContainer"]
+custom_minimum_size = Vector2(130, 30)
 layout_mode = 2
-mouse_default_cursor_shape = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
-theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("1_font_bold")
-theme_override_font_sizes/font_size = 16
-theme_override_styles/focus = SubResource("StyleBoxEmpty_wwc4u")
-text = "Voice"
-icon = ExtResource("7_l5u2n")
-flat = true
-icon_alignment = 1
-expand_icon = true
+value = 100.0
+tick_count = 10
+ticks_on_borders = true
+
+[node name="TTSVolumeValue" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/TTSVolumeContainer"]
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_font_regular")
+theme_override_font_sizes/font_size = 14
+text = "100%"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Separator1" type="HSeparator" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox"]
 layout_mode = 2

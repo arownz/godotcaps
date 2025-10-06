@@ -274,6 +274,11 @@ func _on_player_experience_changed(_current_exp, _max_exp):
 	ui_manager.update_player_exp()
 
 func _on_player_level_up(new_level):
+	# Play level up SFX
+	var level_up_sfx = get_node_or_null("LevelUpSFX")
+	if level_up_sfx:
+		level_up_sfx.play()
+	
 	# Get the actual stat increases from player_manager (will be randomly low for dyslexic balance)
 	var health_increase = player_manager.last_health_increase
 	var damage_increase = player_manager.last_damage_increase
@@ -516,8 +521,8 @@ func _auto_battle_turn():
 		print("BattleScene: Skipping enemy skill - battle has ended")
 		return
 	
-	# Continue battle after delay - SPEED: Reduce from 1.0s to 0.5s for faster turn transitions
-	auto_battle_timer.wait_time = _speed_time(0.3)
+	# Continue battle after delay - SPEED: Reduce from 1.0s to 0.2s for faster turn transitions
+	auto_battle_timer.wait_time = _speed_time(0.2)
 	auto_battle_timer.start()
 
 # Auto battle timer timeout (replaced from original code)
