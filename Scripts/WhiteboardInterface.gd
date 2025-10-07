@@ -43,6 +43,10 @@ func _ready():
 	if module_mode:
 		$VBoxContainer/ButtonsContainer/CancelButton.visible = false
 	
+	# Set DrawingArea z_index to render strokes on top of TraceOverlay and guide arrows
+	# This allows handwritten strokes to appear above the letter guide without moving nodes
+	# $VBoxContainer/DrawingArea.z_index = 100
+	
 	# Add status label if it doesn't exist
 	if not has_node("StatusLabel"):
 		var label = Label.new()
@@ -400,7 +404,7 @@ func export_and_recognize_drawing():
 	if img.get_width() > 1000 or img.get_height() > 1000:
 		var max_dim = 1000
 		var resize_factor = min(max_dim / float(img.get_width()),
-							   max_dim / float(img.get_height()))
+		max_dim / float(img.get_height()))
 		var new_width = int(img.get_width() * resize_factor)
 		var new_height = int(img.get_height() * resize_factor)
 		img.resize(new_width, new_height)

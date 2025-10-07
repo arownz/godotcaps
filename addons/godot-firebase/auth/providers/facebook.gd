@@ -1,7 +1,7 @@
-class_name FacebookProvider 
+class_name FacebookProvider
 extends AuthProvider
 
-func _init(client_id: String,client_secret: String):
+func _init(client_id: String, client_secret: String):
 	randomize()
 	set_client_id(client_id)
 	set_client_secret(client_secret)
@@ -17,5 +17,3 @@ func _init(client_id: String,client_secret: String):
 	else:
 		self.should_exchange = true
 		self.params.response_type = "code"
-		
-		

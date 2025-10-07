@@ -12,7 +12,7 @@ func _init(client_id: String, client_secret: String):
 		self.redirect_uri = "https://accounts.google.com/o/oauth2/v2/auth?"
 		self.access_token_uri = "https://oauth2.googleapis.com/token"
 		self.provider_id = "google.com"
-		self.params.response_type = "token"  # Implicit flow for web
+		self.params.response_type = "token" # Implicit flow for web
 		self.params.scope = "email openid profile"
 		# Force account selection even if only one account exists
 		self.params.prompt = "select_account"
@@ -24,5 +24,5 @@ func _init(client_id: String, client_secret: String):
 		self.redirect_uri = "https://accounts.google.com/o/oauth2/v2/auth?"
 		self.access_token_uri = "https://oauth2.googleapis.com/token"
 		self.provider_id = "google.com"
-		self.params.response_type = "code"  # Authorization code flow for desktop
+		self.params.response_type = "code" # Authorization code flow for desktop
 		self.params.scope = "email openid profile"

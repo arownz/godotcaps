@@ -1,7 +1,7 @@
-class_name GitHubProvider 
+class_name GitHubProvider
 extends AuthProvider
 
-func _init(client_id: String,client_secret: String):
+func _init(client_id: String, client_secret: String):
     randomize()
     set_client_id(client_id)
     set_client_secret(client_secret)

@@ -127,9 +127,9 @@ func build_error(_error, action, description) -> void:
 	else:
 		#error.code, error.status, error.message
 		error = { "error": {
-				 "code": 0,
-				 "status": "Unknown Error",
-				 "message": "Error: %s - %s" % [action, description]
+			"code": 0,
+			"status": "Unknown Error",
+			"message": "Error: %s - %s" % [action, description]
 			}
 		}
 	

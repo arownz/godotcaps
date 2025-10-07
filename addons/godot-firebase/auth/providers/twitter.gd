@@ -1,19 +1,19 @@
-class_name TwitterProvider 
+class_name TwitterProvider
 extends AuthProvider
 
 var request_token_endpoint: String = "https://api.twitter.com/oauth/access_token?oauth_callback="
 
 var oauth_header: Dictionary = {
-    oauth_callback="",
-    oauth_consumer_key="",
-    oauth_nonce="",
-    oauth_signature="",
-    oauth_signature_method="HMAC-SHA1",
-    oauth_timestamp="",
-    oauth_version="1.0"
+    oauth_callback = "",
+    oauth_consumer_key = "",
+    oauth_nonce = "",
+    oauth_signature = "",
+    oauth_signature_method = "HMAC-SHA1",
+    oauth_timestamp = "",
+    oauth_version = "1.0"
 }
 
-func _init(client_id: String,client_secret: String):
+func _init(client_id: String, client_secret: String):
     randomize()
     set_client_id(client_id)
     set_client_secret(client_secret)
@@ -35,5 +35,5 @@ func _init(client_id: String,client_secret: String):
 func get_oauth_params() -> String:
     var params: PackedStringArray = []
     for key in self.oauth.keys():
-        params.append(key+"="+self.oauth.get(key))
+        params.append(key + "=" + self.oauth.get(key))
     return "&".join(params)

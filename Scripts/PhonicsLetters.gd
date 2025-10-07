@@ -16,7 +16,6 @@ var recent_errors: Array = [] # Track recently missed letters for adaptive revis
 
 # Guided tracing system variables
 var guided_arrows: Array = [] # Array of CurvedArrow2D nodes for multi-stroke letters
-var guided_labels: Array = [] # Array of Label nodes for step numbers
 var guide_animation_tween: Tween = null
 var is_guide_playing := false
 var guide_container: Control = null # Container for arrow overlays
@@ -172,7 +171,7 @@ func _update_button_visibility():
 		next_btn.visible = (letter_index < letter_set.size() - 1)
 
 # ============================================================================
-# GUIDED TRACING SYSTEM
+# GUIDED PATH TRACING SYSTEM
 # ============================================================================
 
 func play_guided_trace(letter: String):
@@ -198,7 +197,7 @@ func play_guided_trace(letter: String):
 	
 	is_guide_playing = true
 	
-	# Create arrow for each stroke with numbered labels
+	# Create arrow for each stroke
 	for i in range(strokes.size()):
 		var stroke = strokes[i]
 		var arrow = CurvedArrow2D.new()
@@ -208,37 +207,32 @@ func play_guided_trace(letter: String):
 		arrow.position = stroke.start
 		arrow.global_end_position = guide_container.global_position + stroke.end
 		
-		# Dyslexia-friendly styling
-		arrow.color = Color(1.0, 0.9, 0.2, 0.85) # Yellow (dyslexia-friendly)
-		arrow.transparency = 0.85
-		arrow.width = 8.0 # Visible but not overwhelming
-		arrow.arrowhead_height = 20.0
-		arrow.arrowhead_width = 24.0
+		# CRITICAL: Disable ALL input processing on arrow and its children
+		# This prevents arrows from blocking whiteboard drawing strokes
+		arrow.set_process_input(false)
+		arrow.set_process_unhandled_input(false)
+		
+		# Dyslexia-friendly styling - Improved high-contrast warm yellow
+		arrow.color = Color(1.0, 0.85, 0.0, 0.9) # Brighter yellow-orange for better visibility
+		arrow.transparency = 0.9
+		arrow.width = 10.0 # Slightly thicker for better visibility
+		arrow.arrowhead_height = 22.0
+		arrow.arrowhead_width = 26.0
 		arrow.curve_height_factor = stroke.get("curve", 0.3) # Slight curve for natural feel
-		arrow.outline_thickness = 2
-		arrow.outline_color = Color(1.0, 1.0, 1.0, 0.9)
+		arrow.outline_thickness = 3 # Thicker outline for better contrast
+		arrow.outline_color = Color(0.2, 0.2, 0.2, 1.0) # Dark outline for high contrast
 		
 		# Set initial animation progress to 0
 		arrow.animation_progress = 0.0
 		
+		# Add to scene first so children are initialized
 		guide_container.add_child(arrow)
 		guided_arrows.append(arrow)
-		
-		# Add numbered step label at stroke start
-		var step_label = Label.new()
-		step_label.name = "StepLabel_" + str(i)
-		step_label.text = str(i + 1) # 1-indexed for user
-		step_label.add_theme_font_size_override("font_size", 24)
-		step_label.add_theme_color_override("font_color", Color(0, 0, 0, 1)) # Black text
-		step_label.add_theme_color_override("font_outline_color", Color(1, 1, 1, 1)) # White outline
-		step_label.add_theme_constant_override("outline_size", 3)
-		
-		# Position label slightly offset from stroke start (top-left)
-		step_label.position = stroke.start - Vector2(20, 25)
-		step_label.z_index = 10 # Above arrows
-		
-		guide_container.add_child(step_label)
-		guided_labels.append(step_label) # Track separately from arrows
+	
+	# Wait one frame for all arrows to initialize, then disable input recursively
+	await get_tree().process_frame
+	for arrow in guided_arrows:
+		_disable_arrow_input_recursive(arrow)
 	
 	# Start looping animation
 	_animate_guide_strokes()
@@ -261,12 +255,6 @@ func stop_guided_trace():
 		if is_instance_valid(arrow):
 			arrow.queue_free()
 	guided_arrows.clear()
-	
-	# Remove all label nodes
-	for label in guided_labels:
-		if is_instance_valid(label):
-			label.queue_free()
-	guided_labels.clear()
 
 func _animate_guide_strokes():
 	"""
@@ -298,27 +286,18 @@ func _animate_guide_strokes():
 	# Brief pause before fade-out (0.5s)
 	guide_animation_tween.tween_callback(func(): pass ).set_delay(0.5)
 	
-	# Fade out all arrows and labels for visual clarity
+	# Fade out all arrows for visual clarity
 	for arrow in guided_arrows:
 		if is_instance_valid(arrow):
 			guide_animation_tween.tween_property(arrow, "modulate:a", 0.0, 0.5).set_ease(Tween.EASE_IN_OUT)
 	
-	for label in guided_labels:
-		if is_instance_valid(label):
-			guide_animation_tween.tween_property(label, "modulate:a", 0.0, 0.5).set_ease(Tween.EASE_IN_OUT)
-	
 	# Clear arrows and prepare for next loop
 	guide_animation_tween.tween_callback(func():
-		# Clean up current arrows and labels
+		# Clean up current arrows
 		for arrow in guided_arrows:
 			if is_instance_valid(arrow):
 				arrow.queue_free()
 		guided_arrows.clear()
-		
-		for label in guided_labels:
-			if is_instance_valid(label):
-				label.queue_free()
-		guided_labels.clear()
 		
 		# Brief pause before recreating (0.3s)
 		await get_tree().create_timer(0.3).timeout
@@ -343,47 +322,35 @@ func _animate_guide_strokes():
 			arrow.position = stroke.start
 			arrow.global_end_position = guide_container.global_position + stroke.end
 			
-			# Dyslexia-friendly styling
-			arrow.color = Color(1.0, 0.9, 0.2, 0.85) # Yellow (dyslexia-friendly)
-			arrow.transparency = 0.85
-			arrow.width = 8.0
-			arrow.arrowhead_height = 20.0
-			arrow.arrowhead_width = 24.0
+			# CRITICAL: Disable ALL input processing on arrow and its children
+			arrow.set_process_input(false)
+			arrow.set_process_unhandled_input(false)
+			
+			# Dyslexia-friendly styling - Improved high-contrast warm yellow
+			arrow.color = Color(1.0, 0.85, 0.0, 0.9) # Brighter yellow-orange for better visibility
+			arrow.transparency = 0.9
+			arrow.width = 10.0 # Slightly thicker for better visibility
+			arrow.arrowhead_height = 22.0
+			arrow.arrowhead_width = 26.0
 			arrow.curve_height_factor = stroke.get("curve", 0.3)
-			arrow.outline_thickness = 2
-			arrow.outline_color = Color(1.0, 1.0, 1.0, 0.9)
+			arrow.outline_thickness = 3 # Thicker outline for better contrast
+			arrow.outline_color = Color(0.2, 0.2, 0.2, 1.0) # Dark outline for high contrast
 			arrow.animation_progress = 0.0
 			arrow.modulate.a = 0.0 # Start invisible for fade-in
 			
 			guide_container.add_child(arrow)
 			guided_arrows.append(arrow)
-			
-			# Recreate numbered step label
-			var step_label = Label.new()
-			step_label.name = "StepLabel_" + str(i)
-			step_label.text = str(i + 1) # 1-indexed for user
-			step_label.add_theme_font_size_override("font_size", 24)
-			step_label.add_theme_color_override("font_color", Color(0, 0, 0, 1)) # Black text
-			step_label.add_theme_color_override("font_outline_color", Color(1, 1, 1, 1)) # White outline
-			step_label.add_theme_constant_override("outline_size", 3)
-			
-			# Position label slightly offset from stroke start
-			step_label.position = stroke.start - Vector2(20, 25)
-			step_label.z_index = 10 # Above arrows
-			step_label.modulate.a = 0.0 # Start invisible for fade-in
-			
-			guide_container.add_child(step_label)
-			guided_labels.append(step_label) # Track separately
 		
-		# Fade in new arrows and labels
+		# Wait one frame for all arrows to initialize, then disable input recursively
+		await get_tree().process_frame
+		for arrow in guided_arrows:
+			_disable_arrow_input_recursive(arrow)
+		
+		# Fade in new arrows
 		var fade_tween = create_tween()
 		for arrow in guided_arrows:
 			if is_instance_valid(arrow):
 				fade_tween.tween_property(arrow, "modulate:a", 1.0, 0.5).set_ease(Tween.EASE_IN_OUT)
-		
-		for label in guided_labels:
-			if is_instance_valid(label):
-				fade_tween.tween_property(label, "modulate:a", 1.0, 0.5).set_ease(Tween.EASE_IN_OUT)
 		
 		# Wait for fade-in to complete, then start next loop
 		await fade_tween.finished
@@ -409,9 +376,9 @@ func _get_letter_strokes(letter: String) -> Array:
 		return []
 	
 	var center = container.size / 2
-	# Match TraceOverlay: font_size=90, scale=1.3210202
-	# Effective height ≈ 119px, use 60px as half-height for vertical range
-	var scale_factor = 60.0 # Adjusted to match TraceOverlay visual size
+	# Match TraceOverlay: font_size=126, scale=Vector2(0.8689284, 0.99230725)
+	# Effective height ≈ 126 × 0.992 ≈ 125px, use 62.5px as half-height for vertical range
+	var scale_factor = 62.5 # Adjusted to match TraceOverlay visual size
 	
 	# Letter stroke definitions (normalized then scaled)
 	var stroke_data = {
@@ -428,8 +395,10 @@ func _get_letter_strokes(letter: String) -> Array:
 			{"start": Vector2(0.4, 0.4), "end": Vector2(-0.3, 0.8), "curve": 0.9} # Close bottom (increased)
 		],
 		"C": [
-			{"start": Vector2(0.6, -0.3), "end": Vector2(-0.5, 0.0), "curve": 1.5}, # Top arc (clockwise from right)
-			{"start": Vector2(-0.5, 0.0), "end": Vector2(0.6, 0.3), "curve": 1.5} # Bottom arc (complete the C)
+			{"start": Vector2(0.55, -0.4), "end": Vector2(-0.05, -0.75), "curve": 1.2}, # Top arc (right to top-center)
+			{"start": Vector2(-0.05, -0.75), "end": Vector2(-0.55, 0.0), "curve": 1.2}, # Left arc (top to middle-left)
+			{"start": Vector2(-0.55, 0.0), "end": Vector2(-0.05, 0.75), "curve": 1.2}, # Bottom-left arc
+			{"start": Vector2(-0.05, 0.75), "end": Vector2(0.55, 0.4), "curve": 1.2} # Bottom arc (complete the C)
 		],
 		"D": [
 			{"start": Vector2(-0.3, -0.8), "end": Vector2(-0.3, 0.8), "curve": 0.0}, # Vertical line
@@ -463,8 +432,9 @@ func _get_letter_strokes(letter: String) -> Array:
 			{"start": Vector2(0, -0.8), "end": Vector2(0, 0.8), "curve": 0.0} # Vertical line
 		],
 		"J": [
-			{"start": Vector2(0.3, -0.8), "end": Vector2(0.3, 0.5), "curve": 0.0}, # Vertical line
-			{"start": Vector2(0.3, 0.5), "end": Vector2(-0.3, 0.7), "curve": 1.0} # Bottom curve/hook (increased)
+			{"start": Vector2(0.3, -0.8), "end": Vector2(0.3, 0.5), "curve": 0.0}, # Vertical line down
+			{"start": Vector2(0.3, 0.5), "end": Vector2(0.0, 0.75), "curve": 1.3}, # Bottom curve start
+			{"start": Vector2(0.0, 0.75), "end": Vector2(-0.3, 0.6), "curve": 1.3} # Bottom hook complete
 		],
 		"K": [
 			{"start": Vector2(-0.4, -0.8), "end": Vector2(-0.4, 0.8), "curve": 0.0}, # Vertical line
@@ -487,10 +457,12 @@ func _get_letter_strokes(letter: String) -> Array:
 			{"start": Vector2(0.4, 0.8), "end": Vector2(0.4, -0.8), "curve": 0.0} # Right vertical
 		],
 		"O": [
-			{"start": Vector2(0, -0.7), "end": Vector2(-0.55, 0), "curve": 1.8}, # Top-left quarter
-			{"start": Vector2(-0.55, 0), "end": Vector2(0, 0.7), "curve": 1.8}, # Bottom-left quarter
-			{"start": Vector2(0, 0.7), "end": Vector2(0.55, 0), "curve": 1.8}, # Bottom-right quarter
-			{"start": Vector2(0.55, 0), "end": Vector2(0, -0.7), "curve": 1.8} # Top-right quarter (close circle)
+			{"start": Vector2(0.0, -0.75), "end": Vector2(-0.5, -0.25), "curve": 1.5}, # Top-left quarter
+			{"start": Vector2(-0.5, -0.25), "end": Vector2(-0.5, 0.25), "curve": 1.5}, # Left side
+			{"start": Vector2(-0.5, 0.25), "end": Vector2(0.0, 0.75), "curve": 1.5}, # Bottom-left quarter
+			{"start": Vector2(0.0, 0.75), "end": Vector2(0.5, 0.25), "curve": 1.5}, # Bottom-right quarter
+			{"start": Vector2(0.5, 0.25), "end": Vector2(0.5, -0.25), "curve": 1.5}, # Right side
+			{"start": Vector2(0.5, -0.25), "end": Vector2(0.0, -0.75), "curve": 1.5} # Top-right quarter (close circle)
 		],
 		"P": [
 			{"start": Vector2(-0.3, 0.8), "end": Vector2(-0.3, -0.8), "curve": 0.0}, # Vertical line
@@ -498,11 +470,13 @@ func _get_letter_strokes(letter: String) -> Array:
 			{"start": Vector2(0.4, -0.4), "end": Vector2(-0.3, 0.0), "curve": 0.9} # Close top loop (increased)
 		],
 		"Q": [
-			{"start": Vector2(0, -0.7), "end": Vector2(-0.55, 0), "curve": 1.8}, # Top-left quarter
-			{"start": Vector2(-0.55, 0), "end": Vector2(0, 0.7), "curve": 1.8}, # Bottom-left quarter
-			{"start": Vector2(0, 0.7), "end": Vector2(0.55, 0), "curve": 1.8}, # Bottom-right quarter
-			{"start": Vector2(0.55, 0), "end": Vector2(0, -0.7), "curve": 1.8}, # Top-right quarter (close circle)
-			{"start": Vector2(0.2, 0.4), "end": Vector2(0.65, 0.85), "curve": 0.0} # Tail diagonal
+			{"start": Vector2(0.0, -0.75), "end": Vector2(-0.5, -0.25), "curve": 1.5}, # Top-left quarter
+			{"start": Vector2(-0.5, -0.25), "end": Vector2(-0.5, 0.25), "curve": 1.5}, # Left side
+			{"start": Vector2(-0.5, 0.25), "end": Vector2(0.0, 0.75), "curve": 1.5}, # Bottom-left quarter
+			{"start": Vector2(0.0, 0.75), "end": Vector2(0.5, 0.25), "curve": 1.5}, # Bottom-right quarter
+			{"start": Vector2(0.5, 0.25), "end": Vector2(0.5, -0.25), "curve": 1.5}, # Right side
+			{"start": Vector2(0.5, -0.25), "end": Vector2(0.0, -0.75), "curve": 1.5}, # Top-right quarter (close circle)
+			{"start": Vector2(0.2, 0.4), "end": Vector2(0.7, 0.9), "curve": 0.0} # Tail diagonal
 		],
 		"R": [
 			{"start": Vector2(-0.3, 0.8), "end": Vector2(-0.3, -0.8), "curve": 0.0}, # Vertical line
@@ -511,9 +485,12 @@ func _get_letter_strokes(letter: String) -> Array:
 			{"start": Vector2(-0.3, 0.0), "end": Vector2(0.4, 0.8), "curve": 0.0} # Leg diagonal
 		],
 		"S": [
-			{"start": Vector2(0.5, -0.5), "end": Vector2(-0.3, -0.2), "curve": 1.6}, # Top curve (right to left-center)
-			{"start": Vector2(-0.3, -0.2), "end": Vector2(0.3, 0.2), "curve": 1.4}, # Middle S-curve (left to right)
-			{"start": Vector2(0.3, 0.2), "end": Vector2(-0.5, 0.5), "curve": 1.6} # Bottom curve (right to left)
+			{"start": Vector2(0.5, -0.6), "end": Vector2(0.0, -0.75), "curve": 1.4}, # Top-right to top-center
+			{"start": Vector2(0.0, -0.75), "end": Vector2(-0.45, -0.4), "curve": 1.4}, # Top curve (center to left)
+			{"start": Vector2(-0.45, -0.4), "end": Vector2(0.0, 0.0), "curve": 1.3}, # Middle transition (left to center)
+			{"start": Vector2(0.0, 0.0), "end": Vector2(0.45, 0.4), "curve": 1.3}, # Middle S-curve (center to right)
+			{"start": Vector2(0.45, 0.4), "end": Vector2(0.0, 0.75), "curve": 1.4}, # Bottom curve (right to center)
+			{"start": Vector2(0.0, 0.75), "end": Vector2(-0.5, 0.6), "curve": 1.4} # Bottom-left end
 		],
 		"T": [
 			{"start": Vector2(-0.5, -0.8), "end": Vector2(0.5, -0.8), "curve": 0.0}, # Top horizontal
@@ -567,6 +544,40 @@ func _get_letter_strokes(letter: String) -> Array:
 		scaled_strokes.append(scaled_stroke)
 	
 	return scaled_strokes
+
+# ============================================================================
+# ARROW INPUT MANAGEMENT
+# ============================================================================
+
+func _disable_arrow_input_recursive(node: Node):
+	"""
+	Recursively disable input processing on arrow nodes and all their children.
+	This prevents any arrow components from blocking whiteboard drawing input events.
+	
+	Note: In Godot, CanvasItem nodes (Node2D, Polygon2D, CanvasGroup) don't block
+	input by default unless they have input handlers connected. We disable input
+	processing to be safe.
+	"""
+	if not is_instance_valid(node):
+		return
+	
+	# Disable input processing methods for all nodes that support it
+	if node.has_method("set_process_input"):
+		node.set_process_input(false)
+	if node.has_method("set_process_unhandled_input"):
+		node.set_process_unhandled_input(false)
+	
+	# Set mouse filter to ignore for Control nodes
+	if node is Control:
+		node.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	
+	# For CollisionObject2D nodes (if any), disable input_pickable
+	if node is CollisionObject2D:
+		node.input_pickable = false
+	
+	# Recursively process all children
+	for child in node.get_children():
+		_disable_arrow_input_recursive(child)
 
 # ============================================================================
 # END GUIDED TRACING SYSTEM
