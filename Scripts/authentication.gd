@@ -67,6 +67,27 @@ func _ready():
 
 # Initialize Firebase auth persistence for web builds (simplified approach)
 func _initialize_firebase_persistence():
+	# CRITICAL FIX: Clear any corrupted localStorage data from old save format
+	JavaScriptBridge.eval("""
+		(function() {
+			try {
+				var authData = localStorage.getItem('firebase_auth');
+				if (authData) {
+					// Try to parse to check if valid
+					try {
+						JSON.parse(authData);
+						console.log('Existing auth data is valid JSON');
+					} catch(e) {
+						console.error('Corrupted auth data detected, clearing: ' + e.message);
+						localStorage.removeItem('firebase_auth');
+					}
+				}
+			} catch(e) {
+				console.error('Error checking auth data: ' + e);
+			}
+		})();
+	""")
+	
 	JavaScriptBridge.eval("""
 		(function() {
 			console.log('Setting Firebase auth persistence to LOCAL for web builds');
@@ -106,38 +127,51 @@ func check_existing_auth():
 	# Add a small delay to allow logout operations to complete
 	await get_tree().create_timer(0.1).timeout
 	
-	# Use Firebase's built-in auth persistence mechanism for both web and standalone
-	if Firebase.Auth.check_auth_file():
-		print("DEBUG: Firebase auth file found, loading existing authentication")
-		Firebase.Auth.load_auth()
-		
-		# Verify that the loaded auth is valid
-		if Firebase.Auth.auth != null and Firebase.Auth.auth.has("localid"):
-			print("DEBUG: Valid auth loaded, user already logged in")
-			show_message("You are already logged in", true)
-			await get_tree().create_timer(0.5).timeout
-			_fade_out_and_change_scene("res://Scenes/MainMenu.tscn")
-			return
-		else:
-			print("DEBUG: Auth file exists but no valid auth object, proceeding with login screen")
-	
-	# For web builds, check for OAuth redirect tokens following Firebase Godot extension pattern
+	# For web builds, check for OAuth redirect tokens FIRST (this takes priority)
+	# This ensures that OAuth redirect flow completes before checking stored auth
 	if OS.has_feature('web'):
-		print("DEBUG: Web platform detected, checking for OAuth redirect")
+		print("DEBUG: ===== WEB PLATFORM AUTH CHECK =====")
+		print("DEBUG: Current URL: " + JavaScriptBridge.eval("window.location.href"))
+		
 		var provider = Firebase.Auth.get_GoogleProvider()
 		var redirect_uri = get_web_redirect_uri()
 		print("DEBUG: Setting redirect URI: " + redirect_uri)
 		Firebase.Auth.set_redirect_uri(redirect_uri)
 		
-		# Check for OAuth token in URL (following documentation pattern)
+		# Check localStorage for stored auth BEFORE checking URL token
+		var has_stored_auth = JavaScriptBridge.eval("localStorage.getItem('firebase_auth') !== null")
+		print("DEBUG: localStorage has firebase_auth: " + str(has_stored_auth))
+		
+		if has_stored_auth:
+			var stored_auth_preview = JavaScriptBridge.eval("""
+				(function() {
+					try {
+						var data = localStorage.getItem('firebase_auth');
+						if (data) {
+							var json = JSON.parse(data);
+							return 'Has localid: ' + (json.localid ? 'YES' : 'NO') + 
+								   ', Has refreshToken: ' + (json.refreshToken ? 'YES' : 'NO');
+						}
+					} catch(e) {
+						return 'Error: ' + e.message;
+					}
+					return 'No data';
+				})();
+			""")
+			print("DEBUG: Stored auth preview: " + str(stored_auth_preview))
+		
+		# Check for OAuth token in URL (active OAuth redirect)
 		var token = Firebase.Auth.get_token_from_url(provider)
 		if token:
-			print("DEBUG: OAuth token found on page load, completing sign-in")
+			print("DEBUG: ===== OAUTH TOKEN FOUND IN URL =====")
+			print("DEBUG: Token preview: " + str(token).substr(0, 20) + "...")
 			show_message("Completing Google Sign-In...", true)
 			# Use a deferred call to ensure the GUI is ready
 			await get_tree().process_frame
 			Firebase.Auth.login_with_oauth(token, provider)
 			return
+		else:
+			print("DEBUG: No OAuth token in URL (this is normal for page reloads)")
 		
 		# Check if we were in the middle of a Google auth that might have failed
 		if JavaScriptBridge.eval("window.location.href.indexOf('#state=google_auth') !== -1"):
@@ -150,6 +184,50 @@ func check_existing_auth():
 				}
 			""")
 			return
+	
+	# CRITICAL FIX: Properly await check_auth_file() - it's an async function
+	# This ensures stored auth (including OAuth) is loaded correctly
+	print("DEBUG: ===== CHECKING STORED AUTH FILE =====")
+	var auth_file_exists = await Firebase.Auth.check_auth_file()
+	print("DEBUG: check_auth_file() returned: " + str(auth_file_exists))
+	
+	if auth_file_exists:
+		print("DEBUG: Firebase auth file found, attempting to load authentication")
+		# Give Firebase.Auth.auth time to be populated by check_auth_file's manual_token_refresh
+		await get_tree().create_timer(0.5).timeout
+		
+		print("DEBUG: Checking Firebase.Auth.auth object after check_auth_file")
+		print("DEBUG: Firebase.Auth.auth is null: " + str(Firebase.Auth.auth == null))
+		
+		if Firebase.Auth.auth != null:
+			print("DEBUG: Firebase.Auth.auth keys: " + str(Firebase.Auth.auth.keys()))
+			print("DEBUG: Has localid: " + str(Firebase.Auth.auth.has("localid")))
+			if Firebase.Auth.auth.has("localid"):
+				print("DEBUG: localid value: " + str(Firebase.Auth.auth.localid))
+		
+		# Verify that the loaded auth is valid
+		if Firebase.Auth.auth != null and Firebase.Auth.auth.has("localid"):
+			var auth_type = "Unknown"
+			if Firebase.Auth.auth.has("providerId"):
+				auth_type = "OAuth (" + str(Firebase.Auth.auth.providerId) + ")"
+			elif Firebase.Auth.auth.has("email"):
+				auth_type = "Email (" + str(Firebase.Auth.auth.email) + ")"
+			
+			print("DEBUG: ===== VALID AUTH LOADED =====")
+			print("DEBUG: Auth type: " + auth_type)
+			print("DEBUG: User ID: " + str(Firebase.Auth.auth.localid))
+			
+			show_message("You are already logged in", true)
+			await get_tree().create_timer(0.5).timeout
+			_fade_out_and_change_scene("res://Scenes/MainMenu.tscn")
+			return
+		else:
+			print("DEBUG: ===== AUTH LOAD FAILED =====")
+			print("DEBUG: Auth loaded but no valid localid found, proceeding with login screen")
+			print("DEBUG: This usually means token refresh failed")
+	else:
+		print("DEBUG: ===== NO STORED AUTH =====")
+		print("DEBUG: No stored auth file found, showing login screen")
 
 # Function to hide the ForgotPassword tab in the TabContainer
 func _hide_forgot_password_tab():
@@ -175,7 +253,7 @@ func _initialize_date_pickers():
 	# Months
 	var month_option = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/BirthDateContainer/MonthOptionButton
 	var months = ["January", "February", "March", "April", "May", "June",
-				 "July", "August", "September", "October", "November", "December"]
+					"July", "August", "September", "October", "November", "December"]
 	for i in range(months.size()):
 		month_option.add_item(months[i])
 	
@@ -651,14 +729,44 @@ func _on_reset_password_button_pressed():
 
 # ===== Firebase Authentication Callbacks =====
 func on_login_succeeded(auth):
-	print("DEBUG: Login successful with auth data: " + str(auth.keys()))
+	print("DEBUG: ===== LOGIN SUCCEEDED =====")
+	print("DEBUG: Auth data keys: " + str(auth.keys()))
+	
+	# Check if this is OAuth or email login
+	var login_type = "Email"
+	if auth.has("providerId"):
+		login_type = "OAuth (" + str(auth.providerId) + ")"
+	elif auth.has("federatedId"):
+		login_type = "OAuth (federated)"
+	
+	print("DEBUG: Login type: " + login_type)
+	print("DEBUG: Has localid: " + str(auth.has("localid")))
+	print("DEBUG: Has refreshToken: " + str(auth.has("refreshToken")))
+	print("DEBUG: Has idToken: " + str(auth.has("idtoken")))
 	
 	# Use Firebase's built-in auth persistence (works for both web and standalone)
 	var save_result = Firebase.Auth.save_auth(auth)
 	print("DEBUG: Firebase auth save result: " + str(save_result))
 	
-	# For web builds, set Firebase persistence to LOCAL to match standalone behavior
+	# Verify the save worked on web
 	if OS.has_feature('web'):
+		var verify_save = JavaScriptBridge.eval("""
+			(function() {
+				try {
+					var data = localStorage.getItem('firebase_auth');
+					if (data) {
+						var json = JSON.parse(data);
+						return 'Saved successfully. Has localid: ' + (json.localid ? 'YES' : 'NO') + 
+							   ', Has refreshToken: ' + (json.refreshToken ? 'YES' : 'NO');
+					}
+					return 'No data found in localStorage!';
+				} catch(e) {
+					return 'Error verifying: ' + e.message;
+				}
+			})();
+		""")
+		print("DEBUG: Verification of saved auth: " + str(verify_save))
+		
 		JavaScriptBridge.eval("""
 			(function() {
 				try {

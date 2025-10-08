@@ -531,11 +531,16 @@ func save_auth(auth: Dictionary) -> bool:
 		# Web version - use localStorage with error handling
 		print("DEBUG: Saving auth data to web storage")
 		var auth_json = JSON.stringify(auth)
+		# CRITICAL FIX: Properly escape JSON for JavaScript by base64 encoding
+		# This prevents JSON corruption from special characters
+		var auth_base64 = Marshalls.utf8_to_base64(auth_json)
 		var result = JavaScriptBridge.eval("""
 			(function() {
 				try {
-					localStorage.setItem('firebase_auth', '""" + auth_json + """');
-					console.log('Auth data saved to localStorage');
+					var base64Data = '""" + auth_base64 + """';
+					var jsonString = atob(base64Data);
+					localStorage.setItem('firebase_auth', jsonString);
+					console.log('Auth data saved to localStorage (base64 decoded)');
 					return true;
 				} catch(e) {
 					console.error('Failed to save auth data: ' + e.message);
@@ -558,18 +563,20 @@ func save_auth(auth: Dictionary) -> bool:
 # Note this uses web storage in HTML5
 func load_auth() -> bool:
 	if OS.has_feature('web'):
-		# Web version - use localStorage
+		# Web version - use localStorage (data is stored as plain JSON)
 		if JavaScriptBridge.eval("typeof localStorage !== 'undefined' && localStorage.getItem('firebase_auth') !== null"):
 			var auth_data_str = JavaScriptBridge.eval("localStorage.getItem('firebase_auth')")
+			print("DEBUG: Raw auth data from localStorage (first 100 chars): " + str(auth_data_str).substr(0, 100))
 			var json = JSON.new()
 			var json_parse_result = json.parse(auth_data_str)
 			if json_parse_result == OK:
 				var auth_data = json.data
+				print("DEBUG: Successfully parsed auth data, calling manual_token_refresh")
 				# Fix: Add await here
 				await manual_token_refresh(auth_data)
 				return true
 			else:
-				Firebase._printerr("Error parsing auth data from web storage")
+				Firebase._printerr("Error parsing auth data from web storage: " + json.get_error_message())
 				auth_request.emit(ERR_PARSE_ERROR, "Error parsing auth data from web storage")
 				return false
 		else:
@@ -609,16 +616,24 @@ func remove_auth() -> void:
 # If there is, the game will load it and refresh the token
 func check_auth_file() -> bool:
 	if OS.has_feature('web'):
-		# Web version - use localStorage instead of file system
+		# Web version - use localStorage instead of file system (data is stored as plain JSON)
 		if JavaScriptBridge.eval("typeof localStorage !== 'undefined' && localStorage.getItem('firebase_auth') !== null"):
 			var auth_data_str = JavaScriptBridge.eval("localStorage.getItem('firebase_auth')")
+			print("DEBUG: check_auth_file - Raw auth data (first 100 chars): " + str(auth_data_str).substr(0, 100))
 			var json = JSON.new()
 			var json_parse_result = json.parse(auth_data_str)
 			if json_parse_result == OK:
 				var auth_data = json.data
+				print("DEBUG: check_auth_file - Successfully parsed auth data")
+				print("DEBUG: Auth data has localid: " + str(auth_data.has("localid")))
+				print("DEBUG: Auth data has refreshToken: " + str(auth_data.has("refreshToken")))
 				# Fix: Add await here
 				await manual_token_refresh(auth_data)
 				return true
+			else:
+				Firebase._printerr("Error parsing auth data in check_auth_file: " + json.get_error_message())
+				auth_request.emit(ERR_PARSE_ERROR, "Error parsing auth data")
+				return false
 		# If no auth data in localStorage
 		Firebase._printerr("No saved auth data found in web storage")
 		auth_request.emit(ERR_DOES_NOT_EXIST, "No saved auth data found in web storage")
@@ -765,7 +780,7 @@ func get_token_from_url(provider: AuthProvider):
 		var debug_url = JavaScriptBridge.eval("window.location.href")
 		print("DEBUG: Current URL: " + str(debug_url))
 		
-		 # Fix the JavaScript code to avoid using 'return' statements within eval
+		# Fix the JavaScript code to avoid using 'return' statements within eval
 		var token = JavaScriptBridge.eval("""
 			(function() {
 				// First try: Check hash fragment directly (most reliable method)

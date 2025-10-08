@@ -8,8 +8,6 @@ This capstone project aims to create an **interactive, accessible, and engaging*
 
 ## **Current Development Status**
 
-🚧 **Work In Progress** 🚧
-
 This project is actively being developed. Some features may be incomplete or subject to change.
 
 ### **Planned Features**
@@ -18,7 +16,7 @@ This project is actively being developed. Some features may be incomplete or sub
 
 ✔️ **Speech-to-Text Support:** Allow users to record random word fetch from api.
 
-✔️ **Interactive Modular:** Gamified learning experiences to enhance comprehension.
+✔️ **Modular:** Learning modiles to enhance comprehension.
 
 ✔️ **User Progress Tracking:** Monitor improvements and suggest personalized learning paths in our flutter parents/teacher app to monitor dyslexia.
 
