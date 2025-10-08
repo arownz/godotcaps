@@ -910,3 +910,7 @@ func _update_character_animation(data):
 				print("ProfilePopUp: Failed to load character animation: " + character_skin)
 		else:
 			print("ProfilePopUp: CharacterContainer not found")
+
+
+func _on_profile_picture_button_mouse_entered() -> void:
+	$ButtonHover.play()

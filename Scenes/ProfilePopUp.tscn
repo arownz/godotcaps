@@ -212,7 +212,7 @@ text = "Username:"
 layout_mode = 0
 offset_left = 184.0
 offset_top = 3.0
-offset_right = 453.0
+offset_right = 500.42688
 offset_bottom = 48.0
 scale = Vector2(1.00685, 1)
 theme_override_colors/font_color = Color(0.988235, 0.988235, 0, 1)
@@ -247,7 +247,7 @@ text = "Email:"
 layout_mode = 0
 offset_left = 101.0
 offset_top = 120.78047
-offset_right = 473.0
+offset_right = 498.21082
 offset_bottom = 157.78047
 theme_override_colors/font_color = Color(0.988235, 0.988235, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -316,7 +316,7 @@ stretch_mode = 5
 layout_mode = 0
 offset_left = 119.587
 offset_top = 79.32597
-offset_right = 279.587
+offset_right = 313.00772
 offset_bottom = 116.32597
 theme_override_colors/font_color = Color(0.988235, 0.988235, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -729,6 +729,7 @@ stream = ExtResource("22_6o1ar")
 stream = ExtResource("23_q75ak")
 
 [connection signal="pressed" from="ProfileContainer/CloseButton" to="." method="_on_close_button_pressed"]
+[connection signal="mouse_entered" from="ProfileContainer/ProfilePictureButton" to="." method="_on_profile_picture_button_mouse_entered"]
 [connection signal="pressed" from="ProfileContainer/ProfilePictureButton" to="." method="_on_profile_picture_button_pressed"]
 [connection signal="pressed" from="ProfileContainer/LogoutButton" to="." method="_on_logout_button_pressed"]
 [connection signal="text_submitted" from="EditUsernamePanel/EditContainer/ContentContainer/VBoxContainer/InputContainer/UsernameLineEdit" to="." method="_on_username_text_submitted"]
