@@ -138,6 +138,46 @@ func check_existing_auth():
 		print("DEBUG: Setting redirect URI: " + redirect_uri)
 		Firebase.Auth.set_redirect_uri(redirect_uri)
 		
+		# CRITICAL FIX: Check sessionStorage for pre-captured OAuth token
+		# This token was captured by JavaScript BEFORE Godot loaded
+		var has_pending_token = JavaScriptBridge.eval("sessionStorage.getItem('pending_oauth_token') !== null")
+		print("DEBUG: sessionStorage has pending_oauth_token: " + str(has_pending_token))
+		
+		if has_pending_token:
+			var pending_token = JavaScriptBridge.eval("sessionStorage.getItem('pending_oauth_token')")
+			var token_timestamp = JavaScriptBridge.eval("sessionStorage.getItem('pending_oauth_timestamp')")
+			var pending_url = JavaScriptBridge.eval("sessionStorage.getItem('pending_oauth_url')")
+			
+			# Validate token is not null or empty
+			if pending_token and str(pending_token).length() > 10:
+				print("DEBUG: ===== PENDING OAUTH TOKEN FOUND =====")
+				print("DEBUG: Token captured at: " + str(token_timestamp))
+				print("DEBUG: Original URL: " + str(pending_url))
+				print("DEBUG: Token preview: " + str(pending_token).substr(0, 20) + "...")
+				
+				# Clear the pending token from sessionStorage
+				JavaScriptBridge.eval("sessionStorage.removeItem('pending_oauth_token')")
+				JavaScriptBridge.eval("sessionStorage.removeItem('pending_oauth_timestamp')")
+				JavaScriptBridge.eval("sessionStorage.removeItem('pending_oauth_url')")
+				
+				# Clean up URL immediately to prevent confusion
+				JavaScriptBridge.eval("""
+					if (window.history && window.history.replaceState) {
+						console.log('Cleaning up OAuth URL after token capture');
+						window.history.replaceState(null, null, window.location.pathname);
+					}
+				""")
+				
+				show_message("Completing Google Sign-In...", true)
+				await get_tree().process_frame
+				Firebase.Auth.login_with_oauth(pending_token, provider)
+				return
+			else:
+				print("DEBUG: Pending token invalid, clearing sessionStorage")
+				JavaScriptBridge.eval("sessionStorage.removeItem('pending_oauth_token')")
+				JavaScriptBridge.eval("sessionStorage.removeItem('pending_oauth_timestamp')")
+				JavaScriptBridge.eval("sessionStorage.removeItem('pending_oauth_url')")
+		
 		# Check localStorage for stored auth BEFORE checking URL token
 		var has_stored_auth = JavaScriptBridge.eval("localStorage.getItem('firebase_auth') !== null")
 		print("DEBUG: localStorage has firebase_auth: " + str(has_stored_auth))
@@ -150,7 +190,7 @@ func check_existing_auth():
 						if (data) {
 							var json = JSON.parse(data);
 							return 'Has localid: ' + (json.localid ? 'YES' : 'NO') + 
-								   ', Has refreshToken: ' + (json.refreshToken ? 'YES' : 'NO');
+									', Has refreshToken: ' + (json.refreshToken ? 'YES' : 'NO');
 						}
 					} catch(e) {
 						return 'Error: ' + e.message;

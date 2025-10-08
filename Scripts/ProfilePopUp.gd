@@ -775,7 +775,7 @@ func _on_copy_uid_button_pressed():
 		popup.add_theme_font_override("font", load("res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf"))
 		popup.add_theme_font_size_override("font_size", 16)
 		popup.add_theme_color_override("font_color", Color(0, 0.8, 0.2)) # Green color
-		popup.position = $ProfileContainer/UserInfoArea/CopyUIDButton.position + Vector2(-50, 40)
+		popup.position = $ProfileContainer/UserInfoArea/CopyUIDButton.position + Vector2(-95, 40)
 		$ProfileContainer/UserInfoArea.add_child(popup)
 		
 		# Remove popup after a short delay
