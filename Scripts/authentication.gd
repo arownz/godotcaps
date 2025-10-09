@@ -459,6 +459,29 @@ func _on_show_confirm_password_button_pressed():
 	button.text = "Hide" if confirm_password_visible else "Show"
 
 # ===== Input Validation =====
+# Helper function to validate password strength
+func _validate_password_strength(password: String) -> bool:
+	"""Check if password has at least 1 special character OR 1 capital letter OR 1 number"""
+	var has_capital = false
+	var has_number = false
+	var has_special = false
+	# Common special characters for password validation
+	var special_chars = "!@#$%^&*()_+-=[]{}|;:',.<>?/~`"
+	
+	for character in password:
+		if character >= 'A' and character <= 'Z':
+			has_capital = true
+		elif character >= '0' and character <= '9':
+			has_number = true
+		elif character in special_chars:
+			has_special = true
+		
+		# Return true if ANY of the conditions is met (OR logic)
+		if has_capital or has_number or has_special:
+			return true
+	
+	return false
+
 func _on_login_email_text_changed(new_text):
 	# Hide error label when user starts typing
 	$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/EmailErrorLabel.visible = false
@@ -563,21 +586,21 @@ func _on_login_button_pressed():
 	
 	# Validate email
 	if email.strip_edges().is_empty() or not "@" in email or not "." in email:
-		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/EmailErrorLabel.text = "Please enter a valid email address"
+		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/EmailErrorLabel.text = "Enter valid email"
 		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/EmailErrorLabel.visible = true
 		has_error = true
 	elif email.length() > 100:
-		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/EmailErrorLabel.text = "Email too long! Maximum 100 characters"
+		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/EmailErrorLabel.text = "Max 100 characters"
 		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/EmailErrorLabel.visible = true
 		has_error = true
 	
 	# Validate password
 	if password.strip_edges().is_empty():
-		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/PasswordErrorLabel.text = "Please enter your password"
+		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/PasswordErrorLabel.text = "Enter password"
 		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/PasswordErrorLabel.visible = true
 		has_error = true
 	elif password.length() > 128:
-		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/PasswordErrorLabel.text = "Password too long! Maximum 128 characters"
+		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/PasswordErrorLabel.text = "Max 128 characters"
 		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/PasswordErrorLabel.visible = true
 		has_error = true
 	
@@ -599,15 +622,15 @@ func _on_register_button_pressed():
 	
 	# Validate username with dyslexia-friendly constraints
 	if username.strip_edges().is_empty():
-		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/UsernameErrorLabel.text = "Please enter a username"
+		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/UsernameErrorLabel.text = "Enter username"
 		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/UsernameErrorLabel.visible = true
 		has_error = true
 	elif username.length() > 25:
-		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/UsernameErrorLabel.text = "Maximum 25 characters only!"
+		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/UsernameErrorLabel.text = "Maximum 25 characters"
 		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/UsernameErrorLabel.visible = true
 		has_error = true
 	elif username.length() < 3:
-		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/UsernameErrorLabel.text = "Username too short! Please use at least 3 characters"
+		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/UsernameErrorLabel.text = "Minimum 3 characters"
 		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/UsernameErrorLabel.visible = true
 		has_error = true
 	
@@ -622,35 +645,39 @@ func _on_register_button_pressed():
 	
 	# Validate email
 	if email.strip_edges().is_empty() or not "@" in email or not "." in email:
-		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegEmailErrorLabel.text = "Please enter a valid email address"
+		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegEmailErrorLabel.text = "Enter valid email"
 		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegEmailErrorLabel.visible = true
 		has_error = true
 	elif email.length() > 100:
-		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegEmailErrorLabel.text = "Email too long! Maximum 100 characters"
+		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegEmailErrorLabel.text = "Maximum 100 characters"
 		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegEmailErrorLabel.visible = true
 		has_error = true
 	
-	# Validate password
+	# Validate password with strength requirements (capital letter + number)
 	if password.strip_edges().is_empty():
-		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegPasswordErrorLabel.text = "Please enter a password"
+		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegPasswordErrorLabel.text = "Enter a password"
 		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegPasswordErrorLabel.visible = true
 		has_error = true
 	elif password.length() < 6:
-		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegPasswordErrorLabel.text = "Password too short! Minimum 6 characters for security"
+		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegPasswordErrorLabel.text = "Minimum 6 characters"
 		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegPasswordErrorLabel.visible = true
 		has_error = true
 	elif password.length() > 128:
-		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegPasswordErrorLabel.text = "Password too long! Maximum 128 characters"
+		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegPasswordErrorLabel.text = "Maximum 128 characters"
+		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegPasswordErrorLabel.visible = true
+		has_error = true
+	elif not _validate_password_strength(password):
+		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegPasswordErrorLabel.text = "Need 1 special, capital or number"
 		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegPasswordErrorLabel.visible = true
 		has_error = true
 	
 	# Validate confirm password
 	if password != confirm_password:
-		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/ConfirmPasswordErrorLabel.text = "Passwords don't match! Please make sure both passwords are the same"
+		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/ConfirmPasswordErrorLabel.text = "Passwords don't match"
 		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/ConfirmPasswordErrorLabel.visible = true
 		has_error = true
 	elif confirm_password.length() > 128:
-		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/ConfirmPasswordErrorLabel.text = "Password too long! Maximum 128 characters"
+		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/ConfirmPasswordErrorLabel.text = "Maximum 128 characters"
 		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/ConfirmPasswordErrorLabel.visible = true
 		has_error = true
 	

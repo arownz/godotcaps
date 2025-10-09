@@ -175,19 +175,27 @@ text = "Email"
 
 [node name="EmailLineEdit" type="LineEdit" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_placeholder_color = Color(1, 1, 1, 1)
+theme_override_colors/caret_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 16
-placeholder_text = "Enter your email"
+placeholder_text = "Enter your email..."
 max_length = 100
 clear_button_enabled = true
+caret_blink = true
+caret_blink_interval = 0.56
 
 [node name="EmailErrorLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login"]
 visible = false
 layout_mode = 2
-theme_override_colors/font_color = Color(0.85098, 0.137255, 0.137255, 1)
+theme_override_colors/font_color = Color(0.9999998, 0.11943438, 0.12700897, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 14
 text = "Please enter a valid email"
+clip_text = true
 
 [node name="PasswordLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login"]
 layout_mode = 2
@@ -203,11 +211,16 @@ layout_mode = 2
 [node name="PasswordLineEdit" type="LineEdit" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/PasswordContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_placeholder_color = Color(1, 1, 1, 1)
+theme_override_colors/caret_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 16
-placeholder_text = "Enter your password"
+placeholder_text = "Enter your password..."
 max_length = 128
 clear_button_enabled = true
+caret_blink = true
+caret_blink_interval = 0.56
 secret = true
 
 [node name="ShowPasswordButton" type="Button" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/PasswordContainer"]
@@ -220,10 +233,12 @@ text = "Show"
 [node name="PasswordErrorLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login"]
 visible = false
 layout_mode = 2
-theme_override_colors/font_color = Color(0.85098, 0.137255, 0.137255, 1)
+theme_override_colors/font_color = Color(0.9999998, 0.11943438, 0.12700897, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 14
 text = "Please enter your password"
+clip_text = true
 
 [node name="ForgotPasswordButton" type="LinkButton" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login"]
 layout_mode = 2
@@ -330,19 +345,26 @@ text = "Username"
 
 [node name="UsernameLineEdit" type="LineEdit" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_placeholder_color = Color(1, 1, 1, 1)
+theme_override_colors/caret_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 16
 placeholder_text = "Enter your username (25 max characters)"
 max_length = 25
 clear_button_enabled = true
+caret_blink = true
+caret_blink_interval = 0.56
 
 [node name="UsernameErrorLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
 visible = false
 layout_mode = 2
-theme_override_colors/font_color = Color(0.85098, 0.137255, 0.137255, 1)
+theme_override_colors/font_color = Color(0.9999998, 0.11943438, 0.12700897, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 14
 text = "Please enter a username"
+clip_text = true
 
 [node name="BirthDateLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
 layout_mode = 2
@@ -383,10 +405,12 @@ theme_override_styles/focus = SubResource("StyleBoxEmpty_6oq4l")
 [node name="BirthDateErrorLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
 visible = false
 layout_mode = 2
-theme_override_colors/font_color = Color(0.85098, 0.137255, 0.137255, 1)
+theme_override_colors/font_color = Color(0.9999998, 0.11943438, 0.12700897, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 14
 text = "Please select your birth date"
+clip_text = true
 
 [node name="EmailLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
 layout_mode = 2
@@ -398,19 +422,26 @@ text = "Email"
 
 [node name="RegEmailLineEdit" type="LineEdit" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_placeholder_color = Color(1, 1, 1, 1)
+theme_override_colors/caret_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 16
-placeholder_text = "Enter your email"
+placeholder_text = "Enter your email..."
 max_length = 100
 clear_button_enabled = true
+caret_blink = true
+caret_blink_interval = 0.56
 
 [node name="RegEmailErrorLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
 visible = false
 layout_mode = 2
-theme_override_colors/font_color = Color(0.85098, 0.137255, 0.137255, 1)
+theme_override_colors/font_color = Color(0.9999998, 0.11943438, 0.12700897, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 14
 text = "Please enter a valid email address"
+clip_text = true
 
 [node name="PasswordLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
 layout_mode = 2
@@ -426,11 +457,16 @@ layout_mode = 2
 [node name="RegPasswordLineEdit" type="LineEdit" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegPasswordContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_placeholder_color = Color(1, 1, 1, 1)
+theme_override_colors/caret_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 16
-placeholder_text = "Create a password"
+placeholder_text = "Create a password..."
 max_length = 128
 clear_button_enabled = true
+caret_blink = true
+caret_blink_interval = 0.56
 secret = true
 
 [node name="ShowRegPasswordButton" type="Button" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegPasswordContainer"]
@@ -443,10 +479,12 @@ text = "Show"
 [node name="RegPasswordErrorLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
 visible = false
 layout_mode = 2
-theme_override_colors/font_color = Color(0.85098, 0.137255, 0.137255, 1)
+theme_override_colors/font_color = Color(0.9999998, 0.11943438, 0.12700897, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 14
 text = "Password must be at least 6 characters"
+clip_text = true
 
 [node name="ConfirmPasswordLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
 layout_mode = 2
@@ -462,11 +500,16 @@ layout_mode = 2
 [node name="ConfirmPasswordLineEdit" type="LineEdit" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/ConfirmPasswordContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_placeholder_color = Color(1, 1, 1, 1)
+theme_override_colors/caret_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 16
-placeholder_text = "Confirm your password"
+placeholder_text = "Confirm your password..."
 max_length = 128
 clear_button_enabled = true
+caret_blink = true
+caret_blink_interval = 0.56
 secret = true
 
 [node name="ShowConfirmPasswordButton" type="Button" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/ConfirmPasswordContainer"]
@@ -479,10 +522,12 @@ text = "Show"
 [node name="ConfirmPasswordErrorLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
 visible = false
 layout_mode = 2
-theme_override_colors/font_color = Color(0.85098, 0.137255, 0.137255, 1)
+theme_override_colors/font_color = Color(0.9999998, 0.11943438, 0.12700897, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 14
 text = "Passwords do not match"
+clip_text = true
 
 [node name="RegisterButton" type="Button" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
 custom_minimum_size = Vector2(0, 50)
@@ -542,19 +587,26 @@ text = "Email"
 
 [node name="ResetEmailLineEdit" type="LineEdit" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_placeholder_color = Color(1, 1, 1, 1)
+theme_override_colors/caret_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 16
-placeholder_text = "Enter your email"
+placeholder_text = "Enter your email..."
 max_length = 100
 clear_button_enabled = true
+caret_blink = true
+caret_blink_interval = 0.56
 
 [node name="ResetEmailErrorLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword"]
 visible = false
 layout_mode = 2
-theme_override_colors/font_color = Color(0.85098, 0.137255, 0.137255, 1)
+theme_override_colors/font_color = Color(0.9999998, 0.11943438, 0.12700897, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 14
 text = "Please enter a valid email address"
+clip_text = true
 
 [node name="Spacer3" type="Control" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword"]
 custom_minimum_size = Vector2(0, 10)

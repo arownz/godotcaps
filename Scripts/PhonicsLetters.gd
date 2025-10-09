@@ -395,13 +395,13 @@ func _get_letter_strokes(letter: String) -> Array:
 			{"start": Vector2(0.4, 0.4), "end": Vector2(-0.3, 0.8), "curve": 0.9} # Close bottom (increased)
 		],
 		"C": [
-			{"start": Vector2(0.6, -0.5), "end": Vector2(0.3, -0.75), "curve": 1.0}, # Top-right start
-			{"start": Vector2(0.3, -0.75), "end": Vector2(-0.2, -0.8), "curve": 1.0}, # Top arc to left
-			{"start": Vector2(-0.2, -0.8), "end": Vector2(-0.6, -0.3), "curve": 1.0}, # Top-left curve
-			{"start": Vector2(-0.6, -0.3), "end": Vector2(-0.6, 0.3), "curve": 1.0}, # Left side
-			{"start": Vector2(-0.6, 0.3), "end": Vector2(-0.2, 0.8), "curve": 1.0}, # Bottom-left curve
-			{"start": Vector2(-0.2, 0.8), "end": Vector2(0.3, 0.75), "curve": 1.0}, # Bottom arc
-			{"start": Vector2(0.3, 0.75), "end": Vector2(0.6, 0.5), "curve": 1.0} # Bottom-right end
+			{"start": Vector2(0.5, -0.4), "end": Vector2(0.2, -0.7), "curve": 0.5}, # Top-right start (reduced curve)
+			{"start": Vector2(0.2, -0.7), "end": Vector2(-0.2, -0.75), "curve": 0.5}, # Top arc to left
+			{"start": Vector2(-0.2, -0.75), "end": Vector2(-0.5, -0.4), "curve": 0.5}, # Top-left curve
+			{"start": Vector2(-0.5, -0.4), "end": Vector2(-0.5, 0.4), "curve": 0.3}, # Left side (gentle curve)
+			{"start": Vector2(-0.5, 0.4), "end": Vector2(-0.2, 0.75), "curve": 0.5}, # Bottom-left curve
+			{"start": Vector2(-0.2, 0.75), "end": Vector2(0.2, 0.7), "curve": 0.5}, # Bottom arc
+			{"start": Vector2(0.2, 0.7), "end": Vector2(0.5, 0.4), "curve": 0.5} # Bottom-right end (points right)
 		],
 		"D": [
 			{"start": Vector2(-0.3, -0.8), "end": Vector2(-0.3, 0.8), "curve": 0.0}, # Vertical line
@@ -420,11 +420,15 @@ func _get_letter_strokes(letter: String) -> Array:
 			{"start": Vector2(-0.4, 0.0), "end": Vector2(0.3, 0.0), "curve": 0.0} # Middle horizontal
 		],
 		"G": [
-			{"start": Vector2(0.5, -0.6), "end": Vector2(-0.4, -0.6), "curve": 1.2}, # Top curve
-			{"start": Vector2(-0.4, -0.6), "end": Vector2(-0.4, 0.6), "curve": 0.0}, # Left side
-			{"start": Vector2(-0.4, 0.6), "end": Vector2(0.5, 0.6), "curve": 1.2}, # Bottom curve
-			{"start": Vector2(0.5, 0.6), "end": Vector2(0.5, 0.0), "curve": 0.0}, # Right side up
-			{"start": Vector2(0.5, 0.0), "end": Vector2(0.0, 0.0), "curve": 0.0} # Horizontal bar
+			{"start": Vector2(0.5, -0.5), "end": Vector2(0.2, -0.7), "curve": 0.5}, # Top-right start
+			{"start": Vector2(0.2, -0.7), "end": Vector2(-0.2, -0.75), "curve": 0.5}, # Top arc
+			{"start": Vector2(-0.2, -0.75), "end": Vector2(-0.5, -0.4), "curve": 0.5}, # Top-left curve
+			{"start": Vector2(-0.5, -0.4), "end": Vector2(-0.5, 0.4), "curve": 0.3}, # Left side (gentle)
+			{"start": Vector2(-0.5, 0.4), "end": Vector2(-0.2, 0.75), "curve": 0.5}, # Bottom-left curve
+			{"start": Vector2(-0.2, 0.75), "end": Vector2(0.2, 0.7), "curve": 0.5}, # Bottom arc
+			{"start": Vector2(0.2, 0.7), "end": Vector2(0.5, 0.4), "curve": 0.5}, # Bottom-right curve (points right)
+			{"start": Vector2(0.5, 0.4), "end": Vector2(0.5, 0.0), "curve": 0.0}, # Right side up (straight)
+			{"start": Vector2(0.5, 0.0), "end": Vector2(0.15, 0.0), "curve": 0.0} # Horizontal bar (straight)
 		],
 		"H": [
 			{"start": Vector2(-0.4, -0.8), "end": Vector2(-0.4, 0.8), "curve": 0.0}, # Left vertical
@@ -435,10 +439,10 @@ func _get_letter_strokes(letter: String) -> Array:
 			{"start": Vector2(0, -0.8), "end": Vector2(0, 0.8), "curve": 0.0} # Vertical line
 		],
 		"J": [
-			{"start": Vector2(0.35, -0.8), "end": Vector2(0.35, 0.4), "curve": 0.0}, # Vertical line down
-			{"start": Vector2(0.35, 0.4), "end": Vector2(0.2, 0.7), "curve": 1.2}, # Start bottom curve
-			{"start": Vector2(0.2, 0.7), "end": Vector2(-0.1, 0.8), "curve": 1.2}, # Bottom curve middle
-			{"start": Vector2(-0.1, 0.8), "end": Vector2(-0.4, 0.65), "curve": 1.2} # Hook end
+			{"start": Vector2(0.3, -0.8), "end": Vector2(0.3, 0.5), "curve": 0.0}, # Straight vertical line down
+			{"start": Vector2(0.3, 0.5), "end": Vector2(0.1, 0.7), "curve": 0.4}, # Start bottom curve (gentle)
+			{"start": Vector2(0.1, 0.7), "end": Vector2(-0.2, 0.75), "curve": 0.4}, # Bottom curve left
+			{"start": Vector2(-0.2, 0.75), "end": Vector2(-0.4, 0.6), "curve": 0.4} # Hook end (points left)
 		],
 		"K": [
 			{"start": Vector2(-0.4, -0.8), "end": Vector2(-0.4, 0.8), "curve": 0.0}, # Vertical line
@@ -461,16 +465,16 @@ func _get_letter_strokes(letter: String) -> Array:
 			{"start": Vector2(0.4, 0.8), "end": Vector2(0.4, -0.8), "curve": 0.0} # Right vertical
 		],
 		"O": [
-			{"start": Vector2(0.0, -0.8), "end": Vector2(-0.4, -0.6), "curve": 1.2}, # Top to top-left
-			{"start": Vector2(-0.4, -0.6), "end": Vector2(-0.6, -0.2), "curve": 1.2}, # Top-left curve
-			{"start": Vector2(-0.6, -0.2), "end": Vector2(-0.6, 0.2), "curve": 1.2}, # Left side
-			{"start": Vector2(-0.6, 0.2), "end": Vector2(-0.4, 0.6), "curve": 1.2}, # Bottom-left curve
-			{"start": Vector2(-0.4, 0.6), "end": Vector2(0.0, 0.8), "curve": 1.2}, # Bottom
-			{"start": Vector2(0.0, 0.8), "end": Vector2(0.4, 0.6), "curve": 1.2}, # Bottom-right curve
-			{"start": Vector2(0.4, 0.6), "end": Vector2(0.6, 0.2), "curve": 1.2}, # Right bottom
-			{"start": Vector2(0.6, 0.2), "end": Vector2(0.6, -0.2), "curve": 1.2}, # Right side
-			{"start": Vector2(0.6, -0.2), "end": Vector2(0.4, -0.6), "curve": 1.2}, # Top-right curve
-			{"start": Vector2(0.4, -0.6), "end": Vector2(0.0, -0.8), "curve": 1.2} # Close circle
+			{"start": Vector2(0.0, -0.75), "end": Vector2(-0.35, -0.6), "curve": 0.5}, # Top to top-left
+			{"start": Vector2(-0.35, -0.6), "end": Vector2(-0.55, -0.25), "curve": 0.5}, # Top-left curve
+			{"start": Vector2(-0.55, -0.25), "end": Vector2(-0.55, 0.25), "curve": 0.3}, # Left side (gentle)
+			{"start": Vector2(-0.55, 0.25), "end": Vector2(-0.35, 0.6), "curve": 0.5}, # Bottom-left curve
+			{"start": Vector2(-0.35, 0.6), "end": Vector2(0.0, 0.75), "curve": 0.5}, # Bottom center
+			{"start": Vector2(0.0, 0.75), "end": Vector2(0.35, 0.6), "curve": 0.5}, # Bottom-right curve
+			{"start": Vector2(0.35, 0.6), "end": Vector2(0.55, 0.25), "curve": 0.5}, # Right bottom
+			{"start": Vector2(0.55, 0.25), "end": Vector2(0.55, -0.25), "curve": 0.3}, # Right side (gentle)
+			{"start": Vector2(0.55, -0.25), "end": Vector2(0.35, -0.6), "curve": 0.5}, # Top-right curve
+			{"start": Vector2(0.35, -0.6), "end": Vector2(0.0, -0.75), "curve": 0.5} # Close circle (smooth)
 		],
 		"P": [
 			{"start": Vector2(-0.3, 0.8), "end": Vector2(-0.3, -0.8), "curve": 0.0}, # Vertical line
@@ -478,17 +482,17 @@ func _get_letter_strokes(letter: String) -> Array:
 			{"start": Vector2(0.4, -0.4), "end": Vector2(-0.3, 0.0), "curve": 0.9} # Close top loop (increased)
 		],
 		"Q": [
-			{"start": Vector2(0.0, -0.8), "end": Vector2(-0.4, -0.6), "curve": 1.2}, # Top to top-left
-			{"start": Vector2(-0.4, -0.6), "end": Vector2(-0.6, -0.2), "curve": 1.2}, # Top-left curve
-			{"start": Vector2(-0.6, -0.2), "end": Vector2(-0.6, 0.2), "curve": 1.2}, # Left side
-			{"start": Vector2(-0.6, 0.2), "end": Vector2(-0.4, 0.6), "curve": 1.2}, # Bottom-left curve
-			{"start": Vector2(-0.4, 0.6), "end": Vector2(0.0, 0.8), "curve": 1.2}, # Bottom
-			{"start": Vector2(0.0, 0.8), "end": Vector2(0.4, 0.6), "curve": 1.2}, # Bottom-right curve
-			{"start": Vector2(0.4, 0.6), "end": Vector2(0.6, 0.2), "curve": 1.2}, # Right bottom
-			{"start": Vector2(0.6, 0.2), "end": Vector2(0.6, -0.2), "curve": 1.2}, # Right side
-			{"start": Vector2(0.6, -0.2), "end": Vector2(0.4, -0.6), "curve": 1.2}, # Top-right curve
-			{"start": Vector2(0.4, -0.6), "end": Vector2(0.0, -0.8), "curve": 1.2}, # Close circle
-			{"start": Vector2(0.25, 0.45), "end": Vector2(0.75, 0.95), "curve": 0.0} # Tail diagonal
+			{"start": Vector2(0.0, -0.75), "end": Vector2(-0.35, -0.6), "curve": 0.5}, # Top to top-left
+			{"start": Vector2(-0.35, -0.6), "end": Vector2(-0.55, -0.25), "curve": 0.5}, # Top-left curve
+			{"start": Vector2(-0.55, -0.25), "end": Vector2(-0.55, 0.25), "curve": 0.3}, # Left side (gentle)
+			{"start": Vector2(-0.55, 0.25), "end": Vector2(-0.35, 0.6), "curve": 0.5}, # Bottom-left curve
+			{"start": Vector2(-0.35, 0.6), "end": Vector2(0.0, 0.75), "curve": 0.5}, # Bottom center
+			{"start": Vector2(0.0, 0.75), "end": Vector2(0.35, 0.6), "curve": 0.5}, # Bottom-right curve
+			{"start": Vector2(0.35, 0.6), "end": Vector2(0.55, 0.25), "curve": 0.5}, # Right bottom
+			{"start": Vector2(0.55, 0.25), "end": Vector2(0.55, -0.25), "curve": 0.3}, # Right side (gentle)
+			{"start": Vector2(0.55, -0.25), "end": Vector2(0.35, -0.6), "curve": 0.5}, # Top-right curve
+			{"start": Vector2(0.35, -0.6), "end": Vector2(0.0, -0.75), "curve": 0.5}, # Close circle (smooth)
+			{"start": Vector2(0.2, 0.4), "end": Vector2(0.65, 0.9), "curve": 0.0} # Tail diagonal (straight, points right-down)
 		],
 		"R": [
 			{"start": Vector2(-0.3, 0.8), "end": Vector2(-0.3, -0.8), "curve": 0.0}, # Vertical line
@@ -497,16 +501,16 @@ func _get_letter_strokes(letter: String) -> Array:
 			{"start": Vector2(-0.3, 0.0), "end": Vector2(0.4, 0.8), "curve": 0.0} # Leg diagonal
 		],
 		"S": [
-			{"start": Vector2(0.55, -0.65), "end": Vector2(0.25, -0.8), "curve": 1.2}, # Top-right start
-			{"start": Vector2(0.25, -0.8), "end": Vector2(-0.15, -0.75), "curve": 1.2}, # Top curve left
-			{"start": Vector2(-0.15, -0.75), "end": Vector2(-0.5, -0.45), "curve": 1.2}, # Top-left curve
-			{"start": Vector2(-0.5, -0.45), "end": Vector2(-0.3, -0.1), "curve": 1.1}, # Middle transition
-			{"start": Vector2(-0.3, -0.1), "end": Vector2(0.0, 0.0), "curve": 1.1}, # Center S-curve
-			{"start": Vector2(0.0, 0.0), "end": Vector2(0.3, 0.1), "curve": 1.1}, # Center to right
-			{"start": Vector2(0.3, 0.1), "end": Vector2(0.5, 0.45), "curve": 1.2}, # Right middle
-			{"start": Vector2(0.5, 0.45), "end": Vector2(0.15, 0.75), "curve": 1.2}, # Bottom-right curve
-			{"start": Vector2(0.15, 0.75), "end": Vector2(-0.25, 0.8), "curve": 1.2}, # Bottom curve
-			{"start": Vector2(-0.25, 0.8), "end": Vector2(-0.55, 0.65), "curve": 1.2} # Bottom-left end
+			{"start": Vector2(0.45, -0.5), "end": Vector2(0.2, -0.7), "curve": 0.4}, # Top-right start (reduced curve)
+			{"start": Vector2(0.2, -0.7), "end": Vector2(-0.1, -0.75), "curve": 0.4}, # Top curve left
+			{"start": Vector2(-0.1, -0.75), "end": Vector2(-0.4, -0.5), "curve": 0.4}, # Top-left curve (points down-right)
+			{"start": Vector2(-0.4, -0.5), "end": Vector2(-0.25, -0.15), "curve": 0.35}, # Upper S-curve transition
+			{"start": Vector2(-0.25, -0.15), "end": Vector2(0.0, 0.0), "curve": 0.35}, # Center S-curve
+			{"start": Vector2(0.0, 0.0), "end": Vector2(0.25, 0.15), "curve": 0.35}, # Center to right
+			{"start": Vector2(0.25, 0.15), "end": Vector2(0.4, 0.5), "curve": 0.4}, # Right middle (points down-left)
+			{"start": Vector2(0.4, 0.5), "end": Vector2(0.1, 0.75), "curve": 0.4}, # Bottom-right curve
+			{"start": Vector2(0.1, 0.75), "end": Vector2(-0.2, 0.7), "curve": 0.4}, # Bottom curve
+			{"start": Vector2(-0.2, 0.7), "end": Vector2(-0.45, 0.5), "curve": 0.4} # Bottom-left end (points left)
 		],
 		"T": [
 			{"start": Vector2(-0.5, -0.8), "end": Vector2(0.5, -0.8), "curve": 0.0}, # Top horizontal
