@@ -120,7 +120,7 @@ offset_right = -58.0
 offset_bottom = -32.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 45
+theme_override_constants/separation = 30
 
 [node name="HeaderPanel" type="Panel" parent="MainContainer"]
 custom_minimum_size = Vector2(0, 123)
@@ -317,7 +317,7 @@ icon_alignment = 1
 expand_icon = true
 
 [node name="ActivityPanel" type="Panel" parent="MainContainer"]
-custom_minimum_size = Vector2(0, 205)
+custom_minimum_size = Vector2(0, 300)
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_activity_panel")
@@ -327,7 +327,10 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -9.0
+offset_left = -4.0
+offset_top = -17.5
+offset_right = -4.0
+offset_bottom = 32.5
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/margin_left = 25
@@ -336,13 +339,13 @@ theme_override_constants/margin_right = 25
 theme_override_constants/margin_bottom = 25
 
 [node name="ScrollContainer" type="ScrollContainer" parent="MainContainer/ActivityPanel/MarginContainer"]
+custom_minimum_size = Vector2(0, 300)
 layout_mode = 2
 horizontal_scroll_mode = 0
 
 [node name="ActivityContainer" type="VBoxContainer" parent="MainContainer/ActivityPanel/MarginContainer/ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 20
 
 [node name="ActivityTitleLabel" type="Label" parent="MainContainer/ActivityPanel/MarginContainer/ScrollContainer/ActivityContainer"]
 layout_mode = 2
@@ -390,6 +393,7 @@ theme_override_constants/separation = 20
 alignment = 1
 
 [node name="PrevButton" type="Button" parent="MainContainer/ActivityPanel/MarginContainer/ScrollContainer/ActivityContainer/STTContainer/ControlsContainer"]
+visible = false
 custom_minimum_size = Vector2(150, 50)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -435,6 +439,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.2, 0.8, 0.4, 1)
 theme_override_fonts/font = ExtResource("4_bold")
 theme_override_font_sizes/font_size = 16
+text = "Result"
 horizontal_alignment = 1
 autowrap_mode = 2
 

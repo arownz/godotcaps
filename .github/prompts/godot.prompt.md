@@ -2,8 +2,9 @@
 
 **COPILOT INSTRUCTION**:
 
-- use MCP context7 only when it is necessary, such as when prompts mention - GodotFirebase, Google Cloud, Firebase, docs, API
+- use context7 MCP only when it is necessary, such as when prompts mention - GodotFirebase, Google Cloud, Firebase, docs, API
 - Use GITHUB MCP for analyzing my godot repository
+- Use markitdown MCP for converting documents to .md
 - you dont have to test since godot isn't in the PATH, I will do the test in godot platform
 - DO NOT USE EMOJI AS DYSLEXIA FONT DOES NOT SUPPORT IT WHEN EXPORTED TO WEB
 - Always use tab indentation, never spaces

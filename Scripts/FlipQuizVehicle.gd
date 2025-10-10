@@ -32,7 +32,7 @@ func _speak_text_simple(text: String):
 	"""Simple TTS without captions"""
 	if tts:
 		tts.speak(text)
-
+	
 func _ready():
 	print("FlipQuizVehicle: Vehicle flip quiz loaded")
 	
@@ -249,9 +249,11 @@ func _update_navigation_buttons():
 	var prev_btn = $MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/PreviousButton
 	var next_btn = $MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer/NextButton
 	
-	# Always show navigation buttons for user freedom
-	prev_btn.visible = true
-	next_btn.visible = true
+	# Hide Previous button when at first target (index 0)
+	prev_btn.visible = (current_vehicle_index > 0)
+	
+	# Hide Next button when at last target (no loop - last is end)
+	next_btn.visible = (current_vehicle_index < selected_vehicles.size() - 1)
 
 func _create_flip_cards():
 	"""Create flip cards for the memory game"""

@@ -203,33 +203,32 @@ func _get_fallback_word() -> String:
 	var word_categories_by_length = {
 		3: {
 			"animals": ["dog", "fox", "owl", "pig", "cow", "ape", "ant"], # Removed cat/bat confusion
-			"objects": ["cup", "pot", "box", "key", "pen", "rod", "bag", "car", "bed", "toy"],
-			"nature": ["fog", "air", "ice", "gas", "web", "oak", "gem", "sky"],
-			"food": ["pie", "egg", "jam", "ham", "gum", "oat", "fig", "yam"], # Removed tea (sounds like "T")
-			"colors": ["red", "tan", "jet", "ash", "ink", "wax", "tar"], # Removed dye/die, navy (too long sound)
-			"verbs": ["run", "sit", "eat", "get", "put", "cut", "dig", "fly", "try", "hop"],
-			"body": ["arm", "leg", "eye", "ear", "jaw", "lip", "hip", "rib", "gut"], # Removed toe (sounds like "tow")
-			"things": ["map", "zip", "cap", "tap", "gap", "lap", "nap", "sap", "rap", "zap"]
+			"objects": ["box", "key", "pen", "rod", "bag", "car", "bed", "toy"],
+			"nature": ["fog", "air", "ice", "gas", "web", "gem", "sky"],
+			"food": ["pie", "egg", "jam", "ham", "gum"], # Removed tea (sounds like "T")
+			"colors": ["red", "jet", "ash", "ink", "wax"], # Removed dye/die, navy (too long sound)
+			"verbs": ["run", "sit", "eat", "get", "cut", "dig", "fly", "try"],
+			"body": ["arm", "leg", "eye", "ear", "jaw", "lip", "hip", "rib"], # Removed toe (sounds like "tow")
 		},
 		4: {
 			"animals": ["wolf", "frog", "lion", "duck", "bird", "fish", "deer", "goat", "seal"], # Removed bear/beer confusion
-			"objects": ["book", "lamp", "desk", "fork", "door", "bowl", "ring", "coat", "pipe", "disk"],
+			"objects": ["book", "fork", "door", "bowl", "ring", "coat", "pipe"],
 			"nature": ["tree", "rock", "fire", "lake", "moon", "star", "snow", "leaf", "wind", "cave"],
-			"food": ["cake", "rice", "soup", "pear", "plum", "milk", "corn", "beef", "tuna"], # Removed bread (sounds like "bred")
-			"colors": ["blue", "pink", "teal", "gold", "ruby", "mint", "lime", "rust", "jade", "rose"],
+			"food": ["cake", "rice", "soup", "milk", "beef", "tuna"], # Removed bread (sounds like "bred")
+			"colors": ["blue", "pink", "gold", "ruby", "mint", "lime", "rust", "jade", "rose"],
 			"verbs": ["walk", "talk", "make", "swim", "sing", "play", "ride", "push", "pull"], # Removed read/red confusion
-			"tools": ["nail", "gear", "bolt", "wire", "rope", "tape", "glue", "drill"], # Removed tool/two confusion, clamp
-			"home": ["room", "wall", "roof", "yard", "gate", "path", "step", "deck", "porch", "fence"]
+			"tools": ["nail", "gear", "wire", "rope", "tape", "glue"], # Removed tool/two confusion, clamp
+			"home": ["room", "wall", "yard", "gate", "path", "step"]
 		},
 		5: {
 			"animals": ["horse", "shark", "eagle", "tiger", "mouse", "whale", "sheep", "snake", "zebra", "llama"],
-			"objects": ["chair", "phone", "watch", "glass", "brush", "spoon", "plate", "tower", "wheel"], # Removed table/stable
-			"nature": ["ocean", "river", "beach", "field", "grass", "plant", "stone", "cloud", "storm", "light"],
-			"food": ["apple", "honey", "grape", "lemon", "pasta", "salad", "pizza", "cream", "sugar"], # Removed bread
-			"colors": ["green", "black", "white", "brown", "coral", "peach", "ivory", "amber", "olive", "beige"],
+			"objects": ["chair", "phone", "glass", "brush", "spoon", "plate", "tower", "wheel"], # Removed table/stable
+			"nature": ["ocean", "river", "field", "grass", "plant", "stone", "cloud", "storm", "light"],
+			"food": ["apple", "honey", "grape", "lemon", "pasta", "salad", "pizza", "sugar"], # Removed bread
+			"colors": ["green", "white", "brown", "coral", "amber", "olive"],
 			"verbs": ["dance", "smile", "laugh", "think", "learn", "teach", "build", "climb", "throw"], # Removed write/right
-			"places": ["store", "house", "beach", "woods", "city", "farm", "ranch", "cabin"], # Removed park/bark, town/down
-			"things": ["music", "story", "movie", "sport", "hobby", "craft", "magic", "party", "gift"] # Removed game/gam
+			"places": ["store", "house", "woods", "ranch", "cabin"], # Removed park/bark, town/down
+			"things": ["music", "story", "movie", "sport", "hobby", "craft", "magic", "party"] # Removed game/gam
 		}
 	}
 	

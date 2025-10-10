@@ -6,10 +6,10 @@
 [resource]
 script = ExtResource("1_1")
 enemy_name = "Forest Guardian"
-health = 120
+health = 90
 damage = 25
 durability = 7
 exp_reward = 75
-skill_name = "Root Strike"
-description = "A massive ancient tree guardian with crushing strength"
+skill_name = "Root Forest"
+description = "A forest guardian with gripping stems to ensnare its foes"
 animation_scene = ExtResource("2_1")

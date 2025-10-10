@@ -441,6 +441,7 @@ func _start_battle():
 	# Get the engage button and make it transparent/disabled looking
 	engage_button.disabled = true
 	engage_button.modulate = Color(1, 1, 1, 0.5) # 50% transparency
+	engage_button.mouse_filter = Control.CURSOR_ARROW
 	
 	# Add battle log message
 	battle_log_manager.add_message("[color=#000000]Battle started! You engage the " + enemy_manager.enemy_name + ".[/color]")
@@ -995,8 +996,8 @@ func _show_damage_indicator(damage_amount: int, target: String):
 	damage_label.add_theme_font_size_override("font_size", 24)
 	damage_label.add_theme_color_override("font_color", Color.RED)
 	damage_label.add_theme_color_override("font_shadow_color", Color.BLACK)
-	damage_label.add_theme_constant_override("shadow_offset_x", 2)
-	damage_label.add_theme_constant_override("shadow_offset_y", 2)
+	damage_label.add_theme_constant_override("shadow_offset_x", -1)
+	damage_label.add_theme_constant_override("shadow_offset_y", 1)
 
 	# Add dyslexic-friendly font
 	var dyslexic_font = load("res://Fonts/dyslexiafont/OpenDyslexic-Italic.otf")
@@ -1065,8 +1066,8 @@ func _show_counter_damage_indicator(damage_amount: int, target: String, _bonus_d
 	damage_label.add_theme_font_size_override("font_size", 28)
 	damage_label.add_theme_color_override("font_color", Color.GOLD)
 	damage_label.add_theme_color_override("font_shadow_color", Color.BLACK)
-	damage_label.add_theme_constant_override("shadow_offset_x", 3)
-	damage_label.add_theme_constant_override("shadow_offset_y", 3)
+	damage_label.add_theme_constant_override("shadow_offset_x", -2)
+	damage_label.add_theme_constant_override("shadow_offset_y", 1)
 
 	# Add dyslexic-friendly font
 	var dyslexic_font = load("res://Fonts/dyslexiafont/OpenDyslexic-Bold-Italic.otf")
@@ -1104,12 +1105,12 @@ func _show_skill_damage_indicator(damage_amount: int, target: String):
 	
 	# Create skill damage label with special styling
 	var damage_label = Label.new()
-	damage_label.text = "-" + str(damage_amount) + " CRITICAL!"
+	damage_label.text = "-" + str(damage_amount) + " SKILL DAMAGE!"
 	damage_label.add_theme_font_size_override("font_size", 26)
 	damage_label.add_theme_color_override("font_color", Color.ORANGE_RED)
 	damage_label.add_theme_color_override("font_shadow_color", Color.BLACK)
-	damage_label.add_theme_constant_override("shadow_offset_x", 3)
-	damage_label.add_theme_constant_override("shadow_offset_y", 3)
+	damage_label.add_theme_constant_override("shadow_offset_x", -3)
+	damage_label.add_theme_constant_override("shadow_offset_y", 1)
 
 	# Add dyslexic-friendly font
 	var dyslexic_font = load("res://Fonts/dyslexiafont/OpenDyslexic-Bold-Italic.otf")
