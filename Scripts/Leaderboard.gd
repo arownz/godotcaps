@@ -202,10 +202,11 @@ func _create_avatar_column(user_data: Dictionary, container_size: Vector2 = Vect
 	profile_center.custom_minimum_size = container_size # Default: Vector2(100, 50)
 	profile_center.add_child(profile_rect)
 	
-	# 🎯 CUSTOMIZE: Change avatar position to center it (x_offset, y_offset)
+	# 🎯 DYNAMIC CENTERING: Calculate position to center avatar in container
 	# Formula: x = (container_width - avatar_width) / 2, y = (container_height - avatar_height) / 2
-	# Example: (100 - 40) / 2 = 30, (50 - 40) / 2 = 5
-	profile_rect.position = Vector2(50, 10) # Adjust these numbers to center the avatar
+	var x_offset = (container_size.x - avatar_size.x) / 2
+	var y_offset = (container_size.y - avatar_size.y) / 2
+	profile_rect.position = Vector2(x_offset, y_offset)
 	
 	var avatar_container = _create_bordered_container(profile_center, container_size, bg_color, "center")
 	
@@ -230,7 +231,7 @@ func _create_leaderboard_row(user_data: Dictionary, rank: int, columns: Array, t
 	# Create rank column
 	var rank_text = "#" + str(rank) if rank <= 3 else str(rank)
 	var rank_label = _create_reliable_label(rank_text, 16, rank_color)
-	var rank_container = _create_bordered_container(rank_label, Vector2(10, 10), rank_bg_color, "center")
+	var rank_container = _create_bordered_container(rank_label, Vector2(80, 50), rank_bg_color, "center")
 	row.add_child(rank_container)
 	
 	# 🎯 CUSTOMIZE AVATAR COLUMN: Modify _create_avatar_column() parameters
@@ -238,7 +239,7 @@ func _create_leaderboard_row(user_data: Dictionary, rank: int, columns: Array, t
 	# container_size = Vector2(width, height) of the bordered box
 	# avatar_size = Vector2(width, height) of the actual portrait image
 	# Create profile picture column using the helper for proper centering
-	var profile_container = _create_avatar_column(user_data, Vector2(5, 5), Vector2(40, 40), theme_color)
+	var profile_container = _create_avatar_column(user_data, Vector2(80, 50), Vector2(40, 40), theme_color)
 	row.add_child(profile_container)
 	
 	# 🎯 CUSTOMIZE NAME COLUMN: Change Vector2(300, 50) for width/height

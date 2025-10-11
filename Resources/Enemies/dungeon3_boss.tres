@@ -7,8 +7,8 @@
 script = ExtResource("1_1")
 enemy_name = "Mountain Guardian"
 health = 110
-damage = 30
-durability = 10
+damage = 25
+durability = 7
 exp_reward = 100
 skill_name = "Root Mountain"
 description = "The ancient mountain guardian with devastating destruction roots"

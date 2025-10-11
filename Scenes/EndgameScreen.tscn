@@ -8,7 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="7_3xqox"]
 [ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="7_gworm"]
 [ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="8_7m5p6"]
-[ext_resource type="AudioStream" uid="uid://crd56a17rhay3" path="res://audio/victory sound effect/victory 3.ogg" id="9_7m5p6"]
+[ext_resource type="AudioStream" uid="uid://bagpol34i81pf" path="res://audio/victory sound effect/victory_3.mp3" id="9_emr7u"]
 [ext_resource type="AudioStream" uid="uid://dmpgnloyks834" path="res://audio/defeat/defeat 2.ogg" id="10_emr7u"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hehfl"]
@@ -151,7 +151,7 @@ stream = ExtResource("7_gworm")
 stream = ExtResource("8_7m5p6")
 
 [node name="VictorySFX" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("9_7m5p6")
+stream = ExtResource("9_emr7u")
 
 [node name="DefeatSFX" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("10_emr7u")

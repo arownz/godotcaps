@@ -225,16 +225,35 @@ func load_user_data():
 						user_data["current_dungeon"] = current_dungeon
 						user_data["current_stage"] = current_stage
 						
-						# Set rank based on completion
-						if dungeon_3_completed:
+						# FIXED: Calculate rank using same logic as Leaderboard.gd
+						# Calculate highest dungeon reached and total stages completed
+						var highest_dungeon = 0
+						var total_stages_completed = 0
+						
+						for dungeon_id in ["1", "2", "3"]:
+							if completed.has(dungeon_id):
+								var dungeon_data = completed[dungeon_id]
+								var stages_completed = dungeon_data.get("stages_completed", 0)
+								total_stages_completed += stages_completed
+								
+								# Update highest dungeon if this dungeon has progress
+								if dungeon_data.get("completed", false):
+									highest_dungeon = max(highest_dungeon, int(dungeon_id))
+								elif stages_completed > 0:
+									highest_dungeon = max(highest_dungeon, int(dungeon_id))
+						
+						print("ProfilePopUp: Rank calculation - Highest dungeon:", highest_dungeon, " Total stages:", total_stages_completed)
+						
+						# Calculate rank based on dungeon progress (matching Leaderboard.gd logic)
+						if highest_dungeon >= 3 and total_stages_completed >= 10:
 							user_data["rank"] = "gold"
-						elif dungeon_2_completed:
+						elif highest_dungeon >= 2 and total_stages_completed >= 5:
 							user_data["rank"] = "silver"
-						elif dungeon_1_completed:
-							user_data["rank"] = "bronze"
 						else:
 							user_data["rank"] = "bronze"
-					
+						
+						print("ProfilePopUp: Calculated rank:", user_data["rank"])
+						
 					# Extract character data
 					var characters = document.get_value("characters")
 					if characters != null and typeof(characters) == TYPE_DICTIONARY:
