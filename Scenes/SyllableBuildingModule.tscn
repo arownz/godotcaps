@@ -393,7 +393,6 @@ theme_override_constants/separation = 20
 alignment = 1
 
 [node name="PrevButton" type="Button" parent="MainContainer/ActivityPanel/MarginContainer/ScrollContainer/ActivityContainer/STTContainer/ControlsContainer"]
-visible = false
 custom_minimum_size = Vector2(150, 50)
 layout_mode = 2
 mouse_default_cursor_shape = 2

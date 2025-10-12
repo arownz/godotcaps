@@ -15,8 +15,23 @@ var current_pitch = 1.0
 var test_word = "testing"
 
 func _ready():
+	# Background click closes popup
+	var bg = get_node_or_null("Background")
+	if bg and not bg.gui_input.is_connected(_on_background_input):
+		bg.gui_input.connect(_on_background_input)
+	
 	# Constrain popup to screen bounds
 	_constrain_popup_to_screen()
+	
+	# Center main container and animate fade in
+	var panel: Control = $Panel
+	if panel:
+		panel.modulate.a = 0.0
+		panel.scale = Vector2(0.8, 0.8)
+		var tween = create_tween()
+		tween.set_parallel(true)
+		tween.tween_property(panel, "modulate:a", 1.0, 0.35).set_ease(Tween.EASE_OUT)
+		tween.tween_property(panel, "scale", Vector2(1.0, 1.0), 0.35).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
 	
 	# Set initial values
 	var rate_slider = $Panel/ScrollContainer/VBoxContainer/RateContainer/RateSlider
@@ -414,6 +429,28 @@ func sync_from_external(voice_id: String, rate: float, volume_percent: int):
 
 func _on_close_button_pressed():
 	$ButtonClick.play()
+	print("TTSSettingsPopup: Close button pressed - closing popup")
+	_close_popup()
+
+func _on_background_input(event):
+	"""Handle background click to close popup"""
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		_close_popup()
+
+func _close_popup():
+	"""Fade out and close the popup"""
+	var panel: Control = $Panel
+	var tween = create_tween()
+	tween.set_parallel(true)
+	# Fade out background
+	var bg = get_node_or_null("Background")
+	if bg:
+		tween.tween_property(bg, "modulate:a", 0.0, 0.25).set_ease(Tween.EASE_IN)
+	# Panel fade and scale
+	if panel:
+		tween.tween_property(panel, "modulate:a", 0.0, 0.25).set_ease(Tween.EASE_IN)
+		tween.tween_property(panel, "scale", Vector2(0.8, 0.8), 0.25).set_ease(Tween.EASE_IN)
+	await tween.finished
 	# Save settings and close
 	emit_signal("settings_saved", current_voice_id, current_rate, current_volume)
 	emit_signal("settings_closed")

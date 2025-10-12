@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://7wtij707stht"]
+[gd_scene load_steps=13 format=3 uid="uid://7wtij707stht"]
 
 [ext_resource type="Script" uid="uid://di3xy4fn8ivv" path="res://Scripts/TTSSettingsPopup.gd" id="1_y2dfs"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="2_m3f5r"]
@@ -6,8 +6,10 @@
 [ext_resource type="Texture2D" uid="uid://5kclvhwf1uke" path="res://gui/Update/UI/green button.png" id="4_7wrw6"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="5_jb0wy"]
 [ext_resource type="Texture2D" uid="uid://cylxg6njg7bam" path="res://gui/Update/UI/yellow button.png" id="6_e2f2d"]
+[ext_resource type="Texture2D" uid="uid://cmvfv5h4u7j6e" path="res://gui/Update/icons/close icon.png" id="7_48sdl"]
 [ext_resource type="AudioStream" uid="uid://isf8nct72815" path="res://audio/button click sound effect/button click 4.ogg" id="7_e2f2d"]
 [ext_resource type="AudioStream" uid="uid://cbrtwl8sob8oo" path="res://audio/buttons select sound effect/button select hover 2.ogg" id="8_2s7nq"]
+[ext_resource type="Texture2D" uid="uid://c5cpf575pv2ee" path="res://gui/Update/icons/close icon_hover.png" id="8_rsuur"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_jb0wy"]
 
@@ -193,6 +195,23 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
+[node name="CloseButton" type="TextureButton" parent="Panel"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.9480001
+anchor_top = -0.057000004
+anchor_right = 1.031
+anchor_bottom = 0.060000002
+offset_left = 0.15997314
+offset_top = -0.05999756
+offset_right = 0.020019531
+offset_bottom = 0.79999924
+grow_horizontal = 0
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("7_48sdl")
+texture_hover = ExtResource("8_rsuur")
+stretch_mode = 5
+
 [node name="ButtonClick" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("7_e2f2d")
 
@@ -207,3 +226,4 @@ stream = ExtResource("8_2s7nq")
 [connection signal="pressed" from="Panel/ScrollContainer/VBoxContainer/HBoxContainer/TestButton" to="." method="_on_test_button_pressed"]
 [connection signal="mouse_entered" from="Panel/ScrollContainer/VBoxContainer/HBoxContainer/CloseButton" to="." method="_on_close_button_mouse_entered"]
 [connection signal="pressed" from="Panel/ScrollContainer/VBoxContainer/HBoxContainer/CloseButton" to="." method="_on_close_button_pressed"]
+[connection signal="pressed" from="Panel/CloseButton" to="." method="_on_close_button_pressed"]

@@ -824,7 +824,7 @@ func on_login_succeeded(auth):
 					if (data) {
 						var json = JSON.parse(data);
 						return 'Saved successfully. Has localid: ' + (json.localid ? 'YES' : 'NO') + 
-							   ', Has refreshToken: ' + (json.refreshToken ? 'YES' : 'NO');
+							', Has refreshToken: ' + (json.refreshToken ? 'YES' : 'NO');
 					}
 					return 'No data found in localStorage!';
 				} catch(e) {

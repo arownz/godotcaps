@@ -67,11 +67,11 @@ func _ready():
 		
 	# Enhanced fade-in animation matching SettingScene style
 	modulate.a = 0.0
-	scale = Vector2(0.8, 0.8)
+	$ChallengePanel.scale = Vector2(0.8, 0.8)
 	var tween = create_tween()
 	tween.set_parallel(true)
 	tween.tween_property(self, "modulate:a", 1.0, 0.35).set_ease(Tween.EASE_OUT)
-	tween.tween_property(self, "scale", Vector2(1.0, 1.0), 0.35).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+	tween.tween_property($ChallengePanel, "scale", Vector2(1.0, 1.0), 0.35).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
 	
 	# Create TTS instance and initialize
 	tts = TextToSpeech.new()
@@ -1615,7 +1615,7 @@ func _fade_out_and_signal(signal_name: String, param = null):
 	var tween = create_tween()
 	tween.set_parallel(true)
 	tween.tween_property(self, "modulate:a", 0.0, 0.25).set_ease(Tween.EASE_IN)
-	tween.tween_property(self, "scale", Vector2(0.8, 0.8), 0.25).set_ease(Tween.EASE_IN)
+	tween.tween_property($ChallengePanel, "scale", Vector2(0.8, 0.8), 0.25).set_ease(Tween.EASE_IN)
 	await tween.finished
 	
 	match signal_name:
@@ -1702,8 +1702,8 @@ func levenshtein_distance(s1, s2):
 		for i in range(1, m + 1):
 			var substitutionCost = 0 if s1[i - 1] == s2[j - 1] else 1
 			d[i][j] = min(min(d[i - 1][j] + 1, # Deletion
-							  d[i][j - 1] + 1), # Insertion
-							  d[i - 1][j - 1] + substitutionCost) # Substitution
+							d[i][j - 1] + 1), # Insertion
+							d[i - 1][j - 1] + substitutionCost) # Substitution
 	
 	return d[m][n]
 
@@ -1726,11 +1726,11 @@ func _on_tts_button_pressed():
 		# Stop TTS
 		if tts and is_instance_valid(tts):
 			tts.stop()
-		# Immediately reset button text
+		# Immediately reset button text and clear status
 		tts_button.text = "Read"
 		if api_status_label:
-			api_status_label.text = "Word reading stopped"
-		print("WordChallengePanel_STT: TTS stopped by user - button reset to Read")
+			api_status_label.text = ""
+		print("WordChallengePanel_STT: TTS stopped by user - button reset to Read, status cleared")
 		return
 	
 	# Block TTS if STT is active to prevent feedback loop
@@ -1757,64 +1757,62 @@ func _on_tts_button_pressed():
 	
 	print("TTS button pressed, trying to speak: ", challenge_word)
 	
+	# Connect to signals BEFORE speaking to ensure they're ready
+	if not tts.is_connected("speech_ended", Callable(self, "_on_tts_speech_ended")):
+		tts.connect("speech_ended", Callable(self, "_on_tts_speech_ended"))
+	
+	if not tts.is_connected("speech_error", Callable(self, "_on_tts_speech_error")):
+		tts.connect("speech_error", Callable(self, "_on_tts_speech_error"))
+	
 	var result = tts.speak(challenge_word)
 	
 	if !result:
 		if api_status_label:
-			api_status_label.text = "Failed to read word"
+			api_status_label.text = ""
 		if tts_button:
 			tts_button.text = "Read"
 		print("TTS speak returned false")
 		return
-	
-	# Connect to TTS finished signal to reset button
-	if tts.has_signal("utterance_finished"):
-		if not tts.utterance_finished.is_connected(_on_tts_finished):
-			tts.utterance_finished.connect(_on_tts_finished)
-	elif tts.has_signal("finished"):
-		if not tts.finished.is_connected(_on_tts_finished):
-			tts.finished.connect(_on_tts_finished)
-
-func _on_tts_finished():
-	"""Reset TTS button when TTS finishes"""
-	print("WordChallengePanel_STT: _on_tts_finished called - resetting button")
-	var tts_button = get_node_or_null("ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer/TTSButton")
-	if not tts_button:
-		tts_button = get_node_or_null("ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer/TTSButton")
-	
-	if tts_button:
-		tts_button.text = "Read"
-		print("WordChallengePanel_STT: Button text reset to 'Read'")
-	if api_status_label:
-		api_status_label.text = "Word reading complete"
-
-	# Connect to signals for this specific request if not already connected
-	if !tts.is_connected("speech_ended", Callable(self, "_on_tts_speech_ended")):
-		tts.connect("speech_ended", Callable(self, "_on_tts_speech_ended"))
-	
-	if !tts.is_connected("speech_error", Callable(self, "_on_tts_speech_error")):
-		tts.connect("speech_error", Callable(self, "_on_tts_speech_error"))
 
 # Handle TTS feedback
 func _on_tts_speech_ended():
-	api_status_label.text = ""
+	print("WordChallengePanel_STT: _on_tts_speech_ended called - resetting button and clearing status")
 	
-	# Disconnect the temporary signals
+	# Clear status label
+	if api_status_label:
+		api_status_label.text = ""
+	
+	# Reset TTS button
+	var tts_button = get_node_or_null("ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer/TTSButton")
+	if tts_button:
+		tts_button.text = "Read"
+		print("WordChallengePanel_STT: Button text reset to 'Read'")
+	
+	# Disconnect the signals after use
 	if tts.is_connected("speech_ended", Callable(self, "_on_tts_speech_ended")):
 		tts.disconnect("speech_ended", Callable(self, "_on_tts_speech_ended"))
 	
-	if tts.is_connected("speech_error", Callable(self, "_on_tts_speech_ended")):
-		tts.disconnect("speech_error", Callable(self, "_on_tts_speech_ended"))
+	if tts.is_connected("speech_error", Callable(self, "_on_tts_speech_error")):
+		tts.disconnect("speech_error", Callable(self, "_on_tts_speech_error"))
 
 func _on_tts_speech_error(error_msg):
-	api_status_label.text = "TTS Error: " + error_msg
+	print("WordChallengePanel_STT: TTS error - clearing status and resetting button: ", error_msg)
 	
-	# Disconnect the temporary signals
+	# Clear status label
+	if api_status_label:
+		api_status_label.text = ""
+	
+	# Reset TTS button
+	var tts_button = get_node_or_null("ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer/TTSButton")
+	if tts_button:
+		tts_button.text = "Read"
+	
+	# Disconnect the signals after error
 	if tts.is_connected("speech_ended", Callable(self, "_on_tts_speech_ended")):
 		tts.disconnect("speech_ended", Callable(self, "_on_tts_speech_ended"))
 	
-	if tts.is_connected("speech_error", Callable(self, "_on_tts_speech_ended")):
-		tts.disconnect("speech_error", Callable(self, "_on_tts_speech_ended"))
+	if tts.is_connected("speech_error", Callable(self, "_on_tts_speech_error")):
+		tts.disconnect("speech_error", Callable(self, "_on_tts_speech_error"))
 
 func _on_tts_settings_button_pressed():
 	$ButtonClick.play()

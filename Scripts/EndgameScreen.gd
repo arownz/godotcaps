@@ -5,11 +5,11 @@ signal quit_to_menu
 signal continue_battle
 
 func _ready():
+	# Fade-in animation - only fade, no scale change
 	$ResultPanel.modulate = Color(1, 1, 1, 0)
 	
 	var tween = create_tween()
-	tween.set_parallel(true)
-	tween.tween_property($ResultPanel, "modulate", Color(1, 1, 1, 1), 0.4).set_ease(Tween.EASE_OUT)
+	tween.tween_property($ResultPanel, "modulate", Color(1, 1, 1, 1), 0.35).set_ease(Tween.EASE_OUT)
 	
 	# Hide continue button by default
 	$ResultPanel/VBoxContainer/ButtonContainer/ContinueButton.visible = false
@@ -75,30 +75,27 @@ func set_continue_enabled(enabled):
 
 func _on_restart_button_pressed():
 	$ButtonClick.play()
-	# Enhanced fade-out animation
+	# Fade-out animation - only fade, no scale change
 	var tween = create_tween()
-	tween.set_parallel(true)
-	tween.tween_property($ResultPanel, "modulate", Color(1, 1, 1, 0), 0.3).set_ease(Tween.EASE_IN)
+	tween.tween_property($ResultPanel, "modulate", Color(1, 1, 1, 0), 0.25).set_ease(Tween.EASE_IN)
 	await tween.finished
 	restart_battle.emit()
 	queue_free()
 
 func _on_quit_button_pressed():
 	$ButtonClick.play()
-	# Enhanced fade-out animation
+	# Fade-out animation - only fade, no scale change
 	var tween = create_tween()
-	tween.set_parallel(true)
-	tween.tween_property($ResultPanel, "modulate", Color(1, 1, 1, 0), 0.3).set_ease(Tween.EASE_IN)
+	tween.tween_property($ResultPanel, "modulate", Color(1, 1, 1, 0), 0.25).set_ease(Tween.EASE_IN)
 	await tween.finished
 	quit_to_menu.emit()
 	queue_free()
 
 func _on_continue_button_pressed():
 	$ButtonClick.play()
-	# Enhanced fade-out animation
+	# Fade-out animation - only fade, no scale change
 	var tween = create_tween()
-	tween.set_parallel(true)
-	tween.tween_property($ResultPanel, "modulate", Color(1, 1, 1, 0), 0.3).set_ease(Tween.EASE_IN)
+	tween.tween_property($ResultPanel, "modulate", Color(1, 1, 1, 0), 0.25).set_ease(Tween.EASE_IN)
 	await tween.finished
 	continue_battle.emit()
 	queue_free()

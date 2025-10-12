@@ -54,6 +54,12 @@ var challenge_active = false
 # Add these missing variables at the top of the script
 var document = null
 
+# Energy recovery system variables (mirrored from MainMenu.gd)
+var max_energy = 20
+var energy_recovery_rate = 180 # 3 minutes = 180 seconds (changed from 5 mins)
+var energy_recovery_amount = 4 # Amount of energy recovered per interval
+var energy_recovery_timer = null
+
 func _ready():
 	print("BattleScene: Starting battle scene initialization")
 	
@@ -64,6 +70,9 @@ func _ready():
 	tween.set_parallel(true)
 	tween.tween_property(self, "modulate:a", 1.0, 0.4).set_ease(Tween.EASE_OUT)
 	tween.tween_property(self, "scale", Vector2(1.0, 1.0), 0.4).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+	
+	# Setup energy recovery timer (matches MainMenu.gd pattern)
+	_setup_energy_recovery_timer()
 	
 	# Initialize managers
 	_initialize_managers()
@@ -104,6 +113,104 @@ func _cleanup_battle_session():
 	if typeof(DungeonGlobals) != TYPE_NIL:
 		DungeonGlobals.engage_button_hidden_session = false
 		print("BattleScene: Cleaned up battle session - engage button available for new battles")
+	
+	# Clean up energy recovery timer
+	if energy_recovery_timer:
+		energy_recovery_timer.queue_free()
+		energy_recovery_timer = null
+
+# Setup energy recovery timer (matches MainMenu.gd pattern)
+func _setup_energy_recovery_timer():
+	print("BattleScene: Setting up energy recovery system")
+	
+	# Create energy processing timer (check every 10 seconds)
+	energy_recovery_timer = Timer.new()
+	energy_recovery_timer.wait_time = 10.0 # Check every 10 seconds for better responsiveness
+	energy_recovery_timer.timeout.connect(_process_energy_recovery)
+	energy_recovery_timer.autostart = true
+	add_child(energy_recovery_timer)
+	
+	print("BattleScene: Energy recovery system initialized")
+
+# Process energy recovery (matches MainMenu.gd logic)
+func _process_energy_recovery():
+	if !Firebase.Auth or !Firebase.Auth.auth:
+		return
+	
+	var user_id = Firebase.Auth.auth.localid
+	var collection = Firebase.Firestore.collection("dyslexia_users")
+	
+	# Get current document
+	var user_doc = await collection.get_doc(user_id)
+	if !user_doc or ("error" in user_doc.keys() and user_doc.get_value("error")):
+		print("BattleScene: Failed to get user document for energy recovery")
+		return
+	
+	var stats_data = user_doc.get_value("stats")
+	if !stats_data or !stats_data.has("player"):
+		print("BattleScene: No player stats found for energy recovery")
+		return
+	
+	var player_data = stats_data["player"]
+	var current_energy = player_data.get("energy", 20)
+	var current_time = Time.get_unix_time_from_system()
+	var last_update = player_data.get("last_energy_update", current_time)
+	
+	print("BattleScene: Processing energy recovery - Current: " + str(current_energy) + ", Last update: " + str(last_update))
+	
+	# If last_energy_update is 0 or invalid, set it to current time
+	if last_update == 0:
+		last_update = current_time
+		_update_energy_timestamp_in_firebase(user_id, current_time)
+		return
+	
+	# If already at max energy, update timestamp to current time to stop recovery attempts
+	if current_energy >= max_energy:
+		if last_update < current_time - energy_recovery_rate:
+			_update_energy_timestamp_in_firebase(user_id, current_time)
+		return
+	
+	var time_passed = current_time - last_update
+	var recovery_intervals = int(time_passed / energy_recovery_rate)
+	
+	print("BattleScene: Time passed: " + str(time_passed) + " seconds, Recovery intervals: " + str(recovery_intervals))
+	
+	if recovery_intervals > 0:
+		var energy_to_recover = recovery_intervals * energy_recovery_amount
+		var new_energy = min(current_energy + energy_to_recover, max_energy)
+		var new_last_update = last_update + (recovery_intervals * energy_recovery_rate)
+		
+		# If energy reached max, set timestamp to current time
+		if new_energy >= max_energy:
+			new_last_update = current_time
+		
+		if new_energy != current_energy:
+			print("BattleScene: Recovering energy: " + str(current_energy) + " -> " + str(new_energy))
+			
+			# Update energy in Firebase
+			player_data["energy"] = new_energy
+			player_data["last_energy_update"] = new_last_update
+			stats_data["player"] = player_data
+			user_doc.add_or_update_field("stats", stats_data)
+			
+			var updated_doc = await collection.update(user_doc)
+			if updated_doc:
+				print("BattleScene: Energy recovered and saved to Firebase: " + str(current_energy) + " -> " + str(new_energy))
+			else:
+				print("BattleScene: Failed to save energy recovery to Firebase")
+
+# Update energy timestamp in Firebase
+func _update_energy_timestamp_in_firebase(user_id: String, timestamp: float):
+	var collection = Firebase.Firestore.collection("dyslexia_users")
+	var user_doc = await collection.get_doc(user_id)
+	
+	if user_doc and !("error" in user_doc.keys() and user_doc.get_value("error")):
+		var stats_data = user_doc.get_value("stats")
+		if stats_data and stats_data.has("player"):
+			stats_data["player"]["last_energy_update"] = timestamp
+			user_doc.add_or_update_field("stats", stats_data)
+			await collection.update(user_doc)
+			print("BattleScene: Updated energy timestamp: " + str(timestamp))
 
 func _initialize_managers():
 	print("Initializing battle scene managers")
@@ -642,7 +749,7 @@ func _consume_battle_energy() -> bool:
 			
 			# Check if player has enough energy
 			if current_energy < 2:
-				_show_energy_notification(current_energy, 20)
+				_show_energy_notification(current_energy)
 				return false
 			
 			# Consume 2 energy
@@ -659,10 +766,10 @@ func _consume_battle_energy() -> bool:
 				print("Failed to update energy in Firebase")
 				return false
 		else:
-			_show_energy_notification(0, 20)
+			_show_energy_notification(0)
 			return false
 	else:
-		_show_energy_notification(0, 20)
+		_show_energy_notification(0)
 		return false
 
 # NEW: Check energy and show notification if insufficient 
@@ -672,7 +779,7 @@ func _check_energy_and_show_notification() -> bool:
 	# Get current energy without consuming it
 	if !Firebase.Auth.auth:
 		print("BattleScene: Not authenticated, showing energy notification")
-		_show_energy_notification(0, 20)
+		_show_energy_notification(0)
 		return false
 	
 	var user_id = Firebase.Auth.auth.localid
@@ -685,29 +792,28 @@ func _check_energy_and_show_notification() -> bool:
 		if stats_data != null and "player" in stats_data:
 			var player_data = stats_data["player"]
 			var current_energy = player_data.get("energy", 0)
-			var max_energy = 20
 			
 			print("BattleScene: Current energy: " + str(current_energy) + "/" + str(max_energy))
 			
 			# Check if player has enough energy
 			if current_energy < 2:
 				print("BattleScene: Insufficient energy, showing notification")
-				_show_energy_notification(current_energy, max_energy)
+				_show_energy_notification(current_energy)
 				return false
 			
 			print("BattleScene: Energy check passed")
 			return true
 		else:
 			print("BattleScene: No player stats data found")
-			_show_energy_notification(0, 20)
+			_show_energy_notification(0)
 			return false
 	else:
 		print("BattleScene: Failed to get user document")
-		_show_energy_notification(0, 20)
+		_show_energy_notification(0)
 		return false
 
 # NEW: Show energy notification popup
-func _show_energy_notification(current_energy: int, max_energy: int):
+func _show_energy_notification(current_energy: int):
 	print("Showing energy notification: " + str(current_energy) + "/" + str(max_energy))
 	
 	# Get the notification popup that was created in _initialize_managers()
@@ -751,8 +857,6 @@ func _get_energy_recovery_info() -> Dictionary:
 			
 			# Get current energy and last update from Firestore
 			var current_energy = player_data.get("energy", 0)
-			var max_energy = 20
-			var energy_recovery_rate = 300 # 5 minutes in seconds
 			
 			# If at max energy, no recovery needed
 			if current_energy >= max_energy:
@@ -803,14 +907,15 @@ func _start_energy_countdown_for_battle_notification(notification_popup: CanvasL
 		var energy_info = await _get_energy_recovery_info()
 		var recovery_text = "\n\nNext energy in: Calculating..."
 		var base_message = ""
-		var max_energy = 20
+		var title_text = "Not Enough Energy"
 		
 		# Get CURRENT energy from fresh Firestore data
 		var current_energy = energy_info.get("current_energy", 0)
 		
 		# Check if energy is sufficient now
 		if current_energy >= 2:
-			base_message = "Energy recovered! You now have " + str(current_energy) + "/" + str(max_energy) + " energy.\n\nYou can now start a battle!"
+			title_text = "Energy Recovered!"
+			base_message = "You now have " + str(current_energy) + "/" + str(max_energy) + " energy.\n\nYou can now start a fight!"
 			recovery_text = ""
 		else:
 			# Build message with CURRENT energy from Firestore
@@ -826,12 +931,22 @@ func _start_energy_countdown_for_battle_notification(notification_popup: CanvasL
 				var seconds = int(time_until_next) % 60
 				recovery_text = "\n\nNext energy in: %d:%02d" % [minutes, seconds]
 		
-		# Update notification message with LIVE energy data
-		var updated_message = base_message + recovery_text
-		var message_label = notification_popup.get_node_or_null("PopupContainer/CenterContainer/PopupBackground/VBoxContainer/MessageLabel")
+		# Update notification TITLE with LIVE energy status
+		var title_label = notification_popup.get_node_or_null("PopupContainer/CenterContainer/PopupBackground/VBoxContainer/TopContainer/TitleLabel")
+		if title_label:
+			title_label.text = title_text
 		
-		if message_label:
-			message_label.text = updated_message
+		# Update notification message with LIVE energy data AND resize popup dynamically
+		var updated_message = base_message + recovery_text
+		
+		# Use the notification popup's dynamic update method to resize properly
+		if notification_popup.has_method("update_message_dynamic"):
+			notification_popup.update_message_dynamic(updated_message)
+		else:
+			# Fallback to direct label update if method doesn't exist
+			var message_label = notification_popup.get_node_or_null("PopupContainer/CenterContainer/PopupBackground/VBoxContainer/MessageLabel")
+			if message_label:
+				message_label.text = updated_message
 	
 	# Connect timer to update function
 	countdown_timer.timeout.connect(update_countdown)

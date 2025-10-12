@@ -35,7 +35,7 @@ func _ready():
 	# This is crucial for popup visibility
 	set_as_top_level(true)
 	
-	# Enhanced fade-in animation with scale effect
+	# Enhanced fade-in animation matching SettingScene style
 	modulate.a = 0
 	$ResultPanel.scale = Vector2(0.8, 0.8)
 	

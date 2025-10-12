@@ -722,10 +722,10 @@ func _verify_firebase_update():
 		if stats and stats.has("player"):
 			var firebase_player_stats = stats["player"]
 			print("Firebase verification - Level: " + str(firebase_player_stats.get("level", "ERROR")) +
-				  ", Exp: " + str(firebase_player_stats.get("exp", "ERROR")) +
-				  ", Health: " + str(firebase_player_stats.get("health", "ERROR")) +
-				  ", Damage: " + str(firebase_player_stats.get("damage", "ERROR")) +
-				  ", Durability: " + str(firebase_player_stats.get("durability", "ERROR")))
+				", Exp: " + str(firebase_player_stats.get("exp", "ERROR")) +
+				", Health: " + str(firebase_player_stats.get("health", "ERROR")) +
+				", Damage: " + str(firebase_player_stats.get("damage", "ERROR")) +
+				", Durability: " + str(firebase_player_stats.get("durability", "ERROR")))
 			
 			# Compare with local values
 			var local_matches_firebase = (

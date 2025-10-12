@@ -142,6 +142,31 @@ func show_notification(title = default_title, message = default_message, button_
 	else:
 		print("Warning: PopupContainer not found in notification popup")
 
+# Public method to update message dynamically and resize popup accordingly
+func update_message_dynamic(new_message: String):
+	"""Update the message label text and resize the popup to fit the new content"""
+	var message_label = $PopupContainer/CenterContainer/PopupBackground/VBoxContainer/MessageLabel
+	var popup_background = $PopupContainer/CenterContainer/PopupBackground
+	
+	if message_label:
+		message_label.text = new_message
+	else:
+		print("Warning: MessageLabel not found for dynamic update")
+		return
+	
+	# Recalculate and apply new size based on updated message
+	if popup_background:
+		var calculated_size = _calculate_popup_size(new_message)
+		popup_background.custom_minimum_size = calculated_size
+		
+		# Update pivot offset for proper centering with the new size
+		popup_background.pivot_offset = calculated_size / 2
+		
+		# Force a layout update to ensure proper sizing
+		popup_background.queue_redraw()
+		
+		print("NotificationPopup: Dynamically resized to: ", calculated_size, " for message: ", new_message.substr(0, 50), "...")
+
 # Calculate popup size based on message content
 # Dynamic sizing rules:
 # - Base size: 500x200 for simple content (1-2 sentences, 1 paragraph)

@@ -2233,9 +2233,40 @@ func _on_speak_button_pressed():
 func _on_guide_button_pressed():
 	"""Guide button - Provide TTS guidance for guided reading"""
 	$ButtonClick.play()
+	var guide_button = $MainContainer/HeaderPanel/GuideButton
+	
+	if guide_button and guide_button.text == "Stop":
+		# Stop TTS
+		if tts:
+			tts.stop()
+		# Immediately reset button text
+		guide_button.text = "Guide"
+		print("ReadAloudGuided: Guide TTS stopped by user - button reset")
+		return
+	
 	if tts:
+		# Start TTS and change button to Stop
+		if guide_button:
+			guide_button.text = "Stop"
+		
 		var guide_text = "Welcome to Guided Reading! This activity helps you practice reading with step-by-step guidance. Read the guide notes first to understand what to do. Listen to the passage by clicking 'Read', then practice reading each sentence yourself. The yellow highlighting shows you which sentence is being read. Take your time and follow the guidance!"
 		tts.speak(guide_text)
+		
+		# Connect to TTS finished signal to reset button
+		if tts.has_signal("utterance_finished"):
+			if not tts.utterance_finished.is_connected(_on_guide_tts_finished):
+				tts.utterance_finished.connect(_on_guide_tts_finished)
+		elif tts.has_signal("finished"):
+			if not tts.finished.is_connected(_on_guide_tts_finished):
+				tts.finished.connect(_on_guide_tts_finished)
+
+func _on_guide_tts_finished():
+	"""Reset guide button when TTS finishes"""
+	print("ReadAloudGuided: _on_guide_tts_finished called - resetting button")
+	var guide_button = $MainContainer/HeaderPanel/GuideButton
+	if guide_button:
+		guide_button.text = "Guide"
+		print("ReadAloudGuided: Button text reset to 'Guide'")
 
 func _on_tts_setting_button_pressed():
 	"""TTS Settings button - Open settings as popup overlay"""

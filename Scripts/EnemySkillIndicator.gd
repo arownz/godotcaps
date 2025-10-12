@@ -19,6 +19,11 @@ var countdown_timer: Timer
 var signal_emitted = false # Prevent duplicate signal emission
 
 func _ready():
+	# Fade-in animation - only fade, no scale change
+	modulate.a = 0.0
+	var fade_tween = create_tween()
+	fade_tween.tween_property(self, "modulate:a", 1.0, 0.35).set_ease(Tween.EASE_OUT)
+	
 	# Create countdown timer
 	countdown_timer = Timer.new()
 	countdown_timer.wait_time = 1.0 # 1 second intervals
@@ -120,11 +125,9 @@ func _on_indicator_finished():
 	if animation_player:
 		animation_player.stop()
 	
-	# Enhanced fade-out animation matching SettingScene style
+	# Fade-out animation - only fade, no scale change
 	var tween = create_tween()
-	tween.set_parallel(true)
 	tween.tween_property(self, "modulate:a", 0.0, 0.25).set_ease(Tween.EASE_IN)
-	tween.tween_property(self, "scale", Vector2(0.8, 0.8), 0.25).set_ease(Tween.EASE_IN)
 	
 	# Wait for fade-out to complete, then emit signal and cleanup
 	await tween.finished
