@@ -189,22 +189,25 @@ func _load_user_data():
 	# Set initial carousel position and update display
 	await get_tree().process_frame # Wait one frame to ensure scene is fully loaded
 	
-	# SIMPLE TEST: Just force Dungeon 1 to center position
-	print("=== CIRCULAR LAYOUT TEST ===")
-	print("Testing circular arrangement for all scenarios:")
+	# Test linear arrangement for dungeons
+	print("=== LINEAR LAYOUT TEST ===")
+	print("Testing linear left-to-right arrangement:")
 	print()
 	
 	# Test what each scenario should look like
 	for test_center in range(DUNGEON_COUNT):
-		print("SCENARIO: Dungeon ", test_center + 1, " is centered (latest unlocked)")
+		print("SCENARIO: Dungeon ", test_center + 1, " is centered")
 		for i in range(DUNGEON_COUNT):
-			var relative_pos = (i - test_center + DUNGEON_COUNT) % DUNGEON_COUNT
+			var offset = i - test_center
+			var expected_x = CENTER_POSITION + (offset * DUNGEON_SPACING)
 			var desc = ""
-			match relative_pos:
-				0: desc = "CENTER"
-				1: desc = "RIGHT"
-				2: desc = "LEFT"
-			print("  Dungeon ", i + 1, " would be: ", desc, " (relative_pos: ", relative_pos, ")")
+			if offset < 0:
+				desc = "LEFT"
+			elif offset == 0:
+				desc = "CENTER"
+			else:
+				desc = "RIGHT"
+			print("  Dungeon ", i + 1, " would be at x=", expected_x, " (", desc, ", offset: ", offset, ")")
 		print()
 	
 	print("Current setup: Dungeon ", current_dungeon + 1, " should be centered")
@@ -226,44 +229,39 @@ func _center_carousel_on_current_dungeon():
 	print("=== CENTERING COMPLETE ===")
 	print()
 
-# Position all dungeons based on which one should be centered (CIRCULAR LAYOUT)
+# Position all dungeons based on which one should be centered (LINEAR LAYOUT - simple left to right)
 func _position_all_dungeons_for_selection(selected_index):
-	print("=== CIRCULAR CAROUSEL POSITIONING ===")
+	print("=== LINEAR DUNGEON POSITIONING ===")
 	print("Centering dungeon index: ", selected_index, " (Dungeon ", selected_index + 1, ")")
 	print("CENTER_POSITION: ", CENTER_POSITION)
 	print("DUNGEON_SPACING: ", DUNGEON_SPACING)
 	
-	# Circular positions: LEFT ← CENTER → RIGHT
-	# We arrange dungeons in a circle around the selected one
+	# Simple linear arrangement: each dungeon slides left/right
+	# Dungeon 0 at LEFT, Dungeon 1 at CENTER, Dungeon 2 at RIGHT
+	# When navigating, all dungeons shift together
 	for i in range(DUNGEON_COUNT):
 		var dungeon_node = dungeon_carousel.get_child(i)
 		print("Node ", i, " name: ", dungeon_node.name)
 		print("Before - Dungeon ", i + 1, " at x: ", dungeon_node.position.x)
 		
-		# Calculate circular offset from selected dungeon
-		var relative_position = (i - selected_index + DUNGEON_COUNT) % DUNGEON_COUNT
+		# Calculate position: center position + offset based on (current index - selected index)
+		var offset_from_selected = i - selected_index
+		var new_x = CENTER_POSITION + (offset_from_selected * DUNGEON_SPACING)
 		
-		var new_x: float
-		var position_desc: String
-		
-		# Position based on circular arrangement
-		match relative_position:
-			0: # This is the selected dungeon - CENTER
-				new_x = CENTER_POSITION
-				position_desc = "CENTER"
-			1: # Next dungeon in sequence - RIGHT
-				new_x = CENTER_POSITION + DUNGEON_SPACING
-				position_desc = "RIGHT"
-			2: # Previous dungeon in sequence - LEFT
-				new_x = CENTER_POSITION - DUNGEON_SPACING
-				position_desc = "LEFT"
+		var position_desc = ""
+		if offset_from_selected == 0:
+			position_desc = "CENTER"
+		elif offset_from_selected < 0:
+			position_desc = "LEFT"
+		else:
+			position_desc = "RIGHT"
 		
 		# Apply the position
 		dungeon_node.position.x = new_x
 		
-		print("After - Dungeon ", i + 1, " at x: ", new_x, " (", position_desc, ", relative_pos: ", relative_position, ")")
+		print("After - Dungeon ", i + 1, " at x: ", new_x, " (", position_desc, ", offset: ", offset_from_selected, ")")
 	
-	print("=== CIRCULAR POSITIONING COMPLETE ===")
+	print("=== LINEAR POSITIONING COMPLETE ===")
 	print()
 
 # Animate selection indicator for better dyslexia visibility
@@ -327,27 +325,27 @@ func update_dungeon_display():
 			if i == current_dungeon:
 				_animate_selection_indicator(indicator)
 	
-	# Update button visibility - always show both buttons for circular navigation
-	next_button.visible = true
-	previous_button.visible = true
+	# LINEAR navigation - hide buttons at boundaries instead of wrapping
+	previous_button.visible = current_dungeon > 0
+	next_button.visible = current_dungeon < DUNGEON_COUNT - 1
 	
 	# Enable/disable play button based on selected dungeon's unlock status
-	play_button.disabled = current_dungeon >= unlocked_dungeons
-
-# Handle navigation buttons with circular behavior
+	play_button.disabled = current_dungeon >= unlocked_dungeons# Handle navigation buttons with LINEAR behavior (no wrapping)
 func _on_next_button_pressed():
 	$ButtonClick.play()
-	current_dungeon = (current_dungeon + 1) % DUNGEON_COUNT # Wrap around: 0→1→2→0
-	_animate_carousel_to_position(current_dungeon)
-	update_dungeon_display()
+	if current_dungeon < DUNGEON_COUNT - 1:
+		current_dungeon += 1
+		_animate_carousel_to_position(current_dungeon)
+		update_dungeon_display()
 
 func _on_previous_button_pressed():
 	$ButtonClick.play()
-	current_dungeon = (current_dungeon - 1 + DUNGEON_COUNT) % DUNGEON_COUNT # Wrap around: 2→1→0→2
-	_animate_carousel_to_position(current_dungeon)
-	update_dungeon_display()
+	if current_dungeon > 0:
+		current_dungeon -= 1
+		_animate_carousel_to_position(current_dungeon)
+		update_dungeon_display()
 
-# Handle dungeon selection with circular behavior
+# Handle dungeon selection with LINEAR navigation
 func _on_dungeon1_pressed():
 	$ButtonClick.play()
 	if unlocked_dungeons >= 1: # Dungeon 1 is always unlocked
@@ -379,27 +377,19 @@ func _on_dungeon3_pressed():
 		# Show notification for locked dungeon
 		notification_popup.show_notification("Dungeon Locked!", "Please complete 'The Plain' and 'The Forest' first to unlock this dungeon.", "OK")
 
-# Animation function for smooth circular carousel movement
+# Animation function for smooth linear carousel movement
 func _animate_carousel_to_position(dungeon_index):
 	var tween = create_tween()
 	tween.set_ease(ANIMATION_EASE)
 	tween.set_trans(Tween.TRANS_CUBIC)
 	
-	# Animate all dungeons to their new circular positions
+	# Animate all dungeons to their new linear positions (simple left-to-right slide)
 	for i in range(DUNGEON_COUNT):
 		var dungeon_node = dungeon_carousel.get_child(i)
 		
-		# Calculate circular position (same logic as positioning function)
-		var relative_position = (i - dungeon_index + DUNGEON_COUNT) % DUNGEON_COUNT
-		
-		var target_x: float
-		match relative_position:
-			0: # Center
-				target_x = CENTER_POSITION
-			1: # Right
-				target_x = CENTER_POSITION + DUNGEON_SPACING
-			2: # Left
-				target_x = CENTER_POSITION - DUNGEON_SPACING
+		# Calculate linear position: offset from selected dungeon
+		var offset_from_selected = i - dungeon_index
+		var target_x = CENTER_POSITION + (offset_from_selected * DUNGEON_SPACING)
 		
 		tween.parallel().tween_property(dungeon_node, "position:x", target_x, ANIMATION_DURATION)
 

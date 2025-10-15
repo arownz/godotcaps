@@ -95,17 +95,20 @@ theme_override_font_sizes/font_size = 28
 text = "Notification Title"
 horizontal_alignment = 1
 
-[node name="MessageLabel" type="Label" parent="PopupContainer/CenterContainer/PopupBackground/VBoxContainer"]
+[node name="MessageLabel" type="RichTextLabel" parent="PopupContainer/CenterContainer/PopupBackground/VBoxContainer"]
 custom_minimum_size = Vector2(1, 1)
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_colors/font_color = Color(0.985813, 0.955071, 0.530108, 1)
+theme_override_colors/default_color = Color(0.985813, 0.955071, 0.530108, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("2_47wmi")
-theme_override_font_sizes/font_size = 15
+theme_override_fonts/normal_font = ExtResource("2_47wmi")
+theme_override_font_sizes/normal_font_size = 15
+bbcode_enabled = true
 text = "Message"
+fit_content = true
+scroll_active = false
 horizontal_alignment = 1
-autowrap_mode = 2
+vertical_alignment = 3
 
 [node name="CloseButton" type="Button" parent="PopupContainer/CenterContainer/PopupBackground/VBoxContainer"]
 custom_minimum_size = Vector2(120, 40)

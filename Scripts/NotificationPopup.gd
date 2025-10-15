@@ -93,25 +93,91 @@ func show_notification(title = default_title, message = default_message, button_
 	var message_label = $PopupContainer/CenterContainer/PopupBackground/VBoxContainer/MessageLabel
 	var button_label = $PopupContainer/CenterContainer/PopupBackground/VBoxContainer/CloseButton
 	var popup_background = $PopupContainer/CenterContainer/PopupBackground
+	var vbox = $PopupContainer/CenterContainer/PopupBackground/VBoxContainer
 	
 	if title_label:
 		title_label.text = title
 	else:
 		print("Warning: TitleLabel not found in notification popup")
-		
-	if message_label:
-		message_label.text = message
-	else:
-		print("Warning: MessageLabel not found in notification popup")
-		
+	
 	if button_label:
 		button_label.text = button_text
 	else:
 		print("Warning: CloseButton Label not found in notification popup")
 	
+	# Determine if content is long enough to need scrolling (e.g., privacy policy)
+	var line_count = message.split("\n").size()
+	var char_count = message.length()
+	var needs_scrolling = (line_count > 15 or char_count > 600)
+	
+	# Check if ScrollContainer already exists (from previous call)
+	var existing_scroll = vbox.get_node_or_null("ScrollContainer")
+	
+	if needs_scrolling and not existing_scroll:
+		# Create ScrollContainer for long content
+		print("Creating ScrollContainer for long content (", char_count, " chars, ", line_count, " lines)")
+		
+		# Remove message label from VBoxContainer temporarily
+		if message_label and message_label.get_parent() == vbox:
+			vbox.remove_child(message_label)
+		
+		# Create ScrollContainer
+		var scroll_container = ScrollContainer.new()
+		scroll_container.name = "ScrollContainer"
+		scroll_container.custom_minimum_size = Vector2(460, 300) # Fixed height for scrolling
+		scroll_container.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		scroll_container.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+		scroll_container.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+		
+		# Insert ScrollContainer after TopContainer (index 1)
+		vbox.add_child(scroll_container)
+		vbox.move_child(scroll_container, 1)
+		
+		# Add message label to ScrollContainer
+		if message_label:
+			scroll_container.add_child(message_label)
+			message_label.custom_minimum_size = Vector2(440, 0)
+			message_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			message_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
+			message_label.text = message
+			# RichTextLabel uses different autowrap constant (AUTOWRAP_WORD_SMART = 3)
+			message_label.autowrap_mode = 3
+			message_label.bbcode_enabled = true
+			message_label.fit_content = true
+	elif not needs_scrolling and existing_scroll:
+		# Remove ScrollContainer and restore normal layout for short content
+		print("Removing ScrollContainer for short content")
+		
+		# Get message label from ScrollContainer
+		if existing_scroll.get_child_count() > 0:
+			message_label = existing_scroll.get_child(0)
+			existing_scroll.remove_child(message_label)
+			
+			# Remove ScrollContainer
+			vbox.remove_child(existing_scroll)
+			existing_scroll.queue_free()
+			
+			# Re-add message label to VBoxContainer at index 1 (after TopContainer)
+			vbox.add_child(message_label)
+			vbox.move_child(message_label, 1)
+			
+			# Reset message label properties
+			message_label.custom_minimum_size = Vector2(1, 1)
+			message_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
+			message_label.text = message
+	elif needs_scrolling and existing_scroll:
+		# ScrollContainer exists, just update message
+		if existing_scroll.get_child_count() > 0:
+			message_label = existing_scroll.get_child(0)
+			message_label.text = message
+	else:
+		# Normal case - short message, no scrolling needed
+		if message_label:
+			message_label.text = message
+	
 	# Calculate dynamic size based on content
-	if popup_background and message_label:
-		var calculated_size = _calculate_popup_size(message)
+	if popup_background:
+		var calculated_size = _calculate_popup_size(message, needs_scrolling)
 		popup_background.custom_minimum_size = calculated_size
 		
 		# Update pivot offset for proper centering with the new size
@@ -174,10 +240,14 @@ func update_message_dynamic(new_message: String):
 # - Height scaling: +40px per additional paragraph, +20px per extra sentence
 # - Max height: 250px for 1-2 paragraphs, 350px for more paragraphs
 # - Character count consideration for very long messages
-func _calculate_popup_size(message: String) -> Vector2:
+func _calculate_popup_size(message: String, is_scrollable: bool = false) -> Vector2:
 	# Base size for minimal content
 	var base_width = 500.0
 	var base_height = 200.0
+	
+	# If content is scrollable, use fixed larger size
+	if is_scrollable:
+		return Vector2(540.0, 480.0) # Fixed size for scrollable content (privacy policy, etc.)
 	
 	# Count paragraphs (split by \n - including empty lines for spacing)
 	var lines = message.split("\n")

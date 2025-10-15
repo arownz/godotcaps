@@ -312,22 +312,25 @@ func _load_user_data():
 	# Set initial carousel position and update display
 	await get_tree().process_frame # Wait one frame to ensure scene is fully loaded
 	
-	# Test circular arrangement for characters
-	print("=== CIRCULAR CHARACTER LAYOUT TEST ===")
-	print("Testing circular arrangement for all scenarios:")
+	# Test linear arrangement for characters
+	print("=== LINEAR CHARACTER LAYOUT TEST ===")
+	print("Testing linear left-to-right arrangement:")
 	print()
 	
 	# Test what each scenario should look like
 	for test_center in range(CHARACTER_COUNT):
 		print("SCENARIO: Character ", test_center + 1, " (", character_names[test_center], ") is centered")
 		for i in range(CHARACTER_COUNT):
-			var relative_pos = (i - test_center + CHARACTER_COUNT) % CHARACTER_COUNT
+			var offset = i - test_center
+			var expected_x = CENTER_POSITION + (offset * CHARACTER_SPACING)
 			var desc = ""
-			match relative_pos:
-				0: desc = "CENTER"
-				1: desc = "RIGHT"
-				2: desc = "LEFT"
-			print("  Character ", i + 1, " (", character_names[i], ") would be: ", desc, " (relative_pos: ", relative_pos, ")")
+			if offset < 0:
+				desc = "LEFT"
+			elif offset == 0:
+				desc = "CENTER"
+			else:
+				desc = "RIGHT"
+			print("  Character ", i + 1, " (", character_names[i], ") would be at x=", expected_x, " (", desc, ", offset: ", offset, ")")
 		print()
 	
 	print("Current setup: Character ", current_character + 1, " (", character_names[current_character], ") should be centered")
@@ -342,44 +345,38 @@ func _center_carousel_on_current_character():
 	# Position all characters relative to the center position
 	_position_all_characters_for_selection(current_character)
 
-# Position all characters based on which one should be centered (CIRCULAR LAYOUT)
+# Position all characters based on which one should be centered (LINEAR LAYOUT - simple left to right)
 func _position_all_characters_for_selection(selected_index):
-	print("=== CIRCULAR CHARACTER POSITIONING ===")
+	print("=== LINEAR CHARACTER POSITIONING ===")
 	print("Centering character index: ", selected_index, " (Character ", selected_index + 1, ")")
 	print("CENTER_POSITION: ", CENTER_POSITION)
 	print("CHARACTER_SPACING: ", CHARACTER_SPACING)
 	
-	# Circular positions: LEFT ← CENTER → RIGHT
-	# We arrange characters in a circle around the selected one
+	# Simple linear arrangement: each character slides left/right
+	# Character 0 (Lexia) at LEFT, Character 1 (Ragna) at RIGHT when navigating
 	for i in range(CHARACTER_COUNT):
 		var character_node = character_carousel.get_child(i)
 		print("Node ", i, " name: ", character_node.name)
 		print("Before - Character ", i + 1, " at x: ", character_node.position.x)
 		
-		# Calculate circular offset from selected character
-		var relative_position = (i - selected_index + CHARACTER_COUNT) % CHARACTER_COUNT
+		# Calculate position: center position + offset based on (current index - selected index)
+		var offset_from_selected = i - selected_index
+		var new_x = CENTER_POSITION + (offset_from_selected * CHARACTER_SPACING)
 		
-		var new_x: float
-		var position_desc: String
-		
-		# Position based on 2-character layout
-		match relative_position:
-			0: # This is the selected character - CENTER
-				new_x = CENTER_POSITION
-				position_desc = "CENTER"
-			1: # Other character - place to the side based on which is selected
-				if selected_index == 0:
-					new_x = CENTER_POSITION + CHARACTER_SPACING # Ragna to the right of Lexia
-				else:
-					new_x = CENTER_POSITION - CHARACTER_SPACING # Lexia to the left of Ragna
-				position_desc = "SIDE"
+		var position_desc = ""
+		if offset_from_selected == 0:
+			position_desc = "CENTER"
+		elif offset_from_selected < 0:
+			position_desc = "LEFT"
+		else:
+			position_desc = "RIGHT"
 		
 		# Apply the position
 		character_node.position.x = new_x
 		
-		print("After - Character ", i + 1, " at x: ", new_x, " (", position_desc, ", relative_pos: ", relative_position, ")")
+		print("After - Character ", i + 1, " at x: ", new_x, " (", position_desc, ", offset: ", offset_from_selected, ")")
 	
-	print("=== CIRCULAR CHARACTER POSITIONING COMPLETE ===")
+	print("=== LINEAR CHARACTER POSITIONING COMPLETE ===")
 	print()
 
 # Animate selection indicator for better dyslexia visibility
@@ -436,27 +433,27 @@ func update_character_display():
 			if i == current_character:
 				_animate_selection_indicator(selection_indicators[i])
 	
-	# Update button visibility - always show both buttons for circular navigation
-	next_button.visible = true
-	previous_button.visible = true
+	# LINEAR navigation - hide buttons at boundaries instead of wrapping
+	previous_button.visible = current_character > 0
+	next_button.visible = current_character < CHARACTER_COUNT - 1
 	
 	# Enable/disable select button based on selected character's unlock status
-	select_button.disabled = current_character >= unlocked_characters
-
-# Handle navigation buttons with circular behavior
+	select_button.disabled = current_character >= unlocked_characters# Handle navigation buttons with LINEAR behavior (no wrapping)
 func _on_next_button_pressed():
 	$ButtonClick.play()
-	current_character = (current_character + 1) % CHARACTER_COUNT # Wrap around: 0→1→2→0
-	_animate_carousel_to_position(current_character)
-	update_character_display()
+	if current_character < CHARACTER_COUNT - 1:
+		current_character += 1
+		_animate_carousel_to_position(current_character)
+		update_character_display()
 
 func _on_previous_button_pressed():
 	$ButtonClick.play()
-	current_character = (current_character - 1 + CHARACTER_COUNT) % CHARACTER_COUNT # Wrap around: 2→1→0→2
-	_animate_carousel_to_position(current_character)
-	update_character_display()
+	if current_character > 0:
+		current_character -= 1
+		_animate_carousel_to_position(current_character)
+		update_character_display()
 
-# Handle character selection with circular behavior and stats display
+# Handle character selection with LINEAR navigation and stats display
 func _on_character1_pressed():
 	if unlocked_characters >= 1: # Character 1 is always unlocked
 		# Show character stats in custom popup
@@ -485,28 +482,19 @@ func _on_character2_pressed():
 
 # Character 3 (Magi) removed - coming in future update
 
-# Animation function for smooth circular carousel movement
+# Animation function for smooth linear carousel movement
 func _animate_carousel_to_position(character_index):
 	var tween = create_tween()
 	tween.set_ease(ANIMATION_EASE)
 	tween.set_trans(Tween.TRANS_CUBIC)
 	
-	# Animate all characters to their new 2-character positions
+	# Animate all characters to their new linear positions (simple left-to-right slide)
 	for i in range(CHARACTER_COUNT):
 		var character_node = character_carousel.get_child(i)
 		
-		# Calculate 2-character position (same logic as positioning function)
-		var relative_position = (i - character_index + CHARACTER_COUNT) % CHARACTER_COUNT
-		
-		var target_x: float
-		match relative_position:
-			0: # Center
-				target_x = CENTER_POSITION
-			1: # Side
-				if character_index == 0:
-					target_x = CENTER_POSITION + CHARACTER_SPACING # Ragna to the right of Lexia
-				else:
-					target_x = CENTER_POSITION - CHARACTER_SPACING # Lexia to the left of Ragna
+		# Calculate linear position: offset from selected character
+		var offset_from_selected = i - character_index
+		var target_x = CENTER_POSITION + (offset_from_selected * CHARACTER_SPACING)
 		
 		tween.parallel().tween_property(character_node, "position:x", target_x, ANIMATION_DURATION)
 

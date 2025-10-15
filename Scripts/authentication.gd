@@ -549,6 +549,61 @@ func _on_confirm_password_text_changed(new_text):
 		password_field.caret_column = 128
 		show_message("Password is too long! Maximum 128 characters.", false)
 
+func _on_privacy_checkbox_toggled(_pressed):
+	# Hide error label when checkbox is toggled
+	$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/PrivacyErrorLabel.visible = false
+
+func _on_privacy_label_mouse_entered():
+	$ButtonHover.play()
+
+func _on_privacy_label_pressed():
+	$ButtonClick.play()
+	_show_privacy_policy()
+
+func _show_privacy_policy():
+	# Note: Default horizontal alignment in NotificationPopUp MessageLabel is center
+	# To show bullets on left, we use BBCode with left alignment tags
+	# Default color is yellow (#fbf487), we use [color=#ffffff] for white bullets
+	var privacy_text = """
+WHO WE SERVE
+[color=#ffffff]This educational game is designed for dyslexic learners, including children, parents, and professionals.[/color]
+
+DATA COLLECTION
+[left][color=#ffffff]We collect:
+• Username and email for account creation
+• Birth date for age-appropriate content
+• Learning progress and game statistics
+• Player preferences and settings[/color][/left]
+
+HOW WE USE YOUR DATA
+[left][color=#ffffff]• Personalized learning experiences
+• Track educational progress
+• Improve teaching methods and features
+• Ensure age-appropriate content[/color][/left]
+
+CHILDREN'S PRIVACY
+[left][color=#ffffff]Special protections for users under 13:
+• Parental consent required
+• Limited data collection for minors
+• No third-party sharing of children's data
+• Secure Firebase storage[/color][/left]
+
+YOUR RIGHTS
+[left][color=#ffffff]• Access your data anytime
+• Request data correction or deletion
+• Opt out of non-essential collection
+• Export your progress data[/color][/left]
+
+DATA SECURITY
+[color=#ffffff]We use Firebase's secure infrastructure with industry-standard encryption to protect your information.[/color]
+
+CONTACT
+[color=#ffffff]contact.charlescollantes@gmail.com[/color]
+
+[color=#ffffff]By accepting, you acknowledge reading and understanding this privacy policy.[/color]"""
+	
+	notification_popup.show_notification("Privacy Policy", privacy_text, "OK")
+
 func _on_reset_email_text_changed(new_text):
 	# Hide error label when user starts typing
 	$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword/ResetEmailErrorLabel.visible = false
@@ -571,6 +626,7 @@ func clear_all_error_labels():
 	$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegEmailErrorLabel.visible = false
 	$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegPasswordErrorLabel.visible = false
 	$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/ConfirmPasswordErrorLabel.visible = false
+	$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/PrivacyErrorLabel.visible = false
 	
 	# Forgot password tab
 	$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword/ResetEmailErrorLabel.visible = false
@@ -679,6 +735,13 @@ func _on_register_button_pressed():
 	elif confirm_password.length() > 128:
 		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/ConfirmPasswordErrorLabel.text = "Maximum 128 characters"
 		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/ConfirmPasswordErrorLabel.visible = true
+		has_error = true
+	
+	# Validate privacy policy checkbox
+	var privacy_checkbox = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/PrivacyContainer/PrivacyCheckBox
+	if not privacy_checkbox.button_pressed:
+		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/PrivacyErrorLabel.text = "You must accept the Privacy Policy to register"
+		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/PrivacyErrorLabel.visible = true
 		has_error = true
 	
 	if has_error:
