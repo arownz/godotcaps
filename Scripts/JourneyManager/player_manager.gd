@@ -425,38 +425,51 @@ func add_experience(exp_amount):
 		player_exp -= max_exp
 		player_level += 1
 		
-		# Balanced stat growth for dyslexic children with STAT CAPS for balance
-		# Randomized increases with maximum limits to prevent overpowered progression
+		# Open-ended balanced stat growth for dyslexic learners
+		# Randomized increases that scale down as player gets stronger to prevent being overpowered
+		# No hard stat caps - players can level indefinitely but gains become smaller over time
 		var health_increase = 0
 		var damage_increase = 0
 		var durability_increase = 0
 		
-		# Define maximum base stats (before character bonuses are applied)
-		var max_base_health = 115 # From starting 100 + max 15
-		var max_base_damage = 18 # From starting 10 + max 8
-		var max_base_durability = 11 # From starting 5 + max 6
+		# Calculate scaling factor based on current base stats (diminishing returns)
+		# As stats grow higher, the chance and size of increases become smaller
+		var health_scaling = max(0.2, 1.0 - (base_health - 100) / 200.0) # Scales from 100% at start to 20% at high levels
+		var damage_scaling = max(0.15, 1.0 - (base_damage - 10) / 50.0) # Scales from 100% to 15%
+		var durability_scaling = max(0.15, 1.0 - (base_durability - 5) / 30.0) # Scales from 100% to 15%
 		
-		# Calculate potential increases with stat caps
-		var health_room = max(0, max_base_health - base_health)
-		var damage_room = max(0, max_base_damage - base_damage)
-		var durability_room = max(0, max_base_durability - base_durability)
-		
-		# Determine actual increases based on available room and level ranges
+		# Level-based growth ranges (base values before scaling)
 		if player_level <= 10:
-			# Early-mid game - moderate growth with caps
-			health_increase = min(health_room, randi_range(2, 4)) # 2-4 health (capped)
-			damage_increase = min(damage_room, randi_range(0, 1)) # 0-1 damage (capped)
-			durability_increase = min(durability_room, randi_range(0, 1)) # 0-1 durability (capped)
-		elif player_level <= 20:
-			# Mid-late game - minimal growth with caps
-			health_increase = min(health_room, randi_range(1, 3)) # 1-3 health (capped)
-			damage_increase = min(damage_room, randi_range(0, 1)) # 0-1 damage (capped)
-			durability_increase = min(durability_room, randi_range(0, 1)) # 0-1 durability (capped)
+			# Early game (Levels 1-10) - BOOSTED for capstone demo visibility
+			# Panelists need to SEE the progression clearly in limited demo time
+			health_increase = randi_range(8, 12)   # Was 3-5, now 8-12 for visual impact
+			damage_increase = randi_range(2, 4)    # Was 3-6, now 2-4 (damage scales well enough)
+			durability_increase = randi_range(1, 2) # Was 3-4, now 1-2 (durability compounds quickly)
+		elif player_level <= 25:
+			# Mid game (Levels 11-25) - Balanced growth
+			health_increase = randi_range(4, 6)
+			damage_increase = randi_range(4, 7)
+			durability_increase = randi_range(4, 5)
+		elif player_level <= 50:
+			# Late game (Levels 26-50) - Moderate growth
+			health_increase = randi_range(5, 7) 
+			damage_increase = randi_range(5, 8) 
+			durability_increase = randi_range(5, 6) 
+		elif player_level <= 100:
+			# Very late game (Levels 51-100) - Small growth
+			health_increase = randi_range(3, 5)
+			damage_increase = 0 if randf() > 0.5 else 5 
+			durability_increase = 0 if randf() > 0.4 else 3
 		else:
-			# Late game - barely any growth with caps
-			health_increase = min(health_room, randi_range(1, 2)) # 1-2 health (capped)
-			damage_increase = min(damage_room, randi_range(0, 1)) # 0-1 damage (capped)
-			durability_increase = min(durability_room, randi_range(0, 1)) # 0-1 durability (capped)
+			# Ultra late game (Levels 101+) - Minimal growth with scaling
+			health_increase = 1 if randf() < 0.8 else 4 
+			damage_increase = 0 if randf() > 0.3 else 3 
+			durability_increase = 0 if randf() > 0.25 else 2
+		
+		# Apply scaling factors to reduce gains as stats grow
+		health_increase = max(3, int(health_increase * health_scaling))
+		damage_increase = int(damage_increase * damage_scaling)
+		durability_increase = int(durability_increase * durability_scaling) 
 		
 		# Store stat increases for UI display
 		last_health_increase = health_increase
@@ -474,9 +487,10 @@ func add_experience(exp_amount):
 		player_damage = base_damage + character_bonuses["damage"]
 		player_durability = base_durability + character_bonuses["durability"]
 		
-		# Log stat increases with cap information
-		print("PlayerManager: Level up stat increases - Health: +", health_increase, ", Damage: +", damage_increase, ", Durability: +", durability_increase)
-		print("PlayerManager: Current base stats - Health: ", base_health, "/", max_base_health, ", Damage: ", base_damage, "/", max_base_damage, ", Durability: ", base_durability, "/", max_base_durability)
+		# Log stat increases with scaling information
+		print("PlayerManager: Level ", player_level, " stat increases - Health: +", health_increase, ", Damage: +", damage_increase, ", Durability: +", durability_increase)
+		print("PlayerManager: Scaling factors - Health: ", "%.2f" % health_scaling, ", Damage: ", "%.2f" % damage_scaling, ", Durability: ", "%.2f" % durability_scaling)
+		print("PlayerManager: Current base stats - Health: ", base_health, ", Damage: ", base_damage, ", Durability: ", base_durability)
 		print("PlayerManager: Final stats (with character bonuses) - Health: ", player_max_health, ", Damage: ", player_damage, ", Durability: ", player_durability)
 		
 		# Recalculate max_exp for next level

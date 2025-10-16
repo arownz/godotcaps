@@ -342,17 +342,29 @@ func add_level_up_message(new_level: int, health_increase: int, damage_increase:
 	# Main level-up announcement
 	add_message("[color=#B8860B]LEVEL UP! You reached level " + str(new_level) + "![/color]")
 	
-	# Show stat increases with high contrast colors (deliberately low for dyslexic balance)
-	add_message("[color=#006400]Health increased by +" + str(health_increase) + " (now " + str(new_health) + ")[/color]")
-	add_message("[color=#8B0000]Damage increased by +" + str(damage_increase) + " (now " + str(new_damage) + ")[/color]")
-	add_message("[color=#000080]Durability increased by +" + str(durability_increase) + " (now " + str(new_durability) + ")[/color]")
+	# Show stat increases with high contrast colors and actual amounts
+	if health_increase > 0:
+		add_message("[color=#006400]Health increased by +" + str(health_increase) + " (now " + str(new_health) + ")[/color]")
+	
+	if damage_increase > 0:
+		add_message("[color=#8B0000]Damage increased by +" + str(damage_increase) + " (now " + str(new_damage) + ")[/color]")
+	
+	if durability_increase > 0:
+		add_message("[color=#000080]Durability increased by +" + str(durability_increase) + " (now " + str(new_durability) + ")[/color]")
+	
+	# Motivational message based on level range
+	if new_level <= 10:
+		add_message("[color=#B8860B]Great progress! I'm proud of you![[/color]")
+	elif new_level <= 25:
+		add_message("[color=#B8860B]You're becoming stronger!  I'm proud of you![[/color]")
+	elif new_level <= 50:
+		add_message("[color=#B8860B]Impressive dedication!  I'm proud of you![[/color]")
+	elif new_level <= 100:
+		add_message("[color=#B8860B]Master level achieved! I'm proud of you![/color]")
+	else:
+		add_message("[color=#B8860B]You're an inspiration to all learners![/color]")
 
 # Add motivational message encouraging word challenges for dyslexic learners
-	# Check if near stat caps and provide appropriate encouragement
-	if health_increase == 0 and damage_increase == 0 and durability_increase == 0:
-		add_message("[color=#B8860B]Stats at maximum! Word challenges are your key to power![/color]")
-	else:
-		add_message("[color=#B8860B]Practice word challenges to grow even stronger![/color]")
 
 # Clear all log entries
 func clear_log() -> void:

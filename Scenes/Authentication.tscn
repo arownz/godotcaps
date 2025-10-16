@@ -144,9 +144,9 @@ horizontal_alignment = 1
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/ContentContainer/RightPanel/MainContainer"]
 layout_mode = 0
 offset_left = 17.0
-offset_top = 98.0
+offset_top = 114.0
 offset_right = 602.0
-offset_bottom = 701.0
+offset_bottom = 713.0
 alignment = 1
 
 [node name="TabContainer" type="TabContainer" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer"]
@@ -328,7 +328,7 @@ text = "Sign In with Google"
 [node name="Register" type="VBoxContainer" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer"]
 visible = false
 layout_mode = 2
-theme_override_constants/separation = 4
+theme_override_constants/separation = 5
 metadata/_tab_index = 1
 
 [node name="Spacer" type="Control" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
@@ -529,42 +529,6 @@ theme_override_font_sizes/font_size = 14
 text = "Passwords do not match"
 clip_text = true
 
-[node name="PrivacySpacer" type="Control" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
-custom_minimum_size = Vector2(0, 10)
-layout_mode = 2
-
-[node name="PrivacyContainer" type="HBoxContainer" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
-layout_mode = 2
-theme_override_constants/separation = 10
-
-[node name="PrivacyCheckBox" type="CheckBox" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/PrivacyContainer"]
-layout_mode = 2
-mouse_default_cursor_shape = 2
-theme_override_fonts/font = ExtResource("2_edc1m")
-theme_override_font_sizes/font_size = 16
-theme_override_styles/focus = SubResource("StyleBoxEmpty_6oq4l")
-
-[node name="PrivacyLabel" type="LinkButton" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/PrivacyContainer"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(0, 0.342275, 0.342276, 1)
-theme_override_constants/outline_size = 3
-theme_override_fonts/font = ExtResource("3_4bnr5")
-theme_override_font_sizes/font_size = 16
-theme_override_styles/focus = SubResource("StyleBoxEmpty_6oq4l")
-text = "I accept the Privacy Policy"
-underline = 1
-
-[node name="PrivacyErrorLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
-visible = false
-layout_mode = 2
-theme_override_colors/font_color = Color(0.9999998, 0.11943438, 0.12700897, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("2_edc1m")
-theme_override_font_sizes/font_size = 14
-text = "You must accept the Privacy Policy to register"
-clip_text = true
-
 [node name="RegisterButton" type="Button" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
@@ -759,9 +723,6 @@ stream = ExtResource("10_c45f6")
 [connection signal="text_changed" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/ConfirmPasswordContainer/ConfirmPasswordLineEdit" to="." method="_on_confirm_password_text_changed"]
 [connection signal="mouse_entered" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/ConfirmPasswordContainer/ShowConfirmPasswordButton" to="." method="_on_show_confirm_password_button_mouse_entered"]
 [connection signal="pressed" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/ConfirmPasswordContainer/ShowConfirmPasswordButton" to="." method="_on_show_confirm_password_button_pressed"]
-[connection signal="toggled" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/PrivacyContainer/PrivacyCheckBox" to="." method="_on_privacy_checkbox_toggled"]
-[connection signal="mouse_entered" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/PrivacyContainer/PrivacyLabel" to="." method="_on_privacy_label_mouse_entered"]
-[connection signal="pressed" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/PrivacyContainer/PrivacyLabel" to="." method="_on_privacy_label_pressed"]
 [connection signal="mouse_entered" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegisterButton" to="." method="_on_register_button_mouse_entered"]
 [connection signal="pressed" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegisterButton" to="." method="_on_register_button_pressed"]
 [connection signal="mouse_entered" from="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword/BackToLoginButton" to="." method="_on_back_to_login_button_mouse_entered"]

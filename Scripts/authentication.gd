@@ -22,6 +22,9 @@ var admin_button_visible_duration = 10.0 # Admin button stays visible for 10 sec
 # Notification popup for user feedback
 var notification_popup
 
+# Terms and Privacy acceptance tracking
+var terms_accepted = false
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	# Add fade-in animation
@@ -62,8 +65,105 @@ func _ready():
 	get_tree().root.size_changed.connect(_adjust_layout_for_screen_size)
 	_adjust_layout_for_screen_size()
 	
-	# Handle authentication check on startup
+	# Check if terms have been accepted before
+	_check_and_show_terms_popup()
+
+# Check if user has accepted terms, if not show the popup
+func _check_and_show_terms_popup():
+	# Use the static method from TermsPrivacyPopup to check acceptance
+	var has_accepted = _has_terms_been_accepted()
+	
+	if not has_accepted:
+		# Show terms popup and disable all interaction with the form
+		_show_initial_terms_popup()
+	else:
+		terms_accepted = true
+		print("Terms already accepted, allowing access to authentication")
+	
+	# Handle authentication check on startup only if terms accepted
+	if terms_accepted:
+		check_existing_auth()
+
+# Check if terms have been accepted (static method)
+func _has_terms_been_accepted() -> bool:
+	if OS.has_feature('web'):
+		# Check localStorage in web build
+		var js_code = """
+		(function() {
+			try {
+				var accepted = localStorage.getItem('lexia_terms_accepted');
+				return accepted === 'true';
+			} catch(e) {
+				console.error('Error checking terms acceptance:', e);
+				return false;
+			}
+		})();
+		"""
+		return JavaScriptBridge.eval(js_code)
+	else:
+		# For desktop, check file flag
+		var file_path = "user://terms_accepted.dat"
+		return FileAccess.file_exists(file_path)
+
+# Show initial terms and privacy policy popup (first-time users)
+func _show_initial_terms_popup():
+	print("Showing initial terms and privacy policy popup")
+	
+	# Load the reusable TermsPrivacyPopup scene
+	var terms_popup_scene = load("res://Scenes/TermsPrivacyPopup.tscn")
+	var terms_popup_instance = terms_popup_scene.instantiate()
+	
+	# Connect to the terms_accepted signal
+	terms_popup_instance.terms_accepted.connect(_on_terms_accepted)
+	
+	# Add to scene tree
+	add_child(terms_popup_instance)
+	
+	# Disable all input elements until terms are accepted
+	_set_authentication_inputs_disabled(true)
+
+# Called when user accepts terms from the popup
+func _on_terms_accepted():
+	print("Authentication: Terms accepted, enabling inputs")
+	
+	# Set flag
+	terms_accepted = true
+	
+	# Enable authentication inputs
+	_set_authentication_inputs_disabled(false)
+	
+	# Now check for existing auth
 	check_existing_auth()
+
+# Disable/enable all authentication inputs
+func _set_authentication_inputs_disabled(disabled: bool):
+	# Disable/enable all input fields and buttons in the authentication form
+	var tab_container = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer
+	
+	# Set modulate to show visual feedback
+	var alpha = 0.5 if disabled else 1.0
+	tab_container.modulate = Color(1, 1, 1, alpha)
+	
+	# Disable mouse input
+	tab_container.mouse_filter = Control.MOUSE_FILTER_IGNORE if disabled else Control.MOUSE_FILTER_STOP
+
+# Override login/register/google buttons to check terms acceptance first
+func _check_terms_before_action() -> bool:
+	if not terms_accepted:
+		print("Terms not accepted, showing popup again")
+		
+		# Check if popup already exists
+		var existing_popup = get_node_or_null("TermsPrivacyPopup")
+		if existing_popup:
+			# Popup already visible, just flash it
+			var tween = create_tween()
+			tween.tween_property(existing_popup, "modulate", Color(1.2, 1.2, 1.2, 1), 0.1)
+			tween.tween_property(existing_popup, "modulate", Color(1, 1, 1, 1), 0.1)
+		else:
+			# Show popup again
+			_show_initial_terms_popup()
+		return false
+	return true
 
 # Initialize Firebase auth persistence for web builds (simplified approach)
 func _initialize_firebase_persistence():
@@ -549,61 +649,6 @@ func _on_confirm_password_text_changed(new_text):
 		password_field.caret_column = 128
 		show_message("Password is too long! Maximum 128 characters.", false)
 
-func _on_privacy_checkbox_toggled(_pressed):
-	# Hide error label when checkbox is toggled
-	$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/PrivacyErrorLabel.visible = false
-
-func _on_privacy_label_mouse_entered():
-	$ButtonHover.play()
-
-func _on_privacy_label_pressed():
-	$ButtonClick.play()
-	_show_privacy_policy()
-
-func _show_privacy_policy():
-	# Note: Default horizontal alignment in NotificationPopUp MessageLabel is center
-	# To show bullets on left, we use BBCode with left alignment tags
-	# Default color is yellow (#fbf487), we use [color=#ffffff] for white bullets
-	var privacy_text = """
-WHO WE SERVE
-[color=#ffffff]This educational game is designed for dyslexic learners, including children, parents, and professionals.[/color]
-
-DATA COLLECTION
-[left][color=#ffffff]We collect:
-• Username and email for account creation
-• Birth date for age-appropriate content
-• Learning progress and game statistics
-• Player preferences and settings[/color][/left]
-
-HOW WE USE YOUR DATA
-[left][color=#ffffff]• Personalized learning experiences
-• Track educational progress
-• Improve teaching methods and features
-• Ensure age-appropriate content[/color][/left]
-
-CHILDREN'S PRIVACY
-[left][color=#ffffff]Special protections for users under 13:
-• Parental consent required
-• Limited data collection for minors
-• No third-party sharing of children's data
-• Secure Firebase storage[/color][/left]
-
-YOUR RIGHTS
-[left][color=#ffffff]• Access your data anytime
-• Request data correction or deletion
-• Opt out of non-essential collection
-• Export your progress data[/color][/left]
-
-DATA SECURITY
-[color=#ffffff]We use Firebase's secure infrastructure with industry-standard encryption to protect your information.[/color]
-
-CONTACT
-[color=#ffffff]contact.charlescollantes@gmail.com[/color]
-
-[color=#ffffff]By accepting, you acknowledge reading and understanding this privacy policy.[/color]"""
-	
-	notification_popup.show_notification("Privacy Policy", privacy_text, "OK")
-
 func _on_reset_email_text_changed(new_text):
 	# Hide error label when user starts typing
 	$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword/ResetEmailErrorLabel.visible = false
@@ -626,7 +671,6 @@ func clear_all_error_labels():
 	$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegEmailErrorLabel.visible = false
 	$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegPasswordErrorLabel.visible = false
 	$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/ConfirmPasswordErrorLabel.visible = false
-	$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/PrivacyErrorLabel.visible = false
 	
 	# Forgot password tab
 	$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword/ResetEmailErrorLabel.visible = false
@@ -634,6 +678,11 @@ func clear_all_error_labels():
 # ===== Login Functions =====
 func _on_login_button_pressed():
 	$ButtonClick.play()
+	
+	# Check if terms have been accepted first
+	if not _check_terms_before_action():
+		return
+	
 	# Don't clear storage for regular login - we want persistence
 	# Only clear storage if there are authentication conflicts
 	var email = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/EmailLineEdit.text
@@ -670,6 +719,11 @@ func _on_login_button_pressed():
 # ===== Registration Functions =====
 func _on_register_button_pressed():
 	$ButtonClick.play()
+	
+	# Check if terms have been accepted first
+	if not _check_terms_before_action():
+		return
+	
 	var username = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/UsernameLineEdit.text
 	var email = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegEmailLineEdit.text
 	var password = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegPasswordContainer/RegPasswordLineEdit.text
@@ -737,13 +791,6 @@ func _on_register_button_pressed():
 		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/ConfirmPasswordErrorLabel.visible = true
 		has_error = true
 	
-	# Validate privacy policy checkbox
-	var privacy_checkbox = $MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/PrivacyContainer/PrivacyCheckBox
-	if not privacy_checkbox.button_pressed:
-		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/PrivacyErrorLabel.text = "You must accept the Privacy Policy to register"
-		$MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/PrivacyErrorLabel.visible = true
-		has_error = true
-	
 	if has_error:
 		return
 	
@@ -772,6 +819,11 @@ func _on_register_button_pressed():
 # ===== Google Sign-In =====
 func _on_sign_in_google_button_pressed():
 	$ButtonClick.play()
+	
+	# Check if terms have been accepted first
+	if not _check_terms_before_action():
+		return
+	
 	var provider = Firebase.Auth.get_GoogleProvider()
 	
 	show_message("Redirecting to Google...", true)

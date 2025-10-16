@@ -208,11 +208,20 @@ func _load_default_enemy_animation():
         print("EnemyManager: Could not load default enemy animation")
 
 func get_exp_reward():
-    # Calculate experience based on enemy stats and scaling to match new player leveling system
+    # For capstone presentation - use exp_reward from resource for predictable demo
+    # This allows fast leveling (50 exp per normal enemy = 2 enemies per level)
+    # Boss rewards are higher for visual impact during demonstration
+    
+    # Return resource-defined exp_reward if available
+    if enemy_exp_reward > 0:
+        print("EnemyManager: Using resource exp_reward: ", enemy_exp_reward)
+        return enemy_exp_reward
+    
+    # Fallback to calculated exp if resource doesn't define it
     var dungeon_num = battle_scene.dungeon_manager.dungeon_num
     var stage_num = battle_scene.dungeon_manager.stage_num
     
-    # Base exp scales with dungeon and stage to match player leveling curve
+    # Base exp scales with dungeon and stage
     var base_exp = 15 + (dungeon_num - 1) * 10 + (stage_num - 1) * 3 # 15-45 range
     
     # Stage multiplier for within-dungeon progression
@@ -224,14 +233,14 @@ func get_exp_reward():
         "normal":
             type_multiplier = 1.0
         "boss":
-            type_multiplier = 2.5 # Bosses give significant exp but not overwhelming
+            type_multiplier = 2.5
         _:
             type_multiplier = 1.0
     
     # Calculate final exp reward
     var total_exp = int(base_exp * stage_multiplier * type_multiplier)
     
-    print("EnemyManager: Exp calculation - Base: ", base_exp, ", Stage mult: ", stage_multiplier, ", Type mult: ", type_multiplier, ", Total: ", total_exp)
+    print("EnemyManager: Fallback exp calculation - Base: ", base_exp, ", Stage mult: ", stage_multiplier, ", Type mult: ", type_multiplier, ", Total: ", total_exp)
     
     return max(total_exp, 8) # Minimum 8 exp to ensure progress
 

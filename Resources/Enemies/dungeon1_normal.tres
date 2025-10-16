@@ -6,10 +6,10 @@
 [resource]
 script = ExtResource("1_1")
 enemy_name = "Slime"
-health = 60
-damage = 8
-durability = 2
-exp_reward = 25
+health = 70
+damage = 10
+durability = 3
+exp_reward = 50
 skill_name = "Slime Bounce"
 description = "A gelatinous creature from the forest depths."
 animation_scene = ExtResource("2_1")

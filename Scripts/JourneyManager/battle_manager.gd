@@ -582,6 +582,26 @@ func _on_challenge_cancelled():
 
 # Show unified dungeon completion and character unlock notification
 func _show_dungeon_completion_notification(completed_dungeon_num: int):
+	# Check if user has already seen this dungeon completion notification before
+	if !Firebase.Auth.auth:
+		return
+		
+	var user_id = Firebase.Auth.auth.localid
+	var collection = Firebase.Firestore.collection("dyslexia_users")
+	
+	# Get user document to check completion history
+	var document = await collection.get_doc(user_id)
+	if document and !("error" in document.keys() and document.get_value("error")):
+		var dungeon_notifications_shown = document.get_value("dungeon_notifications_shown")
+		if not dungeon_notifications_shown:
+			dungeon_notifications_shown = {}
+		
+		# Check if notification for this dungeon was already shown
+		var dungeon_key = "dungeon_" + str(completed_dungeon_num)
+		if dungeon_notifications_shown.has(dungeon_key) and dungeon_notifications_shown[dungeon_key] == true:
+			print("BattleManager: Dungeon " + str(completed_dungeon_num) + " completion notification already shown, skipping")
+			return
+	
 	var next_dungeon = completed_dungeon_num + 1
 	var next_word_length = ""
 	
@@ -607,6 +627,9 @@ func _show_dungeon_completion_notification(completed_dungeon_num: int):
 	else:
 		message = "All dungeons completed! You are now a master reader!"
 	
+	# Mark this dungeon notification as shown in Firebase
+	await _mark_dungeon_notification_shown(completed_dungeon_num)
+	
 	# Get notification popup from battle scene (should exist)
 	var notification_popup = battle_scene.get_node_or_null("NotificationPopUp")
 	if notification_popup:
@@ -615,6 +638,30 @@ func _show_dungeon_completion_notification(completed_dungeon_num: int):
 		notification_popup.show_notification(title, message, button_text)
 	else:
 		print("BattleManager: Warning - notification popup not found")
+
+# Mark dungeon completion notification as shown in Firebase
+func _mark_dungeon_notification_shown(dungeon_num: int):
+	if !Firebase.Auth.auth:
+		return
+		
+	var user_id = Firebase.Auth.auth.localid
+	var collection = Firebase.Firestore.collection("dyslexia_users")
+	
+	var document = await collection.get_doc(user_id)
+	if document and !("error" in document.keys() and document.get_value("error")):
+		var dungeon_notifications_shown = document.get_value("dungeon_notifications_shown")
+		if not dungeon_notifications_shown:
+			dungeon_notifications_shown = {}
+		
+		var dungeon_key = "dungeon_" + str(dungeon_num)
+		dungeon_notifications_shown[dungeon_key] = true
+		
+		var update_data = {
+			"dungeon_notifications_shown": dungeon_notifications_shown
+		}
+		
+		await collection.update(user_id, update_data)
+		print("BattleManager: Marked dungeon " + str(dungeon_num) + " notification as shown in Firebase")
 
 # Check for character unlocks after dungeon completion - returns unlock info
 func _check_character_unlock(completed_dungeon_num: int) -> Dictionary:
