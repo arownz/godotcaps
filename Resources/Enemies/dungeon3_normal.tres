@@ -6,8 +6,8 @@
 [resource]
 script = ExtResource("1_1")
 enemy_name = "Boar"
-health = 120
-damage = 22
+health = 110
+damage = 21
 durability = 6
 exp_reward = 50
 skill_name = "Charge"

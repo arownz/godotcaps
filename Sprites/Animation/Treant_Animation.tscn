@@ -275,6 +275,9 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_hc7j1")
+}, {
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_ekcs8")
 }, {
 "duration": 1.0,
@@ -291,12 +294,6 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_e2d4x")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_hc7j1")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_hc7j1")
 }],
 "loop": false,
 "name": &"skill",
@@ -308,7 +305,7 @@ position = Vector2(-2, -23)
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_j63xv")
-animation = &"idle"
+animation = &"skill"
 autoplay = "idle"
 
 [node name="enemy_hurt" type="AudioStreamPlayer" parent="."]

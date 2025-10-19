@@ -228,10 +228,30 @@ offset_top = 12.477468
 offset_right = 533.6078
 offset_bottom = 20.477467
 scale = Vector2(2.89615, 3.31034)
-tooltip_text = "Edit Username"
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("7_rwnca")
 texture_hover = ExtResource("11_6o1ar")
+
+[node name="CharacterLabel" type="Label" parent="ProfileContainer/UserInfoArea/EditNameButton"]
+visible = false
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -6.270335
+offset_top = -0.9931424
+offset_right = 266.72968
+offset_bottom = 33.00686
+grow_horizontal = 2
+scale = Vector2(0.33229575, 0.287486)
+theme_override_colors/font_color = Color(0.9764706, 1, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_fonts/font = ExtResource("2_73kok")
+theme_override_font_sizes/font_size = 18
+text = "Edit Username"
+horizontal_alignment = 1
 
 [node name="EmailLabel" type="Label" parent="ProfileContainer/UserInfoArea"]
 layout_mode = 0
@@ -285,10 +305,30 @@ offset_top = 46.831238
 offset_right = 534.0518
 offset_bottom = 54.831245
 scale = Vector2(2.92016, 3.53089)
-tooltip_text = "Copy UID to Clipboard"
 mouse_default_cursor_shape = 2
 texture_normal = ExtResource("8_ampbo")
 texture_hover = ExtResource("13_q75ak")
+
+[node name="CharacterLabel" type="Label" parent="ProfileContainer/UserInfoArea/CopyUIDButton"]
+visible = false
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -17.28685
+offset_top = -0.10807389
+offset_right = 255.71313
+offset_bottom = 33.891926
+grow_horizontal = 2
+scale = Vector2(0.33229575, 0.287486)
+theme_override_colors/font_color = Color(0.9764706, 1, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_fonts/font = ExtResource("2_73kok")
+theme_override_font_sizes/font_size = 18
+text = "Copy UID"
+horizontal_alignment = 1
 
 [node name="RankLabel" type="Label" parent="ProfileContainer/UserInfoArea"]
 layout_mode = 0
@@ -330,7 +370,7 @@ offset_left = 33.0
 offset_top = 334.0
 offset_right = 716.0
 offset_bottom = 337.0
-color = Color(0, 0, 0, 0.895)
+color = Color(0, 0, 0, 0.89411765)
 
 [node name="StatsArea" type="Control" parent="ProfileContainer"]
 layout_mode = 1
@@ -492,12 +532,33 @@ texture_normal = ExtResource("11_tilb2")
 texture_hover = ExtResource("12_82scp")
 stretch_mode = 0
 
+[node name="CharacterLabel" type="Label" parent="ProfileContainer/CharacterContainer"]
+visible = false
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -124.84229
+offset_top = 280.7459
+offset_right = 148.15771
+offset_bottom = 314.7459
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.9764706, 1, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_fonts/font = ExtResource("2_73kok")
+theme_override_font_sizes/font_size = 18
+text = "Characters Selection"
+horizontal_alignment = 1
+
 [node name="DungeonArea" type="Button" parent="ProfileContainer"]
 layout_mode = 1
-offset_left = 506.0
-offset_top = 357.0
-offset_right = 747.0
-offset_bottom = 679.0
+offset_left = 521.6376
+offset_top = 356.1601
+offset_right = 762.6376
+offset_bottom = 678.16003
+scale = Vector2(0.8379948, 0.8379948)
 mouse_default_cursor_shape = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_pressed")
@@ -554,6 +615,26 @@ theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_uyv5l")
 theme_override_font_sizes/font_size = 18
 text = "5/5"
+
+[node name="ProgressLabel" type="Label" parent="ProfileContainer/DungeonArea"]
+visible = false
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -164.96307
+offset_top = 337.3962
+offset_right = 157.03693
+offset_bottom = 371.3962
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.9764706, 1, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_fonts/font = ExtResource("2_73kok")
+theme_override_font_sizes/font_size = 18
+text = "Go to progress dungeon"
+horizontal_alignment = 1
 
 [node name="LogoutButton" type="Button" parent="ProfileContainer"]
 layout_mode = 0
@@ -731,6 +812,14 @@ stream = ExtResource("23_q75ak")
 [connection signal="pressed" from="ProfileContainer/CloseButton" to="." method="_on_close_button_pressed"]
 [connection signal="mouse_entered" from="ProfileContainer/ProfilePictureButton" to="." method="_on_profile_picture_button_mouse_entered"]
 [connection signal="pressed" from="ProfileContainer/ProfilePictureButton" to="." method="_on_profile_picture_button_pressed"]
+[connection signal="mouse_entered" from="ProfileContainer/UserInfoArea/EditNameButton" to="." method="_on_edit_name_button_mouse_entered"]
+[connection signal="mouse_exited" from="ProfileContainer/UserInfoArea/EditNameButton" to="." method="_on_edit_name_button_mouse_exited"]
+[connection signal="mouse_entered" from="ProfileContainer/UserInfoArea/CopyUIDButton" to="." method="_on_copy_uid_button_mouse_entered"]
+[connection signal="mouse_exited" from="ProfileContainer/UserInfoArea/CopyUIDButton" to="." method="_on_copy_uid_button_mouse_exited"]
+[connection signal="mouse_entered" from="ProfileContainer/CharacterContainer" to="." method="_on_character_container_mouse_entered"]
+[connection signal="mouse_exited" from="ProfileContainer/CharacterContainer" to="." method="_on_character_container_mouse_exited"]
+[connection signal="mouse_entered" from="ProfileContainer/DungeonArea" to="." method="_on_dungeon_area_mouse_entered"]
+[connection signal="mouse_exited" from="ProfileContainer/DungeonArea" to="." method="_on_dungeon_area_mouse_exited"]
 [connection signal="pressed" from="ProfileContainer/LogoutButton" to="." method="_on_logout_button_pressed"]
 [connection signal="text_submitted" from="EditUsernamePanel/EditContainer/ContentContainer/VBoxContainer/InputContainer/UsernameLineEdit" to="." method="_on_username_text_submitted"]
 [connection signal="mouse_entered" from="EditUsernamePanel/EditContainer/ContentContainer/VBoxContainer/ButtonContainer/CancelButton" to="." method="_on_cancel_button_mouse_entered"]

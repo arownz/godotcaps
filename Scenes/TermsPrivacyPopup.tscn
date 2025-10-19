@@ -103,11 +103,11 @@ text = "[center]WELCOME TO LEXIA[/center]
 [center]HOW WE USE YOUR DATA[/center]
 [left][color=#ffffff]• Personalized learning experiences
 • Track educational progress
-• Improve teaching methods and features
+• Improve methods and features
 • Ensure age-appropriate content[/color][/left]
 
 [center]CHILDREN'S PRIVACY[/center]
-[left][color=#ffffff]Special protections for users under 13:
+[left][color=#ffffff]Special protections for users 5-7:
 • Parental consent required
 • Limited data collection for minors
 • No third-party sharing of children's data
@@ -125,7 +125,7 @@ text = "[center]WELCOME TO LEXIA[/center]
 [center]CONTACT[/center]
 [color=#ffffff]contact.charlescollantes@gmail.com[/color]
 
-[center]By clicking \"I Agree\", you acknowledge that you have read, understood, and accept these terms and our privacy policy.[/center]"
+[center]By clicking \"Agree\", you acknowledge that you have read, understood, and accept these terms and our privacy policy.[/center]"
 fit_content = true
 scroll_active = false
 

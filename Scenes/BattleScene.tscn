@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=3 uid="uid://cfead7bcuslp4"]
+[gd_scene load_steps=28 format=3 uid="uid://cfead7bcuslp4"]
 
 [ext_resource type="Texture2D" uid="uid://cxqd6wyqy8g22" path="res://gui/Update/Backgrounds/battlescene background.png" id="2_ixjr5"]
 [ext_resource type="Texture2D" uid="uid://2jgthsch6pn" path="res://gui/Update/Backgrounds/forestbig.png" id="3_hueq0"]
@@ -10,7 +10,6 @@
 [ext_resource type="Texture2D" uid="uid://c3jmmbnxol7mb" path="res://gui/Update/UI/active skill bar icon.png" id="7_cja1x"]
 [ext_resource type="Texture2D" uid="uid://c8vnqmxwy0lsw" path="res://gui/Update/icons/small settings.png" id="7_ixjr5"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="8_2tp6q"]
-[ext_resource type="FontFile" uid="uid://cvgewg0m0haaj" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold-Italic.otf" id="8_ksqd2"]
 [ext_resource type="Texture2D" uid="uid://v6kvgpaeyimy" path="res://gui/Update/UI/hp_icon.png" id="9_ixjr5"]
 [ext_resource type="Texture2D" uid="uid://bmjpxe8wculxv" path="res://gui/Update/UI/exp4.png" id="10_1yevk"]
 [ext_resource type="Texture2D" uid="uid://ca1vrebej7etf" path="res://gui/Update/icons/lock icon.png" id="10_ksqd2"]
@@ -412,7 +411,7 @@ grow_vertical = 2
 theme_override_colors/font_color = Color(1, 0.37130922, 0.18131006, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 5
-theme_override_fonts/font = ExtResource("8_ksqd2")
+theme_override_fonts/font = ExtResource("8_2tp6q")
 theme_override_font_sizes/font_size = 80
 text = "FIGHT!"
 horizontal_alignment = 1
@@ -655,8 +654,8 @@ offset_top = -6.65788
 offset_right = 125.927
 offset_bottom = 37.3421
 scale = Vector2(0.143098, 0.143098)
-theme_override_colors/font_color = Color(0.054902, 0.27451, 0.47451, 1)
-theme_override_colors/font_shadow_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(0.9764706, 1, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/shadow_offset_x = 1
 theme_override_constants/shadow_offset_y = 1
 theme_override_fonts/font = ExtResource("8_2tp6q")

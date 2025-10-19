@@ -241,6 +241,9 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_trsto")
+}, {
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_ykal7")
 }, {
 "duration": 1.0,
@@ -257,12 +260,6 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_vbqwn")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_trsto")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_trsto")
 }],
 "loop": false,
 "name": &"skill",
@@ -273,7 +270,7 @@ animations = [{
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_ovbb4")
-animation = &"auto_attack"
+animation = &"skill"
 autoplay = "idle"
 
 [node name="enemy_autoattack" type="AudioStreamPlayer" parent="."]

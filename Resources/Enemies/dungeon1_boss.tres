@@ -6,10 +6,9 @@
 [resource]
 script = ExtResource("1_1")
 enemy_name = "Plain Guardian"
-health = 100
+health = 80
 damage = 16
-durability = 5
-exp_reward = 125
+exp_reward = 50
 skill_name = "Root Plain"
 description = "A massive plain guardian with crushing strength"
 animation_scene = ExtResource("2_1")

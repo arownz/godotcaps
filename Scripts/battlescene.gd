@@ -1086,21 +1086,14 @@ func _save_stage_time_to_firebase(completion_time: float):
 # ===== Damage Indicator System =====
 func _show_damage_indicator(damage_amount: int, target: String):
 	var target_position: Vector2
-	var target_node: Node2D
 	
-	# Get the target position based on whether it's player or enemy
+	# Get the exact position node based on target (ignore animation nodes)
 	if target == "player":
-		if player_manager.player_animation:
-			target_node = player_manager.player_animation
-			target_position = target_node.global_position
-		else:
-			target_position = $MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer/PlayerPosition.global_position
+		var position_node = $MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer/PlayerPosition
+		target_position = position_node.global_position
 	elif target == "enemy":
-		if enemy_manager.enemy_animation:
-			target_node = enemy_manager.enemy_animation
-			target_position = target_node.global_position
-		else:
-			target_position = $MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer/EnemyPosition.global_position
+		var position_node = $MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer/EnemyPosition
+		target_position = position_node.global_position
 	else:
 		print("Invalid damage indicator target: ", target)
 		return
@@ -1115,25 +1108,22 @@ func _show_damage_indicator(damage_amount: int, target: String):
 	damage_label.add_theme_constant_override("shadow_offset_y", 1)
 
 	# Add dyslexic-friendly font
-	var dyslexic_font = load("res://Fonts/dyslexiafont/OpenDyslexic-Italic.otf")
+	var dyslexic_font = load("res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf")
 	if dyslexic_font:
 		damage_label.add_theme_font_override("font", dyslexic_font)
 	
-	# Add to battle container for proper layering
+	# Add to battle container for proper layering and clipping
 	var battle_container = $MainContainer/BattleAreaContainer/BattleContainer
 	battle_container.add_child(damage_label)
 	
-	# Position near target with random offset to avoid overlap
-	var random_offset = Vector2(
-		randf_range(-30, 30), # Random horizontal offset
-		randf_range(-40, -10) # Random upward offset
-	)
-	damage_label.position = target_position + random_offset
+	# Convert global position to local position within battle container
+	# Control nodes don't have to_local(), so calculate manually
+	var battle_container_global_pos = battle_container.global_position
+	var local_pos = target_position - battle_container_global_pos
 	
-	# Ensure label doesn't go off screen
-	var viewport_size = get_viewport_rect().size
-	damage_label.position.x = clamp(damage_label.position.x, 0, viewport_size.x - 50)
-	damage_label.position.y = clamp(damage_label.position.y, 50, viewport_size.y - 50)
+	# Position at exact target with small upward offset to avoid overlap
+	var offset = Vector2(0, -20)
+	damage_label.position = local_pos + offset
 	
 	# Animate the damage indicator
 	_animate_damage_indicator(damage_label)
@@ -1163,42 +1153,43 @@ func _animate_damage_indicator(label: Label):
 # Show counter damage indicator with special styling
 func _show_counter_damage_indicator(damage_amount: int, target: String, _bonus_damage: int):
 	var target_position: Vector2
-	var target_node: Node2D
 	
-	# Get the target position
+	# Get the exact position node for enemy (counter damage is always dealt to enemy)
 	if target == "enemy":
-		if enemy_manager.enemy_animation:
-			target_node = enemy_manager.enemy_animation
-			target_position = target_node.global_position
-		else:
-			target_position = $MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer/EnemyPosition.global_position
+		var position_node = $MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer/EnemyPosition
+		target_position = position_node.global_position
 	else:
 		return
 	
-	# Create counter damage label with special styling
+	# Create counter damage label with special styling - slightly smaller to prevent overflow
 	var damage_label = Label.new()
 	damage_label.text = "-" + str(damage_amount) + " COUNTER!"
-	damage_label.add_theme_font_size_override("font_size", 28)
+	damage_label.add_theme_font_size_override("font_size", 22) # Reduced from 28 to prevent overflow
 	damage_label.add_theme_color_override("font_color", Color.GOLD)
 	damage_label.add_theme_color_override("font_shadow_color", Color.BLACK)
 	damage_label.add_theme_constant_override("shadow_offset_x", -2)
 	damage_label.add_theme_constant_override("shadow_offset_y", 1)
 
 	# Add dyslexic-friendly font
-	var dyslexic_font = load("res://Fonts/dyslexiafont/OpenDyslexic-Bold-Italic.otf")
+	var dyslexic_font = load("res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf")
 	if dyslexic_font:
 		damage_label.add_theme_font_override("font", dyslexic_font)
 	
-	# Add to battle container
+	# Add to battle container for proper layering and clipping
 	var battle_container = $MainContainer/BattleAreaContainer/BattleContainer
 	battle_container.add_child(damage_label)
 	
-	# Position with larger offset for counter attacks
-	var random_offset = Vector2(
-		randf_range(-40, 40),
-		randf_range(-60, -20)
-	)
-	damage_label.position = target_position + random_offset
+	# Convert global position to local position within battle container
+	# Control nodes don't have to_local(), so calculate manually
+	var battle_container_global_pos = battle_container.global_position
+	var local_pos = target_position - battle_container_global_pos
+	
+	# Position at exact target with upward offset
+	var offset = Vector2(0, -30)
+	damage_label.position = local_pos + offset
+	
+	# Set clip mode to prevent overflow into RightContainer
+	damage_label.clip_contents = true
 	
 	# Animate with more dramatic effect for counters
 	_animate_counter_damage_indicator(damage_label)
@@ -1206,42 +1197,43 @@ func _show_counter_damage_indicator(damage_amount: int, target: String, _bonus_d
 # Show skill damage indicator with special styling
 func _show_skill_damage_indicator(damage_amount: int, target: String):
 	var target_position: Vector2
-	var target_node: Node2D
 	
-	# Get the target position
+	# Get the exact position node for player (skill damage is dealt to player)
 	if target == "player":
-		if player_manager.player_animation:
-			target_node = player_manager.player_animation
-			target_position = target_node.global_position
-		else:
-			target_position = $MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer/PlayerPosition.global_position
+		var position_node = $MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer/PlayerPosition
+		target_position = position_node.global_position
 	else:
 		return
 	
 	# Create skill damage label with special styling
 	var damage_label = Label.new()
 	damage_label.text = "-" + str(damage_amount) + " SKILL DAMAGE!"
-	damage_label.add_theme_font_size_override("font_size", 26)
+	damage_label.add_theme_font_size_override("font_size", 24) # Reduced from 26 for better fit
 	damage_label.add_theme_color_override("font_color", Color.ORANGE_RED)
 	damage_label.add_theme_color_override("font_shadow_color", Color.BLACK)
 	damage_label.add_theme_constant_override("shadow_offset_x", -3)
 	damage_label.add_theme_constant_override("shadow_offset_y", 1)
 
 	# Add dyslexic-friendly font
-	var dyslexic_font = load("res://Fonts/dyslexiafont/OpenDyslexic-Bold-Italic.otf")
+	var dyslexic_font = load("res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf")
 	if dyslexic_font:
 		damage_label.add_theme_font_override("font", dyslexic_font)
 	
-	# Add to battle container
+	# Add to battle container for proper layering and clipping
 	var battle_container = $MainContainer/BattleAreaContainer/BattleContainer
 	battle_container.add_child(damage_label)
 	
-	# Position with offset
-	var random_offset = Vector2(
-		randf_range(-35, 35),
-		randf_range(-50, -15)
-	)
-	damage_label.position = target_position + random_offset
+	# Convert global position to local position within battle container
+	# Control nodes don't have to_local(), so calculate manually
+	var battle_container_global_pos = battle_container.global_position
+	var local_pos = target_position - battle_container_global_pos
+	
+	# Position at exact target with upward offset
+	var offset = Vector2(0, -25)
+	damage_label.position = local_pos + offset
+	
+	# Set clip mode to prevent overflow
+	damage_label.clip_contents = true
 	
 	# Animate with special effect for skill damage
 	_animate_skill_damage_indicator(damage_label)

@@ -931,5 +931,54 @@ func _update_character_animation(data):
 			print("ProfilePopUp: CharacterContainer not found")
 
 
-func _on_profile_picture_button_mouse_entered() -> void:
+func _on_profile_picture_button_mouse_entered():
 	$ButtonHover.play()
+
+
+func _on_character_container_mouse_entered():
+	$ButtonHover.play()
+	var character_label = $ProfileContainer/CharacterContainer/CharacterLabel
+	if character_label:
+		character_label.visible = true
+
+func _on_character_container_mouse_exited():
+	var character_label = $ProfileContainer/CharacterContainer/CharacterLabel
+	if character_label:
+		character_label.visible = false
+
+
+func _on_dungeon_area_mouse_entered():
+	$ButtonHover.play()
+	var dungeon_label = $ProfileContainer/DungeonArea/ProgressLabel
+	if dungeon_label:
+		dungeon_label.visible = true
+
+
+func _on_dungeon_area_mouse_exited():
+	var dungeon_label = $ProfileContainer/DungeonArea/ProgressLabel
+	if dungeon_label:
+		dungeon_label.visible = false
+
+
+func _on_edit_name_button_mouse_entered():
+	var username_label = $ProfileContainer/UserInfoArea/EditNameButton/CharacterLabel
+	if username_label:
+		username_label.visible = true
+
+
+func _on_edit_name_button_mouse_exited():
+	var username_label = $ProfileContainer/UserInfoArea/EditNameButton/CharacterLabel
+	if username_label:
+		username_label.visible = false
+
+
+func _on_copy_uid_button_mouse_entered():
+	var uid_label = $ProfileContainer/UserInfoArea/CopyUIDButton/CharacterLabel
+	if uid_label:
+		uid_label.visible = true
+
+
+func _on_copy_uid_button_mouse_exited():
+	var uid_label = $ProfileContainer/UserInfoArea/CopyUIDButton/CharacterLabel
+	if uid_label:
+		uid_label.visible = false

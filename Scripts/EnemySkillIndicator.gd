@@ -14,7 +14,7 @@ signal indicator_finished
 var enemy_name = ""
 var skill_name = ""
 var challenge_type = ""
-var display_duration = 5.0 # Total display time in seconds
+var display_duration = 7.0 # Total display time in seconds
 var countdown_timer: Timer
 var signal_emitted = false # Prevent duplicate signal emission
 

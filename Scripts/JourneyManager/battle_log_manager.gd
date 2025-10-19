@@ -288,7 +288,7 @@ func update_ui() -> void:
 		label.bbcode_enabled = true
 		label.fit_content = true
 		label.scroll_active = false
-		label.custom_minimum_size = Vector2(0, 30)
+		label.custom_minimum_size = Vector2(0, 45)  # ACCESSIBILITY: Increased from 30 to 45 for more breathing room
 		
 		# Use original text with bbcode if available, otherwise use clean text
 		var display_text = entry.get("original", entry.text)
@@ -308,11 +308,14 @@ func update_ui() -> void:
 		label.add_theme_font_override("font", dyslexia_font)
 		label.add_theme_font_override("normal_font", dyslexia_font)
 		label.add_theme_font_override("bold_font", dyslexia_font)
-		label.add_theme_font_override("italics_font", dyslexia_font)
-		label.add_theme_font_override("bold_italics_font", dyslexia_font)
 		label.add_theme_font_override("mono_font", dyslexia_font)
-		label.add_theme_font_size_override("font_size", 16)
-		label.add_theme_font_size_override("normal_font_size", 16)
+		# ACCESSIBILITY IMPROVEMENT: Increased font size from 16 to 18 for better readability
+		label.add_theme_font_size_override("font_size", 18)
+		label.add_theme_font_size_override("normal_font_size", 18)
+		
+		# ACCESSIBILITY IMPROVEMENT: Add generous line spacing for dyslexia-friendly reading
+		# Research shows 1.5-2.0 line height optimal for dyslexia
+		label.add_theme_constant_override("line_separation", 8)  # Extra spacing between wrapped lines
 		
 		# Set default font color to black for any text without explicit color tags
 		label.add_theme_color_override("default_color", Color.BLACK)
@@ -354,11 +357,11 @@ func add_level_up_message(new_level: int, health_increase: int, damage_increase:
 	
 	# Motivational message based on level range
 	if new_level <= 10:
-		add_message("[color=#B8860B]Great progress! I'm proud of you![[/color]")
+		add_message("[color=#B8860B]Great progress! I'm proud of you![/color]")
 	elif new_level <= 25:
-		add_message("[color=#B8860B]You're becoming stronger!  I'm proud of you![[/color]")
+		add_message("[color=#B8860B]You're becoming stronger!  I'm proud of you![/color]")
 	elif new_level <= 50:
-		add_message("[color=#B8860B]Impressive dedication!  I'm proud of you![[/color]")
+		add_message("[color=#B8860B]Impressive dedication!  I'm proud of you![/color]")
 	elif new_level <= 100:
 		add_message("[color=#B8860B]Master level achieved! I'm proud of you![/color]")
 	else:

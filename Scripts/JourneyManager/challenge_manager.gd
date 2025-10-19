@@ -319,8 +319,15 @@ func handle_challenge_failed():
 			# Play skill SFX when animation starts
 			enemy_manager.play_enemy_sfx("enemy_skill")
 			
-			# Wait for animation to progress before applying damage
-			await battle_scene.get_tree().create_timer(0.5).timeout
+			# FIXED: Calculate proper timing based on animation length
+			# Different enemies have different skill animation speeds (Slime: 12 FPS, Treant: 7 FPS)
+			var frame_count = enemy_sprite.sprite_frames.get_frame_count("skill")
+			var animation_speed = enemy_sprite.sprite_frames.get_animation_speed("skill")
+			var animation_duration = frame_count / animation_speed
+			
+			# Apply damage at 60% of animation (peak of skill effect)
+			var damage_timing = animation_duration * 0.6
+			await battle_scene.get_tree().create_timer(damage_timing).timeout
 			
 			# NOW apply damage at the peak of the skill animation
 			player_manager.take_damage(skill_damage)
@@ -328,6 +335,10 @@ func handle_challenge_failed():
 			
 			# Show skill damage indicator (different color for skill attacks)
 			battle_scene._show_skill_damage_indicator(skill_damage, "player")
+			
+			# Wait for remaining animation to complete before returning
+			var remaining_time = animation_duration - damage_timing
+			await battle_scene.get_tree().create_timer(remaining_time).timeout
 		else:
 			# Fallback: apply damage after pause even without skill animation
 			# Play skill SFX even if animation not found
@@ -405,13 +416,26 @@ func handle_challenge_cancelled():
 			enemy_sprite.play("skill")
 			# Play skill SFX when animation starts
 			enemy_manager.play_enemy_sfx("enemy_skill")
-			# Wait slightly longer to align with skill impact
-			await battle_scene.get_tree().create_timer(0.5).timeout
+			
+			# DYNAMIC ANIMATION TIMING: Calculate actual animation duration
+			# Replaces hardcoded 0.5s wait to ensure full animation completes before enemy returns
+			var frame_count = enemy_sprite.sprite_frames.get_frame_count("skill")
+			var animation_speed = enemy_sprite.sprite_frames.get_animation_speed("skill")
+			var animation_duration = frame_count / animation_speed
+			
+			# Apply damage at 60% of animation (peak of skill effect)
+			var damage_timing = animation_duration * 0.6
+			await battle_scene.get_tree().create_timer(damage_timing).timeout
+			
 			# Apply skill damage
 			player_manager.take_damage(cancellation_damage)
 			battle_log_manager.add_message("[color=#000000]The " + enemy_manager.enemy_name + " dealt " + str(cancellation_damage) + " critical damage![/color]")
 			# Show skill damage indicator for consistency
 			battle_scene._show_skill_damage_indicator(cancellation_damage, "player")
+			
+			# Wait for remaining animation time before returning enemy to position
+			var remaining_time = animation_duration - damage_timing
+			await battle_scene.get_tree().create_timer(remaining_time).timeout
 		elif enemy_sprite and enemy_sprite.sprite_frames and enemy_sprite.sprite_frames.has_animation("auto_attack"):
 			# Fallback: if no 'skill' animation, try auto_attack but still play skill SFX
 			enemy_sprite.play("auto_attack")

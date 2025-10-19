@@ -634,7 +634,7 @@ func _show_dungeon_completion_notification(completed_dungeon_num: int):
 	var notification_popup = battle_scene.get_node_or_null("NotificationPopUp")
 	if notification_popup:
 		print("BattleManager: Showing unified dungeon completion notification")
-		var button_text = "Ok" if character_unlock_info.unlocked else "Continue"
+		var button_text = "Thanks" if character_unlock_info.unlocked else "Ok"
 		notification_popup.show_notification(title, message, button_text)
 	else:
 		print("BattleManager: Warning - notification popup not found")
@@ -656,12 +656,15 @@ func _mark_dungeon_notification_shown(dungeon_num: int):
 		var dungeon_key = "dungeon_" + str(dungeon_num)
 		dungeon_notifications_shown[dungeon_key] = true
 		
-		var update_data = {
-			"dungeon_notifications_shown": dungeon_notifications_shown
-		}
+		# Use document.add_or_update_field pattern (FIXED: was incorrectly using 2 arguments)
+		document.add_or_update_field("dungeon_notifications_shown", dungeon_notifications_shown)
 		
-		await collection.update(user_id, update_data)
-		print("BattleManager: Marked dungeon " + str(dungeon_num) + " notification as shown in Firebase")
+		# Update the document with only 1 argument (the document itself)
+		var updated_doc = await collection.update(document)
+		if updated_doc:
+			print("BattleManager: Marked dungeon " + str(dungeon_num) + " notification as shown in Firebase")
+		else:
+			print("BattleManager: Failed to mark dungeon notification in Firebase")
 
 # Check for character unlocks after dungeon completion - returns unlock info
 func _check_character_unlock(completed_dungeon_num: int) -> Dictionary:

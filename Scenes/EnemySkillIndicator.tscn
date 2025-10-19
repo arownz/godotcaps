@@ -204,7 +204,7 @@ theme_override_constants/shadow_offset_x = 3
 theme_override_constants/shadow_offset_y = 3
 theme_override_fonts/font = ExtResource("4_skillind")
 theme_override_font_sizes/font_size = 36
-text = "5"
+text = "7"
 
 [node name="SkipHint" type="Label" parent="CenterContainer/IndicatorPanel/VBoxContainer"]
 layout_mode = 2

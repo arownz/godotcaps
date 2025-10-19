@@ -27,9 +27,10 @@ var music_excluded_scenes: Array[String] = [
 	"CompletionCelebration",
 	"WordChallengePanel_Whiteboard",
 	"WordChallengePanel_STT",
-	"Setting", # Root node name in SettingScene.tscn
+	"Setting",
 	"TTSSettingsPopup",
-	"NotificationPopUp"
+	"NotificationPopUp",
+	"EnemySkillIndicator"
 ]
 
 func _ready():
