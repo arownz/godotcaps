@@ -1,16 +1,22 @@
 extends Control
 
+# ========================================
+# MODERN LEADERBOARD UI/UX REDESIGN
+# Clean table structure with GridContainer
+# Proper centering, hover effects, dyslexia-friendly
+# ========================================
+
 # UI References
 @onready var tab_container = $MainContainer/ContentContainer/TabContainer
 @onready var back_button = $MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton
 
-# Leaderboard data containers  
-@onready var dungeon_list = $MainContainer/ContentContainer/TabContainer.get_node("Dungeon Rankings/ScrollContainer/VBoxContainer")
-@onready var power_list = $MainContainer/ContentContainer/TabContainer.get_node("Power Scale/ScrollContainer/VBoxContainer")
-@onready var word_list = $MainContainer/ContentContainer/TabContainer.get_node("Word Masters/ScrollContainer/VBoxContainer")
-@onready var phonics_list = $MainContainer/ContentContainer/TabContainer.get_node("Phonics/ScrollContainer/VBoxContainer")
-@onready var read_aloud_list = $MainContainer/ContentContainer/TabContainer.get_node("Read Aloud/ScrollContainer/VBoxContainer")
-@onready var flip_quiz_list = $MainContainer/ContentContainer/TabContainer.get_node("Flip Quiz/ScrollContainer/VBoxContainer")
+# Leaderboard data containers - Using GridContainer structure
+@onready var dungeon_grid = $MainContainer/ContentContainer/TabContainer.get_node("Dungeon Rankings/ScrollContainer/GridContainer")
+@onready var power_grid = $MainContainer/ContentContainer/TabContainer.get_node("Power Scale/ScrollContainer/GridContainer")
+@onready var word_grid = $MainContainer/ContentContainer/TabContainer.get_node("Word Masters/ScrollContainer/GridContainer")
+@onready var phonics_grid = $MainContainer/ContentContainer/TabContainer.get_node("Phonics/ScrollContainer/GridContainer")
+@onready var read_aloud_grid = $MainContainer/ContentContainer/TabContainer.get_node("Read Aloud/ScrollContainer/GridContainer")
+@onready var flip_quiz_grid = $MainContainer/ContentContainer/TabContainer.get_node("Flip Quiz/ScrollContainer/GridContainer")
 
 # Cached leaderboard data
 var all_users_data = []
@@ -18,32 +24,86 @@ var current_user_data = {}
 
 # Medal and rank textures
 var medal_textures = {
-	"bronze": preload("res://gui/Update/icons/bronze medal.png"),
-	"silver": preload("res://gui/Update/icons/silver medal.png"),
-	"gold": preload("res://gui/Update/icons/gold medal.png")
+"bronze": preload("res://gui/Update/icons/bronze medal.png"),
+"silver": preload("res://gui/Update/icons/silver medal.png"),
+"gold": preload("res://gui/Update/icons/gold medal.png")
 }
 
 # Dungeon names
 var dungeon_names = {
-	1: "The Plain",
-	2: "The Forest",
-	3: "The Mountain"
+1: "The Plain",
+2: "The Forest",
+3: "The Mountain"
 }
 
-# Theme colors based on ModuleScene.tscn cards
+# Modern UI theme colors - Dyslexia-friendly color scheme
 var theme_colors = {
-	"phonics": Color(0.2, 0.6, 0.9), # Blue #3399e6
-	"read_aloud": Color(0.2, 0.8, 0.4), # Green #33cc66
-	"flip_quiz": Color(0.9, 0.3, 0.3), # Red #e64d4d
-	"default": Color(0.15, 0.2, 0.3) # Default dark blue
+	"header_bg": Color(0.12, 0.14, 0.18, 0.95),
+	"row_even": Color(0.15, 0.17, 0.22, 0.85),
+	"row_odd": Color(0.18, 0.20, 0.25, 0.85),
+	"row_hover": Color(0.22, 0.28, 0.35, 0.95),
+	"current_user": Color(0.35, 0.28, 0.10, 0.90),
+	"border": Color(0.08, 0.09, 0.12, 0.95),
+	"text_primary": Color(0.95, 0.93, 0.85, 1.0), # Warm off-white (easier on eyes)
+	"text_secondary": Color(0.85, 0.88, 0.75, 1.0), # Soft greenish-white (high contrast, calm)
+	"text_highlight": Color(1.0, 0.92, 0.4, 1.0), # Warm yellow (attention without strain)
+	"gold": Color(1.0, 0.85, 0.1, 1.0),
+	"silver": Color(0.85, 0.85, 0.85, 1.0), # Slightly warmer silver
+	"bronze": Color(0.85, 0.6, 0.3, 1.0) # Brighter bronze for better visibility
 }
 
-# Rank colors - Gold, Silver, Bronze, Default White
-var rank_colors = {
-	1: Color(1.0, 0.85, 0.1), # Gold
-	2: Color(0.75, 0.75, 0.75), # Silver
-	3: Color(0.8, 0.5, 0.2), # Bronze
-	"default": Color(1, 1, 1) # White for others
+# Column definitions for each leaderboard type
+var column_configs = {
+	"dungeon": [
+		{"title": "RANK", "width": 80, "type": "rank"},
+		{"title": "AVATAR", "width": 95, "type": "avatar"},
+		{"title": "PLAYER", "width": 250, "type": "name"},
+		{"title": "DUNGEON", "width": 165, "type": "dungeon_name"},
+		{"title": "STAGE", "width": 100, "type": "current_stage"},
+		{"title": "SLAIN", "width": 100, "type": "enemies_defeated"}
+	],
+	"power": [
+		{"title": "RANK", "width": 80, "type": "rank"},
+		{"title": "AVATAR", "width": 95, "type": "avatar"},
+		{"title": "PLAYER", "width": 250, "type": "name"},
+		{"title": "LEVEL", "width": 110, "type": "level"},
+		{"title": "HEALTH", "width": 110, "type": "health"},
+		{"title": "DAMAGE", "width": 110, "type": "damage"},
+		{"title": "DURABILITY", "width": 160, "type": "durability"},
+		{"title": "SCALE", "width": 100, "type": "power_score"}
+	],
+	"word": [
+		{"title": "RANK", "width": 80, "type": "rank"},
+		{"title": "AVATAR", "width":95, "type": "avatar"},
+		{"title": "PLAYER", "width": 300, "type": "name"},
+		{"title": "SPEECH", "width": 150, "type": "stt_completed"},
+		{"title": "WHITEBOARD", "width": 175, "type": "whiteboard_completed"},
+		{"title": "TOTAL", "width": 100, "type": "word_recognize"}
+	],
+	"phonics": [
+		{"title": "RANK", "width": 80, "type": "rank"},
+		{"title": "AVATAR", "width": 95, "type": "avatar"},
+		{"title": "PLAYER", "width": 300, "type": "name"},
+		{"title": "LETTERS", "width": 150, "type": "phonics_letters"},
+		{"title": "WORDS", "width": 150, "type": "phonics_sight_words"},
+		{"title": "PROGRESS", "width": 150, "type": "phonics_progress"}
+	],
+	"read_aloud": [
+		{"title": "RANK", "width": 80, "type": "rank"},
+		{"title": "AVATAR", "width": 95, "type": "avatar"},
+		{"title": "PLAYER", "width": 300, "type": "name"},
+		{"title": "GUIDED", "width": 150, "type": "read_aloud_guided"},
+		{"title": "SYLLABLE", "width": 150, "type": "read_aloud_syllable"},
+		{"title": "PROGRESS", "width": 150, "type": "read_aloud_progress"}
+	],
+	"flip_quiz": [
+		{"title": "RANK", "width": 80, "type": "rank"},
+		{"title": "AVATAR", "width": 95, "type": "avatar"},
+		{"title": "PLAYER", "width": 300, "type": "name"},
+		{"title": "ANIMALS", "width": 150, "type": "flip_quiz_animals"},
+		{"title": "VEHICLES", "width": 150, "type": "flip_quiz_vehicles"},
+		{"title": "PROGRESS", "width": 150, "type": "flip_quiz_progress"}
+	]
 }
 
 func _ready():
@@ -102,182 +162,187 @@ func _setup_tab_styling():
 	tabs.add_theme_color_override("font_unselected_color", Color(0.9, 0.9, 0.9, 0.8))
 	tabs.add_theme_color_override("font_selected_color", Color(1, 1, 1, 1))
 
-# Helper function to create a simple, reliable bordered container
-# alignment: "center" for centered content, "left" for left-aligned content
-func _create_bordered_container(content: Control, min_size: Vector2, bg_color: Color = Color(0.1, 0.1, 0.1, 0.8), alignment: String = "center") -> Control:
-	var container = Panel.new()
-	container.custom_minimum_size = min_size
-	container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	
-	# Create simple StyleBox with solid background
-	var style_box = StyleBoxFlat.new()
-	style_box.bg_color = bg_color
-	style_box.border_width_left = 2
-	style_box.border_width_right = 2
-	style_box.border_width_top = 2
-	style_box.border_width_bottom = 2
-	style_box.border_color = Color(0, 0, 0, 0.5)
-	style_box.corner_radius_top_left = 5
-	style_box.corner_radius_top_right = 5
-	style_box.corner_radius_bottom_left = 5
-	style_box.corner_radius_bottom_right = 5
-	style_box.content_margin_left = 10
-	style_box.content_margin_right = 10
-	style_box.content_margin_top = 8
-	style_box.content_margin_bottom = 8
-	
-	container.add_theme_stylebox_override("panel", style_box)
-	
-	# Wrap content based on alignment to achieve centering inside the panel
-	if alignment == "center":
-		# Use CenterContainer to center the label inside the panel
-		var center_container = CenterContainer.new()
-		center_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		center_container.size_flags_vertical = Control.SIZE_EXPAND_FILL
-		center_container.add_child(content)
-		container.add_child(center_container)
-	elif alignment == "left":
-		# Use HBoxContainer with left alignment
-		var hbox = HBoxContainer.new()
-		hbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		hbox.size_flags_vertical = Control.SIZE_EXPAND_FILL
-		hbox.alignment = BoxContainer.ALIGNMENT_BEGIN
-		hbox.add_child(content)
-		container.add_child(hbox)
-	else:
-		# Default: add content directly
-		container.add_child(content)
-	
-	return container
+# ========================================
+# MODERN TABLE CREATION SYSTEM
+# ========================================
 
-# Helper function to create a reliable label with guaranteed visibility
-# For centered labels, do NOT use SIZE_EXPAND_FILL - let the label size naturally
-# For left-aligned labels (like player name), use SIZE_EXPAND_FILL
-func _create_reliable_label(text: String, font_size: int = 16, color: Color = Color(1, 1, 1), max_chars: int = 25, expand: bool = false) -> Label:
+# Create a table cell with proper styling
+func _create_cell(content: Control, width: int, bg_color: Color, is_header: bool = false) -> Panel:
+	var cell = Panel.new()
+	cell.custom_minimum_size = Vector2(width, 50 if is_header else 60)
+	
+	# Create cell style
+	var style = StyleBoxFlat.new()
+	style.bg_color = bg_color
+	style.border_width_left = 1
+	style.border_width_right = 1
+	style.border_width_top = 1
+	style.border_width_bottom = 1
+	style.border_color = theme_colors["border"]
+	
+	if is_header:
+		style.corner_radius_top_left = 6
+		style.corner_radius_top_right = 6
+	
+	cell.add_theme_stylebox_override("panel", style)
+	
+	# Center the content
+	var center = CenterContainer.new()
+	center.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	center.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	center.add_child(content)
+	cell.add_child(center)
+	
+	return cell
+
+# Create a label with proper styling
+func _create_label(text: String, font_size: int = 16, color: Color = Color.WHITE, _bold: bool = false) -> Label:
 	var label = Label.new()
-	
-	# Set text with truncation for long names
-	var display_text = text
-	if text.length() > max_chars:
-		display_text = text.substr(0, max_chars - 3) + "..."
-		label.tooltip_text = text # Show full text on hover
-	
-	label.text = display_text
+	label.text = text
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	
-	# Use dyslexia-friendly font
 	label.add_theme_font_override("font", load("res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf"))
 	label.add_theme_font_size_override("font_size", font_size)
 	label.add_theme_color_override("font_color", color)
-	
-	# Only expand if explicitly requested (for left-aligned name columns)
-	if expand:
-		label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		label.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	
 	return label
 
-# Helper function to create a properly centered avatar/profile picture column
-# Uses manual positioning for precise control - adjust Vector2 values to center
-func _create_avatar_column(user_data: Dictionary, container_size: Vector2 = Vector2(100, 50), avatar_size: Vector2 = Vector2(50, 100), bg_color: Color = Color(0.15, 0.2, 0.3)) -> Control:
-	# Create texture rect for the portrait
-	var profile_rect = TextureRect.new()
-	# 🎯 CUSTOMIZE: Change avatar size here (width, height)
-	profile_rect.custom_minimum_size = avatar_size # Default: Vector2(150, 100)
-	profile_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	profile_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+# Create an avatar texture rect
+func _create_avatar(user_data: Dictionary) -> TextureRect:
+	var avatar = TextureRect.new()
+	avatar.custom_minimum_size = Vector2(45, 45)
+	avatar.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	avatar.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	
-	# Load the profile picture
+	# Set size flags to allow CenterContainer to properly center the avatar
+	avatar.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	avatar.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	
 	var profile_id = user_data.get("profile_picture", "13")
 	if profile_id == "default":
 		profile_id = "13"
+	
 	var profile_texture = load("res://gui/ProfileScene/Profile/portrait" + profile_id + ".png")
 	if profile_texture:
-		profile_rect.texture = profile_texture
+		avatar.texture = profile_texture
 	
-	# Create container for manual positioning
-	var profile_center = Control.new()
-	# 🎯 CUSTOMIZE: Change container size here (width, height)
-	profile_center.custom_minimum_size = container_size # Default: Vector2(100, 50)
-	profile_center.add_child(profile_rect)
-	
-	# 🎯 DYNAMIC CENTERING: Calculate position to center avatar in container
-	# Formula: x = (container_width - avatar_width) / 2, y = (container_height - avatar_height) / 2
-	var x_offset = (container_size.x - avatar_size.x) / 2
-	var y_offset = (container_size.y - avatar_size.y) / 2
-	profile_rect.position = Vector2(x_offset, y_offset)
-	
-	var avatar_container = _create_bordered_container(profile_center, container_size, bg_color, "center")
-	
-	return avatar_container
+	return avatar
 
-# Create consistent leaderboard row
-# Used by: Power Scale, Word Masters, Phonics, Read Aloud, Flip Quiz tabs
-func _create_leaderboard_row(user_data: Dictionary, rank: int, columns: Array, theme_color: Color = Color(0.15, 0.2, 0.3)) -> Control:
-	var row = HBoxContainer.new()
-	row.add_theme_constant_override("separation", 5)
-	# 🎯 CUSTOMIZE ROW HEIGHT: Change the Y value (currently 60)
-	row.custom_minimum_size = Vector2(0, 60) # Vector2(0, HEIGHT)
-	row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+# Create a table header row
+func _create_header_row(grid: GridContainer, config_key: String):
+	var columns = column_configs[config_key]
+	grid.columns = columns.size()
 	
-	# Determine rank color
-	var rank_color = rank_colors.get(rank, rank_colors["default"])
-	var rank_bg_color = theme_color
-	if rank <= 3:
-		rank_bg_color = Color(rank_color.r * 0.3, rank_color.g * 0.3, rank_color.b * 0.3, 0.8)
+	for column in columns:
+		var label = _create_label(column["title"], 16, theme_colors["text_highlight"], true)
+		var cell = _create_cell(label, column["width"], theme_colors["header_bg"], true)
+		grid.add_child(cell)
+
+# Create a data row with hover effect
+func _create_data_row(grid: GridContainer, user_data: Dictionary, rank: int, config_key: String, row_index: int):
+	var columns = column_configs[config_key]
+	var is_current_user = user_data.get("is_current_user", false)
+	var is_even_row = row_index % 2 == 0
 	
-	# 🎯 CUSTOMIZE RANK COLUMN: Change Vector2(80, 50) for width/height
-	# Create rank column
-	var rank_text = "#" + str(rank) if rank <= 3 else str(rank)
-	var rank_label = _create_reliable_label(rank_text, 16, rank_color)
-	var rank_container = _create_bordered_container(rank_label, Vector2(80, 50), rank_bg_color, "center")
-	row.add_child(rank_container)
+	# Determine row background color
+	var row_bg = theme_colors["current_user"] if is_current_user else (theme_colors["row_even"] if is_even_row else theme_colors["row_odd"])
 	
-	# 🎯 CUSTOMIZE AVATAR COLUMN: Modify _create_avatar_column() parameters
-	# _create_avatar_column(user_data, container_size, avatar_size, bg_color)
-	# container_size = Vector2(width, height) of the bordered box
-	# avatar_size = Vector2(width, height) of the actual portrait image
-	# Create profile picture column using the helper for proper centering
-	var profile_container = _create_avatar_column(user_data, Vector2(80, 50), Vector2(40, 40), theme_color)
-	row.add_child(profile_container)
+	# Determine rank color for top 3
+	var rank_color = theme_colors["text_primary"]
+	if rank == 1:
+		rank_color = theme_colors["gold"]
+	elif rank == 2:
+		rank_color = theme_colors["silver"]
+	elif rank == 3:
+		rank_color = theme_colors["bronze"]
 	
-	# 🎯 CUSTOMIZE NAME COLUMN: Change Vector2(300, 50) for width/height
-	# Create player name column
-	var player_name = user_data.get("username", "Unknown")
-	var name_color = Color(1, 1, 1)
-	var name_bg_color = theme_color
-	
-	if user_data.get("is_current_user", false):
-		name_color = Color(1, 1, 0.3)
-		name_bg_color = Color(0.3, 0.25, 0.1, 0.8)
-		player_name = "* " + player_name + " (You)"
-	
-	var name_label = _create_reliable_label(player_name, 16, name_color, 25, true) # expand=true for left-aligned name
-	var name_container = _create_bordered_container(name_label, Vector2(300, 50), name_bg_color, "left")
-	row.add_child(name_container)
-	
-	# 🎯 CUSTOMIZE DYNAMIC COLUMNS: Column widths/colors are defined in the populate functions
-	# See: _populate_power_scale_rankings(), _populate_word_recognize_rankings(), etc.
-	# Each column array entry: {"key": "stat_name", "width": 100, "color": Color(...)}
-	# Add additional columns based on leaderboard type
-	for i in range(columns.size()):
-		var column_data = columns[i]
-		var raw_value = user_data.get(column_data["key"], column_data.get("default", 0))
+	# Create cells for each column
+	for column in columns:
+		var content: Control
+		var cell_bg = row_bg
 		
-		# Format value if it's a progress percentage
-		var value_text = str(raw_value)
-		if column_data.has("format") and column_data["format"] == "%.1f%%":
-			value_text = "%.1f%%" % raw_value
+		match column["type"]:
+			"rank":
+				# Rank with medal for top 3
+				var hbox = HBoxContainer.new()
+				hbox.alignment = BoxContainer.ALIGNMENT_CENTER
+				hbox.add_theme_constant_override("separation", 8)
+				
+				var rank_label = _create_label(str(rank), 18, rank_color, true)
+				hbox.add_child(rank_label)
+				
+				# Add medal for dungeon rankings
+				if config_key == "dungeon" and user_data.has("current_dungeon"):
+					var dungeon_level = user_data.get("current_dungeon", 0)
+					if dungeon_level >= 1 and dungeon_level <= 3:
+						var medal_icon = TextureRect.new()
+						medal_icon.custom_minimum_size = Vector2(24, 24)
+						medal_icon.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+						medal_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+						
+						match dungeon_level:
+							1: medal_icon.texture = medal_textures["bronze"]
+							2: medal_icon.texture = medal_textures["silver"]
+							3: medal_icon.texture = medal_textures["gold"]
+						
+						hbox.add_child(medal_icon)
+				
+				content = hbox
+			
+			"avatar":
+				content = _create_avatar(user_data)
+			
+			"name":
+				var player_name = user_data.get("username", "Unknown")
+				if is_current_user:
+					player_name = player_name + " (You)"
+				
+				var name_label = _create_label(player_name, 16, theme_colors["text_highlight"] if is_current_user else theme_colors["text_primary"])
+				# Truncate long names
+				if player_name.length() > 20:
+					name_label.text = player_name.substr(0, 17) + "..."
+					name_label.tooltip_text = player_name
+				content = name_label
+			
+			"dungeon_name":
+				var dungeon_id = user_data.get("current_dungeon", 1)
+				var dungeon_name = dungeon_names.get(dungeon_id, "Unknown")
+				content = _create_label(dungeon_name, 16, Color(0.7, 0.9, 0.7))
+			
+			"phonics_progress", "read_aloud_progress", "flip_quiz_progress":
+				var progress_value = user_data.get(column["type"], 0.0)
+				content = _create_label("%.1f%%" % progress_value, 16, Color(1, 1, 0.4))
+			
+			_:
+				# Default: display the value as-is
+				var value = user_data.get(column["type"], 0)
+				content = _create_label(str(value), 16, theme_colors["text_secondary"])
 		
-		var column_color = column_data.get("color", Color(1, 1, 1))
-		var column_width = column_data.get("width", 100)
+		var cell = _create_cell(content, column["width"], cell_bg, false)
 		
-		var column_label = _create_reliable_label(value_text, 16, column_color)
-		var column_container = _create_bordered_container(column_label, Vector2(column_width, 50), theme_color, "center")
-		row.add_child(column_container)
+		# Add hover effect to row cells (except header)
+		_add_hover_effect_to_cell(cell, row_bg)
+		
+		grid.add_child(cell)
+
+# Add hover effect to cell
+func _add_hover_effect_to_cell(cell: Panel, original_color: Color):
+	cell.mouse_filter = Control.MOUSE_FILTER_PASS
 	
-	return row
+	cell.mouse_entered.connect(func():
+		var style = cell.get_theme_stylebox("panel")
+		if style is StyleBoxFlat:
+			style.bg_color = theme_colors["row_hover"]
+	)
+	
+	cell.mouse_exited.connect(func():
+		var style = cell.get_theme_stylebox("panel")
+		if style is StyleBoxFlat:
+			style.bg_color = original_color
+	)
+
+# ========================================
+# DATA LOADING & POPULATION
+# ========================================
 
 # Load all user data from Firestore for leaderboard
 func _load_leaderboard_data():
@@ -286,8 +351,6 @@ func _load_leaderboard_data():
 		return
 	
 	print("Leaderboard: Loading user data from Firestore...")
-	
-	# Start loading immediately with proper error handling
 	_load_data_async()
 
 # Separate async function to prevent cancellation warnings
@@ -465,7 +528,10 @@ func _calculate_rank_from_progress(highest_dungeon: int, total_stages: int) -> S
 	else:
 		return "bronze"
 
-# Populate all leaderboards with consistent headers and rows
+# ========================================
+# POPULATE ALL LEADERBOARDS
+# ========================================
+
 func _populate_all_leaderboards():
 	_populate_dungeon_rankings()
 	_populate_power_scale_rankings()
@@ -477,7 +543,7 @@ func _populate_all_leaderboards():
 # Populate dungeon rankings tab
 func _populate_dungeon_rankings():
 	# Clear existing entries
-	for child in dungeon_list.get_children():
+	for child in dungeon_grid.get_children():
 		child.queue_free()
 	
 	# Sort users by dungeon progress
@@ -492,156 +558,18 @@ func _populate_dungeon_rankings():
 		return a["level"] > b["level"]
 	)
 	
-	# Add header
-	var header = _create_dungeon_header()
-	dungeon_list.add_child(header)
+	# Create header
+	_create_header_row(dungeon_grid, "dungeon")
 	
-	# Add spacer
-	var spacer = Control.new()
-	spacer.custom_minimum_size = Vector2(0, 10)
-	dungeon_list.add_child(spacer)
-	
-	# Add user entries
+	# Create data rows
 	for i in range(sorted_users.size()):
-		var user = sorted_users[i]
-		var entry = _create_dungeon_row(user, i + 1)
-		dungeon_list.add_child(entry)
+		_create_data_row(dungeon_grid, sorted_users[i], i + 1, "dungeon", i)
 
-# Create dungeon header
-func _create_dungeon_header() -> Control:
-	var header = HBoxContainer.new()
-	header.add_theme_constant_override("separation", 5)
-	header.custom_minimum_size = Vector2(0, 60)
-	header.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	
-	var rank_label = _create_reliable_label("RANK", 16, Color(1, 0.9, 0.3))
-	var rank_container = _create_bordered_container(rank_label, Vector2(80, 50), theme_colors["default"], "center")
-	header.add_child(rank_container)
-	
-	var pic_label = _create_reliable_label("AVATAR", 14, Color(0.8, 0.9, 1))
-	var pic_container = _create_bordered_container(pic_label, Vector2(80, 50), theme_colors["default"], "center")
-	header.add_child(pic_container)
-	
-	var name_label = _create_reliable_label("PLAYER NAME", 16, Color(0.9, 0.95, 1))
-	var name_container = _create_bordered_container(name_label, Vector2(300, 50), theme_colors["default"], "center")
-	header.add_child(name_container)
-	
-	var dungeon_label = _create_reliable_label("DUNGEON", 16, Color(0.7, 0.9, 0.7))
-	var dungeon_container = _create_bordered_container(dungeon_label, Vector2(100, 50), theme_colors["default"], "center")
-	header.add_child(dungeon_container)
-	
-	var stage_label = _create_reliable_label("STAGE", 16, Color(0.9, 0.7, 0.9))
-	var stage_container = _create_bordered_container(stage_label, Vector2(80, 50), theme_colors["default"], "center")
-	header.add_child(stage_container)
-	
-	var kills_label = _create_reliable_label("SLAIN ENEMY", 16, Color(1, 0.4, 0.4))
-	var kills_container = _create_bordered_container(kills_label, Vector2(80, 50), theme_colors["default"], "center")
-	header.add_child(kills_container)
-	
-	return header
-
-# Create special dungeon entry with dungeon name display
-# Used by: Dungeon Rankings tab ONLY (has custom columns)
-func _create_dungeon_row(user_data: Dictionary, rank: int) -> Control:
-	var row = HBoxContainer.new()
-	row.add_theme_constant_override("separation", 5)
-	# 🎯 CUSTOMIZE ROW HEIGHT: Change the Y value (currently 60)
-	row.custom_minimum_size = Vector2(0, 60) # Vector2(0, HEIGHT)
-	row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	
-	# Determine rank color
-	var rank_color = rank_colors.get(rank, rank_colors["default"])
-	var rank_bg_color = theme_colors["default"]
-	if rank <= 3:
-		rank_bg_color = Color(rank_color.r * 0.3, rank_color.g * 0.3, rank_color.b * 0.3, 0.8)
-	
-	# Get current dungeon early for both medal and dungeon column
-	var current_dungeon = user_data.get("current_dungeon", 1)
-	
-	# 🎯 CUSTOMIZE RANK COLUMN: Change Vector2(80, 50) for width/height
-	# Create rank column with medal based on dungeon level
-	var rank_text = "#" + str(rank) if rank <= 3 else str(rank)
-	var rank_label = _create_reliable_label(rank_text, 16, rank_color)
-	
-	# Create HBox to hold rank text and medal
-	var rank_hbox = HBoxContainer.new()
-	rank_hbox.alignment = BoxContainer.ALIGNMENT_CENTER
-	rank_hbox.add_theme_constant_override("separation", 5) # Space between rank and medal
-	rank_hbox.add_child(rank_label)
-	
-	# Add medal based on user's dungeon level (1-3)
-	if current_dungeon >= 1 and current_dungeon <= 3:
-		var medal_texture: Texture2D = null
-		match current_dungeon:
-			1:
-				medal_texture = load("res://gui/Update/icons/bronze medal.png")
-			2:
-				medal_texture = load("res://gui/Update/icons/silver medal.png")
-			3:
-				medal_texture = load("res://gui/Update/icons/gold medal.png")
-		
-		if medal_texture:
-			var medal_rect = TextureRect.new()
-			medal_rect.texture = medal_texture
-			medal_rect.custom_minimum_size = Vector2(24, 24) # 🎯 CUSTOMIZE: Medal icon size
-			medal_rect.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
-			medal_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-			rank_hbox.add_child(medal_rect)
-	
-	var rank_container = _create_bordered_container(rank_hbox, Vector2(80, 50), rank_bg_color, "center")
-	row.add_child(rank_container)
-	
-	# 🎯 CUSTOMIZE AVATAR COLUMN: Modify _create_avatar_column() parameters
-	# _create_avatar_column(user_data, container_size, avatar_size, bg_color)
-	# Create profile picture column using the helper for proper centering
-	var profile_container = _create_avatar_column(user_data, Vector2(100, 50), Vector2(40, 40), theme_colors["default"])
-	row.add_child(profile_container)
-	
-	# 🎯 CUSTOMIZE NAME COLUMN: Change Vector2(300, 50) for width/height
-	# Create player name column
-	var player_name = user_data.get("username", "Unknown")
-	var name_color = Color(1, 1, 1)
-	var name_bg_color = theme_colors["default"]
-	
-	if user_data.get("is_current_user", false):
-		name_color = Color(1, 1, 0.3)
-		name_bg_color = Color(0.3, 0.25, 0.1, 0.8)
-		player_name = "* " + player_name + " (You)"
-	
-	var name_label = _create_reliable_label(player_name, 16, name_color, 25, true) # expand=true for left-aligned name
-	var name_container = _create_bordered_container(name_label, Vector2(300, 50), name_bg_color, "left")
-	row.add_child(name_container)
-	
-	# 🎯 CUSTOMIZE DUNGEON COLUMN: Change Vector2(100, 50) for width/height
-	# Dungeon name instead of number
-	var dungeon_name = dungeon_names.get(current_dungeon, "Unknown")
-	var dungeon_label = _create_reliable_label(dungeon_name, 16, Color(0.7, 0.9, 0.7))
-	var dungeon_container = _create_bordered_container(dungeon_label, Vector2(100, 50), theme_colors["default"], "center")
-	row.add_child(dungeon_container)
-	
-	# 🎯 CUSTOMIZE STAGE COLUMN: Change Vector2(80, 50) for width/height
-	# Stage
-	var stage_text = str(user_data.get("current_stage", 1))
-	var stage_label = _create_reliable_label(stage_text, 16, Color(0.9, 0.7, 0.9))
-	var stage_container = _create_bordered_container(stage_label, Vector2(80, 50), theme_colors["default"], "center")
-	row.add_child(stage_container)
-	
-	# 🎯 CUSTOMIZE KILLS COLUMN: Change Vector2(80, 50) for width/height
-	# Kills
-	var kills_text = str(user_data.get("enemies_defeated", 0))
-	var kills_label = _create_reliable_label(kills_text, 16, Color(1, 0.4, 0.4))
-	var kills_container = _create_bordered_container(kills_label, Vector2(80, 50), theme_colors["default"], "center")
-	row.add_child(kills_container)
-	
-	return row
-
-# Populate power scale rankings tab  
+# Populate power scale rankings tab
 func _populate_power_scale_rankings():
-	# Clear existing entries
-	for child in power_list.get_children():
+	for child in power_grid.get_children():
 		child.queue_free()
 	
-	# Sort users by power score
 	var sorted_users = all_users_data.duplicate()
 	sorted_users.sort_custom(func(a, b):
 		if a["power_score"] != b["power_score"]:
@@ -649,79 +577,16 @@ func _populate_power_scale_rankings():
 		return a["level"] > b["level"]
 	)
 	
-	# Add header
-	var header = _create_power_header()
-	power_list.add_child(header)
+	_create_header_row(power_grid, "power")
 	
-	# Add spacer
-	var spacer = Control.new()
-	spacer.custom_minimum_size = Vector2(0, 10)
-	power_list.add_child(spacer)
-	
-	# Add user entries
 	for i in range(sorted_users.size()):
-		var user = sorted_users[i]
-		# 🎯 CUSTOMIZE POWER SCALE COLUMNS: Change width/color for each column
-		# Each entry: {"key": "data_field_name", "width": pixels, "color": Color(...)}
-		var columns = [
-			{"key": "level", "width": 80, "color": Color(1, 1, 0.3)}, # Level column
-			{"key": "health", "width": 100, "color": Color(0.3, 1, 0.3)}, # Health column
-			{"key": "damage", "width": 100, "color": Color(1, 0.3, 0.3)}, # Damage column
-			{"key": "durability", "width": 80, "color": Color(0.3, 0.7, 1)}, # Durability column
-			{"key": "power_score", "width": 100, "color": Color(1, 0.8, 0.2)} # Power Score column
-		]
-		
-		var entry = _create_leaderboard_row(user, i + 1, columns, theme_colors["default"])
-		power_list.add_child(entry)
-
-# Create power header
-func _create_power_header() -> Control:
-	var header = HBoxContainer.new()
-	header.add_theme_constant_override("separation", 5)
-	header.custom_minimum_size = Vector2(0, 60)
-	header.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	
-	var rank_label = _create_reliable_label("RANK", 16, Color(1, 0.9, 0.3))
-	var rank_container = _create_bordered_container(rank_label, Vector2(80, 50), theme_colors["default"], "center")
-	header.add_child(rank_container)
-	
-	var pic_label = _create_reliable_label("AVATAR", 14, Color(0.8, 0.9, 1))
-	var pic_container = _create_bordered_container(pic_label, Vector2(80, 50), theme_colors["default"], "center")
-	header.add_child(pic_container)
-
-	var name_label = _create_reliable_label("PLAYER NAME", 16, Color(0.9, 0.95, 1))
-	var name_container = _create_bordered_container(name_label, Vector2(300, 50), theme_colors["default"], "center")
-	header.add_child(name_container)
-	
-	var level_label = _create_reliable_label("LEVEL", 16, Color(1, 1, 0.3))
-	var level_container = _create_bordered_container(level_label, Vector2(80, 50), theme_colors["default"], "center")
-	header.add_child(level_container)
-	
-	var health_label = _create_reliable_label("HEALTH", 15, Color(0.3, 1, 0.3))
-	var health_container = _create_bordered_container(health_label, Vector2(100, 50), theme_colors["default"], "center")
-	header.add_child(health_container)
-	
-	var damage_label = _create_reliable_label("DAMAGE", 15, Color(1, 0.3, 0.3))
-	var damage_container = _create_bordered_container(damage_label, Vector2(100, 50), theme_colors["default"], "center")
-	header.add_child(damage_container)
-	
-	var def_label = _create_reliable_label("DEF", 16, Color(0.3, 0.7, 1))
-	var def_container = _create_bordered_container(def_label, Vector2(80, 50), theme_colors["default"], "center")
-	header.add_child(def_container)
-	
-	var power_label = _create_reliable_label("POWER", 16, Color(1, 0.8, 0.2))
-	var power_container = _create_bordered_container(power_label, Vector2(100, 50), theme_colors["default"], "center")
-	header.add_child(power_container)
-	
-	return header
+		_create_data_row(power_grid, sorted_users[i], i + 1, "power", i)
 
 # Populate word recognize rankings tab
 func _populate_word_recognize_rankings():
-	# Clear existing entries
-	for child in word_list.get_children():
+	for child in word_grid.get_children():
 		child.queue_free()
 	
-	# Sort users by total word recognize
 	var sorted_users = all_users_data.duplicate()
 	sorted_users.sort_custom(func(a, b):
 		if a["word_recognize"] != b["word_recognize"]:
@@ -729,67 +594,16 @@ func _populate_word_recognize_rankings():
 		return a["level"] > b["level"]
 	)
 	
-	# Add header
-	var header = _create_word_header()
-	word_list.add_child(header)
+	_create_header_row(word_grid, "word")
 	
-	# Add spacer
-	var spacer = Control.new()
-	spacer.custom_minimum_size = Vector2(0, 10)
-	word_list.add_child(spacer)
-	
-	# Add user entries
 	for i in range(sorted_users.size()):
-		var user = sorted_users[i]
-		var columns = [
-			{"key": "stt_completed", "width": 100, "color": Color(0.3, 0.8, 1)},
-			{"key": "whiteboard_completed", "width": 100, "color": Color(0.3, 1, 0.8)},
-			{"key": "word_recognize", "width": 100, "color": Color(0.5, 1, 0.5)}
-		]
-		
-		var entry = _create_leaderboard_row(user, i + 1, columns, theme_colors["default"])
-		word_list.add_child(entry)
+		_create_data_row(word_grid, sorted_users[i], i + 1, "word", i)
 
-# Create word masters header
-func _create_word_header() -> Control:
-	var header = HBoxContainer.new()
-	header.add_theme_constant_override("separation", 5)
-	header.custom_minimum_size = Vector2(0, 60)
-	header.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	
-	var rank_label = _create_reliable_label("RANK", 16, Color(1, 0.9, 0.3))
-	var rank_container = _create_bordered_container(rank_label, Vector2(80, 50), theme_colors["default"], "center")
-	header.add_child(rank_container)
-	
-	var pic_label = _create_reliable_label("AVATAR", 14, Color(0.8, 0.9, 1))
-	var pic_container = _create_bordered_container(pic_label, Vector2(80, 50), theme_colors["default"], "center")
-	header.add_child(pic_container)
-	
-	var name_label = _create_reliable_label("PLAYER NAME", 16, Color(0.9, 0.95, 1))
-	var name_container = _create_bordered_container(name_label, Vector2(300, 50), theme_colors["default"], "center")
-	header.add_child(name_container)
-	
-	var speech_label = _create_reliable_label("SPEECH", 15, Color(0.3, 0.8, 1))
-	var speech_container = _create_bordered_container(speech_label, Vector2(100, 50), theme_colors["default"], "center")
-	header.add_child(speech_container)
-	
-	var board_label = _create_reliable_label("WHITEBOARD", 15, Color(0.3, 1, 0.8))
-	var board_container = _create_bordered_container(board_label, Vector2(100, 50), theme_colors["default"], "center")
-	header.add_child(board_container)
-	
-	var total_label = _create_reliable_label("TOTAL", 16, Color(0.5, 1, 0.5))
-	var total_container = _create_bordered_container(total_label, Vector2(100, 50), theme_colors["default"], "center")
-	header.add_child(total_container)
-	
-	return header
-
-# Populate Phonics rankings - BLUE theme
+# Populate Phonics rankings
 func _populate_phonics_rankings():
-	# Clear existing entries
-	for child in phonics_list.get_children():
+	for child in phonics_grid.get_children():
 		child.queue_free()
 	
-	# Sort users by phonics total
 	var sorted_users = all_users_data.duplicate()
 	sorted_users.sort_custom(func(a, b):
 		if a["phonics_total"] != b["phonics_total"]:
@@ -797,67 +611,16 @@ func _populate_phonics_rankings():
 		return a["phonics_progress"] > b["phonics_progress"]
 	)
 	
-	# Add header
-	var header = _create_phonics_header()
-	phonics_list.add_child(header)
+	_create_header_row(phonics_grid, "phonics")
 	
-	# Add spacer
-	var spacer = Control.new()
-	spacer.custom_minimum_size = Vector2(0, 10)
-	phonics_list.add_child(spacer)
-	
-	# Add user entries
 	for i in range(sorted_users.size()):
-		var user = sorted_users[i]
-		var columns = [
-			{"key": "phonics_letters", "width": 100, "color": Color(0.3, 1, 0.3)},
-			{"key": "phonics_sight_words", "width": 100, "color": Color(0.3, 0.7, 1)},
-			{"key": "phonics_progress", "width": 120, "color": Color(1, 1, 0.3), "format": "%.1f%%"}
-		]
-		
-		var entry = _create_leaderboard_row(user, i + 1, columns, theme_colors["default"])
-		phonics_list.add_child(entry)
+		_create_data_row(phonics_grid, sorted_users[i], i + 1, "phonics", i)
 
-# Create phonics header - BLUE theme
-func _create_phonics_header() -> Control:
-	var header = HBoxContainer.new()
-	header.add_theme_constant_override("separation", 5)
-	header.custom_minimum_size = Vector2(0, 60)
-	header.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	
-	var rank_label = _create_reliable_label("RANK", 16, Color(1, 0.9, 0.3))
-	var rank_container = _create_bordered_container(rank_label, Vector2(80, 50), theme_colors["default"], "center")
-	header.add_child(rank_container)
-	
-	var pic_label = _create_reliable_label("AVATAR", 14, Color(0.8, 0.9, 1))
-	var pic_container = _create_bordered_container(pic_label, Vector2(80, 50), theme_colors["default"], "center")
-	header.add_child(pic_container)
-	
-	var name_label = _create_reliable_label("PLAYER NAME", 16, Color(0.9, 0.95, 1))
-	var name_container = _create_bordered_container(name_label, Vector2(300, 50), theme_colors["default"], "center")
-	header.add_child(name_container)
-	
-	var letters_label = _create_reliable_label("LETTERS", 15, Color(0.3, 1, 0.3))
-	var letters_container = _create_bordered_container(letters_label, Vector2(100, 50), theme_colors["default"], "center")
-	header.add_child(letters_container)
-	
-	var words_label = _create_reliable_label("WORDS", 15, Color(0.3, 0.7, 1))
-	var words_container = _create_bordered_container(words_label, Vector2(100, 50), theme_colors["default"], "center")
-	header.add_child(words_container)
-	
-	var progress_label = _create_reliable_label("PROGRESS", 14, Color(1, 1, 0.3))
-	var progress_container = _create_bordered_container(progress_label, Vector2(120, 50), theme_colors["default"], "center")
-	header.add_child(progress_container)
-	
-	return header
-
-# Populate Read Aloud rankings - GREEN theme
+# Populate Read Aloud rankings
 func _populate_read_aloud_rankings():
-	# Clear existing entries
-	for child in read_aloud_list.get_children():
+	for child in read_aloud_grid.get_children():
 		child.queue_free()
 	
-	# Sort users by read aloud total
 	var sorted_users = all_users_data.duplicate()
 	sorted_users.sort_custom(func(a, b):
 		if a["read_aloud_total"] != b["read_aloud_total"]:
@@ -865,67 +628,16 @@ func _populate_read_aloud_rankings():
 		return a["read_aloud_progress"] > b["read_aloud_progress"]
 	)
 	
-	# Add header
-	var header = _create_read_aloud_header()
-	read_aloud_list.add_child(header)
+	_create_header_row(read_aloud_grid, "read_aloud")
 	
-	# Add spacer
-	var spacer = Control.new()
-	spacer.custom_minimum_size = Vector2(0, 10)
-	read_aloud_list.add_child(spacer)
-	
-	# Add user entries
 	for i in range(sorted_users.size()):
-		var user = sorted_users[i]
-		var columns = [
-			{"key": "read_aloud_guided", "width": 100, "color": Color(0.3, 1, 0.3)},
-			{"key": "read_aloud_syllable", "width": 100, "color": Color(0.8, 0.3, 1)},
-			{"key": "read_aloud_progress", "width": 120, "color": Color(1, 1, 0.3), "format": "%.1f%%"}
-		]
-		
-		var entry = _create_leaderboard_row(user, i + 1, columns, theme_colors["default"])
-		read_aloud_list.add_child(entry)
+		_create_data_row(read_aloud_grid, sorted_users[i], i + 1, "read_aloud", i)
 
-# Create read aloud header - GREEN theme
-func _create_read_aloud_header() -> Control:
-	var header = HBoxContainer.new()
-	header.add_theme_constant_override("separation", 5)
-	header.custom_minimum_size = Vector2(0, 60)
-	header.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	
-	var rank_label = _create_reliable_label("RANK", 16, Color(1, 0.9, 0.3))
-	var rank_container = _create_bordered_container(rank_label, Vector2(80, 50), theme_colors["default"], "center")
-	header.add_child(rank_container)
-	
-	var pic_label = _create_reliable_label("AVATAR", 14, Color(0.8, 0.9, 1))
-	var pic_container = _create_bordered_container(pic_label, Vector2(80, 50), theme_colors["default"], "center")
-	header.add_child(pic_container)
-	
-	var name_label = _create_reliable_label("PLAYER NAME", 16, Color(0.9, 0.95, 1))
-	var name_container = _create_bordered_container(name_label, Vector2(300, 50), theme_colors["default"], "center")
-	header.add_child(name_container)
-	
-	var guided_label = _create_reliable_label("GUIDED", 15, Color(0.3, 1, 0.3))
-	var guided_container = _create_bordered_container(guided_label, Vector2(100, 50), theme_colors["default"], "center")
-	header.add_child(guided_container)
-	
-	var syllable_label = _create_reliable_label("SYLLABLE", 14, Color(0.8, 0.3, 1))
-	var syllable_container = _create_bordered_container(syllable_label, Vector2(100, 50), theme_colors["default"], "center")
-	header.add_child(syllable_container)
-	
-	var progress_label = _create_reliable_label("PROGRESS", 14, Color(1, 1, 0.3))
-	var progress_container = _create_bordered_container(progress_label, Vector2(120, 50), theme_colors["default"], "center")
-	header.add_child(progress_container)
-	
-	return header
-
-# Populate Flip Quiz rankings - RED theme
+# Populate Flip Quiz rankings
 func _populate_flip_quiz_rankings():
-	# Clear existing entries
-	for child in flip_quiz_list.get_children():
+	for child in flip_quiz_grid.get_children():
 		child.queue_free()
 	
-	# Sort users by flip quiz total
 	var sorted_users = all_users_data.duplicate()
 	sorted_users.sort_custom(func(a, b):
 		if a["flip_quiz_total"] != b["flip_quiz_total"]:
@@ -933,59 +645,14 @@ func _populate_flip_quiz_rankings():
 		return a["flip_quiz_progress"] > b["flip_quiz_progress"]
 	)
 	
-	# Add header
-	var header = _create_flip_quiz_header()
-	flip_quiz_list.add_child(header)
+	_create_header_row(flip_quiz_grid, "flip_quiz")
 	
-	# Add spacer
-	var spacer = Control.new()
-	spacer.custom_minimum_size = Vector2(0, 10)
-	flip_quiz_list.add_child(spacer)
-	
-	# Add user entries
 	for i in range(sorted_users.size()):
-		var user = sorted_users[i]
-		var columns = [
-			{"key": "flip_quiz_animals", "width": 100, "color": Color(1, 0.6, 0.3)},
-			{"key": "flip_quiz_vehicles", "width": 100, "color": Color(0.3, 0.8, 1)},
-			{"key": "flip_quiz_progress", "width": 120, "color": Color(1, 1, 0.3), "format": "%.1f%%"}
-		]
-		
-		var entry = _create_leaderboard_row(user, i + 1, columns, theme_colors["default"])
-		flip_quiz_list.add_child(entry)
+		_create_data_row(flip_quiz_grid, sorted_users[i], i + 1, "flip_quiz", i)
 
-# Create flip quiz header - RED theme
-func _create_flip_quiz_header() -> Control:
-	var header = HBoxContainer.new()
-	header.add_theme_constant_override("separation", 5)
-	header.custom_minimum_size = Vector2(0, 60)
-	header.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	
-	var rank_label = _create_reliable_label("RANK", 16, Color(1, 0.9, 0.3))
-	var rank_container = _create_bordered_container(rank_label, Vector2(80, 50), theme_colors["default"], "center")
-	header.add_child(rank_container)
-	
-	var pic_label = _create_reliable_label("AVATAR", 14, Color(0.8, 0.9, 1))
-	var pic_container = _create_bordered_container(pic_label, Vector2(80, 50), theme_colors["default"], "center")
-	header.add_child(pic_container)
-	
-	var name_label = _create_reliable_label("PLAYER NAME", 16, Color(0.9, 0.95, 1))
-	var name_container = _create_bordered_container(name_label, Vector2(300, 50), theme_colors["default"], "center")
-	header.add_child(name_container)
-	
-	var animals_label = _create_reliable_label("ANIMALS", 15, Color(1, 0.6, 0.3))
-	var animals_container = _create_bordered_container(animals_label, Vector2(100, 50), theme_colors["default"], "center")
-	header.add_child(animals_container)
-	
-	var vehicles_label = _create_reliable_label("VEHICLES", 14, Color(0.3, 0.8, 1))
-	var vehicles_container = _create_bordered_container(vehicles_label, Vector2(100, 50), theme_colors["default"], "center")
-	header.add_child(vehicles_container)
-	
-	var progress_label = _create_reliable_label("PROGRESS", 14, Color(1, 1, 0.3))
-	var progress_container = _create_bordered_container(progress_label, Vector2(120, 50), theme_colors["default"], "center")
-	header.add_child(progress_container)
-	
-	return header
+# ========================================
+# NAVIGATION
+# ========================================
 
 # Back button handler
 func _on_back_button_pressed():
@@ -1003,3 +670,4 @@ func _fade_out_and_change_scene(scene_path: String):
 
 func _on_back_button_mouse_entered():
 	$ButtonHover.play()
+

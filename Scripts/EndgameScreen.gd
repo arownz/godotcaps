@@ -5,6 +5,23 @@ signal quit_to_menu
 signal continue_battle
 
 func _ready():
+	# Ensure all audio uses SFX bus for proper volume control
+	var victory_sfx = get_node_or_null("VictorySFX")
+	if victory_sfx:
+		victory_sfx.bus = "SFX"
+	
+	var defeat_sfx = get_node_or_null("DefeatSFX")
+	if defeat_sfx:
+		defeat_sfx.bus = "SFX"
+	
+	var button_click = get_node_or_null("ButtonClick")
+	if button_click:
+		button_click.bus = "SFX"
+	
+	var button_hover = get_node_or_null("ButtonHover")
+	if button_hover:
+		button_hover.bus = "SFX"
+	
 	# Fade-in animation - only fade, no scale change
 	$ResultPanel.modulate = Color(1, 1, 1, 0)
 	

@@ -184,11 +184,13 @@ offset_bottom = -15.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MainContainer/ContentContainer/TabContainer/Dungeon Rankings/ScrollContainer"]
+[node name="GridContainer" type="GridContainer" parent="MainContainer/ContentContainer/TabContainer/Dungeon Rankings/ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/separation = 8
+theme_override_constants/h_separation = 5
+theme_override_constants/v_separation = 5
+columns = 6
 
 [node name="Power Scale" type="Control" parent="MainContainer/ContentContainer/TabContainer"]
 visible = false
@@ -208,11 +210,13 @@ grow_horizontal = 2
 grow_vertical = 2
 horizontal_scroll_mode = 0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MainContainer/ContentContainer/TabContainer/Power Scale/ScrollContainer"]
+[node name="GridContainer" type="GridContainer" parent="MainContainer/ContentContainer/TabContainer/Power Scale/ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/separation = 8
+theme_override_constants/h_separation = 5
+theme_override_constants/v_separation = 5
+columns = 8
 
 [node name="Word Masters" type="Control" parent="MainContainer/ContentContainer/TabContainer"]
 visible = false
@@ -232,11 +236,13 @@ grow_horizontal = 2
 grow_vertical = 2
 horizontal_scroll_mode = 0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MainContainer/ContentContainer/TabContainer/Word Masters/ScrollContainer"]
+[node name="GridContainer" type="GridContainer" parent="MainContainer/ContentContainer/TabContainer/Word Masters/ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/separation = 8
+theme_override_constants/h_separation = 5
+theme_override_constants/v_separation = 5
+columns = 6
 
 [node name="Phonics" type="Control" parent="MainContainer/ContentContainer/TabContainer"]
 visible = false
@@ -256,11 +262,13 @@ grow_horizontal = 2
 grow_vertical = 2
 horizontal_scroll_mode = 0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MainContainer/ContentContainer/TabContainer/Phonics/ScrollContainer"]
+[node name="GridContainer" type="GridContainer" parent="MainContainer/ContentContainer/TabContainer/Phonics/ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/separation = 8
+theme_override_constants/h_separation = 5
+theme_override_constants/v_separation = 5
+columns = 6
 
 [node name="Read Aloud" type="Control" parent="MainContainer/ContentContainer/TabContainer"]
 visible = false
@@ -280,11 +288,13 @@ grow_horizontal = 2
 grow_vertical = 2
 horizontal_scroll_mode = 0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MainContainer/ContentContainer/TabContainer/Read Aloud/ScrollContainer"]
+[node name="GridContainer" type="GridContainer" parent="MainContainer/ContentContainer/TabContainer/Read Aloud/ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/separation = 8
+theme_override_constants/h_separation = 5
+theme_override_constants/v_separation = 5
+columns = 6
 
 [node name="Flip Quiz" type="Control" parent="MainContainer/ContentContainer/TabContainer"]
 visible = false
@@ -304,11 +314,13 @@ grow_horizontal = 2
 grow_vertical = 2
 horizontal_scroll_mode = 0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MainContainer/ContentContainer/TabContainer/Flip Quiz/ScrollContainer"]
+[node name="GridContainer" type="GridContainer" parent="MainContainer/ContentContainer/TabContainer/Flip Quiz/ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/separation = 8
+theme_override_constants/h_separation = 5
+theme_override_constants/v_separation = 5
+columns = 6
 
 [node name="ButtonClick" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("5_67k4m")

@@ -22,7 +22,7 @@ var current_settings = {
 		"sfx_volume": 80,
 		"music_volume": 60
 	},
-	"gameplay": {
+	"gameplay": { #FUTURE
 		"show_tutorials": true
 	}
 }

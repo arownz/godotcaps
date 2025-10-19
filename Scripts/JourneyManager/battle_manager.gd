@@ -51,8 +51,8 @@ func player_attack():
 	# Set player Z-index below enemy during attack (player appears at bottom)
 	var enemy_node = battle_scene.enemy_manager.enemy_animation
 	if enemy_node:
-		player_node.z_index = enemy_node.z_index - 1
-	
+		player_node.z_index = enemy_node.z_index + 10
+
 	var player_attack_tween = create_tween()
 	player_attack_tween.tween_property(player_node, "position", original_position + Vector2(50, 0), 0.3) # Move right
 
@@ -113,7 +113,7 @@ func enemy_attack():
 	# Set enemy Z-index below player during attack (enemy appears at bottom)
 	var player_node = battle_scene.player_manager.player_animation
 	if player_node:
-		enemy_node.z_index = player_node.z_index - 1
+		enemy_node.z_index = player_node.z_index
 	
 	var enemy_attack_tween = create_tween()
 	enemy_attack_tween.tween_property(enemy_node, "position", original_position - Vector2(64, 0), 0.3) # Move left
