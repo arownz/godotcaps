@@ -28,13 +28,19 @@ func _ready():
 	if bg and not bg.gui_input.is_connected(_on_background_clicked):
 		bg.gui_input.connect(_on_background_clicked)
 
-	# Center main container and animate with SettingScene.gd pattern
+	# Fade in animation - matching TermsPrivacyPopup pattern
 	var panel: Control = $ProfileContainer
+	if bg:
+		bg.modulate.a = 0.0
 	if panel:
 		panel.modulate.a = 0.0
 		panel.scale = Vector2(0.8, 0.8)
 		var tween = create_tween()
 		tween.set_parallel(true)
+		# Fade in background
+		if bg:
+			tween.tween_property(bg, "modulate:a", 1.0, 0.35).set_ease(Tween.EASE_OUT)
+		# Fade in and scale panel
 		tween.tween_property(panel, "modulate:a", 1.0, 0.35).set_ease(Tween.EASE_OUT)
 		tween.tween_property(panel, "scale", Vector2(1.0, 1.0), 0.35).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
 

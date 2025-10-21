@@ -1,7 +1,7 @@
 [gd_scene load_steps=17 format=3 uid="uid://cbpwvuj8kdyod"]
 
 [ext_resource type="Script" uid="uid://t5tc36uuxhcf" path="res://Scripts/Authentication.gd" id="1_6ea5n"]
-[ext_resource type="Texture2D" uid="uid://cxqd6wyqy8g22" path="res://gui/Update/Backgrounds/battlescene background.png" id="2_6oq4l"]
+[ext_resource type="Texture2D" uid="uid://020rncisvpgv" path="res://gui/ChatGPT Image Oct 20, 2025, 11_10_37 AM.png" id="2_2p2cx"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="2_edc1m"]
 [ext_resource type="Texture2D" uid="uid://dkkb8nek5d6fs" path="res://gui/Update/logos/LEXIA Logo (with text).png" id="3_3ev2f"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="3_4bnr5"]
@@ -43,9 +43,13 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = -38.0
+offset_top = -107.0
+offset_right = 38.0
+offset_bottom = 107.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_6oq4l")
+texture = ExtResource("2_2p2cx")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1

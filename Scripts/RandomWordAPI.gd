@@ -203,12 +203,12 @@ func _get_fallback_word() -> String:
 	var word_categories_by_length = {
 		3: {
 			"animals": ["dog", "fox", "owl", "pig", "cow", "ape", "ant"], # Removed cat/bat confusion
-			"objects": ["box", "key", "pen", "rod", "bag", "car", "bed", "toy"],
+			"objects": ["box", "key", "pen", "bag", "car", "bed", "toy"],
 			"nature": ["fog", "air", "ice", "gas", "web", "gem", "sky"],
 			"food": ["pie", "egg", "jam", "ham", "gum"], # Removed tea (sounds like "T")
 			"colors": ["red", "jet", "ash", "ink", "wax"], # Removed dye/die, navy (too long sound)
 			"verbs": ["run", "sit", "eat", "get", "cut", "dig", "fly", "try"],
-			"body": ["arm", "leg", "eye", "ear", "jaw", "lip", "hip", "rib"], # Removed toe (sounds like "tow")
+			"body": ["arm", "leg", "eye", "ear", "hip", "rib"], # Removed toe (sounds like "tow")
 		},
 		4: {
 			"animals": ["wolf", "frog", "lion", "duck", "bird", "fish", "deer", "goat", "seal"], # Removed bear/beer confusion

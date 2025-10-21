@@ -7,6 +7,24 @@ signal terms_accepted
 func _ready():
 	# Make background block all clicks
 	$Background.mouse_filter = Control.MOUSE_FILTER_STOP
+	
+	# Fade in animation - matching ProfilePopUp pattern
+	var bg = get_node_or_null("Background")
+	var popup = get_node_or_null("PopupContainer")
+	
+	if bg:
+		bg.modulate.a = 0.0
+	if popup:
+		popup.modulate.a = 0.0
+		popup.scale = Vector2(0.8, 0.8)
+		var tween = create_tween()
+		tween.set_parallel(true)
+		# Fade in background
+		if bg:
+			tween.tween_property(bg, "modulate:a", 1.0, 0.35).set_ease(Tween.EASE_OUT)
+		# Fade in and scale popup
+		tween.tween_property(popup, "modulate:a", 1.0, 0.35).set_ease(Tween.EASE_OUT)
+		tween.tween_property(popup, "scale", Vector2(1.0, 1.0), 0.35).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
 
 # Called when user clicks "I Agree"
 func _on_agree_button_pressed():
@@ -24,8 +42,8 @@ func _on_agree_button_pressed():
 	# Emit signal
 	emit_signal("terms_accepted")
 	
-	# Remove this popup
-	queue_free()
+	# Fade out animation before closing
+	await _fade_out_and_close()
 
 # Save acceptance to persistent storage
 func _save_acceptance():
@@ -70,6 +88,22 @@ static func has_accepted_terms() -> bool:
 		var file_path = "user://terms_accepted.dat"
 		return FileAccess.file_exists(file_path)
 
+
+# Helper function to fade out before closing - matching ProfilePopUp pattern
+func _fade_out_and_close():
+	var bg = get_node_or_null("Background")
+	var popup = get_node_or_null("PopupContainer")
+	var tween = create_tween()
+	tween.set_parallel(true)
+	# Fade out background
+	if bg:
+		tween.tween_property(bg, "modulate:a", 0.0, 0.25).set_ease(Tween.EASE_IN)
+	# Fade out and scale popup
+	if popup:
+		tween.tween_property(popup, "modulate:a", 0.0, 0.25).set_ease(Tween.EASE_IN)
+		tween.tween_property(popup, "scale", Vector2(0.8, 0.8), 0.25).set_ease(Tween.EASE_IN)
+	await tween.finished
+	queue_free()
 
 func _on_agree_button_mouse_entered():
 	$ButtonHover.play()

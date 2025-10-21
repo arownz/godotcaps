@@ -892,6 +892,10 @@ func _on_whiteboard_result(text_result: String):
 	var recognized_text = text_result.strip_edges().to_upper()
 	var target_letter = current_target.to_upper()
 	
+	# CRITICAL: Filter out non-letter characters (numbers, special chars, etc.) BEFORE OCR correction
+	recognized_text = _filter_letters_only(recognized_text)
+	print("PhonicsLetters: After letter-only filter -> ", recognized_text)
+	
 	# Apply OCR correction for common letter/digit confusions
 	recognized_text = _apply_letter_ocr_correction(recognized_text, target_letter)
 	print("PhonicsLetters: After OCR correction -> ", recognized_text)
@@ -1082,6 +1086,25 @@ func _toggle_focus_mode():
 			var target_alpha = 0.35 if letter_focus_mode else 1.0
 			tween.tween_property(node, "modulate:a", target_alpha, 0.4)
 	print("PhonicsLetters: Focus mode = ", letter_focus_mode)
+
+# Filter to accept only letters (a-z, A-Z), removing numbers and special characters
+func _filter_letters_only(text: String) -> String:
+	"""
+	Remove all non-letter characters from recognized text.
+	This ensures we only process alphabetic characters for letters.
+	Dyslexia-focused: prevents confusion from OCR detecting numbers/symbols.
+	"""
+	var filtered = ""
+	for i in range(text.length()):
+		var character = text[i]
+		# Accept only lowercase a-z and uppercase A-Z
+		if (character >= 'a' and character <= 'z') or (character >= 'A' and character <= 'Z'):
+			filtered += character
+	
+	if filtered != text:
+		print("PhonicsLetters: Filtered '", text, "' -> '", filtered, "' (removed non-letters)")
+	
+	return filtered
 
 func _on_tts_settings_saved(voice_id: String, rate: float):
 	"""Handle TTS settings save to update local TTS instance"""

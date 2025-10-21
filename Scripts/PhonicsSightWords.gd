@@ -429,6 +429,10 @@ func _on_whiteboard_result(text_result: String):
 	var recognized_text = text_result.strip_edges().to_lower()
 	var target_word = current_target.to_lower()
 	
+	# CRITICAL: Filter out non-letter characters (numbers, special chars, etc.) BEFORE OCR correction
+	recognized_text = _filter_letters_only(recognized_text)
+	print("PhonicsSightWords: After letter-only filter -> ", recognized_text)
+	
 	# Apply OCR correction for common letter/digit confusions in sight words
 	recognized_text = _apply_sight_word_ocr_correction(recognized_text, target_word)
 	print("PhonicsSightWords: After OCR correction -> ", recognized_text)
@@ -600,6 +604,7 @@ func _on_celebration_try_again():
 func _on_celebration_next():
 	"""Handle next button from celebration popup"""
 	print("PhonicsSightWords: User chose to move to next word")
+	# Adaptive: if user struggled with a recent word, occasionally revisit it before moving on
 	if recent_word_errors.size() > 0 and randi() % 4 == 0:
 		var revisit = recent_word_errors[randi() % recent_word_errors.size()]
 		word_index = sight_words.find(revisit)
@@ -628,6 +633,25 @@ func _toggle_focus_mode():
 			tween.tween_property(node, "modulate:a", target_alpha, 0.4)
 	print("PhonicsSightWords: Focus mode = ", sight_focus_mode)
 
+# Filter to accept only letters (a-z, A-Z), removing numbers and special characters
+func _filter_letters_only(text: String) -> String:
+	"""
+	Remove all non-letter characters from recognized text.
+	This ensures we only process alphabetic characters for sight words.
+	Dyslexia-focused: prevents confusion from OCR detecting numbers/symbols.
+	"""
+	var filtered = ""
+	for i in range(text.length()):
+		var character = text[i]
+		# Accept only lowercase a-z and uppercase A-Z
+		if (character >= 'a' and character <= 'z') or (character >= 'A' and character <= 'Z'):
+			filtered += character
+	
+	if filtered != text:
+		print("PhonicsSightWords: Filtered '", text, "' -> '", filtered, "' (removed non-letters)")
+	
+	return filtered
+
 # OCR correction specifically for sight word recognition
 func _apply_sight_word_ocr_correction(recognized: String, target: String) -> String:
 	var corrected = recognized
@@ -639,7 +663,11 @@ func _apply_sight_word_ocr_correction(recognized: String, target: String) -> Str
 		"5": "s",
 		"6": "g",
 		"2": "z",
-		"8": "b"
+		"8": "b",
+		"4": "a",
+		"3": "e",
+		"7": "t",
+		"9": "g"
 	}
 	
 	# Apply character-by-character corrections
