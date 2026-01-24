@@ -53,4 +53,6 @@ For questions, suggestions, or collaboration opportunities, please contact:
 
 ---
 
-Let me know if you'd like any refinements! You can customize this further as you progress. 🚀
+<img width="1648" height="912" alt="Screenshot 2026-01-01 171404" src="https://github.com/user-attachments/assets/228e70a4-ac59-44f7-9ccb-dae0901620bb" />
+
+<img width="1653" height="910" alt="Screenshot 2026-01-01 170944" src="https://github.com/user-attachments/assets/a17b9817-01a9-45ec-85b3-55a62eb4c274" />
