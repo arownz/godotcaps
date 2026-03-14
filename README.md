@@ -52,5 +52,10 @@ For questions, suggestions, or collaboration opportunities, please contact:
 📧 **pasionharold01@gmail.com**
 
 ---
+<img width="1536" height="1024" alt="lexia (1)" src="https://github.com/user-attachments/assets/ec7f9f41-080e-4b65-9469-054915079ca7" />
+<img width="1648" height="912" alt="Screenshot 2026-01-01 171404" src="https://github.com/user-attachments/assets/228e70a4-ac59-44f7-9ccb-dae0901620bb" />
+<img width="1653" height="910" alt="Screenshot 2026-01-01 170944" src="https://github.com/user-attachments/assets/a17b9817-01a9-45ec-85b3-55a62eb4c274" />
+<img width="1659" height="921" alt="Screenshot 2025-11-30 063729" src="https://github.com/user-attachments/assets/cd71111e-f524-466e-bcf0-023b62adfee8" />
+<img width="1647" height="914" alt="Screenshot 2025-11-30 063754" src="https://github.com/user-attachments/assets/0a79cdad-6188-4ac9-9930-d3075f60fd68" />
+<img width="1659" height="916" alt="Screenshot 2025-11-30 063833" src="https://github.com/user-attachments/assets/33c75e93-08cf-42d5-8f88-b1389028491e" />
 
-Let me know if you'd like any refinements! You can customize this further as you progress. 🚀
