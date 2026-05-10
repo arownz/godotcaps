@@ -47,9 +47,7 @@ Contributions are welcome! If you'd like to help, please follow these steps:
 
 ## **Contact & Updates**
 
-For questions, suggestions, or collaboration opportunities, please contact:
-
-📧 **pasionharold01@gmail.com**
+For questions, suggestions, or collaboration opportunities, please contac me and other dev
 
 ---
 <img width="1536" height="1024" alt="lexia (1)" src="https://github.com/user-attachments/assets/ec7f9f41-080e-4b65-9469-054915079ca7" />
