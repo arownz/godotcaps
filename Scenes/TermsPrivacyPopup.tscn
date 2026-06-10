@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://c6jnt1xkuopi5"]
+[gd_scene format=3 uid="uid://c6jnt1xkuopi5"]
 
 [ext_resource type="Script" uid="uid://4bm7wy3vmj4b" path="res://Scripts/TermsPrivacyPopup.gd" id="1_terms"]
 [ext_resource type="Texture2D" uid="uid://bedyjdu5rblv8" path="res://gui/Update/UI/ui (1).png" id="2_terms"]
@@ -11,11 +11,11 @@
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_8rj3b"]
 
-[node name="TermsPrivacyPopup" type="CanvasLayer"]
+[node name="TermsPrivacyPopup" type="CanvasLayer" unique_id=1142873563]
 layer = 15
 script = ExtResource("1_terms")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="." unique_id=1405002354]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -23,7 +23,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.8)
 
-[node name="PopupContainer" type="Control" parent="."]
+[node name="PopupContainer" type="Control" parent="." unique_id=99436671]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -32,7 +32,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="CenterContainer" type="CenterContainer" parent="PopupContainer"]
+[node name="CenterContainer" type="CenterContainer" parent="PopupContainer" unique_id=1018141222]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -40,12 +40,12 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="PopupBackground" type="TextureRect" parent="PopupContainer/CenterContainer"]
+[node name="PopupBackground" type="TextureRect" parent="PopupContainer/CenterContainer" unique_id=1452394591]
 custom_minimum_size = Vector2(540, 480)
 layout_mode = 2
 texture = ExtResource("2_terms")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PopupContainer/CenterContainer/PopupBackground"]
+[node name="VBoxContainer" type="VBoxContainer" parent="PopupContainer/CenterContainer/PopupBackground" unique_id=269533483]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -58,7 +58,7 @@ grow_horizontal = 2
 grow_vertical = 2
 alignment = 1
 
-[node name="TitleLabel" type="Label" parent="PopupContainer/CenterContainer/PopupBackground/VBoxContainer"]
+[node name="TitleLabel" type="Label" parent="PopupContainer/CenterContainer/PopupBackground/VBoxContainer" unique_id=1891548896]
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -68,17 +68,17 @@ theme_override_font_sizes/font_size = 24
 text = "Terms & Privacy Policy"
 horizontal_alignment = 1
 
-[node name="Spacer1" type="Control" parent="PopupContainer/CenterContainer/PopupBackground/VBoxContainer"]
+[node name="Spacer1" type="Control" parent="PopupContainer/CenterContainer/PopupBackground/VBoxContainer" unique_id=1816386557]
 custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
 
-[node name="ScrollContainer" type="ScrollContainer" parent="PopupContainer/CenterContainer/PopupBackground/VBoxContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="PopupContainer/CenterContainer/PopupBackground/VBoxContainer" unique_id=1578750807]
 custom_minimum_size = Vector2(480, 300)
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
-[node name="MessageLabel" type="RichTextLabel" parent="PopupContainer/CenterContainer/PopupBackground/VBoxContainer/ScrollContainer"]
+[node name="MessageLabel" type="RichTextLabel" parent="PopupContainer/CenterContainer/PopupBackground/VBoxContainer/ScrollContainer" unique_id=953147455]
 custom_minimum_size = Vector2(460, 0)
 layout_mode = 2
 theme_override_colors/default_color = Color(0.985813, 0.955071, 0.530108, 1)
@@ -129,15 +129,15 @@ text = "[center]WELCOME TO LEXIA![/center]
 fit_content = true
 scroll_active = false
 
-[node name="Spacer2" type="Control" parent="PopupContainer/CenterContainer/PopupBackground/VBoxContainer"]
+[node name="Spacer2" type="Control" parent="PopupContainer/CenterContainer/PopupBackground/VBoxContainer" unique_id=738755999]
 custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
 
-[node name="ButtonContainer" type="HBoxContainer" parent="PopupContainer/CenterContainer/PopupBackground/VBoxContainer"]
+[node name="ButtonContainer" type="HBoxContainer" parent="PopupContainer/CenterContainer/PopupBackground/VBoxContainer" unique_id=1538539950]
 layout_mode = 2
 alignment = 1
 
-[node name="AgreeButton" type="Button" parent="PopupContainer/CenterContainer/PopupBackground/VBoxContainer/ButtonContainer"]
+[node name="AgreeButton" type="Button" parent="PopupContainer/CenterContainer/PopupBackground/VBoxContainer/ButtonContainer" unique_id=711082994]
 custom_minimum_size = Vector2(120, 50)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -155,10 +155,10 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+[node name="ButtonClick" type="AudioStreamPlayer" parent="." unique_id=565184523]
 stream = ExtResource("9_15ss7")
 
-[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+[node name="ButtonHover" type="AudioStreamPlayer" parent="." unique_id=20088494]
 stream = ExtResource("10_8rj3b")
 
 [connection signal="mouse_entered" from="PopupContainer/CenterContainer/PopupBackground/VBoxContainer/ButtonContainer/AgreeButton" to="." method="_on_agree_button_mouse_entered"]

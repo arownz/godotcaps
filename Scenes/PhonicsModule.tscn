@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://c3eucvdnmnw54"]
+[gd_scene format=3 uid="uid://c3eucvdnmnw54"]
 
 [ext_resource type="Script" uid="uid://c8qtq6lp3uc26" path="res://Scripts/PhonicsModule.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://0con8ixqofpr" path="res://gui/Update/UI/ui 8.png" id="2_edgla"]
@@ -61,7 +61,7 @@ shadow_offset = Vector2(0, 2)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_nm4xh"]
 
-[node name="PhonicsModule" type="Control"]
+[node name="PhonicsModule" type="Control" unique_id=2063009582]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -70,7 +70,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_script")
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="Background" type="TextureRect" parent="." unique_id=656883087]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -79,7 +79,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_edgla")
 
-[node name="MainContainer" type="VBoxContainer" parent="."]
+[node name="MainContainer" type="VBoxContainer" parent="." unique_id=1270656659]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -92,13 +92,13 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 50
 
-[node name="HeaderPanel" type="Panel" parent="MainContainer"]
+[node name="HeaderPanel" type="Panel" parent="MainContainer" unique_id=374347437]
 custom_minimum_size = Vector2(0, 123)
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_ydvs0")
 
-[node name="HeaderContainer" type="VBoxContainer" parent="MainContainer/HeaderPanel"]
+[node name="HeaderContainer" type="VBoxContainer" parent="MainContainer/HeaderPanel" unique_id=893817182]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -114,12 +114,12 @@ grow_vertical = 2
 scale = Vector2(0.95167, 0.95167)
 theme_override_constants/separation = 15
 
-[node name="TitleContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer"]
+[node name="TitleContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer" unique_id=2074708829]
 layout_mode = 2
 size_flags_vertical = 0
 alignment = 1
 
-[node name="TitleLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer"]
+[node name="TitleLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer" unique_id=1978507405]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -129,7 +129,7 @@ text = "    PHONICS LEARNING"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="BackButton" type="Button" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer"]
+[node name="BackButton" type="Button" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer" unique_id=1356545541]
 custom_minimum_size = Vector2(120, 45)
 layout_mode = 2
 size_flags_horizontal = 8
@@ -146,20 +146,20 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="ProgressContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer"]
+[node name="ProgressContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer" unique_id=906531911]
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_constants/separation = 15
 alignment = 1
 
-[node name="ProgressLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer"]
+[node name="ProgressLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer" unique_id=1894781100]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular")
 theme_override_font_sizes/font_size = 16
 text = "0% Complete"
 
-[node name="ProgressBar" type="ProgressBar" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer"]
+[node name="ProgressBar" type="ProgressBar" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer" unique_id=1004489891]
 custom_minimum_size = Vector2(250, 20)
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -167,7 +167,7 @@ theme_override_fonts/font = ExtResource("4_bold")
 theme_override_styles/background = SubResource("StyleBoxFlat_progress_bg")
 theme_override_styles/fill = SubResource("StyleBoxFlat_letters_progress")
 
-[node name="GuideButton" type="Button" parent="MainContainer/HeaderPanel"]
+[node name="GuideButton" type="Button" parent="MainContainer/HeaderPanel" unique_id=1018102734]
 layout_mode = 0
 offset_left = 30.0
 offset_right = 129.0
@@ -184,7 +184,7 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="TTSSettingButton" type="TextureButton" parent="MainContainer/HeaderPanel"]
+[node name="TTSSettingButton" type="TextureButton" parent="MainContainer/HeaderPanel" unique_id=594705166]
 layout_mode = 0
 offset_left = 49.0
 offset_top = 66.0
@@ -195,23 +195,23 @@ texture_normal = ExtResource("8_settings")
 texture_hover = ExtResource("9_settings_hover")
 stretch_mode = 5
 
-[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer" unique_id=324557994]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="CategoriesGrid" type="GridContainer" parent="MainContainer/ScrollContainer"]
+[node name="CategoriesGrid" type="GridContainer" parent="MainContainer/ScrollContainer" unique_id=723916001]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/h_separation = 25
 columns = 3
 
-[node name="LettersCard" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid"]
+[node name="LettersCard" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid" unique_id=541560652]
 custom_minimum_size = Vector2(430, 300)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_ydvs0")
 
-[node name="LettersContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/LettersCard"]
+[node name="LettersContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/LettersCard" unique_id=1519171080]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -223,11 +223,11 @@ offset_bottom = -15.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="IconContainer" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid/LettersCard/LettersContent"]
+[node name="IconContainer" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid/LettersCard/LettersContent" unique_id=505007202]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="CenterContainer" type="CenterContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/LettersCard/LettersContent/IconContainer"]
+[node name="CenterContainer" type="CenterContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/LettersCard/LettersContent/IconContainer" unique_id=1271950792]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -235,7 +235,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="IconLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/LettersCard/LettersContent/IconContainer/CenterContainer"]
+[node name="IconLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/LettersCard/LettersContent/IconContainer/CenterContainer" unique_id=1358218675]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.2, 0.6, 0.901961, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -244,7 +244,7 @@ theme_override_font_sizes/font_size = 48
 text = "ABC"
 horizontal_alignment = 1
 
-[node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/LettersCard/LettersContent"]
+[node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/LettersCard/LettersContent" unique_id=931325593]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold")
@@ -252,7 +252,7 @@ theme_override_font_sizes/font_size = 20
 text = "Letters (Path Guide)"
 horizontal_alignment = 1
 
-[node name="DescLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/LettersCard/LettersContent"]
+[node name="DescLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/LettersCard/LettersContent" unique_id=381886675]
 custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -262,7 +262,7 @@ text = "Trace A-Z and hear sounds"
 horizontal_alignment = 1
 autowrap_mode = 2
 
-[node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/LettersCard/LettersContent"]
+[node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/LettersCard/LettersContent" unique_id=1708079799]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular")
@@ -270,7 +270,7 @@ theme_override_font_sizes/font_size = 12
 text = "0% Complete"
 horizontal_alignment = 1
 
-[node name="EnterButton" type="Button" parent="MainContainer/ScrollContainer/CategoriesGrid/LettersCard/LettersContent"]
+[node name="EnterButton" type="Button" parent="MainContainer/ScrollContainer/CategoriesGrid/LettersCard/LettersContent" unique_id=1754882354]
 layout_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -285,12 +285,12 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="SightWordsCard" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid"]
+[node name="SightWordsCard" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid" unique_id=276062429]
 custom_minimum_size = Vector2(430, 300)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_ydvs0")
 
-[node name="SightWordsContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard"]
+[node name="SightWordsContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard" unique_id=945899707]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -302,11 +302,11 @@ offset_bottom = -15.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="IconContainer" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard/SightWordsContent"]
+[node name="IconContainer" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard/SightWordsContent" unique_id=229115217]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="CenterContainer" type="CenterContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard/SightWordsContent/IconContainer"]
+[node name="CenterContainer" type="CenterContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard/SightWordsContent/IconContainer" unique_id=1383253770]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -314,7 +314,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="IconLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard/SightWordsContent/IconContainer/CenterContainer"]
+[node name="IconLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard/SightWordsContent/IconContainer/CenterContainer" unique_id=251577162]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.2, 0.6, 0.901961, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -324,7 +324,7 @@ text = "the
 cat"
 horizontal_alignment = 1
 
-[node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard/SightWordsContent"]
+[node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard/SightWordsContent" unique_id=1628870294]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold")
@@ -332,7 +332,7 @@ theme_override_font_sizes/font_size = 20
 text = "Sight Words"
 horizontal_alignment = 1
 
-[node name="DescLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard/SightWordsContent"]
+[node name="DescLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard/SightWordsContent" unique_id=2098185000]
 custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -342,7 +342,7 @@ text = "Common words like 'the', 'and'"
 horizontal_alignment = 1
 autowrap_mode = 2
 
-[node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard/SightWordsContent"]
+[node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard/SightWordsContent" unique_id=1555255554]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular")
@@ -350,7 +350,7 @@ theme_override_font_sizes/font_size = 12
 text = "0% Complete"
 horizontal_alignment = 1
 
-[node name="EnterButton" type="Button" parent="MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard/SightWordsContent"]
+[node name="EnterButton" type="Button" parent="MainContainer/ScrollContainer/CategoriesGrid/SightWordsCard/SightWordsContent" unique_id=2606932]
 layout_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -365,10 +365,10 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+[node name="ButtonClick" type="AudioStreamPlayer" parent="." unique_id=1554161414]
 stream = ExtResource("6_click")
 
-[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+[node name="ButtonHover" type="AudioStreamPlayer" parent="." unique_id=686696173]
 stream = ExtResource("7_hover")
 
 [connection signal="pressed" from="MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton" to="." method="_on_back_button_pressed"]

@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3 uid="uid://bysyq46j6ycis"]
+[gd_scene format=3 uid="uid://bysyq46j6ycis"]
 
 [ext_resource type="Script" uid="uid://caa84ntbsorb8" path="res://Scripts/ProfilePopUp.gd" id="1_script"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="2_73kok"]
@@ -79,10 +79,10 @@ corner_radius_bottom_left = 15
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_tilb2"]
 
-[node name="ProfilePopUp" type="Node2D"]
+[node name="ProfilePopUp" type="Node2D" unique_id=1365018732]
 script = ExtResource("1_script")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="." unique_id=269310307]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -92,7 +92,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.6)
 
-[node name="ProfileContainer" type="Control" parent="."]
+[node name="ProfileContainer" type="Control" parent="." unique_id=69269616]
 custom_minimum_size = Vector2(750, 600)
 layout_mode = 3
 anchors_preset = 0
@@ -102,7 +102,7 @@ offset_right = 1119.0
 offset_bottom = 746.0
 scale = Vector2(0.912511, 0.912511)
 
-[node name="BackgroundTexture" type="TextureRect" parent="ProfileContainer"]
+[node name="BackgroundTexture" type="TextureRect" parent="ProfileContainer" unique_id=1646412833]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -117,7 +117,7 @@ texture = ExtResource("2_rwnca")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="HeaderPanel" type="Panel" parent="ProfileContainer"]
+[node name="HeaderPanel" type="Panel" parent="ProfileContainer" unique_id=853705811]
 custom_minimum_size = Vector2(0, 90)
 layout_mode = 0
 offset_left = -18.0
@@ -126,7 +126,7 @@ offset_right = 762.0
 offset_bottom = 107.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_header")
 
-[node name="TitleContainer" type="HBoxContainer" parent="ProfileContainer/HeaderPanel"]
+[node name="TitleContainer" type="HBoxContainer" parent="ProfileContainer/HeaderPanel" unique_id=1457593090]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -137,14 +137,14 @@ grow_horizontal = 2
 grow_vertical = 2
 alignment = 1
 
-[node name="TextureRect" type="TextureRect" parent="ProfileContainer/HeaderPanel/TitleContainer"]
+[node name="TextureRect" type="TextureRect" parent="ProfileContainer/HeaderPanel/TitleContainer" unique_id=218554567]
 custom_minimum_size = Vector2(45, 45)
 layout_mode = 2
 size_flags_vertical = 4
 texture = ExtResource("3_q75ak")
 expand_mode = 2
 
-[node name="TitleLabel" type="Label" parent="ProfileContainer/HeaderPanel/TitleContainer"]
+[node name="TitleLabel" type="Label" parent="ProfileContainer/HeaderPanel/TitleContainer" unique_id=281816966]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -153,7 +153,7 @@ theme_override_font_sizes/font_size = 36
 text = "PROFILE"
 horizontal_alignment = 1
 
-[node name="CloseButton" type="TextureButton" parent="ProfileContainer"]
+[node name="CloseButton" type="TextureButton" parent="ProfileContainer" unique_id=203075301]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -169,7 +169,7 @@ texture_hover = ExtResource("4_7j5ql")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="ProfilePictureButton" type="TextureButton" parent="ProfileContainer"]
+[node name="ProfilePictureButton" type="TextureButton" parent="ProfileContainer" unique_id=2024658418]
 layout_mode = 0
 offset_left = 8.0
 offset_top = 148.0
@@ -180,7 +180,7 @@ texture_normal = ExtResource("5_r1smr")
 texture_hover = ExtResource("6_tilb2")
 stretch_mode = 0
 
-[node name="PictureContainer" type="TextureRect" parent="ProfileContainer/ProfilePictureButton"]
+[node name="PictureContainer" type="TextureRect" parent="ProfileContainer/ProfilePictureButton" unique_id=1063950190]
 layout_mode = 0
 offset_left = 23.0
 offset_top = 17.0
@@ -191,7 +191,7 @@ texture = ExtResource("9_6o1ar")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="UserInfoArea" type="Control" parent="ProfileContainer"]
+[node name="UserInfoArea" type="Control" parent="ProfileContainer" unique_id=888947005]
 layout_mode = 1
 anchors_preset = 0
 offset_left = 190.0
@@ -199,7 +199,7 @@ offset_top = 153.0
 offset_right = 740.0
 offset_bottom = 324.0
 
-[node name="NameLabel" type="Label" parent="ProfileContainer/UserInfoArea"]
+[node name="NameLabel" type="Label" parent="ProfileContainer/UserInfoArea" unique_id=773616645]
 layout_mode = 0
 offset_right = 181.0
 offset_bottom = 39.0
@@ -208,7 +208,7 @@ theme_override_fonts/font = ExtResource("2_73kok")
 theme_override_font_sizes/font_size = 24
 text = "Username:"
 
-[node name="NameValue" type="Label" parent="ProfileContainer/UserInfoArea"]
+[node name="NameValue" type="Label" parent="ProfileContainer/UserInfoArea" unique_id=1482614258]
 layout_mode = 0
 offset_left = 184.0
 offset_top = 3.0
@@ -221,7 +221,7 @@ theme_override_fonts/font = ExtResource("3_uyv5l")
 theme_override_font_sizes/font_size = 22
 text = "Loading..."
 
-[node name="EditNameButton" type="TextureButton" parent="ProfileContainer/UserInfoArea"]
+[node name="EditNameButton" type="TextureButton" parent="ProfileContainer/UserInfoArea" unique_id=2118655810]
 layout_mode = 0
 offset_left = 525.6078
 offset_top = 12.477468
@@ -232,7 +232,7 @@ mouse_default_cursor_shape = 2
 texture_normal = ExtResource("7_rwnca")
 texture_hover = ExtResource("11_6o1ar")
 
-[node name="CharacterLabel" type="Label" parent="ProfileContainer/UserInfoArea/EditNameButton"]
+[node name="CharacterLabel" type="Label" parent="ProfileContainer/UserInfoArea/EditNameButton" unique_id=1950424683]
 visible = false
 layout_mode = 1
 anchors_preset = 5
@@ -253,7 +253,7 @@ theme_override_font_sizes/font_size = 18
 text = "Edit Username"
 horizontal_alignment = 1
 
-[node name="EmailLabel" type="Label" parent="ProfileContainer/UserInfoArea"]
+[node name="EmailLabel" type="Label" parent="ProfileContainer/UserInfoArea" unique_id=724498200]
 layout_mode = 0
 offset_top = 120.78047
 offset_right = 181.0
@@ -263,7 +263,7 @@ theme_override_fonts/font = ExtResource("2_73kok")
 theme_override_font_sizes/font_size = 20
 text = "Email:"
 
-[node name="EmailValue" type="Label" parent="ProfileContainer/UserInfoArea"]
+[node name="EmailValue" type="Label" parent="ProfileContainer/UserInfoArea" unique_id=206791538]
 layout_mode = 0
 offset_left = 101.0
 offset_top = 120.78047
@@ -275,7 +275,7 @@ theme_override_fonts/font = ExtResource("3_uyv5l")
 theme_override_font_sizes/font_size = 20
 text = "Loading..."
 
-[node name="UIDLabel" type="Label" parent="ProfileContainer/UserInfoArea"]
+[node name="UIDLabel" type="Label" parent="ProfileContainer/UserInfoArea" unique_id=586816491]
 layout_mode = 0
 offset_left = -0.41320693
 offset_top = 45.35377
@@ -286,7 +286,7 @@ theme_override_fonts/font = ExtResource("2_73kok")
 theme_override_font_sizes/font_size = 18
 text = "UID:"
 
-[node name="UIDValue" type="Label" parent="ProfileContainer/UserInfoArea"]
+[node name="UIDValue" type="Label" parent="ProfileContainer/UserInfoArea" unique_id=2032925646]
 layout_mode = 0
 offset_left = 67.5868
 offset_top = 49.353786
@@ -298,7 +298,7 @@ theme_override_fonts/font = ExtResource("3_uyv5l")
 theme_override_font_sizes/font_size = 16
 text = "Loading..."
 
-[node name="CopyUIDButton" type="TextureButton" parent="ProfileContainer/UserInfoArea"]
+[node name="CopyUIDButton" type="TextureButton" parent="ProfileContainer/UserInfoArea" unique_id=145834710]
 layout_mode = 0
 offset_left = 526.0518
 offset_top = 46.831238
@@ -309,7 +309,7 @@ mouse_default_cursor_shape = 2
 texture_normal = ExtResource("8_ampbo")
 texture_hover = ExtResource("13_q75ak")
 
-[node name="CharacterLabel" type="Label" parent="ProfileContainer/UserInfoArea/CopyUIDButton"]
+[node name="CharacterLabel" type="Label" parent="ProfileContainer/UserInfoArea/CopyUIDButton" unique_id=395358273]
 visible = false
 layout_mode = 1
 anchors_preset = 5
@@ -330,7 +330,7 @@ theme_override_font_sizes/font_size = 18
 text = "Copy UID"
 horizontal_alignment = 1
 
-[node name="RankLabel" type="Label" parent="ProfileContainer/UserInfoArea"]
+[node name="RankLabel" type="Label" parent="ProfileContainer/UserInfoArea" unique_id=1090636354]
 layout_mode = 0
 offset_left = -0.413228
 offset_top = 81.32597
@@ -341,7 +341,7 @@ theme_override_fonts/font = ExtResource("2_73kok")
 theme_override_font_sizes/font_size = 20
 text = "Rank:"
 
-[node name="RankIcon" type="TextureRect" parent="ProfileContainer/UserInfoArea"]
+[node name="RankIcon" type="TextureRect" parent="ProfileContainer/UserInfoArea" unique_id=2020910854]
 custom_minimum_size = Vector2(30, 30)
 layout_mode = 0
 offset_left = 86.5868
@@ -352,7 +352,7 @@ texture = ExtResource("7_medal")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="RankValue" type="Label" parent="ProfileContainer/UserInfoArea"]
+[node name="RankValue" type="Label" parent="ProfileContainer/UserInfoArea" unique_id=651267241]
 layout_mode = 0
 offset_left = 119.587
 offset_top = 79.32597
@@ -364,7 +364,7 @@ theme_override_fonts/font = ExtResource("3_uyv5l")
 theme_override_font_sizes/font_size = 20
 text = "Rank"
 
-[node name="Separator" type="ColorRect" parent="ProfileContainer"]
+[node name="Separator" type="ColorRect" parent="ProfileContainer" unique_id=2041696482]
 layout_mode = 0
 offset_left = 33.0
 offset_top = 334.0
@@ -372,7 +372,7 @@ offset_right = 716.0
 offset_bottom = 337.0
 color = Color(0, 0, 0, 0.89411765)
 
-[node name="StatsArea" type="Control" parent="ProfileContainer"]
+[node name="StatsArea" type="Control" parent="ProfileContainer" unique_id=227505123]
 layout_mode = 1
 anchors_preset = 0
 offset_left = 241.0
@@ -380,7 +380,7 @@ offset_top = 353.0
 offset_right = 470.0
 offset_bottom = 604.0
 
-[node name="StatsTitle" type="Label" parent="ProfileContainer/StatsArea"]
+[node name="StatsTitle" type="Label" parent="ProfileContainer/StatsArea" unique_id=79005934]
 layout_mode = 0
 offset_left = -7.0
 offset_top = 12.0
@@ -393,7 +393,7 @@ text = "Player Stats"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="HealthLabel" type="Label" parent="ProfileContainer/StatsArea"]
+[node name="HealthLabel" type="Label" parent="ProfileContainer/StatsArea" unique_id=1073679599]
 layout_mode = 0
 offset_left = -8.0
 offset_top = 62.0
@@ -404,7 +404,7 @@ theme_override_fonts/font = ExtResource("2_73kok")
 theme_override_font_sizes/font_size = 20
 text = "Health:"
 
-[node name="HealthValue" type="Label" parent="ProfileContainer/StatsArea"]
+[node name="HealthValue" type="Label" parent="ProfileContainer/StatsArea" unique_id=1531569050]
 layout_mode = 0
 offset_left = 101.0
 offset_top = 61.0
@@ -416,7 +416,7 @@ theme_override_fonts/font = ExtResource("3_uyv5l")
 theme_override_font_sizes/font_size = 20
 text = "100"
 
-[node name="bonus_hp" type="Label" parent="ProfileContainer/StatsArea"]
+[node name="bonus_hp" type="Label" parent="ProfileContainer/StatsArea" unique_id=201540378]
 layout_mode = 0
 offset_left = 194.06322
 offset_top = 56.858055
@@ -428,7 +428,7 @@ theme_override_fonts/font = ExtResource("2_73kok")
 theme_override_font_sizes/font_size = 20
 text = "+"
 
-[node name="bonus_atk" type="Label" parent="ProfileContainer/StatsArea"]
+[node name="bonus_atk" type="Label" parent="ProfileContainer/StatsArea" unique_id=190260760]
 layout_mode = 0
 offset_left = 194.0632
 offset_top = 96.30964
@@ -440,7 +440,7 @@ theme_override_fonts/font = ExtResource("2_73kok")
 theme_override_font_sizes/font_size = 20
 text = "+"
 
-[node name="bonus_drb" type="Label" parent="ProfileContainer/StatsArea"]
+[node name="bonus_drb" type="Label" parent="ProfileContainer/StatsArea" unique_id=1164418871]
 layout_mode = 0
 offset_left = 194.06328
 offset_top = 133.56946
@@ -452,7 +452,7 @@ theme_override_fonts/font = ExtResource("2_73kok")
 theme_override_font_sizes/font_size = 20
 text = "+"
 
-[node name="AttackLabel" type="Label" parent="ProfileContainer/StatsArea"]
+[node name="AttackLabel" type="Label" parent="ProfileContainer/StatsArea" unique_id=1439321044]
 layout_mode = 0
 offset_left = -7.0
 offset_top = 97.0
@@ -463,7 +463,7 @@ theme_override_fonts/font = ExtResource("2_73kok")
 theme_override_font_sizes/font_size = 20
 text = "Attack:"
 
-[node name="AttackValue" type="Label" parent="ProfileContainer/StatsArea"]
+[node name="AttackValue" type="Label" parent="ProfileContainer/StatsArea" unique_id=207090735]
 layout_mode = 0
 offset_left = 102.0
 offset_top = 96.0
@@ -475,7 +475,7 @@ theme_override_fonts/font = ExtResource("3_uyv5l")
 theme_override_font_sizes/font_size = 20
 text = "100"
 
-[node name="DurabilityLabel" type="Label" parent="ProfileContainer/StatsArea"]
+[node name="DurabilityLabel" type="Label" parent="ProfileContainer/StatsArea" unique_id=231146326]
 layout_mode = 0
 offset_left = -7.0
 offset_top = 134.0
@@ -486,7 +486,7 @@ theme_override_fonts/font = ExtResource("2_73kok")
 theme_override_font_sizes/font_size = 20
 text = "Durability:"
 
-[node name="DurabilityValue" type="Label" parent="ProfileContainer/StatsArea"]
+[node name="DurabilityValue" type="Label" parent="ProfileContainer/StatsArea" unique_id=1532498632]
 layout_mode = 0
 offset_left = 149.0
 offset_top = 134.0
@@ -498,7 +498,7 @@ theme_override_fonts/font = ExtResource("3_uyv5l")
 theme_override_font_sizes/font_size = 20
 text = "100"
 
-[node name="Level" type="Label" parent="ProfileContainer/StatsArea"]
+[node name="Level" type="Label" parent="ProfileContainer/StatsArea" unique_id=1603611666]
 layout_mode = 0
 offset_left = -6.0
 offset_top = 174.0
@@ -509,7 +509,7 @@ theme_override_font_sizes/font_size = 20
 text = "Level:"
 horizontal_alignment = 1
 
-[node name="Level2" type="Label" parent="ProfileContainer/StatsArea"]
+[node name="Level2" type="Label" parent="ProfileContainer/StatsArea" unique_id=218170590]
 layout_mode = 0
 offset_left = 88.0
 offset_top = 174.0
@@ -521,7 +521,7 @@ theme_override_fonts/font = ExtResource("3_uyv5l")
 theme_override_font_sizes/font_size = 20
 text = "100"
 
-[node name="CharacterContainer" type="TextureButton" parent="ProfileContainer"]
+[node name="CharacterContainer" type="TextureButton" parent="ProfileContainer" unique_id=1292135004]
 layout_mode = 0
 offset_left = 5.0
 offset_top = 345.0
@@ -532,7 +532,7 @@ texture_normal = ExtResource("11_tilb2")
 texture_hover = ExtResource("12_82scp")
 stretch_mode = 0
 
-[node name="CharacterLabel" type="Label" parent="ProfileContainer/CharacterContainer"]
+[node name="CharacterLabel" type="Label" parent="ProfileContainer/CharacterContainer" unique_id=367584125]
 visible = false
 layout_mode = 1
 anchors_preset = 5
@@ -552,7 +552,7 @@ theme_override_font_sizes/font_size = 18
 text = "Characters Selection"
 horizontal_alignment = 1
 
-[node name="DungeonArea" type="Button" parent="ProfileContainer"]
+[node name="DungeonArea" type="Button" parent="ProfileContainer" unique_id=1884212315]
 layout_mode = 1
 offset_left = 521.6376
 offset_top = 356.1601
@@ -569,7 +569,7 @@ autowrap_mode = 3
 icon_alignment = 1
 expand_icon = true
 
-[node name="DungeonValue" type="Label" parent="ProfileContainer/DungeonArea"]
+[node name="DungeonValue" type="Label" parent="ProfileContainer/DungeonArea" unique_id=1386158116]
 layout_mode = 0
 offset_left = 20.0
 offset_top = 8.0
@@ -581,7 +581,7 @@ theme_override_fonts/font = ExtResource("2_73kok")
 theme_override_font_sizes/font_size = 18
 text = "3: The Mountain"
 
-[node name="DungeonImage" type="TextureRect" parent="ProfileContainer/DungeonArea"]
+[node name="DungeonImage" type="TextureRect" parent="ProfileContainer/DungeonArea" unique_id=1802221807]
 layout_mode = 0
 offset_left = 7.0
 offset_top = 50.0
@@ -592,7 +592,7 @@ texture = ExtResource("13_tilb2")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="StageLabel" type="Label" parent="ProfileContainer/DungeonArea"]
+[node name="StageLabel" type="Label" parent="ProfileContainer/DungeonArea" unique_id=227971344]
 layout_mode = 0
 offset_left = 4.0
 offset_top = 285.0
@@ -604,7 +604,7 @@ theme_override_fonts/font = ExtResource("2_73kok")
 theme_override_font_sizes/font_size = 18
 text = "Current Stage:"
 
-[node name="StageValue" type="Label" parent="ProfileContainer/DungeonArea"]
+[node name="StageValue" type="Label" parent="ProfileContainer/DungeonArea" unique_id=970675041]
 layout_mode = 0
 offset_left = 204.0
 offset_top = 284.0
@@ -616,7 +616,7 @@ theme_override_fonts/font = ExtResource("3_uyv5l")
 theme_override_font_sizes/font_size = 18
 text = "5/5"
 
-[node name="ProgressLabel" type="Label" parent="ProfileContainer/DungeonArea"]
+[node name="ProgressLabel" type="Label" parent="ProfileContainer/DungeonArea" unique_id=2081313591]
 visible = false
 layout_mode = 1
 anchors_preset = 5
@@ -636,7 +636,7 @@ theme_override_font_sizes/font_size = 18
 text = "Go to progress dungeon"
 horizontal_alignment = 1
 
-[node name="LogoutButton" type="Button" parent="ProfileContainer"]
+[node name="LogoutButton" type="Button" parent="ProfileContainer" unique_id=1880453654]
 layout_mode = 0
 offset_left = 237.0
 offset_top = 628.0
@@ -656,7 +656,7 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="EditUsernamePanel" type="Control" parent="."]
+[node name="EditUsernamePanel" type="Control" parent="." unique_id=300561141]
 visible = false
 layout_mode = 3
 anchors_preset = 15
@@ -669,7 +669,7 @@ offset_bottom = 854.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="PanelBackground" type="ColorRect" parent="EditUsernamePanel"]
+[node name="PanelBackground" type="ColorRect" parent="EditUsernamePanel" unique_id=1979073796]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -678,7 +678,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.7)
 
-[node name="EditContainer" type="Control" parent="EditUsernamePanel"]
+[node name="EditContainer" type="Control" parent="EditUsernamePanel" unique_id=922009323]
 custom_minimum_size = Vector2(500, 300)
 layout_mode = 1
 anchors_preset = 8
@@ -693,7 +693,7 @@ offset_bottom = 150.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="PanelTexture" type="NinePatchRect" parent="EditUsernamePanel/EditContainer"]
+[node name="PanelTexture" type="NinePatchRect" parent="EditUsernamePanel/EditContainer" unique_id=1570239939]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -702,7 +702,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_rwnca")
 
-[node name="ContentContainer" type="MarginContainer" parent="EditUsernamePanel/EditContainer"]
+[node name="ContentContainer" type="MarginContainer" parent="EditUsernamePanel/EditContainer" unique_id=1613990731]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -714,10 +714,10 @@ theme_override_constants/margin_top = 40
 theme_override_constants/margin_right = 40
 theme_override_constants/margin_bottom = 40
 
-[node name="VBoxContainer" type="Control" parent="EditUsernamePanel/EditContainer/ContentContainer"]
+[node name="VBoxContainer" type="Control" parent="EditUsernamePanel/EditContainer/ContentContainer" unique_id=1135573536]
 layout_mode = 2
 
-[node name="TitleLabel" type="Label" parent="EditUsernamePanel/EditContainer/ContentContainer/VBoxContainer"]
+[node name="TitleLabel" type="Label" parent="EditUsernamePanel/EditContainer/ContentContainer/VBoxContainer" unique_id=469431723]
 layout_mode = 0
 offset_left = -3.0
 offset_top = -24.0
@@ -729,7 +729,7 @@ theme_override_font_sizes/font_size = 20
 text = "Edit Username"
 horizontal_alignment = 1
 
-[node name="InstructionLabel" type="Label" parent="EditUsernamePanel/EditContainer/ContentContainer/VBoxContainer"]
+[node name="InstructionLabel" type="Label" parent="EditUsernamePanel/EditContainer/ContentContainer/VBoxContainer" unique_id=880456783]
 layout_mode = 0
 offset_top = 65.0
 offset_right = 420.0
@@ -740,21 +740,21 @@ theme_override_font_sizes/font_size = 18
 text = "Enter your new username:"
 horizontal_alignment = 1
 
-[node name="InputContainer" type="HBoxContainer" parent="EditUsernamePanel/EditContainer/ContentContainer/VBoxContainer"]
+[node name="InputContainer" type="HBoxContainer" parent="EditUsernamePanel/EditContainer/ContentContainer/VBoxContainer" unique_id=609780241]
 layout_mode = 0
 offset_top = 119.0
 offset_right = 420.0
 offset_bottom = 159.0
 alignment = 1
 
-[node name="UsernameLineEdit" type="LineEdit" parent="EditUsernamePanel/EditContainer/ContentContainer/VBoxContainer/InputContainer"]
+[node name="UsernameLineEdit" type="LineEdit" parent="EditUsernamePanel/EditContainer/ContentContainer/VBoxContainer/InputContainer" unique_id=1383320400]
 custom_minimum_size = Vector2(250, 40)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3_uyv5l")
 theme_override_font_sizes/font_size = 16
 placeholder_text = "New username"
 
-[node name="ButtonContainer" type="HBoxContainer" parent="EditUsernamePanel/EditContainer/ContentContainer/VBoxContainer"]
+[node name="ButtonContainer" type="HBoxContainer" parent="EditUsernamePanel/EditContainer/ContentContainer/VBoxContainer" unique_id=20438862]
 layout_mode = 0
 offset_top = 179.0
 offset_right = 420.0
@@ -762,7 +762,7 @@ offset_bottom = 224.0
 theme_override_constants/separation = 20
 alignment = 1
 
-[node name="CancelButton" type="Button" parent="EditUsernamePanel/EditContainer/ContentContainer/VBoxContainer/ButtonContainer"]
+[node name="CancelButton" type="Button" parent="EditUsernamePanel/EditContainer/ContentContainer/VBoxContainer/ButtonContainer" unique_id=1400426010]
 custom_minimum_size = Vector2(120, 45)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -775,7 +775,7 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="ConfirmButton" type="Button" parent="EditUsernamePanel/EditContainer/ContentContainer/VBoxContainer/ButtonContainer"]
+[node name="ConfirmButton" type="Button" parent="EditUsernamePanel/EditContainer/ContentContainer/VBoxContainer/ButtonContainer" unique_id=1719736399]
 custom_minimum_size = Vector2(120, 45)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -789,7 +789,7 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="ErrorLabel" type="Label" parent="EditUsernamePanel/EditContainer/ContentContainer/VBoxContainer"]
+[node name="ErrorLabel" type="Label" parent="EditUsernamePanel/EditContainer/ContentContainer/VBoxContainer" unique_id=641558095]
 visible = false
 layout_mode = 0
 offset_left = 53.0
@@ -803,10 +803,10 @@ theme_override_font_sizes/font_size = 16
 text = "Username cannot be empty!"
 horizontal_alignment = 1
 
-[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+[node name="ButtonClick" type="AudioStreamPlayer" parent="." unique_id=828942983]
 stream = ExtResource("22_6o1ar")
 
-[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+[node name="ButtonHover" type="AudioStreamPlayer" parent="." unique_id=1594886141]
 stream = ExtResource("23_q75ak")
 
 [connection signal="pressed" from="ProfileContainer/CloseButton" to="." method="_on_close_button_pressed"]

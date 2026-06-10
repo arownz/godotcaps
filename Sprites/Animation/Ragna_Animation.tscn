@@ -1,4 +1,4 @@
-[gd_scene load_steps=70 format=3 uid="uid://xs5u2wmna405"]
+[gd_scene format=3 uid="uid://xs5u2wmna405"]
 
 [ext_resource type="Texture2D" uid="uid://u5tr14p25cn8" path="res://Sprites/Frame Sprites/Ragna.png" id="1_gumrm"]
 [ext_resource type="AudioStream" uid="uid://hxux3ukc5gjm" path="res://audio/player/ragna/ragna_cut2.mp3" id="2_gumrm"]
@@ -497,18 +497,18 @@ animations = [{
 "speed": 10.0
 }]
 
-[node name="DefaultPlayerAnimation" type="Node2D"]
+[node name="DefaultPlayerAnimation" type="Node2D" unique_id=1533899616]
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1387457053]
 sprite_frames = SubResource("SpriteFrames_fdt5l")
 animation = &"auto_attack"
 autoplay = "idle"
 
-[node name="player_counter" type="AudioStreamPlayer" parent="."]
+[node name="player_counter" type="AudioStreamPlayer" parent="." unique_id=1985874367]
 stream = ExtResource("2_gumrm")
 
-[node name="player_autoattack" type="AudioStreamPlayer" parent="."]
+[node name="player_autoattack" type="AudioStreamPlayer" parent="." unique_id=1096188538]
 stream = ExtResource("3_l8wov")
 
-[node name="player_hurt" type="AudioStreamPlayer" parent="."]
+[node name="player_hurt" type="AudioStreamPlayer" parent="." unique_id=1326188881]
 stream = ExtResource("4_xg8h6")

@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://beu8uw5oqkvxd"]
+[gd_scene format=3 uid="uid://beu8uw5oqkvxd"]
 
 [ext_resource type="Script" uid="uid://liwnmmbqa706" path="res://Scripts/ChangeCharacterScene.gd" id="1_rnq7s"]
 [ext_resource type="Texture2D" uid="uid://n08ji1i2co16" path="res://gui/Update/UI/small button.png" id="2_6nemp"]
@@ -23,7 +23,7 @@
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_wve8j"]
 
-[node name="ChangeCharacterScene" type="Control"]
+[node name="ChangeCharacterScene" type="Control" unique_id=275189292]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -32,7 +32,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_rnq7s")
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="Background" type="TextureRect" parent="." unique_id=2013626190]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -45,14 +45,14 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_ccovg")
 
-[node name="TitleContainer" type="Control" parent="."]
+[node name="TitleContainer" type="Control" parent="." unique_id=2077418603]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
 offset_bottom = 100.0
 grow_horizontal = 2
 
-[node name="TitleLabel" type="Label" parent="TitleContainer"]
+[node name="TitleLabel" type="Label" parent="TitleContainer" unique_id=2083097882]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
@@ -73,7 +73,7 @@ theme_override_font_sizes/font_size = 48
 text = "Select a Character"
 horizontal_alignment = 1
 
-[node name="CharacterContainer" type="Control" parent="."]
+[node name="CharacterContainer" type="Control" parent="." unique_id=1612063057]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -83,7 +83,7 @@ offset_bottom = -100.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="CharacterCarousel" type="Control" parent="CharacterContainer"]
+[node name="CharacterCarousel" type="Control" parent="CharacterContainer" unique_id=1706531608]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -91,7 +91,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Character1" type="Control" parent="CharacterContainer/CharacterCarousel"]
+[node name="Character1" type="Control" parent="CharacterContainer/CharacterCarousel" unique_id=948718563]
 custom_minimum_size = Vector2(600, 500)
 anchors_preset = 0
 offset_left = 430.0
@@ -99,7 +99,7 @@ offset_top = 45.0
 offset_right = 1030.0
 offset_bottom = 545.0
 
-[node name="TextureButton" type="TextureButton" parent="CharacterContainer/CharacterCarousel/Character1"]
+[node name="TextureButton" type="TextureButton" parent="CharacterContainer/CharacterCarousel/Character1" unique_id=1366797473]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -111,7 +111,7 @@ texture_normal = ExtResource("4_solvw")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="NameLabel" type="Label" parent="CharacterContainer/CharacterCarousel/Character1"]
+[node name="NameLabel" type="Label" parent="CharacterContainer/CharacterCarousel/Character1" unique_id=393578580]
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
@@ -129,7 +129,7 @@ theme_override_font_sizes/font_size = 30
 text = "Lexia"
 horizontal_alignment = 1
 
-[node name="StatusLabel" type="Label" parent="CharacterContainer/CharacterCarousel/Character1"]
+[node name="StatusLabel" type="Label" parent="CharacterContainer/CharacterCarousel/Character1" unique_id=37961616]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
@@ -145,7 +145,7 @@ theme_override_font_sizes/font_size = 24
 text = "Selected"
 horizontal_alignment = 1
 
-[node name="Character2" type="Control" parent="CharacterContainer/CharacterCarousel"]
+[node name="Character2" type="Control" parent="CharacterContainer/CharacterCarousel" unique_id=809641888]
 custom_minimum_size = Vector2(600, 500)
 anchors_preset = 0
 offset_left = 1130.0
@@ -153,7 +153,7 @@ offset_top = 45.0
 offset_right = 1730.0
 offset_bottom = 545.0
 
-[node name="TextureButton" type="TextureButton" parent="CharacterContainer/CharacterCarousel/Character2"]
+[node name="TextureButton" type="TextureButton" parent="CharacterContainer/CharacterCarousel/Character2" unique_id=1403768217]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -165,7 +165,7 @@ texture_normal = ExtResource("6_solvw")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="NameLabel" type="Label" parent="CharacterContainer/CharacterCarousel/Character2"]
+[node name="NameLabel" type="Label" parent="CharacterContainer/CharacterCarousel/Character2" unique_id=1192447712]
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
@@ -183,7 +183,7 @@ theme_override_font_sizes/font_size = 30
 text = "Ragna"
 horizontal_alignment = 1
 
-[node name="StatusLabel" type="Label" parent="CharacterContainer/CharacterCarousel/Character2"]
+[node name="StatusLabel" type="Label" parent="CharacterContainer/CharacterCarousel/Character2" unique_id=119630336]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
@@ -199,7 +199,7 @@ theme_override_font_sizes/font_size = 24
 text = "Not Unlocked"
 horizontal_alignment = 1
 
-[node name="NextButton" type="TextureButton" parent="."]
+[node name="NextButton" type="TextureButton" parent="." unique_id=88168946]
 layout_mode = 1
 anchors_preset = 6
 anchor_left = 1.0
@@ -219,7 +219,7 @@ texture_hover = ExtResource("9_hnmjh")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="NextLabel" type="Label" parent="NextButton"]
+[node name="NextLabel" type="Label" parent="NextButton" unique_id=2112174238]
 visible = false
 layout_mode = 0
 offset_left = 9.25191
@@ -234,7 +234,7 @@ theme_override_font_sizes/font_size = 18
 text = "Next"
 horizontal_alignment = 1
 
-[node name="PreviousButton" type="TextureButton" parent="."]
+[node name="PreviousButton" type="TextureButton" parent="." unique_id=1544812071]
 layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
@@ -252,7 +252,7 @@ ignore_texture_size = true
 stretch_mode = 5
 flip_h = true
 
-[node name="PreviousLabel" type="Label" parent="PreviousButton"]
+[node name="PreviousLabel" type="Label" parent="PreviousButton" unique_id=1556312535]
 visible = false
 layout_mode = 0
 offset_top = -8.15793
@@ -267,7 +267,7 @@ theme_override_font_sizes/font_size = 18
 text = "Previous"
 horizontal_alignment = 1
 
-[node name="SelectButton" type="Button" parent="."]
+[node name="SelectButton" type="Button" parent="." unique_id=152658949]
 physics_interpolation_mode = 0
 custom_minimum_size = Vector2(250, 0)
 layout_mode = 0
@@ -289,7 +289,7 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="BackButton" type="TextureButton" parent="."]
+[node name="BackButton" type="TextureButton" parent="." unique_id=440791776]
 custom_minimum_size = Vector2(1, 1)
 layout_mode = 0
 offset_left = 135.0
@@ -301,7 +301,7 @@ mouse_default_cursor_shape = 2
 texture_normal = ExtResource("2_6nemp")
 texture_hover = ExtResource("4_c2xce")
 
-[node name="TextureRect" type="TextureRect" parent="BackButton"]
+[node name="TextureRect" type="TextureRect" parent="BackButton" unique_id=533507131]
 layout_mode = 0
 offset_left = 4.73197
 offset_top = 7.02944
@@ -310,7 +310,7 @@ offset_bottom = 31.0294
 scale = Vector2(0.612926, 0.537912)
 texture = ExtResource("3_oxpqv")
 
-[node name="BackLabel" type="Label" parent="BackButton"]
+[node name="BackLabel" type="Label" parent="BackButton" unique_id=568766478]
 visible = false
 layout_mode = 0
 offset_left = 29.4983
@@ -327,11 +327,11 @@ theme_override_font_sizes/font_size = 24
 text = "Back"
 horizontal_alignment = 1
 
-[node name="CharacterStatsPopup" type="CanvasLayer" parent="."]
+[node name="CharacterStatsPopup" type="CanvasLayer" parent="." unique_id=1971268165]
 layer = 12
 visible = false
 
-[node name="PopupBackground" type="ColorRect" parent="CharacterStatsPopup"]
+[node name="PopupBackground" type="ColorRect" parent="CharacterStatsPopup" unique_id=232302616]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -340,7 +340,7 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0, 0, 0, 0.7)
 
-[node name="PopupContainer" type="Control" parent="CharacterStatsPopup"]
+[node name="PopupContainer" type="Control" parent="CharacterStatsPopup" unique_id=1356908727]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -349,7 +349,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="CenterContainer" type="CenterContainer" parent="CharacterStatsPopup/PopupContainer"]
+[node name="CenterContainer" type="CenterContainer" parent="CharacterStatsPopup/PopupContainer" unique_id=420996907]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -357,12 +357,12 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="StatsPanel" type="NinePatchRect" parent="CharacterStatsPopup/PopupContainer/CenterContainer"]
+[node name="StatsPanel" type="NinePatchRect" parent="CharacterStatsPopup/PopupContainer/CenterContainer" unique_id=899566843]
 custom_minimum_size = Vector2(600, 630)
 layout_mode = 2
 texture = ExtResource("14_ns5we")
 
-[node name="CloseButton" type="TextureButton" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel"]
+[node name="CloseButton" type="TextureButton" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel" unique_id=1039181839]
 layout_mode = 0
 offset_left = 564.0
 offset_top = -14.0
@@ -373,7 +373,7 @@ mouse_default_cursor_shape = 2
 texture_normal = ExtResource("16_close")
 texture_hover = ExtResource("17_close_hover")
 
-[node name="StatsContent" type="VBoxContainer" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel"]
+[node name="StatsContent" type="VBoxContainer" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel" unique_id=894311169]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -386,7 +386,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 20
 
-[node name="CharacterTitle" type="Label" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent"]
+[node name="CharacterTitle" type="Label" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent" unique_id=1782074039]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -397,11 +397,11 @@ theme_override_font_sizes/font_size = 36
 text = "Lexia"
 horizontal_alignment = 1
 
-[node name="WeaponContainer" type="VBoxContainer" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent"]
+[node name="WeaponContainer" type="VBoxContainer" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent" unique_id=896205845]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="WeaponLabel" type="Label" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent/WeaponContainer"]
+[node name="WeaponLabel" type="Label" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent/WeaponContainer" unique_id=1125273535]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -410,7 +410,7 @@ theme_override_font_sizes/font_size = 20
 text = "Weapon: Sword"
 horizontal_alignment = 1
 
-[node name="CounterLabel" type="Label" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent/WeaponContainer"]
+[node name="CounterLabel" type="Label" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent/WeaponContainer" unique_id=2003552691]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -419,7 +419,7 @@ theme_override_font_sizes/font_size = 20
 text = "Counter: Blade Beam"
 horizontal_alignment = 1
 
-[node name="StatsTitle" type="Label" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent"]
+[node name="StatsTitle" type="Label" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent" unique_id=131960485]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -428,15 +428,15 @@ theme_override_font_sizes/font_size = 24
 text = "Stat Bonuses:"
 horizontal_alignment = 1
 
-[node name="StatsContainer" type="VBoxContainer" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent"]
+[node name="StatsContainer" type="VBoxContainer" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent" unique_id=5224834]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="HealthStat" type="HBoxContainer" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent/StatsContainer"]
+[node name="HealthStat" type="HBoxContainer" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent/StatsContainer" unique_id=1532942021]
 layout_mode = 2
 alignment = 1
 
-[node name="HealthIcon" type="Label" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent/StatsContainer/HealthStat"]
+[node name="HealthIcon" type="Label" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent/StatsContainer/HealthStat" unique_id=2116170218]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.101960786, 0.7882353, 0.23921569, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -444,7 +444,7 @@ theme_override_fonts/font = ExtResource("8_8uolc")
 theme_override_font_sizes/font_size = 22
 text = "~ Health:"
 
-[node name="HealthValue" type="Label" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent/StatsContainer/HealthStat"]
+[node name="HealthValue" type="Label" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent/StatsContainer/HealthStat" unique_id=1910102530]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -452,11 +452,11 @@ theme_override_fonts/font = ExtResource("8_8uolc")
 theme_override_font_sizes/font_size = 22
 text = " +5"
 
-[node name="AttackStat" type="HBoxContainer" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent/StatsContainer"]
+[node name="AttackStat" type="HBoxContainer" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent/StatsContainer" unique_id=561515020]
 layout_mode = 2
 alignment = 1
 
-[node name="AttackIcon" type="Label" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent/StatsContainer/AttackStat"]
+[node name="AttackIcon" type="Label" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent/StatsContainer/AttackStat" unique_id=228820549]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.9098039, 0.53333336, 0.23137255, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -464,7 +464,7 @@ theme_override_fonts/font = ExtResource("8_8uolc")
 theme_override_font_sizes/font_size = 22
 text = "~ Attack:"
 
-[node name="AttackValue" type="Label" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent/StatsContainer/AttackStat"]
+[node name="AttackValue" type="Label" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent/StatsContainer/AttackStat" unique_id=1384968531]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -472,11 +472,11 @@ theme_override_fonts/font = ExtResource("8_8uolc")
 theme_override_font_sizes/font_size = 22
 text = " +3"
 
-[node name="DurabilityStat" type="HBoxContainer" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent/StatsContainer"]
+[node name="DurabilityStat" type="HBoxContainer" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent/StatsContainer" unique_id=1156396653]
 layout_mode = 2
 alignment = 1
 
-[node name="DurabilityIcon" type="Label" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent/StatsContainer/DurabilityStat"]
+[node name="DurabilityIcon" type="Label" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent/StatsContainer/DurabilityStat" unique_id=170272849]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.32156864, 0.43137255, 0.78431374, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -484,7 +484,7 @@ theme_override_fonts/font = ExtResource("8_8uolc")
 theme_override_font_sizes/font_size = 22
 text = "~ Durability:"
 
-[node name="DurabilityValue" type="Label" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent/StatsContainer/DurabilityStat"]
+[node name="DurabilityValue" type="Label" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent/StatsContainer/DurabilityStat" unique_id=1677380314]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -492,7 +492,7 @@ theme_override_fonts/font = ExtResource("8_8uolc")
 theme_override_font_sizes/font_size = 22
 text = " +2"
 
-[node name="Description" type="Label" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent"]
+[node name="Description" type="Label" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent" unique_id=1311420382]
 custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.85, 0.85, 1)
@@ -503,7 +503,7 @@ text = "A dyslexic sword master wielding a trusty sword."
 horizontal_alignment = 1
 autowrap_mode = 2
 
-[node name="CloseButton" type="Button" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent"]
+[node name="CloseButton" type="Button" parent="CharacterStatsPopup/PopupContainer/CenterContainer/StatsPanel/StatsContent" unique_id=488683164]
 custom_minimum_size = Vector2(120, 40)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -521,10 +521,10 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+[node name="ButtonClick" type="AudioStreamPlayer" parent="." unique_id=806001183]
 stream = ExtResource("13_8uolc")
 
-[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+[node name="ButtonHover" type="AudioStreamPlayer" parent="." unique_id=817480546]
 stream = ExtResource("14_ccovg")
 
 [connection signal="pressed" from="CharacterContainer/CharacterCarousel/Character1/TextureButton" to="." method="_on_character1_pressed"]

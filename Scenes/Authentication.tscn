@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://cbpwvuj8kdyod"]
+[gd_scene format=3 uid="uid://cbpwvuj8kdyod"]
 
 [ext_resource type="Script" uid="uid://t5tc36uuxhcf" path="res://Scripts/Authentication.gd" id="1_6ea5n"]
 [ext_resource type="Texture2D" uid="uid://020rncisvpgv" path="res://gui/ChatGPT Image Oct 20, 2025, 11_10_37 AM.png" id="2_2p2cx"]
@@ -28,7 +28,7 @@ shadow_color = Color(0, 0.266667, 0.337255, 0.192157)
 shadow_size = 6
 shadow_offset = Vector2(0, 3)
 
-[node name="Authentication" type="Control"]
+[node name="Authentication" type="Control" unique_id=1602411618]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -39,7 +39,7 @@ grow_vertical = 2
 script = ExtResource("1_6ea5n")
 metadata/_edit_vertical_guides_ = [-348.0]
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="Background" type="TextureRect" parent="." unique_id=1197507645]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -52,7 +52,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_2p2cx")
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1229094940]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -64,16 +64,16 @@ theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 40
 theme_override_constants/margin_bottom = 20
 
-[node name="ContentContainer" type="HBoxContainer" parent="MarginContainer"]
+[node name="ContentContainer" type="HBoxContainer" parent="MarginContainer" unique_id=1144801553]
 layout_mode = 2
 theme_override_constants/separation = 30
 
-[node name="LeftPanel" type="Control" parent="MarginContainer/ContentContainer"]
+[node name="LeftPanel" type="Control" parent="MarginContainer/ContentContainer" unique_id=435707455]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.8
 
-[node name="BrandContainer" type="VBoxContainer" parent="MarginContainer/ContentContainer/LeftPanel"]
+[node name="BrandContainer" type="VBoxContainer" parent="MarginContainer/ContentContainer/LeftPanel" unique_id=793633361]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
@@ -89,7 +89,7 @@ grow_vertical = 2
 scale = Vector2(1.11549, 1.11549)
 alignment = 1
 
-[node name="LogoTexture" type="TextureButton" parent="MarginContainer/ContentContainer/LeftPanel/BrandContainer"]
+[node name="LogoTexture" type="TextureButton" parent="MarginContainer/ContentContainer/LeftPanel/BrandContainer" unique_id=982817824]
 custom_minimum_size = Vector2(200, 180)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -98,7 +98,7 @@ texture_normal = ExtResource("3_3ev2f")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="Subtitle" type="Label" parent="MarginContainer/ContentContainer/LeftPanel/BrandContainer"]
+[node name="Subtitle" type="Label" parent="MarginContainer/ContentContainer/LeftPanel/BrandContainer" unique_id=1535058024]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 1
@@ -111,11 +111,11 @@ Gamification
 Version 1.0"
 horizontal_alignment = 1
 
-[node name="RightPanel" type="Control" parent="MarginContainer/ContentContainer"]
+[node name="RightPanel" type="Control" parent="MarginContainer/ContentContainer" unique_id=255464953]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="MainContainer" type="TextureRect" parent="MarginContainer/ContentContainer/RightPanel"]
+[node name="MainContainer" type="TextureRect" parent="MarginContainer/ContentContainer/RightPanel" unique_id=596881038]
 custom_minimum_size = Vector2(400, 0)
 layout_mode = 1
 anchors_preset = 8
@@ -131,7 +131,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("5_6oq4l")
 
-[node name="WelcomeLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer"]
+[node name="WelcomeLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer" unique_id=708556141]
 layout_mode = 0
 offset_left = 17.0
 offset_top = 26.0
@@ -146,7 +146,7 @@ theme_override_font_sizes/font_size = 30
 text = "Welcome to Lexia!"
 horizontal_alignment = 1
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/ContentContainer/RightPanel/MainContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/ContentContainer/RightPanel/MainContainer" unique_id=1965391176]
 layout_mode = 0
 offset_left = 17.0
 offset_top = 114.0
@@ -154,23 +154,23 @@ offset_right = 602.0
 offset_bottom = 713.0
 alignment = 1
 
-[node name="TabContainer" type="TabContainer" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer"]
+[node name="TabContainer" type="TabContainer" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer" unique_id=1187610635]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 20
 theme_override_styles/tab_focus = SubResource("StyleBoxEmpty_c45f6")
 current_tab = 0
 
-[node name="Login" type="VBoxContainer" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer"]
+[node name="Login" type="VBoxContainer" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer" unique_id=296088611]
 layout_mode = 2
 theme_override_constants/separation = 18
 metadata/_tab_index = 0
 
-[node name="Spacer" type="Control" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login"]
+[node name="Spacer" type="Control" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login" unique_id=1243060545]
 custom_minimum_size = Vector2(0, 5)
 layout_mode = 2
 
-[node name="EmailLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login"]
+[node name="EmailLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login" unique_id=519635711]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -178,7 +178,7 @@ theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 18
 text = "Email"
 
-[node name="EmailLineEdit" type="LineEdit" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login"]
+[node name="EmailLineEdit" type="LineEdit" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login" unique_id=436618351]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_placeholder_color = Color(1, 1, 1, 1)
@@ -191,7 +191,7 @@ clear_button_enabled = true
 caret_blink = true
 caret_blink_interval = 0.56
 
-[node name="EmailErrorLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login"]
+[node name="EmailErrorLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login" unique_id=821711134]
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(0.9999998, 0.11943438, 0.12700897, 1)
@@ -202,7 +202,7 @@ theme_override_font_sizes/font_size = 14
 text = "Please enter a valid email"
 clip_text = true
 
-[node name="PasswordLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login"]
+[node name="PasswordLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login" unique_id=85248753]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -210,10 +210,10 @@ theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 18
 text = "Password"
 
-[node name="PasswordContainer" type="HBoxContainer" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login"]
+[node name="PasswordContainer" type="HBoxContainer" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login" unique_id=1342397665]
 layout_mode = 2
 
-[node name="PasswordLineEdit" type="LineEdit" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/PasswordContainer"]
+[node name="PasswordLineEdit" type="LineEdit" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/PasswordContainer" unique_id=1646185836]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -228,14 +228,14 @@ caret_blink = true
 caret_blink_interval = 0.56
 secret = true
 
-[node name="ShowPasswordButton" type="Button" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/PasswordContainer"]
+[node name="ShowPasswordButton" type="Button" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/PasswordContainer" unique_id=888705336]
 layout_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_fonts/font = ExtResource("3_4bnr5")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_6oq4l")
 text = "Show"
 
-[node name="PasswordErrorLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login"]
+[node name="PasswordErrorLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login" unique_id=314986632]
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(0.9999998, 0.11943438, 0.12700897, 1)
@@ -245,7 +245,7 @@ theme_override_font_sizes/font_size = 14
 text = "Please enter your password"
 clip_text = true
 
-[node name="ForgotPasswordButton" type="LinkButton" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login"]
+[node name="ForgotPasswordButton" type="LinkButton" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login" unique_id=188992287]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(0, 0.342275, 0.342276, 1)
@@ -256,11 +256,11 @@ theme_override_styles/focus = SubResource("StyleBoxEmpty_6oq4l")
 text = "Forgot your password?"
 underline = 1
 
-[node name="Spacer2" type="Control" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login"]
+[node name="Spacer2" type="Control" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login" unique_id=1400098301]
 custom_minimum_size = Vector2(0, 5)
 layout_mode = 2
 
-[node name="LoginButton" type="Button" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login"]
+[node name="LoginButton" type="Button" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login" unique_id=1255142634]
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -270,15 +270,15 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_axc1p")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_6oq4l")
 text = "Sign In"
 
-[node name="OrContainer" type="HBoxContainer" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login"]
+[node name="OrContainer" type="HBoxContainer" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login" unique_id=1050907710]
 layout_mode = 2
 alignment = 1
 
-[node name="HSeparator" type="HSeparator" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/OrContainer"]
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/OrContainer" unique_id=1796596228]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="OrLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/OrContainer"]
+[node name="OrLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/OrContainer" unique_id=385648392]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -287,11 +287,11 @@ theme_override_font_sizes/font_size = 16
 text = "  Or  "
 horizontal_alignment = 1
 
-[node name="HSeparator2" type="HSeparator" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/OrContainer"]
+[node name="HSeparator2" type="HSeparator" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/OrContainer" unique_id=2084077123]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="SignInGoogleButton" type="Button" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login"]
+[node name="SignInGoogleButton" type="Button" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login" unique_id=397880905]
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -300,7 +300,7 @@ theme_override_font_sizes/font_size = 18
 theme_override_styles/focus = SubResource("StyleBoxEmpty_6oq4l")
 icon_alignment = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/SignInGoogleButton"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/SignInGoogleButton" unique_id=447707248]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -316,7 +316,7 @@ grow_vertical = 2
 theme_override_constants/separation = -16
 alignment = 1
 
-[node name="GoogleIcon" type="TextureRect" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/SignInGoogleButton/HBoxContainer"]
+[node name="GoogleIcon" type="TextureRect" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/SignInGoogleButton/HBoxContainer" unique_id=1266483311]
 texture_filter = 1
 custom_minimum_size = Vector2(70, 70)
 layout_direction = 4
@@ -324,23 +324,23 @@ layout_mode = 2
 texture = ExtResource("5_qlk3g")
 expand_mode = 1
 
-[node name="Label" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/SignInGoogleButton/HBoxContainer"]
+[node name="Label" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Login/SignInGoogleButton/HBoxContainer" unique_id=846362222]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3_4bnr5")
 theme_override_font_sizes/font_size = 18
 text = "Sign In with Google"
 
-[node name="Register" type="VBoxContainer" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer"]
+[node name="Register" type="VBoxContainer" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer" unique_id=1734237269]
 visible = false
 layout_mode = 2
 theme_override_constants/separation = 5
 metadata/_tab_index = 1
 
-[node name="Spacer" type="Control" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
+[node name="Spacer" type="Control" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register" unique_id=870587831]
 custom_minimum_size = Vector2(0, 5)
 layout_mode = 2
 
-[node name="UsernameLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
+[node name="UsernameLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register" unique_id=723817946]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -348,7 +348,7 @@ theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 18
 text = "Username"
 
-[node name="UsernameLineEdit" type="LineEdit" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
+[node name="UsernameLineEdit" type="LineEdit" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register" unique_id=632090926]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_placeholder_color = Color(1, 1, 1, 1)
@@ -361,7 +361,7 @@ clear_button_enabled = true
 caret_blink = true
 caret_blink_interval = 0.56
 
-[node name="UsernameErrorLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
+[node name="UsernameErrorLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register" unique_id=836915804]
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(0.9999998, 0.11943438, 0.12700897, 1)
@@ -371,7 +371,7 @@ theme_override_font_sizes/font_size = 14
 text = "Please enter a username"
 clip_text = true
 
-[node name="BirthDateLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
+[node name="BirthDateLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register" unique_id=517358522]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -379,11 +379,11 @@ theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 18
 text = "Birth Date"
 
-[node name="BirthDateContainer" type="HBoxContainer" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
+[node name="BirthDateContainer" type="HBoxContainer" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register" unique_id=1418943030]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="DayOptionButton" type="OptionButton" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/BirthDateContainer"]
+[node name="DayOptionButton" type="OptionButton" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/BirthDateContainer" unique_id=869320897]
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_default_cursor_shape = 2
@@ -391,7 +391,7 @@ theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 16
 theme_override_styles/focus = SubResource("StyleBoxEmpty_6oq4l")
 
-[node name="MonthOptionButton" type="OptionButton" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/BirthDateContainer"]
+[node name="MonthOptionButton" type="OptionButton" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/BirthDateContainer" unique_id=140341764]
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_default_cursor_shape = 2
@@ -399,7 +399,7 @@ theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 16
 theme_override_styles/focus = SubResource("StyleBoxEmpty_6oq4l")
 
-[node name="YearOptionButton" type="OptionButton" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/BirthDateContainer"]
+[node name="YearOptionButton" type="OptionButton" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/BirthDateContainer" unique_id=1436907978]
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_default_cursor_shape = 2
@@ -407,7 +407,7 @@ theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 16
 theme_override_styles/focus = SubResource("StyleBoxEmpty_6oq4l")
 
-[node name="BirthDateErrorLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
+[node name="BirthDateErrorLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register" unique_id=582412962]
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(0.9999998, 0.11943438, 0.12700897, 1)
@@ -417,7 +417,7 @@ theme_override_font_sizes/font_size = 14
 text = "Please select your birth date"
 clip_text = true
 
-[node name="EmailLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
+[node name="EmailLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register" unique_id=1221942034]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -425,7 +425,7 @@ theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 18
 text = "Email"
 
-[node name="RegEmailLineEdit" type="LineEdit" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
+[node name="RegEmailLineEdit" type="LineEdit" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register" unique_id=670863835]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_placeholder_color = Color(1, 1, 1, 1)
@@ -438,7 +438,7 @@ clear_button_enabled = true
 caret_blink = true
 caret_blink_interval = 0.56
 
-[node name="RegEmailErrorLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
+[node name="RegEmailErrorLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register" unique_id=1170917949]
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(0.9999998, 0.11943438, 0.12700897, 1)
@@ -448,7 +448,7 @@ theme_override_font_sizes/font_size = 14
 text = "Please enter a valid email address"
 clip_text = true
 
-[node name="PasswordLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
+[node name="PasswordLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register" unique_id=1770714616]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -456,10 +456,10 @@ theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 18
 text = "Password"
 
-[node name="RegPasswordContainer" type="HBoxContainer" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
+[node name="RegPasswordContainer" type="HBoxContainer" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register" unique_id=200494130]
 layout_mode = 2
 
-[node name="RegPasswordLineEdit" type="LineEdit" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegPasswordContainer"]
+[node name="RegPasswordLineEdit" type="LineEdit" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegPasswordContainer" unique_id=1941643667]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -474,14 +474,14 @@ caret_blink = true
 caret_blink_interval = 0.56
 secret = true
 
-[node name="ShowRegPasswordButton" type="Button" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegPasswordContainer"]
+[node name="ShowRegPasswordButton" type="Button" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/RegPasswordContainer" unique_id=1932056988]
 layout_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_6oq4l")
 text = "Show"
 
-[node name="RegPasswordErrorLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
+[node name="RegPasswordErrorLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register" unique_id=377328388]
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(0.9999998, 0.11943438, 0.12700897, 1)
@@ -491,7 +491,7 @@ theme_override_font_sizes/font_size = 14
 text = "Password must be at least 6 characters"
 clip_text = true
 
-[node name="ConfirmPasswordLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
+[node name="ConfirmPasswordLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register" unique_id=317288028]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -499,10 +499,10 @@ theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 18
 text = "Confirm Password"
 
-[node name="ConfirmPasswordContainer" type="HBoxContainer" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
+[node name="ConfirmPasswordContainer" type="HBoxContainer" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register" unique_id=28467984]
 layout_mode = 2
 
-[node name="ConfirmPasswordLineEdit" type="LineEdit" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/ConfirmPasswordContainer"]
+[node name="ConfirmPasswordLineEdit" type="LineEdit" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/ConfirmPasswordContainer" unique_id=423359736]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -517,14 +517,14 @@ caret_blink = true
 caret_blink_interval = 0.56
 secret = true
 
-[node name="ShowConfirmPasswordButton" type="Button" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/ConfirmPasswordContainer"]
+[node name="ShowConfirmPasswordButton" type="Button" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register/ConfirmPasswordContainer" unique_id=129054240]
 layout_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_6oq4l")
 text = "Show"
 
-[node name="ConfirmPasswordErrorLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
+[node name="ConfirmPasswordErrorLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register" unique_id=989784716]
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(0.9999998, 0.11943438, 0.12700897, 1)
@@ -534,7 +534,7 @@ theme_override_font_sizes/font_size = 14
 text = "Passwords do not match"
 clip_text = true
 
-[node name="RegisterButton" type="Button" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register"]
+[node name="RegisterButton" type="Button" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/Register" unique_id=1335353505]
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -544,18 +544,18 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_axc1p")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_6oq4l")
 text = "Create Account"
 
-[node name="ForgotPassword" type="VBoxContainer" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer"]
+[node name="ForgotPassword" type="VBoxContainer" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer" unique_id=894735569]
 visible = false
 layout_mode = 2
 theme_override_constants/separation = 12
 metadata/_tab_index = 2
 metadata/_tab_hidden = true
 
-[node name="Spacer" type="Control" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword"]
+[node name="Spacer" type="Control" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword" unique_id=1564634925]
 custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
 
-[node name="BackToLoginButton" type="LinkButton" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword"]
+[node name="BackToLoginButton" type="LinkButton" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword" unique_id=1865032622]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 1, 1, 1)
 theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
@@ -567,7 +567,7 @@ theme_override_styles/focus = SubResource("StyleBoxEmpty_6oq4l")
 text = "← Back to Login"
 underline = 1
 
-[node name="InfoLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword"]
+[node name="InfoLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword" unique_id=99260249]
 custom_minimum_size = Vector2(400, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -578,11 +578,11 @@ text = "Enter your email address and we will send you instructions to reset your
 horizontal_alignment = 1
 autowrap_mode = 2
 
-[node name="Spacer2" type="Control" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword"]
+[node name="Spacer2" type="Control" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword" unique_id=534187638]
 custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
 
-[node name="EmailLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword"]
+[node name="EmailLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword" unique_id=692715733]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -590,7 +590,7 @@ theme_override_fonts/font = ExtResource("2_edc1m")
 theme_override_font_sizes/font_size = 18
 text = "Email"
 
-[node name="ResetEmailLineEdit" type="LineEdit" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword"]
+[node name="ResetEmailLineEdit" type="LineEdit" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword" unique_id=1712542112]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_placeholder_color = Color(1, 1, 1, 1)
@@ -603,7 +603,7 @@ clear_button_enabled = true
 caret_blink = true
 caret_blink_interval = 0.56
 
-[node name="ResetEmailErrorLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword"]
+[node name="ResetEmailErrorLabel" type="Label" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword" unique_id=779218253]
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(0.9999998, 0.11943438, 0.12700897, 1)
@@ -613,11 +613,11 @@ theme_override_font_sizes/font_size = 14
 text = "Please enter a valid email address"
 clip_text = true
 
-[node name="Spacer3" type="Control" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword"]
+[node name="Spacer3" type="Control" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword" unique_id=1062146199]
 custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
 
-[node name="ResetButton" type="Button" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword"]
+[node name="ResetButton" type="Button" parent="MarginContainer/ContentContainer/RightPanel/MainContainer/VBoxContainer/TabContainer/ForgotPassword" unique_id=959251651]
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -627,7 +627,7 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_axc1p")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_6oq4l")
 text = "Reset Password"
 
-[node name="AdminButton" type="Button" parent="."]
+[node name="AdminButton" type="Button" parent="." unique_id=636847124]
 layout_mode = 0
 offset_left = 40.0
 offset_top = 737.0
@@ -645,7 +645,7 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="SettingsButton" type="TextureButton" parent="."]
+[node name="SettingsButton" type="TextureButton" parent="." unique_id=1653720640]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.90800005
@@ -664,7 +664,7 @@ texture_hover = ExtResource("12_os440")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="SettingsLabel" type="Label" parent="SettingsButton"]
+[node name="SettingsLabel" type="Label" parent="SettingsButton" unique_id=1058826660]
 visible = false
 layout_mode = 1
 anchors_preset = 5
@@ -684,7 +684,7 @@ theme_override_font_sizes/font_size = 18
 text = "Setting"
 horizontal_alignment = 1
 
-[node name="SettingsIcon" type="TextureRect" parent="SettingsButton"]
+[node name="SettingsIcon" type="TextureRect" parent="SettingsButton" unique_id=2124900824]
 custom_minimum_size = Vector2(60, 60)
 layout_mode = 0
 offset_left = 29.0
@@ -695,10 +695,10 @@ texture = ExtResource("13_hu7sp")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+[node name="ButtonClick" type="AudioStreamPlayer" parent="." unique_id=1778632858]
 stream = ExtResource("9_c45f6")
 
-[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+[node name="ButtonHover" type="AudioStreamPlayer" parent="." unique_id=1776824963]
 stream = ExtResource("10_c45f6")
 
 [connection signal="pressed" from="MarginContainer/ContentContainer/LeftPanel/BrandContainer/LogoTexture" to="." method="_on_logo_button_pressed"]

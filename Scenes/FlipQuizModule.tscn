@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://bnaj2f5n3k8l6"]
+[gd_scene format=3 uid="uid://bnaj2f5n3k8l6"]
 
 [ext_resource type="Script" uid="uid://dgl0bug32bd8w" path="res://Scripts/FlipQuizModule.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://0con8ixqofpr" path="res://gui/Update/UI/ui 8.png" id="2_bg"]
@@ -63,7 +63,7 @@ shadow_offset = Vector2(0, 2)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_tbhtg"]
 
-[node name="FlipQuizModule" type="Control"]
+[node name="FlipQuizModule" type="Control" unique_id=1344892188]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -72,7 +72,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_script")
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="Background" type="TextureRect" parent="." unique_id=831281396]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -81,7 +81,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_bg")
 
-[node name="MainContainer" type="VBoxContainer" parent="."]
+[node name="MainContainer" type="VBoxContainer" parent="." unique_id=1484519147]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -94,13 +94,13 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 50
 
-[node name="HeaderPanel" type="Panel" parent="MainContainer"]
+[node name="HeaderPanel" type="Panel" parent="MainContainer" unique_id=351010863]
 custom_minimum_size = Vector2(0, 123)
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_dt2ji")
 
-[node name="HeaderContainer" type="VBoxContainer" parent="MainContainer/HeaderPanel"]
+[node name="HeaderContainer" type="VBoxContainer" parent="MainContainer/HeaderPanel" unique_id=1748240358]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -116,12 +116,12 @@ grow_vertical = 2
 scale = Vector2(0.95167, 0.95167)
 theme_override_constants/separation = 15
 
-[node name="TitleContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer"]
+[node name="TitleContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer" unique_id=203788459]
 layout_mode = 2
 size_flags_vertical = 0
 alignment = 1
 
-[node name="TitleLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer"]
+[node name="TitleLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer" unique_id=1340141867]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -131,7 +131,7 @@ text = "FLIP QUIZ LEARNING"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="BackButton" type="Button" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer"]
+[node name="BackButton" type="Button" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer" unique_id=927529401]
 custom_minimum_size = Vector2(120, 45)
 layout_mode = 2
 size_flags_horizontal = 8
@@ -148,20 +148,20 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="ProgressContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer"]
+[node name="ProgressContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer" unique_id=1861839094]
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_constants/separation = 15
 alignment = 1
 
-[node name="ProgressLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer"]
+[node name="ProgressLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer" unique_id=2067464791]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular")
 theme_override_font_sizes/font_size = 16
 text = "0% Complete"
 
-[node name="ProgressBar" type="ProgressBar" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer"]
+[node name="ProgressBar" type="ProgressBar" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer" unique_id=9262314]
 custom_minimum_size = Vector2(250, 20)
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -169,7 +169,7 @@ theme_override_fonts/font = ExtResource("4_bold")
 theme_override_styles/background = SubResource("StyleBoxFlat_h7rfw")
 theme_override_styles/fill = SubResource("StyleBoxFlat_bfapu")
 
-[node name="GuideButton" type="Button" parent="MainContainer/HeaderPanel"]
+[node name="GuideButton" type="Button" parent="MainContainer/HeaderPanel" unique_id=98268820]
 layout_mode = 0
 offset_left = 30.0
 offset_right = 129.0
@@ -186,7 +186,7 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="TTSSettingButton" type="TextureButton" parent="MainContainer/HeaderPanel"]
+[node name="TTSSettingButton" type="TextureButton" parent="MainContainer/HeaderPanel" unique_id=1508352877]
 layout_mode = 0
 offset_left = 49.0
 offset_top = 67.0
@@ -197,23 +197,23 @@ texture_normal = ExtResource("11_settings")
 texture_hover = ExtResource("12_settings_hover")
 stretch_mode = 5
 
-[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer" unique_id=2100032126]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="CategoriesGrid" type="GridContainer" parent="MainContainer/ScrollContainer"]
+[node name="CategoriesGrid" type="GridContainer" parent="MainContainer/ScrollContainer" unique_id=1764662600]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/h_separation = 25
 columns = 3
 
-[node name="AnimalsCard" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid"]
+[node name="AnimalsCard" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid" unique_id=2135481260]
 custom_minimum_size = Vector2(430, 300)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_dt2ji")
 
-[node name="AnimalsContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/AnimalsCard"]
+[node name="AnimalsContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/AnimalsCard" unique_id=1328275333]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -225,11 +225,11 @@ offset_bottom = -15.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="IconContainer" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid/AnimalsCard/AnimalsContent"]
+[node name="IconContainer" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid/AnimalsCard/AnimalsContent" unique_id=1863439471]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="CenterContainer" type="CenterContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/AnimalsCard/AnimalsContent/IconContainer"]
+[node name="CenterContainer" type="CenterContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/AnimalsCard/AnimalsContent/IconContainer" unique_id=2138919019]
 clip_contents = true
 layout_mode = 0
 offset_left = 137.0
@@ -238,11 +238,11 @@ offset_right = 617.0
 offset_bottom = 466.0
 scale = Vector2(0.273077, 0.276276)
 
-[node name="IconLabel" type="TextureRect" parent="MainContainer/ScrollContainer/CategoriesGrid/AnimalsCard/AnimalsContent/IconContainer/CenterContainer"]
+[node name="IconLabel" type="TextureRect" parent="MainContainer/ScrollContainer/CategoriesGrid/AnimalsCard/AnimalsContent/IconContainer/CenterContainer" unique_id=1434006228]
 layout_mode = 2
 texture = ExtResource("7_qpuos")
 
-[node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/AnimalsCard/AnimalsContent"]
+[node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/AnimalsCard/AnimalsContent" unique_id=1355541624]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold")
@@ -250,7 +250,7 @@ theme_override_font_sizes/font_size = 20
 text = "Animals"
 horizontal_alignment = 1
 
-[node name="DescLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/AnimalsCard/AnimalsContent"]
+[node name="DescLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/AnimalsCard/AnimalsContent" unique_id=1968538149]
 custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -260,7 +260,7 @@ text = "Match different types of animals"
 horizontal_alignment = 1
 autowrap_mode = 2
 
-[node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/AnimalsCard/AnimalsContent"]
+[node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/AnimalsCard/AnimalsContent" unique_id=1030571875]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular")
@@ -268,7 +268,7 @@ theme_override_font_sizes/font_size = 12
 text = "0% Complete"
 horizontal_alignment = 1
 
-[node name="EnterButton" type="Button" parent="MainContainer/ScrollContainer/CategoriesGrid/AnimalsCard/AnimalsContent"]
+[node name="EnterButton" type="Button" parent="MainContainer/ScrollContainer/CategoriesGrid/AnimalsCard/AnimalsContent" unique_id=701179113]
 layout_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -283,12 +283,12 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="VehiclesCard" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid"]
+[node name="VehiclesCard" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid" unique_id=1911568187]
 custom_minimum_size = Vector2(430, 300)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_dt2ji")
 
-[node name="VehiclesContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/VehiclesCard"]
+[node name="VehiclesContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/VehiclesCard" unique_id=145395215]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -300,11 +300,11 @@ offset_bottom = -15.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="IconContainer" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid/VehiclesCard/VehiclesContent"]
+[node name="IconContainer" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid/VehiclesCard/VehiclesContent" unique_id=751316672]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="CenterContainer" type="CenterContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/VehiclesCard/VehiclesContent/IconContainer"]
+[node name="CenterContainer" type="CenterContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/VehiclesCard/VehiclesContent/IconContainer" unique_id=1407650863]
 clip_contents = true
 layout_mode = 0
 offset_left = 130.0
@@ -312,11 +312,11 @@ offset_right = 1154.0
 offset_bottom = 1024.0
 scale = Vector2(0.130107, 0.131631)
 
-[node name="IconLabel" type="TextureRect" parent="MainContainer/ScrollContainer/CategoriesGrid/VehiclesCard/VehiclesContent/IconContainer/CenterContainer"]
+[node name="IconLabel" type="TextureRect" parent="MainContainer/ScrollContainer/CategoriesGrid/VehiclesCard/VehiclesContent/IconContainer/CenterContainer" unique_id=2055033224]
 layout_mode = 2
 texture = ExtResource("9_p1t5b")
 
-[node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/VehiclesCard/VehiclesContent"]
+[node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/VehiclesCard/VehiclesContent" unique_id=423215605]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold")
@@ -324,7 +324,7 @@ theme_override_font_sizes/font_size = 20
 text = "Vehicles"
 horizontal_alignment = 1
 
-[node name="DescLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/VehiclesCard/VehiclesContent"]
+[node name="DescLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/VehiclesCard/VehiclesContent" unique_id=1152995116]
 custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -334,7 +334,7 @@ text = "Match different types of vehicles"
 horizontal_alignment = 1
 autowrap_mode = 2
 
-[node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/VehiclesCard/VehiclesContent"]
+[node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/VehiclesCard/VehiclesContent" unique_id=1350667859]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular")
@@ -342,7 +342,7 @@ theme_override_font_sizes/font_size = 12
 text = "0% Complete"
 horizontal_alignment = 1
 
-[node name="EnterButton" type="Button" parent="MainContainer/ScrollContainer/CategoriesGrid/VehiclesCard/VehiclesContent"]
+[node name="EnterButton" type="Button" parent="MainContainer/ScrollContainer/CategoriesGrid/VehiclesCard/VehiclesContent" unique_id=1607000730]
 layout_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -357,10 +357,10 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+[node name="ButtonClick" type="AudioStreamPlayer" parent="." unique_id=1180507]
 stream = ExtResource("7_click")
 
-[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+[node name="ButtonHover" type="AudioStreamPlayer" parent="." unique_id=1516127540]
 stream = ExtResource("8_hover")
 
 [connection signal="pressed" from="MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton" to="." method="_on_back_button_pressed"]

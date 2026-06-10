@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://q1yjdcnnetr4"]
+[gd_scene format=3 uid="uid://q1yjdcnnetr4"]
 
 [ext_resource type="Script" uid="uid://bgt50sf3dooe2" path="res://Scripts/FlipQuizVehicle.gd" id="1_7p1sg"]
 [ext_resource type="Texture2D" uid="uid://ciaa4qe2o2juf" path="res://gui/Update/UI/ui 3.png" id="2_y0fi5"]
@@ -90,7 +90,7 @@ shadow_color = Color(0, 0, 0, 0.2)
 shadow_size = 6
 shadow_offset = Vector2(0, 3)
 
-[node name="FlipQuizVehicle" type="Control"]
+[node name="FlipQuizVehicle" type="Control" unique_id=835114425]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -99,7 +99,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_7p1sg")
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="Background" type="TextureRect" parent="." unique_id=853369949]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -108,7 +108,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_y0fi5")
 
-[node name="MainContainer" type="VBoxContainer" parent="."]
+[node name="MainContainer" type="VBoxContainer" parent="." unique_id=660897355]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -121,13 +121,13 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 20
 
-[node name="HeaderPanel" type="Panel" parent="MainContainer"]
+[node name="HeaderPanel" type="Panel" parent="MainContainer" unique_id=720693473]
 custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_22x63")
 
-[node name="HeaderContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel"]
+[node name="HeaderContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel" unique_id=637825484]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -140,13 +140,13 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 20
 
-[node name="ProgressContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer"]
+[node name="ProgressContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer" unique_id=1418090164]
 layout_mode = 2
 size_flags_vertical = 4
 theme_override_constants/separation = 15
 alignment = 2
 
-[node name="ProgressBar" type="ProgressBar" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer"]
+[node name="ProgressBar" type="ProgressBar" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer" unique_id=1877476009]
 custom_minimum_size = Vector2(250, 20)
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -154,19 +154,19 @@ theme_override_fonts/font = ExtResource("3_ma1yg")
 theme_override_styles/background = SubResource("StyleBoxFlat_d1161")
 theme_override_styles/fill = SubResource("StyleBoxFlat_4j16c")
 
-[node name="ProgressLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer"]
+[node name="ProgressLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer" unique_id=434066341]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_ma1yg")
 theme_override_font_sizes/font_size = 16
 text = "Complete"
 
-[node name="TitleContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer"]
+[node name="TitleContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer" unique_id=610698797]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 20
 
-[node name="TitleLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer"]
+[node name="TitleLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer" unique_id=1822941821]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -176,7 +176,7 @@ text = "Vehicle Memory Game"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="BackButton" type="Button" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer"]
+[node name="BackButton" type="Button" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer" unique_id=1594041723]
 custom_minimum_size = Vector2(120, 60)
 layout_mode = 2
 size_flags_horizontal = 0
@@ -193,18 +193,18 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="ContentContainer" type="VBoxContainer" parent="MainContainer"]
+[node name="ContentContainer" type="VBoxContainer" parent="MainContainer" unique_id=867985043]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 20
 
-[node name="InstructionPanel" type="Panel" parent="MainContainer/ContentContainer"]
+[node name="InstructionPanel" type="Panel" parent="MainContainer/ContentContainer" unique_id=48907290]
 custom_minimum_size = Vector2(0, 120)
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_5sqj8")
 
-[node name="InstructionContainer" type="VBoxContainer" parent="MainContainer/ContentContainer/InstructionPanel"]
+[node name="InstructionContainer" type="VBoxContainer" parent="MainContainer/ContentContainer/InstructionPanel" unique_id=1113272318]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -218,7 +218,7 @@ grow_vertical = 2
 scale = Vector2(0.727786, 0.727786)
 theme_override_constants/separation = 10
 
-[node name="TargetLabel" type="RichTextLabel" parent="MainContainer/ContentContainer/InstructionPanel/InstructionContainer"]
+[node name="TargetLabel" type="RichTextLabel" parent="MainContainer/ContentContainer/InstructionPanel/InstructionContainer" unique_id=1857331673]
 layout_mode = 2
 theme_override_colors/default_color = Color(0, 0, 0, 1)
 theme_override_fonts/normal_font = ExtResource("3_ma1yg")
@@ -229,13 +229,13 @@ fit_content = true
 scroll_active = false
 horizontal_alignment = 1
 
-[node name="ControlsContainer" type="HBoxContainer" parent="MainContainer/ContentContainer/InstructionPanel/InstructionContainer"]
+[node name="ControlsContainer" type="HBoxContainer" parent="MainContainer/ContentContainer/InstructionPanel/InstructionContainer" unique_id=144275604]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 0
 alignment = 1
 
-[node name="PreviousButton" type="Button" parent="MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer"]
+[node name="PreviousButton" type="Button" parent="MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer" unique_id=1856626481]
 custom_minimum_size = Vector2(150, 40)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -251,7 +251,7 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="HearButton" type="Button" parent="MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer"]
+[node name="HearButton" type="Button" parent="MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer" unique_id=129177420]
 custom_minimum_size = Vector2(150, 40)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -267,7 +267,7 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="NextButton" type="Button" parent="MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer"]
+[node name="NextButton" type="Button" parent="MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer" unique_id=1303599098]
 custom_minimum_size = Vector2(150, 40)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -283,7 +283,7 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="GuideButton" type="Button" parent="MainContainer/ContentContainer/InstructionPanel"]
+[node name="GuideButton" type="Button" parent="MainContainer/ContentContainer/InstructionPanel" unique_id=1823715023]
 layout_mode = 0
 offset_left = 30.0
 offset_right = 129.0
@@ -300,7 +300,7 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="TTSSettingButton" type="TextureButton" parent="MainContainer/ContentContainer/InstructionPanel"]
+[node name="TTSSettingButton" type="TextureButton" parent="MainContainer/ContentContainer/InstructionPanel" unique_id=816552727]
 layout_mode = 0
 offset_left = 50.0
 offset_top = 67.0
@@ -311,12 +311,12 @@ texture_normal = ExtResource("13_settings")
 texture_hover = ExtResource("14_settings_hover")
 stretch_mode = 5
 
-[node name="GamePanel" type="Panel" parent="MainContainer/ContentContainer"]
+[node name="GamePanel" type="Panel" parent="MainContainer/ContentContainer" unique_id=825486671]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_1i48n")
 
-[node name="GameContainer" type="VBoxContainer" parent="MainContainer/ContentContainer/GamePanel"]
+[node name="GameContainer" type="VBoxContainer" parent="MainContainer/ContentContainer/GamePanel" unique_id=346186663]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -329,13 +329,13 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 20
 
-[node name="ScoreContainer" type="HBoxContainer" parent="MainContainer/ContentContainer/GamePanel/GameContainer"]
+[node name="ScoreContainer" type="HBoxContainer" parent="MainContainer/ContentContainer/GamePanel/GameContainer" unique_id=1955928838]
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_constants/separation = 30
 alignment = 1
 
-[node name="ScoreLabel" type="Label" parent="MainContainer/ContentContainer/GamePanel/GameContainer/ScoreContainer"]
+[node name="ScoreLabel" type="Label" parent="MainContainer/ContentContainer/GamePanel/GameContainer/ScoreContainer" unique_id=550769744]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_ma1yg")
@@ -343,7 +343,7 @@ theme_override_font_sizes/font_size = 24
 text = "Matches: 0/4"
 horizontal_alignment = 1
 
-[node name="AttemptsLabel" type="Label" parent="MainContainer/ContentContainer/GamePanel/GameContainer/ScoreContainer"]
+[node name="AttemptsLabel" type="Label" parent="MainContainer/ContentContainer/GamePanel/GameContainer/ScoreContainer" unique_id=1113576083]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_ma1yg")
@@ -351,7 +351,7 @@ theme_override_font_sizes/font_size = 24
 text = "Attempts: 0"
 horizontal_alignment = 1
 
-[node name="CardsContainer" type="GridContainer" parent="MainContainer/ContentContainer/GamePanel/GameContainer"]
+[node name="CardsContainer" type="GridContainer" parent="MainContainer/ContentContainer/GamePanel/GameContainer" unique_id=708317471]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 3
@@ -359,27 +359,27 @@ theme_override_constants/h_separation = 20
 theme_override_constants/v_separation = 20
 columns = 4
 
-[node name="car_sfx" type="AudioStreamPlayer" parent="."]
+[node name="car_sfx" type="AudioStreamPlayer" parent="." unique_id=1317666782]
 stream = ExtResource("7_22x63")
 
-[node name="truck_sfx" type="AudioStreamPlayer" parent="."]
+[node name="truck_sfx" type="AudioStreamPlayer" parent="." unique_id=579440541]
 stream = ExtResource("8_d1161")
 
-[node name="train_sfx" type="AudioStreamPlayer" parent="."]
+[node name="train_sfx" type="AudioStreamPlayer" parent="." unique_id=868852930]
 stream = ExtResource("9_4j16c")
 
-[node name="airplane_sfx" type="AudioStreamPlayer" parent="."]
+[node name="airplane_sfx" type="AudioStreamPlayer" parent="." unique_id=1919536582]
 stream = ExtResource("10_6r5gh")
 
-[node name="boat_sfx" type="AudioStreamPlayer" parent="."]
+[node name="boat_sfx" type="AudioStreamPlayer" parent="." unique_id=1103458468]
 stream = ExtResource("11_5sqj8")
 
-[node name="bus_sfx" type="AudioStreamPlayer" parent="."]
+[node name="bus_sfx" type="AudioStreamPlayer" parent="." unique_id=561422143]
 stream = ExtResource("12_vmau7")
 
-[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+[node name="ButtonClick" type="AudioStreamPlayer" parent="." unique_id=2012653086]
 
-[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+[node name="ButtonHover" type="AudioStreamPlayer" parent="." unique_id=1322044551]
 
 [connection signal="pressed" from="MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton" to="." method="_on_back_button_pressed"]
 [connection signal="pressed" from="MainContainer/ContentContainer/InstructionPanel/GuideButton" to="." method="_on_guide_button_pressed"]

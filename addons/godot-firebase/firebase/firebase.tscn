@@ -1,36 +1,36 @@
-[gd_scene load_steps=9 format=3 uid="uid://cvb26atjckwlq"]
+[gd_scene format=3 uid="uid://cvb26atjckwlq"]
 
-[ext_resource type="Script" path="res://addons/godot-firebase/database/database.gd" id="1"]
-[ext_resource type="Script" path="res://addons/godot-firebase/firestore/firestore.gd" id="2"]
-[ext_resource type="Script" path="res://addons/godot-firebase/firebase/firebase.gd" id="3"]
-[ext_resource type="Script" path="res://addons/godot-firebase/auth/auth.gd" id="4"]
-[ext_resource type="Script" path="res://addons/godot-firebase/storage/storage.gd" id="5"]
-[ext_resource type="Script" path="res://addons/godot-firebase/dynamiclinks/dynamiclinks.gd" id="6"]
-[ext_resource type="Script" path="res://addons/godot-firebase/functions/functions.gd" id="7"]
+[ext_resource type="Script" uid="uid://mh81n2rj007r" path="res://addons/godot-firebase/database/database.gd" id="1"]
+[ext_resource type="Script" uid="uid://imcuneiklee6" path="res://addons/godot-firebase/firestore/firestore.gd" id="2"]
+[ext_resource type="Script" uid="uid://no6bou7fa22" path="res://addons/godot-firebase/firebase/firebase.gd" id="3"]
+[ext_resource type="Script" uid="uid://3ja8figy3e2c" path="res://addons/godot-firebase/auth/auth.gd" id="4"]
+[ext_resource type="Script" uid="uid://c4xotubl4xqrt" path="res://addons/godot-firebase/storage/storage.gd" id="5"]
+[ext_resource type="Script" uid="uid://dyi2fg4x4iisa" path="res://addons/godot-firebase/dynamiclinks/dynamiclinks.gd" id="6"]
+[ext_resource type="Script" uid="uid://b1f2hn1jibq17" path="res://addons/godot-firebase/functions/functions.gd" id="7"]
 [ext_resource type="PackedScene" uid="uid://5xa6ulbllkjk" path="res://addons/godot-firebase/remote_config/firebase_remote_config.tscn" id="8_mvdf4"]
 
-[node name="Firebase" type="Node"]
+[node name="Firebase" type="Node" unique_id=402495688]
 script = ExtResource("3")
 
-[node name="Auth" type="HTTPRequest" parent="."]
+[node name="Auth" type="HTTPRequest" parent="." unique_id=4090355]
 max_redirects = 12
 timeout = 10.0
 script = ExtResource("4")
 
-[node name="Firestore" type="Node" parent="."]
+[node name="Firestore" type="Node" parent="." unique_id=1417146508]
 script = ExtResource("2")
 
-[node name="Database" type="Node" parent="."]
+[node name="Database" type="Node" parent="." unique_id=1287750668]
 script = ExtResource("1")
 
-[node name="Storage" type="Node" parent="."]
+[node name="Storage" type="Node" parent="." unique_id=448191281]
 script = ExtResource("5")
 
-[node name="DynamicLinks" type="Node" parent="."]
+[node name="DynamicLinks" type="Node" parent="." unique_id=86620120]
 script = ExtResource("6")
 
-[node name="Functions" type="Node" parent="."]
+[node name="Functions" type="Node" parent="." unique_id=828364724]
 script = ExtResource("7")
 
-[node name="RemoteConfig" parent="." instance=ExtResource("8_mvdf4")]
+[node name="RemoteConfig" parent="." unique_id=1493174538 instance=ExtResource("8_mvdf4")]
 accept_gzip = false

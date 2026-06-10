@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://csgj103sy7guc"]
+[gd_scene format=3 uid="uid://csgj103sy7guc"]
 
 [ext_resource type="Texture2D" uid="uid://dkkb8nek5d6fs" path="res://gui/Update/logos/LEXIA Logo (with text).png" id="1_ihlsn"]
 [ext_resource type="Script" uid="uid://dixnw351mfvhc" path="res://Scripts/SplashScene.gd" id="2_splash"]
@@ -26,7 +26,7 @@ corner_radius_top_right = 25
 corner_radius_bottom_right = 25
 corner_radius_bottom_left = 25
 
-[node name="SplashScene" type="Control"]
+[node name="SplashScene" type="Control" unique_id=1895114159]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -35,7 +35,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("2_splash")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="." unique_id=660223107]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -44,7 +44,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.0684457, 0.0503768, 0.00715434, 1)
 
-[node name="CenterContainer" type="CenterContainer" parent="."]
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=850141935]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -52,12 +52,12 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="LogoPanel" type="Panel" parent="CenterContainer"]
+[node name="LogoPanel" type="Panel" parent="CenterContainer" unique_id=276348450]
 custom_minimum_size = Vector2(520, 520)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_1")
 
-[node name="LogoContainer" type="MarginContainer" parent="CenterContainer/LogoPanel"]
+[node name="LogoContainer" type="MarginContainer" parent="CenterContainer/LogoPanel" unique_id=2145458079]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -71,12 +71,12 @@ theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="LogoClipPanel" type="Panel" parent="CenterContainer/LogoPanel/LogoContainer"]
+[node name="LogoClipPanel" type="Panel" parent="CenterContainer/LogoPanel/LogoContainer" unique_id=286646538]
 clip_contents = true
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_2")
 
-[node name="LogoRect" type="TextureRect" parent="CenterContainer/LogoPanel/LogoContainer/LogoClipPanel"]
+[node name="LogoRect" type="TextureRect" parent="CenterContainer/LogoPanel/LogoContainer/LogoClipPanel" unique_id=998306042]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -89,7 +89,7 @@ texture = ExtResource("1_ihlsn")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="LoadingLabel" type="Label" parent="."]
+[node name="LoadingLabel" type="Label" parent="." unique_id=818741162]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -108,7 +108,7 @@ text = "Loading..."
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="LoadingDots" type="Label" parent="."]
+[node name="LoadingDots" type="Label" parent="." unique_id=1510026255]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5

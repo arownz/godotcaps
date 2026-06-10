@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://bhsb4od5anjae"]
+[gd_scene format=3 uid="uid://bhsb4od5anjae"]
 
 [ext_resource type="Script" uid="uid://cpyo81gkxoads" path="res://Scripts/Leaderboard.gd" id="1_8k3l4"]
 [ext_resource type="Texture2D" uid="uid://c75anq8c0biyi" path="res://gui/Update/UI/ui 7.png" id="2_ldouh"]
@@ -57,7 +57,7 @@ shadow_offset = Vector2(0, 2)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_67k4m"]
 
-[node name="Leaderboard" type="Control"]
+[node name="Leaderboard" type="Control" unique_id=714822992]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -68,7 +68,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_8k3l4")
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="Background" type="TextureRect" parent="." unique_id=622275434]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -78,7 +78,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_ldouh")
 
-[node name="MainContainer" type="VBoxContainer" parent="."]
+[node name="MainContainer" type="VBoxContainer" parent="." unique_id=496025776]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -91,13 +91,13 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 50
 
-[node name="HeaderPanel" type="Panel" parent="MainContainer"]
+[node name="HeaderPanel" type="Panel" parent="MainContainer" unique_id=648464051]
 custom_minimum_size = Vector2(0, 150)
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_header")
 
-[node name="TextureRect" type="TextureRect" parent="MainContainer/HeaderPanel"]
+[node name="TextureRect" type="TextureRect" parent="MainContainer/HeaderPanel" unique_id=825105218]
 layout_mode = 0
 offset_left = 364.0
 offset_top = 29.0
@@ -106,7 +106,7 @@ offset_bottom = 234.0
 scale = Vector2(0.350827, 0.350827)
 texture = ExtResource("3_r3gmb")
 
-[node name="HeaderContainer" type="VBoxContainer" parent="MainContainer/HeaderPanel"]
+[node name="HeaderContainer" type="VBoxContainer" parent="MainContainer/HeaderPanel" unique_id=1006555982]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.405
@@ -120,12 +120,12 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 20
 
-[node name="TitleContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer"]
+[node name="TitleContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer" unique_id=435035797]
 layout_mode = 2
 size_flags_vertical = 0
 alignment = 1
 
-[node name="TitleLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer"]
+[node name="TitleLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer" unique_id=700989433]
 layout_mode = 2
 size_flags_horizontal = 6
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -135,7 +135,7 @@ text = "LEADERBOARD"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="BackButton" type="Button" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer"]
+[node name="BackButton" type="Button" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer" unique_id=705645268]
 custom_minimum_size = Vector2(140, 50)
 layout_mode = 2
 size_flags_horizontal = 0
@@ -154,12 +154,12 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="ContentContainer" type="VBoxContainer" parent="MainContainer"]
+[node name="ContentContainer" type="VBoxContainer" parent="MainContainer" unique_id=452201118]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 20
 
-[node name="TabContainer" type="TabContainer" parent="MainContainer/ContentContainer"]
+[node name="TabContainer" type="TabContainer" parent="MainContainer/ContentContainer" unique_id=1260140698]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_fonts/font = ExtResource("3_font")
@@ -168,11 +168,11 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_tab_container")
 theme_override_styles/tab_focus = SubResource("StyleBoxEmpty_67k4m")
 current_tab = 0
 
-[node name="Dungeon Rankings" type="Control" parent="MainContainer/ContentContainer/TabContainer"]
+[node name="Dungeon Rankings" type="Control" parent="MainContainer/ContentContainer/TabContainer" unique_id=1092372340]
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer/ContentContainer/TabContainer/Dungeon Rankings"]
+[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer/ContentContainer/TabContainer/Dungeon Rankings" unique_id=1470321711]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -184,7 +184,7 @@ offset_bottom = -15.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="GridContainer" type="GridContainer" parent="MainContainer/ContentContainer/TabContainer/Dungeon Rankings/ScrollContainer"]
+[node name="GridContainer" type="GridContainer" parent="MainContainer/ContentContainer/TabContainer/Dungeon Rankings/ScrollContainer" unique_id=21482863]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -192,12 +192,12 @@ theme_override_constants/h_separation = 5
 theme_override_constants/v_separation = 5
 columns = 6
 
-[node name="Power Scale" type="Control" parent="MainContainer/ContentContainer/TabContainer"]
+[node name="Power Scale" type="Control" parent="MainContainer/ContentContainer/TabContainer" unique_id=1738045471]
 visible = false
 layout_mode = 2
 metadata/_tab_index = 1
 
-[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer/ContentContainer/TabContainer/Power Scale"]
+[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer/ContentContainer/TabContainer/Power Scale" unique_id=378795125]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -210,7 +210,7 @@ grow_horizontal = 2
 grow_vertical = 2
 horizontal_scroll_mode = 0
 
-[node name="GridContainer" type="GridContainer" parent="MainContainer/ContentContainer/TabContainer/Power Scale/ScrollContainer"]
+[node name="GridContainer" type="GridContainer" parent="MainContainer/ContentContainer/TabContainer/Power Scale/ScrollContainer" unique_id=14780726]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -218,12 +218,12 @@ theme_override_constants/h_separation = 5
 theme_override_constants/v_separation = 5
 columns = 8
 
-[node name="Word Masters" type="Control" parent="MainContainer/ContentContainer/TabContainer"]
+[node name="Word Masters" type="Control" parent="MainContainer/ContentContainer/TabContainer" unique_id=592815144]
 visible = false
 layout_mode = 2
 metadata/_tab_index = 2
 
-[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer/ContentContainer/TabContainer/Word Masters"]
+[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer/ContentContainer/TabContainer/Word Masters" unique_id=1793224836]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -236,7 +236,7 @@ grow_horizontal = 2
 grow_vertical = 2
 horizontal_scroll_mode = 0
 
-[node name="GridContainer" type="GridContainer" parent="MainContainer/ContentContainer/TabContainer/Word Masters/ScrollContainer"]
+[node name="GridContainer" type="GridContainer" parent="MainContainer/ContentContainer/TabContainer/Word Masters/ScrollContainer" unique_id=2098888928]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -244,12 +244,12 @@ theme_override_constants/h_separation = 5
 theme_override_constants/v_separation = 5
 columns = 6
 
-[node name="Phonics" type="Control" parent="MainContainer/ContentContainer/TabContainer"]
+[node name="Phonics" type="Control" parent="MainContainer/ContentContainer/TabContainer" unique_id=1407957369]
 visible = false
 layout_mode = 2
 metadata/_tab_index = 3
 
-[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer/ContentContainer/TabContainer/Phonics"]
+[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer/ContentContainer/TabContainer/Phonics" unique_id=1961262020]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -262,7 +262,7 @@ grow_horizontal = 2
 grow_vertical = 2
 horizontal_scroll_mode = 0
 
-[node name="GridContainer" type="GridContainer" parent="MainContainer/ContentContainer/TabContainer/Phonics/ScrollContainer"]
+[node name="GridContainer" type="GridContainer" parent="MainContainer/ContentContainer/TabContainer/Phonics/ScrollContainer" unique_id=316046205]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -270,12 +270,12 @@ theme_override_constants/h_separation = 5
 theme_override_constants/v_separation = 5
 columns = 6
 
-[node name="Read Aloud" type="Control" parent="MainContainer/ContentContainer/TabContainer"]
+[node name="Read Aloud" type="Control" parent="MainContainer/ContentContainer/TabContainer" unique_id=1213859472]
 visible = false
 layout_mode = 2
 metadata/_tab_index = 4
 
-[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer/ContentContainer/TabContainer/Read Aloud"]
+[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer/ContentContainer/TabContainer/Read Aloud" unique_id=1733370457]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -288,7 +288,7 @@ grow_horizontal = 2
 grow_vertical = 2
 horizontal_scroll_mode = 0
 
-[node name="GridContainer" type="GridContainer" parent="MainContainer/ContentContainer/TabContainer/Read Aloud/ScrollContainer"]
+[node name="GridContainer" type="GridContainer" parent="MainContainer/ContentContainer/TabContainer/Read Aloud/ScrollContainer" unique_id=1666761640]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -296,12 +296,12 @@ theme_override_constants/h_separation = 5
 theme_override_constants/v_separation = 5
 columns = 6
 
-[node name="Flip Quiz" type="Control" parent="MainContainer/ContentContainer/TabContainer"]
+[node name="Flip Quiz" type="Control" parent="MainContainer/ContentContainer/TabContainer" unique_id=120642122]
 visible = false
 layout_mode = 2
 metadata/_tab_index = 5
 
-[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer/ContentContainer/TabContainer/Flip Quiz"]
+[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer/ContentContainer/TabContainer/Flip Quiz" unique_id=1551949058]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -314,7 +314,7 @@ grow_horizontal = 2
 grow_vertical = 2
 horizontal_scroll_mode = 0
 
-[node name="GridContainer" type="GridContainer" parent="MainContainer/ContentContainer/TabContainer/Flip Quiz/ScrollContainer"]
+[node name="GridContainer" type="GridContainer" parent="MainContainer/ContentContainer/TabContainer/Flip Quiz/ScrollContainer" unique_id=1434408735]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -322,10 +322,10 @@ theme_override_constants/h_separation = 5
 theme_override_constants/v_separation = 5
 columns = 6
 
-[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+[node name="ButtonClick" type="AudioStreamPlayer" parent="." unique_id=234321122]
 stream = ExtResource("5_67k4m")
 
-[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+[node name="ButtonHover" type="AudioStreamPlayer" parent="." unique_id=1741276210]
 stream = ExtResource("6_r3gmb")
 
 [connection signal="mouse_entered" from="MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton" to="." method="_on_back_button_mouse_entered"]

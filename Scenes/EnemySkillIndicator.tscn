@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://8g8p2x82pya7"]
+[gd_scene format=3 uid="uid://8g8p2x82pya7"]
 
 [ext_resource type="Script" uid="uid://b6jxgla4ajwhw" path="res://Scripts/EnemySkillIndicator.gd" id="1_skillind"]
 [ext_resource type="Texture2D" uid="uid://0con8ixqofpr" path="res://gui/Update/UI/ui 8.png" id="2_762ag"]
@@ -41,7 +41,7 @@ _data = {
 &"pulse": SubResource("Animation_pulse")
 }
 
-[node name="EnemySkillIndicator" type="Control"]
+[node name="EnemySkillIndicator" type="Control" unique_id=2146619718]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -51,7 +51,7 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_skillind")
 
-[node name="DarkOverlay" type="ColorRect" parent="."]
+[node name="DarkOverlay" type="ColorRect" parent="." unique_id=1967682557]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -61,7 +61,7 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0, 0, 0, 0.75)
 
-[node name="CenterContainer" type="CenterContainer" parent="."]
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=715755243]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -74,13 +74,13 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="IndicatorPanel" type="Control" parent="CenterContainer"]
+[node name="IndicatorPanel" type="Control" parent="CenterContainer" unique_id=882132928]
 modulate = Color(1, 1, 1, 0.9)
 custom_minimum_size = Vector2(700, 350)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="GoldenBorder" type="NinePatchRect" parent="CenterContainer/IndicatorPanel"]
+[node name="GoldenBorder" type="NinePatchRect" parent="CenterContainer/IndicatorPanel" unique_id=1173589875]
 modulate = Color(1, 0.8, 0.2, 0.7)
 layout_mode = 1
 anchors_preset = 15
@@ -98,7 +98,7 @@ patch_margin_top = 20
 patch_margin_right = 20
 patch_margin_bottom = 20
 
-[node name="BorderFrame" type="NinePatchRect" parent="CenterContainer/IndicatorPanel"]
+[node name="BorderFrame" type="NinePatchRect" parent="CenterContainer/IndicatorPanel" unique_id=1761215877]
 modulate = Color(1, 0.2, 0.2, 0.9)
 layout_mode = 1
 anchors_preset = 15
@@ -116,7 +116,7 @@ patch_margin_top = 20
 patch_margin_right = 20
 patch_margin_bottom = 20
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/IndicatorPanel"]
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/IndicatorPanel" unique_id=1172567317]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -129,7 +129,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 15
 
-[node name="AlertIcon" type="Label" parent="CenterContainer/IndicatorPanel/VBoxContainer"]
+[node name="AlertIcon" type="Label" parent="CenterContainer/IndicatorPanel/VBoxContainer" unique_id=2109349538]
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_colors/font_color = Color(1, 0.2, 0.2, 1)
@@ -141,7 +141,7 @@ theme_override_font_sizes/font_size = 35
 text = "SPECIAL ATTACK!"
 horizontal_alignment = 1
 
-[node name="EnemyNameLabel" type="Label" parent="CenterContainer/IndicatorPanel/VBoxContainer"]
+[node name="EnemyNameLabel" type="Label" parent="CenterContainer/IndicatorPanel/VBoxContainer" unique_id=671626583]
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -153,7 +153,7 @@ theme_override_font_sizes/font_size = 36
 text = "Enemy Name"
 horizontal_alignment = 1
 
-[node name="SkillNameLabel" type="Label" parent="CenterContainer/IndicatorPanel/VBoxContainer"]
+[node name="SkillNameLabel" type="Label" parent="CenterContainer/IndicatorPanel/VBoxContainer" unique_id=386909873]
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_colors/font_color = Color(1, 0.8, 0.2, 1)
@@ -165,7 +165,7 @@ theme_override_font_sizes/font_size = 35
 text = "uses Skill Name!"
 horizontal_alignment = 1
 
-[node name="InstructionLabel" type="Label" parent="CenterContainer/IndicatorPanel/VBoxContainer"]
+[node name="InstructionLabel" type="Label" parent="CenterContainer/IndicatorPanel/VBoxContainer" unique_id=274673862]
 custom_minimum_size = Vector2(1, 1)
 layout_mode = 2
 size_flags_vertical = 0
@@ -179,12 +179,12 @@ text = "Prepare to counter!"
 horizontal_alignment = 1
 autowrap_mode = 2
 
-[node name="CountdownContainer" type="HBoxContainer" parent="CenterContainer/IndicatorPanel/VBoxContainer"]
+[node name="CountdownContainer" type="HBoxContainer" parent="CenterContainer/IndicatorPanel/VBoxContainer" unique_id=971339784]
 layout_mode = 2
 size_flags_vertical = 0
 alignment = 1
 
-[node name="CountdownText" type="Label" parent="CenterContainer/IndicatorPanel/VBoxContainer/CountdownContainer"]
+[node name="CountdownText" type="Label" parent="CenterContainer/IndicatorPanel/VBoxContainer/CountdownContainer" unique_id=1997744337]
 layout_mode = 2
 size_flags_horizontal = 0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -195,7 +195,7 @@ theme_override_fonts/font = ExtResource("3_skillind")
 theme_override_font_sizes/font_size = 28
 text = "Starting in: "
 
-[node name="CountdownLabel" type="Label" parent="CenterContainer/IndicatorPanel/VBoxContainer/CountdownContainer"]
+[node name="CountdownLabel" type="Label" parent="CenterContainer/IndicatorPanel/VBoxContainer/CountdownContainer" unique_id=1229846214]
 layout_mode = 2
 size_flags_horizontal = 0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -206,7 +206,7 @@ theme_override_fonts/font = ExtResource("4_skillind")
 theme_override_font_sizes/font_size = 36
 text = "7"
 
-[node name="SkipHint" type="Label" parent="CenterContainer/IndicatorPanel/VBoxContainer"]
+[node name="SkipHint" type="Label" parent="CenterContainer/IndicatorPanel/VBoxContainer" unique_id=198455028]
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_colors/font_color = Color(0.830335, 0.830335, 0.830335, 0.8)
@@ -218,11 +218,9 @@ theme_override_font_sizes/font_size = 16
 text = "(Click or press Space/Enter to skip)"
 horizontal_alignment = 1
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="CenterContainer/IndicatorPanel"]
-libraries = {
-&"default": SubResource("AnimationLibrary_1")
-}
-autoplay = "pulse"
+[node name="AnimationPlayer" type="AnimationPlayer" parent="CenterContainer/IndicatorPanel" unique_id=1049802608]
+libraries/default = SubResource("AnimationLibrary_1")
+autoplay = &"pulse"
 
-[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+[node name="ButtonClick" type="AudioStreamPlayer" parent="." unique_id=1987925323]
 stream = ExtResource("6_762ag")

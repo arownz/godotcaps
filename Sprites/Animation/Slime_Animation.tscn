@@ -1,4 +1,4 @@
-[gd_scene load_steps=38 format=3 uid="uid://d1i117ieiarnh"]
+[gd_scene format=3 uid="uid://d1i117ieiarnh"]
 
 [ext_resource type="Texture2D" uid="uid://cmgrkntjwnvvr" path="res://Sprites/Frame Sprites/Slime.png" id="1_ykal7"]
 [ext_resource type="AudioStream" uid="uid://flxi1a124b07" path="res://audio/slime/slime hit sound effect.ogg" id="2_r1exb"]
@@ -266,18 +266,18 @@ animations = [{
 "speed": 12.0
 }]
 
-[node name="Slime" type="Node2D"]
+[node name="Slime" type="Node2D" unique_id=955702403]
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=191626494]
 sprite_frames = SubResource("SpriteFrames_ovbb4")
 animation = &"skill"
 autoplay = "idle"
 
-[node name="enemy_autoattack" type="AudioStreamPlayer" parent="."]
+[node name="enemy_autoattack" type="AudioStreamPlayer" parent="." unique_id=723330933]
 stream = ExtResource("2_r1exb")
 
-[node name="enemy_skill" type="AudioStreamPlayer" parent="."]
+[node name="enemy_skill" type="AudioStreamPlayer" parent="." unique_id=808104645]
 stream = ExtResource("3_xluus")
 
-[node name="enemy_hurt" type="AudioStreamPlayer" parent="."]
+[node name="enemy_hurt" type="AudioStreamPlayer" parent="." unique_id=696517569]
 stream = ExtResource("2_r1exb")

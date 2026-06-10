@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://c4s0f4n6pxn6o"]
+[gd_scene format=3 uid="uid://c4s0f4n6pxn6o"]
 
 [ext_resource type="Script" uid="uid://h4w722tfbmr7" path="res://Scripts/ReadAloudGuided.gd" id="1_guided"]
 [ext_resource type="Texture2D" uid="uid://0con8ixqofpr" path="res://gui/Update/UI/ui 8.png" id="2_background"]
@@ -88,7 +88,7 @@ shadow_color = Color(0, 0, 0, 0.2)
 shadow_size = 8
 shadow_offset = Vector2(0, 4)
 
-[node name="ReadAloudGuided" type="Control"]
+[node name="ReadAloudGuided" type="Control" unique_id=2029367700]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -97,7 +97,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_guided")
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="Background" type="TextureRect" parent="." unique_id=1374059040]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -106,7 +106,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_background")
 
-[node name="MainContainer" type="VBoxContainer" parent="."]
+[node name="MainContainer" type="VBoxContainer" parent="." unique_id=2065581926]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -119,13 +119,13 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 35
 
-[node name="HeaderPanel" type="Panel" parent="MainContainer"]
+[node name="HeaderPanel" type="Panel" parent="MainContainer" unique_id=1595101347]
 custom_minimum_size = Vector2(0, 123)
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_header")
 
-[node name="HeaderContainer" type="VBoxContainer" parent="MainContainer/HeaderPanel"]
+[node name="HeaderContainer" type="VBoxContainer" parent="MainContainer/HeaderPanel" unique_id=193535882]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -141,12 +141,12 @@ grow_vertical = 2
 scale = Vector2(0.95167, 0.95167)
 theme_override_constants/separation = 15
 
-[node name="TitleContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer"]
+[node name="TitleContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer" unique_id=821121900]
 layout_mode = 2
 size_flags_vertical = 0
 alignment = 1
 
-[node name="TitleLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer"]
+[node name="TitleLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer" unique_id=8359640]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -156,7 +156,7 @@ text = "    GUIDED PASSAGE"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="BackButton" type="Button" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer"]
+[node name="BackButton" type="Button" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer" unique_id=678014416]
 custom_minimum_size = Vector2(120, 45)
 layout_mode = 2
 size_flags_horizontal = 8
@@ -173,20 +173,20 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="ProgressContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer"]
+[node name="ProgressContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer" unique_id=245357772]
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_constants/separation = 15
 alignment = 1
 
-[node name="ProgressLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer"]
+[node name="ProgressLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer" unique_id=2060391168]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_regular")
 theme_override_font_sizes/font_size = 16
 text = "1/4 Passages"
 
-[node name="ProgressBar" type="ProgressBar" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer"]
+[node name="ProgressBar" type="ProgressBar" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer" unique_id=468914568]
 custom_minimum_size = Vector2(250, 20)
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -194,7 +194,7 @@ theme_override_fonts/font = ExtResource("3_bold")
 theme_override_styles/background = SubResource("StyleBoxFlat_progress_bg")
 theme_override_styles/fill = SubResource("StyleBoxFlat_progress_fill")
 
-[node name="GuideButton" type="Button" parent="MainContainer/HeaderPanel"]
+[node name="GuideButton" type="Button" parent="MainContainer/HeaderPanel" unique_id=1262856480]
 layout_mode = 0
 offset_left = 25.0
 offset_right = 124.0
@@ -211,7 +211,7 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="TTSSettingButton" type="TextureButton" parent="MainContainer/HeaderPanel"]
+[node name="TTSSettingButton" type="TextureButton" parent="MainContainer/HeaderPanel" unique_id=664225199]
 layout_mode = 0
 offset_left = 15.0
 offset_top = 67.0
@@ -221,12 +221,12 @@ mouse_default_cursor_shape = 2
 texture_normal = ExtResource("7_sp5qi")
 stretch_mode = 5
 
-[node name="GuidePanel" type="Panel" parent="MainContainer"]
+[node name="GuidePanel" type="Panel" parent="MainContainer" unique_id=863798187]
 custom_minimum_size = Vector2(0, 130)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_guide")
 
-[node name="MarginContainer" type="MarginContainer" parent="MainContainer/GuidePanel"]
+[node name="MarginContainer" type="MarginContainer" parent="MainContainer/GuidePanel" unique_id=1335619609]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -238,11 +238,11 @@ theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 25
 theme_override_constants/margin_bottom = 20
 
-[node name="GuideContainer" type="VBoxContainer" parent="MainContainer/GuidePanel/MarginContainer"]
+[node name="GuideContainer" type="VBoxContainer" parent="MainContainer/GuidePanel/MarginContainer" unique_id=2104386159]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="GuideTitle" type="Label" parent="MainContainer/GuidePanel/MarginContainer/GuideContainer"]
+[node name="GuideTitle" type="Label" parent="MainContainer/GuidePanel/MarginContainer/GuideContainer" unique_id=1195551332]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_bold")
@@ -250,7 +250,7 @@ theme_override_font_sizes/font_size = 20
 text = "Reading Guide"
 horizontal_alignment = 1
 
-[node name="GuideNotes" type="Label" parent="MainContainer/GuidePanel/MarginContainer/GuideContainer"]
+[node name="GuideNotes" type="Label" parent="MainContainer/GuidePanel/MarginContainer/GuideContainer" unique_id=811211827]
 custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -261,12 +261,12 @@ horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 2
 
-[node name="PassagePanel" type="Panel" parent="MainContainer"]
+[node name="PassagePanel" type="Panel" parent="MainContainer" unique_id=288860462]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_passage")
 
-[node name="MarginContainer" type="MarginContainer" parent="MainContainer/PassagePanel"]
+[node name="MarginContainer" type="MarginContainer" parent="MainContainer/PassagePanel" unique_id=1127147706]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -278,11 +278,11 @@ theme_override_constants/margin_top = 25
 theme_override_constants/margin_right = 25
 theme_override_constants/margin_bottom = 25
 
-[node name="PassageContainer" type="VBoxContainer" parent="MainContainer/PassagePanel/MarginContainer"]
+[node name="PassageContainer" type="VBoxContainer" parent="MainContainer/PassagePanel/MarginContainer" unique_id=1528717384]
 layout_mode = 2
 theme_override_constants/separation = 20
 
-[node name="PassageTitleLabel" type="Label" parent="MainContainer/PassagePanel/MarginContainer/PassageContainer"]
+[node name="PassageTitleLabel" type="Label" parent="MainContainer/PassagePanel/MarginContainer/PassageContainer" unique_id=2029951429]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_bold")
@@ -290,7 +290,7 @@ theme_override_font_sizes/font_size = 28
 text = "The Friendly Cat"
 horizontal_alignment = 1
 
-[node name="PassageText" type="RichTextLabel" parent="MainContainer/PassagePanel/MarginContainer/PassageContainer"]
+[node name="PassageText" type="RichTextLabel" parent="MainContainer/PassagePanel/MarginContainer/PassageContainer" unique_id=2050706114]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_colors/default_color = Color(0, 0, 0, 1)
@@ -306,7 +306,7 @@ Sam likes to play with a red ball.
 
 Mia gives Sam food every day."
 
-[node name="ReadButton" type="Button" parent="MainContainer/PassagePanel"]
+[node name="ReadButton" type="Button" parent="MainContainer/PassagePanel" unique_id=1069706558]
 custom_minimum_size = Vector2(150, 50)
 layout_mode = 0
 offset_left = 25.0
@@ -326,12 +326,12 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="ControlsContainer" type="HBoxContainer" parent="MainContainer"]
+[node name="ControlsContainer" type="HBoxContainer" parent="MainContainer" unique_id=1139423969]
 layout_mode = 2
 theme_override_constants/separation = 20
 alignment = 1
 
-[node name="PreviousButton" type="Button" parent="MainContainer/ControlsContainer"]
+[node name="PreviousButton" type="Button" parent="MainContainer/ControlsContainer" unique_id=257444471]
 custom_minimum_size = Vector2(150, 50)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -347,7 +347,7 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="SpeakButton" type="Button" parent="MainContainer/ControlsContainer"]
+[node name="SpeakButton" type="Button" parent="MainContainer/ControlsContainer" unique_id=1986104629]
 custom_minimum_size = Vector2(150, 50)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -364,7 +364,7 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="NextButton" type="Button" parent="MainContainer/ControlsContainer"]
+[node name="NextButton" type="Button" parent="MainContainer/ControlsContainer" unique_id=1440512743]
 custom_minimum_size = Vector2(150, 50)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -380,10 +380,10 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+[node name="ButtonClick" type="AudioStreamPlayer" parent="." unique_id=213035460]
 stream = ExtResource("4_click")
 
-[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+[node name="ButtonHover" type="AudioStreamPlayer" parent="." unique_id=1870469646]
 stream = ExtResource("5_hover")
 
 [connection signal="pressed" from="MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton" to="." method="_on_back_button_pressed"]

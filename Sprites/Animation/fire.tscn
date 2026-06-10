@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://df6msh4r8y56y"]
+[gd_scene format=3 uid="uid://df6msh4r8y56y"]
 
 [ext_resource type="Texture2D" uid="uid://4d1cdv74uvhu" path="res://gui/fire_frame/frame_0_delay-0.1s.png" id="1_d7pmt"]
 [ext_resource type="Texture2D" uid="uid://bqybsyvsvslq7" path="res://gui/fire_frame/frame_1_delay-0.1s.png" id="2_0170q"]
@@ -25,9 +25,9 @@ animations = [{
 "speed": 7.0
 }]
 
-[node name="Fire" type="Node2D"]
+[node name="Fire" type="Node2D" unique_id=367513843]
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=18458330]
 sprite_frames = SubResource("SpriteFrames_34qlc")
 autoplay = "default"
 frame_progress = 0.77508

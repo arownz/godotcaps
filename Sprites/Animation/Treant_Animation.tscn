@@ -1,4 +1,4 @@
-[gd_scene load_steps=42 format=3 uid="uid://d4gnmb7y5laks"]
+[gd_scene format=3 uid="uid://d4gnmb7y5laks"]
 
 [ext_resource type="Texture2D" uid="uid://by0xvtv0v0usp" path="res://Sprites/Frame Sprites/Treant.png" id="1_ekcs8"]
 [ext_resource type="AudioStream" uid="uid://dkr6sxeeo5ck4" path="res://audio/treant/treantskillz.ogg" id="3_ludm2"]
@@ -300,19 +300,19 @@ animations = [{
 "speed": 7.0
 }]
 
-[node name="TreantAnimation" type="Node2D"]
+[node name="TreantAnimation" type="Node2D" unique_id=363915184]
 position = Vector2(-2, -23)
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1563140337]
 sprite_frames = SubResource("SpriteFrames_j63xv")
 animation = &"skill"
 autoplay = "idle"
 
-[node name="enemy_hurt" type="AudioStreamPlayer" parent="."]
+[node name="enemy_hurt" type="AudioStreamPlayer" parent="." unique_id=826233858]
 stream = ExtResource("3_oe6dc")
 
-[node name="enemy_skill" type="AudioStreamPlayer" parent="."]
+[node name="enemy_skill" type="AudioStreamPlayer" parent="." unique_id=575918736]
 stream = ExtResource("3_ludm2")
 
-[node name="enemy_autoattack" type="AudioStreamPlayer" parent="."]
+[node name="enemy_autoattack" type="AudioStreamPlayer" parent="." unique_id=1702339217]
 stream = ExtResource("4_oe6dc")

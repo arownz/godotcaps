@@ -1,4 +1,4 @@
-[gd_scene load_steps=81 format=3 uid="uid://e6bec84rrthm"]
+[gd_scene format=3 uid="uid://e6bec84rrthm"]
 
 [ext_resource type="Texture2D" uid="uid://bs7axy8rkm4ei" path="res://Sprites/Frame Sprites/Lexia.png" id="1_0riqc"]
 [ext_resource type="AudioStream" uid="uid://dmsn7fibj384u" path="res://audio/player/sword slash.ogg" id="2_81ctd"]
@@ -576,18 +576,18 @@ animations = [{
 "speed": 10.0
 }]
 
-[node name="DefaultPlayerAnimation" type="Node2D"]
+[node name="DefaultPlayerAnimation" type="Node2D" unique_id=113435996]
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=933341777]
 sprite_frames = SubResource("SpriteFrames_fdt5l")
 animation = &"dead"
 autoplay = "idle"
 
-[node name="player_counter" type="AudioStreamPlayer" parent="."]
+[node name="player_counter" type="AudioStreamPlayer" parent="." unique_id=1677324479]
 stream = ExtResource("2_81ctd")
 
-[node name="player_autoattack" type="AudioStreamPlayer" parent="."]
+[node name="player_autoattack" type="AudioStreamPlayer" parent="." unique_id=727927557]
 stream = ExtResource("3_0var5")
 
-[node name="player_hurt" type="AudioStreamPlayer" parent="."]
+[node name="player_hurt" type="AudioStreamPlayer" parent="." unique_id=912682262]
 stream = ExtResource("4_0var5")

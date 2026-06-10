@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://bh58ks8y1mr5l"]
+[gd_scene format=3 uid="uid://bh58ks8y1mr5l"]
 
 [ext_resource type="Script" uid="uid://rxbjx6aq2wjr" path="res://Scripts/ReadAloudModule.gd" id="1_u04du"]
 [ext_resource type="Texture2D" uid="uid://0con8ixqofpr" path="res://gui/Update/UI/ui 8.png" id="2_bg"]
@@ -63,7 +63,7 @@ shadow_offset = Vector2(0, 2)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_d0twa"]
 
-[node name="ReadAloudModule" type="Control"]
+[node name="ReadAloudModule" type="Control" unique_id=1318213022]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -72,7 +72,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_u04du")
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="Background" type="TextureRect" parent="." unique_id=695268035]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -81,7 +81,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_bg")
 
-[node name="MainContainer" type="VBoxContainer" parent="."]
+[node name="MainContainer" type="VBoxContainer" parent="." unique_id=2032310362]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -94,13 +94,13 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 50
 
-[node name="HeaderPanel" type="Panel" parent="MainContainer"]
+[node name="HeaderPanel" type="Panel" parent="MainContainer" unique_id=627779955]
 custom_minimum_size = Vector2(0, 123)
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_dt2ji")
 
-[node name="HeaderContainer" type="VBoxContainer" parent="MainContainer/HeaderPanel"]
+[node name="HeaderContainer" type="VBoxContainer" parent="MainContainer/HeaderPanel" unique_id=1160616046]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -116,12 +116,12 @@ grow_vertical = 2
 scale = Vector2(0.95167, 0.95167)
 theme_override_constants/separation = 15
 
-[node name="TitleContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer"]
+[node name="TitleContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer" unique_id=1520993248]
 layout_mode = 2
 size_flags_vertical = 0
 alignment = 1
 
-[node name="TitleLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer"]
+[node name="TitleLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer" unique_id=1139966335]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -131,7 +131,7 @@ text = "READ-ALOUD LEARNING"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="BackButton" type="Button" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer"]
+[node name="BackButton" type="Button" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer" unique_id=813491052]
 custom_minimum_size = Vector2(120, 45)
 layout_mode = 2
 size_flags_horizontal = 8
@@ -148,20 +148,20 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="ProgressContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer"]
+[node name="ProgressContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer" unique_id=1596098054]
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_constants/separation = 15
 alignment = 1
 
-[node name="ProgressLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer"]
+[node name="ProgressLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer" unique_id=2113871367]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular")
 theme_override_font_sizes/font_size = 16
 text = "0% Complete"
 
-[node name="ProgressBar" type="ProgressBar" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer"]
+[node name="ProgressBar" type="ProgressBar" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer" unique_id=2043506082]
 custom_minimum_size = Vector2(250, 20)
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -169,7 +169,7 @@ theme_override_fonts/font = ExtResource("4_bold")
 theme_override_styles/background = SubResource("StyleBoxFlat_h7rfw")
 theme_override_styles/fill = SubResource("StyleBoxFlat_bfapu")
 
-[node name="GuideButton" type="Button" parent="MainContainer/HeaderPanel"]
+[node name="GuideButton" type="Button" parent="MainContainer/HeaderPanel" unique_id=679507716]
 layout_mode = 0
 offset_left = 30.0
 offset_right = 129.0
@@ -186,7 +186,7 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="TTSSettingButton" type="TextureButton" parent="MainContainer/HeaderPanel"]
+[node name="TTSSettingButton" type="TextureButton" parent="MainContainer/HeaderPanel" unique_id=1390842440]
 layout_mode = 0
 offset_left = 50.0
 offset_top = 67.0
@@ -197,24 +197,24 @@ texture_normal = ExtResource("11_settings")
 texture_hover = ExtResource("12_settings_hover")
 stretch_mode = 5
 
-[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer" unique_id=563464348]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="CategoriesGrid" type="GridContainer" parent="MainContainer/ScrollContainer"]
+[node name="CategoriesGrid" type="GridContainer" parent="MainContainer/ScrollContainer" unique_id=269219305]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/h_separation = 25
 columns = 3
 
-[node name="GuidedReadingCard2" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid"]
+[node name="GuidedReadingCard2" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid" unique_id=1581606440]
 custom_minimum_size = Vector2(430, 300)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_styles/panel = SubResource("StyleBoxFlat_dt2ji")
 
-[node name="GuidedContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard2"]
+[node name="GuidedContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard2" unique_id=954699240]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -226,11 +226,11 @@ offset_bottom = -15.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="IconContainer" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard2/GuidedContent"]
+[node name="IconContainer" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard2/GuidedContent" unique_id=695407764]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="CenterContainer" type="CenterContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard2/GuidedContent/IconContainer"]
+[node name="CenterContainer" type="CenterContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard2/GuidedContent/IconContainer" unique_id=136834011]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -238,14 +238,14 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="IconLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard2/GuidedContent/IconContainer/CenterContainer"]
+[node name="IconLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard2/GuidedContent/IconContainer/CenterContainer" unique_id=2102167002]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.2, 0.8, 0.4, 1)
 theme_override_fonts/font = ExtResource("4_bold")
 theme_override_font_sizes/font_size = 48
 text = "Syl-la-ble"
 
-[node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard2/GuidedContent"]
+[node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard2/GuidedContent" unique_id=1962502813]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold")
@@ -253,7 +253,7 @@ theme_override_font_sizes/font_size = 20
 text = "Syllable Workshop"
 horizontal_alignment = 1
 
-[node name="DescLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard2/GuidedContent"]
+[node name="DescLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard2/GuidedContent" unique_id=165946445]
 custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -263,7 +263,7 @@ text = "Break words into chunks and build phonological awareness."
 horizontal_alignment = 1
 autowrap_mode = 2
 
-[node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard2/GuidedContent"]
+[node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard2/GuidedContent" unique_id=1821758320]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular")
@@ -271,7 +271,7 @@ theme_override_font_sizes/font_size = 12
 text = "0% Complete"
 horizontal_alignment = 1
 
-[node name="EnterButton" type="Button" parent="MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard2/GuidedContent"]
+[node name="EnterButton" type="Button" parent="MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard2/GuidedContent" unique_id=456977703]
 layout_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -284,13 +284,13 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="GuidedReadingCard" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid"]
+[node name="GuidedReadingCard" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid" unique_id=1448910565]
 custom_minimum_size = Vector2(430, 300)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_styles/panel = SubResource("StyleBoxFlat_dt2ji")
 
-[node name="GuidedContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard"]
+[node name="GuidedContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard" unique_id=870170956]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -302,11 +302,11 @@ offset_bottom = -15.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="IconContainer" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard/GuidedContent"]
+[node name="IconContainer" type="Panel" parent="MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard/GuidedContent" unique_id=1558242058]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="CenterContainer" type="CenterContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard/GuidedContent/IconContainer"]
+[node name="CenterContainer" type="CenterContainer" parent="MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard/GuidedContent/IconContainer" unique_id=587288274]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -314,14 +314,14 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="IconLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard/GuidedContent/IconContainer/CenterContainer"]
+[node name="IconLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard/GuidedContent/IconContainer/CenterContainer" unique_id=1896592166]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.2, 0.8, 0.4, 1)
 theme_override_fonts/font = ExtResource("4_bold")
 theme_override_font_sizes/font_size = 48
 text = "Passage"
 
-[node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard/GuidedContent"]
+[node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard/GuidedContent" unique_id=1785097655]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold")
@@ -329,7 +329,7 @@ theme_override_font_sizes/font_size = 20
 text = "Guided Passage"
 horizontal_alignment = 1
 
-[node name="DescLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard/GuidedContent"]
+[node name="DescLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard/GuidedContent" unique_id=1633008527]
 custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -339,7 +339,7 @@ text = "Focus on pacing, expression, and confidence building."
 horizontal_alignment = 1
 autowrap_mode = 2
 
-[node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard/GuidedContent"]
+[node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard/GuidedContent" unique_id=1170364319]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular")
@@ -347,7 +347,7 @@ theme_override_font_sizes/font_size = 12
 text = "0% Complete"
 horizontal_alignment = 1
 
-[node name="EnterButton" type="Button" parent="MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard/GuidedContent"]
+[node name="EnterButton" type="Button" parent="MainContainer/ScrollContainer/CategoriesGrid/GuidedReadingCard/GuidedContent" unique_id=693905600]
 layout_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -360,10 +360,10 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+[node name="ButtonClick" type="AudioStreamPlayer" parent="." unique_id=915055829]
 stream = ExtResource("7_click")
 
-[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+[node name="ButtonHover" type="AudioStreamPlayer" parent="." unique_id=314385465]
 stream = ExtResource("8_hover")
 
 [connection signal="pressed" from="MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton" to="." method="_on_back_button_pressed"]

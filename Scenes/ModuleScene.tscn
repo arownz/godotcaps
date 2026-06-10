@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://cpuv0hhhcq6sv"]
+[gd_scene format=3 uid="uid://cpuv0hhhcq6sv"]
 
 [ext_resource type="Texture2D" uid="uid://c75anq8c0biyi" path="res://gui/Update/UI/ui 7.png" id="2_178ft"]
 [ext_resource type="Script" uid="uid://dgboy6v1hc540" path="res://Scripts/ModuleScene.gd" id="2_module_script"]
@@ -184,7 +184,7 @@ shadow_color = Color(0, 0, 0, 0.3)
 shadow_size = 4
 shadow_offset = Vector2(0, 2)
 
-[node name="ModuleScene" type="Control"]
+[node name="ModuleScene" type="Control" unique_id=660641503]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -193,7 +193,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("2_module_script")
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="Background" type="TextureRect" parent="." unique_id=2144770446]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -202,7 +202,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_178ft")
 
-[node name="MainContainer" type="VBoxContainer" parent="."]
+[node name="MainContainer" type="VBoxContainer" parent="." unique_id=421525591]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -215,13 +215,13 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 50
 
-[node name="HeaderPanel" type="Panel" parent="MainContainer"]
+[node name="HeaderPanel" type="Panel" parent="MainContainer" unique_id=596060195]
 custom_minimum_size = Vector2(0, 150)
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_header")
 
-[node name="HeaderContainer" type="VBoxContainer" parent="MainContainer/HeaderPanel"]
+[node name="HeaderContainer" type="VBoxContainer" parent="MainContainer/HeaderPanel" unique_id=1529868038]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -236,12 +236,12 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 20
 
-[node name="TitleContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer"]
+[node name="TitleContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer" unique_id=293301877]
 layout_mode = 2
 size_flags_vertical = 0
 alignment = 1
 
-[node name="TitleLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer"]
+[node name="TitleLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer" unique_id=1979750380]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -252,7 +252,7 @@ text = "MODULE LEARNING"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="MenuButton" type="Button" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer"]
+[node name="MenuButton" type="Button" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer" unique_id=1218701546]
 custom_minimum_size = Vector2(140, 50)
 layout_mode = 2
 size_flags_horizontal = 0
@@ -271,18 +271,18 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer" unique_id=767598872]
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
-[node name="ContentContainer" type="VBoxContainer" parent="MainContainer/ScrollContainer"]
+[node name="ContentContainer" type="VBoxContainer" parent="MainContainer/ScrollContainer" unique_id=1322817479]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 20
 
-[node name="ModulesGrid" type="GridContainer" parent="MainContainer/ScrollContainer/ContentContainer"]
+[node name="ModulesGrid" type="GridContainer" parent="MainContainer/ScrollContainer/ContentContainer" unique_id=248671959]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
@@ -290,13 +290,13 @@ theme_override_constants/h_separation = 25
 theme_override_constants/v_separation = 20
 columns = 2
 
-[node name="PhonicsCard" type="Panel" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid"]
+[node name="PhonicsCard" type="Panel" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid" unique_id=567102644]
 custom_minimum_size = Vector2(350, 360)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_phonics_card")
 
-[node name="CardContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/PhonicsCard"]
+[node name="CardContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/PhonicsCard" unique_id=1516671474]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -309,18 +309,18 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 15
 
-[node name="Header" type="HBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/PhonicsCard/CardContent"]
+[node name="Header" type="HBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/PhonicsCard/CardContent" unique_id=639235259]
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_constants/separation = 20
 
-[node name="IconPanel" type="Panel" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/PhonicsCard/CardContent/Header"]
+[node name="IconPanel" type="Panel" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/PhonicsCard/CardContent/Header" unique_id=998186330]
 custom_minimum_size = Vector2(80, 80)
 layout_mode = 2
 size_flags_horizontal = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_icon")
 
-[node name="IconTexture" type="TextureRect" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/PhonicsCard/CardContent/Header/IconPanel"]
+[node name="IconTexture" type="TextureRect" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/PhonicsCard/CardContent/Header/IconPanel" unique_id=1083594165]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -334,7 +334,7 @@ grow_vertical = 2
 scale = Vector2(0.200074, 0.200074)
 texture = ExtResource("5_o7nev")
 
-[node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/PhonicsCard/CardContent/Header"]
+[node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/PhonicsCard/CardContent/Header" unique_id=134201343]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -344,7 +344,7 @@ theme_override_font_sizes/font_size = 24
 text = "Phonics"
 vertical_alignment = 1
 
-[node name="DescriptionLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/PhonicsCard/CardContent"]
+[node name="DescriptionLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/PhonicsCard/CardContent" unique_id=1334191995]
 custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 size_flags_vertical = 0
@@ -354,19 +354,19 @@ theme_override_font_sizes/font_size = 16
 text = "Build foundational reading skills through interactive letter recognition, sound association, and visual learning exercises."
 autowrap_mode = 3
 
-[node name="ProgressContainer" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/PhonicsCard/CardContent"]
+[node name="ProgressContainer" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/PhonicsCard/CardContent" unique_id=992877716]
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_constants/separation = 8
 
-[node name="ProgressBar" type="ProgressBar" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/PhonicsCard/CardContent/ProgressContainer"]
+[node name="ProgressBar" type="ProgressBar" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/PhonicsCard/CardContent/ProgressContainer" unique_id=615204654]
 custom_minimum_size = Vector2(0, 12)
 layout_mode = 2
 theme_override_styles/background = SubResource("StyleBoxFlat_progress_bg")
 theme_override_styles/fill = SubResource("StyleBoxFlat_phonics_progress")
 show_percentage = false
 
-[node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/PhonicsCard/CardContent/ProgressContainer"]
+[node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/PhonicsCard/CardContent/ProgressContainer" unique_id=1156849127]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -375,7 +375,7 @@ theme_override_font_sizes/font_size = 14
 text = "0% Complete"
 horizontal_alignment = 2
 
-[node name="ActionButton" type="Button" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/PhonicsCard/CardContent"]
+[node name="ActionButton" type="Button" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/PhonicsCard/CardContent" unique_id=1992481390]
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -394,13 +394,13 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="ReadAloudCard" type="Panel" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid"]
+[node name="ReadAloudCard" type="Panel" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid" unique_id=598987966]
 custom_minimum_size = Vector2(350, 360)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_reading_card")
 
-[node name="CardContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard"]
+[node name="CardContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard" unique_id=779193112]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -413,18 +413,18 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 15
 
-[node name="Header" type="HBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent"]
+[node name="Header" type="HBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent" unique_id=1239205701]
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_constants/separation = 20
 
-[node name="IconPanel" type="Panel" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent/Header"]
+[node name="IconPanel" type="Panel" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent/Header" unique_id=808407567]
 custom_minimum_size = Vector2(80, 80)
 layout_mode = 2
 size_flags_horizontal = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_icon")
 
-[node name="IconTexture" type="TextureRect" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent/Header/IconPanel"]
+[node name="IconTexture" type="TextureRect" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent/Header/IconPanel" unique_id=1104022157]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -438,7 +438,7 @@ grow_vertical = 2
 scale = Vector2(0.204558, 0.204558)
 texture = ExtResource("9_bmnuq")
 
-[node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent/Header"]
+[node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent/Header" unique_id=369038040]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -448,7 +448,7 @@ theme_override_font_sizes/font_size = 24
 text = "Read-Aloud"
 vertical_alignment = 1
 
-[node name="DescriptionLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent"]
+[node name="DescriptionLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent" unique_id=20677595]
 custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 size_flags_vertical = 0
@@ -458,19 +458,19 @@ theme_override_font_sizes/font_size = 16
 text = "Develop reading fluency and phonological awareness through guided reading activities and interactive learning experiences."
 autowrap_mode = 3
 
-[node name="ProgressContainer" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent"]
+[node name="ProgressContainer" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent" unique_id=801069059]
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_constants/separation = 8
 
-[node name="ProgressBar" type="ProgressBar" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent/ProgressContainer"]
+[node name="ProgressBar" type="ProgressBar" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent/ProgressContainer" unique_id=635676877]
 custom_minimum_size = Vector2(0, 12)
 layout_mode = 2
 theme_override_styles/background = SubResource("StyleBoxFlat_progress_bg")
 theme_override_styles/fill = SubResource("StyleBoxFlat_reading_progress")
 show_percentage = false
 
-[node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent/ProgressContainer"]
+[node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent/ProgressContainer" unique_id=1728239070]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -479,7 +479,7 @@ theme_override_font_sizes/font_size = 14
 text = "0% Complete"
 horizontal_alignment = 2
 
-[node name="ActionButton" type="Button" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent"]
+[node name="ActionButton" type="Button" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/ReadAloudCard/CardContent" unique_id=1876286779]
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 size_flags_vertical = 8
@@ -499,13 +499,13 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="FlipQuizCard" type="Panel" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid"]
+[node name="FlipQuizCard" type="Panel" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid" unique_id=1208230043]
 custom_minimum_size = Vector2(350, 360)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_quiz_card")
 
-[node name="CardContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard"]
+[node name="CardContent" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard" unique_id=133545462]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -518,18 +518,18 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 15
 
-[node name="Header" type="HBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent"]
+[node name="Header" type="HBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent" unique_id=1949849720]
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_constants/separation = 20
 
-[node name="IconPanel" type="Panel" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent/Header"]
+[node name="IconPanel" type="Panel" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent/Header" unique_id=1969576251]
 custom_minimum_size = Vector2(80, 80)
 layout_mode = 2
 size_flags_horizontal = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_icon")
 
-[node name="IconTexture" type="TextureRect" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent/Header/IconPanel"]
+[node name="IconTexture" type="TextureRect" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent/Header/IconPanel" unique_id=496063962]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -543,7 +543,7 @@ grow_vertical = 2
 scale = Vector2(0.202719, 0.202719)
 texture = ExtResource("8_jsrwg")
 
-[node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent/Header"]
+[node name="TitleLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent/Header" unique_id=113944129]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -553,7 +553,7 @@ theme_override_font_sizes/font_size = 24
 text = "Flip Quiz"
 vertical_alignment = 1
 
-[node name="DescriptionLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent"]
+[node name="DescriptionLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent" unique_id=378058137]
 custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 size_flags_vertical = 0
@@ -563,19 +563,19 @@ theme_override_font_sizes/font_size = 16
 text = "Practice vocabulary and comprehension through engaging quiz activities with visual and audio support for diverse learning styles."
 autowrap_mode = 3
 
-[node name="ProgressContainer" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent"]
+[node name="ProgressContainer" type="VBoxContainer" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent" unique_id=770794255]
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_constants/separation = 8
 
-[node name="ProgressBar" type="ProgressBar" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent/ProgressContainer"]
+[node name="ProgressBar" type="ProgressBar" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent/ProgressContainer" unique_id=354149084]
 custom_minimum_size = Vector2(0, 12)
 layout_mode = 2
 theme_override_styles/background = SubResource("StyleBoxFlat_progress_bg")
 theme_override_styles/fill = SubResource("StyleBoxFlat_quiz_progress")
 show_percentage = false
 
-[node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent/ProgressContainer"]
+[node name="ProgressLabel" type="Label" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent/ProgressContainer" unique_id=1712719792]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -584,7 +584,7 @@ theme_override_font_sizes/font_size = 14
 text = "0% Complete"
 horizontal_alignment = 2
 
-[node name="ActionButton" type="Button" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent"]
+[node name="ActionButton" type="Button" parent="MainContainer/ScrollContainer/ContentContainer/ModulesGrid/FlipQuizCard/CardContent" unique_id=1514871150]
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 size_flags_vertical = 8
@@ -604,8 +604,8 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+[node name="ButtonClick" type="AudioStreamPlayer" parent="." unique_id=544348616]
 stream = ExtResource("12_n8sgv")
 
-[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+[node name="ButtonHover" type="AudioStreamPlayer" parent="." unique_id=458665337]
 stream = ExtResource("13_bh0w4")

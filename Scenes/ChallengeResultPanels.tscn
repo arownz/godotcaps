@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://2fpacds3hu8n"]
+[gd_scene format=3 uid="uid://2fpacds3hu8n"]
 
 [ext_resource type="Script" uid="uid://c8ypkl4nixsox" path="res://Scripts/ChallengeResultPanel.gd" id="1_8sm0m"]
 [ext_resource type="Texture2D" uid="uid://0con8ixqofpr" path="res://gui/Update/UI/ui 8.png" id="2_uofyk"]
@@ -43,7 +43,7 @@ _data = {
 &"fade_out": SubResource("Animation_fade_out")
 }
 
-[node name="ChallengeResultPanels" type="Control"]
+[node name="ChallengeResultPanels" type="Control" unique_id=934499533]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -53,7 +53,7 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_8sm0m")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="." unique_id=1582225695]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -62,7 +62,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.6)
 
-[node name="ResultPanel" type="TextureRect" parent="."]
+[node name="ResultPanel" type="TextureRect" parent="." unique_id=301195382]
 custom_minimum_size = Vector2(600, 500)
 layout_mode = 1
 anchors_preset = 8
@@ -81,7 +81,7 @@ texture = ExtResource("2_uofyk")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="ContentContainer" type="Control" parent="ResultPanel"]
+[node name="ContentContainer" type="Control" parent="ResultPanel" unique_id=2126994133]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -93,7 +93,7 @@ offset_bottom = -44.1125
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="TitleLabel" type="Label" parent="ResultPanel/ContentContainer"]
+[node name="TitleLabel" type="Label" parent="ResultPanel/ContentContainer" unique_id=1930345802]
 layout_mode = 0
 offset_right = 560.0
 offset_bottom = 59.0
@@ -107,13 +107,13 @@ theme_override_font_sizes/font_size = 32
 text = "Challenge Result"
 horizontal_alignment = 1
 
-[node name="ResultContainer" type="Control" parent="ResultPanel/ContentContainer"]
+[node name="ResultContainer" type="Control" parent="ResultPanel/ContentContainer" unique_id=1646450115]
 anchors_preset = 0
 offset_top = 79.0
 offset_right = 560.0
 offset_bottom = 307.0
 
-[node name="InputLabel" type="Label" parent="ResultPanel/ContentContainer/ResultContainer"]
+[node name="InputLabel" type="Label" parent="ResultPanel/ContentContainer/ResultContainer" unique_id=2128515671]
 layout_mode = 0
 offset_left = 1.00278
 offset_top = 10.6933
@@ -128,7 +128,7 @@ theme_override_font_sizes/font_size = 22
 text = "You stated:"
 horizontal_alignment = 1
 
-[node name="WordLabel" type="Label" parent="ResultPanel/ContentContainer/ResultContainer"]
+[node name="WordLabel" type="Label" parent="ResultPanel/ContentContainer/ResultContainer" unique_id=1835347939]
 layout_mode = 0
 offset_top = 53.0
 offset_right = 560.0
@@ -142,7 +142,7 @@ theme_override_font_sizes/font_size = 25
 text = "Hat = Close! "
 horizontal_alignment = 1
 
-[node name="ExpectedLabel" type="Label" parent="ResultPanel/ContentContainer/ResultContainer"]
+[node name="ExpectedLabel" type="Label" parent="ResultPanel/ContentContainer/ResultContainer" unique_id=594919347]
 layout_mode = 0
 offset_top = 120.0
 offset_right = 560.0
@@ -156,7 +156,7 @@ theme_override_font_sizes/font_size = 22
 text = "The word was:"
 horizontal_alignment = 1
 
-[node name="TargetWordLabel" type="Label" parent="ResultPanel/ContentContainer/ResultContainer"]
+[node name="TargetWordLabel" type="Label" parent="ResultPanel/ContentContainer/ResultContainer" unique_id=1380347874]
 layout_mode = 0
 offset_top = 173.0
 offset_right = 560.0
@@ -170,14 +170,14 @@ theme_override_font_sizes/font_size = 30
 text = "Hot"
 horizontal_alignment = 1
 
-[node name="StatusContainer" type="VBoxContainer" parent="ResultPanel/ContentContainer"]
+[node name="StatusContainer" type="VBoxContainer" parent="ResultPanel/ContentContainer" unique_id=1560493221]
 layout_mode = 0
 offset_top = 327.0
 offset_right = 560.0
 offset_bottom = 423.0
 theme_override_constants/separation = 10
 
-[node name="StatusLabel" type="Label" parent="ResultPanel/ContentContainer/StatusContainer"]
+[node name="StatusLabel" type="Label" parent="ResultPanel/ContentContainer/StatusContainer" unique_id=1917769176]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.113725, 0.866667, 0.384314, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.501961)
@@ -188,7 +188,7 @@ theme_override_font_sizes/font_size = 22
 text = "COUNTERED SUCCESSFUL!"
 horizontal_alignment = 1
 
-[node name="BonusDamageLabel" type="Label" parent="ResultPanel/ContentContainer/StatusContainer"]
+[node name="BonusDamageLabel" type="Label" parent="ResultPanel/ContentContainer/StatusContainer" unique_id=2111159195]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0.762171, 0.822802, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.501961)
@@ -199,11 +199,9 @@ theme_override_font_sizes/font_size = 24
 text = "Bonus Damage: +20"
 horizontal_alignment = 1
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_rdw4p")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=913439994]
+libraries/ = SubResource("AnimationLibrary_rdw4p")
 
-[node name="DisplayTimer" type="Timer" parent="."]
+[node name="DisplayTimer" type="Timer" parent="." unique_id=1016472596]
 wait_time = 3.5
 one_shot = true

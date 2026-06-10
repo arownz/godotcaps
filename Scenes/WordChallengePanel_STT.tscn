@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://dhb04kp6rp2xh"]
+[gd_scene format=3 uid="uid://dhb04kp6rp2xh"]
 
 [ext_resource type="Script" uid="uid://5556075jac2c" path="res://Scripts/WordChallengePanel_STT.gd" id="1_4yifo"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="2_8hfec"]
@@ -40,7 +40,7 @@ corner_radius_bottom_left = 10
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_0l2ru"]
 
-[node name="WordChallengePanel_STT" type="Control"]
+[node name="WordChallengePanel_STT" type="Control" unique_id=22548044]
 layout_mode = 3
 anchors_preset = 8
 anchor_left = 0.5
@@ -55,7 +55,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_4yifo")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="." unique_id=1365363307]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -68,7 +68,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.6)
 
-[node name="ChallengePanel" type="TextureRect" parent="."]
+[node name="ChallengePanel" type="TextureRect" parent="." unique_id=1507967779]
 custom_minimum_size = Vector2(800, 600)
 layout_mode = 1
 anchors_preset = 8
@@ -84,7 +84,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_ys01y")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="ChallengePanel"]
+[node name="VBoxContainer" type="VBoxContainer" parent="ChallengePanel" unique_id=311121529]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -97,7 +97,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 15
 
-[node name="TitleLabel" type="Label" parent="ChallengePanel/VBoxContainer"]
+[node name="TitleLabel" type="Label" parent="ChallengePanel/VBoxContainer" unique_id=1708596186]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.905882, 0.47451, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -108,7 +108,7 @@ theme_override_font_sizes/font_size = 36
 text = "Enemy Skill Activated!"
 horizontal_alignment = 1
 
-[node name="InstructionLabel" type="Label" parent="ChallengePanel/VBoxContainer"]
+[node name="InstructionLabel" type="Label" parent="ChallengePanel/VBoxContainer" unique_id=1875671904]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.101961, 0.101961, 0.101961, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -117,13 +117,13 @@ theme_override_font_sizes/font_size = 24
 text = "Speak the word to counter the enemy skill!"
 horizontal_alignment = 1
 
-[node name="HSeparator" type="HSeparator" parent="ChallengePanel/VBoxContainer"]
+[node name="HSeparator" type="HSeparator" parent="ChallengePanel/VBoxContainer" unique_id=175675656]
 layout_mode = 2
 
-[node name="WordContainer" type="HBoxContainer" parent="ChallengePanel/VBoxContainer"]
+[node name="WordContainer" type="HBoxContainer" parent="ChallengePanel/VBoxContainer" unique_id=830796112]
 layout_mode = 2
 
-[node name="RandomWordLabel" type="Label" parent="ChallengePanel/VBoxContainer/WordContainer"]
+[node name="RandomWordLabel" type="Label" parent="ChallengePanel/VBoxContainer/WordContainer" unique_id=1595876500]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.101961, 0.101961, 0.101961, 1)
@@ -133,11 +133,11 @@ theme_override_font_sizes/font_size = 48
 text = "Loading..."
 horizontal_alignment = 1
 
-[node name="TTSButtonContainer" type="VBoxContainer" parent="ChallengePanel/VBoxContainer/WordContainer"]
+[node name="TTSButtonContainer" type="VBoxContainer" parent="ChallengePanel/VBoxContainer/WordContainer" unique_id=1646925484]
 layout_mode = 2
 alignment = 1
 
-[node name="TTSButton" type="Button" parent="ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer"]
+[node name="TTSButton" type="Button" parent="ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer" unique_id=567544774]
 custom_minimum_size = Vector2(130, 50)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -153,7 +153,7 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="TTSSettingsButton" type="Button" parent="ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer"]
+[node name="TTSSettingsButton" type="Button" parent="ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer" unique_id=472637004]
 custom_minimum_size = Vector2(130, 50)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -169,12 +169,12 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="TTSSettingsPanel" type="Panel" parent="ChallengePanel/VBoxContainer"]
+[node name="TTSSettingsPanel" type="Panel" parent="ChallengePanel/VBoxContainer" unique_id=1166019677]
 visible = false
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_tts_panel")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="ChallengePanel/VBoxContainer/TTSSettingsPanel"]
+[node name="VBoxContainer" type="VBoxContainer" parent="ChallengePanel/VBoxContainer/TTSSettingsPanel" unique_id=726089344]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -187,7 +187,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 10
 
-[node name="TitleLabel" type="Label" parent="ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer"]
+[node name="TitleLabel" type="Label" parent="ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer" unique_id=811289972]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.2, 0.2, 0.2, 1)
 theme_override_fonts/font = ExtResource("2_8hfec")
@@ -195,13 +195,13 @@ theme_override_font_sizes/font_size = 18
 text = "Text-to-Speech Settings"
 horizontal_alignment = 1
 
-[node name="HSeparator" type="HSeparator" parent="ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer"]
+[node name="HSeparator" type="HSeparator" parent="ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer" unique_id=1430684604]
 layout_mode = 2
 
-[node name="VoiceContainer" type="HBoxContainer" parent="ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer"]
+[node name="VoiceContainer" type="HBoxContainer" parent="ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer" unique_id=708210524]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer/VoiceContainer"]
+[node name="Label" type="Label" parent="ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer/VoiceContainer" unique_id=1634674068]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.2, 0.2, 0.2, 1)
@@ -209,24 +209,24 @@ theme_override_fonts/font = ExtResource("2_8hfec")
 theme_override_font_sizes/font_size = 16
 text = "Voice:"
 
-[node name="VoiceOptionButton" type="OptionButton" parent="ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer/VoiceContainer"]
+[node name="VoiceOptionButton" type="OptionButton" parent="ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer/VoiceContainer" unique_id=1510822785]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
 theme_override_fonts/font = ExtResource("2_8hfec")
 theme_override_font_sizes/font_size = 16
 
-[node name="RateContainer" type="VBoxContainer" parent="ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer"]
+[node name="RateContainer" type="VBoxContainer" parent="ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer" unique_id=1648174126]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer/RateContainer"]
+[node name="Label" type="Label" parent="ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer/RateContainer" unique_id=1580842696]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.2, 0.2, 0.2, 1)
 theme_override_fonts/font = ExtResource("2_8hfec")
 theme_override_font_sizes/font_size = 16
 text = "Speech Rate:"
 
-[node name="RateSlider" type="HSlider" parent="ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer/RateContainer"]
+[node name="RateSlider" type="HSlider" parent="ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer/RateContainer" unique_id=1344652955]
 layout_mode = 2
 min_value = 0.1
 max_value = 2.0
@@ -235,7 +235,7 @@ value = 0.7999999999999999
 tick_count = 10
 ticks_on_borders = true
 
-[node name="RateValueLabel" type="Label" parent="ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer/RateContainer"]
+[node name="RateValueLabel" type="Label" parent="ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer/RateContainer" unique_id=992675415]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.2, 0.2, 0.2, 1)
 theme_override_fonts/font = ExtResource("2_8hfec")
@@ -243,28 +243,28 @@ theme_override_font_sizes/font_size = 14
 text = "Rate: 0.8 (Slower)"
 horizontal_alignment = 1
 
-[node name="ButtonsContainer" type="HBoxContainer" parent="ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer"]
+[node name="ButtonsContainer" type="HBoxContainer" parent="ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer" unique_id=1378932191]
 layout_mode = 2
 alignment = 1
 
-[node name="TestButton" type="Button" parent="ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer/ButtonsContainer"]
+[node name="TestButton" type="Button" parent="ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer/ButtonsContainer" unique_id=740449757]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_8hfec")
 theme_override_font_sizes/font_size = 16
 text = "Test Voice"
 
-[node name="CloseButton" type="Button" parent="ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer/ButtonsContainer"]
+[node name="CloseButton" type="Button" parent="ChallengePanel/VBoxContainer/TTSSettingsPanel/VBoxContainer/ButtonsContainer" unique_id=1476379707]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_8hfec")
 theme_override_font_sizes/font_size = 16
 text = "Close"
 
-[node name="SpeechContainer" type="Panel" parent="ChallengePanel/VBoxContainer"]
+[node name="SpeechContainer" type="Panel" parent="ChallengePanel/VBoxContainer" unique_id=522037813]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_speech_panel")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="ChallengePanel/VBoxContainer/SpeechContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="ChallengePanel/VBoxContainer/SpeechContainer" unique_id=498015897]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -277,7 +277,7 @@ grow_horizontal = 2
 grow_vertical = 2
 alignment = 1
 
-[node name="SpeechInstructionLabel" type="Label" parent="ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer"]
+[node name="SpeechInstructionLabel" type="Label" parent="ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer" unique_id=916237764]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -286,7 +286,7 @@ theme_override_font_sizes/font_size = 20
 text = "Say the word!"
 horizontal_alignment = 1
 
-[node name="SpeakButton" type="Button" parent="ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer"]
+[node name="SpeakButton" type="Button" parent="ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer" unique_id=1043239778]
 custom_minimum_size = Vector2(250, 70)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -304,7 +304,7 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="CancelButton" type="Button" parent="ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer"]
+[node name="CancelButton" type="Button" parent="ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer" unique_id=949779080]
 custom_minimum_size = Vector2(200, 55)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -321,10 +321,10 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="LiveTranscriptionContainer" type="VBoxContainer" parent="ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer"]
+[node name="LiveTranscriptionContainer" type="VBoxContainer" parent="ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer" unique_id=1986105247]
 layout_mode = 2
 
-[node name="LiveTranscriptionLabel" type="Label" parent="ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer/LiveTranscriptionContainer"]
+[node name="LiveTranscriptionLabel" type="Label" parent="ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer/LiveTranscriptionContainer" unique_id=1505150164]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.8, 1, 0.8, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -333,7 +333,7 @@ theme_override_font_sizes/font_size = 14
 text = "Live: "
 horizontal_alignment = 1
 
-[node name="LiveTranscriptionText" type="Label" parent="ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer/LiveTranscriptionContainer"]
+[node name="LiveTranscriptionText" type="Label" parent="ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer/LiveTranscriptionContainer" unique_id=900976592]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 0.6, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -344,7 +344,7 @@ theme_override_font_sizes/font_size = 18
 text = "..."
 horizontal_alignment = 1
 
-[node name="PermissionStatusLabel" type="Label" parent="ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer"]
+[node name="PermissionStatusLabel" type="Label" parent="ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer" unique_id=2080150178]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.8, 0.6, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -353,7 +353,7 @@ theme_override_font_sizes/font_size = 14
 text = "Checking microphone permission..."
 horizontal_alignment = 1
 
-[node name="StatusLabel" type="Label" parent="ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer"]
+[node name="StatusLabel" type="Label" parent="ChallengePanel/VBoxContainer/SpeechContainer/VBoxContainer" unique_id=1827216791]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -365,7 +365,7 @@ theme_override_font_sizes/font_size = 15
 text = "Speak the random word to counter!"
 horizontal_alignment = 1
 
-[node name="APIStatusLabel" type="Label" parent="ChallengePanel/VBoxContainer"]
+[node name="APIStatusLabel" type="Label" parent="ChallengePanel/VBoxContainer" unique_id=528824402]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.498039, 0.498039, 0.498039, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -374,10 +374,10 @@ theme_override_font_sizes/font_size = 16
 text = "Connecting to random word API..."
 horizontal_alignment = 1
 
-[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+[node name="ButtonClick" type="AudioStreamPlayer" parent="." unique_id=1577601703]
 stream = ExtResource("9_y2iqy")
 
-[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+[node name="ButtonHover" type="AudioStreamPlayer" parent="." unique_id=2049315328]
 stream = ExtResource("10_y470y")
 
 [connection signal="pressed" from="ChallengePanel/VBoxContainer/WordContainer/TTSButtonContainer/TTSButton" to="." method="_on_tts_button_pressed"]

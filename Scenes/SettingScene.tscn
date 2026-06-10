@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://cjrrrf0p4lr7q"]
+[gd_scene format=3 uid="uid://cjrrrf0p4lr7q"]
 
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="1_font_bold"]
 [ext_resource type="Texture2D" uid="uid://0con8ixqofpr" path="res://gui/Update/UI/ui 8.png" id="2_ch0ic"]
@@ -33,10 +33,10 @@ shadow_offset = Vector2(0, 4)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_wwc4u"]
 
-[node name="Setting" type="CanvasLayer"]
+[node name="Setting" type="CanvasLayer" unique_id=701652049]
 script = ExtResource("3_script")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="." unique_id=871800692]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -44,7 +44,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.6)
 
-[node name="SettingsContainer" type="Control" parent="."]
+[node name="SettingsContainer" type="Control" parent="." unique_id=2093113714]
 custom_minimum_size = Vector2(580, 420)
 layout_mode = 3
 anchor_left = 0.30100003
@@ -58,7 +58,7 @@ offset_bottom = 0.20996094
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="BackgroundTexture" type="NinePatchRect" parent="SettingsContainer"]
+[node name="BackgroundTexture" type="NinePatchRect" parent="SettingsContainer" unique_id=1657407321]
 texture_filter = 1
 layout_mode = 1
 anchors_preset = -1
@@ -71,7 +71,7 @@ grow_vertical = 2
 texture = ExtResource("2_ch0ic")
 region_rect = Rect2(0, 0, 130, 118)
 
-[node name="HeaderPanel" type="Panel" parent="SettingsContainer"]
+[node name="HeaderPanel" type="Panel" parent="SettingsContainer" unique_id=1556944431]
 custom_minimum_size = Vector2(0, 80)
 layout_mode = 0
 offset_left = 23.0
@@ -81,7 +81,7 @@ offset_bottom = 91.0
 scale = Vector2(0.803788, 0.803788)
 theme_override_styles/panel = SubResource("StyleBoxFlat_header")
 
-[node name="TitleContainer" type="HBoxContainer" parent="SettingsContainer/HeaderPanel"]
+[node name="TitleContainer" type="HBoxContainer" parent="SettingsContainer/HeaderPanel" unique_id=607997473]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -94,14 +94,14 @@ grow_horizontal = 2
 grow_vertical = 2
 alignment = 1
 
-[node name="TextureRect" type="TextureRect" parent="SettingsContainer/HeaderPanel/TitleContainer"]
+[node name="TextureRect" type="TextureRect" parent="SettingsContainer/HeaderPanel/TitleContainer" unique_id=510235717]
 custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 size_flags_vertical = 4
 texture = ExtResource("6_66loe")
 expand_mode = 2
 
-[node name="TitleLabel" type="Label" parent="SettingsContainer/HeaderPanel/TitleContainer"]
+[node name="TitleLabel" type="Label" parent="SettingsContainer/HeaderPanel/TitleContainer" unique_id=451071981]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -111,7 +111,7 @@ text = "SETTING"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="CloseButton" type="TextureButton" parent="SettingsContainer"]
+[node name="CloseButton" type="TextureButton" parent="SettingsContainer" unique_id=1396906148]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.9480001
@@ -128,7 +128,7 @@ texture_normal = ExtResource("5_close")
 texture_hover = ExtResource("6_close_hover")
 stretch_mode = 5
 
-[node name="SettingsContent" type="MarginContainer" parent="SettingsContainer"]
+[node name="SettingsContent" type="MarginContainer" parent="SettingsContainer" unique_id=1726597833]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -140,27 +140,27 @@ offset_bottom = -19.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ScrollContainer" type="ScrollContainer" parent="SettingsContainer/SettingsContent"]
+[node name="ScrollContainer" type="ScrollContainer" parent="SettingsContainer/SettingsContent" unique_id=2097478808]
 layout_mode = 2
 horizontal_scroll_mode = 0
 
-[node name="SettingsVBox" type="VBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer"]
+[node name="SettingsVBox" type="VBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer" unique_id=294389751]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 15
 
-[node name="BackgroundRect" type="ColorRect" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox"]
+[node name="BackgroundRect" type="ColorRect" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox" unique_id=153696812]
 z_index = -1
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 color = Color(0.05, 0.05, 0.15, 0.8)
 
-[node name="BattleSection" type="VBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox"]
+[node name="BattleSection" type="VBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox" unique_id=2089796727]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="BattleHeader" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/BattleSection"]
+[node name="BattleHeader" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/BattleSection" unique_id=417465055]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -169,13 +169,13 @@ theme_override_font_sizes/font_size = 18
 text = "Battle Actions"
 horizontal_alignment = 1
 
-[node name="BattleButtonContainer" type="HBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/BattleSection"]
+[node name="BattleButtonContainer" type="HBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/BattleSection" unique_id=2062949288]
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 theme_override_constants/separation = 15
 alignment = 1
 
-[node name="EngageButton" type="Button" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/BattleSection/BattleButtonContainer"]
+[node name="EngageButton" type="Button" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/BattleSection/BattleButtonContainer" unique_id=835394310]
 custom_minimum_size = Vector2(130, 32)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -189,7 +189,7 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="LeaveButton" type="Button" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/BattleSection/BattleButtonContainer"]
+[node name="LeaveButton" type="Button" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/BattleSection/BattleButtonContainer" unique_id=1426414795]
 custom_minimum_size = Vector2(110, 32)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -203,15 +203,15 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="BattleSeparator" type="HSeparator" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox"]
+[node name="BattleSeparator" type="HSeparator" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox" unique_id=1267846310]
 layout_mode = 2
 theme_override_constants/separation = 2
 
-[node name="AccessibilitySection" type="VBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox"]
+[node name="AccessibilitySection" type="VBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox" unique_id=922264777]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="AccessibilityHeader" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection"]
+[node name="AccessibilityHeader" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection" unique_id=2115450305]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.234221, 0.972639, 0.237151, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -219,11 +219,11 @@ theme_override_fonts/font = ExtResource("1_font_bold")
 theme_override_font_sizes/font_size = 18
 text = "Accessibility"
 
-[node name="TTSContainer" type="HBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection"]
+[node name="TTSContainer" type="HBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection" unique_id=99362671]
 layout_mode = 2
 theme_override_constants/separation = 15
 
-[node name="TTSLabel" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/TTSContainer"]
+[node name="TTSLabel" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/TTSContainer" unique_id=1391595229]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -233,7 +233,7 @@ theme_override_font_sizes/font_size = 14
 text = "Change Voice Sound:"
 vertical_alignment = 1
 
-[node name="TTSSettingsButton" type="Button" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/TTSContainer"]
+[node name="TTSSettingsButton" type="Button" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/TTSContainer" unique_id=1844998981]
 custom_minimum_size = Vector2(120, 32)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -249,11 +249,11 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="ReadingSpeedContainer" type="HBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection"]
+[node name="ReadingSpeedContainer" type="HBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection" unique_id=871126152]
 layout_mode = 2
 theme_override_constants/separation = 15
 
-[node name="ReadingSpeedLabel" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/ReadingSpeedContainer"]
+[node name="ReadingSpeedLabel" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/ReadingSpeedContainer" unique_id=525984582]
 custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -263,7 +263,7 @@ theme_override_font_sizes/font_size = 14
 text = "Voice Reading Speed:"
 vertical_alignment = 1
 
-[node name="ReadingSpeedSlider" type="HSlider" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/ReadingSpeedContainer"]
+[node name="ReadingSpeedSlider" type="HSlider" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/ReadingSpeedContainer" unique_id=1775192317]
 custom_minimum_size = Vector2(130, 30)
 layout_mode = 2
 min_value = 0.5
@@ -273,7 +273,7 @@ value = 1.0
 tick_count = 10
 ticks_on_borders = true
 
-[node name="ReadingSpeedValue" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/ReadingSpeedContainer"]
+[node name="ReadingSpeedValue" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/ReadingSpeedContainer" unique_id=1722786119]
 custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -284,11 +284,11 @@ text = "1.0x"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="TTSVolumeContainer" type="HBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection"]
+[node name="TTSVolumeContainer" type="HBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection" unique_id=1096510982]
 layout_mode = 2
 theme_override_constants/separation = 15
 
-[node name="TTSVolumeLabel" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/TTSVolumeContainer"]
+[node name="TTSVolumeLabel" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/TTSVolumeContainer" unique_id=1831998211]
 custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -298,14 +298,14 @@ theme_override_font_sizes/font_size = 14
 text = "Voice Volume:"
 vertical_alignment = 1
 
-[node name="TTSVolumeSlider" type="HSlider" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/TTSVolumeContainer"]
+[node name="TTSVolumeSlider" type="HSlider" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/TTSVolumeContainer" unique_id=1645699452]
 custom_minimum_size = Vector2(130, 30)
 layout_mode = 2
 value = 100.0
 tick_count = 10
 ticks_on_borders = true
 
-[node name="TTSVolumeValue" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/TTSVolumeContainer"]
+[node name="TTSVolumeValue" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AccessibilitySection/TTSVolumeContainer" unique_id=583621648]
 custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -316,15 +316,15 @@ text = "100%"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Separator1" type="HSeparator" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox"]
+[node name="Separator1" type="HSeparator" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox" unique_id=1818969199]
 layout_mode = 2
 theme_override_constants/separation = 2
 
-[node name="AudioSection" type="VBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox"]
+[node name="AudioSection" type="VBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox" unique_id=1586126213]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="AudioHeader" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection"]
+[node name="AudioHeader" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection" unique_id=1490952496]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.219261, 0.834255, 0.834176, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -332,11 +332,11 @@ theme_override_fonts/font = ExtResource("1_font_bold")
 theme_override_font_sizes/font_size = 18
 text = "Audio"
 
-[node name="MasterVolumeContainer" type="HBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection"]
+[node name="MasterVolumeContainer" type="HBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection" unique_id=1184177876]
 layout_mode = 2
 theme_override_constants/separation = 15
 
-[node name="MasterVolumeLabel" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MasterVolumeContainer"]
+[node name="MasterVolumeLabel" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MasterVolumeContainer" unique_id=165170114]
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -346,14 +346,14 @@ theme_override_font_sizes/font_size = 14
 text = "Master Volume:"
 vertical_alignment = 1
 
-[node name="MasterVolumeSlider" type="HSlider" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MasterVolumeContainer"]
+[node name="MasterVolumeSlider" type="HSlider" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MasterVolumeContainer" unique_id=613708899]
 custom_minimum_size = Vector2(130, 30)
 layout_mode = 2
 value = 75.0
 tick_count = 10
 ticks_on_borders = true
 
-[node name="MasterVolumeValue" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MasterVolumeContainer"]
+[node name="MasterVolumeValue" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MasterVolumeContainer" unique_id=2069920572]
 custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -364,11 +364,11 @@ text = "75%"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="MusicVolumeContainer" type="HBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection"]
+[node name="MusicVolumeContainer" type="HBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection" unique_id=1646641606]
 layout_mode = 2
 theme_override_constants/separation = 15
 
-[node name="MusicVolumeLabel" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MusicVolumeContainer"]
+[node name="MusicVolumeLabel" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MusicVolumeContainer" unique_id=867770482]
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -378,14 +378,14 @@ theme_override_font_sizes/font_size = 14
 text = "Music:"
 vertical_alignment = 1
 
-[node name="MusicVolumeSlider" type="HSlider" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MusicVolumeContainer"]
+[node name="MusicVolumeSlider" type="HSlider" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MusicVolumeContainer" unique_id=1323582235]
 custom_minimum_size = Vector2(130, 30)
 layout_mode = 2
 value = 60.0
 tick_count = 10
 ticks_on_borders = true
 
-[node name="MusicVolumeValue" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MusicVolumeContainer"]
+[node name="MusicVolumeValue" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MusicVolumeContainer" unique_id=1196163026]
 custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -396,11 +396,11 @@ text = "60%"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="SFXVolumeContainer" type="HBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection"]
+[node name="SFXVolumeContainer" type="HBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection" unique_id=899679257]
 layout_mode = 2
 theme_override_constants/separation = 15
 
-[node name="SFXVolumeLabel" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/SFXVolumeContainer"]
+[node name="SFXVolumeLabel" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/SFXVolumeContainer" unique_id=421794039]
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -410,14 +410,14 @@ theme_override_font_sizes/font_size = 14
 text = "Sound Effects:"
 vertical_alignment = 1
 
-[node name="SFXVolumeSlider" type="HSlider" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/SFXVolumeContainer"]
+[node name="SFXVolumeSlider" type="HSlider" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/SFXVolumeContainer" unique_id=1832124985]
 custom_minimum_size = Vector2(130, 30)
 layout_mode = 2
 value = 80.0
 tick_count = 10
 ticks_on_borders = true
 
-[node name="SFXVolumeValue" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/SFXVolumeContainer"]
+[node name="SFXVolumeValue" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/SFXVolumeContainer" unique_id=2116848951]
 custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -428,16 +428,16 @@ text = "80%"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Separator2" type="HSeparator" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox"]
+[node name="Separator2" type="HSeparator" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox" unique_id=1166777955]
 layout_mode = 2
 theme_override_constants/separation = 2
 
-[node name="GameplaySection" type="VBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox"]
+[node name="GameplaySection" type="VBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox" unique_id=1722330722]
 visible = false
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="GameplayHeader" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/GameplaySection"]
+[node name="GameplayHeader" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/GameplaySection" unique_id=1740264752]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.875676, 0.600796, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -445,11 +445,11 @@ theme_override_fonts/font = ExtResource("1_font_bold")
 theme_override_font_sizes/font_size = 18
 text = "Gameplay"
 
-[node name="TutorialsContainer" type="HBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/GameplaySection"]
+[node name="TutorialsContainer" type="HBoxContainer" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/GameplaySection" unique_id=562141613]
 layout_mode = 2
 theme_override_constants/separation = 15
 
-[node name="TutorialsLabel" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/GameplaySection/TutorialsContainer"]
+[node name="TutorialsLabel" type="Label" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/GameplaySection/TutorialsContainer" unique_id=816787094]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -459,21 +459,21 @@ theme_override_font_sizes/font_size = 14
 text = "Show Tutorial Tips:"
 vertical_alignment = 1
 
-[node name="TutorialsToggle" type="CheckBox" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/GameplaySection/TutorialsContainer"]
+[node name="TutorialsToggle" type="CheckBox" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/GameplaySection/TutorialsContainer" unique_id=771485449]
 layout_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_fonts/font = ExtResource("2_font_regular")
 theme_override_font_sizes/font_size = 14
 button_pressed = true
 
-[node name="BottomSpacer" type="Control" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox"]
+[node name="BottomSpacer" type="Control" parent="SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox" unique_id=1493459930]
 custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
 
-[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+[node name="ButtonClick" type="AudioStreamPlayer" parent="." unique_id=240939221]
 stream = ExtResource("7_button_click")
 
-[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+[node name="ButtonHover" type="AudioStreamPlayer" parent="." unique_id=2018893625]
 stream = ExtResource("13_avqid")
 
 [connection signal="mouse_entered" from="SettingsContainer/CloseButton" to="." method="_on_close_button_mouse_entered"]

@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://0qstx7wmx0vr"]
+[gd_scene format=3 uid="uid://0qstx7wmx0vr"]
 
 [ext_resource type="Script" uid="uid://b026p1dub2ejv" path="res://Scripts/PhonicsSightWords.gd" id="2_script"]
 [ext_resource type="Texture2D" uid="uid://ciaa4qe2o2juf" path="res://gui/Update/UI/ui 3.png" id="2_vpakk"]
@@ -84,7 +84,7 @@ corner_radius_bottom_left = 12
 shadow_color = Color(0, 0, 0, 0.25)
 shadow_size = 6
 
-[node name="PhonicsSightWords" type="Control"]
+[node name="PhonicsSightWords" type="Control" unique_id=1136924994]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -93,7 +93,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("2_script")
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="Background" type="TextureRect" parent="." unique_id=1051301416]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -102,7 +102,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_vpakk")
 
-[node name="MainContainer" type="VBoxContainer" parent="."]
+[node name="MainContainer" type="VBoxContainer" parent="." unique_id=1201917822]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -115,13 +115,13 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 30
 
-[node name="HeaderPanel" type="Panel" parent="MainContainer"]
+[node name="HeaderPanel" type="Panel" parent="MainContainer" unique_id=1641811361]
 custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_header_panel")
 
-[node name="HeaderContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel"]
+[node name="HeaderContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel" unique_id=400207821]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -134,13 +134,13 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 20
 
-[node name="ProgressContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer"]
+[node name="ProgressContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer" unique_id=6764339]
 layout_mode = 2
 size_flags_vertical = 4
 theme_override_constants/separation = 20
 alignment = 2
 
-[node name="ProgressBar" type="ProgressBar" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer"]
+[node name="ProgressBar" type="ProgressBar" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer" unique_id=971849581]
 custom_minimum_size = Vector2(250, 20)
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -148,19 +148,19 @@ theme_override_fonts/font = ExtResource("4_bold")
 theme_override_styles/background = SubResource("StyleBoxFlat_t0cn4")
 theme_override_styles/fill = SubResource("StyleBoxFlat_8msy7")
 
-[node name="ProgressLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer"]
+[node name="ProgressLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer" unique_id=225823126]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold")
 theme_override_font_sizes/font_size = 16
 text = "1/20 Words"
 
-[node name="TitleContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer"]
+[node name="TitleContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer" unique_id=1696989321]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 20
 
-[node name="TitleLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer"]
+[node name="TitleLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer" unique_id=832870341]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -170,7 +170,7 @@ text = "Sight Words Phonic"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="BackButton" type="Button" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer"]
+[node name="BackButton" type="Button" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer" unique_id=261303674]
 custom_minimum_size = Vector2(120, 60)
 layout_mode = 2
 size_flags_horizontal = 0
@@ -187,18 +187,18 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="ContentContainer" type="VBoxContainer" parent="MainContainer"]
+[node name="ContentContainer" type="VBoxContainer" parent="MainContainer" unique_id=465836589]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 20
 
-[node name="InstructionPanel" type="Panel" parent="MainContainer/ContentContainer"]
+[node name="InstructionPanel" type="Panel" parent="MainContainer/ContentContainer" unique_id=355122906]
 custom_minimum_size = Vector2(0, 120)
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_instruction_panel")
 
-[node name="InstructionContainer" type="VBoxContainer" parent="MainContainer/ContentContainer/InstructionPanel"]
+[node name="InstructionContainer" type="VBoxContainer" parent="MainContainer/ContentContainer/InstructionPanel" unique_id=1252257323]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -212,7 +212,7 @@ grow_vertical = 2
 scale = Vector2(0.727786, 0.727786)
 theme_override_constants/separation = 10
 
-[node name="TargetLabel" type="Label" parent="MainContainer/ContentContainer/InstructionPanel/InstructionContainer"]
+[node name="TargetLabel" type="Label" parent="MainContainer/ContentContainer/InstructionPanel/InstructionContainer" unique_id=198846336]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold")
@@ -220,12 +220,12 @@ theme_override_font_sizes/font_size = 48
 text = "Trace: the"
 horizontal_alignment = 1
 
-[node name="ControlsContainer" type="HBoxContainer" parent="MainContainer/ContentContainer/InstructionPanel/InstructionContainer"]
+[node name="ControlsContainer" type="HBoxContainer" parent="MainContainer/ContentContainer/InstructionPanel/InstructionContainer" unique_id=1842444465]
 layout_mode = 2
 size_flags_vertical = 3
 alignment = 1
 
-[node name="PreviousButton" type="Button" parent="MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer"]
+[node name="PreviousButton" type="Button" parent="MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer" unique_id=1851354381]
 custom_minimum_size = Vector2(150, 40)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -241,7 +241,7 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="HearButton" type="Button" parent="MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer"]
+[node name="HearButton" type="Button" parent="MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer" unique_id=295842686]
 custom_minimum_size = Vector2(150, 40)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -257,7 +257,7 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="NextButton" type="Button" parent="MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer"]
+[node name="NextButton" type="Button" parent="MainContainer/ContentContainer/InstructionPanel/InstructionContainer/ControlsContainer" unique_id=1284146610]
 custom_minimum_size = Vector2(150, 40)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -273,7 +273,7 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="GuideButton" type="Button" parent="MainContainer/ContentContainer/InstructionPanel"]
+[node name="GuideButton" type="Button" parent="MainContainer/ContentContainer/InstructionPanel" unique_id=22393755]
 layout_mode = 0
 offset_left = 30.0
 offset_right = 129.0
@@ -290,7 +290,7 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="TTSSettingButton" type="TextureButton" parent="MainContainer/ContentContainer/InstructionPanel"]
+[node name="TTSSettingButton" type="TextureButton" parent="MainContainer/ContentContainer/InstructionPanel" unique_id=1554230577]
 layout_mode = 0
 offset_left = 48.0
 offset_top = 71.0
@@ -301,12 +301,12 @@ texture_normal = ExtResource("10_settings")
 texture_hover = ExtResource("11_settings_hover")
 stretch_mode = 5
 
-[node name="WhiteboardPanel" type="Panel" parent="MainContainer/ContentContainer"]
+[node name="WhiteboardPanel" type="Panel" parent="MainContainer/ContentContainer" unique_id=2144919522]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_word_panel")
 
-[node name="WhiteboardContainer" type="Control" parent="MainContainer/ContentContainer/WhiteboardPanel"]
+[node name="WhiteboardContainer" type="Control" parent="MainContainer/ContentContainer/WhiteboardPanel" unique_id=2081349512]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -318,7 +318,7 @@ offset_bottom = -20.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="WhiteboardInterface" parent="MainContainer/ContentContainer/WhiteboardPanel/WhiteboardContainer" instance=ExtResource("6_whiteboard")]
+[node name="WhiteboardInterface" parent="MainContainer/ContentContainer/WhiteboardPanel/WhiteboardContainer" unique_id=1768966340 instance=ExtResource("6_whiteboard")]
 layout_mode = 1
 anchors_preset = 15
 anchor_left = 0.0
@@ -331,7 +331,7 @@ offset_right = 0.0
 offset_bottom = 0.0
 module_mode = true
 
-[node name="TraceOverlay" type="Label" parent="MainContainer/ContentContainer/WhiteboardPanel/WhiteboardContainer"]
+[node name="TraceOverlay" type="Label" parent="MainContainer/ContentContainer/WhiteboardPanel/WhiteboardContainer" unique_id=548715867]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -351,10 +351,10 @@ text = "the"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+[node name="ButtonClick" type="AudioStreamPlayer" parent="." unique_id=1474955512]
 stream = ExtResource("8_click")
 
-[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+[node name="ButtonHover" type="AudioStreamPlayer" parent="." unique_id=1123924638]
 stream = ExtResource("9_hover")
 
 [connection signal="pressed" from="MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton" to="." method="_on_back_button_pressed"]

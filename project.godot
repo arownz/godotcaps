@@ -8,15 +8,19 @@
 
 config_version=5
 
+[animation]
+
+compatibility/default_parent_skeleton_in_mesh_instance_3d=true
+
 [application]
 
 config/name="Lexia"
-config/description="2D Dyslexia Gamification Browser Base (Chrome, Edge, Firefox, Brave)"
+config/description="2D Dyslexia Gamification Chromium Base"
 config/version="1.0"
 config/tags=PackedStringArray("dyslexia")
 run/main_scene="uid://cbpwvuj8kdyod"
-config/features=PackedStringArray("4.5", "GL Compatibility")
-boot_splash/fullsize=false
+config/features=PackedStringArray("4.6", "GL Compatibility")
+boot_splash/stretch_mode=0
 boot_splash/image="uid://dkkb8nek5d6fs"
 config/icon="uid://byhddv6cyomeu"
 boot_splash/minimum_display_time=2
@@ -27,7 +31,7 @@ general/text_to_speech=true
 
 [autoload]
 
-Firebase="*res://addons/godot-firebase/firebase/firebase.tscn"
+Firebase="*uid://cvb26atjckwlq"
 DungeonGlobals="*res://Scripts/DungeonGlobals.gd"
 SettingsManager="*res://Scripts/SettingsManager.gd"
 BackgroundMusicManager="*res://Scripts/BackgroundMusicManager.gd"

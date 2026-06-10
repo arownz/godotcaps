@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://7wtij707stht"]
+[gd_scene format=3 uid="uid://7wtij707stht"]
 
 [ext_resource type="Script" uid="uid://di3xy4fn8ivv" path="res://Scripts/TTSSettingsPopup.gd" id="1_y2dfs"]
 [ext_resource type="FontFile" uid="uid://l1q8mfvbxty3" path="res://Fonts/dyslexiafont/OpenDyslexic-Regular.otf" id="2_m3f5r"]
@@ -15,7 +15,7 @@
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_7wrw6"]
 
-[node name="TTSSettingsPopup" type="Control"]
+[node name="TTSSettingsPopup" type="Control" unique_id=1987704649]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -24,7 +24,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_y2dfs")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="." unique_id=53979852]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -33,7 +33,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.6)
 
-[node name="Panel" type="TextureRect" parent="."]
+[node name="Panel" type="TextureRect" parent="." unique_id=1825220270]
 custom_minimum_size = Vector2(500, 450)
 layout_mode = 1
 anchors_preset = -1
@@ -49,7 +49,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_umhyu")
 
-[node name="ScrollContainer" type="ScrollContainer" parent="Panel"]
+[node name="ScrollContainer" type="ScrollContainer" parent="Panel" unique_id=1599331685]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -63,13 +63,13 @@ grow_vertical = 2
 horizontal_scroll_mode = 0
 vertical_scroll_mode = 0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel/ScrollContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/ScrollContainer" unique_id=1136430232]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 10
 
-[node name="TitleLabel" type="Label" parent="Panel/ScrollContainer/VBoxContainer"]
+[node name="TitleLabel" type="Label" parent="Panel/ScrollContainer/VBoxContainer" unique_id=387410476]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("5_jb0wy")
@@ -77,13 +77,13 @@ theme_override_font_sizes/font_size = 20
 text = "Text-to-Speech Settings"
 horizontal_alignment = 1
 
-[node name="HSeparator" type="HSeparator" parent="Panel/ScrollContainer/VBoxContainer"]
+[node name="HSeparator" type="HSeparator" parent="Panel/ScrollContainer/VBoxContainer" unique_id=1742820115]
 layout_mode = 2
 
-[node name="VoiceContainer" type="VBoxContainer" parent="Panel/ScrollContainer/VBoxContainer"]
+[node name="VoiceContainer" type="VBoxContainer" parent="Panel/ScrollContainer/VBoxContainer" unique_id=288468144]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Panel/ScrollContainer/VBoxContainer/VoiceContainer"]
+[node name="Label" type="Label" parent="Panel/ScrollContainer/VBoxContainer/VoiceContainer" unique_id=1794966069]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("5_jb0wy")
@@ -91,7 +91,7 @@ theme_override_font_sizes/font_size = 18
 text = "Voice:"
 horizontal_alignment = 1
 
-[node name="VoiceOptionButton" type="OptionButton" parent="Panel/ScrollContainer/VBoxContainer/VoiceContainer"]
+[node name="VoiceOptionButton" type="OptionButton" parent="Panel/ScrollContainer/VBoxContainer/VoiceContainer" unique_id=900440968]
 clip_contents = true
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -100,21 +100,21 @@ theme_override_font_sizes/font_size = 16
 theme_override_styles/focus = SubResource("StyleBoxEmpty_jb0wy")
 fit_to_longest_item = false
 
-[node name="VolumeContainer" type="VBoxContainer" parent="Panel/ScrollContainer/VBoxContainer"]
+[node name="VolumeContainer" type="VBoxContainer" parent="Panel/ScrollContainer/VBoxContainer" unique_id=791682628]
 layout_mode = 2
 
-[node name="VolumeLabel" type="Label" parent="Panel/ScrollContainer/VBoxContainer/VolumeContainer"]
+[node name="VolumeLabel" type="Label" parent="Panel/ScrollContainer/VBoxContainer/VolumeContainer" unique_id=627835517]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("5_jb0wy")
 theme_override_font_sizes/font_size = 18
 text = "Voice Volume:"
 
-[node name="VolumeSlider" type="HSlider" parent="Panel/ScrollContainer/VBoxContainer/VolumeContainer"]
+[node name="VolumeSlider" type="HSlider" parent="Panel/ScrollContainer/VBoxContainer/VolumeContainer" unique_id=1153999063]
 layout_mode = 2
 value = 100.0
 
-[node name="VolumeValueLabel" type="Label" parent="Panel/ScrollContainer/VBoxContainer/VolumeContainer"]
+[node name="VolumeValueLabel" type="Label" parent="Panel/ScrollContainer/VBoxContainer/VolumeContainer" unique_id=820176862]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_m3f5r")
@@ -122,17 +122,17 @@ theme_override_font_sizes/font_size = 16
 text = "Volume: 100%"
 horizontal_alignment = 1
 
-[node name="RateContainer" type="VBoxContainer" parent="Panel/ScrollContainer/VBoxContainer"]
+[node name="RateContainer" type="VBoxContainer" parent="Panel/ScrollContainer/VBoxContainer" unique_id=711566229]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Panel/ScrollContainer/VBoxContainer/RateContainer"]
+[node name="Label" type="Label" parent="Panel/ScrollContainer/VBoxContainer/RateContainer" unique_id=803746549]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("5_jb0wy")
 theme_override_font_sizes/font_size = 18
 text = "Speech Rate:"
 
-[node name="RateSlider" type="HSlider" parent="Panel/ScrollContainer/VBoxContainer/RateContainer"]
+[node name="RateSlider" type="HSlider" parent="Panel/ScrollContainer/VBoxContainer/RateContainer" unique_id=1246264118]
 layout_mode = 2
 min_value = 0.5
 max_value = 2.0
@@ -141,7 +141,7 @@ value = 1.0
 tick_count = 10
 ticks_on_borders = true
 
-[node name="RateValueLabel" type="Label" parent="Panel/ScrollContainer/VBoxContainer/RateContainer"]
+[node name="RateValueLabel" type="Label" parent="Panel/ScrollContainer/VBoxContainer/RateContainer" unique_id=1619049318]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_m3f5r")
@@ -149,7 +149,7 @@ theme_override_font_sizes/font_size = 16
 text = "Rate: 1.0 (Normal)"
 horizontal_alignment = 1
 
-[node name="StatusLabel" type="Label" parent="Panel/ScrollContainer/VBoxContainer"]
+[node name="StatusLabel" type="Label" parent="Panel/ScrollContainer/VBoxContainer" unique_id=204684872]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("5_jb0wy")
@@ -158,12 +158,12 @@ text = "Loading voices..."
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel/ScrollContainer/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/ScrollContainer/VBoxContainer" unique_id=1088105316]
 layout_mode = 2
 size_flags_vertical = 3
 alignment = 1
 
-[node name="TestButton" type="Button" parent="Panel/ScrollContainer/VBoxContainer/HBoxContainer"]
+[node name="TestButton" type="Button" parent="Panel/ScrollContainer/VBoxContainer/HBoxContainer" unique_id=2132539614]
 custom_minimum_size = Vector2(130, 120)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -179,7 +179,7 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="CloseButton" type="Button" parent="Panel/ScrollContainer/VBoxContainer/HBoxContainer"]
+[node name="CloseButton" type="Button" parent="Panel/ScrollContainer/VBoxContainer/HBoxContainer" unique_id=1655789210]
 custom_minimum_size = Vector2(130, 120)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -195,7 +195,7 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="CloseButton" type="TextureButton" parent="Panel"]
+[node name="CloseButton" type="TextureButton" parent="Panel" unique_id=261843457]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.9480001
@@ -212,10 +212,10 @@ texture_normal = ExtResource("7_48sdl")
 texture_hover = ExtResource("8_rsuur")
 stretch_mode = 5
 
-[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+[node name="ButtonClick" type="AudioStreamPlayer" parent="." unique_id=207262960]
 stream = ExtResource("7_e2f2d")
 
-[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+[node name="ButtonHover" type="AudioStreamPlayer" parent="." unique_id=1032797974]
 stream = ExtResource("8_2s7nq")
 
 [connection signal="item_selected" from="Panel/ScrollContainer/VBoxContainer/VoiceContainer/VoiceOptionButton" to="." method="_on_voice_option_button_item_selected"]

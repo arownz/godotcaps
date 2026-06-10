@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://3mxcrytk1kud"]
+[gd_scene format=3 uid="uid://3mxcrytk1kud"]
 
 [ext_resource type="Script" uid="uid://dc6lqw6dmfe1y" path="res://Scripts/EndgameScreen.gd" id="1_mgr3d"]
 [ext_resource type="Texture2D" uid="uid://rgl03eh75egv" path="res://gui/Update/UI/victory UI.png" id="2_frm3f"]
@@ -13,7 +13,7 @@
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hehfl"]
 
-[node name="EndgameScreen" type="Control"]
+[node name="EndgameScreen" type="Control" unique_id=717102300]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -22,7 +22,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_mgr3d")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="." unique_id=1008314023]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -34,7 +34,7 @@ grow_vertical = 2
 scale = Vector2(0.985009, 1.03088)
 color = Color(0, 0, 0, 0.6)
 
-[node name="ResultPanel" type="TextureRect" parent="."]
+[node name="ResultPanel" type="TextureRect" parent="." unique_id=1964440559]
 custom_minimum_size = Vector2(500, 350)
 layout_mode = 1
 anchors_preset = -1
@@ -51,7 +51,7 @@ grow_vertical = 2
 scale = Vector2(0.807802, 0.807802)
 texture = ExtResource("2_frm3f")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="ResultPanel"]
+[node name="VBoxContainer" type="VBoxContainer" parent="ResultPanel" unique_id=1724175385]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -65,7 +65,7 @@ grow_vertical = 2
 theme_override_constants/separation = 15
 alignment = 1
 
-[node name="ResultLabel" type="Label" parent="ResultPanel/VBoxContainer"]
+[node name="ResultLabel" type="Label" parent="ResultPanel/VBoxContainer" unique_id=1550677015]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -74,7 +74,7 @@ theme_override_font_sizes/font_size = 30
 text = "Victory!"
 horizontal_alignment = 1
 
-[node name="MessageLabel" type="Label" parent="ResultPanel/VBoxContainer"]
+[node name="MessageLabel" type="Label" parent="ResultPanel/VBoxContainer" unique_id=81885778]
 custom_minimum_size = Vector2(25, 25)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -85,12 +85,12 @@ text = "You defeated the enemy!"
 horizontal_alignment = 1
 autowrap_mode = 2
 
-[node name="ButtonContainer" type="VBoxContainer" parent="ResultPanel/VBoxContainer"]
+[node name="ButtonContainer" type="VBoxContainer" parent="ResultPanel/VBoxContainer" unique_id=1616869031]
 layout_mode = 2
 theme_override_constants/separation = 15
 alignment = 1
 
-[node name="ContinueButton" type="Button" parent="ResultPanel/VBoxContainer/ButtonContainer"]
+[node name="ContinueButton" type="Button" parent="ResultPanel/VBoxContainer/ButtonContainer" unique_id=419285286]
 custom_minimum_size = Vector2(200, 60)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -107,12 +107,12 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="ButtonsContainer" type="HBoxContainer" parent="ResultPanel/VBoxContainer"]
+[node name="ButtonsContainer" type="HBoxContainer" parent="ResultPanel/VBoxContainer" unique_id=53165268]
 layout_mode = 2
 theme_override_constants/separation = 0
 alignment = 1
 
-[node name="RestartButton" type="Button" parent="ResultPanel/VBoxContainer/ButtonsContainer"]
+[node name="RestartButton" type="Button" parent="ResultPanel/VBoxContainer/ButtonsContainer" unique_id=496946884]
 custom_minimum_size = Vector2(200, 50)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -128,7 +128,7 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="QuitButton" type="Button" parent="ResultPanel/VBoxContainer/ButtonsContainer"]
+[node name="QuitButton" type="Button" parent="ResultPanel/VBoxContainer/ButtonsContainer" unique_id=786811446]
 custom_minimum_size = Vector2(200, 60)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -144,16 +144,16 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+[node name="ButtonClick" type="AudioStreamPlayer" parent="." unique_id=198146450]
 stream = ExtResource("7_gworm")
 
-[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+[node name="ButtonHover" type="AudioStreamPlayer" parent="." unique_id=2012088284]
 stream = ExtResource("8_7m5p6")
 
-[node name="VictorySFX" type="AudioStreamPlayer" parent="."]
+[node name="VictorySFX" type="AudioStreamPlayer" parent="." unique_id=1309077995]
 stream = ExtResource("9_emr7u")
 
-[node name="DefeatSFX" type="AudioStreamPlayer" parent="."]
+[node name="DefeatSFX" type="AudioStreamPlayer" parent="." unique_id=73905358]
 stream = ExtResource("10_emr7u")
 
 [connection signal="mouse_entered" from="ResultPanel/VBoxContainer/ButtonContainer/ContinueButton" to="." method="_on_continue_button_mouse_entered"]

@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://b3nujqyc1ufpy"]
+[gd_scene format=3 uid="uid://b3nujqyc1ufpy"]
 
 [ext_resource type="Script" uid="uid://clrq6w71538i1" path="res://Scripts/SyllableBuildingModule.gd" id="1_h3m2v"]
 [ext_resource type="Texture2D" uid="uid://0con8ixqofpr" path="res://gui/Update/UI/ui 8.png" id="2_bg"]
@@ -91,7 +91,7 @@ shadow_color = Color(0, 0, 0, 0.2)
 shadow_size = 8
 shadow_offset = Vector2(0, 4)
 
-[node name="SyllableBuildingModule" type="Control"]
+[node name="SyllableBuildingModule" type="Control" unique_id=1407182495]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -100,7 +100,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_h3m2v")
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="Background" type="TextureRect" parent="." unique_id=1090784841]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -109,7 +109,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_bg")
 
-[node name="MainContainer" type="VBoxContainer" parent="."]
+[node name="MainContainer" type="VBoxContainer" parent="." unique_id=1874761760]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -122,13 +122,13 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 30
 
-[node name="HeaderPanel" type="Panel" parent="MainContainer"]
+[node name="HeaderPanel" type="Panel" parent="MainContainer" unique_id=1550393361]
 custom_minimum_size = Vector2(0, 123)
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_header")
 
-[node name="HeaderContainer" type="VBoxContainer" parent="MainContainer/HeaderPanel"]
+[node name="HeaderContainer" type="VBoxContainer" parent="MainContainer/HeaderPanel" unique_id=867718210]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -144,12 +144,12 @@ grow_vertical = 2
 scale = Vector2(0.95167, 0.95167)
 theme_override_constants/separation = 15
 
-[node name="TitleContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer"]
+[node name="TitleContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer" unique_id=576372072]
 layout_mode = 2
 size_flags_vertical = 0
 alignment = 1
 
-[node name="TitleLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer"]
+[node name="TitleLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer" unique_id=1747769166]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -159,7 +159,7 @@ text = "SYLLABLE WORKSHOP"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="BackButton" type="Button" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer"]
+[node name="BackButton" type="Button" parent="MainContainer/HeaderPanel/HeaderContainer/TitleContainer" unique_id=70259699]
 custom_minimum_size = Vector2(120, 45)
 layout_mode = 2
 size_flags_horizontal = 8
@@ -176,20 +176,20 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="ProgressContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer"]
+[node name="ProgressContainer" type="HBoxContainer" parent="MainContainer/HeaderPanel/HeaderContainer" unique_id=2115233563]
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_constants/separation = 15
 alignment = 1
 
-[node name="ProgressLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer"]
+[node name="ProgressLabel" type="Label" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer" unique_id=1682929913]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular")
 theme_override_font_sizes/font_size = 16
 text = "1/9 Words"
 
-[node name="ProgressBar" type="ProgressBar" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer"]
+[node name="ProgressBar" type="ProgressBar" parent="MainContainer/HeaderPanel/HeaderContainer/ProgressContainer" unique_id=1017273749]
 custom_minimum_size = Vector2(250, 20)
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -197,7 +197,7 @@ theme_override_fonts/font = ExtResource("4_bold")
 theme_override_styles/background = SubResource("StyleBoxFlat_progress_bg")
 theme_override_styles/fill = SubResource("StyleBoxFlat_progress_fill")
 
-[node name="GuideButton" type="Button" parent="MainContainer/HeaderPanel"]
+[node name="GuideButton" type="Button" parent="MainContainer/HeaderPanel" unique_id=1596171316]
 layout_mode = 0
 offset_left = 33.0
 offset_top = 7.0
@@ -215,7 +215,7 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="TTSSettingButton" type="TextureButton" parent="MainContainer/HeaderPanel"]
+[node name="TTSSettingButton" type="TextureButton" parent="MainContainer/HeaderPanel" unique_id=1007543601]
 custom_minimum_size = Vector2(38, 38)
 layout_mode = 0
 offset_left = 49.0
@@ -227,13 +227,13 @@ texture_normal = ExtResource("11_settings")
 texture_hover = ExtResource("12_settings_hover")
 stretch_mode = 5
 
-[node name="WordDisplayPanel" type="Panel" parent="MainContainer"]
+[node name="WordDisplayPanel" type="Panel" parent="MainContainer" unique_id=1234760440]
 custom_minimum_size = Vector2(0, 270)
 layout_direction = 2
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_word_panel")
 
-[node name="MarginContainer" type="MarginContainer" parent="MainContainer/WordDisplayPanel"]
+[node name="MarginContainer" type="MarginContainer" parent="MainContainer/WordDisplayPanel" unique_id=1206283088]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -245,10 +245,10 @@ theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 25
 theme_override_constants/margin_bottom = 20
 
-[node name="WordDisplayContainer" type="VBoxContainer" parent="MainContainer/WordDisplayPanel/MarginContainer"]
+[node name="WordDisplayContainer" type="VBoxContainer" parent="MainContainer/WordDisplayPanel/MarginContainer" unique_id=947934573]
 layout_mode = 2
 
-[node name="WordLabel" type="Label" parent="MainContainer/WordDisplayPanel/MarginContainer/WordDisplayContainer"]
+[node name="WordLabel" type="Label" parent="MainContainer/WordDisplayPanel/MarginContainer/WordDisplayContainer" unique_id=1528020656]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold")
@@ -256,7 +256,7 @@ theme_override_font_sizes/font_size = 20
 text = "Target Word"
 horizontal_alignment = 1
 
-[node name="CurrentWordLabel" type="RichTextLabel" parent="MainContainer/WordDisplayPanel/MarginContainer/WordDisplayContainer"]
+[node name="CurrentWordLabel" type="RichTextLabel" parent="MainContainer/WordDisplayPanel/MarginContainer/WordDisplayContainer" unique_id=464500957]
 layout_mode = 2
 theme_override_colors/default_color = Color(0.17563492, 0.6743976, 0.3377176, 1)
 theme_override_fonts/normal_font = ExtResource("4_bold")
@@ -266,7 +266,7 @@ text = "butterfly"
 fit_content = true
 horizontal_alignment = 1
 
-[node name="SyllableDisplayLabel" type="RichTextLabel" parent="MainContainer/WordDisplayPanel/MarginContainer/WordDisplayContainer"]
+[node name="SyllableDisplayLabel" type="RichTextLabel" parent="MainContainer/WordDisplayPanel/MarginContainer/WordDisplayContainer" unique_id=652667070]
 layout_mode = 2
 theme_override_colors/default_color = Color(0, 0, 0, 1)
 theme_override_fonts/normal_font = ExtResource("4_bold")
@@ -276,7 +276,7 @@ text = "but • ter • fly"
 fit_content = true
 horizontal_alignment = 1
 
-[node name="HearWordButton" type="Button" parent="MainContainer/WordDisplayPanel"]
+[node name="HearWordButton" type="Button" parent="MainContainer/WordDisplayPanel" unique_id=1939864026]
 layout_mode = 0
 offset_left = 520.0
 offset_top = 198.0
@@ -296,7 +296,7 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="HearSyllablesButton" type="Button" parent="MainContainer/WordDisplayPanel"]
+[node name="HearSyllablesButton" type="Button" parent="MainContainer/WordDisplayPanel" unique_id=460865151]
 layout_mode = 0
 offset_left = 682.0
 offset_top = 198.0
@@ -316,13 +316,13 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="ActivityPanel" type="Panel" parent="MainContainer"]
+[node name="ActivityPanel" type="Panel" parent="MainContainer" unique_id=1807503905]
 custom_minimum_size = Vector2(0, 300)
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_activity_panel")
 
-[node name="MarginContainer" type="MarginContainer" parent="MainContainer/ActivityPanel"]
+[node name="MarginContainer" type="MarginContainer" parent="MainContainer/ActivityPanel" unique_id=430557313]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -338,16 +338,16 @@ theme_override_constants/margin_top = 25
 theme_override_constants/margin_right = 25
 theme_override_constants/margin_bottom = 25
 
-[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer/ActivityPanel/MarginContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer/ActivityPanel/MarginContainer" unique_id=1135697114]
 custom_minimum_size = Vector2(0, 300)
 layout_mode = 2
 horizontal_scroll_mode = 0
 
-[node name="ActivityContainer" type="VBoxContainer" parent="MainContainer/ActivityPanel/MarginContainer/ScrollContainer"]
+[node name="ActivityContainer" type="VBoxContainer" parent="MainContainer/ActivityPanel/MarginContainer/ScrollContainer" unique_id=2145307417]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="ActivityTitleLabel" type="Label" parent="MainContainer/ActivityPanel/MarginContainer/ScrollContainer/ActivityContainer"]
+[node name="ActivityTitleLabel" type="Label" parent="MainContainer/ActivityPanel/MarginContainer/ScrollContainer/ActivityContainer" unique_id=1705589058]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_bold")
@@ -355,7 +355,7 @@ theme_override_font_sizes/font_size = 24
 text = "Activity: Syllable Breaking"
 horizontal_alignment = 1
 
-[node name="InstructionLabel" type="Label" parent="MainContainer/ActivityPanel/MarginContainer/ScrollContainer/ActivityContainer"]
+[node name="InstructionLabel" type="Label" parent="MainContainer/ActivityPanel/MarginContainer/ScrollContainer/ActivityContainer" unique_id=1692701645]
 custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -366,12 +366,12 @@ horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 2
 
-[node name="STTContainer" type="VBoxContainer" parent="MainContainer/ActivityPanel/MarginContainer/ScrollContainer/ActivityContainer"]
+[node name="STTContainer" type="VBoxContainer" parent="MainContainer/ActivityPanel/MarginContainer/ScrollContainer/ActivityContainer" unique_id=1867899510]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 15
 
-[node name="STTButton" type="Button" parent="MainContainer/ActivityPanel/MarginContainer/ScrollContainer/ActivityContainer/STTContainer"]
+[node name="STTButton" type="Button" parent="MainContainer/ActivityPanel/MarginContainer/ScrollContainer/ActivityContainer/STTContainer" unique_id=1498675326]
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -387,12 +387,12 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="ControlsContainer" type="HBoxContainer" parent="MainContainer/ActivityPanel/MarginContainer/ScrollContainer/ActivityContainer/STTContainer"]
+[node name="ControlsContainer" type="HBoxContainer" parent="MainContainer/ActivityPanel/MarginContainer/ScrollContainer/ActivityContainer/STTContainer" unique_id=1982788479]
 layout_mode = 2
 theme_override_constants/separation = 20
 alignment = 1
 
-[node name="PrevButton" type="Button" parent="MainContainer/ActivityPanel/MarginContainer/ScrollContainer/ActivityContainer/STTContainer/ControlsContainer"]
+[node name="PrevButton" type="Button" parent="MainContainer/ActivityPanel/MarginContainer/ScrollContainer/ActivityContainer/STTContainer/ControlsContainer" unique_id=1178860284]
 custom_minimum_size = Vector2(150, 50)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -408,7 +408,7 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="NextButton" type="Button" parent="MainContainer/ActivityPanel/MarginContainer/ScrollContainer/ActivityContainer/STTContainer/ControlsContainer"]
+[node name="NextButton" type="Button" parent="MainContainer/ActivityPanel/MarginContainer/ScrollContainer/ActivityContainer/STTContainer/ControlsContainer" unique_id=172631820]
 custom_minimum_size = Vector2(150, 50)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -424,7 +424,7 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="STTStatusLabel" type="Label" parent="MainContainer/ActivityPanel/MarginContainer/ScrollContainer/ActivityContainer/STTContainer"]
+[node name="STTStatusLabel" type="Label" parent="MainContainer/ActivityPanel/MarginContainer/ScrollContainer/ActivityContainer/STTContainer" unique_id=1648419511]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_regular")
@@ -432,7 +432,7 @@ theme_override_font_sizes/font_size = 14
 text = "Click to start recording"
 horizontal_alignment = 1
 
-[node name="STTResultLabel" type="Label" parent="MainContainer/ActivityPanel/MarginContainer/ScrollContainer/ActivityContainer/STTContainer"]
+[node name="STTResultLabel" type="Label" parent="MainContainer/ActivityPanel/MarginContainer/ScrollContainer/ActivityContainer/STTContainer" unique_id=499139768]
 custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.2, 0.8, 0.4, 1)
@@ -442,10 +442,10 @@ text = "Result"
 horizontal_alignment = 1
 autowrap_mode = 2
 
-[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+[node name="ButtonClick" type="AudioStreamPlayer" parent="." unique_id=848018564]
 stream = ExtResource("6_click")
 
-[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+[node name="ButtonHover" type="AudioStreamPlayer" parent="." unique_id=1071181091]
 stream = ExtResource("7_hover")
 
 [connection signal="pressed" from="MainContainer/HeaderPanel/HeaderContainer/TitleContainer/BackButton" to="." method="_on_back_button_pressed"]

@@ -1,4 +1,4 @@
-[gd_scene load_steps=34 format=3 uid="uid://b16uc2y8w57k1"]
+[gd_scene format=3 uid="uid://b16uc2y8w57k1"]
 
 [ext_resource type="Script" uid="uid://dysw762c4jib3" path="res://Scripts/ProfilePicturesPopup.gd" id="1_popup_script"]
 [ext_resource type="Texture2D" uid="uid://clo1votqbo4bs" path="res://gui/Update/UI/ui 13.png" id="2_kxfne"]
@@ -35,7 +35,7 @@
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_yxql3"]
 
-[node name="ProfilePicturesPopup" type="Control"]
+[node name="ProfilePicturesPopup" type="Control" unique_id=1077090359]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -44,7 +44,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_popup_script")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="." unique_id=325314529]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -53,7 +53,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.6)
 
-[node name="PictureContainer" type="TextureRect" parent="."]
+[node name="PictureContainer" type="TextureRect" parent="." unique_id=1695717775]
 custom_minimum_size = Vector2(500, 400)
 layout_mode = 1
 anchors_preset = 8
@@ -69,7 +69,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_kxfne")
 
-[node name="CloseButton" type="TextureButton" parent="PictureContainer"]
+[node name="CloseButton" type="TextureButton" parent="PictureContainer" unique_id=1199209109]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 1.0
@@ -86,7 +86,7 @@ texture_hover = ExtResource("4_00j4d")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="TitleLabel" type="Label" parent="PictureContainer"]
+[node name="TitleLabel" type="Label" parent="PictureContainer" unique_id=1747562982]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -102,7 +102,7 @@ theme_override_font_sizes/font_size = 25
 text = "Choose Profile Picture"
 horizontal_alignment = 1
 
-[node name="ScrollContainer" type="ScrollContainer" parent="PictureContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="PictureContainer" unique_id=1149916348]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -115,7 +115,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_default_cursor_shape = 2
 
-[node name="GridContainer" type="GridContainer" parent="PictureContainer/ScrollContainer"]
+[node name="GridContainer" type="GridContainer" parent="PictureContainer/ScrollContainer" unique_id=1900660314]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -124,7 +124,7 @@ theme_override_constants/h_separation = 20
 theme_override_constants/v_separation = 20
 columns = 4
 
-[node name="Portrait13" type="TextureButton" parent="PictureContainer/ScrollContainer/GridContainer"]
+[node name="Portrait13" type="TextureButton" parent="PictureContainer/ScrollContainer/GridContainer" unique_id=164395910]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -133,7 +133,7 @@ texture_hover = ExtResource("7_ijhip")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="Portrait14" type="TextureButton" parent="PictureContainer/ScrollContainer/GridContainer"]
+[node name="Portrait14" type="TextureButton" parent="PictureContainer/ScrollContainer/GridContainer" unique_id=963417337]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -142,7 +142,7 @@ texture_hover = ExtResource("9_le1vt")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="Portrait15" type="TextureButton" parent="PictureContainer/ScrollContainer/GridContainer"]
+[node name="Portrait15" type="TextureButton" parent="PictureContainer/ScrollContainer/GridContainer" unique_id=1382687185]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -151,7 +151,7 @@ texture_hover = ExtResource("11_n5yux")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="Portrait16" type="TextureButton" parent="PictureContainer/ScrollContainer/GridContainer"]
+[node name="Portrait16" type="TextureButton" parent="PictureContainer/ScrollContainer/GridContainer" unique_id=1666705575]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -160,7 +160,7 @@ texture_hover = ExtResource("13_6mciq")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="Portrait17" type="TextureButton" parent="PictureContainer/ScrollContainer/GridContainer"]
+[node name="Portrait17" type="TextureButton" parent="PictureContainer/ScrollContainer/GridContainer" unique_id=1731947808]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -169,7 +169,7 @@ texture_hover = ExtResource("15_w0ekn")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="Portrait18" type="TextureButton" parent="PictureContainer/ScrollContainer/GridContainer"]
+[node name="Portrait18" type="TextureButton" parent="PictureContainer/ScrollContainer/GridContainer" unique_id=1234382029]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -178,7 +178,7 @@ texture_hover = ExtResource("17_hsgj8")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="Portrait19" type="TextureButton" parent="PictureContainer/ScrollContainer/GridContainer"]
+[node name="Portrait19" type="TextureButton" parent="PictureContainer/ScrollContainer/GridContainer" unique_id=95396793]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -187,7 +187,7 @@ texture_hover = ExtResource("19_hcpdp")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="Portrait20" type="TextureButton" parent="PictureContainer/ScrollContainer/GridContainer"]
+[node name="Portrait20" type="TextureButton" parent="PictureContainer/ScrollContainer/GridContainer" unique_id=1371165055]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -196,7 +196,7 @@ texture_hover = ExtResource("21_g6pap")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="Portrait21" type="TextureButton" parent="PictureContainer/ScrollContainer/GridContainer"]
+[node name="Portrait21" type="TextureButton" parent="PictureContainer/ScrollContainer/GridContainer" unique_id=1895746227]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -205,7 +205,7 @@ texture_hover = ExtResource("23_3g4pc")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="Portrait22" type="TextureButton" parent="PictureContainer/ScrollContainer/GridContainer"]
+[node name="Portrait22" type="TextureButton" parent="PictureContainer/ScrollContainer/GridContainer" unique_id=2125535423]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -214,7 +214,7 @@ texture_hover = ExtResource("25_f0fw5")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="Portrait23" type="TextureButton" parent="PictureContainer/ScrollContainer/GridContainer"]
+[node name="Portrait23" type="TextureButton" parent="PictureContainer/ScrollContainer/GridContainer" unique_id=313653936]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -223,7 +223,7 @@ texture_hover = ExtResource("27_js0qt")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="Portrait24" type="TextureButton" parent="PictureContainer/ScrollContainer/GridContainer"]
+[node name="Portrait24" type="TextureButton" parent="PictureContainer/ScrollContainer/GridContainer" unique_id=1954720957]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -232,7 +232,7 @@ texture_hover = ExtResource("29_8djvh")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="ConfirmButton" type="Button" parent="PictureContainer"]
+[node name="ConfirmButton" type="Button" parent="PictureContainer" unique_id=134211257]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -258,10 +258,10 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+[node name="ButtonClick" type="AudioStreamPlayer" parent="." unique_id=1142785381]
 stream = ExtResource("18_v70ae")
 
-[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+[node name="ButtonHover" type="AudioStreamPlayer" parent="." unique_id=1422539283]
 stream = ExtResource("19_00j4d")
 
 [connection signal="mouse_entered" from="PictureContainer/CloseButton" to="." method="_on_close_button_mouse_entered"]

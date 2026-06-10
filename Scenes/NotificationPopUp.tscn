@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://blge5vt1gmc8o"]
+[gd_scene format=3 uid="uid://blge5vt1gmc8o"]
 
 [ext_resource type="Texture2D" uid="uid://bedyjdu5rblv8" path="res://gui/Update/UI/ui (1).png" id="1_8cacn"]
 [ext_resource type="Script" uid="uid://bpilknkrukhr5" path="res://Scripts/NotificationPopup.gd" id="1_i02w3"]
@@ -13,11 +13,11 @@
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_issni"]
 
-[node name="NotificationPopUp" type="CanvasLayer"]
+[node name="NotificationPopUp" type="CanvasLayer" unique_id=413353574]
 layer = 10
 script = ExtResource("1_i02w3")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="." unique_id=1176130129]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -25,7 +25,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.6)
 
-[node name="PopupContainer" type="Control" parent="."]
+[node name="PopupContainer" type="Control" parent="." unique_id=1857323532]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -34,7 +34,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="CenterContainer" type="CenterContainer" parent="PopupContainer"]
+[node name="CenterContainer" type="CenterContainer" parent="PopupContainer" unique_id=501900092]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -42,12 +42,12 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="PopupBackground" type="TextureRect" parent="PopupContainer/CenterContainer"]
+[node name="PopupBackground" type="TextureRect" parent="PopupContainer/CenterContainer" unique_id=867914117]
 custom_minimum_size = Vector2(500, 210)
 layout_mode = 2
 texture = ExtResource("1_8cacn")
 
-[node name="CloseXButton" type="TextureButton" parent="PopupContainer/CenterContainer/PopupBackground"]
+[node name="CloseXButton" type="TextureButton" parent="PopupContainer/CenterContainer/PopupBackground" unique_id=1631425060]
 custom_minimum_size = Vector2(30, 30)
 layout_mode = 1
 anchors_preset = -1
@@ -67,7 +67,7 @@ texture_normal = ExtResource("3_u5x37")
 texture_hover = ExtResource("4_4lrsy")
 stretch_mode = 4
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PopupContainer/CenterContainer/PopupBackground"]
+[node name="VBoxContainer" type="VBoxContainer" parent="PopupContainer/CenterContainer/PopupBackground" unique_id=1635891988]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -80,11 +80,11 @@ grow_horizontal = 2
 grow_vertical = 2
 alignment = 1
 
-[node name="TopContainer" type="HBoxContainer" parent="PopupContainer/CenterContainer/PopupBackground/VBoxContainer"]
+[node name="TopContainer" type="HBoxContainer" parent="PopupContainer/CenterContainer/PopupBackground/VBoxContainer" unique_id=1287048739]
 layout_mode = 2
 size_flags_vertical = 0
 
-[node name="TitleLabel" type="Label" parent="PopupContainer/CenterContainer/PopupBackground/VBoxContainer/TopContainer"]
+[node name="TitleLabel" type="Label" parent="PopupContainer/CenterContainer/PopupBackground/VBoxContainer/TopContainer" unique_id=642029095]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -95,7 +95,7 @@ theme_override_font_sizes/font_size = 28
 text = "Notification Title"
 horizontal_alignment = 1
 
-[node name="MessageLabel" type="RichTextLabel" parent="PopupContainer/CenterContainer/PopupBackground/VBoxContainer"]
+[node name="MessageLabel" type="RichTextLabel" parent="PopupContainer/CenterContainer/PopupBackground/VBoxContainer" unique_id=278960075]
 custom_minimum_size = Vector2(1, 1)
 layout_mode = 2
 size_flags_vertical = 3
@@ -110,7 +110,7 @@ scroll_active = false
 horizontal_alignment = 1
 vertical_alignment = 3
 
-[node name="CloseButton" type="Button" parent="PopupContainer/CenterContainer/PopupBackground/VBoxContainer"]
+[node name="CloseButton" type="Button" parent="PopupContainer/CenterContainer/PopupBackground/VBoxContainer" unique_id=592707239]
 custom_minimum_size = Vector2(120, 40)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -128,10 +128,10 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+[node name="ButtonClick" type="AudioStreamPlayer" parent="." unique_id=1713152985]
 stream = ExtResource("7_jfof2")
 
-[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+[node name="ButtonHover" type="AudioStreamPlayer" parent="." unique_id=1711371823]
 stream = ExtResource("8_lecsd")
 
 [connection signal="mouse_entered" from="PopupContainer/CenterContainer/PopupBackground/CloseXButton" to="." method="_on_close_button_mouse_entered"]

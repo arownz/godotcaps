@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://cvv1bpkfdvqjw"]
+[gd_scene format=3 uid="uid://cvv1bpkfdvqjw"]
 
 [ext_resource type="Script" uid="uid://tupwtis13uye" path="res://Scripts/WhiteboardInterface.gd" id="1_e3gsa"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="2_vuw0y"]
@@ -24,7 +24,7 @@ corner_radius_bottom_left = 5
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_vuw0y"]
 
-[node name="WhiteboardInterface" type="Control"]
+[node name="WhiteboardInterface" type="Control" unique_id=2073189433]
 layout_mode = 3
 anchors_preset = 8
 anchor_left = 0.5
@@ -39,7 +39,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_e3gsa")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1132298790]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -48,17 +48,17 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 0
 
-[node name="DrawingArea" type="Panel" parent="VBoxContainer"]
+[node name="DrawingArea" type="Panel" parent="VBoxContainer" unique_id=274265122]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_7wk35")
 
-[node name="ButtonsContainer" type="HBoxContainer" parent="VBoxContainer"]
+[node name="ButtonsContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=974944400]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_constants/separation = 0
 
-[node name="UndoButton" type="Button" parent="VBoxContainer/ButtonsContainer"]
+[node name="UndoButton" type="Button" parent="VBoxContainer/ButtonsContainer" unique_id=990086961]
 custom_minimum_size = Vector2(110, 50)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -74,7 +74,7 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="RedoButton" type="Button" parent="VBoxContainer/ButtonsContainer"]
+[node name="RedoButton" type="Button" parent="VBoxContainer/ButtonsContainer" unique_id=1271436644]
 custom_minimum_size = Vector2(110, 50)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -90,7 +90,7 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="ClearButton" type="Button" parent="VBoxContainer/ButtonsContainer"]
+[node name="ClearButton" type="Button" parent="VBoxContainer/ButtonsContainer" unique_id=1868546091]
 custom_minimum_size = Vector2(110, 50)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -106,7 +106,7 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="CancelButton" type="Button" parent="VBoxContainer/ButtonsContainer"]
+[node name="CancelButton" type="Button" parent="VBoxContainer/ButtonsContainer" unique_id=303050216]
 custom_minimum_size = Vector2(150, 50)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -122,7 +122,7 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="DoneButton" type="Button" parent="VBoxContainer/ButtonsContainer"]
+[node name="DoneButton" type="Button" parent="VBoxContainer/ButtonsContainer" unique_id=734893768]
 custom_minimum_size = Vector2(150, 50)
 layout_mode = 2
 mouse_default_cursor_shape = 2
@@ -138,13 +138,13 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+[node name="ButtonClick" type="AudioStreamPlayer" parent="." unique_id=832549198]
 stream = ExtResource("4_jliia")
 
-[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+[node name="ButtonHover" type="AudioStreamPlayer" parent="." unique_id=225993729]
 stream = ExtResource("5_46aw1")
 
-[node name="WhiteboardSwiping" type="AudioStreamPlayer" parent="."]
+[node name="WhiteboardSwiping" type="AudioStreamPlayer" parent="." unique_id=303870261]
 stream = ExtResource("6_46aw1")
 
 [connection signal="draw" from="VBoxContainer/DrawingArea" to="." method="_on_drawing_area_draw"]

@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://cfead7bcuslp4"]
+[gd_scene format=3 uid="uid://cfead7bcuslp4"]
 
 [ext_resource type="Texture2D" uid="uid://cxqd6wyqy8g22" path="res://gui/Update/Backgrounds/battlescene background.png" id="2_ixjr5"]
 [ext_resource type="Texture2D" uid="uid://2jgthsch6pn" path="res://gui/Update/Backgrounds/forestbig.png" id="3_hueq0"]
@@ -96,21 +96,21 @@ corner_radius_bottom_left = 8
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_8uoga"]
 
-[node name="BattleScene" type="Node2D"]
+[node name="BattleScene" type="Node2D" unique_id=662415222]
 script = ExtResource("3_vhj2j")
 
-[node name="Background" type="ParallaxBackground" parent="."]
+[node name="Background" type="ParallaxBackground" parent="." unique_id=1297798804]
 
-[node name="ParallaxLayer" type="ParallaxLayer" parent="Background"]
+[node name="ParallaxLayer" type="ParallaxLayer" parent="Background" unique_id=1948294053]
 
-[node name="Sprite2D" type="Sprite2D" parent="Background/ParallaxLayer"]
+[node name="Sprite2D" type="Sprite2D" parent="Background/ParallaxLayer" unique_id=531143342]
 texture_filter = 1
 position = Vector2(-3.8147e-06, -3.8147e-06)
 scale = Vector2(4.5625, 4.5)
 texture = ExtResource("2_ixjr5")
 centered = false
 
-[node name="Sprite2D2" type="Sprite2D" parent="Background/ParallaxLayer"]
+[node name="Sprite2D2" type="Sprite2D" parent="Background/ParallaxLayer" unique_id=1879401907]
 visible = false
 texture_filter = 1
 position = Vector2(-3.8147e-06, -3.8147e-06)
@@ -118,7 +118,7 @@ scale = Vector2(0.953776, 0.791016)
 texture = ExtResource("3_hueq0")
 centered = false
 
-[node name="Sprite2D3" type="Sprite2D" parent="Background/ParallaxLayer"]
+[node name="Sprite2D3" type="Sprite2D" parent="Background/ParallaxLayer" unique_id=941040002]
 visible = false
 texture_filter = 1
 position = Vector2(-3.8147e-06, -3.8147e-06)
@@ -126,16 +126,16 @@ scale = Vector2(0.950521, 0.791016)
 texture = ExtResource("4_pwb48")
 centered = false
 
-[node name="MainContainer" type="HBoxContainer" parent="."]
+[node name="MainContainer" type="HBoxContainer" parent="." unique_id=1356347785]
 offset_right = 1460.0
 offset_bottom = 810.0
 
-[node name="BattleAreaContainer" type="Control" parent="MainContainer"]
+[node name="BattleAreaContainer" type="Control" parent="MainContainer" unique_id=1304475145]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 1.6
 
-[node name="BattleContainer" type="Control" parent="MainContainer/BattleAreaContainer"]
+[node name="BattleContainer" type="Control" parent="MainContainer/BattleAreaContainer" unique_id=699674438]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -144,7 +144,7 @@ offset_right = -30.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="PlayerContainer" type="Control" parent="MainContainer/BattleAreaContainer/BattleContainer"]
+[node name="PlayerContainer" type="Control" parent="MainContainer/BattleAreaContainer/BattleContainer" unique_id=2037069543]
 layout_mode = 1
 anchor_left = 0.314
 anchor_top = 0.599
@@ -156,11 +156,11 @@ offset_right = 45.076
 offset_bottom = 231.81
 grow_vertical = 2
 
-[node name="PlayerPosition" type="Node2D" parent="MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer"]
+[node name="PlayerPosition" type="Node2D" parent="MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer" unique_id=309196313]
 position = Vector2(-47, -184)
 scale = Vector2(4.57468, 4.51523)
 
-[node name="PlayerHealthBar" type="ProgressBar" parent="MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer"]
+[node name="PlayerHealthBar" type="ProgressBar" parent="MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer" unique_id=125237061]
 custom_minimum_size = Vector2(180, 15)
 layout_mode = 0
 offset_left = -150.0
@@ -172,7 +172,7 @@ theme_override_styles/fill = SubResource("StyleBoxFlat_s2q4u")
 value = 100.0
 show_percentage = false
 
-[node name="TextureRect" type="TextureRect" parent="MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer/PlayerHealthBar"]
+[node name="TextureRect" type="TextureRect" parent="MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer/PlayerHealthBar" unique_id=80771130]
 layout_mode = 0
 offset_left = -7.0
 offset_top = -4.0
@@ -180,7 +180,7 @@ offset_right = 21.0
 offset_bottom = 26.0
 texture = ExtResource("9_ixjr5")
 
-[node name="HealthLabel" type="Label" parent="MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer/PlayerHealthBar"]
+[node name="HealthLabel" type="Label" parent="MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer/PlayerHealthBar" unique_id=1807683087]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -203,7 +203,7 @@ text = "loading.."
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="PlayerName" type="Label" parent="MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer"]
+[node name="PlayerName" type="Label" parent="MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer" unique_id=1836633690]
 layout_mode = 0
 offset_left = -224.0
 offset_top = -76.0
@@ -218,7 +218,7 @@ text = "loading.."
 horizontal_alignment = 1
 vertical_alignment = 2
 
-[node name="PlayerLevel" type="Label" parent="MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer"]
+[node name="PlayerLevel" type="Label" parent="MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer" unique_id=1266390856]
 layout_mode = 0
 offset_left = -121.0
 offset_top = -42.0
@@ -232,7 +232,7 @@ theme_override_font_sizes/font_size = 18
 text = "Level:"
 horizontal_alignment = 1
 
-[node name="PlayerLevelValue" type="Label" parent="MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer"]
+[node name="PlayerLevelValue" type="Label" parent="MainContainer/BattleAreaContainer/BattleContainer/PlayerContainer" unique_id=321712362]
 layout_mode = 0
 offset_left = -39.0
 offset_top = -42.0
@@ -245,7 +245,7 @@ theme_override_fonts/font = ExtResource("8_2tp6q")
 theme_override_font_sizes/font_size = 18
 text = "loading.."
 
-[node name="EnemyContainer" type="Control" parent="MainContainer/BattleAreaContainer/BattleContainer"]
+[node name="EnemyContainer" type="Control" parent="MainContainer/BattleAreaContainer/BattleContainer" unique_id=36756038]
 layout_mode = 1
 anchor_left = 0.711
 anchor_top = 0.599
@@ -258,11 +258,11 @@ offset_bottom = 184.81
 grow_horizontal = 0
 grow_vertical = 2
 
-[node name="EnemyPosition" type="Node2D" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer"]
+[node name="EnemyPosition" type="Node2D" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer" unique_id=601241077]
 position = Vector2(48, -137)
 scale = Vector2(3.52051, 3.76243)
 
-[node name="EnemyHealthBar" type="ProgressBar" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer"]
+[node name="EnemyHealthBar" type="ProgressBar" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer" unique_id=1562807807]
 custom_minimum_size = Vector2(180, 15)
 layout_mode = 0
 offset_left = -41.0
@@ -276,7 +276,7 @@ value = 100.0
 fill_mode = 1
 show_percentage = false
 
-[node name="TextureRect" type="TextureRect" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer/EnemyHealthBar"]
+[node name="TextureRect" type="TextureRect" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer/EnemyHealthBar" unique_id=1787518742]
 layout_mode = 0
 offset_left = 161.191
 offset_top = -4.0
@@ -284,7 +284,7 @@ offset_right = 189.191
 offset_bottom = 26.0
 texture = ExtResource("9_ixjr5")
 
-[node name="HealthLabel" type="Label" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer/EnemyHealthBar"]
+[node name="HealthLabel" type="Label" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer/EnemyHealthBar" unique_id=1927844883]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -307,7 +307,7 @@ text = "loading.."
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="EnemySkillBar" type="ProgressBar" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer"]
+[node name="EnemySkillBar" type="ProgressBar" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer" unique_id=152576949]
 custom_minimum_size = Vector2(180, 10)
 layout_mode = 0
 offset_left = -40.0
@@ -319,7 +319,7 @@ theme_override_styles/fill = SubResource("StyleBoxFlat_skill_fill")
 fill_mode = 1
 show_percentage = false
 
-[node name="SkillLabel" type="Label" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer/EnemySkillBar"]
+[node name="SkillLabel" type="Label" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer/EnemySkillBar" unique_id=1109224204]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.494444
@@ -343,7 +343,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 metadata/_edit_use_anchors_ = true
 
-[node name="TextureRect" type="TextureRect" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer/EnemySkillBar"]
+[node name="TextureRect" type="TextureRect" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer/EnemySkillBar" unique_id=106723115]
 layout_mode = 0
 offset_left = 160.0
 offset_top = -2.0
@@ -352,7 +352,7 @@ offset_bottom = 38.0
 scale = Vector2(0.759279, 0.759279)
 texture = ExtResource("7_cja1x")
 
-[node name="EnemyName" type="Label" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer"]
+[node name="EnemyName" type="Label" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer" unique_id=1258648594]
 layout_mode = 0
 offset_left = -131.0
 offset_top = -2.0
@@ -367,7 +367,7 @@ text = "loading.."
 horizontal_alignment = 1
 vertical_alignment = 2
 
-[node name="EnemyLevel" type="Label" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer"]
+[node name="EnemyLevel" type="Label" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer" unique_id=320409040]
 layout_mode = 0
 offset_left = -6.0
 offset_top = 32.0
@@ -381,7 +381,7 @@ theme_override_font_sizes/font_size = 18
 text = "Stage:"
 horizontal_alignment = 1
 
-[node name="EnemyLevelValue" type="Label" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer"]
+[node name="EnemyLevelValue" type="Label" parent="MainContainer/BattleAreaContainer/BattleContainer/EnemyContainer" unique_id=204585414]
 layout_mode = 0
 offset_left = 80.25098
 offset_top = 32.0
@@ -394,7 +394,7 @@ theme_override_fonts/font = ExtResource("8_2tp6q")
 theme_override_font_sizes/font_size = 18
 text = "loading..."
 
-[node name="FightLabel" type="Label" parent="MainContainer/BattleAreaContainer"]
+[node name="FightLabel" type="Label" parent="MainContainer/BattleAreaContainer" unique_id=940530434]
 visible = false
 layout_mode = 1
 anchors_preset = 8
@@ -416,7 +416,7 @@ theme_override_font_sizes/font_size = 80
 text = "FIGHT!"
 horizontal_alignment = 1
 
-[node name="StageInfoLabel" type="RichTextLabel" parent="MainContainer/BattleAreaContainer"]
+[node name="StageInfoLabel" type="RichTextLabel" parent="MainContainer/BattleAreaContainer" unique_id=1271394081]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.503
@@ -440,7 +440,7 @@ scroll_active = false
 autowrap_mode = 0
 horizontal_alignment = 1
 
-[node name="StageProgress" type="Control" parent="MainContainer/BattleAreaContainer"]
+[node name="StageProgress" type="Control" parent="MainContainer/BattleAreaContainer" unique_id=478827408]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -452,14 +452,14 @@ offset_bottom = 150.0
 grow_horizontal = 2
 metadata/_edit_use_anchors_ = true
 
-[node name="Bar" type="ColorRect" parent="MainContainer/BattleAreaContainer/StageProgress"]
+[node name="Bar" type="ColorRect" parent="MainContainer/BattleAreaContainer/StageProgress" unique_id=2073811281]
 layout_mode = 0
 offset_top = 44.0
 offset_right = 440.0
 offset_bottom = 66.0
 color = Color(0.121569, 0.0509804, 0.0117647, 1)
 
-[node name="BarBg" type="ColorRect" parent="MainContainer/BattleAreaContainer/StageProgress"]
+[node name="BarBg" type="ColorRect" parent="MainContainer/BattleAreaContainer/StageProgress" unique_id=1827769210]
 layout_mode = 0
 offset_left = 2.0
 offset_top = 46.0
@@ -467,7 +467,7 @@ offset_right = 438.0
 offset_bottom = 64.0
 color = Color(0.8, 0.705882, 0.552941, 1)
 
-[node name="BarFill" type="ColorRect" parent="MainContainer/BattleAreaContainer/StageProgress"]
+[node name="BarFill" type="ColorRect" parent="MainContainer/BattleAreaContainer/StageProgress" unique_id=324906624]
 layout_mode = 0
 offset_left = 2.0
 offset_top = 46.0
@@ -475,18 +475,18 @@ offset_right = 2.0
 offset_bottom = 64.0
 color = Color(0.529412, 0.909804, 0.172549, 1)
 
-[node name="StageSlots" type="HBoxContainer" parent="MainContainer/BattleAreaContainer/StageProgress"]
+[node name="StageSlots" type="HBoxContainer" parent="MainContainer/BattleAreaContainer/StageProgress" unique_id=1767154097]
 layout_mode = 0
 offset_top = 11.0
 offset_right = 438.0
 offset_bottom = 58.0
 theme_override_constants/separation = 8
 
-[node name="Slot1" type="Control" parent="MainContainer/BattleAreaContainer/StageProgress/StageSlots"]
+[node name="Slot1" type="Control" parent="MainContainer/BattleAreaContainer/StageProgress/StageSlots" unique_id=1816477759]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="EnemyIcon" type="TextureRect" parent="MainContainer/BattleAreaContainer/StageProgress/StageSlots/Slot1"]
+[node name="EnemyIcon" type="TextureRect" parent="MainContainer/BattleAreaContainer/StageProgress/StageSlots/Slot1" unique_id=1414977632]
 custom_minimum_size = Vector2(44, 44)
 layout_mode = 1
 anchors_preset = 8
@@ -506,11 +506,11 @@ texture = ExtResource("17_slaym")
 expand_mode = 1
 stretch_mode = 4
 
-[node name="Slot2" type="Control" parent="MainContainer/BattleAreaContainer/StageProgress/StageSlots"]
+[node name="Slot2" type="Control" parent="MainContainer/BattleAreaContainer/StageProgress/StageSlots" unique_id=129060987]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="EnemyIcon" type="TextureRect" parent="MainContainer/BattleAreaContainer/StageProgress/StageSlots/Slot2"]
+[node name="EnemyIcon" type="TextureRect" parent="MainContainer/BattleAreaContainer/StageProgress/StageSlots/Slot2" unique_id=2131607912]
 custom_minimum_size = Vector2(44, 44)
 layout_mode = 1
 anchors_preset = 8
@@ -530,11 +530,11 @@ texture = ExtResource("10_ksqd2")
 expand_mode = 1
 stretch_mode = 4
 
-[node name="Slot3" type="Control" parent="MainContainer/BattleAreaContainer/StageProgress/StageSlots"]
+[node name="Slot3" type="Control" parent="MainContainer/BattleAreaContainer/StageProgress/StageSlots" unique_id=1172566397]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="EnemyIcon" type="TextureRect" parent="MainContainer/BattleAreaContainer/StageProgress/StageSlots/Slot3"]
+[node name="EnemyIcon" type="TextureRect" parent="MainContainer/BattleAreaContainer/StageProgress/StageSlots/Slot3" unique_id=1419802771]
 custom_minimum_size = Vector2(44, 44)
 layout_mode = 1
 anchors_preset = 8
@@ -554,11 +554,11 @@ texture = ExtResource("10_ksqd2")
 expand_mode = 1
 stretch_mode = 4
 
-[node name="Slot4" type="Control" parent="MainContainer/BattleAreaContainer/StageProgress/StageSlots"]
+[node name="Slot4" type="Control" parent="MainContainer/BattleAreaContainer/StageProgress/StageSlots" unique_id=921969452]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="EnemyIcon" type="TextureRect" parent="MainContainer/BattleAreaContainer/StageProgress/StageSlots/Slot4"]
+[node name="EnemyIcon" type="TextureRect" parent="MainContainer/BattleAreaContainer/StageProgress/StageSlots/Slot4" unique_id=1858628353]
 custom_minimum_size = Vector2(44, 44)
 layout_mode = 1
 anchors_preset = 8
@@ -578,11 +578,11 @@ texture = ExtResource("10_ksqd2")
 expand_mode = 1
 stretch_mode = 4
 
-[node name="Slot5" type="Control" parent="MainContainer/BattleAreaContainer/StageProgress/StageSlots"]
+[node name="Slot5" type="Control" parent="MainContainer/BattleAreaContainer/StageProgress/StageSlots" unique_id=1685201281]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="EnemyIcon" type="TextureRect" parent="MainContainer/BattleAreaContainer/StageProgress/StageSlots/Slot5"]
+[node name="EnemyIcon" type="TextureRect" parent="MainContainer/BattleAreaContainer/StageProgress/StageSlots/Slot5" unique_id=91237842]
 custom_minimum_size = Vector2(44, 44)
 layout_mode = 1
 anchors_preset = 8
@@ -602,7 +602,7 @@ texture = ExtResource("10_ksqd2")
 expand_mode = 1
 stretch_mode = 4
 
-[node name="PlayerIcon" type="TextureRect" parent="MainContainer/BattleAreaContainer/StageProgress"]
+[node name="PlayerIcon" type="TextureRect" parent="MainContainer/BattleAreaContainer/StageProgress" unique_id=144027564]
 custom_minimum_size = Vector2(44, 44)
 layout_mode = 0
 offset_left = 17.0
@@ -613,7 +613,7 @@ scale = Vector2(1.1035504, 1.1035504)
 expand_mode = 1
 stretch_mode = 4
 
-[node name="StageTimer" type="Label" parent="MainContainer/BattleAreaContainer"]
+[node name="StageTimer" type="Label" parent="MainContainer/BattleAreaContainer" unique_id=492034645]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.092
@@ -635,7 +635,7 @@ text = "0:00"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="SettingButton" type="TextureButton" parent="MainContainer/BattleAreaContainer"]
+[node name="SettingButton" type="TextureButton" parent="MainContainer/BattleAreaContainer" unique_id=1597932115]
 layout_mode = 0
 offset_left = 51.0
 offset_top = 55.0
@@ -646,7 +646,7 @@ mouse_default_cursor_shape = 2
 texture_normal = ExtResource("7_ixjr5")
 texture_hover = ExtResource("5_47u5s")
 
-[node name="SettingLabel" type="Label" parent="MainContainer/BattleAreaContainer/SettingButton"]
+[node name="SettingLabel" type="Label" parent="MainContainer/BattleAreaContainer/SettingButton" unique_id=1562891385]
 visible = false
 layout_mode = 0
 offset_left = -4.07348
@@ -663,11 +663,11 @@ theme_override_font_sizes/font_size = 24
 text = "Setting"
 horizontal_alignment = 1
 
-[node name="RightContainer" type="Control" parent="MainContainer"]
+[node name="RightContainer" type="Control" parent="MainContainer" unique_id=1764570040]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="BackgroundTexture" type="TextureRect" parent="MainContainer/RightContainer"]
+[node name="BackgroundTexture" type="TextureRect" parent="MainContainer/RightContainer" unique_id=1811169736]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -682,7 +682,7 @@ texture = ExtResource("6_2tp6q")
 expand_mode = 3
 stretch_mode = 6
 
-[node name="MarginContainer" type="MarginContainer" parent="MainContainer/RightContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="MainContainer/RightContainer" unique_id=1938592574]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -699,19 +699,19 @@ theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 20
 theme_override_constants/margin_bottom = 20
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MainContainer/RightContainer/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MainContainer/RightContainer/MarginContainer" unique_id=1611995187]
 layout_mode = 2
 theme_override_constants/separation = 30
 
-[node name="StatsContainer" type="HBoxContainer" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer"]
+[node name="StatsContainer" type="HBoxContainer" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer" unique_id=1846179292]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="HPContainer" type="VBoxContainer" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer"]
+[node name="HPContainer" type="VBoxContainer" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer" unique_id=1395741436]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="HPLabel" type="Label" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/HPContainer"]
+[node name="HPLabel" type="Label" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/HPContainer" unique_id=1273277376]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -720,7 +720,7 @@ theme_override_font_sizes/font_size = 16
 text = "HP"
 horizontal_alignment = 1
 
-[node name="PlayerHealth" type="ProgressBar" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/HPContainer"]
+[node name="PlayerHealth" type="ProgressBar" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/HPContainer" unique_id=1484318364]
 custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 theme = SubResource("Theme_kwfy1")
@@ -729,7 +729,7 @@ theme_override_styles/fill = SubResource("StyleBoxFlat_s2q4u")
 value = 100.0
 show_percentage = false
 
-[node name="TextureRect" type="TextureRect" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/HPContainer/PlayerHealth"]
+[node name="TextureRect" type="TextureRect" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/HPContainer/PlayerHealth" unique_id=476253651]
 layout_mode = 0
 offset_left = -11.0
 offset_top = -4.0
@@ -737,7 +737,7 @@ offset_right = 17.0
 offset_bottom = 26.0
 texture = ExtResource("9_ixjr5")
 
-[node name="HPValue" type="Label" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/HPContainer/PlayerHealth"]
+[node name="HPValue" type="Label" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/HPContainer/PlayerHealth" unique_id=1767645535]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -760,14 +760,14 @@ text = "loading.."
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="TextureProgressBar" type="TextureProgressBar" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/HPContainer"]
+[node name="TextureProgressBar" type="TextureProgressBar" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/HPContainer" unique_id=1263207755]
 layout_mode = 2
 
-[node name="EXPContainer" type="VBoxContainer" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer"]
+[node name="EXPContainer" type="VBoxContainer" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer" unique_id=673114730]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="EXPLabel" type="Label" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/EXPContainer"]
+[node name="EXPLabel" type="Label" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/EXPContainer" unique_id=1792391853]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -776,14 +776,14 @@ theme_override_font_sizes/font_size = 16
 text = "EXP"
 horizontal_alignment = 1
 
-[node name="PlayerEXP" type="ProgressBar" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/EXPContainer"]
+[node name="PlayerEXP" type="ProgressBar" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/EXPContainer" unique_id=1459130419]
 custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 theme_override_styles/background = SubResource("StyleBoxFlat_exp_bg")
 theme_override_styles/fill = SubResource("StyleBoxFlat_exp_fill")
 show_percentage = false
 
-[node name="TextureRect" type="TextureRect" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/EXPContainer/PlayerEXP"]
+[node name="TextureRect" type="TextureRect" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/EXPContainer/PlayerEXP" unique_id=881243456]
 layout_mode = 0
 offset_left = -10.0
 offset_top = -8.0
@@ -792,7 +792,7 @@ offset_bottom = 1072.0
 scale = Vector2(0.0333268, 0.0333268)
 texture = ExtResource("10_1yevk")
 
-[node name="EXPValue" type="Label" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/EXPContainer/PlayerEXP"]
+[node name="EXPValue" type="Label" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/EXPContainer/PlayerEXP" unique_id=224704597]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -815,11 +815,11 @@ text = "loading.."
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="PowerContainer" type="VBoxContainer" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer"]
+[node name="PowerContainer" type="VBoxContainer" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer" unique_id=1670051418]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="PowerLabel" type="Label" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/PowerContainer"]
+[node name="PowerLabel" type="Label" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/PowerContainer" unique_id=74762468]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -828,14 +828,14 @@ theme_override_font_sizes/font_size = 16
 text = "Damage"
 horizontal_alignment = 1
 
-[node name="PowerBar" type="ProgressBar" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/PowerContainer"]
+[node name="PowerBar" type="ProgressBar" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/PowerContainer" unique_id=2029241678]
 custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 theme_override_styles/fill = SubResource("StyleBoxFlat_skill_fill")
 max_value = 0.0
 show_percentage = false
 
-[node name="TextureRect" type="TextureRect" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/PowerContainer/PowerBar"]
+[node name="TextureRect" type="TextureRect" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/PowerContainer/PowerBar" unique_id=728887980]
 layout_mode = 0
 offset_left = -12.0
 offset_top = 10.0
@@ -845,7 +845,7 @@ rotation = -0.818102
 scale = Vector2(0.75842, 0.75842)
 texture = ExtResource("11_x5p3t")
 
-[node name="PowerValue" type="Label" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/PowerContainer/PowerBar"]
+[node name="PowerValue" type="Label" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/PowerContainer/PowerBar" unique_id=546721367]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -868,11 +868,11 @@ text = "loading.."
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="DurabilityContainer" type="VBoxContainer" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer"]
+[node name="DurabilityContainer" type="VBoxContainer" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer" unique_id=237978052]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="DurabilityLabel" type="Label" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/DurabilityContainer"]
+[node name="DurabilityLabel" type="Label" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/DurabilityContainer" unique_id=1562970434]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -881,7 +881,7 @@ theme_override_font_sizes/font_size = 16
 text = "Durability"
 horizontal_alignment = 1
 
-[node name="DurabilityBar" type="ProgressBar" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/DurabilityContainer"]
+[node name="DurabilityBar" type="ProgressBar" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/DurabilityContainer" unique_id=369091274]
 custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 theme_override_styles/background = SubResource("StyleBoxFlat_e13ox")
@@ -889,7 +889,7 @@ theme_override_styles/fill = SubResource("StyleBoxFlat_stats_toggle")
 max_value = 0.0
 show_percentage = false
 
-[node name="TextureRect" type="TextureRect" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/DurabilityContainer/DurabilityBar"]
+[node name="TextureRect" type="TextureRect" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/DurabilityContainer/DurabilityBar" unique_id=785877641]
 layout_mode = 0
 offset_left = -5.0
 offset_top = -4.0
@@ -897,7 +897,7 @@ offset_right = 25.0
 offset_bottom = 26.0
 texture = ExtResource("12_cja1x")
 
-[node name="DurabilityValue" type="Label" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/DurabilityContainer/DurabilityBar"]
+[node name="DurabilityValue" type="Label" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/StatsContainer/DurabilityContainer/DurabilityBar" unique_id=1717780548]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -920,12 +920,12 @@ text = "loading.."
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="BattleLogContainer" type="VBoxContainer" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer"]
+[node name="BattleLogContainer" type="VBoxContainer" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer" unique_id=527457674]
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.5
 
-[node name="BattleLogLabel" type="Label" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/BattleLogContainer"]
+[node name="BattleLogLabel" type="Label" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/BattleLogContainer" unique_id=1877513097]
 custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -936,14 +936,14 @@ text = "Battle Log"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/BattleLogContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/BattleLogContainer" unique_id=323542178]
 layout_mode = 2
 size_flags_vertical = 3
 follow_focus = true
 horizontal_scroll_mode = 0
 vertical_scroll_mode = 2
 
-[node name="LogsContainer" type="VBoxContainer" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/BattleLogContainer/ScrollContainer"]
+[node name="LogsContainer" type="VBoxContainer" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/BattleLogContainer/ScrollContainer" unique_id=1819456751]
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -951,14 +951,14 @@ size_flags_vertical = 3
 size_flags_stretch_ratio = 0.0
 theme_override_constants/separation = 10
 
-[node name="ButtonContainer" type="VBoxContainer" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer"]
+[node name="ButtonContainer" type="VBoxContainer" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer" unique_id=699443370]
 custom_minimum_size = Vector2(0, 120)
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.0
 alignment = 1
 
-[node name="EngageButton" type="Button" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/ButtonContainer"]
+[node name="EngageButton" type="Button" parent="MainContainer/RightContainer/MarginContainer/VBoxContainer/ButtonContainer" unique_id=1555246205]
 custom_minimum_size = Vector2(500, 0)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -977,13 +977,13 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+[node name="ButtonClick" type="AudioStreamPlayer" parent="." unique_id=1423321660]
 stream = ExtResource("14_cja1x")
 
-[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+[node name="ButtonHover" type="AudioStreamPlayer" parent="." unique_id=1239446366]
 stream = ExtResource("15_aip7a")
 
-[node name="LevelUpSFX" type="AudioStreamPlayer" parent="."]
+[node name="LevelUpSFX" type="AudioStreamPlayer" parent="." unique_id=1861592589]
 stream = ExtResource("19_43vwj")
 
 [connection signal="mouse_entered" from="MainContainer/RightContainer/MarginContainer/VBoxContainer/ButtonContainer/EngageButton" to="." method="_on_engage_button_mouse_entered"]

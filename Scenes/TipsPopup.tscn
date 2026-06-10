@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://dwbgcm4h51s55"]
+[gd_scene format=3 uid="uid://dwbgcm4h51s55"]
 
 [ext_resource type="Script" uid="uid://bpilknkrukhr5" path="res://Scripts/NotificationPopup.gd" id="1_sco0o"]
 [ext_resource type="FontFile" uid="uid://bdlqaeel30c00" path="res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf" id="3_uo33e"]
@@ -10,11 +10,11 @@
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_issni"]
 
-[node name="NotificationPopUp" type="CanvasLayer"]
+[node name="NotificationPopUp" type="CanvasLayer" unique_id=191685216]
 layer = 10
 script = ExtResource("1_sco0o")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="." unique_id=1228148318]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -22,7 +22,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.6)
 
-[node name="PopupContainer" type="Control" parent="."]
+[node name="PopupContainer" type="Control" parent="." unique_id=785760514]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -31,7 +31,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="CenterContainer" type="CenterContainer" parent="PopupContainer"]
+[node name="CenterContainer" type="CenterContainer" parent="PopupContainer" unique_id=549183140]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -39,11 +39,11 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="PopupBackground" type="Panel" parent="PopupContainer/CenterContainer"]
+[node name="PopupBackground" type="Panel" parent="PopupContainer/CenterContainer" unique_id=671031775]
 custom_minimum_size = Vector2(500, 210)
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PopupContainer/CenterContainer/PopupBackground"]
+[node name="VBoxContainer" type="VBoxContainer" parent="PopupContainer/CenterContainer/PopupBackground" unique_id=1934394998]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -56,7 +56,7 @@ grow_horizontal = 2
 grow_vertical = 2
 alignment = 1
 
-[node name="TitleLabel" type="Label" parent="PopupContainer/CenterContainer/PopupBackground/VBoxContainer"]
+[node name="TitleLabel" type="Label" parent="PopupContainer/CenterContainer/PopupBackground/VBoxContainer" unique_id=1899630084]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
@@ -66,10 +66,10 @@ theme_override_font_sizes/font_size = 25
 text = "Tips"
 horizontal_alignment = 1
 
-[node name="LoopVid" type="VideoStreamPlayer" parent="PopupContainer/CenterContainer/PopupBackground/VBoxContainer"]
+[node name="LoopVid" type="VideoStreamPlayer" parent="PopupContainer/CenterContainer/PopupBackground/VBoxContainer" unique_id=646675886]
 layout_mode = 2
 
-[node name="DescriptionLabel" type="Label" parent="PopupContainer/CenterContainer/PopupBackground/VBoxContainer"]
+[node name="DescriptionLabel" type="Label" parent="PopupContainer/CenterContainer/PopupBackground/VBoxContainer" unique_id=1194004887]
 custom_minimum_size = Vector2(1, 1)
 layout_mode = 2
 size_flags_vertical = 3
@@ -81,7 +81,7 @@ text = "This video tips description"
 horizontal_alignment = 1
 autowrap_mode = 2
 
-[node name="CloseButton" type="Button" parent="PopupContainer/CenterContainer/PopupBackground/VBoxContainer"]
+[node name="CloseButton" type="Button" parent="PopupContainer/CenterContainer/PopupBackground/VBoxContainer" unique_id=617184626]
 custom_minimum_size = Vector2(120, 40)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -99,10 +99,10 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
-[node name="ButtonClick" type="AudioStreamPlayer" parent="."]
+[node name="ButtonClick" type="AudioStreamPlayer" parent="." unique_id=826747807]
 stream = ExtResource("6_iwvea")
 
-[node name="ButtonHover" type="AudioStreamPlayer" parent="."]
+[node name="ButtonHover" type="AudioStreamPlayer" parent="." unique_id=615026259]
 stream = ExtResource("7_uo33e")
 
 [connection signal="pressed" from="PopupContainer/CenterContainer/PopupBackground/VBoxContainer/CloseButton" to="." method="_on_close_button_pressed"]
