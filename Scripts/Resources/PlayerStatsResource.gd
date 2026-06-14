@@ -4,10 +4,10 @@ class_name PlayerStatsResource
 # Player stats that match Firebase structure
 @export var level: int = 1
 @export var experience: int = 0
-@export var health: int = 100
+@export var health: int = 95
 @export var damage: int = 10
 @export var durability: int = 5
-@export var base_health: int = 100
+@export var base_health: int = 95
 @export var base_damage: int = 10
 @export var base_durability: int = 5
 @export var energy: int = 20

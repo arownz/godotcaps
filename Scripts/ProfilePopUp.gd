@@ -149,11 +149,11 @@ func load_user_data():
 						user_data["level"] = player_stats.get("level", 1)
 						user_data["energy"] = player_stats.get("energy", 20)
 						user_data["max_energy"] = 20 # This is fixed at 20
-						user_data["health"] = player_stats.get("health", 100)
+						user_data["health"] = player_stats.get("health", 95)
 						user_data["attack"] = player_stats.get("damage", 10)
 						user_data["durability"] = player_stats.get("durability", 5)
 						# Store base stats for bonus calculation
-						user_data["base_health"] = player_stats.get("base_health", 100)
+						user_data["base_health"] = player_stats.get("base_health", 95)
 						user_data["base_damage"] = player_stats.get("base_damage", 10)
 						user_data["base_durability"] = player_stats.get("base_durability", 5)
 						# Store the full stats data for character animation
@@ -306,10 +306,10 @@ func _create_user_document(user_id):
 			"player": {
 				"level": 1,
 				"exp": 0,
-				"health": 100,
+				"health": 95,
 				"damage": 10,
 				"durability": 5,
-				"base_health": 100,
+				"base_health": 95,
 				"base_damage": 10,
 				"base_durability": 5,
 				"energy": 20,
@@ -406,7 +406,7 @@ func update_ui():
 	
 	# Update base player stats (these increase with level up)
 	if has_node("ProfileContainer/StatsArea/HealthValue"):
-		var base_health = user_data.get("base_health", user_data.get("health", 100))
+		var base_health = user_data.get("base_health", user_data.get("health", 95))
 		$ProfileContainer/StatsArea/HealthValue.text = str(base_health)
 
 	if has_node("ProfileContainer/StatsArea/AttackValue"):
@@ -832,7 +832,7 @@ func _update_character_bonuses(data):
 	var player_stats = stats.get("player", {}) if typeof(stats) == TYPE_DICTIONARY else {}
 	
 	# Get base stats
-	var base_health = data.get("base_health", player_stats.get("base_health", 100))
+	var base_health = data.get("base_health", player_stats.get("base_health", 95))
 	var base_attack = data.get("base_damage", player_stats.get("base_damage", 10))
 	var base_durability = data.get("base_durability", player_stats.get("base_durability", 5))
 	

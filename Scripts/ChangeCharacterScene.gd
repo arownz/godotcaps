@@ -592,7 +592,7 @@ func _on_select_button_pressed():
 				var player_stats = stats["player"]
 				
 				# PRESERVE base stats from leveling - these should never change when switching characters
-				var base_health = player_stats.get("base_health", 100)
+				var base_health = player_stats.get("base_health", 95)
 				var base_damage = player_stats.get("base_damage", 10)
 				var base_durability = player_stats.get("base_durability", 5)
 				

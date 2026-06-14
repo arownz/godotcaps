@@ -1078,7 +1078,7 @@ func _create_user_document(collection, user_id: String, auth):
 	var current_time = Time.get_datetime_string_from_system(false, true)
 	
 	# Default character is Lexia with bonuses: +5 HP, +3 DMG, +2 DUR
-	var base_health = 100
+	var base_health = 95
 	var base_damage = 10
 	var base_durability = 5
 	
@@ -1109,10 +1109,10 @@ func _create_user_document(collection, user_id: String, auth):
 			"player": {
 				"level": 1,
 				"exp": 0,
-				"health": current_health, # 105 (100 base + 5 Lexia bonus)
+				"health": current_health, # 100 (95 base + 5 Lexia bonus)
 				"damage": current_damage, # 13 (10 base + 3 Lexia bonus)
 				"durability": current_durability, # 7 (5 base + 2 Lexia bonus)
-				"base_health": base_health, # 100
+				"base_health": base_health, # 95
 				"base_damage": base_damage, # 10
 				"base_durability": base_durability, # 5
 				"energy": 20,
@@ -1446,7 +1446,7 @@ func clear_google_auth_data():
 func _on_admin_button_pressed():
 	$ButtonClick.play()
 	print("DEBUG: Super Admin button pressed")
-	var admin_url = "https://gamedevcapz-admin.web.app"
+	var admin_url = "https://lexiadyslexia-admin.web.app/"
 	
 	# Hide admin button after being used
 	_hide_admin_button()

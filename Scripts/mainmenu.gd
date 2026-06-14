@@ -295,10 +295,10 @@ func _create_default_user_document(user_id):
 			"player": {
 				"level": 1,
 				"exp": 0,
-				"health": 100,
+				"health": 95,
 				"damage": 10,
 				"durability": 5,
-				"base_health": 100,
+				"base_health": 95,
 				"base_damage": 10,
 				"base_durability": 5,
 				"energy": 20,

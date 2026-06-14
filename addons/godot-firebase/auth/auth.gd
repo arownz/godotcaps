@@ -393,7 +393,7 @@ func _tcp_stream_timer() -> void:
 				tcp_server.stop()
 				return
 
-			var data: PackedByteArray = '<p style="text-align:center">&#128293; You can close this window now. &#128293;</p>'.to_ascii_buffer()
+			var data: PackedByteArray = '<p style="text-align:center; font-family: system-ui, sans-serif; font-size: 18px; color: #1a1a2e; background: linear-gradient(135deg, #e8f5e9, #c8e6c9); padding: 40px; border-radius: 12px; margin: 0; min-width: 320px; box-shadow: 0 4px 24px rgba(0,0,0,0.1);">&#128293; Authenticated! You may close this window. &#128293;</p>'.to_ascii_buffer()
 			peer.put_data(("HTTP/1.1 200 OK\n").to_ascii_buffer())
 			peer.put_data(("Server: Godot Firebase SDK\n").to_ascii_buffer())
 			peer.put_data(("Content-Length: %d\n" % data.size()).to_ascii_buffer())

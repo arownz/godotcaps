@@ -64,7 +64,7 @@ erDiagram
         int health "current HP with character bonus"
         int damage "current DMG with character bonus"
         int durability "current DUR with character bonus"
-        int base_health "100"
+        int base_health "95"
         int base_damage "10"
         int base_durability "5"
         int energy "max 20"
@@ -303,7 +303,7 @@ dyslexia_users/
   - `health`: Current HP (base + character bonus)
   - `damage`: Current attack (base + character bonus)
   - `durability`: Current defense (base + character bonus)
-  - `base_health`: Starting HP (100)
+  - `base_health`: Starting HP (95)
   - `base_damage`: Starting attack (10)
   - `base_durability`: Starting defense (5)
   - `energy`: Battle energy (max 20, regenerates over time)

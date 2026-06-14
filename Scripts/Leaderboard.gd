@@ -411,12 +411,12 @@ func _extract_user_data(document) -> Dictionary:
 	if stats and typeof(stats) == TYPE_DICTIONARY:
 		var player_stats = stats.get("player", {})
 		user_data["level"] = player_stats.get("level", 1)
-		user_data["health"] = player_stats.get("health", 100)
+		user_data["health"] = player_stats.get("health", 95)
 		user_data["damage"] = player_stats.get("damage", 10)
 		user_data["durability"] = player_stats.get("durability", 5)
 	else:
 		user_data["level"] = 1
-		user_data["health"] = 100
+		user_data["health"] = 95
 		user_data["damage"] = 10
 		user_data["durability"] = 5
 	

@@ -14,8 +14,8 @@ var player_animation
 
 # Player properties
 var player_name = "Player"
-var player_health = 100
-var player_max_health = 100 # Max health is calculated based on level
+var player_health = 95
+var player_max_health = 95 # Max health is calculated based on level
 var player_damage = 10
 var player_exp = 0
 var player_max_exp = 100 # Max exp needed for leveling up
@@ -37,7 +37,7 @@ var character_bonuses = {
 }
 
 # Base stats (without character bonuses)
-var base_health = 100
+var base_health = 95
 var base_damage = 10
 var base_durability = 5
 
@@ -111,7 +111,7 @@ func load_player_data_from_firebase():
 			var character_stat_bonuses = _get_character_bonuses(current_skin)
 			
 			# Load base stats first - these are the stats that increase with leveling up
-			base_health = player_data.get("base_health", 100)
+			base_health = player_data.get("base_health", 95)
 			base_damage = player_data.get("base_damage", 10)
 			base_durability = player_data.get("base_durability", 5)
 			
@@ -123,7 +123,7 @@ func load_player_data_from_firebase():
 				print("PlayerManager: Base stats not found in Firebase - initializing with character bonuses")
 				
 				# Get current health/damage/durability from Firebase (may or may not have bonuses)
-				var current_health = player_data.get("health", 100)
+				var current_health = player_data.get("health", 95)
 				var current_damage = player_data.get("damage", 10)
 				var current_durability = player_data.get("durability", 5)
 				
@@ -195,7 +195,7 @@ func _set_default_player_data():
 		"username": "Player",
 		"level": 1,
 		"exp": 0,
-		"health": 100,
+		"health": 95,
 		"damage": 10,
 		"durability": 5,
 		"energy": 20
@@ -205,7 +205,7 @@ func _set_default_stats():
 	# Set default values if Firebase data is not available
 	player_level = 1
 	player_exp = 0
-	player_max_health = 100
+	player_max_health = 95
 	player_health = player_max_health
 	player_damage = 10
 	player_durability = 5
@@ -220,7 +220,7 @@ func _load_player_stats():
 		player_name = player_firebase_data.get("username", "Player")
 		player_level = player_firebase_data.get("level", 1)
 		player_exp = player_firebase_data.get("exp", 0)
-		player_max_health = player_firebase_data.get("health", 100)
+		player_max_health = player_firebase_data.get("health", 95)
 		player_health = player_max_health
 		player_damage = player_firebase_data.get("damage", 10)
 		player_durability = player_firebase_data.get("durability", 5)
@@ -434,7 +434,7 @@ func add_experience(exp_amount):
 		
 		# Calculate scaling factor based on current base stats (diminishing returns)
 		# As stats grow higher, the chance and size of increases become smaller
-		var health_scaling = max(0.2, 1.0 - (base_health - 100) / 200.0) # Scales from 100% at start to 20% at high levels
+		var health_scaling = max(0.2, 1.0 - (base_health - 95) / 200.0) # Scales from 100% at start to 20% at high levels
 		var damage_scaling = max(0.15, 1.0 - (base_damage - 10) / 50.0) # Scales from 100% to 15%
 		var durability_scaling = max(0.15, 1.0 - (base_durability - 5) / 30.0) # Scales from 100% to 15%
 		
