@@ -178,17 +178,16 @@ func _setup_hover_functionality():
 	$PreviousButton.mouse_entered.connect(_on_previous_button_hover_entered)
 	$PreviousButton.mouse_exited.connect(_on_previous_button_hover_exited)
 
-	$SelectButton.mouse_entered.connect(_on_select_button_hover_entered)
+	$SelectButton.mouse_entered.connect(_on_select_button_hover_entered)	
 
 	# Connect hover sounds for each character texture button
 	for i in range(CHARACTER_COUNT):
 		var character_node = character_carousel.get_child(i)
 		var texture_button = character_node.get_node("TextureButton")
 		if texture_button and !texture_button.is_connected("mouse_entered", _on_character_texture_hover):
-			texture_button.mouse_entered.connect(_on_character_texture_hover)
-		# (Optional) play sound on focus via keyboard navigation
-		if texture_button and !texture_button.is_connected("focus_entered", _on_character_texture_hover):
-			texture_button.focus_entered.connect(_on_character_texture_hover)
+			texture_button.mouse_entered.connect(_on_character_texture_hover.bind(i))
+		if texture_button and !texture_button.is_connected("mouse_exited", _on_character_button_exited):
+			texture_button.mouse_exited.connect(_on_character_button_exited)
 
 # Show character stats in custom popup
 func _show_character_stats_popup(character_index: int):
@@ -540,8 +539,17 @@ func _on_previous_button_hover_exited():
 func _on_select_button_hover_entered():
 	$ButtonHover.play()
 
-func _on_character_texture_hover():
+func _on_character_texture_hover(character_index: int):
 	$ButtonHover.play()
+	var is_unlocked = character_index < unlocked_characters
+	var view_stats_label = $CharacterContainer/ViewLabel
+	if view_stats_label:
+		view_stats_label.visible = is_unlocked
+
+func _on_character_button_exited():
+	var view_stats_label = $CharacterContainer/ViewLabel
+	if view_stats_label:
+		view_stats_label.visible = false
 
 func _on_close_button_hover():
 	$ButtonHover.play()

@@ -101,9 +101,12 @@ offset_bottom = 545.0
 
 [node name="TextureButton" type="TextureButton" parent="CharacterContainer/CharacterCarousel/Character1" unique_id=1366797473]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
+anchors_preset = -1
+anchor_left = 0.28300002
+anchor_right = 0.75200003
 anchor_bottom = 1.0
+offset_left = 0.19998169
+offset_right = -0.2000122
 grow_horizontal = 2
 grow_vertical = 2
 mouse_default_cursor_shape = 2
@@ -133,8 +136,8 @@ horizontal_alignment = 1
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
-offset_top = 366.0
-offset_bottom = 411.0
+offset_top = 403.0
+offset_bottom = 448.0
 grow_horizontal = 2
 theme_override_colors/font_color = Color(0.501961, 0.988235, 0.501961, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -155,9 +158,11 @@ offset_bottom = 545.0
 
 [node name="TextureButton" type="TextureButton" parent="CharacterContainer/CharacterCarousel/Character2" unique_id=1403768217]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
+anchors_preset = -1
+anchor_left = 0.27
+anchor_right = 0.72800004
 anchor_bottom = 1.0
+offset_right = 0.19998169
 grow_horizontal = 2
 grow_vertical = 2
 mouse_default_cursor_shape = 2
@@ -187,8 +192,8 @@ horizontal_alignment = 1
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
-offset_top = 366.0
-offset_bottom = 411.0
+offset_top = 403.0
+offset_bottom = 448.0
 grow_horizontal = 2
 theme_override_colors/font_color = Color(1, 0.4, 0.4, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
@@ -197,6 +202,26 @@ theme_override_constants/shadow_offset_y = 2
 theme_override_fonts/font = ExtResource("8_8uolc")
 theme_override_font_sizes/font_size = 24
 text = "Not Unlocked"
+horizontal_alignment = 1
+
+[node name="ViewLabel" type="Label" parent="CharacterContainer" unique_id=2066376087]
+visible = false
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -181.0
+offset_top = 281.0
+offset_right = 185.0
+offset_bottom = 326.83337
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.9764706, 1, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_fonts/font = ExtResource("8_8uolc")
+theme_override_font_sizes/font_size = 16
+text = "Click to view stats"
 horizontal_alignment = 1
 
 [node name="NextButton" type="TextureButton" parent="." unique_id=88168946]
@@ -271,10 +296,10 @@ horizontal_alignment = 1
 physics_interpolation_mode = 0
 custom_minimum_size = Vector2(250, 0)
 layout_mode = 0
-offset_left = 574.0
-offset_top = 667.0
-offset_right = 824.0
-offset_bottom = 764.0
+offset_left = 570.0
+offset_top = 678.0
+offset_right = 820.0
+offset_bottom = 775.0
 scale = Vector2(1.24648, 1.24648)
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -531,6 +556,5 @@ stream = ExtResource("14_ccovg")
 [connection signal="pressed" from="CharacterContainer/CharacterCarousel/Character2/TextureButton" to="." method="_on_character2_pressed"]
 [connection signal="pressed" from="NextButton" to="." method="_on_next_button_pressed"]
 [connection signal="pressed" from="PreviousButton" to="." method="_on_previous_button_pressed"]
-[connection signal="mouse_entered" from="SelectButton" to="." method="_on_select_button_hover_exited"]
 [connection signal="pressed" from="SelectButton" to="." method="_on_select_button_pressed"]
 [connection signal="pressed" from="BackButton" to="." method="_on_back_button_pressed"]
