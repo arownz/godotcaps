@@ -888,6 +888,12 @@ func _previous_target():
 func _on_whiteboard_result(text_result: String):
 	print("PhonicsLetters: Whiteboard result -> ", text_result)
 	
+	# Handle recognition errors gracefully - show a friendly message instead of raw error text
+	if text_result.begins_with("recognition_error") or text_result.begins_with("no_text_detected"):
+		print("PhonicsLetters: Recognition error - showing friendly message")
+		_show_could_not_read_message()
+		return
+	
 	# Enhanced recognition with letter-specific OCR correction and dyslexia-friendly matching
 	var recognized_text = text_result.strip_edges().to_upper()
 	var target_letter = current_target.to_upper()
@@ -969,7 +975,7 @@ func _on_whiteboard_result(text_result: String):
 			print("PhonicsLetters: ModuleProgress not available, using local session progress")
 		
 		_show_completion_celebration(target_letter, progress_data)
-	elif not text_result.begins_with("recognition_error"):
+	else:
 		print("PhonicsLetters: Letter not recognized correctly. Expected: ", target_letter, ", Got: ", recognized_text)
 		
 		# Track whiteboard failure for leaderboard analytics
@@ -1013,6 +1019,17 @@ func _show_completion_celebration(letter: String, progress_data: Dictionary):
 	if completion_celebration and completion_celebration.has_method("show_completion"):
 		completion_celebration.show_completion(0, letter, progress_data, "phonics") # 0 = CompletionType.LETTER, "phonics" = module_key
 
+func _show_could_not_read_message():
+	"""Show a friendly message when the whiteboard couldn't read the writing at all"""
+	if not notification_popup:
+		var popup_scene = load("res://Scenes/NotificationPopUp.tscn")
+		if popup_scene:
+			notification_popup = popup_scene.instantiate()
+			add_child(notification_popup)
+	
+	if notification_popup and notification_popup.has_method("show_notification"):
+		notification_popup.show_notification("Couldn't read that!", "I couldn't make out what you drew. Try writing the letter more clearly?", "OK")
+
 func _show_encouragement_message(recognized: String, expected: String):
 	"""Show encouraging message when letter isn't quite right"""
 	if not notification_popup:
@@ -1031,7 +1048,7 @@ func _show_encouragement_message(recognized: String, expected: String):
 		notification_popup.connect("button_pressed", Callable(self, "_on_encouragement_continue"))
 	
 	if notification_popup and notification_popup.has_method("show_notification"):
-		var message = "Great try! I see you wrote '" + recognized + "'.\n\nLet's practice the letter '" + expected + "' again.\nTrace it carefully."
+		var message = "I saw you wrote '" + recognized + "'.\n\nLet's try the letter '" + expected + "' again. Trace it carefully!"
 		notification_popup.show_notification("Keep Practicing!", message, "Again")
 
 func _on_encouragement_continue():

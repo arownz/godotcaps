@@ -133,14 +133,14 @@ func _on_word_fetched():
 	if random_word_api.last_error == "":
 		api_status_label.text = ""
 	else:
-		api_status_label.text = "Word loading failed. Please try again."
+		api_status_label.text = "Couldn't load a word. Using a backup instead."
 		
 		# If API fails, use a fallback word
 		if challenge_word.is_empty():
 			var fallback_words = ["cat", "dog", "tree", "book", "pen", "car", "sun", "moon", "fish", "house"]
 			challenge_word = fallback_words[randi() % fallback_words.size()]
 			random_word_label.text = challenge_word
-			api_status_label.text = "Using fallback word"
+			api_status_label.text = "Using a backup word"
 	
 	# Store the challenge word in JavaScript for debugging
 	if OS.has_feature("JavaScript"):
@@ -162,7 +162,7 @@ func _on_drawing_submitted(text_result):
 		recognized_text = text_result.to_lower().strip_edges()
 		
 		# Check for special error messages to handle them separately
-		if recognized_text == "no_text_detected" or recognized_text == "recognition_error":
+		if recognized_text.begins_with("recognition_error") or recognized_text == "no_text_detected":
 			print("Special error case detected: " + recognized_text)
 		else:
 			# More sophisticated normalization for normal text results
@@ -270,7 +270,7 @@ func _on_result_panel_continue_pressed(was_successful: bool):
 
 # Simple failure handling function
 func _fail_challenge():
-	api_status_label.text = "You failed to counter the skill"
+	api_status_label.text = "Couldn't counter the skill in time"
 	await get_tree().create_timer(1.0).timeout
 	_fade_out_and_signal("challenge_failed")
 

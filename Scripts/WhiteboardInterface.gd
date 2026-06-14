@@ -554,6 +554,10 @@ func _on_recognition_completed(text_result: String):
 	# Re-enable buttons after recognition
 	_re_enable_buttons()
 	
+	# Normalize "no_text_detected" into error prefix so consumers can detect it
+	if text_result == "no_text_detected":
+		text_result = "recognition_error:no text detected"
+	
 	# Emit signal with recognized text
 	emit_signal("drawing_submitted", text_result)
 
@@ -569,25 +573,26 @@ func _on_recognition_error(error_msg: String):
 	_re_enable_buttons()
 	
 	# Humanize error messages for better user experience
-	var user_friendly_msg = "recognition_error"
+	# All error labels are prefixed with "recognition_error:" so consumers can detect them
+	var user_friendly_msg = "recognition_error:couldn't read"
 	if "Failed to start recognition" in error_msg:
-		user_friendly_msg = "Not Recognized"
-		_show_status_message("Could not analyze your writing. Please try again.", Color(1, 0.3, 0.3, 1))
+		user_friendly_msg = "recognition_error:not recognized"
+		_show_status_message("Hmm, I couldn't read that. Try writing again?", Color(1, 0.3, 0.3, 1))
 	elif "Vision API not available" in error_msg:
-		user_friendly_msg = "Unavailable"
-		_show_status_message("Recognition service unavailable. Please try again later.", Color(1, 0.3, 0.3, 1))
+		user_friendly_msg = "recognition_error:service unavailable"
+		_show_status_message("The recognition service is unavailable right now. Please try again later.", Color(1, 0.3, 0.3, 1))
 	elif "Request timed out" in error_msg:
-		user_friendly_msg = "Too long"
-		_show_status_message("Analysis timed out. Please try again.", Color(1, 0.3, 0.3, 1))
+		user_friendly_msg = "recognition_error:took too long"
+		_show_status_message("It's taking too long to process. Please try again.", Color(1, 0.3, 0.3, 1))
 	elif "Empty result received" in error_msg:
-		user_friendly_msg = "Couldn't read"
-		_show_status_message("Could not read your writing. Please try writing more clearly.", Color(1, 0.3, 0.3, 1))
+		user_friendly_msg = "recognition_error:couldn't read"
+		_show_status_message("I couldn't make out what you wrote. Try writing more clearly?", Color(1, 0.3, 0.3, 1))
 	elif "JavaScript bridge unavailable" in error_msg:
-		user_friendly_msg = "System error"
-		_show_status_message("System error. Please try again.", Color(1, 0.3, 0.3, 1))
+		user_friendly_msg = "recognition_error:something went wrong"
+		_show_status_message("Something went wrong. Please try again.", Color(1, 0.3, 0.3, 1))
 	else:
-		user_friendly_msg = "Unable"
-		_show_status_message("Unable to read your writing. Please try again.", Color(1, 0.3, 0.3, 1))
+		user_friendly_msg = "recognition_error:couldn't read"
+		_show_status_message("I couldn't read that. Please try again.", Color(1, 0.3, 0.3, 1))
 
 	# Hide status message after some time
 	await get_tree().create_timer(3.0).timeout

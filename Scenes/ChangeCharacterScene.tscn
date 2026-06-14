@@ -204,16 +204,16 @@ theme_override_font_sizes/font_size = 24
 text = "Not Unlocked"
 horizontal_alignment = 1
 
-[node name="ViewLabel" type="Label" parent="CharacterContainer" unique_id=2066376087]
+[node name="ViewLabel" type="Label" parent="CharacterContainer/CharacterCarousel" unique_id=1378736006]
 visible = false
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -181.0
-offset_top = 281.0
-offset_right = 185.0
-offset_bottom = 326.83337
+offset_left = -179.0
+offset_top = 562.0
+offset_right = 187.0
+offset_bottom = 607.8334
 grow_horizontal = 2
 theme_override_colors/font_color = Color(0.9764706, 1, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
