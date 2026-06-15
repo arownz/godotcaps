@@ -542,14 +542,17 @@ func _on_select_button_hover_entered():
 func _on_character_texture_hover(character_index: int):
 	$ButtonHover.play()
 	var is_unlocked = character_index < unlocked_characters
-	var view_stats_label = $CharacterContainer/ViewLabel
+	var character_node = character_carousel.get_child(character_index)
+	var view_stats_label = character_node.get_node_or_null("ViewLabel")
 	if view_stats_label:
 		view_stats_label.visible = is_unlocked
 
 func _on_character_button_exited():
-	var view_stats_label = $CharacterContainer/ViewLabel
-	if view_stats_label:
-		view_stats_label.visible = false
+	for i in range(CHARACTER_COUNT):
+		var character_node = character_carousel.get_child(i)
+		var view_stats_label = character_node.get_node_or_null("ViewLabel")
+		if view_stats_label:
+			view_stats_label.visible = false
 
 func _on_close_button_hover():
 	$ButtonHover.play()

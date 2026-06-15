@@ -378,9 +378,9 @@ func _on_mob_button_pressed(type, index):
 	
 	$StageDetails/LeftContainer/MonsterName.text = enemy_data["name"].to_upper()
 	$StageDetails/RightContainer/Info.text = enemy_data["description"]
-	$StageDetails/RightContainer/Health.text = str(enemy_data["health"])
-	$StageDetails/RightContainer/Attack.text = str(enemy_data["attack"])
-	$StageDetails/RightContainer/Durability.text = str(enemy_data["durability"])
+	$StageDetails/RightContainer/Health.text = str(enemy_data["health"]) + " HP"
+	$StageDetails/RightContainer/Attack.text = str(enemy_data["attack"]) + " DMG"
+	$StageDetails/RightContainer/Durability.text = str(enemy_data["durability"]) + " DEF"
 	$StageDetails/RightContainer/SkillName.text = enemy_data["skill"]
 
 func _on_back_button_pressed():

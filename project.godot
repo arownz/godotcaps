@@ -16,14 +16,14 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 config/name="Lexia"
 config/description="2D Dyslexia Gamification Chromium Base"
-config/version="1.0"
+config/version="1.1"
 config/tags=PackedStringArray("dyslexia")
-run/main_scene="uid://csgj103sy7guc"
+run/main_scene="uid://cbpwvuj8kdyod"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 boot_splash/stretch_mode=0
+boot_splash/use_filter=false
 boot_splash/image="uid://dkkb8nek5d6fs"
 config/icon="uid://byhddv6cyomeu"
-boot_splash/minimum_display_time=2
 
 [audio]
 
@@ -70,6 +70,11 @@ folder_colors={
 "res://audio/": "red",
 "res://gui/": "teal"
 }
+
+[filesystem]
+
+import/fbx2gltf/enabled.web=true
+import/blender/enabled.web=true
 
 [gui]
 

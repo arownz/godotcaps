@@ -148,6 +148,26 @@ theme_override_font_sizes/font_size = 24
 text = "Selected"
 horizontal_alignment = 1
 
+[node name="ViewLabel" type="Label" parent="CharacterContainer/CharacterCarousel/Character1" unique_id=1378736006]
+visible = false
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -188.0
+offset_top = 260.0
+offset_right = 212.0
+offset_bottom = 305.83337
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.9764706, 1, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_fonts/font = ExtResource("8_8uolc")
+theme_override_font_sizes/font_size = 16
+text = "Click to view stats"
+horizontal_alignment = 1
+
 [node name="Character2" type="Control" parent="CharacterContainer/CharacterCarousel" unique_id=809641888]
 custom_minimum_size = Vector2(600, 500)
 anchors_preset = 0
@@ -204,16 +224,16 @@ theme_override_font_sizes/font_size = 24
 text = "Not Unlocked"
 horizontal_alignment = 1
 
-[node name="ViewLabel" type="Label" parent="CharacterContainer/CharacterCarousel" unique_id=1378736006]
+[node name="ViewLabel" type="Label" parent="CharacterContainer/CharacterCarousel/Character2" unique_id=1378736007]
 visible = false
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -179.0
-offset_top = 562.0
-offset_right = 187.0
-offset_bottom = 607.8334
+offset_left = -188.0
+offset_top = 260.0
+offset_right = 188.0
+offset_bottom = 305.83337
 grow_horizontal = 2
 theme_override_colors/font_color = Color(0.9764706, 1, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
