@@ -492,6 +492,7 @@ func set_energy_cost(cost: int) -> void:
 
 func _on_background_input(event):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		$ButtonClick.play()
 		_close_popup()
 
 func _close_popup():

@@ -70,8 +70,8 @@ func _ready():
 	scale = Vector2(0.8, 0.8)
 	var tween = create_tween()
 	tween.set_parallel(true)
-	tween.tween_property(self, "modulate:a", 1.0, 0.35).set_ease(Tween.EASE_OUT)
-	tween.tween_property(self, "scale", Vector2(1.0, 1.0), 0.35).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+	tween.tween_property(self , "modulate:a", 1.0, 0.35).set_ease(Tween.EASE_OUT)
+	tween.tween_property(self , "scale", Vector2(1.0, 1.0), 0.35).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
 	
 	# Preload character textures (only available characters)
 	character_textures.unlocked = [
@@ -178,7 +178,7 @@ func _setup_hover_functionality():
 	$PreviousButton.mouse_entered.connect(_on_previous_button_hover_entered)
 	$PreviousButton.mouse_exited.connect(_on_previous_button_hover_exited)
 
-	$SelectButton.mouse_entered.connect(_on_select_button_hover_entered)	
+	$SelectButton.mouse_entered.connect(_on_select_button_hover_entered)
 
 	# Connect hover sounds for each character texture button
 	for i in range(CHARACTER_COUNT):
@@ -264,6 +264,7 @@ func _on_character_stats_popup_close():
 
 func _on_character_stats_background_clicked(event):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		$ButtonClick.play()
 		_close_character_stats_popup()
 
 
@@ -437,7 +438,7 @@ func update_character_display():
 	next_button.visible = current_character < CHARACTER_COUNT - 1
 	
 	# Enable/disable select button based on selected character's unlock status
-	select_button.disabled = current_character >= unlocked_characters# Handle navigation buttons with LINEAR behavior (no wrapping)
+	select_button.disabled = current_character >= unlocked_characters # Handle navigation buttons with LINEAR behavior (no wrapping)
 func _on_next_button_pressed():
 	$ButtonClick.play()
 	if current_character < CHARACTER_COUNT - 1:
@@ -454,6 +455,7 @@ func _on_previous_button_pressed():
 
 # Handle character selection with LINEAR navigation and stats display
 func _on_character1_pressed():
+	$ButtonClick.play()
 	if unlocked_characters >= 1: # Character 1 is always unlocked
 		# Show character stats in custom popup
 		_show_character_stats_popup(0)
@@ -466,6 +468,7 @@ func _on_character1_pressed():
 	# No else needed since Character 1 is always unlocked
 
 func _on_character2_pressed():
+	$ButtonClick.play()
 	if unlocked_characters >= 2:
 		# Show character stats in custom popup
 		_show_character_stats_popup(1)
@@ -566,8 +569,8 @@ func _fade_out_and_change_scene(scene_path: String):
 	# Enhanced fade-out animation matching SettingScene style
 	var tween = create_tween()
 	tween.set_parallel(true)
-	tween.tween_property(self, "modulate:a", 0.0, 0.25).set_ease(Tween.EASE_IN)
-	tween.tween_property(self, "scale", Vector2(0.8, 0.8), 0.25).set_ease(Tween.EASE_IN)
+	tween.tween_property(self , "modulate:a", 0.0, 0.25).set_ease(Tween.EASE_IN)
+	tween.tween_property(self , "scale", Vector2(0.8, 0.8), 0.25).set_ease(Tween.EASE_IN)
 	await tween.finished
 	get_tree().change_scene_to_file(scene_path)
 

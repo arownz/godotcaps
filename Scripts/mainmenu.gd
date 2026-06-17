@@ -31,9 +31,6 @@ func _ready():
     # Setup hover buttons for UI interaction
     _setup_hover_buttons()
     
-    # Connect button signals
-    _connect_button_signals()
-    
     # Setup energy recovery timer
     energy_recovery_timer = Timer.new()
     energy_recovery_timer.wait_time = 1.0 # Update every second
@@ -137,27 +134,6 @@ func _setup_hover_buttons():
         if button_data.button and button_data.label:
             button_data.button.mouse_entered.connect(func(): _on_button_mouse_entered(button_data.label))
             button_data.button.mouse_exited.connect(func(): _on_button_mouse_exited(button_data.label))
-
-# Connect button signals to their respective handler functions
-func _connect_button_signals():
-    var journey_btn = $BottomButtonsContainer/JourneyButton
-    if journey_btn and !journey_btn.is_connected("pressed", _on_journey_mode_button_pressed):
-        journey_btn.pressed.connect(_on_journey_mode_button_pressed)
-    var modules_btn = $BottomButtonsContainer/ModulesButton
-    if modules_btn and !modules_btn.is_connected("pressed", _on_modules_button_pressed):
-        modules_btn.pressed.connect(_on_modules_button_pressed)
-    var character_btn = $BottomButtonsContainer/CharacterButton
-    if character_btn and !character_btn.is_connected("pressed", _on_character_button_pressed):
-        character_btn.pressed.connect(_on_character_button_pressed)
-    var leaderboard_btn = $BottomButtonsContainer/LeaderboardButton
-    if leaderboard_btn and !leaderboard_btn.is_connected("pressed", _on_leaderboard_button_pressed):
-        leaderboard_btn.pressed.connect(_on_leaderboard_button_pressed)
-    var settings_btn = $BottomButtonsContainer/SettingsButton
-    if settings_btn and !settings_btn.is_connected("pressed", _on_settings_button_pressed):
-        settings_btn.pressed.connect(_on_settings_button_pressed)
-    var profile_btn = $ProfileButton
-    if profile_btn and !profile_btn.is_connected("pressed", _on_profile_button_pressed):
-        profile_btn.pressed.connect(_on_profile_button_pressed)
 
 # Button hover handlers
 func _on_button_mouse_entered(label):
@@ -665,7 +641,7 @@ func _on_profile_button_pressed():
         
         # Connect the closed signal
         if profile_popup.has_signal("closed"):
-            profile_popup.connect("closed", Callable(self, "_on_profile_popup_closed"))
+            profile_popup.connect("closed", Callable(self , "_on_profile_popup_closed"))
 
 func _on_profile_button_mouse_entered():
     $ButtonHover.play()

@@ -15,7 +15,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 [application]
 
 config/name="Lexia"
-config/description="2D Dyslexia Gamification Chromium Base"
+config/description="2D Dyslexia Gamification HTML5 Chromium Based"
 config/version="1.1"
 config/tags=PackedStringArray("dyslexia")
 run/main_scene="uid://cbpwvuj8kdyod"
@@ -23,7 +23,7 @@ config/features=PackedStringArray("4.6", "GL Compatibility")
 boot_splash/stretch_mode=0
 boot_splash/use_filter=false
 boot_splash/image="uid://dkkb8nek5d6fs"
-config/icon="uid://byhddv6cyomeu"
+config/icon="uid://dkkb8nek5d6fs"
 
 [audio]
 

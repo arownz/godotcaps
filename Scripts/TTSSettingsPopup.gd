@@ -47,12 +47,6 @@ func _ready():
 	
 	# Show loading indicator
 	$Panel/ScrollContainer/VBoxContainer/StatusLabel.text = "Loading voices..."
-	
-	# Connect button hover events
-	if $Panel/ScrollContainer/VBoxContainer/HBoxContainer/TestButton:
-		$Panel/ScrollContainer/VBoxContainer/HBoxContainer/TestButton.mouse_entered.connect(_on_button_hover)
-	if $Panel/ScrollContainer/VBoxContainer/HBoxContainer/CloseButton:
-		$Panel/ScrollContainer/VBoxContainer/HBoxContainer/CloseButton.mouse_entered.connect(_on_button_hover)
 
 	# Initialize TTS if not already set
 	if not tts:
@@ -100,9 +94,6 @@ func _on_voice_option_pressed():
 		var max_height = panel_rect.size.y - 100 # Leave some margin
 		if popup.size.y > max_height:
 			popup.size.y = max_height
-
-func _on_button_hover():
-	$ButtonHover.play()
 
 func _initialize_tts():
 	"""Initialize TTS instance if not provided"""

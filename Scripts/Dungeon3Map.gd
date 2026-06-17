@@ -88,6 +88,7 @@ func _unhandled_input(event):
 			var rect = $StageDetails.get_global_rect()
 			
 			if not rect.has_point(click_pos):
+				$ButtonClick.play()
 				$StageDetails.visible = false
 				$SelectLevel.visible = true # Show SelectLevel when StageDetails is closed
 				get_viewport().set_input_as_handled()

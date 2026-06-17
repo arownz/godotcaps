@@ -41,6 +41,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 
 [node name="PopupBackground" type="TextureRect" parent="PopupContainer/CenterContainer" unique_id=867914117]
 custom_minimum_size = Vector2(500, 210)
