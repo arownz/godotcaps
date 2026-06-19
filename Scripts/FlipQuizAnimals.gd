@@ -202,12 +202,11 @@ func _initialize_game():
 	matched_pairs = 0
 	attempts = 0
 	
-	# Update instruction for current animal
-	_update_instruction()
 	_update_navigation_buttons()
 	
 	# Create flip cards
 	_create_flip_cards()
+	_update_instruction()
 	_update_score_display()
 
 func _update_instruction():
@@ -249,14 +248,14 @@ func _update_instruction():
 		# Set BBCode text for color highlighting (RichTextLabel)
 		instruction_label.bbcode_text = target_text
 		
-		instruction_label.add_theme_font_override("font", preload("res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf"))
-		instruction_label.add_theme_font_size_override("font_size", 36) # Slightly smaller for longer text
-		instruction_label.add_theme_color_override("font_color", Color.BLACK) # Default black color
+		instruction_label.add_theme_font_override("normal_font", preload("res://Fonts/dyslexiafont/OpenDyslexic-Bold.otf"))
+		instruction_label.add_theme_font_size_override("normal_font_size", 36) # Slightly smaller for longer text
+		instruction_label.add_theme_color_override("default_color", Color.BLACK) # Default black color
 		instruction_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	else:
 		# All targets completed - show replay message
 		instruction_label.text = "Great job! All animals found!"
-		instruction_label.add_theme_color_override("font_color", Color(0.2, 0.6, 0.2, 1))
+		instruction_label.add_theme_color_override("default_color", Color(0.2, 0.6, 0.2, 1))
 
 func _update_navigation_buttons():
 	"""Update visibility of previous/next buttons"""
@@ -615,12 +614,9 @@ func _on_guide_button_pressed():
 		_speak_text_simple(guide_text)
 		
 		# Connect to TTS finished signal to reset button
-		if tts.has_signal("utterance_finished"):
-			if not tts.utterance_finished.is_connected(_on_guide_tts_finished):
-				tts.utterance_finished.connect(_on_guide_tts_finished)
-		elif tts.has_signal("finished"):
-			if not tts.finished.is_connected(_on_guide_tts_finished):
-				tts.finished.connect(_on_guide_tts_finished)
+		if tts.has_signal("speech_finished"):
+			if not tts.speech_finished.is_connected(_on_guide_tts_finished):
+				tts.speech_finished.connect(_on_guide_tts_finished)
 
 func _on_guide_tts_finished():
 	"""Reset guide button when TTS finishes"""
@@ -701,20 +697,17 @@ func _on_hear_button_pressed():
 		var sound_node = get_node_or_null(animal.sound_node)
 		if sound_node:
 			sound_node.play()
-		
-		# Wait a moment, then speak the animal name clearly (secondary hint)
-		await get_tree().create_timer(2.0).timeout
-		if tts and hear_button and hear_button.text == "Stop": # Check if still in Stop mode
-			var hint_text = animal.name.capitalize() + ". Find the picture and the word!"
-			_speak_text_simple(hint_text)
 			
+			# Wait a moment, then speak the animal name clearly (secondary hint)
+			await get_tree().create_timer(2.5).timeout
+			if tts and hear_button and hear_button.text == "Stop": # Check if still in Stop mode
+				var hint_text = animal.name.capitalize() + ". Find the picture and the word!"
+				_speak_text_simple(hint_text)
+
 			# Connect to TTS finished signal to reset button
-			if tts.has_signal("utterance_finished"):
-				if not tts.utterance_finished.is_connected(_on_hear_tts_finished):
-					tts.utterance_finished.connect(_on_hear_tts_finished)
-			elif tts.has_signal("finished"):
-				if not tts.finished.is_connected(_on_hear_tts_finished):
-					tts.finished.connect(_on_hear_tts_finished)
+			if tts.has_signal("speech_finished"):
+				if not tts.speech_finished.is_connected(_on_hear_tts_finished):
+					tts.speech_finished.connect(_on_hear_tts_finished)
 		else:
 			# Reset button if interrupted
 			if hear_button:
@@ -731,10 +724,24 @@ func _on_hear_tts_finished():
 		# Visual hint: briefly highlight the target animal name in the instruction
 		var instruction_label = $MainContainer/ContentContainer/InstructionPanel/InstructionContainer/TargetLabel
 		if instruction_label:
-			var original_color = instruction_label.get_theme_color("font_color")
-			instruction_label.add_theme_color_override("font_color", Color(1.0, 0.6, 0.0, 1)) # Orange highlight
-			await get_tree().create_timer(2.0).timeout
-			instruction_label.add_theme_color_override("font_color", original_color)
+			instruction_label.add_theme_color_override("default_color", Color(1.0, 0.6, 0.0, 1)) # Orange highlight
+			# Use Timer instead of await so script reloads don't cancel the color reset
+			_cleanup_highlight_timer()
+			var timer = Timer.new()
+			timer.name = "LabelHighlightTimer"
+			timer.one_shot = true
+			timer.timeout.connect(_on_label_highlight_timer_timeout)
+			add_child(timer)
+			timer.start(2.0)
+
+func _on_label_highlight_timer_timeout():
+	"""Restore label color after highlight timer expires"""
+	var existing = get_node_or_null("LabelHighlightTimer")
+	if existing:
+		existing.queue_free()
+	var instruction_label = $MainContainer/ContentContainer/InstructionPanel/InstructionContainer/TargetLabel
+	if is_instance_valid(instruction_label):
+		instruction_label.add_theme_color_override("default_color", Color.BLACK)
 
 func _on_next_button_pressed():
 	$ButtonClick.play()
@@ -753,8 +760,21 @@ func _on_next_button_pressed():
 		if tts:
 			_speak_text_simple("Now focusing on " + animal.name)
 
+func _cleanup_highlight_timer():
+	var existing = get_node_or_null("LabelHighlightTimer")
+	if existing:
+		existing.stop()
+		existing.queue_free()
+
 func _fade_out_and_change_scene(scene_path: String):
-	# Stop any playing TTS before changing scenes
+	# Disconnect TTS signals to prevent callbacks during transition
+	if tts and tts.has_signal("speech_finished"):
+		if tts.speech_finished.is_connected(_on_hear_tts_finished):
+			tts.speech_finished.disconnect(_on_hear_tts_finished)
+		if tts.speech_finished.is_connected(_on_guide_tts_finished):
+			tts.speech_finished.disconnect(_on_guide_tts_finished)
+	
+	_cleanup_highlight_timer()
 	_stop_tts()
 	
 	var tween = create_tween()
@@ -770,6 +790,7 @@ func _stop_tts():
 		print("FlipQuizAnimals: TTS stopped before scene change")
 
 func _exit_tree():
+	_cleanup_highlight_timer()
 	_stop_tts()
 
 # Direct Firebase flip quiz completion update using working authentication.gd pattern

@@ -184,18 +184,10 @@ func _init_tts():
 	
 	# Connect TTS finished signal for guided reading flow
 	if tts:
-		# Check what signals are available and connect the appropriate one
-		if tts.has_signal("utterance_finished"):
-			tts.utterance_finished.connect(_on_tts_finished)
-			print("ReadAloudGuided: Connected to utterance_finished signal")
-		elif tts.has_signal("finished"):
-			tts.finished.connect(_on_tts_finished)
-			print("ReadAloudGuided: Connected to finished signal")
-		elif tts.has_signal("speaking_finished"):
-			tts.speaking_finished.connect(_on_tts_finished)
-			print("ReadAloudGuided: Connected to speaking_finished signal")
-		else:
-			print("ReadAloudGuided: No suitable TTS finished signal found")
+		# Connect to TTS finished signal
+		if tts.has_signal("speech_finished"):
+			tts.speech_finished.connect(_on_tts_finished)
+			print("ReadAloudGuided: Connected to speech_finished signal")
 			use_timer_fallback_for_tts = true
 	
 	# ALWAYS create a backup timer to ensure button resets even if TTS signals fail
@@ -2253,12 +2245,9 @@ func _on_guide_button_pressed():
 		tts.speak(guide_text)
 		
 		# Connect to TTS finished signal to reset button
-		if tts.has_signal("utterance_finished"):
-			if not tts.utterance_finished.is_connected(_on_guide_tts_finished):
-				tts.utterance_finished.connect(_on_guide_tts_finished)
-		elif tts.has_signal("finished"):
-			if not tts.finished.is_connected(_on_guide_tts_finished):
-				tts.finished.connect(_on_guide_tts_finished)
+		if tts.has_signal("speech_finished"):
+			if not tts.speech_finished.is_connected(_on_guide_tts_finished):
+				tts.speech_finished.connect(_on_guide_tts_finished)
 
 func _on_guide_tts_finished():
 	"""Reset guide button when TTS finishes"""

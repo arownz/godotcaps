@@ -185,6 +185,10 @@ func _update_content(module_key: String = "phonics"):
 				if next_btn:
 					next_btn.text = "Next"
 					next_btn.visible = true
+					if percent >= 100.0:
+						next_btn.visible = false
+					else:
+						next_btn.visible = true
 		
 		CompletionType.FLIP_VEHICLE:
 			if title_label:

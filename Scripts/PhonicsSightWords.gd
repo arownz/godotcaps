@@ -275,12 +275,9 @@ func _on_HearButton_pressed():
 		_speak_text_simple(spell_text)
 		
 		# Connect to TTS finished signal to reset button
-		if tts.has_signal("utterance_finished"):
-			if not tts.utterance_finished.is_connected(_on_hear_tts_finished):
-				tts.utterance_finished.connect(_on_hear_tts_finished)
-		elif tts.has_signal("finished"):
-			if not tts.finished.is_connected(_on_hear_tts_finished):
-				tts.finished.connect(_on_hear_tts_finished)
+		if tts.has_signal("speech_finished"):
+			if not tts.speech_finished.is_connected(_on_hear_tts_finished):
+				tts.speech_finished.connect(_on_hear_tts_finished)
 
 func _on_hear_tts_finished():
 	"""Reset hear button when TTS finishes"""
@@ -353,12 +350,9 @@ func _on_guide_button_pressed():
 		_speak_text_simple(guide_text)
 		
 		# Connect to TTS finished signal to reset button
-		if tts.has_signal("utterance_finished"):
-			if not tts.utterance_finished.is_connected(_on_guide_tts_finished):
-				tts.utterance_finished.connect(_on_guide_tts_finished)
-		elif tts.has_signal("finished"):
-			if not tts.finished.is_connected(_on_guide_tts_finished):
-				tts.finished.connect(_on_guide_tts_finished)
+		if tts.has_signal("speech_finished"):
+			if not tts.speech_finished.is_connected(_on_guide_tts_finished):
+				tts.speech_finished.connect(_on_guide_tts_finished)
 
 func _on_guide_tts_finished():
 	"""Reset guide button when TTS finishes"""
