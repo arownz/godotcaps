@@ -30,7 +30,10 @@ var music_excluded_scenes: Array[String] = [
 	"Setting",
 	"TTSSettingsPopup",
 	"NotificationPopUp",
-	"EnemySkillIndicator"
+	"EnemySkillIndicator",
+	"ProfilePopUp",
+	"TipsPopup",
+	"TermsPrivacyPopup"
 ]
 
 func _ready():

@@ -26,6 +26,7 @@ var engage_permanently_hidden: bool = false # Once true, engage button stays hid
 @onready var sfx_volume_value = get_node_or_null("SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/SFXVolumeContainer/SFXVolumeValue")
 @onready var music_volume_slider = get_node_or_null("SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MusicVolumeContainer/MusicVolumeSlider")
 @onready var music_volume_value = get_node_or_null("SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MusicVolumeContainer/MusicVolumeValue")
+@onready var music_volume_container = get_node_or_null("SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/AudioSection/MusicVolumeContainer")
 
 # Gameplay Settings
 @onready var tutorials_toggle = get_node_or_null("SettingsContainer/SettingsContent/ScrollContainer/SettingsVBox/GameplaySection/TutorialsContainer/TutorialsToggle")
@@ -43,14 +44,6 @@ func _ready():
 	
 	# Add to settings popups group for battle scene communication
 	add_to_group("settings_popups")
-
-	# Ensure button audio uses SFX bus
-	var button_click = get_node_or_null("ButtonClick")
-	if button_click:
-		button_click.bus = "SFX"
-	var button_hover = get_node_or_null("ButtonHover")
-	if button_hover:
-		button_hover.bus = "SFX"
 
 	# Background click closes popup
 	var bg = get_node_or_null("Background")
@@ -101,6 +94,10 @@ func _ready():
 	# Auto-detect context if not explicitly set
 	if not _context_initialized:
 		_detect_and_apply_context()
+
+	# Hide music volume slider when current scene excludes background music
+	if music_volume_container and _is_current_scene_music_excluded():
+		music_volume_container.visible = false
 
 	# Make layout responsive to window size
 	_update_layout()
@@ -157,12 +154,27 @@ func _detect_and_apply_context():
 	else:
 		is_battle_context = false
 		_set_battle_buttons_visible(false)
+	if music_volume_container:
+		music_volume_container.visible = not _is_current_scene_music_excluded()
 	_context_initialized = true
+
+func _is_current_scene_music_excluded() -> bool:
+	var bgm: Node = get_node_or_null("/root/BackgroundMusicManager")
+	if bgm and bgm.has_method("is_excluded_scene"):
+		var scene: Node = get_tree().current_scene
+		if scene:
+			return bgm.is_excluded_scene(scene.name)
+	return false
 
 func update_ui_from_settings():
 	"""Update UI elements to reflect current settings from SettingsManager and Firebase"""
 	# Load TTS settings from Firebase/Firestore if authenticated
 	await _load_tts_settings_from_firebase()
+
+	# Directly apply audio settings to AudioServer buses so they persist
+	# even if slider value_changed doesn't fire (e.g., defaults match)
+	if typeof(SettingsManager) != TYPE_NIL and SettingsManager.has_method("apply_audio_settings"):
+		SettingsManager.apply_audio_settings()
 	
 	# Accessibility settings - check for null first
 	if reading_speed_slider:
@@ -483,6 +495,8 @@ func _on_tutorials_toggled(pressed: bool):
 func set_context(battle_context: bool, has_battle_occurred: bool = false, battle_currently_active: bool = false) -> void:
 	is_battle_context = battle_context
 	_set_battle_buttons_visible(is_battle_context)
+	if music_volume_container:
+		music_volume_container.visible = not (battle_context or _is_current_scene_music_excluded())
 	if battle_context:
 		set_battle_session_state(has_battle_occurred, battle_currently_active)
 	_context_initialized = true

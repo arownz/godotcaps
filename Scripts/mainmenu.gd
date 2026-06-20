@@ -30,7 +30,7 @@ var usage_time_update_interval = 30.0 # Update every 30 seconds
 func _ready():
     # Setup hover buttons for UI interaction
     _setup_hover_buttons()
-    
+
     # Setup energy recovery timer
     energy_recovery_timer = Timer.new()
     energy_recovery_timer.wait_time = 1.0 # Update every second

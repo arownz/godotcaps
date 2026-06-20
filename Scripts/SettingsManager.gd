@@ -38,6 +38,9 @@ func _ready():
 	print("SettingsManager: Initial audio setup complete")
 	debug_audio_settings()
 	
+	# Auto-fix bus for any newly added button audio nodes across all scenes
+	get_tree().node_added.connect(_on_audio_node_added)
+	
 	# Ensure button audio uses SFX bus after a frame (so scene is loaded)
 	call_deferred("_ensure_button_audio_uses_sfx_bus")
 	
@@ -362,6 +365,14 @@ func _delayed_audio_check():
 	print("SettingsManager: Running delayed audio bus check...")
 	_ensure_button_audio_uses_sfx_bus()
 	debug_audio_settings()
+
+func _on_audio_node_added(node: Node):
+	"""Auto-assign SFX bus to any ButtonClick/ButtonHover added dynamically"""
+	if node is AudioStreamPlayer and node.bus == "Master":
+		var name_lower = node.name.to_lower()
+		if name_lower in ["buttonclick", "buttonhover"]:
+			node.bus = "SFX"
+			print("SettingsManager: Auto-assigned ", node.name, " to SFX bus")
 
 func get_reading_speed() -> float:
 	return current_settings.accessibility.reading_speed
